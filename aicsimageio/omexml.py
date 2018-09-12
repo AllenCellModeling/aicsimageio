@@ -14,9 +14,8 @@ from __future__ import absolute_import, unicode_literals
 import sys
 import xml.etree.ElementTree as ElementTree
 if sys.version_info.major == 3:
-    from io import StringIO
     from io import BytesIO
-    uenc = 'unicode'
+    uenc = 'utf-8'
 else:
     from cStringIO import StringIO
     uenc = 'utf-8'
@@ -372,8 +371,7 @@ class OMEXML(object):
         # ElementTree.register_namespace("om", NS_ORIGINAL_METADATA)
         result = BytesIO()
         ElementTree.ElementTree(self.root_node).write(result,
-                                                      encoding='utf-8',
-                                                      # encoding=uenc,
+                                                      encoding=uenc,
                                                       method="xml",
                                                       xml_declaration=True
                                                       # default_namespace = 'http://www.openmicroscopy.org/Schemas/ome/2013-06'

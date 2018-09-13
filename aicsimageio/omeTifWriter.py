@@ -89,7 +89,7 @@ class OmeTifWriter:
             pixels = omexml.image().Pixels
             pixels.populate_TiffData()
             self.omeMetadata = omexml
-        xml = self.omeMetadata.to_xml().encode('utf-8', errors='xmlcharrefreplace')
+        xml = self.omeMetadata.to_xml().encode()
 
         # check data shape for TZCYX or ZCYX or ZYX
         dims = len(shape)

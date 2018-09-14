@@ -13,12 +13,8 @@ from __future__ import absolute_import, unicode_literals
 
 import sys
 import xml.etree.ElementTree as ElementTree
-if sys.version_info.major == 3:
-    from io import StringIO
-    uenc = 'unicode'
-else:
-    from cStringIO import StringIO
-    uenc = 'utf-8'
+
+from io import BytesIO
 
 import datetime
 import logging
@@ -369,16 +365,16 @@ class OMEXML(object):
             # ElementTree.register_namespace(ns_key, ns)
             ElementTree.register_namespace('', ns)
         # ElementTree.register_namespace("om", NS_ORIGINAL_METADATA)
-        result = StringIO()
+        result = BytesIO()
         ElementTree.ElementTree(self.root_node).write(result,
-                                                      encoding=uenc,
+                                                      encoding='utf-8',
                                                       method="xml",
-                                                      xml_declaration = True
+                                                      xml_declaration=True
                                                       # default_namespace = 'http://www.openmicroscopy.org/Schemas/ome/2013-06'
                                                       )
-        return result.getvalue()
+        return result.getvalue().decode()
 
-    def to_xml(self, indent="\t", newline="\n", encoding=uenc):
+    def to_xml(self, indent="\t", newline="\n", encoding="utf-8"):
         return str(self)
 
     def get_ns(self, key):

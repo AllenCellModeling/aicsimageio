@@ -1,5 +1,9 @@
-from . import czifile
 import numpy as np
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter('ignore')
+    from . import czifile
 
 
 class CziReader:

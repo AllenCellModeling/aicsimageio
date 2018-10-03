@@ -56,7 +56,7 @@ class AICSImage:
             elif checker.is_tiff:
                 self.reader = tifReader.TifReader(self.file_path)
             else:
-                raise ValueError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
+                raise TypeError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
             # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
             self.data = self.reader.load()
             # TODO remove this transpose call once reader output is changed
@@ -79,7 +79,7 @@ class AICSImage:
             self.shape = self.data.shape
 
         else:
-            raise ValueError("Unable to process item of type {}".format(type(data)))
+            raise TypeError("Unable to process item of type {}".format(type(data)))
 
         self.size_t, self.size_c, self.size_z, self.size_y, self.size_x = tuple(self.shape)
 

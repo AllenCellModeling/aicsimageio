@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 import random
 import os
+import pathlib
 
 from aicsimageio import AICSImage
 
@@ -58,3 +59,7 @@ class TestAicsImage(unittest.TestCase):
         # arrange, act, assert
         with self.assertRaises(IOError):
             AICSImage("fakeimage.ome.tif")
+
+    def test_fromInvalidDataType(self):
+        with self.assertRaises(TypeError):
+            AICSImage(pathlib.Path('foo.tiff'))

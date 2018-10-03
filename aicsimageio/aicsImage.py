@@ -77,6 +77,10 @@ class AICSImage:
                 raise ValueError("Number of dimensions must match dimensions of array provided!")
             self._reshape_data()
             self.shape = self.data.shape
+
+        else:
+            raise ValueError("Unable to process item of type {}".format(type(data)))
+
         self.size_t, self.size_c, self.size_z, self.size_y, self.size_x = tuple(self.shape)
 
     def is_valid_dimension(self, dimensions):

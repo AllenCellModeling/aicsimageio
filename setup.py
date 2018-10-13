@@ -39,6 +39,7 @@ setup(name=PACKAGE_NAME,
       },
       keywords=["commit:{}".format(GIT_COMMIT_HASH)],
       install_requires=[
+            'PyHamcrest>=1.9.0',
             'imageio>=2.3.0',
             'numpy>=1.14.5',
             'Pillow>=5.2.0',

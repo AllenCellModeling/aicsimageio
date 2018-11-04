@@ -1,9 +1,0 @@
--e .[test_group]
--e .[lint_group]
-
-# The above ensures source install of the package
-# Installing test and lint dependencies as above allows us to access them easily on the command line, within the
-# activated venv.
-
-# Add the package requirements in setup.py.
-# This ensures a single location for requirements management.

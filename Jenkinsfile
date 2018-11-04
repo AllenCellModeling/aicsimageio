@@ -2,18 +2,17 @@
 
 node ("python-gradle")
 {
-    parameters { booleanParam(name: 'promote_artifact', defaultValue: false, description: '') }
-    def is_promote=(params.promote_artifact)
-    echo "BUILDTYPE: " + (is_promote ? "Promote Image" : "Build, Publish and Tag")
+    parameters { booleanParam(name: 'create_release', defaultValue: false, 
+                              description: 'If true, create a release artifact and publish to ' +
+                                           'the artifactory release PyPi or public PyPi.') }
+    def create_release=(params.create_release)
+    echo "BUILDTYPE: " + (create_release ? "Creating a Release" : "Building a Snapshot")
 
     try {
-        def VENV_BIN = "/local1/virtualenvs/jenkinstools/bin"
-        def PYTHON = "${VENV_BIN}/python3"
-
-        stage ("git") {
+        stage ("git pull") {
             def git_url=gitUrl()
             if (env.BRANCH_NAME == null) {
-                git url: "${git_url}"
+                git url: "${git_url}", branch: "master"
             }
             else {
                 println "*** BRANCH ${env.BRANCH_NAME}"
@@ -21,24 +20,55 @@ node ("python-gradle")
             }
         }
 
-        if (!is_promote) {
-            stage ("prepare version") {
-                sh "${PYTHON} ${VENV_BIN}/manage_version -t python -s prepare"
-            }
-
-            stage("build and publish") {
-                sh './gradlew -i cleanAll publish'
-            }
-
-            stage ("tag and commit") {
-                sh "${PYTHON} ${VENV_BIN}/manage_version -t python -s tag"
-            }
-
-            junit "build/test_report.xml"
+        stage ("initialize virtualenv") {
+            sh "./gradlew -i cleanAll installCIDependencies"
         }
-        else {
-            stage("promote") {
-                sh "${PYTHON} ${VENV_BIN}/promote_artifact -t python -g ${params.git_tag}"
+
+        stage ("bump version pre-build") {
+            // This will drop the dev suffix if we are releasing
+            if (create_release) {
+                // X.Y.Z.devN -> X.Y.Z
+                sh "./gradlew -i bumpVersionRelease"
+            }
+        }
+
+        stage ("test/build distribution") {
+            sh './gradlew -i build'
+        }
+
+        junit "build/test_report.xml"
+        step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false,
+              coberturaReportFile: 'build/coverage.xml', failUnhealthy: false, failUnstable: false,
+              maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+
+        stage ("publish") {
+            def publish_task = create_release ? "publishRelease" : "publishSnapshot"
+            sh "./gradlew -i ${publish_task}"
+        }
+
+        stage ("tag release") {
+            if (create_release) {
+                sh "./gradlew -i gitTagCommitPush"
+            }
+            else {
+                println "This is a snapshot build - it will not be tagged."
+            }
+        }
+
+        stage ("prep for dev") {
+            if (create_release) {
+                // X.Y.Z -> X.Y.Z+1.dev0  (default - increment patch)
+                sh "./gradlew -i bumpVersionPostRelease gitCommitPush"
+            }
+            else {  // This is a snapshot build
+                // X.Y.Z.devN -> X.Y.Z.devN+1  (devbuild)
+                def ignoreAuthors = ["jenkins", "Jenkins User", "Jenkins Builder"]
+                if (!ignoreAuthors.contains(gitAuthor())) {
+                    sh "./gradlew -i bumpVersionDev gitCommitPush"
+                }
+                else {
+                    println "This is a snapshot build from a jenkins commit. The version will not be bumped."
+                }
             }
         }
 
@@ -59,15 +89,20 @@ node ("python-gradle")
 
         // Email
         step([$class: 'Mailer',
-              notifyEveryUnstableBuild: true,
-              recipients: '!AICS_DevOps@alleninstitute.org',
-              sendToIndividuals: true])
+            notifyEveryUnstableBuild: true,
+            recipients: '!AICS_DevOps@alleninstitute.org',
+            sendToIndividuals: true])
     }
 }
 
 def gitUrl() {
-    checkout scm
+    //checkout scm
     sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+}
+
+def gitAuthor() {
+    //checkout scm
+    sh(returnStdout: true, script: 'git log -1 --format=%an').trim()
 }
 
 def notifyBuildOnSlack(String buildStatus = 'STARTED', String priorStatus) {

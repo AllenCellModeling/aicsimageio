@@ -37,6 +37,9 @@ node ("python-gradle")
         }
 
         junit "build/test_report.xml"
+        step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false,
+              coberturaReportFile: 'build/coverage.xml', failUnhealthy: false, failUnstable: false,
+              maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
 
         stage ("publish") {
             def publish_task = create_release ? "publishRelease" : "publishSnapshot"

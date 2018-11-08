@@ -18,6 +18,7 @@ class TestAicsImage(unittest.TestCase):
         # this method has to be included in a testgroup in order for it be run
         self.assertTrue(True)
 
+
     def test_transposedOutput(self):
         # arrange
         input_shape = random.sample(range(1, 10), 5)
@@ -27,7 +28,35 @@ class TestAicsImage(unittest.TestCase):
         output_array = image.get_image_data("XYZCT")
         stack = stack.transpose((4, 3, 2, 1, 0))
         # assert
-        self.assertEqual(output_array.all(), stack.all())
+        self.assertEqual(output_array.shape, stack.shape)
+
+    def test_transposed2Output(self):
+        # arrange
+        ## Create a random shape matrix
+        input_shape = random.sample(range(1, 10), 5)
+        stack = np.zeros(input_shape)
+        ## Load randsom shape matrix as image with defined order
+        image = AICSImage(stack, dims="TCZYX")
+        # act
+        ## Shuffle the AICS image matrix order
+        output_array = image.get_image_data("YZXCT")
+        ## Shuffle the input matrix block the same way
+        stack = stack.transpose((3, 2, 4, 1, 0))
+        # assert
+        self.assertEqual(output_array.shape, stack.shape)
+        #self.assertEqual(output_array.all, stack.all)
+
+    # def test_transposed2Output(self):
+    #
+    #     # arrange
+    #     input_shape = random.sample(range(1, 10), 5)
+    #     stack = np.zeros(input_shape)
+    #     image = AICSImage(stack, dims="TCZYX")
+    #     # act
+    #     output_array = image.get_image_data(out_orientation="TCYXZ")
+    #     stack = stack.transpose((0, 1, 4, 2, 3))
+    #     # assert
+    #     self.assertEqual(output_array.shape, stack.shape)
 
     def test_slicedOutput(self):
         # arrange

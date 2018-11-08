@@ -66,8 +66,11 @@ class TestAicsImage(unittest.TestCase):
         stack = np.zeros(input_shape)
         stack[t_rand, c_rand] = 1
         image = AICSImage(stack, dims="TCZYX")
+        print("\ninput.shape: ", input_shape)
+        print("\nimage.shape: ", image.shape)
         # act
         output_array = image.get_image_data("ZYX", T=t_rand, C=c_rand)
+        print("output_array.shape: ", output_array.shape)
         # assert
         self.assertEqual(output_array.all(), 1)
 

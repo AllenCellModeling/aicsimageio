@@ -1,9 +1,8 @@
 # author: Zach Crabtree zacharyc@alleninstitute.org
 
 import numpy as np
-
 from . import omeTifReader, cziReader, tifReader, typeChecker
-
+from sys import stderr
 
 def enum(**named_values):
     return type('Enum', (), named_values)
@@ -164,24 +163,77 @@ class AICSImage:
         if kwargs.get("reference", False):
             # get data by reference
             image_data = self.data
+            if kwargs.get("warn", True):
+                print("WARNING: you have a reference to the object. "
+                      "You are responsible for not corrupting the data.", file=stderr)
         else:
             # make a copy of the data
             image_data = self.data.copy()
-        if out_orientation != self.dims and self.is_valid_dimension(out_orientation):
-            # map each dimension (TCZYX) to its index in out_orientation
-            match_map = {dim: out_orientation.find(dim) for dim in self.dims}
-            slicer, transposer = [], []
-            for dim in self.dims:
-                if match_map[dim] == -1:
-                    # only get the bottom slice of this dimension, unless the user specified another in the args
-                    slice_value = kwargs.get(dim, 0)
-                    if slice_value >= self.shape[self.dims.find(dim)] or slice_value < 0:
-                        raise ValueError("{} is not a valid index for the {} dimension".format(slice_value, dim))
-                    slicer.append(slice_value)
-                else:
-                    # append all slices of this dimension
-                    slicer.append(slice(None, None))
-                    transposer.append(match_map[dim])
-            image_data = image_data[tuple(slicer)].transpose(transposer)
+            :memoryview
+        out_order, slice_dict = self.p_process_args(out_orientation, **kwargs)
+        image_data = self.p_transpose(image_data, self.sdims, out_order)
+        return self.p_get_slice(image_data, out_order, slice_dict)
 
+
+    def p_process_args(self, out_order, **kwargs):
+        """
+        take the arguments and convert them from say out_order="ZYX", kwargs{'T':3, 'C':0} and
+        return out_order="TCZYX" and slice_dict = {'T':3, 'C':0, 'Z':slice(None,None), 'Y':slice(None,None),
+        'X':slice(None,None)}
+        :param out_order: The desired output order substring
+        :param kwargs: any specific slices T=3, C=0
+        :return: a 5 channel out_order, and a dictionary of specified slices
+        """
+        # use sets to cet the channels that aren't in out_order
+        o_set = set(list(out_order))
+        r_set = set(list(self.dims))
+        slice_set = r_set - o_set
+        slice_dict = { }  # {c: kwargs.get(c) for c in slice_set}
+        for channel in slice_set:
+            specified_channel = kwargs.get(channel, 0)
+            if specified_channel >= self.shape[self.dims.find(channel)] or specified_channel < 0:
+                raise ValueError("{} is not a valid index for the {} dimension".format(specified_channel, channel))
+            slice_dict[channel] = specified_channel
+
+        # add the slice equivalent of : for the other channels
+        for channel in o_set:
+            slice_dict[channel] = slice(None, None)
+
+        # add slice_set to the beginning of out_order so the slice operation if needed is most efficient
+        indices = {c: i for i, c in enumerate(list(self.dims))}
+        new_out_order = sorted(list(slice_set), key=indices.get)
+        new_out_order = "".join(new_out_order) + out_order
+        return new_out_order, slice_dict
+
+    @staticmethod
+    def p_transpose(image_data, sdims, output_dims):
+        """
+        Takes an image data block and an ordered set of all channels
+        :param image_data: block of image date in a 5D matrix
+        :param sdims: the dims of the image data likely self.dims
+        :param output_dims: the dims ordered the way the user wants
+        :return: the image data block ordered as prescribed
+        """
+        if len(output_dims) != 5:
+            raise ValueError("length of output_dims != 5")
+        match_map = {dim: sdims.find(dim) for dim in output_dims}
+        transposer = []
+        for dim in output_dims:
+                # append all slices of this dimension
+                transposer.append(match_map[dim])
+        image_data = image_data.transpose(transposer)
         return image_data
+
+    @staticmethod
+    def p_get_slice(image_data, out_order, slice_dict):
+        """
+        once the image data is sorted into out_order this functions purpose is to align the slice_dict to
+        the same order and return the relevant slice/subblock of the data
+        :param image_data:
+        :param out_order:
+        :param slice_dict:
+        :return:
+        """
+        slice_list = [slice_dict[channel] for channel in out_order]
+        return image_data[tuple(slice_list)]
+

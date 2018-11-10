@@ -30,6 +30,19 @@ class TestAicsImage(unittest.TestCase):
         # assert
         self.assertEqual(output_array.shape, stack.shape)
 
+    def test_p_transpose(self):
+        input_shape = random.sample(range(1, 10), 5)
+        stack = np.zeros(input_shape)
+        ## Load randsom shape matrix as image with defined order
+        image = AICSImage(stack, dims="TCZYX")
+        # act
+        ## Shuffle the AICS image matrix order
+        output_array = AICSImage.p_transpose(image.data, image.dims, "YZXCT")
+        ## Shuffle the input matrix block the same way
+        stack = stack.transpose((3, 2, 4, 1, 0))
+        # assert
+        self.assertEqual(output_array.shape, stack.shape)
+
     def test_transposed2Output(self):
         # arrange
         ## Create a random shape matrix
@@ -46,17 +59,6 @@ class TestAicsImage(unittest.TestCase):
         self.assertEqual(output_array.shape, stack.shape)
         #self.assertEqual(output_array.all, stack.all)
 
-    # def test_transposed2Output(self):
-    #
-    #     # arrange
-    #     input_shape = random.sample(range(1, 10), 5)
-    #     stack = np.zeros(input_shape)
-    #     image = AICSImage(stack, dims="TCZYX")
-    #     # act
-    #     output_array = image.get_image_data(out_orientation="TCYXZ")
-    #     stack = stack.transpose((0, 1, 4, 2, 3))
-    #     # assert
-    #     self.assertEqual(output_array.shape, stack.shape)
 
     def test_slicedOutput(self):
         # arrange
@@ -73,6 +75,7 @@ class TestAicsImage(unittest.TestCase):
         print("output_array.shape: ", output_array.shape)
         # assert
         self.assertEqual(output_array.all(), 1)
+        self.assertEqual(stack[t_rand, c_rand, :, :, :].shape, output_array.shape)
 
     def test_fewDimensions(self):
         input_shape = random.sample(range(1, 20), 3)

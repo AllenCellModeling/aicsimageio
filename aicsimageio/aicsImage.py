@@ -169,9 +169,9 @@ class AICSImage:
         else:
             # make a copy of the data
             image_data = self.data.copy()
-            :memoryview
+
         out_order, slice_dict = self.p_process_args(out_orientation, **kwargs)
-        image_data = self.p_transpose(image_data, self.sdims, out_order)
+        image_data = self.p_transpose(image_data, self.dims, out_order)
         return self.p_get_slice(image_data, out_order, slice_dict)
 
 

@@ -170,12 +170,11 @@ class AICSImage:
             # make a copy of the data
             image_data = self.data.copy()
 
-        out_order, slice_dict = self.p_process_args(out_orientation, **kwargs)
-        image_data = self.p_transpose(image_data, self.dims, out_order)
-        return self.p_get_slice(image_data, out_order, slice_dict)
+        out_order, slice_dict = self.__process_args(out_orientation, **kwargs)
+        image_data = self.__transpose(image_data, self.dims, out_order)
+        return self.__get_slice(image_data, out_order, slice_dict)
 
-
-    def p_process_args(self, out_order, **kwargs):
+    def __process_args(self, out_order, **kwargs):
         """
         take the arguments and convert them from say out_order="ZYX", kwargs{'T':3, 'C':0} and
         return out_order="TCZYX" and slice_dict = {'T':3, 'C':0, 'Z':slice(None,None), 'Y':slice(None,None),
@@ -188,7 +187,7 @@ class AICSImage:
         o_set = set(list(out_order))
         r_set = set(list(self.dims))
         slice_set = r_set - o_set
-        slice_dict = { }  # {c: kwargs.get(c) for c in slice_set}
+        slice_dict = {}  # {c: kwargs.get(c) for c in slice_set}
         for channel in slice_set:
             specified_channel = kwargs.get(channel, 0)
             if specified_channel >= self.shape[self.dims.find(channel)] or specified_channel < 0:
@@ -206,7 +205,7 @@ class AICSImage:
         return new_out_order, slice_dict
 
     @staticmethod
-    def p_transpose(image_data, sdims, output_dims):
+    def __transpose(image_data, sdims, output_dims):
         """
         Takes an image data block and an ordered set of all channels
         :param image_data: block of image date in a 5D matrix
@@ -225,7 +224,7 @@ class AICSImage:
         return image_data
 
     @staticmethod
-    def p_get_slice(image_data, out_order, slice_dict):
+    def __get_slice(image_data, out_order, slice_dict):
         """
         once the image data is sorted into out_order this functions purpose is to align the slice_dict to
         the same order and return the relevant slice/subblock of the data

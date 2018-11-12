@@ -26,8 +26,10 @@ class ImgContainer(object):
         return tuple(new_shape)
 
     def get_trand_crand(self):
-        tmax = 10
-
+        tmax = self.input_shape[self.order['T']]
+        cmax = self.input_shape[self.order['C']]
+        trand, crand = random.randint(0, tmax - 1), random.randint(0, cmax - 1)
+        return trand, crand
 
 @pytest.fixture
 def example_img5():
@@ -49,10 +51,21 @@ def test_transposed_output(example_img5):
     assert output_array.shape == stack_shape
 
 
-def test_p_transpose(example_img5):
+def test_transpose(example_img5):
     output_array = AICSImage._AICSImage__transpose(example_img5.image.data, example_img5.dims, "YZXCT")
     stack_shape = example_img5.shuffle_shape("YZXCT")
     assert output_array.shape == stack_shape
+
+
+def test_slice(example_img5):
+    trand, crand = example_img5.get_trand_crand()
+    im_shape = example_img5.image.shape
+    example_img5.image.data[trand, crand] = 1
+    slice_shape = [im_shape[i] for i in range(2, 5)]
+    slice_dict = {'T': trand, 'C': crand, 'Z': slice(None, None), 'Y': slice(None, None), 'X': slice(None, None)}
+    output_array = AICSImage._AICSImage__get_slice(example_img5.image.data, "TCZYX", slice_dict)
+    assert output_array.shape == tuple(slice_shape)
+    assert output_array.all() == 1
 
 
 def test_transposed_output_2(example_img5):
@@ -101,3 +114,5 @@ def test_fromInvalidFileName():
 def test_fromInvalidDataType():
     with pytest.raises(TypeError):
         AICSImage(pathlib.Path('foo.tiff'))
+
+

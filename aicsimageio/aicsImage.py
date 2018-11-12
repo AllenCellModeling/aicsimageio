@@ -9,6 +9,10 @@ def enum(**named_values):
 FileType = enum(OMETIF=1, TIF=2, CZI=3)
 
 
+# TODO I am not sure what the behavior should be in the case where img = AICSimage(file, dims="CTX")
+# TODO and then img.get_image_data requests a sub-block. I kind of expect images we deal with to have 5 channels (TCZYX)
+
+
 class AICSImage:
     """
     A wrapper class for ndarrays.
@@ -213,8 +217,6 @@ class AICSImage:
         :param output_dims: the dims ordered the way the user wants
         :return: the image data block ordered as prescribed
         """
-        if len(output_dims) != 5:
-            raise ValueError("length of output_dims != 5")
         match_map = {dim: sdims.find(dim) for dim in output_dims}
         transposer = []
         for dim in output_dims:

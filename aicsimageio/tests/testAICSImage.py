@@ -15,7 +15,7 @@ class ImgContainer(object):
         self.input_shape = random.sample(range(1, 10), channels)
         stack = np.zeros(self.input_shape)
         self.dims = dims
-        self.order =  {c:i for i,c in enumerate(dims)}  # {'T': 0, 'C': 1, 'Z': 2, 'Y': 3, 'X': 4}
+        self.order = {c: i for i, c in enumerate(dims)}  # {'T': 0, 'C': 1, 'Z': 2, 'Y': 3, 'X': 4}
         self.image = AICSImage(stack, dims=self.dims)
 
     def remap(self, seq):
@@ -30,6 +30,7 @@ class ImgContainer(object):
         cmax = self.input_shape[self.order['C']]
         trand, crand = random.randint(0, tmax - 1), random.randint(0, cmax - 1)
         return trand, crand
+
 
 @pytest.fixture
 def example_img5():
@@ -97,7 +98,7 @@ def test_few_dimensions(example_img3ctx):
     assert image.data.shape == image.shape
 
 
-def test_fromFileName():
+def test_from_filename():
     # arrange and act
     dir_path = os.path.dirname(os.path.realpath(__file__))
     image = AICSImage(os.path.join(dir_path, 'img', 'img40_1.ome.tif'))
@@ -105,13 +106,13 @@ def test_fromFileName():
     assert image is not None
 
 
-def test_fromInvalidFileName():
+def test_from_invalid_filename():
     # arrange, act, assert
     with pytest.raises(IOError):
         AICSImage("fakeimage.ome.tif")
 
 
-def test_fromInvalidDataType():
+def test_from_invalid_data_type():
     with pytest.raises(TypeError):
         AICSImage(pathlib.Path('foo.tiff'))
 

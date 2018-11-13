@@ -9,7 +9,7 @@ from aicsimageio import AICSImage
 
 
 class ImgContainer(object):
-    def __init__(self, channels: int=5, dims: str="TCZYX"):
+    def __init__(self, channels: int = 5, dims: str = "TCZYX"):
         self.input_shape = random.sample(range(1, 10), channels)
         stack = np.zeros(self.input_shape)
         self.dims = dims

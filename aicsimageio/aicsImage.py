@@ -2,10 +2,12 @@
 
 import numpy as np
 from . import omeTifReader, cziReader, tifReader, typeChecker
-from sys import stderr
+
 
 def enum(**named_values):
     return type('Enum', (), named_values)
+
+
 FileType = enum(OMETIF=1, TIF=2, CZI=3)
 
 
@@ -103,11 +105,9 @@ class AICSImage:
     def _transpose_to_defaults(self):
         match_map = {dim: self.default_dims.find(dim) for dim in self.dims}
         transposer = []
-        dim_list = list(self.dims)
         for dim in self.dims:
             if not match_map[dim] == -1:
                 transposer.append(match_map[dim])
-        # self.dims = str(np.transpose(dim_list, transposer))
         self.data = self.data.transpose(transposer)
         self.dims = self.default_dims
 
@@ -232,4 +232,3 @@ class AICSImage:
         """
         slice_list = [slice_dict[channel] for channel in out_order]
         return image_data[tuple(slice_list)]
-

@@ -105,6 +105,18 @@ def test_few_dimensions(example_img3ctx):
     assert image.data.shape == image.shape
 
 
+def test_get_image_data_small_data(example_img3ctx):
+    image = example_img3ctx.image.get_image_data("TCX")
+    assert image.shape == example_img3ctx.shuffle_shape("TCX")
+
+
+def test_bad_query(example_img3ctx):
+    # constructed by fixture with "CTX"
+    image = example_img3ctx.image.get_image_data()
+    # returns a 5D block
+    assert image.shape != example_img3ctx.shuffle_shape("TCX")
+
+
 def test_from_filename():
     # arrange and act
     dir_path = os.path.dirname(os.path.realpath(__file__))

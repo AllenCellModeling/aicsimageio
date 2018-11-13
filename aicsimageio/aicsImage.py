@@ -36,7 +36,7 @@ class AICSImage:
         # finally, AICSImage objects can be generated from ometifs and czis (could be removed in later revisions)
         >>> image_from_file = AICSImage("image_data.ome.tif")
         >>> image_from_file = AICSImage("image_data.czi")
-
+    NOTE: If you construct with a data/image block less than 5D the class upscales the data to be 5 D
     """
     default_dims = "TCZYX"
 
@@ -155,7 +155,6 @@ class AICSImage:
     # TODO (minor) allow uppercase and lowercase kwargs
     def get_image_data(self, out_orientation="TCZYX", **kwargs):
         """
-
         :param out_orientation: A string containing the dimension ordering desired for the returned ndarray
         :param kwargs: These can contain the dims you exclude from out_orientation (out of the set "TCZYX").
                        If you want all slices of ZYX, but only one from T and C, you can enter:
@@ -163,6 +162,8 @@ class AICSImage:
                        Unspecified dimensions that are left of out the out_orientation default to 0.
                        :param reference: boolean value to get image data by reference or by value
         :return: ndarray with dimension ordering that was specified with out_orientation
+        Note: if you constructed AICSImage with a datablock with less than 5D you must still include the omitted
+        dimensions in your out_orientation if you want the same < 5D block back
         """
         if kwargs.get("reference", False):
             # get data by reference

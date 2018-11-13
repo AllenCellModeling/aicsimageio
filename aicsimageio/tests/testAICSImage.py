@@ -89,6 +89,17 @@ def test_sliced_output(example_img5):
     assert example_img5.image.data[t_rand, c_rand, :, :, :].shape == output_array.shape
 
 
+def test_multiple_access(example_img5):
+    t_rand, c_rand = example_img5.get_trand_crand()
+    example_img5.image.data[t_rand, c_rand] = 1  # force the data block to 1's, (was 0's)
+    output_array = example_img5.image.get_image_data("ZYX", T=t_rand, C=c_rand)
+    assert output_array.all() == 1
+    assert example_img5.image.data[t_rand, c_rand, :, :, :].shape == output_array.shape
+    output_two = example_img5.image.get_image_data("TCXYZ")
+    out_two_shape = example_img5.shuffle_shape("TCXYZ")
+    assert output_two.shape == out_two_shape
+
+
 def test_few_dimensions(example_img3ctx):
     image = example_img3ctx.image
     assert image.data.shape == image.shape

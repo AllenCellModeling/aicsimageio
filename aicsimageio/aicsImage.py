@@ -217,8 +217,10 @@ class AICSImage:
         """
         match_map = {dim: sdims.find(dim) for dim in output_dims}
         transposer = [match_map[dim] for dim in output_dims]  # compose the order mapping
-        image_data = image_data.transpose(transposer)
-        return image_data
+        transposed_image_data = image_data.transpose(transposer)
+        # this changes the numpy wrapper around the data not the actual underlying data
+        # thus even if the user has requested a reference the internal object isn't changed
+        return transposed_image_data
 
     @staticmethod
     def __get_slice(image_data, out_order, slice_dict):

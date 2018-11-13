@@ -167,9 +167,6 @@ class AICSImage:
         if kwargs.get("reference", False):
             # get data by reference
             image_data = self.data
-            if kwargs.get("warn", True):
-                print("WARNING: you have a reference to the object. "
-                      "You are responsible for not corrupting the data.", file=stderr)
         else:
             # make a copy of the data
             image_data = self.data.copy()
@@ -187,23 +184,24 @@ class AICSImage:
         :param kwargs: any specific slices T=3, C=0
         :return: a 5 channel out_order, and a dictionary of specified slices
         """
-        # use sets to cet the channels that aren't in out_order
-        o_set = set(list(out_order))
-        r_set = set(list(self.dims))
-        slice_set = r_set - o_set
-        slice_dict = {}  # {c: kwargs.get(c) for c in slice_set}
+        # use sets to get the channels that aren't in out_order
+        out_order_set = set(out_order)
+        ref_order_set = set(self.dims)
+        slice_set = ref_order_set - out_order_set
+        slice_dict = {}
         for channel in slice_set:
             specified_channel = kwargs.get(channel, 0)
+            # check that the specified channel is within the defined domain
             if specified_channel >= self.shape[self.dims.find(channel)] or specified_channel < 0:
                 raise ValueError("{} is not a valid index for the {} dimension".format(specified_channel, channel))
             slice_dict[channel] = specified_channel
 
         # add the slice equivalent of : for the other channels
-        for channel in o_set:
+        for channel in out_order_set:
             slice_dict[channel] = slice(None, None)
 
-        # add slice_set to the beginning of out_order so the slice operation if needed is most efficient
-        indices = {c: i for i, c in enumerate(list(self.dims))}
+        # Add user-specified slices to the beginning of the returned order so subblock indexing is more efficient
+        indices = {c: i for i, c in enumerate(self.dims)}  # constructs ordering dictionary apply to the set
         new_out_order = sorted(list(slice_set), key=indices.get)
         new_out_order = "".join(new_out_order) + out_order
         return new_out_order, slice_dict
@@ -218,17 +216,14 @@ class AICSImage:
         :return: the image data block ordered as prescribed
         """
         match_map = {dim: sdims.find(dim) for dim in output_dims}
-        transposer = []
-        for dim in output_dims:
-                # append all slices of this dimension
-                transposer.append(match_map[dim])
+        transposer = [match_map[dim] for dim in output_dims]  # compose the order mapping
         image_data = image_data.transpose(transposer)
         return image_data
 
     @staticmethod
     def __get_slice(image_data, out_order, slice_dict):
         """
-        once the image data is sorted into out_order this functions purpose is to align the slice_dict to
+        once the image data is sorted into out_order this function's purpose is to align the slice_dict to
         the same order and return the relevant slice/subblock of the data
         :param image_data:
         :param out_order:

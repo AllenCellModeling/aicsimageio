@@ -1,5 +1,3 @@
-# author: Zach Crabtree zacharyc@alleninstitute.org
-# reworked by Jamie Sherman 20181112
 
 import pytest
 import numpy as np
@@ -11,7 +9,7 @@ from aicsimageio import AICSImage
 
 
 class ImgContainer(object):
-    def __init__(self, channels:int=5, dims:str="TCZYX"):
+    def __init__(self, channels: int=5, dims: str="TCZYX"):
         self.input_shape = random.sample(range(1, 10), channels)
         stack = np.zeros(self.input_shape)
         self.dims = dims
@@ -34,7 +32,7 @@ class ImgContainer(object):
 
 @pytest.fixture
 def example_img5():
-    return ImgContainer(5)
+    return ImgContainer()
 
 
 @pytest.fixture
@@ -59,14 +57,19 @@ def test_transpose(example_img5):
 
 
 def test_slice(example_img5):
+    """
+    Test if the private function AICSImage.__get_slice works correctly for a simple example
+    """
     trand, crand = example_img5.get_trand_crand()
     im_shape = example_img5.image.shape
+    # reset the slice in the data to have value 1
     example_img5.image.data[trand, crand] = 1
-    slice_shape = [im_shape[i] for i in range(2, 5)]
+    slice_shape = [im_shape[i] for i in range(2, 5)]  # take the shape for the data cube (3D)
     slice_dict = {'T': trand, 'C': crand, 'Z': slice(None, None), 'Y': slice(None, None), 'X': slice(None, None)}
+    # slice_dict defines the sub-block to pull out
     output_array = AICSImage._AICSImage__get_slice(example_img5.image.data, "TCZYX", slice_dict)
-    assert output_array.shape == tuple(slice_shape)
-    assert output_array.all() == 1
+    assert output_array.shape == tuple(slice_shape)  # check the shape is right
+    assert output_array.all() == 1  # check the values are all 1 for the sub-block
 
 
 def test_transposed_output_2(example_img5):
@@ -78,19 +81,12 @@ def test_transposed_output_2(example_img5):
         assert image.shape == shape
 
 
-def test_sliced_output():
-    # arrange
-    input_shape = random.sample(range(1, 20), 5)
-    t_max, c_max = input_shape[0], input_shape[1]
-    t_rand, c_rand = random.randint(0, t_max - 1), random.randint(0, c_max - 1)
-    stack = np.zeros(input_shape)
-    stack[t_rand, c_rand] = 1
-    image = AICSImage(stack, dims="TCZYX")
-    # act
-    output_array = image.get_image_data("ZYX", T=t_rand, C=c_rand)
-    # assert
+def test_sliced_output(example_img5):
+    t_rand, c_rand = example_img5.get_trand_crand()
+    example_img5.image.data[t_rand, c_rand] = 1  # force the data block to 1's, (was 0's)
+    output_array = example_img5.image.get_image_data("ZYX", T=t_rand, C=c_rand)
     assert output_array.all() == 1
-    assert stack[t_rand, c_rand, :, :, :].shape == output_array.shape
+    assert example_img5.image.data[t_rand, c_rand, :, :, :].shape == output_array.shape
 
 
 def test_few_dimensions(example_img3ctx):

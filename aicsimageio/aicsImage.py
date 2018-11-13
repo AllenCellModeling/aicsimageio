@@ -1,13 +1,18 @@
 # author: Zach Crabtree zacharyc@alleninstitute.org
 
 import numpy as np
-
 from . import omeTifReader, cziReader, tifReader, typeChecker
 
 
 def enum(**named_values):
     return type('Enum', (), named_values)
+
+
 FileType = enum(OMETIF=1, TIF=2, CZI=3)
+
+
+# TODO I am not sure what the behavior should be in the case where img = AICSimage(file, dims="CTX")
+# TODO and then img.get_image_data requests a sub-block. I kind of expect images we deal with to have 5 channels (TCZYX)
 
 
 class AICSImage:
@@ -31,7 +36,7 @@ class AICSImage:
         # finally, AICSImage objects can be generated from ometifs and czis (could be removed in later revisions)
         >>> image_from_file = AICSImage("image_data.ome.tif")
         >>> image_from_file = AICSImage("image_data.czi")
-
+    NOTE: If you construct with a data/image block less than 5D the class upscales the data to be 5 D
     """
     default_dims = "TCZYX"
 
@@ -100,11 +105,9 @@ class AICSImage:
     def _transpose_to_defaults(self):
         match_map = {dim: self.default_dims.find(dim) for dim in self.dims}
         transposer = []
-        dim_list = list(self.dims)
         for dim in self.dims:
             if not match_map[dim] == -1:
                 transposer.append(match_map[dim])
-        # self.dims = str(np.transpose(dim_list, transposer))
         self.data = self.data.transpose(transposer)
         self.dims = self.default_dims
 
@@ -152,7 +155,6 @@ class AICSImage:
     # TODO (minor) allow uppercase and lowercase kwargs
     def get_image_data(self, out_orientation="TCZYX", **kwargs):
         """
-
         :param out_orientation: A string containing the dimension ordering desired for the returned ndarray
         :param kwargs: These can contain the dims you exclude from out_orientation (out of the set "TCZYX").
                        If you want all slices of ZYX, but only one from T and C, you can enter:
@@ -160,6 +162,8 @@ class AICSImage:
                        Unspecified dimensions that are left of out the out_orientation default to 0.
                        :param reference: boolean value to get image data by reference or by value
         :return: ndarray with dimension ordering that was specified with out_orientation
+        Note: if you constructed AICSImage with a datablock with less than 5D you must still include the omitted
+        dimensions in your out_orientation if you want the same < 5D block back
         """
         if kwargs.get("reference", False):
             # get data by reference
@@ -167,21 +171,67 @@ class AICSImage:
         else:
             # make a copy of the data
             image_data = self.data.copy()
-        if out_orientation != self.dims and self.is_valid_dimension(out_orientation):
-            # map each dimension (TCZYX) to its index in out_orientation
-            match_map = {dim: out_orientation.find(dim) for dim in self.dims}
-            slicer, transposer = [], []
-            for dim in self.dims:
-                if match_map[dim] == -1:
-                    # only get the bottom slice of this dimension, unless the user specified another in the args
-                    slice_value = kwargs.get(dim, 0)
-                    if slice_value >= self.shape[self.dims.find(dim)] or slice_value < 0:
-                        raise ValueError("{} is not a valid index for the {} dimension".format(slice_value, dim))
-                    slicer.append(slice_value)
-                else:
-                    # append all slices of this dimension
-                    slicer.append(slice(None, None))
-                    transposer.append(match_map[dim])
-            image_data = image_data[tuple(slicer)].transpose(transposer)
 
-        return image_data
+        out_order, slice_dict = self.__process_args(out_orientation, **kwargs)
+        image_data = self.__transpose(image_data, self.dims, out_order)
+        return self.__get_slice(image_data, out_order, slice_dict)
+
+    def __process_args(self, out_order, **kwargs):
+        """
+        take the arguments and convert them from say out_order="ZYX", kwargs{'T':3, 'C':0} and
+        return out_order="TCZYX" and slice_dict = {'T':3, 'C':0, 'Z':slice(None,None), 'Y':slice(None,None),
+        'X':slice(None,None)}
+        :param out_order: The desired output order substring
+        :param kwargs: any specific slices T=3, C=0
+        :return: a 5 channel out_order, and a dictionary of specified slices
+        """
+        # use sets to get the channels that aren't in out_order
+        out_order_set = set(out_order)
+        ref_order_set = set(self.dims)
+        slice_set = ref_order_set - out_order_set
+        slice_dict = {}
+        for channel in slice_set:
+            specified_channel = kwargs.get(channel, 0)
+            # check that the specified channel is within the defined domain
+            if specified_channel >= self.shape[self.dims.find(channel)] or specified_channel < 0:
+                raise ValueError("{} is not a valid index for the {} dimension".format(specified_channel, channel))
+            slice_dict[channel] = specified_channel
+
+        # add the slice equivalent of : for the other channels
+        for channel in out_order_set:
+            slice_dict[channel] = slice(None, None)
+
+        # Add user-specified slices to the beginning of the returned order so subblock indexing is more efficient
+        indices = {c: i for i, c in enumerate(self.dims)}  # constructs ordering dictionary apply to the set
+        new_out_order = sorted(list(slice_set), key=indices.get)
+        new_out_order = "".join(new_out_order) + out_order
+        return new_out_order, slice_dict
+
+    @staticmethod
+    def __transpose(image_data, sdims, output_dims):
+        """
+        Takes an image data block and an ordered set of all channels
+        :param image_data: block of image date in a 5D matrix
+        :param sdims: the dims of the image data likely self.dims
+        :param output_dims: the dims ordered the way the user wants
+        :return: the image data block ordered as prescribed
+        """
+        match_map = {dim: sdims.find(dim) for dim in output_dims}
+        transposer = [match_map[dim] for dim in output_dims]  # compose the order mapping
+        transposed_image_data = image_data.transpose(transposer)
+        # this changes the numpy wrapper around the data not the actual underlying data
+        # thus even if the user has requested a reference the internal object isn't changed
+        return transposed_image_data
+
+    @staticmethod
+    def __get_slice(image_data, out_order, slice_dict):
+        """
+        once the image data is sorted into out_order this function's purpose is to align the slice_dict to
+        the same order and return the relevant slice/subblock of the data
+        :param image_data:
+        :param out_order:
+        :param slice_dict:
+        :return:
+        """
+        slice_list = [slice_dict[channel] for channel in out_order]
+        return image_data[tuple(slice_list)]

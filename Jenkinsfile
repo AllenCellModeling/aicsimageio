@@ -8,7 +8,6 @@ pipeline {
     agent {
         node {
             label "python-gradle"
-            customWorkspace "workspace/${JOB_NAME}/${JOB_NAME.tokenize('/')[1]}"
         }
     }
     environment {
@@ -93,9 +92,7 @@ pipeline {
             this.notifyBB(currentBuild.result)
         }
         cleanup {
-            dir("${JENKINS_HOME}/workspace/${JOB_NAME}") {
-                deleteDir()
-            }
+            deleteDir()
         }
     }
 }

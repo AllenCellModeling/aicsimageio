@@ -2,7 +2,7 @@ buildscript {
     def buildScriptPlugins = ['scripts/common/buildscript-5.gradle']
     println "> Applying script plugins in buildscripts:"
     for (scriptPlugin in buildScriptPlugins) {
-        def pluginPath = "${scriptPluginPrefix}${scriptPlugin}${scriptPluginSuffix}"
+        def pluginPath = "${scriptPluginPrefix}${scriptPlugin}${scriptPluginSuffix}${scriptPluginTag}"
         println "${pluginPath}"
         apply from: pluginPath, to: buildscript
     }
@@ -17,19 +17,27 @@ def scriptPlugins = ['scripts/common/gradle-version-5.gradle',
                      'scripts/python/publish.gradle']
 println "> Applying script plugins:"
 for (scriptPlugin in scriptPlugins) {
-    def pluginPath = "${scriptPluginPrefix}${scriptPlugin}${scriptPluginSuffix}"
+    def pluginPath = "${scriptPluginPrefix}${scriptPlugin}${scriptPluginSuffix}${scriptPluginTag}"
     println "${pluginPath}"
     apply from: pluginPath
 }
 
+
+// Add the environment variable to gradle for coverage report
+// Do not add this to setup.cfg since it will break IDE tools
 py.uploadToPyPi = true
 py.env.put("PYTEST_ADDOPTS", "--cov=${rootProject.name} --cov-config=setup.cfg --cov-report=html --cov-report=xml --cov-report=term")
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 project.group = "org.alleninstitute.aics.pypi"
-description = "AICS Segmentation"
+description = "AICS Image access tools"
 // Project version will be managed outside of gradle in accordance with PEP 440
 // ("https://www.python.org/dev/peps/pep-0440/")
+
+// To see the gradle plugin for python look at 
+// http://stash.corp.alleninstitute.org/projects/AICSSW/repos/gradle-script-plugins/browse/scripts/python/
+// Also read BUILD.md
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////

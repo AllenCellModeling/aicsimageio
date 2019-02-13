@@ -1,108 +1,122 @@
-#!groovy
-
-node ("python-gradle")
-{
+pipeline {
     parameters { booleanParam(name: 'create_release', defaultValue: false, 
                               description: 'If true, create a release artifact and publish to ' +
                                            'the artifactory release PyPi or public PyPi.') }
-    def create_release=(params.create_release)
-    echo "BUILDTYPE: " + (create_release ? "Creating a Release" : "Building a Snapshot")
-
-    try {
-        stage ("git pull") {
-            def git_url=gitUrl()
-            if (env.BRANCH_NAME == null) {
-                git url: "${git_url}", branch: "master"
-            }
-            else {
-                println "*** BRANCH ${env.BRANCH_NAME}"
-                git url: "${git_url}", branch: "${env.BRANCH_NAME}"
-            }
+    options {
+        timeout(time: 1, unit: 'HOURS')
+    }
+    agent {
+        node {
+            label "python-gradle"
+            customWorkspace "workspace/${JOB_NAME}/${JOB_NAME.tokenize('/')[1]}"
         }
-
-        stage ("initialize virtualenv") {
-            sh "./gradlew -i cleanAll installCIDependencies"
+    }
+    environment {
+        PATH = "/home/jenkins/.local/bin:$PATH"
+        REQUESTS_CA_BUNDLE = "/etc/ssl/certs"
+    }
+    stages {
+        stage ("create virtualenv") {
+            steps {
+                this.notifyBB("INPROGRESS")
+                sh "./gradlew -i cleanAll installCIDependencies"
+            }
         }
 
         stage ("bump version pre-build") {
-            // This will drop the dev suffix if we are releasing
-            if (create_release) {
+            when {
+                expression { return params.create_release }
+            }
+            steps {
+                // This will drop the dev suffix if we are releasing
                 // X.Y.Z.devN -> X.Y.Z
                 sh "./gradlew -i bumpVersionRelease"
             }
         }
 
         stage ("test/build distribution") {
-            sh './gradlew -i build'
+            steps {
+                sh "./gradlew -i build"
+            }
         }
 
-        junit "build/test_report.xml"
-        step([$class: 'CoberturaPublisher', autoUpdateHealth: false, autoUpdateStability: false,
-              coberturaReportFile: 'build/coverage.xml', failUnhealthy: false, failUnstable: false,
-              maxNumberOfBuilds: 0, onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false])
+        stage ("report on tests") {
+            steps {
+                junit "build/test_report.xml"
+                
+                cobertura autoUpdateHealth: false,
+                    autoUpdateStability: false,
+                    coberturaReportFile: 'build/coverage.xml', 
+                    failUnhealthy: false,
+                    failUnstable: false,
+                    maxNumberOfBuilds: 0,
+                    onlyStable: false,
+                    sourceEncoding: 'ASCII',
+                    zoomCoverageChart: false
+                
 
-        stage ("publish") {
-            def publish_task = create_release ? "publishRelease" : "publishSnapshot"
-            sh "./gradlew -i ${publish_task}"
-        }
+            }
+        } 
 
-        stage ("tag release") {
-            if (create_release) {
+        stage ("publish release") {
+            when {
+                branch 'master'
+                expression { return params.create_release }
+            }
+            steps {
+                sh "./gradlew -i publishRelease"
                 sh "./gradlew -i gitTagCommitPush"
-            }
-            else {
-                println "This is a snapshot build - it will not be tagged."
-            }
-        }
-
-        stage ("prep for dev") {
-            if (create_release) {
-                // X.Y.Z -> X.Y.Z+1.dev0  (default - increment patch)
                 sh "./gradlew -i bumpVersionPostRelease gitCommitPush"
+             }
+        }
+
+        stage ("publish snapshot") {
+            when {
+                branch 'master'
+                not { expression { return params.create_release } }
             }
-            else {  // This is a snapshot build
-                // X.Y.Z.devN -> X.Y.Z.devN+1  (devbuild)
-                def ignoreAuthors = ["jenkins", "Jenkins User", "Jenkins Builder"]
-                if (!ignoreAuthors.contains(gitAuthor())) {
-                    sh "./gradlew -i bumpVersionDev gitCommitPush"
-                }
-                else {
-                    println "This is a snapshot build from a jenkins commit. The version will not be bumped."
+            steps {
+                sh "./gradlew -i publishSnapshot"
+                script {
+                    def ignoreAuthors = ["jenkins", "Jenkins User", "Jenkins Builder"]
+                    if (!ignoreAuthors.contains(gitAuthor())) {
+                        sh "./gradlew -i bumpVersionDev gitCommitPush"
+                    }
                 }
             }
         }
 
-        currentBuild.result = "SUCCESS"
     }
-    catch(e) {
-        // If there was an exception thrown, the build failed
-        currentBuild.result = "FAILURE"
-        throw e
-    }
-    finally {
-
-        if (currentBuild?.result) {
-            println "BUILD: ${currentBuild.result}"
+    post {
+        always {
+            notifyBuildOnSlack(currentBuild.result, currentBuild.previousBuild?.result)
+            this.notifyBB(currentBuild.result)
         }
-        // Slack
-        notifyBuildOnSlack(currentBuild.result, currentBuild.previousBuild?.result)
-
-        // Email
-        step([$class: 'Mailer',
-            notifyEveryUnstableBuild: true,
-            recipients: '!AICS_DevOps@alleninstitute.org',
-            sendToIndividuals: true])
+        cleanup {
+            dir("${JENKINS_HOME}/workspace/${JOB_NAME}") {
+                deleteDir()
+            }
+        }
     }
 }
 
-def gitUrl() {
-    //checkout scm
-    sh(returnStdout: true, script: 'git config remote.origin.url').trim()
-}
+def notifyBB(String state) {
+    // on success, result is null
+    state = state ?: "SUCCESS"
+    
+    if (state == "SUCCESS" || state == "FAILURE") {
+        currentBuild.result = state
+    }
 
-def gitAuthor() {
-    //checkout scm
-    sh(returnStdout: true, script: 'git log -1 --format=%an').trim()
+    notifyBitbucket commitSha1: "${GIT_COMMIT}", 
+                credentialsId: 'aea50792-dda8-40e4-a683-79e8c83e72a6', 
+                disableInprogressNotification: false, 
+                considerUnstableAsSuccess: true, 
+                ignoreUnverifiedSSLPeer: false,
+                includeBuildNumberInKey: false, 
+                prependParentProjectKey: false, 
+                projectKey: 'SW', 
+                stashServerBaseUrl: 'https://aicsbitbucket.corp.alleninstitute.org'
 }
 
 def notifyBuildOnSlack(String buildStatus = 'STARTED', String priorStatus) {
@@ -121,4 +135,8 @@ def notifyBuildOnSlack(String buildStatus = 'STARTED', String priorStatus) {
                 message: "BACK_TO_NORMAL: '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})"
         )
     }
+}
+
+def gitAuthor() {
+    sh(returnStdout: true, script: 'git log -1 --format=%an').trim()
 }

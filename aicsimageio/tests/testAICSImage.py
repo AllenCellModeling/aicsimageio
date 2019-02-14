@@ -1,11 +1,14 @@
-
-import pytest
-import numpy as np
-import random
 import os
-import pathlib
+from pathlib import Path
+import random
+
+import numpy as np
+import pytest
 
 from aicsimageio import AICSImage
+
+
+TEST_OME = Path(__file__).parent / 'img' / 'img40_1.ome.tif'
 
 
 class ImgContainer(object):
@@ -117,10 +120,13 @@ def test_bad_query(example_img3ctx):
     assert image.shape != example_img3ctx.shuffle_shape("TCX")
 
 
-def test_from_filename():
+@pytest.mark.parametrize('filename', [
+    str(TEST_OME),
+    TEST_OME
+])
+def test_from_filename(filename):
     # arrange and act
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    image = AICSImage(os.path.join(dir_path, 'img', 'img40_1.ome.tif'))
+    image = AICSImage(filename)
     # assert
     assert image is not None
 
@@ -133,6 +139,6 @@ def test_from_invalid_filename():
 
 def test_from_invalid_data_type():
     with pytest.raises(TypeError):
-        AICSImage(pathlib.Path('foo.tiff'))
+        AICSImage(b'not-a-string-path')
 
 

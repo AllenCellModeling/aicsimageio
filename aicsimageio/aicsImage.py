@@ -1,4 +1,5 @@
 # author: Zach Crabtree zacharyc@alleninstitute.org
+from pathlib import Path
 
 import numpy as np
 from . import omeTifReader, cziReader, tifReader, typeChecker
@@ -48,9 +49,9 @@ class AICSImage:
                        with dims arg (ie dims="TZCYX").
         """
         self.dims = AICSImage.default_dims
-        if isinstance(data, str):
+        if isinstance(data, (str, Path)):
             # input is a filepath
-            self.file_path = data
+            self.file_path = str(data)
 
             # check for compatible data types
             checker = typeChecker.TypeChecker(self.file_path)

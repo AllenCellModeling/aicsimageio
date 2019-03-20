@@ -48,6 +48,7 @@ class AICSImage:
         :param kwargs: If ndarray is used for data, then you can specify the dim ordering
                        with dims arg (ie dims="TZCYX").
         """
+        self.metadata = None
         self.dims = AICSImage.default_dims
         if isinstance(data, (str, Path)):
             # input is a filepath

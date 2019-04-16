@@ -46,13 +46,14 @@ class CziReader:
     '0' is the numbers of channels per pixel (always =zero for our data)
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path, max_workers=None):
         """
         :param file_path(str): The path for the file that is to be opened.
         """
         self.filePath = file_path
         self.czi = czifile.CziFile(self.filePath)
         self.hasTimeDimension = 'T' in self.czi.axes
+        self._max_workers = max_workers
 
     def __enter__(self):
         return self
@@ -68,7 +69,7 @@ class CziReader:
 
         :return: 5D array with dimensions TZCYX.
         """
-        image = self.czi.asarray()
+        image = self.czi.asarray(max_workers=self._max_workers)
 
         # TODO: Proper error checking if indices are incorrect
         axes = self.czi.axes

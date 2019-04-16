@@ -57,7 +57,7 @@ class AICSImage:
             # check for compatible data types
             checker = typeChecker.TypeChecker(self.file_path)
             if checker.is_czi:
-                self.reader = cziReader.CziReader(self.file_path)
+                self.reader = cziReader.CziReader(self.file_path, max_workers=kwargs.get('max_workers', None))
             elif checker.is_ome:
                 self.reader = omeTifReader.OmeTifReader(self.file_path)
             elif checker.is_tiff:

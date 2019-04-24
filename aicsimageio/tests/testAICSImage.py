@@ -8,7 +8,8 @@ import pytest
 from aicsimageio import AICSImage
 
 
-TEST_OME = Path(__file__).parent / 'img' / 'img40_1.ome.tif'
+TEST_DATA_DIR = Path(__file__).parent / 'img'
+TEST_OME = TEST_DATA_DIR / 'img40_1.ome.tif'
 
 
 class ImgContainer(object):
@@ -120,25 +121,16 @@ def test_bad_query(example_img3ctx):
     assert image.shape != example_img3ctx.shuffle_shape("TCX")
 
 
-@pytest.mark.parametrize('filename', [
-    str(TEST_OME),
-    TEST_OME
-])
-def test_from_filename(filename):
-    # arrange and act
-    image = AICSImage(filename)
-    # assert
-    assert image is not None
-
-
-def test_from_invalid_filename():
-    # arrange, act, assert
-    with pytest.raises(IOError):
-        AICSImage("fakeimage.ome.tif")
-
-
-def test_from_invalid_data_type():
-    with pytest.raises(TypeError):
-        AICSImage(b'not-a-string-path')
-
-
+@pytest.mark.parametrize(
+    'filepath', [
+        TEST_OME,
+        str(TEST_OME),
+        pytest.param(TEST_DATA_DIR, marks=pytest.mark.raises(exception=IsADirectoryError)),
+        pytest.param('fakeimage.ome.tif', marks=pytest.mark.raises(exception=FileNotFoundError)),
+        pytest.param(b'not-a-string-path', marks=pytest.mark.raises(exception=TypeError)),
+        pytest.param('/This/is/a/bogus/file.ome.tif', marks=pytest.mark.raises(exception=FileNotFoundError)),
+    ]
+)
+def test_file_exceptions(filepath):
+        image = AICSImage(filepath)
+        assert image is not None

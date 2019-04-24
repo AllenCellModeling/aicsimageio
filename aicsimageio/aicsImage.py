@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 from . import omeTifReader, cziReader, tifReader, typeChecker
+from .exceptions import UnsupportedFileFormatError
 
 
 def enum(**named_values):
@@ -51,8 +52,13 @@ class AICSImage:
         self.metadata = None
         self.dims = AICSImage.default_dims
         if isinstance(data, (str, Path)):
-            # input is a filepath
-            self.file_path = str(data)
+            # check input is a filepath
+            check_file_path = Path(data).resolve(strict=True)
+            if not check_file_path.is_file():
+                raise IsADirectoryError(check_file_path)
+
+            # assign proven existing file to member variable (as string for compatibility with readers)
+            self.file_path = str(check_file_path)
 
             # check for compatible data types
             checker = typeChecker.TypeChecker(self.file_path)
@@ -63,7 +69,7 @@ class AICSImage:
             elif checker.is_tiff:
                 self.reader = tifReader.TifReader(self.file_path)
             else:
-                raise TypeError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
+                raise UnsupportedFileFormatError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
             # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
             self.data = self.reader.load()
             # TODO remove this transpose call once reader output is changed

@@ -10,4 +10,4 @@ class UnsupportedFileFormatError(Exception):
         self.target = target
 
     def __str__(self):
-        return f"AICSImage module does not support this image file type:\n\t{self.target}"
+        return f"AICSImage module does not support this image file type: \t{self.target}"

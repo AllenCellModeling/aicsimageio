@@ -5,7 +5,7 @@ class UnsupportedFileFormatError(Exception):
     This exception is intended to communicate that the file extension is not one of
     the supported file types and cannot be parsed with AICSImage.
     """
-    def __init__(self, target: str, **kwargs):
+    def __init__(self, target, **kwargs):  # removed Argument Typing to allow py2.7 (W, Micro)
         super().__init__(**kwargs)
         self.target = target
 

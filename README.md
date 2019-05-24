@@ -20,7 +20,7 @@ img = AICSImage("my_ome.tiff_or_tiff_or_czi")
 # Get the image data as TCZYX
 img.data
 
-# Get channel information
+# Get channel information if you have an OME tiff
 pixels = img.metadata.image().Pixels
 channels = [pixels.Channel(i) for i in range(pixels.get_channel_count())]
 channels = [{"name": c.get_Name(), "index": c.get_ID()} for c in channels]

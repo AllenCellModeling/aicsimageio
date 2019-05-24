@@ -9,3 +9,14 @@ you should not expect an active response.
 
 ## Development
 See [BUILD.md](BUILD.md) for information operations related to developing the code.
+
+## Usage
+
+```
+from aicsimageio import AICSImage
+
+img = AICSImage("my_file.ome.tif")
+pixels = img.metadata.image().Pixels
+channels = [pixels.Channel(i) for i in range(pixels.get_channel_count())]
+channels = [{"name": c.get_Name(), "index": c.get_ID()} for c in channels]
+```

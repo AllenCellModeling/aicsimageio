@@ -9,3 +9,29 @@ you should not expect an active response.
 
 ## Development
 See [BUILD.md](BUILD.md) for information operations related to developing the code.
+
+## Usage
+
+```
+from aicsimageio import AICSImage
+
+img = AICSImage("my_ome.tiff_or_tiff_or_czi")
+
+# Get the image data as TCZYX
+img.data
+
+# Get channel information if you have an OME tiff
+pixels = img.metadata.image().Pixels
+channels = [pixels.Channel(i) for i in range(pixels.get_channel_count())]
+channels = [{"name": c.get_Name(), "index": c.get_ID()} for c in channels]
+
+
+# Note on channel id differences between aicsimageio.OMEXML and lxml.etree._Element:
+        # Under lxml.etree._Element, Channel Id looks like the following: `'Channel:0'`
+        # Where the single integer corresponds to the channel dimension index in image data.
+        # Under aicsimageio, the same Channel Id looks like the following: `'Channel:0:0'`
+        # Where it is the second of the two integers that corresponds to the channel dimension index in image data.
+        # Regardless of structure, these can both be parsed as integers with the following:
+        # `int(channel_id.split(":")[-1])`
+
+```

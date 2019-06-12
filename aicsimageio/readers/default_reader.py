@@ -45,7 +45,8 @@ class DefaultReader(Reader):
         That said these dimensions are probably incorrect because jpg for example is actually 'XYC' dimension order,
         but it's a our assumption to make.
         """
-        return constants.DEFAULT_DIMENSION_ORDER[len(constants)-len(self.data.shape):]
+        return constants.DEFAULT_DIMENSION_ORDER[
+            len(constants.DEFAULT_DIMENSION_ORDER)-len(self.data.shape):]
 
     @property
     def metadata(self) -> None:

@@ -1,14 +1,11 @@
 #!/usr/bin/env python
-
-# authors: Dan Toloudis     danielt@alleninstitute.org
-#          Zach Crabtree    zacharyc@alleninstitute.org
-
-import math as m
+import math
 import os
 import unittest
+
 import numpy as np
 
-from aicsimageio.readers import TifReader
+from aicsimageio.readers import TiffReader
 
 
 class TestTifReader(unittest.TestCase):
@@ -16,8 +13,8 @@ class TestTifReader(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.dir_path = os.path.dirname(os.path.realpath(__file__))
-        cls.reader0 = TifReader(os.path.join(cls.dir_path, 'img', 'img40_1_dna.tif'))
-        cls.reader1 = TifReader(os.path.join(cls.dir_path, 'img', 'TestXYCZ_imagej.tif'))
+        cls.reader0 = TiffReader(os.path.join(cls.dir_path, 'img', 'img40_1_dna.tif'))
+        cls.reader1 = TiffReader(os.path.join(cls.dir_path, 'img', 'TestXYCZ_imagej.tif'))
 
 
     """
@@ -25,7 +22,7 @@ class TestTifReader(unittest.TestCase):
     This should be 2 dimensional, YX
     """
     def test_tifLoadImageDimension(self):
-        z_index = int(m.floor(self.reader0.size_z() / 2))
+        z_index = int(math.floor(self.reader0.size_z() / 2))
         self.assertEqual(len(self.reader0.load_slice(z=z_index).shape), 2)
 
     """

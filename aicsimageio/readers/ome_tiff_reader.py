@@ -1,6 +1,8 @@
 import logging
 import io
 import re
+
+import numpy as np
 import tifffile
 
 from ..vendor import omexml
@@ -12,41 +14,36 @@ from .. import types
 log = logging.getLogger(__name__)
 
 
-class OmeTifReader(Reader):
+class OmeTiffReader(Reader):
     """Opening and processing the contents of an OME Tiff file
     """
 
     def __init__(self, file: types.Union[types.PathLike, types.BufferLike]):
         super().__init__(file)
         try:
-            self.tif = tifffile.TiffFile(self._bytes)
+            self.tiff = tifffile.TiffFile(self._bytes)
         except Exception:
             log.error("tiffile could not parse this input")
             raise
 
-    def _lazy_init_metadata(self):
-        if self._metadata is None and self.tif.is_ome:
-            d = self.tif.pages[0].description.strip()
-            assert d.startswith("<?xml version=") and d.endswith("</OME>")
-            self._metadata = omexml.OMEXML(d)
+    def _lazy_init_metadata(self) -> omexml.OMEXML:
+        if self._metadata is None and self.tiff.is_ome:
+            description = self.tiff.pages[0].description.strip()
+            if not (description.startswith("<?xml version=") and description.endswith("</OME>")):
+                raise ValueError(f'Description does not conform to OME specification: {description[:100]}')
+            self._metadata = omexml.OMEXML(description)
         return self._metadata
 
-    def _lazy_init_data(self):
-        if self._data is None:
-            # load the data
-            self._data = self.tif.asarray()
-        return self._data
-
     @staticmethod
-    def _is_this_type(byte_io: io.BytesIO) -> bool:
-        is_tif = TiffReader._is_this_type(byte_io)
+    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
+        is_tif = TiffReader._is_this_type(buffer)
         if is_tif:
-            buf = TiffReader.get_image_description(byte_io)
+            buf = TiffReader.get_image_description(buffer)
             if buf[0:5] != b"<?xml":
                 return False
             match = re.search(
                 b'<(\\w*)(:?)OME [^>]*xmlns\\2\\1="http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/',
-                buf,
+                buf
             )
             if match is None:
                 return False
@@ -54,8 +51,11 @@ class OmeTifReader(Reader):
         return False
 
     @property
-    def data(self) -> types.SixDArray:
-        return self._lazy_init_data()
+    def data(self) -> np.ndarray:
+        if self._data is None:
+            # load the data
+            self._data = self.tiff.asarray()
+        return self._data
 
     @property
     def dims(self) -> str:
@@ -70,7 +70,7 @@ class OmeTifReader(Reader):
         return self._lazy_init_metadata()
 
     def load_slice(self, slice_index=0):
-        data = self.tif.asarray(key=slice_index)
+        data = self.tiff.asarray(key=slice_index)
         return data
 
     def size_z(self):
@@ -89,7 +89,7 @@ class OmeTifReader(Reader):
         return self.metadata.image().Pixels.SizeY
 
     def dtype(self):
-        return self.tif.pages[0].dtype
+        return self.tiff.pages[0].dtype
 
     def is_ome(self):
-        return OmeTifReader._is_this_type(self._bytes)
+        return OmeTiffReader._is_this_type(self._bytes)

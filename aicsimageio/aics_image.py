@@ -3,7 +3,7 @@ from pathlib import Path
 
 import numpy as np
 from . import buffer_reader
-from aicsimageio.readers import ome_tif_reader, czi_reader, tiff_reader
+from aicsimageio.readers import ome_tiff_reader, czi_reader, tiff_reader
 from .exceptions import UnsupportedFileFormatError
 
 
@@ -69,7 +69,7 @@ class AICSImage:
                     self.file_path, max_workers=kwargs.get("max_workers", None)
                 )
             elif checker.is_ome:
-                self.reader = ome_tif_reader.OmeTifReader(self.file_path)
+                self.reader = ome_tiff_reader.OmeTiffReader(self.file_path)
             elif checker.is_tiff:
                 self.reader = tiff_reader.TiffReader(self.file_path)
             else:

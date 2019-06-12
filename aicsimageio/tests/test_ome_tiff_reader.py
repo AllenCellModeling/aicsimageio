@@ -3,14 +3,14 @@
 import os
 import unittest
 
-from aicsimageio.readers import OmeTifReader
+from aicsimageio.readers import OmeTiffReader
 
 
 class TestOmeTifReader(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.dir_path = os.path.dirname(os.path.realpath(__file__))
-        with OmeTifReader(
+        with OmeTiffReader(
             os.path.join(cls.dir_path, "img", "img40_1.ome.tif")
         ) as reader:
             cls.load = reader.data
@@ -24,26 +24,22 @@ class TestOmeTifReader(unittest.TestCase):
             cls.dims = reader.dims
             cls.metadata = reader.metadata
 
-    @classmethod
-    def tearDownClass(cls):
-        pass
-
     def test_omeTifLoadShapeCorrectDimensions(self):
         self.assertEqual(len(self.load.shape), 4)
 
     def test_omeTifEmptyFileError(self):
         with self.assertRaises(Exception):
-            with OmeTifReader("fakefile") as reader:
-                reader.data
+            with OmeTiffReader("fakefile") as reader:
+                assert reader.data
 
     def test_notOmeTifFile(self):
         with self.assertRaises(Exception):
-            with OmeTifReader(
+            with OmeTiffReader(
                 os.path.join(
                     self.dir_path, "img", "T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi"
                 )
             ) as reader:
-                reader.data
+                assert reader.data
 
     def test_loadSampleOmeTif(self):
         names = [
@@ -67,6 +63,7 @@ class TestOmeTifReader(unittest.TestCase):
             (7, 3, 5, 167, 439),
         ]
         for i, x in enumerate(names):
-            with OmeTifReader(os.path.join(self.dir_path, "img", x)) as reader:
+            with OmeTiffReader(os.path.join(self.dir_path, "img", x)) as reader:
+                assert reader.is_ome()
                 data = reader.data
                 self.assertEqual(data.shape, dims[i])

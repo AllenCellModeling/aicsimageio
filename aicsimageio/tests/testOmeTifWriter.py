@@ -6,7 +6,7 @@ import os
 import unittest
 import numpy as np
 
-from aicsimageio.readers import OmeTifReader
+from aicsimageio.readers import OmeTiffReader
 from aicsimageio.writers import OmeTifWriter
 
 
@@ -32,7 +32,7 @@ class TestOmeTifWriter(unittest.TestCase):
     def test_writerShapeComparison(self):
         self.writer.save(self.image)
 
-        with OmeTifReader(self.file) as test_output_reader:
+        with OmeTiffReader(self.file) as test_output_reader:
             output = test_output_reader.load()
 
         self.assertEqual(output.shape, self.image.shape)

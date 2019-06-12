@@ -42,7 +42,8 @@ class DefaultReader(Reader):
         """
         Remove n number of characters from dimension order where n is number of dimensions in image data.
 
-        That said this is pro
+        That said these dimensions are probably incorrect because jpg for example is actually 'XYC' dimension order,
+        but it's a our assumption to make.
         """
         return constants.DEFAULT_DIMENSION_ORDER[len(constants)-len(self.data.shape):]
 

@@ -146,4 +146,6 @@ class TiffReader(reader.Reader):
 
     @property
     def metadata(self) -> str:
-        return str(self.get_image_description(self._bytes))
+        if self._metadata is None:
+            self._metadata = str(self.get_image_description(self._bytes))
+        return self._metadata

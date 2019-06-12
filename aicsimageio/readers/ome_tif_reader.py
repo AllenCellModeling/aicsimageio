@@ -100,11 +100,4 @@ class OmeTifReader:
         return self.tif.pages[0].dtype
 
     def is_ome(self):
-        """ This checks to make sure the metadata of the file to assure it is an OME Tiff file.
-
-        TODO:
-            * This function is not versatile and could certainly be tricked if somebody desired to do so.
-
-        :return: True if file is OMETiff, False otherwise.
-        """
-        return self.file_path[-7:] == "ome.tif" or self.file_path[-8:] == "ome.tiff"
+        return OmeTifReader._is_this_type(self._bytes)

@@ -12,3 +12,17 @@ class UnsupportedFileFormatError(Exception):
 
     def __str__(self):
         return f"AICSImage module does not support this image file type: \t{self.target}"
+
+
+class InvalidDimensionOrderingError(Exception):
+    """
+    A general exception that can be thrown when handling dimension ordering or validation. Should be provided a message
+    for the user to be given more context.
+    """
+
+    def __init__(self, message: str, **kwargs):
+        super().__init__(**kwargs)
+        self.message = message
+
+    def __str__(self):
+        return self.message

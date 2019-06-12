@@ -7,6 +7,7 @@ import numpy as np
 
 from .reader import Reader
 from .. import constants
+from ..import exceptions
 from .. import types
 
 
@@ -30,12 +31,15 @@ class DefaultReader(Reader):
     def __init__(self, file: types.FileLike):
         self._bytes = self.convert_to_bytes_io(file)
 
+        # Lazy load
+        self._dims = None
+
     @property
     def data(self) -> np.ndarray:
-        if self._data:
-            return self._data
+        if self._data is None:
+            self._data = imageio.imread(self._bytes)
 
-        self._data = imageio.imread(self._bytes)
+        return self._data
 
     @property
     def dims(self) -> str:
@@ -43,10 +47,27 @@ class DefaultReader(Reader):
         Remove n number of characters from dimension order where n is number of dimensions in image data.
 
         That said these dimensions are probably incorrect because jpg for example is actually 'XYC' dimension order,
-        but it's a our assumption to make.
+        but it's our assumption to make. You can override the dims by using the property setter.
         """
-        return constants.DEFAULT_DIMENSION_ORDER[
-            len(constants.DEFAULT_DIMENSION_ORDER)-len(self.data.shape):]
+        if self._dims is None:
+            self._dims = (
+                constants.DEFAULT_DIMENSION_ORDER[len(constants.DEFAULT_DIMENSION_ORDER) - len(self.data.shape):]
+            )
+
+        return self._dims
+
+    @dims.setter
+    def dims(self, dims: str):
+        # Check amount of provided dims against data shape
+        if len(dims) != len(self.data.shape):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Provided too many dimensions for the associated file. "
+                f"Received {len(dims)} dimensions [dims: {dims}] "
+                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+            )
+
+        # Set the dims
+        self._dims = dims
 
     @property
     def metadata(self) -> None:

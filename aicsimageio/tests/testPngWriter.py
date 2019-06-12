@@ -5,7 +5,8 @@
 import os
 import unittest
 
-from aicsimageio import PngReader, PngWriter
+from aicsimageio.readers import PngReader
+from aicsimageio.writers import PngWriter
 from .transformation import *
 
 

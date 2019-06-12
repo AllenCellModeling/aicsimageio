@@ -6,7 +6,8 @@ import os
 import unittest
 import numpy as np
 
-from aicsimageio import OmeTifWriter, OmeTifReader
+from aicsimageio.readers import OmeTifReader
+from aicsimageio.writers import OmeTifWriter
 
 
 class TestOmeTifWriter(unittest.TestCase):

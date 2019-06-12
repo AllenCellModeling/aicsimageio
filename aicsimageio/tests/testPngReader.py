@@ -5,7 +5,7 @@
 import os
 import unittest
 
-from aicsimageio import PngReader
+from aicsimageio.readers import PngReader
 
 
 class TestPngReader(unittest.TestCase):

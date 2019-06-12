@@ -8,7 +8,7 @@ import unittest
 
 import numpy as np
 
-from aicsimageio import OmeTifReader
+from aicsimageio.readers import OmeTifReader
 
 
 class TestOmeTifReader(unittest.TestCase):

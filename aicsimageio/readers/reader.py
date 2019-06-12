@@ -11,6 +11,8 @@ from .. import types
 
 class Reader(ABC):
 
+    _bytes = None
+
     @staticmethod
     def convert_to_bytes_io(file: types.FileLike) -> io.BytesIO:
         # Check path
@@ -41,10 +43,6 @@ class Reader(ABC):
             )
 
     def __init__(self, file: types.FileLike):
-        # Lazy loaded
-        self._bytes = None
-        self._loaded_results = None
-
         # Convert to BytesIO
         self._bytes = self.convert_to_bytes_io(file)
 
@@ -71,10 +69,6 @@ class Reader(ABC):
     @property
     @abstractmethod
     def metadata(self) -> Any:
-        pass
-
-    @abstractmethod
-    def _load_from_bytes(self) -> types.LoadResults:
         pass
 
     def load(self) -> types.LoadResults:

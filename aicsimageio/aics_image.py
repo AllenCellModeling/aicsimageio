@@ -2,7 +2,8 @@
 from pathlib import Path
 
 import numpy as np
-from . import omeTifReader, cziReader, tifReader, typeChecker
+from . import type_checker
+from aicsimageio.readers import ome_tif_reader, czi_reader, tif_reader
 from .exceptions import UnsupportedFileFormatError
 
 
@@ -61,13 +62,13 @@ class AICSImage:
             self.file_path = str(check_file_path)
 
             # check for compatible data types
-            checker = typeChecker.TypeChecker(self.file_path)
+            checker = type_checker.TypeChecker(self.file_path)
             if checker.is_czi:
-                self.reader = cziReader.CziReader(self.file_path, max_workers=kwargs.get('max_workers', None))
+                self.reader = czi_reader.CziReader(self.file_path, max_workers=kwargs.get('max_workers', None))
             elif checker.is_ome:
-                self.reader = omeTifReader.OmeTifReader(self.file_path)
+                self.reader = ome_tif_reader.OmeTifReader(self.file_path)
             elif checker.is_tiff:
-                self.reader = tifReader.TifReader(self.file_path)
+                self.reader = tif_reader.TifReader(self.file_path)
             else:
                 raise UnsupportedFileFormatError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
             # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata

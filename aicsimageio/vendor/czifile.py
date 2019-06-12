@@ -139,7 +139,7 @@ from tifffile import (FileHandle, memmap, decode_lzw, lazyattr, repeat_nd,
 
 try:
     if __package__:
-        from . import _czifile
+        from aicsimageio import _czifile
     else:
         import _czifile
 except ImportError:

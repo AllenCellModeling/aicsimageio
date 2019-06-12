@@ -1,7 +1,7 @@
 import numpy as np
 import tifffile
 
-from . import omexml
+from aicsimageio.vendor import omexml
 
 
 class OmeTifReader:

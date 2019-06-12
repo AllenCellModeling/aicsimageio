@@ -13,6 +13,10 @@ class Reader(ABC):
 
     _bytes = None
 
+    _data = None
+    _dims = None
+    _metadata = None
+
     @staticmethod
     def convert_to_bytes_io(file: types.FileLike) -> io.BytesIO:
         # Check path

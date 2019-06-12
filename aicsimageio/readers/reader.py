@@ -3,6 +3,7 @@
 
 from abc import ABC, abstractmethod
 import io
+import numpy as np
 from pathlib import Path
 from typing import Any
 
@@ -60,7 +61,7 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def data(self) -> types.SixDArray:
+    def data(self) -> np.ndarray:
         pass
 
     @property

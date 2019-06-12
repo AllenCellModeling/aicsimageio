@@ -44,7 +44,8 @@ setup(name=PACKAGE_NAME,
             'numpy>=1.14.5',
             'Pillow>=5.2.0',
             'scipy>=1.1.0',
-            'matplotlib>=2.2.2', # get >=2.2.3 when available, because of https://github.com/matplotlib/matplotlib/pull/10867
+            # get >=2.2.3 when available, because of https://github.com/matplotlib/matplotlib/pull/10867
+            'matplotlib>=2.2.2',
             'scikit-image>=0.14.0',
             'tifffile==0.15.1'
       ],

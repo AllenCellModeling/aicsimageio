@@ -12,7 +12,7 @@ from typing import Union, NamedTuple, Any
 import numpy as np
 
 # Imaging Data Types
-SixDArray = np.array  # In order STCZYX
+SixDArray = np.ndarray  # In order STCZYX
 
 # IO Types
 PathLike = Union[str, Path]

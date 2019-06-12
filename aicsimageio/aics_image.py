@@ -8,7 +8,7 @@ from .exceptions import UnsupportedFileFormatError
 
 
 def enum(**named_values):
-    return type('Enum', (), named_values)
+    return type("Enum", (), named_values)
 
 
 FileType = enum(OMETIF=1, TIF=2, CZI=3)
@@ -41,6 +41,7 @@ class AICSImage:
         >>> image_from_file = AICSImage("image_data.czi")
     NOTE: If you construct with a data/image block less than 5D the class upscales the data to be 5 D
     """
+
     default_dims = "TCZYX"
 
     def __init__(self, data, **kwargs):
@@ -64,13 +65,17 @@ class AICSImage:
             # check for compatible data types
             checker = type_checker.TypeChecker(self.file_path)
             if checker.is_czi:
-                self.reader = czi_reader.CziReader(self.file_path, max_workers=kwargs.get('max_workers', None))
+                self.reader = czi_reader.CziReader(
+                    self.file_path, max_workers=kwargs.get("max_workers", None)
+                )
             elif checker.is_ome:
                 self.reader = ome_tif_reader.OmeTifReader(self.file_path)
             elif checker.is_tiff:
                 self.reader = tiff_reader.TiffReader(self.file_path)
             else:
-                raise UnsupportedFileFormatError("CellImage can only accept OME-TIFF, TIFF, and CZI file formats!")
+                raise UnsupportedFileFormatError(
+                    "CellImage can only accept OME-TIFF, TIFF, and CZI file formats!"
+                )
             # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
             self.data = self.reader.load()
             # TODO remove this transpose call once reader output is changed
@@ -88,14 +93,18 @@ class AICSImage:
                 self.dims = kwargs["dims"]
 
             if len(self.dims) != len(self.data.shape):
-                raise ValueError("Number of dimensions must match dimensions of array provided!")
+                raise ValueError(
+                    "Number of dimensions must match dimensions of array provided!"
+                )
             self._reshape_data()
             self.shape = self.data.shape
 
         else:
             raise TypeError("Unable to process item of type {}".format(type(data)))
 
-        self.size_t, self.size_c, self.size_z, self.size_y, self.size_x = tuple(self.shape)
+        self.size_t, self.size_c, self.size_z, self.size_y, self.size_x = tuple(
+            self.shape
+        )
 
     def is_valid_dimension(self, dimensions):
         if dimensions.strip(self.dims):
@@ -131,11 +140,16 @@ class AICSImage:
 
     def get_channel_names(self):
         if self.metadata is not None:
-            if hasattr(self.metadata, 'image'):
-                return [self.metadata.image().Pixels.Channel(i).Name for i in range(self.size_c)]
+            if hasattr(self.metadata, "image"):
+                return [
+                    self.metadata.image().Pixels.Channel(i).Name
+                    for i in range(self.size_c)
+                ]
             else:
                 # consider this to be CZI metadata!
-                chelem = self.metadata.findall("./Metadata/Information/Image/Dimensions/Channels/Channel")
+                chelem = self.metadata.findall(
+                    "./Metadata/Information/Image/Dimensions/Channels/Channel"
+                )
                 return [ch.get("Name") for ch in chelem]
         else:
             return None
@@ -148,14 +162,30 @@ class AICSImage:
 
     def get_physical_pixel_size(self):
         if self.metadata is not None:
-            if hasattr(self.metadata, 'image'):
+            if hasattr(self.metadata, "image"):
                 p = self.metadata.image().Pixels
-                return [p.get_PhysicalSizeX(), p.get_PhysicalSizeY(), p.get_PhysicalSizeZ()]
+                return [
+                    p.get_PhysicalSizeX(),
+                    p.get_PhysicalSizeY(),
+                    p.get_PhysicalSizeZ(),
+                ]
             else:
                 # consider this to be CZI metadata!
-                px = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"))
-                py = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"))
-                pz = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"))
+                px = float(
+                    self._getmetadataxmltext(
+                        "./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"
+                    )
+                )
+                py = float(
+                    self._getmetadataxmltext(
+                        "./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"
+                    )
+                )
+                pz = float(
+                    self._getmetadataxmltext(
+                        "./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"
+                    )
+                )
                 return [px, py, pz]
         else:
             return None
@@ -202,8 +232,15 @@ class AICSImage:
         for channel in slice_set:
             specified_channel = kwargs.get(channel, 0)
             # check that the specified channel is within the defined domain
-            if specified_channel >= self.shape[self.dims.find(channel)] or specified_channel < 0:
-                raise ValueError("{} is not a valid index for the {} dimension".format(specified_channel, channel))
+            if (
+                specified_channel >= self.shape[self.dims.find(channel)]
+                or specified_channel < 0
+            ):
+                raise ValueError(
+                    "{} is not a valid index for the {} dimension".format(
+                        specified_channel, channel
+                    )
+                )
             slice_dict[channel] = specified_channel
 
         # add the slice equivalent of : for the other channels
@@ -211,7 +248,9 @@ class AICSImage:
             slice_dict[channel] = slice(None, None)
 
         # Add user-specified slices to the beginning of the returned order so subblock indexing is more efficient
-        indices = {c: i for i, c in enumerate(self.dims)}  # constructs ordering dictionary apply to the set
+        indices = {
+            c: i for i, c in enumerate(self.dims)
+        }  # constructs ordering dictionary apply to the set
         new_out_order = sorted(list(slice_set), key=indices.get)
         new_out_order = "".join(new_out_order) + out_order
         return new_out_order, slice_dict
@@ -226,7 +265,9 @@ class AICSImage:
         :return: the image data block ordered as prescribed
         """
         match_map = {dim: sdims.find(dim) for dim in output_dims}
-        transposer = [match_map[dim] for dim in output_dims]  # compose the order mapping
+        transposer = [
+            match_map[dim] for dim in output_dims
+        ]  # compose the order mapping
         transposed_image_data = image_data.transpose(transposer)
         # this changes the numpy wrapper around the data not the actual underlying data
         # thus even if the user has requested a reference the internal object isn't changed
@@ -244,3 +285,56 @@ class AICSImage:
         """
         slice_list = [slice_dict[channel] for channel in out_order]
         return image_data[tuple(slice_list)]
+
+    def ometiftransposer(reader):
+        # get the permutation of dimensionOrder from 'TZCYX', our preferred dimension order.
+        transposition = tuple("TZCYX".find(c) for c in reader.dims)
+        data = reader.data
+        # fixups to get a 5D array
+        if len(data.shape) == 1:
+            # add dimensions T,Z,C,Y
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+        elif len(data.shape) == 2:
+            # ASSUMPTION: both X and Y are > 1
+            # add dimensions T,Z,C
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+        elif len(data.shape) == 3:
+            # ASSUMPTION: both X and Y are > 1
+            # only one of z,c,t is > 1.  no transposing needed.
+            if self.size_z() > 1:
+                # insert C
+                data = np.expand_dims(data, axis=1)
+                # insert T
+                data = np.expand_dims(data, axis=0)
+            elif self.size_c() > 1:
+                # insert T and Z at the beginning
+                data = np.expand_dims(data, axis=0)
+                data = np.expand_dims(data, axis=0)
+            elif self.size_t() > 1:
+                # insert C and Z after T
+                data = np.expand_dims(data, axis=1)
+                data = np.expand_dims(data, axis=1)
+        elif len(data.shape) == 4:
+            # ASSUMPTION: both X and Y are > 1
+            # only one of z,c,t is dimension 1.
+            if self.size_z() == 1:
+                data = np.expand_dims(data, axis=dimension_order.find("Z"))
+            elif self.size_c() == 1:
+                data = np.expand_dims(data, axis=dimension_order.find("C"))
+            elif self.size_t() == 1:
+                data = np.expand_dims(data, axis=dimension_order.find("T"))
+            else:
+                data = np.expand_dims(data, axis=0)
+            data = np.transpose(data, transposition)
+        elif len(data.shape) == 5:
+            data = np.transpose(data, transposition)
+
+        if not len(data.shape) == 5:
+            raise ValueError("Unexpected number of dimensions in ome.tif file")
+        return data
+

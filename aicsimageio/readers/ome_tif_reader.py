@@ -1,147 +1,100 @@
+import logging
+
 import numpy as np
+import re
 import tifffile
 
 from aicsimageio.vendor import omexml
+from aicsimageio.tif_reader import TiffReader
+
+
+log = logging.getLogger(__name__)
 
 
 class OmeTifReader:
     """This class is used primarily for opening and processing the contents of an OME Tiff file
-
-    Example:
-        reader = omeTifReader.OmeTifReader(path="file.ome.tif")
-        file_image = reader.load()
-        file_slice = reader.load_slice(t=1, z=2, c=3)
-
-        with omeTifReader.OmeTifReader(path="file2.ome.tif") as reader:
-            file2_image = reader.load()
-            file2_slice = reader.load_slice(t=1, z=2, c=3)
-
-    The load() function gathers all the slices into a single 5d array with dimensions TZCYX.
-    This should be used when the entire image needs to be processed or transformed in some way.
-
-    The load_slice() function takes a single 2D slice with dimensions YX out of the 5D image.
-    This should be used when only a few select slices need to be processed
-    (e.g. printing out the middle slice for a thumbnail image)
-
-    This class has a similar interface to CziReader.
     """
 
-    def __init__(self, file_path):
-        """
-        :param file_path(str): The path for the file that is to be opened.
-        """
-        self.file_path = file_path
+    def __init__(self, file: Union[types.PathLike, types.BytesLike]):
+        super().__init__(file)
         try:
-            self.tif = tifffile.TiffFile(self.file_path)
-        except ValueError:
-            raise AssertionError("File is not a valid file type")
-        except IOError:
-            raise AssertionError("File is empty or does not exist")
-        if self.tif.is_ome:
+            self.tif = tifffile.TiffFile(self._bytes)
+        except Exception as error:
+            log.error("tiffile could not parse this input")
+            raise
+
+    def _lazy_init_metadata(self):
+        if self._metatata is None and self.tif.is_ome:
             d = self.tif.pages[0].description.strip()
-            assert d.startswith('<?xml version=') and d.endswith('</OME>')
-            self.omeMetadata = omexml.OMEXML(d)
+            assert d.startswith("<?xml version=") and d.endswith("</OME>")
+            self._metadata = omexml.OMEXML(d)
+        return self._metadata
 
-    def __enter__(self):
-        return self
+    def _lazy_init_data(self):
+        if self._data is None:
+            # load the data
+            self._data = self.tif.asarray()
+        return self._data
 
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.close()
+    @staticmethod
+    @abstractmethod
+    def _is_this_type(byte_io: io.BytesIO) -> bool:
+        is_tif = TiffReader._is_this_type(byte_io)
+        if is_tif:
+            buf = TiffReader.get_image_description(byte_io)
+            if buf[0:5] != b"<?xml":
+                return False
+            match = re.search(
+                b'<(\\w*)(:?)OME [^>]*xmlns\\2\\1="http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/',
+                buf,
+            )
+            if match is None:
+                return False
+            return True
+        return False
 
-    def close(self):
-        self.tif.close()
+    @property
+    def data(self) -> types.SixDArray:
+        return self._lazy_init_data()
 
-    def load(self):
-        """Retrieves an array for all z-slices and channels.
-
-        :return: 5D array with dimensions TZCYX.
-        """
-        dimension_order = self.omeMetadata.image().Pixels.DimensionOrder
+    @property
+    def dims(self) -> str:
+        self._lazy_init_metadata()
+        dimension_order = self._metadata.image().Pixels.DimensionOrder
         # reverse the string
         dimension_order = dimension_order[::-1]
-        # get the permutation of dimensionOrder from 'TZCYX', our preferred dimension order.
-        transposition = tuple('TZCYX'.find(c) for c in dimension_order)
+        return dimension_order
 
-        # load the data
-        data = self.tif.asarray()
+    @property
+    def metadata(self) -> omexml.OMEXML:
+        return self._lazy_init_metadata()
 
-        # fixups to get a 5D array
-        if len(data.shape) == 1:
-            # add dimensions T,Z,C,Y
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-        elif len(data.shape) == 2:
-            # ASSUMPTION: both X and Y are > 1
-            # add dimensions T,Z,C
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-        elif len(data.shape) == 3:
-            # ASSUMPTION: both X and Y are > 1
-            # only one of z,c,t is > 1.  no transposing needed.
-            if self.size_z() > 1:
-                # insert C
-                data = np.expand_dims(data, axis=1)
-                # insert T
-                data = np.expand_dims(data, axis=0)
-            elif self.size_c() > 1:
-                # insert T and Z at the beginning
-                data = np.expand_dims(data, axis=0)
-                data = np.expand_dims(data, axis=0)
-            elif self.size_t() > 1:
-                # insert C and Z after T
-                data = np.expand_dims(data, axis=1)
-                data = np.expand_dims(data, axis=1)
-        elif len(data.shape) == 4:
-            # ASSUMPTION: both X and Y are > 1
-            # only one of z,c,t is dimension 1.
-            if self.size_z() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find('Z'))
-            elif self.size_c() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find('C'))
-            elif self.size_t() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find('T'))
-            else:
-                data = np.expand_dims(data, axis=0)
-            data = np.transpose(data, transposition)
-        elif len(data.shape) == 5:
-            data = np.transpose(data, transposition)
-
-        if not len(data.shape) == 5:
-            raise ValueError("Unexpected number of dimensions in ome.tif file")
-        return data
-
-    def load_slice(self, z=0, c=0, t=0):
+    def load_slice(self, slice_index=0):
         """Retrieves the 2D YX slice from the image
 
-        :param z: The z index that will be accessed
-        :param c: The channel that will be accessed
-        :param t: The time index that will be accessed
+        :param slice_index: The slice index that will be accessed
         :return: 2D array with dimensions YX
         """
-        index = c + (self.size_c() * z) + (self.size_c() * self.size_z() * t)
-        data = self.tif.asarray(key=index)
+        data = self.tif.asarray(key=slice_index)
         return data
 
     def get_metadata(self):
-        return self.omeMetadata
+        return self._metadata
 
     def size_z(self):
-        return self.omeMetadata.image().Pixels.SizeZ
+        return self._metadata.image().Pixels.SizeZ
 
     def size_c(self):
-        return self.omeMetadata.image().Pixels.SizeC
+        return self._metadata.image().Pixels.SizeC
 
     def size_t(self):
-        return self.omeMetadata.image().Pixels.SizeT
+        return self._metadata.image().Pixels.SizeT
 
     def size_x(self):
-        return self.omeMetadata.image().Pixels.SizeX
+        return self._metadata.image().Pixels.SizeX
 
     def size_y(self):
-        return self.omeMetadata.image().Pixels.SizeY
+        return self._metadata.image().Pixels.SizeY
 
     def dtype(self):
         return self.tif.pages[0].dtype
@@ -154,4 +107,4 @@ class OmeTifReader:
 
         :return: True if file is OMETiff, False otherwise.
         """
-        return self.file_path[-7:] == 'ome.tif' or self.file_path[-8:] == 'ome.tiff'
+        return self.file_path[-7:] == "ome.tif" or self.file_path[-8:] == "ome.tiff"

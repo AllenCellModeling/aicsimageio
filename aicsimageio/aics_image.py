@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import numpy as np
-from . import type_checker
+from . import buffer_reader
 from aicsimageio.readers import ome_tif_reader, czi_reader, tiff_reader
 from .exceptions import UnsupportedFileFormatError
 
@@ -63,7 +63,7 @@ class AICSImage:
             self.file_path = str(check_file_path)
 
             # check for compatible data types
-            checker = type_checker.TypeChecker(self.file_path)
+            checker = buffer_reader.TypeChecker(self.file_path)
             if checker.is_czi:
                 self.reader = czi_reader.CziReader(
                     self.file_path, max_workers=kwargs.get("max_workers", None)

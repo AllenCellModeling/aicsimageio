@@ -5,7 +5,7 @@ import tifffile
 
 from ..vendor import omexml
 from .reader import Reader
-from .tif_reader import TifReader
+from .tiff_reader import TiffReader
 from .. import types
 
 
@@ -16,7 +16,7 @@ class OmeTifReader(Reader):
     """Opening and processing the contents of an OME Tiff file
     """
 
-    def __init__(self, file: types.Union[types.PathLike, types.BytesLike]):
+    def __init__(self, file: types.Union[types.PathLike, types.BufferLike]):
         super().__init__(file)
         try:
             self.tif = tifffile.TiffFile(self._bytes)
@@ -39,9 +39,9 @@ class OmeTifReader(Reader):
 
     @staticmethod
     def _is_this_type(byte_io: io.BytesIO) -> bool:
-        is_tif = TifReader._is_this_type(byte_io)
+        is_tif = TiffReader._is_this_type(byte_io)
         if is_tif:
-            buf = TifReader.get_image_description(byte_io)
+            buf = TiffReader.get_image_description(byte_io)
             if buf[0:5] != b"<?xml":
                 return False
             match = re.search(

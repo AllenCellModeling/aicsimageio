@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from .. import constants
 from .. import types
 
 
@@ -28,7 +29,6 @@ class Writer(ABC):
         :param file_path: path to image output location
         """
         self.file_path = file_path
-        super().__init__()
 
     def __enter__(self):
         return self
@@ -42,7 +42,7 @@ class Writer(ABC):
         pass
 
     @abstractmethod
-    def save(self, data, dims="STCZYX", **kwargs) -> None:
+    def save(self, data, dims=constants.DEFAULT_DIMENSION_ORDER, **kwargs) -> None:
         """Write to open file"""
         pass
 

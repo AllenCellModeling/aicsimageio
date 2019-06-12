@@ -18,8 +18,12 @@ class Reader(ABC):
     _dims = None
     _metadata = None
 
+    def __init__(self, file: types.FileLike):
+        # Convert to BytesIO
+        self._bytes = self.convert_to_buffer(file)
+
     @staticmethod
-    def convert_to_bytes_io(file: types.FileLike) -> io.BufferedIOBase:
+    def convert_to_buffer(file: types.FileLike) -> io.BufferedIOBase:
         # Check path
         if isinstance(file, (str, Path)):
             # This will both fully expand and enforce that the filepath exists
@@ -45,19 +49,15 @@ class Reader(ABC):
                 f"Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO], received: {type(file)}"
             )
 
-    def __init__(self, file: types.FileLike):
-        # Convert to BytesIO
-        self._bytes = self.convert_to_bytes_io(file)
+    @classmethod
+    def is_this_type(cls, file: types.FileLike) -> bool:
+        buffer = cls.convert_to_buffer(file)
+        return cls._is_this_type(buffer)
 
     @staticmethod
     @abstractmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         pass
-
-    @classmethod
-    def is_this_type(cls, file: types.FileLike) -> bool:
-        byte_io = cls.convert_to_bytes_io(file)
-        return cls._is_this_type(byte_io)
 
     @property
     @abstractmethod

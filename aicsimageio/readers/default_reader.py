@@ -28,12 +28,6 @@ class DefaultReader(Reader):
     dimensions assumed in order but with extra dimensions removed depending on image shape.
     """
 
-    def __init__(self, file: types.FileLike):
-        self._bytes = self.convert_to_bytes_io(file)
-
-        # Lazy load
-        self._dims = None
-
     @property
     def data(self) -> np.ndarray:
         if self._data is None:

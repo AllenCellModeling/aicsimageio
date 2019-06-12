@@ -21,5 +21,5 @@ def test_reader_constructor(file):
     file The various objects [str(filename), pathlib.Path, BytesIO, bytestring]
 
     """
-    Reader.convert_to_bytes_io(file)
+    Reader.convert_to_buffer(file)
 

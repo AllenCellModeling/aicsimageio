@@ -1,4 +1,3 @@
-import czifile
 import io
 import logging
 import numpy as np
@@ -8,6 +7,7 @@ import xml
 
 from aicsimageio import types
 from .reader import Reader
+from ..vendor import czifile
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
@@ -83,7 +83,7 @@ class CziReader(Reader):
     def metadata(self) -> xml.etree.ElementTree :
         return self._lazy_init_metadata()
 
-    def __init__(self, file: Union[types.PathLike, types.BytesLike], max_workers=None):
+    def __init__(self, file: Union[types.PathLike, types.BufferLike], max_workers=None):
         """
         :param file_path(str): The path for the file that is to be opened.
         """

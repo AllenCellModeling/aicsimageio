@@ -7,6 +7,7 @@ import tifffile
 from . import reader
 from .. import types
 from ..type_checker import ByteReader
+from ..constants import DEFAULT_DIMENSION_ORDER
 
 
 class TiffReader(reader.Reader):
@@ -126,3 +127,23 @@ class TiffReader(reader.Reader):
 
     def dtype(self):
         return self.tiff.pages[0].dtype
+
+    @property
+    def data(self) -> np.ndarray:
+        if self._data is None:
+            self._data = self.tiff.asarray()
+        return self._data
+
+    @property
+    def dims(self) -> str:
+        if self._dims is None:
+            return DEFAULT_DIMENSION_ORDER[len(DEFAULT_DIMENSION_ORDER) - len(self.data.shape):]
+        return self._dims
+
+    @dims.setter
+    def dims(self, value: str) -> None:
+        self._dims = value
+
+    @property
+    def metadata(self) -> str:
+        return str(self.get_image_description(self._bytes))

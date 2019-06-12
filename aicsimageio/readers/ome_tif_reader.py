@@ -1,25 +1,26 @@
 import logging
-
-import numpy as np
+import io
 import re
 import tifffile
 
-from aicsimageio.vendor import omexml
-from aicsimageio.tif_reader import TiffReader
+from ..vendor import omexml
+from .reader import Reader
+from .tif_reader import TifReader
+from .. import types
 
 
 log = logging.getLogger(__name__)
 
 
-class OmeTifReader:
+class OmeTifReader(Reader):
     """This class is used primarily for opening and processing the contents of an OME Tiff file
     """
 
-    def __init__(self, file: Union[types.PathLike, types.BytesLike]):
+    def __init__(self, file: types.Union[types.PathLike, types.BytesLike]):
         super().__init__(file)
         try:
             self.tif = tifffile.TiffFile(self._bytes)
-        except Exception as error:
+        except Exception:
             log.error("tiffile could not parse this input")
             raise
 
@@ -37,11 +38,10 @@ class OmeTifReader:
         return self._data
 
     @staticmethod
-    @abstractmethod
     def _is_this_type(byte_io: io.BytesIO) -> bool:
-        is_tif = TiffReader._is_this_type(byte_io)
+        is_tif = TifReader._is_this_type(byte_io)
         if is_tif:
-            buf = TiffReader.get_image_description(byte_io)
+            buf = TifReader.get_image_description(byte_io)
             if buf[0:5] != b"<?xml":
                 return False
             match = re.search(

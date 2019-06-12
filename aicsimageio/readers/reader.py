@@ -18,7 +18,7 @@ class Reader(ABC):
     _metadata = None
 
     @staticmethod
-    def convert_to_bytes_io(file: types.FileLike) -> io.BytesIO:
+    def convert_to_bytes_io(file: types.FileLike) -> io.BufferedIOBase:
         # Check path
         if isinstance(file, (str, Path)):
             # This will both fully expand and enforce that the filepath exists
@@ -28,9 +28,7 @@ class Reader(ABC):
             if f.is_dir():
                 raise IsADirectoryError(f)
 
-            # Convert to BytesIO
-            with open(f, "rb") as read_in:
-                return io.BytesIO(read_in)
+            return open(f, "rb")
 
         # Convert bytes
         elif isinstance(file, bytes):
@@ -52,7 +50,7 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _is_this_type(byte_io: io.BytesIO) -> bool:
+    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         pass
 
     @classmethod

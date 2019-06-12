@@ -15,7 +15,7 @@ class TypeChecker:
     pass
 
 
-class ByteReader:
+class BufferReader:
 
     INTEL_ENDIAN = b'II'
     MOTOROLA_ENDIAN = b'MM'

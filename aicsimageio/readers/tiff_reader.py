@@ -6,7 +6,7 @@ import tifffile
 
 from . import reader
 from .. import types
-from ..type_checker import ByteReader
+from ..type_checker import BufferReader
 from ..constants import DEFAULT_DIMENSION_ORDER
 
 
@@ -17,8 +17,8 @@ class TiffReader(reader.Reader):
     """
 
     @staticmethod
-    def _is_this_type(byte_io: io.BytesIO) -> bool:
-        with ByteReader(byte_io) as byte_reader:
+    def _is_this_type(byte_io: io.BufferedIOBase) -> bool:
+        with BufferReader(byte_io) as byte_reader:
             # Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
             # 'II' is little-endian (Intel format) and 'MM' is big-endian (Motorola format)
             if byte_reader.endianness not in [byte_reader.INTEL_ENDIAN, byte_reader.MOTOROLA_ENDIAN]:
@@ -49,7 +49,7 @@ class TiffReader(reader.Reader):
         description_length = 0
         description_offset = 0
 
-        with ByteReader(byte_io) as byte_reader:
+        with BufferReader(byte_io) as byte_reader:
             # Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
             # 'II' is little-endian (Intel format) and 'MM' is big-endian (Motorola format)
             if byte_reader.endianness not in [byte_reader.INTEL_ENDIAN, byte_reader.MOTOROLA_ENDIAN]:

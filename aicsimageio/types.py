@@ -5,7 +5,7 @@
 Collection of types used across multiple objects and functions.
 """
 
-from io import BytesIO
+from io import BufferedIOBase
 from pathlib import Path
 from typing import Union, NamedTuple, Any
 
@@ -16,8 +16,8 @@ SixDArray = np.array  # In order STCZYX
 
 # IO Types
 PathLike = Union[str, Path]
-BytesLike = Union[bytes, BytesIO]
-FileLike = Union[PathLike, BytesLike]
+BufferLike = Union[bytes, BufferedIOBase]
+FileLike = Union[PathLike, BufferLike]
 
 
 class LoadResults(NamedTuple):

@@ -286,20 +286,20 @@ class AICSImage:
         slice_list = [slice_dict[channel] for channel in out_order]
         return image_data[tuple(slice_list)]
 
-    def ometiftransposer(reader):
+    def transpose_5d_to_TCZYX(reader):
         # get the permutation of dimensionOrder from 'TZCYX', our preferred dimension order.
-        transposition = tuple("TZCYX".find(c) for c in reader.dims)
+        transposition = tuple("TCZYX".find(c) for c in reader.dims)
         data = reader.data
         # fixups to get a 5D array
         if len(data.shape) == 1:
-            # add dimensions T,Z,C,Y
+            # add dimensions T,C,Z,Y
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
         elif len(data.shape) == 2:
             # ASSUMPTION: both X and Y are > 1
-            # add dimensions T,Z,C
+            # add dimensions T,C,Z
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
@@ -308,12 +308,13 @@ class AICSImage:
             # only one of z,c,t is > 1.  no transposing needed.
             if self.size_z() > 1:
                 # insert C
-                data = np.expand_dims(data, axis=1)
+                data = np.expand_dims(data, axis=0)
                 # insert T
                 data = np.expand_dims(data, axis=0)
             elif self.size_c() > 1:
-                # insert T and Z at the beginning
-                data = np.expand_dims(data, axis=0)
+                # insert Z
+                data = np.expand_dims(data, axis=1)
+                # insert T
                 data = np.expand_dims(data, axis=0)
             elif self.size_t() > 1:
                 # insert C and Z after T

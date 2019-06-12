@@ -70,16 +70,8 @@ class OmeTifReader:
         return self._lazy_init_metadata()
 
     def load_slice(self, slice_index=0):
-        """Retrieves the 2D YX slice from the image
-
-        :param slice_index: The slice index that will be accessed
-        :return: 2D array with dimensions YX
-        """
         data = self.tif.asarray(key=slice_index)
         return data
-
-    def get_metadata(self):
-        return self._metadata
 
     def size_z(self):
         return self._metadata.image().Pixels.SizeZ

@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class OmeTifReader(Reader):
-    """This class is used primarily for opening and processing the contents of an OME Tiff file
+    """Opening and processing the contents of an OME Tiff file
     """
 
     def __init__(self, file: types.Union[types.PathLike, types.BytesLike]):
@@ -25,7 +25,7 @@ class OmeTifReader(Reader):
             raise
 
     def _lazy_init_metadata(self):
-        if self._metatata is None and self.tif.is_ome:
+        if self._metadata is None and self.tif.is_ome:
             d = self.tif.pages[0].description.strip()
             assert d.startswith("<?xml version=") and d.endswith("</OME>")
             self._metadata = omexml.OMEXML(d)
@@ -74,19 +74,19 @@ class OmeTifReader(Reader):
         return data
 
     def size_z(self):
-        return self._metadata.image().Pixels.SizeZ
+        return self.metadata.image().Pixels.SizeZ
 
     def size_c(self):
-        return self._metadata.image().Pixels.SizeC
+        return self.metadata.image().Pixels.SizeC
 
     def size_t(self):
-        return self._metadata.image().Pixels.SizeT
+        return self.metadata.image().Pixels.SizeT
 
     def size_x(self):
-        return self._metadata.image().Pixels.SizeX
+        return self.metadata.image().Pixels.SizeX
 
     def size_y(self):
-        return self._metadata.image().Pixels.SizeY
+        return self.metadata.image().Pixels.SizeY
 
     def dtype(self):
         return self.tif.pages[0].dtype

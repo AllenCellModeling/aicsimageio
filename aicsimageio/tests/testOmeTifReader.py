@@ -29,7 +29,7 @@ class TestOmeTifReader(unittest.TestCase):
         pass
 
     def test_omeTifLoadShapeCorrectDimensions(self):
-        self.assertEqual(len(self.load.shape), 5)
+        self.assertEqual(len(self.load.shape), 4)
 
     def test_omeTifEmptyFileError(self):
         with self.assertRaises(Exception):
@@ -57,14 +57,13 @@ class TestOmeTifReader(unittest.TestCase):
             "multi-channel-4D-series.ome.tif",
         ]
         dims = [
-            # T C Z Y X
-            (1, 1, 1, 167, 439),
-            (1, 3, 1, 167, 439),
-            (1, 1, 5, 167, 439),
-            (7, 1, 1, 167, 439),
-            (1, 3, 5, 167, 439),
-            (7, 3, 1, 167, 439),
-            (7, 1, 5, 167, 439),
+            (167, 439),
+            (3, 167, 439),
+            (5, 167, 439),
+            (7, 167, 439),
+            (3, 5, 167, 439),
+            (7, 3, 167, 439),
+            (7, 5, 167, 439),
             (7, 3, 5, 167, 439),
         ]
         for i, x in enumerate(names):

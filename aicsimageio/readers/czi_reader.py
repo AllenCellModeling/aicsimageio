@@ -1,17 +1,16 @@
 import io
 import logging
 import numpy as np
-from typing import Union
+from typing import Optional
 import warnings
-import xml
+import xml.etree
 
 from aicsimageio import types
 from .reader import Reader
-from ..vendor import czifile
 
 with warnings.catch_warnings():
     warnings.simplefilter('ignore')
-    from aicsimageio.vendor import czifile
+    from ..vendor import czifile
 
 log = logging.getLogger(__name__)
 CZI_NATIVE_ARRAY = np.ndarray
@@ -58,7 +57,7 @@ class CziReader(Reader):
     """
 
     @staticmethod
-    def _is_this_type(byte_io: io.BytesIO) -> bool:
+    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         pass
 
     @property
@@ -68,7 +67,10 @@ class CziReader(Reader):
         -------
         the data from the czi file with the native order (i.e. "TZCYX")
         """
-        return self._lazy_init_data()
+        if self._data is None:
+            # load the data
+            self._data = self.czi.asarray(max_workers=self._max_workers)
+        return self._data
 
     @property
     def dims(self) -> str:
@@ -80,42 +82,7 @@ class CziReader(Reader):
         return self.czi.axes
 
     @property
-    def metadata(self) -> xml.etree.ElementTree :
-        return self._lazy_init_metadata()
-
-    def __init__(self, file: Union[types.PathLike, types.BufferLike], max_workers=None):
-        """
-        :param file_path(str): The path for the file that is to be opened.
-        """
-        super().__init__(file)
-        try:
-            self.czi = czifile.CziFile(self._bytes)
-        except Exception:
-            log.error("czifile could not parse this input")
-            raise
-
-        self.hasTimeDimension = 'T' in self.czi.axes
-        self._max_workers = max_workers
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.czi.close()
-
-    def close(self):
-        self.czi.close()
-
-    def _lazy_init_data(self) -> CZI_NATIVE_ARRAY:
-        """Retrieves an array of the image file
-        :return:
-        """
-        if self._data is None:
-            # load the data
-            self._data = self.czi.asarray(max_workers=self._max_workers)
-        return self._data
-
-    def _lazy_init_metadata(self) -> xml.etree.ElementTree:
+    def metadata(self) -> xml.etree.ElementTree:
         """
         Lazy load the metadata from the CZI file
         Returns
@@ -126,6 +93,24 @@ class CziReader(Reader):
             # load the metadata
             self._metadata = self.czi.metadata
         return self._metadata
+
+    def __init__(self, file: types.FileLike, max_workers: Optional[int] = None):
+        """
+        :param file_path(str): The path for the file that is to be opened.
+        """
+        super().__init__(file)
+        try:
+            self.czi = czifile.CziFile(self._bytes)
+        except Exception:
+            log.error("czifile could not parse this input")
+            raise
+
+        self.has_time_dimension = 'T' in self.czi.axes
+        self._max_workers = max_workers
+
+    def close(self):
+        self.czi.close()
+        super().close()
 
     def dtype(self) -> np.dtype:
         """

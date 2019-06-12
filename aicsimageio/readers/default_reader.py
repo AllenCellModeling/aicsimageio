@@ -8,7 +8,6 @@ import numpy as np
 from .reader import Reader
 from .. import constants
 from ..import exceptions
-from .. import types
 
 
 class DefaultReader(Reader):
@@ -68,5 +67,5 @@ class DefaultReader(Reader):
         return None
 
     @staticmethod
-    def _is_this_type(byte_io: io.BytesIO) -> bool:
+    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         return True

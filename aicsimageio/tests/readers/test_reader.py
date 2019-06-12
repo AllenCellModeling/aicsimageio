@@ -15,8 +15,11 @@ from aicsimageio.readers.reader import Reader
 ])
 def test_reader_constructor(file):
     """
-    test constructor takes a filename
-    if filename doesn't exist expect FileNotFoundError
+    Testing the arguments to the static member function on the ABC
+    Parameters
+    ----------
+    file The various objects [str(filename), pathlib.Path, BytesIO, bytestring]
+
     """
     Reader.convert_to_bytes_io(file)
 

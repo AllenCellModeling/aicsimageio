@@ -1,7 +1,4 @@
 #!/usr/bin/env python
-import math
-import os
-import unittest
 from pathlib import Path
 
 import numpy as np
@@ -24,16 +21,17 @@ def test_type_check(name, expected):
     assert TiffReader.is_this_type(tiff_image) == expected
 
 
-@pytest.mark.parametrize('name, shape, dims, metadata', [
-    ('img40_1_dna.tif', (43, 410, 286), 'ZYX', ''),
-    ('TestXYCZ_imagej.tif', (4, 3, 300, 400), 'CZYX', 'ImageJ'),
-    ('single-channel.ome.tif', (167, 439), 'YX', 'OME-XML'),
-    ('4D-series.ome.tif', (7, 5, 167, 439), 'CZYX', 'OME-XML'),
-    ('z-series.ome.tif', (5, 167, 439), 'ZYX', 'OME-XML'),
-    ('multi-channel-4D-series.ome.tif', (7, 3, 5, 167, 439), 'TCZYX', 'OME-XML'),
-    ('BigTIFF.tif', (64, 64, 3), 'ZYX', '')  # This dimension ordering is actually wrong, but nothing we can do about it
+@pytest.mark.parametrize('name, shape, dims, metadata, dtype', [
+    ('img40_1_dna.tif', (43, 410, 286), 'ZYX', '', np.uint8),
+    ('TestXYCZ_imagej.tif', (4, 3, 300, 400), 'CZYX', 'ImageJ', np.uint16),
+    ('single-channel.ome.tif', (167, 439), 'YX', 'OME-XML', np.int8),
+    ('4D-series.ome.tif', (7, 5, 167, 439), 'CZYX', 'OME-XML', np.int8),
+    ('z-series.ome.tif', (5, 167, 439), 'ZYX', 'OME-XML', np.int8),
+    ('multi-channel-4D-series.ome.tif', (7, 3, 5, 167, 439), 'TCZYX', 'OME-XML', np.int8),
+    ('BigTIFF.tif', (64, 64, 3), 'ZYX', '', np.uint8),  # This dimension ordering is wrong, but nothing we can do
+    ('BigTIFFMotorola.tif', (64, 64, 3), 'ZYX', '', np.uint8)  # Same here
 ])
-def test_load(name, shape, dims, metadata):
+def test_load(name, shape, dims, metadata, dtype):
     with TiffReader(RESOURCES / name) as reader:
         data, actual_dims, actual_metadata = reader.load()
         assert data.shape == shape
@@ -42,3 +40,4 @@ def test_load(name, shape, dims, metadata):
             assert metadata == actual_metadata
         else:
             assert metadata in actual_metadata
+        assert dtype == reader.dtype()

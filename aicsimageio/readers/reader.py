@@ -4,15 +4,9 @@
 from abc import ABC, abstractmethod
 import io
 from pathlib import Path
-from typing import Any, NamedTuple, Union
+from typing import Any, Union
 
 from .. import types
-
-
-class LoadResults(NamedTuple):
-    data: types.SixDArray
-    dims: str
-    metadata: Any
 
 
 class Reader(ABC):
@@ -43,7 +37,7 @@ class Reader(ABC):
         # Raise
         else:
             raise TypeError(
-                f"Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO], recieved: {type(file)}"
+                f"Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO], received: {type(file)}"
             )
 
     def __init__(self, file: Union[types.PathLike, types.BytesLike]):
@@ -54,14 +48,19 @@ class Reader(ABC):
         # Convert to BytesIO
         self._bytes = self.convert_to_bytes_io(file)
 
+    @staticmethod
+    @abstractmethod
+    def _is_this_type(byte_io: io.BytesIO) -> bool:
+        pass
+
+    @classmethod
+    def is_this_type(cls, file: Union[types.PathLike, types.BytesLike]) -> bool:
+        byte_io = cls.convert_to_bytes_io(file)
+        return cls._is_this_type(byte_io)
+
     @property
     @abstractmethod
     def data(self) -> types.SixDArray:
-        pass
-
-    @abstractmethod
-    @staticmethod
-    def is_this_type(file: Union[types.PathLike, types.BytesLike]) -> bool:
         pass
 
     @property
@@ -75,14 +74,17 @@ class Reader(ABC):
         pass
 
     @abstractmethod
-    def _load_from_bytes(self) -> LoadResults:
+    def _load_from_bytes(self) -> types.LoadResults:
         pass
 
-    def load(self) -> LoadResults:
-        return LoadResults(self.data, self.dims, self.metadata)
+    def load(self) -> types.LoadResults:
+        return types.LoadResults(self.data, self.dims, self.metadata)
+
+    def close(self) -> None:
+        self._bytes.close()
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._bytes.close()
+        self.close()

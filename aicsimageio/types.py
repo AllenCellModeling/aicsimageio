@@ -7,7 +7,7 @@ Collection of types used across multiple objects and functions.
 
 from io import BytesIO
 from pathlib import Path
-from typing import Union
+from typing import Union, NamedTuple, Any
 
 import numpy as np
 
@@ -17,3 +17,9 @@ SixDArray = np.array  # In order STCZYX
 # IO Types
 PathLike = Union[str, Path]
 BytesLike = Union[bytes, BytesIO]
+
+
+class LoadResults(NamedTuple):
+    data: SixDArray
+    dims: str
+    metadata: Any

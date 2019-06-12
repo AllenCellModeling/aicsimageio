@@ -1,5 +1,6 @@
-from abc import ABC
-import os
+from abc import ABC, abstractmethod
+
+from .. import types
 
 
 class Writer(ABC):
@@ -21,7 +22,7 @@ class Writer(ABC):
             writer2.save(image2)
     """
 
-    def __init__(self, file_path):
+    def __init__(self, file_path: types.PathLike):
         """
         Class initializer
         :param file_path: path to image output location
@@ -36,12 +37,12 @@ class Writer(ABC):
         self.close()
 
     @abstractmethod
-    def close(self):
-        """Close file and del objects"""
+    def close(self) -> None:
+        """Close file objects"""
         pass
 
     @abstractmethod
-    def save(self, data, dims="STCZYX", **kwargs):  # Dave altered from dims=None):
+    def save(self, data, dims="STCZYX", **kwargs) -> None:
         """Write to open file"""
         pass
 

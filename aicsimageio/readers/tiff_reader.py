@@ -44,7 +44,7 @@ class TiffReader(reader.Reader):
             return True
 
     @staticmethod
-    def get_image_description(byte_io: io.BytesIO) -> Optional[bytearray]:
+    def get_image_description(byte_io: io.BufferedIOBase) -> Optional[bytearray]:
         """Retrieve the image description as one large string."""
         description_length = 0
         description_offset = 0
@@ -116,15 +116,6 @@ class TiffReader(reader.Reader):
         self.tiff.close()
         super().close()
 
-    def size_z(self):
-        return len(self.tiff.pages)
-
-    def size_x(self):
-        return self.tiff.pages[0].shape[1]
-
-    def size_y(self):
-        return self.tiff.pages[0].shape[0]
-
     def dtype(self):
         return self.tiff.pages[0].dtype
 
@@ -147,5 +138,9 @@ class TiffReader(reader.Reader):
     @property
     def metadata(self) -> str:
         if self._metadata is None:
-            self._metadata = str(self.get_image_description(self._bytes))
+            description = self.get_image_description(self._bytes)
+            if description is None:
+                self._metadata = ''
+            else:
+                self._metadata = description.decode()
         return self._metadata

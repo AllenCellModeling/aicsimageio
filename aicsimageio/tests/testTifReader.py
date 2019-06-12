@@ -24,11 +24,21 @@ def test_type_check(name, expected):
     assert TiffReader.is_this_type(tiff_image) == expected
 
 
-def test_load():
-    with TiffReader(RESOURCES / 'img40_1_dna.tif') as reader:
-        print(reader.data)
-
-
-def test_metadata():
-    with TiffReader(RESOURCES / 'single-channel.ome.tif') as reader:
-        print(reader.metadata)
+@pytest.mark.parametrize('name, shape, dims, metadata', [
+    ('img40_1_dna.tif', (43, 410, 286), 'ZYX', ''),
+    ('TestXYCZ_imagej.tif', (4, 3, 300, 400), 'CZYX', 'ImageJ'),
+    ('single-channel.ome.tif', (167, 439), 'YX', 'OME-XML'),
+    ('4D-series.ome.tif', (7, 5, 167, 439), 'CZYX', 'OME-XML'),
+    ('z-series.ome.tif', (5, 167, 439), 'ZYX', 'OME-XML'),
+    ('multi-channel-4D-series.ome.tif', (7, 3, 5, 167, 439), 'TCZYX', 'OME-XML'),
+    ('BigTIFF.tif', (64, 64, 3), 'ZYX', '')  # This dimension ordering is actually wrong, but nothing we can do about it
+])
+def test_load(name, shape, dims, metadata):
+    with TiffReader(RESOURCES / name) as reader:
+        data, actual_dims, actual_metadata = reader.load()
+        assert data.shape == shape
+        assert actual_dims == dims
+        if metadata == '':
+            assert metadata == actual_metadata
+        else:
+            assert metadata in actual_metadata

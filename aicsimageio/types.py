@@ -17,6 +17,7 @@ SixDArray = np.array  # In order STCZYX
 # IO Types
 PathLike = Union[str, Path]
 BytesLike = Union[bytes, BytesIO]
+FileLike = Union[PathLike, BytesLike]
 
 
 class LoadResults(NamedTuple):

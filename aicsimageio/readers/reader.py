@@ -4,7 +4,7 @@
 from abc import ABC, abstractmethod
 import io
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 from .. import types
 
@@ -12,7 +12,7 @@ from .. import types
 class Reader(ABC):
 
     @staticmethod
-    def convert_to_bytes_io(file: Union[types.PathLike, types.BytesLike]) -> io.BytesIO:
+    def convert_to_bytes_io(file: types.FileLike) -> io.BytesIO:
         # Check path
         if isinstance(file, (str, Path)):
             # This will both fully expand and enforce that the filepath exists
@@ -40,7 +40,7 @@ class Reader(ABC):
                 f"Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO], received: {type(file)}"
             )
 
-    def __init__(self, file: Union[types.PathLike, types.BytesLike]):
+    def __init__(self, file: types.FileLike):
         # Lazy loaded
         self._bytes = None
         self._loaded_results = None
@@ -54,7 +54,7 @@ class Reader(ABC):
         pass
 
     @classmethod
-    def is_this_type(cls, file: Union[types.PathLike, types.BytesLike]) -> bool:
+    def is_this_type(cls, file: types.FileLike) -> bool:
         byte_io = cls.convert_to_bytes_io(file)
         return cls._is_this_type(byte_io)
 

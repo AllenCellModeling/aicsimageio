@@ -14,65 +14,50 @@ with warnings.catch_warnings():
     from ..vendor import czifile
 
 log = logging.getLogger(__name__)
-CZI_NATIVE_ARRAY = np.ndarray
 
 
 class CziReader(Reader):
-    """This class is used primarily for opening and processing the contents of a CZI file
-
-    Example:
-        reader = cziReader.CziReader(path="file.czi")
-        file_image = reader.load()
-        file_slice = reader.load_slice(t=1, z=2, c=3)
-
-        with cziReader.CziReader(path="file2.czi") as reader:
-            file2_image = reader.load()
-            file2_slice = reader.load_slice(t=1, z=2, c=3)
-
-        # Convert a CZI file into OME Tif.
-        reader = cziReader.CziReader(path="file3.czi")
-        writer = omeTifWriter.OmeTifWriter(path="file3.ome.tif")
-        writer.save(reader.load())
-
-    The load() function gathers all the slices into a single 5d array with dimensions TZCYX.
-    This should be used when the entire image needs to be processed or transformed in some way.
-
-    The load_slice() function takes a single 2D slice with dimensions YX out of the 5D image.
-    This should be used when only a few select slices need to be processed
-    (e.g. printing out the middle slice for a thumbnail image)
-
-    This class has a similar interface to OmeTifReader.
-
-    In order to better understand the inner workings of this class, it is necessary to
-    know that CZI files can be abstracted as an n-dimensional array.
-
-    CZI files contain an n-dimensional array.
-    If t = 1, then the array will be 6 dimensional 'BCZYX0' (czifile.axes)
-    Otherwise, the array will be 7 dimensional 'BTCZYX0' (czifile.axes)
-    'B' is block acquisition from the CZI memory directory
-    'T' is time
-    'C' is the channel
-    'Z' is the index of the slice in the image stack
-    'X' and 'Y' correspond to the 2D slices
-    '0' is the numbers of channels per pixel (always =zero for our data)
     """
+    CziReader is intended for reading single scene Czi files. It is meant to handle the specifics of using the backend
+    library to create a unified interface. This enables higher level functions to duck type the File Readers.
+    """
+    CZI_NATIVE_ARRAY = np.ndarray
+
+    ZEISS_2BYTE = b'ZI'             # First two characters of a czi file according to Zeiss docs
+    ZEISS_10BYTE = b'ZISRAWFILE'    # First 10 characters of a well formatted czi file.
+
+    def __init__(self, file: types.FileLike, max_workers: Optional[int] = None):
+        """
+
+        Parameters
+        ----------
+        file : a file like object ("Filename.czi", Path("/path/Filename.czi") or an open stream to the data
+        max_workers : (Optional) the number of cores the backend library is allowed to use to load the data in the file.
+        """
+        super().__init__(file)
+        try:
+            self.czi = czifile.CziFile(self._bytes)
+        except Exception:
+            log.error("czifile could not parse this input")
+            raise CziReader.FileNotCompatibleWithCziFileLibrary("exception from with CziFile backend library.")
+
+        if self._is_multiscene():
+            raise CziReader.MultiSceneCziException(
+                "File is Multiscene. The backend library CziFile can only read single scene images."
+            )
+
+        self._max_workers = max_workers
 
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
-        is_czi = False
         with BufferReader(buffer) as buffer_reader:
-            if buffer_reader.endianness == b"ZI":
-                magic = buffer_reader.endianness + bytearray(
-                    buffer_reader.buffer.read(8)
-                )
-                # Per spec: CZI files are little-endian
-                is_czi = magic == b"ZISRAWFILE"
-                if is_czi:
-                    buffer_reader.endianness = buffer_reader.INTEL_ENDIAN
-        return is_czi
+            if buffer_reader.endianness != CziReader.ZEISS_2BYTE:
+                return False
+            header = buffer_reader.endianness + buffer_reader.byte_read(8)
+            return header == CziReader.ZEISS_10BYTE
 
     @property
-    def data(self) -> np.ndarray:
+    def data(self) -> CZI_NATIVE_ARRAY:
         """
         Returns
         -------
@@ -116,7 +101,7 @@ class CziReader(Reader):
             log.error("czifile could not parse this input")
             raise
 
-        self.has_time_dimension = "T" in self.czi.axes
+        self.has_time_dimension = 'T' in self.czi.axes
         self._max_workers = max_workers
 
     def close(self):
@@ -145,3 +130,109 @@ class CziReader(Reader):
         the data type of the ndarray being returned (uint16, uint8, etc)
         """
         return self.czi.dtype
+
+    def size_z(self):
+        """
+        Returns
+        -------
+        The number of Z slices in the stack
+        """
+        return self._size_of_dimension('Z')
+
+    def size_c(self):
+        """
+        Returns
+        -------
+        The number of Channels present in the data
+        """
+        return self._size_of_dimension('C')
+
+    def size_t(self):
+        """
+        Returns
+        -------
+        The number of time steps in the data
+        """
+        return self._size_of_dimension('T')
+
+    def size_x(self):
+        """
+        Returns
+        -------
+        The number of pixels in the images X axis
+        """
+        return self._size_of_dimension('X')
+
+    def size_y(self):
+        """
+        Returns
+        -------
+        The number of pixels in the images Y axis
+        """
+        return self._size_of_dimension('Y')
+
+    def _size_of_dimension(self, dimension: str) -> int:
+        """
+        Parameters
+        ----------
+        dimension : str (a single character)
+
+        Raises
+        ------
+        If a string of length greater or smaller than 1 is passed in raise a TypeError
+
+        Returns
+        -------
+        The size of the dimension in the data
+        """
+        index = self._lookup_dimension_index(dimension)
+        if index == -1:
+            return 0
+        return self.czi.shape[index]
+
+    def _lookup_dimension_index(self, dimension: str) -> int:
+        """
+        Use the axes metadata in the czi file to find the dimension index
+        Parameters
+        ----------
+        dimension : str (a single character)
+            sensible values are any one of ('V', 'H', 'M', 'B', 'I', 'S', 'T', 'R', 'Z', 'C', 'Y', 'X')
+            most likely values are one of ('S', 'T', 'C', 'Z', 'Y', 'X')
+
+        Raises
+        ------
+        If a string of length greater or smaller than 1 is passed in raise a TypeError
+
+        Returns
+        -------
+        the integer position of the channel or -1 if the character is not present in the file description
+        """
+        if len(dimension) != 1:
+            raise TypeError(f"channel lookup requested with channel {dimension}")
+        return self.czi.axes.find(dimension)
+
+    def _is_multiscene(self):
+        """
+        Check if the metadata the czi is multiscene
+
+        Returns
+        -------
+        True if multi-scene, False if single-scene
+        """
+        axes = self.czi.axes
+        index = axes.find('S')
+        if index < 0:
+            return False
+        img_shape = self.czi.filtered_subblock_directory[0].shape
+        return img_shape[index] != 1
+
+    class MultiSceneCziException(Exception):
+        """
+        This exception is intended to be thrown when a CZI file has multiple scenes. This is only to
+        be thrown if the Reader is given a multi-scene CZI files and the backend library isn't able
+        to read multi-scene CZI.
+        """
+        pass
+
+    class FileNotCompatibleWithCziFileLibrary(Exception):
+        pass

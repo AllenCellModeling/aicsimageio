@@ -37,3 +37,5 @@ class BufferReader:
     def read_uint64(self):
         return (self.read_uint32() + (self.read_uint32() << 32)) if self.endianness == self.INTEL_ENDIAN else ((self.read_uint32() << 32) + self.read_uint32())
 
+    def byte_read(self, n_bytes: int):
+        return bytearray(self.buffer.read(n_bytes))

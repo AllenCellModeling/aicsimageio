@@ -10,9 +10,10 @@ from aicsimageio.readers.reader import Reader
         Path("/non/existent/file/path/non_existent_file.random"),
         marks=pytest.mark.raises(exception=FileNotFoundError)
     ),
-    (BytesIO(b"abcdef")),
-    (b"abcdef")
-])
+    BytesIO(b"abcdef"),
+    b"abcdef"
+    ]
+)
 def test_reader_constructor(file):
     """
     Testing the arguments to the static member function on the ABC

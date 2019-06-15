@@ -7,9 +7,10 @@ import xml.etree
 
 from aicsimageio import types
 from .reader import Reader
+from ..buffer_reader import BufferReader
 
 with warnings.catch_warnings():
-    warnings.simplefilter('ignore')
+    warnings.simplefilter("ignore")
     from ..vendor import czifile
 
 log = logging.getLogger(__name__)
@@ -58,7 +59,17 @@ class CziReader(Reader):
 
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
-        pass
+        is_czi = False
+        with BufferReader(buffer) as buffer_reader:
+            if buffer_reader.endianness == b'ZI':
+                magic = buffer_reader.endianness + bytearray(buffer_reader.buffer.read(8))
+                # Per spec: CZI files are little-endian
+                is_czi =  magic == b'ZISRAWFILE'
+                if is_czi:
+                    buffer_reader.endianness = buffer_reader.INTEL_ENDIAN
+        return is_czi
+
+
 
     @property
     def data(self) -> np.ndarray:
@@ -105,7 +116,7 @@ class CziReader(Reader):
             log.error("czifile could not parse this input")
             raise
 
-        self.has_time_dimension = 'T' in self.czi.axes
+        self.has_time_dimension = "T" in self.czi.axes
         self._max_workers = max_workers
 
     def close(self):

@@ -4,7 +4,7 @@ import os
 import unittest
 
 from aicsimageio.readers import CziReader
-from .transformation import *
+from aicsimageio.tests.transformation import *
 
 class TestCziReader(unittest.TestCase):
 

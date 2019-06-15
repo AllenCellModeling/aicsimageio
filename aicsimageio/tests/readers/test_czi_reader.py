@@ -1,6 +1,6 @@
 import pytest
 from aicsimageio.readers.czi_reader import CziReader
-from czifile import CziFile
+from aicsimageio.vendor.czifile import CziFile
 
 
 def test_czifile():

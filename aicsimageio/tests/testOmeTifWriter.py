@@ -33,7 +33,7 @@ class TestOmeTifWriter(unittest.TestCase):
         with OmeTiffReader(self.file) as test_output_reader:
             output = test_output_reader.data
 
-        self.assertEqual(output.shape, self.image.shape)
+        self.assertEqual(output.shape, self.image.shape[1:])
 
     """
     Test to check if save() will only accept 3, 4, 5 dimensions for data

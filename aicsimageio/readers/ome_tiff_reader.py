@@ -39,6 +39,8 @@ class OmeTiffReader(Reader):
         is_tif = TiffReader._is_this_type(buffer)
         if is_tif:
             buf = TiffReader.get_image_description(buffer)
+            if buf is None:
+                return False
             if buf[0:5] != b"<?xml":
                 return False
             match = re.search(

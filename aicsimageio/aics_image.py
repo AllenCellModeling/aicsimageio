@@ -1,11 +1,12 @@
-# author: Zach Crabtree zacharyc@alleninstitute.org
-from pathlib import Path
-
+import logging
 import numpy as np
-from . import buffer_reader
-from aicsimageio.readers import ome_tiff_reader, czi_reader, tiff_reader
-from .exceptions import UnsupportedFileFormatError
+from pathlib import Path
+import typing
 
+from . import type_checker, types
+from aicsimageio.readers import default_reader, ome_tiff_reader, czi_reader, tiff_reader
+
+log = logging.getLogger(__name__)
 
 def enum(**named_values):
     return type("Enum", (), named_values)
@@ -44,7 +45,7 @@ class AICSImage:
 
     default_dims = "TCZYX"
 
-    def __init__(self, data, **kwargs):
+    def __init__(self, data: typing.Union[types.FileLike, types.SixDArray], **kwargs):
         """
         Constructor for AICSImage class
         :param data: String with path to ometif/czi file, or ndarray with up to 5 dimensions
@@ -53,40 +54,7 @@ class AICSImage:
         """
         self.metadata = None
         self.dims = AICSImage.default_dims
-        if isinstance(data, (str, Path)):
-            # check input is a filepath
-            check_file_path = Path(data).resolve(strict=True)
-            if not check_file_path.is_file():
-                raise IsADirectoryError(check_file_path)
-
-            # assign proven existing file to member variable (as string for compatibility with readers)
-            self.file_path = str(check_file_path)
-
-            # check for compatible data types
-            checker = buffer_reader.TypeChecker(self.file_path)
-            if checker.is_czi:
-                self.reader = czi_reader.CziReader(
-                    self.file_path, max_workers=kwargs.get("max_workers", None)
-                )
-            elif checker.is_ome:
-                self.reader = ome_tiff_reader.OmeTiffReader(self.file_path)
-            elif checker.is_tiff:
-                self.reader = tiff_reader.TiffReader(self.file_path)
-            else:
-                raise UnsupportedFileFormatError(
-                    "CellImage can only accept OME-TIFF, TIFF, and CZI file formats!"
-                )
-            # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
-            self.data = self.reader.load()
-            # TODO remove this transpose call once reader output is changed
-            # this line assumes that all the above readers return TZCYX order, and converts to TCZYX
-            self.data = self.data.transpose(0, 2, 1, 3, 4)
-            self.metadata = self.reader.get_metadata()
-            self.shape = self.data.shape
-            # we are not using the reader anymore
-            self.reader.close()
-
-        elif isinstance(data, np.ndarray):
+        if isinstance(data, types.SixDArray):
             # input is a data array
             self.data = data
             if self.is_valid_dimension(kwargs["dims"]):
@@ -100,11 +68,54 @@ class AICSImage:
             self.shape = self.data.shape
 
         else:
-            raise TypeError("Unable to process item of type {}".format(type(data)))
+            try:
+                if isinstance(data, (str, Path)):
+                    # check input is a filepath
+                    check_file_path = Path(data).resolve(strict=True)
+                    if not check_file_path.is_file():
+                        raise IsADirectoryError(check_file_path)
+                    if not check_file_path.exists():
+                        raise FileNotFoundError(check_file_path)
+                    # assign proven existing file to member variable (as string for compatibility with readers)
+                    self.file_path = str(check_file_path)
+                elif not isinstance(data, (bytes, BufferedIOBase)):
+                    raise TypeError()
+                else:
+                    self.file_path = None
 
-        self.size_t, self.size_c, self.size_z, self.size_y, self.size_x = tuple(
-            self.shape
-        )
+                # check for compatible data types
+                checker = type_checker.TypeChecker(data)
+
+                if checker.is_czi:
+                    self.reader = czi_reader.CziReader(
+                        data, max_workers=kwargs.get("max_workers", None)
+                    )
+                elif checker.is_ome:
+                    self.reader = ome_tiff_reader.OmeTiffReader(data)
+                elif checker.is_tiff:
+                    self.reader = tiff_reader.TiffReader(data)
+                else:
+                    self.reader = default_reader.DefaultReader(data)
+
+                # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
+                self.data, self.dims, self.metadata = self.reader.load()
+                self.shape = self.data.shape
+                # we are not using the reader anymore
+                self.reader.close()
+            except Exception:
+                log.error("Unable to process item of type {}".format(type(data)))
+                raise
+
+        x = self.dims.find('T')
+        self.size_t = self.shape[x] if x > -1 else 1
+        x = self.dims.find('C')
+        self.size_c = self.shape[x] if x > -1 else 1
+        x = self.dims.find('Z')
+        self.size_z = self.shape[x] if x > -1 else 1
+        x = self.dims.find('Y')
+        self.size_y = self.shape[x] if x > -1 else 1
+        x = self.dims.find('X')
+        self.size_x = self.shape[x] if x > -1 else 1
 
     def is_valid_dimension(self, dimensions):
         if dimensions.strip(self.dims):

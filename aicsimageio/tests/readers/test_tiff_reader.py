@@ -7,7 +7,7 @@ import pytest
 from aicsimageio.readers import TiffReader
 
 
-RESOURCES = Path(__file__).parent / 'img'
+RESOURCES = Path(__file__).parent.parent / 'img'
 
 
 @pytest.mark.parametrize('name, expected', [

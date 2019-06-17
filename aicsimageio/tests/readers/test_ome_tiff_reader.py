@@ -11,7 +11,7 @@ class TestOmeTifReader(unittest.TestCase):
     def setUpClass(cls):
         cls.dir_path = os.path.dirname(os.path.realpath(__file__))
         with OmeTiffReader(
-            os.path.join(cls.dir_path, "img", "img40_1.ome.tif")
+            os.path.join(cls.dir_path, "..", "img", "img40_1.ome.tif")
         ) as reader:
             cls.load = reader.data
             cls.load_sizes = [
@@ -63,7 +63,7 @@ class TestOmeTifReader(unittest.TestCase):
             (7, 3, 5, 167, 439),
         ]
         for i, x in enumerate(names):
-            with OmeTiffReader(os.path.join(self.dir_path, "img", x)) as reader:
+            with OmeTiffReader(os.path.join(self.dir_path, "..", "img", x)) as reader:
                 assert reader.is_ome()
                 data = reader.data
                 self.assertEqual(data.shape, dims[i])

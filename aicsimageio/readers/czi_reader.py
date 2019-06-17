@@ -61,15 +61,15 @@ class CziReader(Reader):
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         is_czi = False
         with BufferReader(buffer) as buffer_reader:
-            if buffer_reader.endianness == b'ZI':
-                magic = buffer_reader.endianness + bytearray(buffer_reader.buffer.read(8))
+            if buffer_reader.endianness == b"ZI":
+                magic = buffer_reader.endianness + bytearray(
+                    buffer_reader.buffer.read(8)
+                )
                 # Per spec: CZI files are little-endian
-                is_czi =  magic == b'ZISRAWFILE'
+                is_czi = magic == b"ZISRAWFILE"
                 if is_czi:
                     buffer_reader.endianness = buffer_reader.INTEL_ENDIAN
         return is_czi
-
-
 
     @property
     def data(self) -> np.ndarray:
@@ -122,6 +122,21 @@ class CziReader(Reader):
     def close(self):
         self.czi.close()
         super().close()
+
+    def size_z(self):
+        return self.czi.shape[3] if self.has_time_dimension else self.czi.shape[2]
+
+    def size_c(self):
+        return self.czi.shape[2] if self.has_time_dimension else self.czi.shape[1]
+
+    def size_t(self):
+        return self.czi.shape[1] if self.has_time_dimension else 1
+
+    def size_x(self):
+        return self.czi.shape[5] if self.has_time_dimension else self.czi.shape[4]
+
+    def size_y(self):
+        return self.czi.shape[4] if self.has_time_dimension else self.czi.shape[3]
 
     def dtype(self) -> np.dtype:
         """

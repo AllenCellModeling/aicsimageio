@@ -4,11 +4,11 @@ import random
 import numpy as np
 import pytest
 
-from aicsimageio import AICSImage
+from aicsimageio.aics_image import AICSImage
 
 
-TEST_DATA_DIR = Path(__file__).parent / 'img'
-TEST_OME = TEST_DATA_DIR / 'img40_1.ome.tif'
+TEST_DATA_DIR = Path(__file__).parent / "img"
+TEST_OME = TEST_DATA_DIR / "img40_1.ome.tif"
 
 
 class ImgContainer(object):
@@ -16,7 +16,9 @@ class ImgContainer(object):
         self.input_shape = random.sample(range(1, 10), channels)
         stack = np.zeros(self.input_shape)
         self.dims = dims
-        self.order = {c: i for i, c in enumerate(dims)}  # {'T': 0, 'C': 1, 'Z': 2, 'Y': 3, 'X': 4}
+        self.order = {
+            c: i for i, c in enumerate(dims)
+        }  # {'T': 0, 'C': 1, 'Z': 2, 'Y': 3, 'X': 4}
         self.image = AICSImage(stack, dims=self.dims)
 
     def remap(self, seq):
@@ -27,8 +29,8 @@ class ImgContainer(object):
         return tuple(new_shape)
 
     def get_trand_crand(self):
-        tmax = self.input_shape[self.order['T']]
-        cmax = self.input_shape[self.order['C']]
+        tmax = self.input_shape[self.order["T"]]
+        cmax = self.input_shape[self.order["C"]]
         trand, crand = random.randint(0, tmax - 1), random.randint(0, cmax - 1)
         return trand, crand
 
@@ -54,7 +56,9 @@ def test_transposed_output(example_img5):
 
 
 def test_transpose(example_img5):
-    output_array = AICSImage._AICSImage__transpose(example_img5.image.data, example_img5.dims, "YZXCT")
+    output_array = AICSImage._AICSImage__transpose(
+        example_img5.image.data, example_img5.dims, "YZXCT"
+    )
     stack_shape = example_img5.shuffle_shape("YZXCT")
     assert output_array.shape == stack_shape
 
@@ -67,10 +71,20 @@ def test_slice(example_img5):
     im_shape = example_img5.image.shape
     # reset the slice in the data to have value 1
     example_img5.image.data[trand, crand] = 1
-    slice_shape = [im_shape[i] for i in range(2, 5)]  # take the shape for the data cube (3D)
-    slice_dict = {'T': trand, 'C': crand, 'Z': slice(None, None), 'Y': slice(None, None), 'X': slice(None, None)}
+    slice_shape = [
+        im_shape[i] for i in range(2, 5)
+    ]  # take the shape for the data cube (3D)
+    slice_dict = {
+        "T": trand,
+        "C": crand,
+        "Z": slice(None, None),
+        "Y": slice(None, None),
+        "X": slice(None, None),
+    }
     # slice_dict defines the sub-block to pull out
-    output_array = AICSImage._AICSImage__get_slice(example_img5.image.data, "TCZYX", slice_dict)
+    output_array = AICSImage._AICSImage__get_slice(
+        example_img5.image.data, "TCZYX", slice_dict
+    )
     assert output_array.shape == tuple(slice_shape)  # check the shape is right
     assert output_array.all() == 1  # check the values are all 1 for the sub-block
 
@@ -78,7 +92,7 @@ def test_slice(example_img5):
 def test_transposed_output_2(example_img5):
     order = "TCZYX"
     for _ in range(0, 20):
-        new_order = ''.join(random.sample(order, len(order)))
+        new_order = "".join(random.sample(order, len(order)))
         image = example_img5.image.get_image_data(new_order)
         shape = example_img5.shuffle_shape(new_order)
         assert image.shape == shape
@@ -86,7 +100,9 @@ def test_transposed_output_2(example_img5):
 
 def test_sliced_output(example_img5):
     t_rand, c_rand = example_img5.get_trand_crand()
-    example_img5.image.data[t_rand, c_rand] = 1  # force the data block to 1's, (was 0's)
+    example_img5.image.data[
+        t_rand, c_rand
+    ] = 1  # force the data block to 1's, (was 0's)
     output_array = example_img5.image.get_image_data("ZYX", T=t_rand, C=c_rand)
     assert output_array.all() == 1
     assert example_img5.image.data[t_rand, c_rand, :, :, :].shape == output_array.shape
@@ -94,7 +110,9 @@ def test_sliced_output(example_img5):
 
 def test_multiple_access(example_img5):
     t_rand, c_rand = example_img5.get_trand_crand()
-    example_img5.image.data[t_rand, c_rand] = 1  # force the data block to 1's, (was 0's)
+    example_img5.image.data[
+        t_rand, c_rand
+    ] = 1  # force the data block to 1's, (was 0's)
     output_array = example_img5.image.get_image_data("ZYX", T=t_rand, C=c_rand)
     assert output_array.all() == 1
     assert example_img5.image.data[t_rand, c_rand, :, :, :].shape == output_array.shape
@@ -121,15 +139,25 @@ def test_bad_query(example_img3ctx):
 
 
 @pytest.mark.parametrize(
-    'filepath', [
+    "filepath",
+    [
         TEST_OME,
         str(TEST_OME),
-        pytest.param(TEST_DATA_DIR, marks=pytest.mark.raises(exception=IsADirectoryError)),
-        pytest.param('fakeimage.ome.tif', marks=pytest.mark.raises(exception=FileNotFoundError)),
-        pytest.param(b'not-a-string-path', marks=pytest.mark.raises(exception=TypeError)),
-        pytest.param('/This/is/a/bogus/file.ome.tif', marks=pytest.mark.raises(exception=FileNotFoundError)),
-    ]
+        pytest.param(
+            TEST_DATA_DIR, marks=pytest.mark.raises(exception=IsADirectoryError)
+        ),
+        pytest.param(
+            "fakeimage.ome.tif", marks=pytest.mark.raises(exception=FileNotFoundError)
+        ),
+        pytest.param(
+            b"not-a-string-path", marks=pytest.mark.raises(exception=TypeError)
+        ),
+        pytest.param(
+            "/This/is/a/bogus/file.ome.tif",
+            marks=pytest.mark.raises(exception=FileNotFoundError),
+        ),
+    ],
 )
 def test_file_exceptions(filepath):
-        image = AICSImage(filepath)
-        assert image is not None
+    image = AICSImage(filepath)
+    assert image is not None

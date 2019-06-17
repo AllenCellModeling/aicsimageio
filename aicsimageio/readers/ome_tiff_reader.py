@@ -18,7 +18,7 @@ class OmeTiffReader(Reader):
     """Opening and processing the contents of an OME Tiff file
     """
 
-    def __init__(self, file: types.Union[types.PathLike, types.BufferLike]):
+    def __init__(self, file: types.FileLike):
         super().__init__(file)
         try:
             self.tiff = tifffile.TiffFile(self._bytes)

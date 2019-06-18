@@ -6,6 +6,9 @@ import pytest
 import os
 import unittest
 
+# TODO It would be good to test that given a multiscene defined exception is raised
+
+
 @pytest.mark.parametrize("file", [
     "/Users/jamies/20180907_M01_001.czi",
     pytest.param(BytesIO(b"abcdef"), marks=pytest.mark.raises(exception=CziReader.FileNotCompatibleWithCziFileLibrary)),
@@ -73,3 +76,19 @@ def test_lookup_index(image_dir, test_input, expected):
 def test_missing_dimension(image_dir):
     czi = CziReader(image_dir / 'T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi')
     assert czi._size_of_dimension('V') == 0
+
+
+@pytest.mark.parametrize("test_input,expected", [
+    ('T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi', '635134669484422421'),
+    ('test_5_dimension.czi', '636063047840986203')
+])
+def test_metadata(image_dir, test_input, expected):
+    czi = CziReader(image_dir / test_input)
+    checked = False
+    for it in czi.metadata.iter('Channel'):
+        x = it.attrib.get('ChannelSetupId')
+        if x:
+            assert x == expected
+            checked = True
+            break
+    assert checked

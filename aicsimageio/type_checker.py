@@ -11,7 +11,7 @@ class TypeChecker:
     If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.
     Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.
     """
-    def __init__(self, file: types.Union[types.PathLike, types.BufferLike]):
+    def __init__(self, file: types.FileLike):
         self.is_czi = CziReader.is_this_type(file)
         self.is_tiff = TiffReader.is_this_type(file)
         self.is_ome = OmeTiffReader.is_this_type(file)

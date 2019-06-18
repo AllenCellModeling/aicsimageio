@@ -57,8 +57,12 @@ class AICSImage:
         if isinstance(data, types.SixDArray):
             # input is a data array
             self.data = data
-            if self.is_valid_dimension(kwargs["dims"]):
-                self.dims = kwargs["dims"]
+            dims = kwargs.get("dims")
+            if dims is None:
+                # guess at dims
+                dims = AICSImage.default_dims[-len(self.data.shape):]
+            if self.is_valid_dimension(dims):
+                self.dims = dims
 
             if len(self.dims) != len(self.data.shape):
                 raise ValueError(
@@ -71,13 +75,13 @@ class AICSImage:
             try:
                 if isinstance(data, (str, Path)):
                     # check input is a filepath
-                    check_file_path = Path(data).resolve(strict=True)
+                    check_file_path = Path(data).expanduser().resolve(strict=True)
                     if not check_file_path.is_file():
                         raise IsADirectoryError(check_file_path)
                     if not check_file_path.exists():
                         raise FileNotFoundError(check_file_path)
                     # assign proven existing file to member variable (as string for compatibility with readers)
-                    self.file_path = str(check_file_path)
+                    self.file_path = check_file_path
                 elif not isinstance(data, (bytes, BufferedIOBase)):
                     raise TypeError()
                 else:
@@ -118,6 +122,8 @@ class AICSImage:
         self.size_x = self.shape[x] if x > -1 else 1
 
     def is_valid_dimension(self, dimensions):
+        if dimensions is None:
+            raise ValueError("Dimensions can not be None")
         if dimensions.strip(self.dims):
             # dims contains more than the standard 5 dims we're used to
             raise ValueError("{} contains invalid dimensions!".format(dimensions))

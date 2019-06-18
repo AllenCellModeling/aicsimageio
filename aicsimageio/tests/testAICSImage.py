@@ -150,7 +150,7 @@ def test_bad_query(example_img3ctx):
             "fakeimage.ome.tif", marks=pytest.mark.raises(exception=FileNotFoundError)
         ),
         pytest.param(
-            b"not-a-string-path", marks=pytest.mark.raises(exception=TypeError)
+            b"not-a-valid-image-byte-array", marks=pytest.mark.raises(exception=ValueError)
         ),
         pytest.param(
             "/This/is/a/bogus/file.ome.tif",

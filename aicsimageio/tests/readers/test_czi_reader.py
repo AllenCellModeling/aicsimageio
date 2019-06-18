@@ -12,14 +12,17 @@ from aicsimageio.exceptions import FileNotCompatibleWithCziFileLibrary, MultiSce
 
 
 @pytest.mark.parametrize("file", [
-    "/Users/jamies/20180907_M01_001.czi",
+    "T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi",
     pytest.param(BytesIO(b"abcdef"), marks=pytest.mark.raises(exception=FileNotCompatibleWithCziFileLibrary)),
     pytest.param("non_existent_file.random", marks=pytest.mark.raises(exception=FileNotFoundError)),
     pytest.param(Path("/nonexistent/file/file.random"), marks=pytest.mark.raises(exception=FileNotFoundError))
     ]
 )
-def test_czi_reader(file):
-    czi = CziReader(file)
+def test_czi_reader(image_dir, file):
+    fobj = file
+    if isinstance(file, str):
+        fobj = image_dir / file
+    czi = CziReader(fobj)
     czi.close()
 
 

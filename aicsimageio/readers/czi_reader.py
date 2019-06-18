@@ -8,6 +8,7 @@ import xml.etree
 from aicsimageio import types
 from .reader import Reader
 from ..buffer_reader import BufferReader
+from ..exceptions import FileNotCompatibleWithCziFileLibrary, MultiSceneCziException
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -39,10 +40,10 @@ class CziReader(Reader):
             self.czi = czifile.CziFile(self._bytes)
         except Exception:
             log.error("czifile could not parse this input")
-            raise CziReader.FileNotCompatibleWithCziFileLibrary("exception from with CziFile backend library.")
+            raise FileNotCompatibleWithCziFileLibrary("exception from with CziFile backend library.")
 
         if self._is_multiscene():
-            raise CziReader.MultiSceneCziException(
+            raise MultiSceneCziException(
                 "File is Multiscene. The backend library CziFile can only read single scene images."
             )
 
@@ -185,6 +186,7 @@ class CziReader(Reader):
         -------
         The size of the dimension in the data
         """
+
         index = self._lookup_dimension_index(dimension)
         if index == -1:
             return 0
@@ -219,20 +221,8 @@ class CziReader(Reader):
         -------
         True if multi-scene, False if single-scene
         """
-        axes = self.czi.axes
-        index = axes.find('S')
+        index = self._lookup_dimension_index('S')
         if index < 0:
             return False
         img_shape = self.czi.filtered_subblock_directory[0].shape
         return img_shape[index] != 1
-
-    class MultiSceneCziException(Exception):
-        """
-        This exception is intended to be thrown when a CZI file has multiple scenes. This is only to
-        be thrown if the Reader is given a multi-scene CZI files and the backend library isn't able
-        to read multi-scene CZI.
-        """
-        pass
-
-    class FileNotCompatibleWithCziFileLibrary(Exception):
-        pass

@@ -65,6 +65,14 @@ class OmeTiffReader(Reader):
         dimension_order = self._metadata.image().Pixels.DimensionOrder
         # reverse the string
         dimension_order = dimension_order[::-1]
+        # see if t,z,or c is squeezed out.
+        # this is a tifffile implementation detail -- see squeeze_axes in tifffile.
+        if self.size_t() < 2:
+            dimension_order = dimension_order.replace("T", "")
+        if self.size_c() < 2:
+            dimension_order = dimension_order.replace("Z", "")
+        if self.size_z() < 2:
+            dimension_order = dimension_order.replace("C", "")
         return dimension_order
 
     @property

@@ -77,9 +77,7 @@ class AICSImage:
                     # check input is a filepath
                     check_file_path = Path(data).expanduser().resolve(strict=True)
                     if not check_file_path.is_file():
-                        raise IsADirectoryError(check_file_path)
-                    if not check_file_path.exists():
-                        raise FileNotFoundError(check_file_path)
+                        raise IsADirectoryError(str(check_file_path))
                     # assign proven existing file to member variable (as string for compatibility with readers)
                     self.file_path = check_file_path
                 elif not isinstance(data, (bytes, BufferedIOBase)):

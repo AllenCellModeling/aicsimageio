@@ -41,12 +41,8 @@ setup(name=PACKAGE_NAME,
       },
       install_requires=[
             'imageio>=2.3.0',
-            'numpy>=1.14.5',
-            'Pillow>=5.2.0',
+            'numpy>=1.16',
             'scipy>=1.1.0',
-            # get >=2.2.3 when available, because of https://github.com/matplotlib/matplotlib/pull/10867
-            'matplotlib>=2.2.2',
-            'scikit-image>=0.14.0',
             'tifffile==0.15.1'
       ],
 

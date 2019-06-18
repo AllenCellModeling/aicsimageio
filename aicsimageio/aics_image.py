@@ -1,7 +1,9 @@
 import logging
-import numpy as np
-from pathlib import Path
 import typing
+from io import BufferedIOBase
+from pathlib import Path
+
+import numpy as np
 
 from . import type_checker, types
 from aicsimageio.readers import default_reader, ome_tiff_reader, czi_reader, tiff_reader

@@ -1,17 +1,19 @@
-from aicsimageio.readers.czi_reader import CziReader
-from io import BytesIO
-from pathlib import Path
-import pytest
-
 import os
 import unittest
+from io import BytesIO
+from pathlib import Path
+
+import pytest
+
+from aicsimageio.readers.czi_reader import CziReader
+from aicsimageio.exceptions import FileNotCompatibleWithCziFileLibrary, MultiSceneCziException
 
 # TODO It would be good to test that given a multiscene defined exception is raised
 
 
 @pytest.mark.parametrize("file", [
     "/Users/jamies/20180907_M01_001.czi",
-    pytest.param(BytesIO(b"abcdef"), marks=pytest.mark.raises(exception=CziReader.FileNotCompatibleWithCziFileLibrary)),
+    pytest.param(BytesIO(b"abcdef"), marks=pytest.mark.raises(exception=FileNotCompatibleWithCziFileLibrary)),
     pytest.param("non_existent_file.random", marks=pytest.mark.raises(exception=FileNotFoundError)),
     pytest.param(Path("/nonexistent/file/file.random"), marks=pytest.mark.raises(exception=FileNotFoundError))
     ]

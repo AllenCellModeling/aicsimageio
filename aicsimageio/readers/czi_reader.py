@@ -91,38 +91,15 @@ class CziReader(Reader):
             self._metadata = self.czi.metadata
         return self._metadata
 
-    def __init__(self, file: types.FileLike, max_workers: Optional[int] = None):
-        """
-        :param file_path(str): The path for the file that is to be opened.
-        """
-        super().__init__(file)
-        try:
-            self.czi = czifile.CziFile(self._bytes)
-        except Exception:
-            log.error("czifile could not parse this input")
-            raise
-
-        self.has_time_dimension = 'T' in self.czi.axes
-        self._max_workers = max_workers
-
     def close(self):
+        """
+        Close the czi file handle and perform any upstream cleanup
+        Returns
+        -------
+        None
+        """
         self.czi.close()
         super().close()
-
-    def size_z(self):
-        return self.czi.shape[3] if self.has_time_dimension else self.czi.shape[2]
-
-    def size_c(self):
-        return self.czi.shape[2] if self.has_time_dimension else self.czi.shape[1]
-
-    def size_t(self):
-        return self.czi.shape[1] if self.has_time_dimension else 1
-
-    def size_x(self):
-        return self.czi.shape[5] if self.has_time_dimension else self.czi.shape[4]
-
-    def size_y(self):
-        return self.czi.shape[4] if self.has_time_dimension else self.czi.shape[3]
 
     def dtype(self) -> np.dtype:
         """

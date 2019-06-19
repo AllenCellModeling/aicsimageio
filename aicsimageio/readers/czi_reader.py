@@ -54,7 +54,7 @@ class CziReader(Reader):
         with BufferReader(buffer) as buffer_reader:
             if buffer_reader.endianness != CziReader.ZEISS_2BYTE:
                 return False
-            header = buffer_reader.endianness + buffer_reader.byte_read(8)
+            header = buffer_reader.endianness + buffer_reader.read_bytes(8)
             return header == CziReader.ZEISS_10BYTE
 
     @property

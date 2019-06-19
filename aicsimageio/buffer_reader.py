@@ -41,5 +41,5 @@ class BufferReader:
             return self.read_uint32() + (self.read_uint32() << 32)
         return (self.read_uint32() << 32) + self.read_uint32()
 
-    def byte_read(self, n_bytes: int):
+    def read_bytes(self, n_bytes: int):
         return bytearray(self.buffer.read(n_bytes))

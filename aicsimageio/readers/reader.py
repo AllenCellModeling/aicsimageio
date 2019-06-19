@@ -18,7 +18,7 @@ class Reader(ABC):
     _dims = None
     _metadata = None
 
-    def __init__(self, file: types.FileLike):
+    def __init__(self, file: types.FileLike, **kwargs):
         # Convert to BytesIO
         self._bytes = self.convert_to_buffer(file)
 

@@ -27,7 +27,7 @@ class CziReader(Reader):
     ZEISS_2BYTE = b'ZI'             # First two characters of a czi file according to Zeiss docs
     ZEISS_10BYTE = b'ZISRAWFILE'    # First 10 characters of a well formatted czi file.
 
-    def __init__(self, file: types.FileLike, max_workers: Optional[int] = None):
+    def __init__(self, file: types.FileLike, max_workers: Optional[int] = None, **kwargs):
         """
 
         Parameters
@@ -35,7 +35,7 @@ class CziReader(Reader):
         file : a file like object ("Filename.czi", Path("/path/Filename.czi") or an open stream to the data
         max_workers : (Optional) the number of cores the backend library is allowed to use to load the data in the file.
         """
-        super().__init__(file)
+        super().__init__(file, **kwargs)
         try:
             self.czi = czifile.CziFile(self._bytes)
         except Exception:

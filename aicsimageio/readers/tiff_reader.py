@@ -108,8 +108,8 @@ class TiffReader(reader.Reader):
                 buffer_reader.buffer.seek(description_offset, 0)
                 return bytearray(buffer_reader.buffer.read(description_length))
 
-    def __init__(self, file: types.FileLike):
-        super().__init__(file)
+    def __init__(self, file: types.FileLike, **kwargs):
+        super().__init__(file, **kwargs)
         self.tiff = tifffile.TiffFile(self._bytes)
 
     def close(self):

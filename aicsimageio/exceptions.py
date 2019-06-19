@@ -6,12 +6,12 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, target, **kwargs):  # removed Argument Typing to allow py2.7 (W, Micro)
+    def __init__(self, type_, **kwargs):
         super().__init__(**kwargs)
-        self.target = target
+        self.type_ = type_
 
     def __str__(self):
-        return f"AICSImage module does not support this image file type: \t{self.target}"
+        return f"AICSImage module does not support this image file type: \t{self.type_}"
 
 
 class InvalidDimensionOrderingError(Exception):

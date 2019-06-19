@@ -32,10 +32,14 @@ class BufferReader:
 
     def read_uint32(self):
         value = bytearray(self.buffer.read(4))
-        return (value[0] + (value[1] << 8) + (value[2] << 16) + (value[3] << 24)) if self.endianness == self.INTEL_ENDIAN else (value[3] + (value[2] << 8) + (value[1] << 16) + (value[0] << 24))
+        if self.endianness == self.INTEL_ENDIAN:
+            return value[0] + (value[1] << 8) + (value[2] << 16) + (value[3] << 24)
+        return value[3] + (value[2] << 8) + (value[1] << 16) + (value[0] << 24)
 
     def read_uint64(self):
-        return (self.read_uint32() + (self.read_uint32() << 32)) if self.endianness == self.INTEL_ENDIAN else ((self.read_uint32() << 32) + self.read_uint32())
+        if self.endianness == self.INTEL_ENDIAN:
+            return self.read_uint32() + (self.read_uint32() << 32)
+        return (self.read_uint32() << 32) + self.read_uint32()
 
     def byte_read(self, n_bytes: int):
         return bytearray(self.buffer.read(n_bytes))

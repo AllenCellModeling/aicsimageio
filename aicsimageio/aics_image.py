@@ -173,3 +173,6 @@ class AICSImage:
             return self.data
         return transforms.reshape_data(data=self.data, given_dims=self.dims,
                                        return_dims=out_orientation, copy=copy, **kwargs)
+
+    def __repr__(self) -> str:
+        return f'<AICSImage [{type(self.reader).__name__}]>'

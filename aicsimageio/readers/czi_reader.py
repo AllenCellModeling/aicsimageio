@@ -161,17 +161,19 @@ class CziReader(Reader):
 
         Returns
         -------
-        The size of the dimension in the data
+        The size of the dimension in the data, if the dimension is not found in the "BTCZYX" type string
+        then the default dimension size of 1 is returned.
         """
 
         index = self._lookup_dimension_index(dimension)
         if index == -1:
-            return 0
+            return 1
         return self.czi.shape[index]
 
     def _lookup_dimension_index(self, dimension: str) -> int:
         """
-        Use the axes metadata in the czi file to find the dimension index
+        Use the axes metadata in the czi file to find the dimension index, additionally this
+        function should be used for determining if a Dimension is present in the native data.
         Parameters
         ----------
         dimension : str (a single character)

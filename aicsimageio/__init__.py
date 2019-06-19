@@ -1,7 +1,6 @@
 from aicsimageio.version import MODULE_VERSION
 
 from .aics_image import AICSImage
-from .type_checker import TypeChecker
 
 
 def get_version():

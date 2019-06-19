@@ -2,11 +2,14 @@ import logging
 import typing
 from io import BufferedIOBase
 from pathlib import Path
+from typing import Type
 
 import numpy as np
 
-from . import type_checker, types
-from aicsimageio.readers import default_reader, ome_tiff_reader, czi_reader, tiff_reader
+from . import types
+from .exceptions import UnsupportedFileFormatError
+from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
+from .readers.reader import Reader
 
 log = logging.getLogger(__name__)
 
@@ -88,19 +91,9 @@ class AICSImage:
                 else:
                     self.file_path = None
 
-                # check for compatible data types
-                checker = type_checker.TypeChecker(data)
-
-                if checker.is_czi:
-                    self.reader = czi_reader.CziReader(
-                        data, max_workers=kwargs.get("max_workers", None)
-                    )
-                elif checker.is_ome:
-                    self.reader = ome_tiff_reader.OmeTiffReader(data)
-                elif checker.is_tiff:
-                    self.reader = tiff_reader.TiffReader(data)
-                else:
-                    self.reader = default_reader.DefaultReader(data)
+                # Determine reader class and load data
+                reader_class = self.determine_reader(data)
+                self.reader = reader_class(data, **kwargs)
 
                 # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
                 self.data, self.dims, self.metadata = self.reader.load()
@@ -121,6 +114,19 @@ class AICSImage:
         self.size_y = self.shape[x] if x > -1 else 1
         x = self.dims.find('X')
         self.size_x = self.shape[x] if x > -1 else 1
+
+    @staticmethod
+    def determine_reader(data: types.ImageLike) -> Type[Reader]:
+        """Cheaply check to see if a given file is a recognized type.
+        Currently recognized types are TIFF, OME TIFF, and CZI.
+        If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.
+        Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.
+        """
+        for reader_class in [CziReader, OmeTiffReader, TiffReader, DefaultReader]:
+            if reader_class.is_this_type(data):
+                return reader_class
+        else:
+            raise UnsupportedFileFormatError(type(data))
 
     def is_valid_dimension(self, dimensions):
         if dimensions is None:

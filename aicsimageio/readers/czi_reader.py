@@ -8,7 +8,7 @@ import xml.etree
 from aicsimageio import types
 from .reader import Reader
 from ..buffer_reader import BufferReader
-from ..exceptions import FileNotCompatibleWithCziFileLibrary, MultiSceneCziException
+from ..exceptions import UnsupportedFileFormatError, MultiSceneCziException
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -40,7 +40,7 @@ class CziReader(Reader):
             self.czi = czifile.CziFile(self._bytes)
         except Exception:
             log.error("czifile could not parse this input")
-            raise FileNotCompatibleWithCziFileLibrary("exception from with CziFile backend library.")
+            raise UnsupportedFileFormatError("exception from with CziFile backend library.")
 
         if self._is_multiscene():
             raise MultiSceneCziException(

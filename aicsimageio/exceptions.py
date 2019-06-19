@@ -35,7 +35,3 @@ class MultiSceneCziException(Exception):
     to read multi-scene CZI.
     """
     pass
-
-
-class FileNotCompatibleWithCziFileLibrary(Exception):
-    pass

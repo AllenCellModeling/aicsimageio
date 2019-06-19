@@ -15,4 +15,3 @@ class TypeChecker:
         self.is_czi = CziReader.is_this_type(file)
         self.is_tiff = TiffReader.is_this_type(file)
         self.is_ome = OmeTiffReader.is_this_type(file)
-

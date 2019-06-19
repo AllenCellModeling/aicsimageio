@@ -3,6 +3,7 @@ import os
 
 from aicsimageio import TypeChecker
 
+
 class TestTypeChecker(unittest.TestCase):
 
     def setUp(self):

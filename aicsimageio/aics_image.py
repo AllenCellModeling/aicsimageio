@@ -10,6 +10,7 @@ from aicsimageio.readers import default_reader, ome_tiff_reader, czi_reader, tif
 
 log = logging.getLogger(__name__)
 
+
 def enum(**named_values):
     return type("Enum", (), named_values)
 
@@ -303,7 +304,7 @@ class AICSImage:
         slice_list = [slice_dict[channel] for channel in out_order]
         return image_data[tuple(slice_list)]
 
-    def transpose_5d_to_TCZYX(reader):
+    def transpose_5d_to_STCZYX(self, reader):
         # get the permutation of dimensionOrder from 'TZCYX', our preferred dimension order.
         transposition = tuple("TCZYX".find(c) for c in reader.dims)
         data = reader.data
@@ -355,4 +356,3 @@ class AICSImage:
         if not len(data.shape) == 5:
             raise ValueError("Unexpected number of dimensions in ome.tif file")
         return data
-

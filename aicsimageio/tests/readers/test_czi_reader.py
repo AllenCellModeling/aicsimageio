@@ -1,12 +1,10 @@
-import os
-import unittest
 from io import BytesIO
 from pathlib import Path
 
 import pytest
 
 from aicsimageio.readers.czi_reader import CziReader
-from aicsimageio.exceptions import FileNotCompatibleWithCziFileLibrary, MultiSceneCziException
+from aicsimageio.exceptions import FileNotCompatibleWithCziFileLibrary
 
 # TODO It would be good to test that given a multiscene defined exception is raised
 
@@ -80,7 +78,8 @@ def test_lookup_index(image_dir, test_input, expected):
 
 def test_missing_dimension(image_dir):
     czi = CziReader(image_dir / 'T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi')
-    assert czi._size_of_dimension('V') == 0
+    assert czi._size_of_dimension('V') == 1
+    assert czi._lookup_dimension_index('V') == -1
 
 
 @pytest.mark.parametrize("test_input,expected", [

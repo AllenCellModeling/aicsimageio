@@ -23,4 +23,3 @@ def test_reader_constructor(file):
 
     """
     Reader.convert_to_buffer(file)
-

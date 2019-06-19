@@ -6,10 +6,11 @@ import os
 import unittest
 
 import pytest
+import numpy as np
 
 from aicsimageio.readers import DefaultReader
 from aicsimageio.writers import PngWriter
-from .transformation import *
+from .transformation import transform
 
 
 class TestPngWriter(unittest.TestCase):
@@ -112,7 +113,8 @@ class TestPngWriter(unittest.TestCase):
             channel_r = all_channels[0, :, :]
             channel_g = all_channels[1, :, :]
             channel_b = all_channels[2, :, :]
-            self.assertTrue(np.array_equal(channel_r, channel_g) and np.array_equal(channel_g, channel_b) and np.array_equal(channel_r, image[0, :, :]))
+            self.assertTrue(np.array_equal(channel_r, channel_g) and np.array_equal(channel_g, channel_b)
+                            and np.array_equal(channel_r, image[0, :, :]))
 
     """
     Test attempts to save an image with zcyx dims

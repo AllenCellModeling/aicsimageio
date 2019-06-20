@@ -146,7 +146,7 @@ class AICSImage:
 
         return True
 
-    def _transpose_to_defaults(self):
+    def _transpose_to_defaults(self, data: types.SixDArray, dims: str) -> types.SixDArray:
         match_map = {dim: self.default_dims.find(dim) for dim in self.dims}
         transposer = []
         for dim in self.dims:
@@ -155,13 +155,14 @@ class AICSImage:
         self.data = self.data.transpose(transposer)
         self.dims = self.default_dims
 
-    def _reshape_data(self):
+    def _reshape_data(self, data, given_dims):
         # this function will add in the missing dimensions in order to make a complete 5d array
         # get each dimension not included in original data
-        excluded_dims = self.default_dims.strip(self.dims)
+        new_dims = given_dims
+        excluded_dims = self.default_dims.strip(given_dims)
         for dim in excluded_dims:
-            self.data = np.expand_dims(self.data, axis=0)
-            self.dims = dim + self.dims
+            data = np.expand_dims(data, axis=0)
+            new_dims = dim + new_dims
         self._transpose_to_defaults()
 
     def get_channel_names(self):

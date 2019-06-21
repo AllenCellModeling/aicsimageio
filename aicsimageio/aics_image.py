@@ -7,113 +7,80 @@ from typing import Type
 import numpy as np
 
 from . import types
-from .exceptions import UnsupportedFileFormatError
-from .readers import CziReader, DefaultReader, OmeTiffReader, TiffReader
+from .exceptions import UnsupportedFileFormatError, InvalidDimensionOrderingError
+from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
 from .readers.reader import Reader
 
 log = logging.getLogger(__name__)
 
 
-def enum(**named_values):
-    return type("Enum", (), named_values)
-
-
-FileType = enum(OMETIF=1, TIF=2, CZI=3)
-
-
-# TODO I am not sure what the behavior should be in the case where img = AICSimage(file, dims="CTX")
-# TODO and then img.get_image_data requests a sub-block. I kind of expect images we deal with to have 5 channels (TCZYX)
-
-
 class AICSImage:
     """
-    A wrapper class for ndarrays.
+    AICSImage takes microscopy image data types (files / bytestreams) of varying dimensions ("ZYX", "TCZYX", "CYX") and
+    puts them into a consistent 6D "STCZYX" ordered numpy.ndarray. The data, metadata are lazy loaded and can be
+    accessed as needed.
 
-    Example:
-        # valid ndarrays are between 1 and 5 dimensions
-        >>> data4d = numpy.zeros((2, 25, 1024, 1024))
-        >>> data2d = numpy.zeros((99, 100))
-        # any dimension ordering of T, C, Z, Y, X is valid
-        >>> image_from_4d = AICSImage(data4d, dims="TZYX")
-        >>> image_from_2d = AICSImage(data2d, dims="YX")
-        # now both images are expanded to contain all 5 dims
-        # you can access it in any dimension ordering, no matter how nonsensical
-        >>> image_to_5d_from_4d = image_from_4d.get_image_data("XYCZT")
-        >>> image_to_5d_from_2d = image_from_2d.get_image_data("YCZTX")
-        # you can also access specific slices from each dimension you leave out
-        >>> image_to_1d_from_2d = image_from_2d.get_image_data("X", Y=12)
+        Simple Example
+        --------------
+        with open("filename.czi", 'rb') as fp:
+            img = AICSImage(fp)
+            data = img.data  # data is a 6D "STCZYX" object
+            metadata = img.metadata  # metadata from the file, an xml.etree
+            zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy.ndarray
 
-        # finally, AICSImage objects can be generated from ometifs and czis (could be removed in later revisions)
-        >>> image_from_file = AICSImage("image_data.ome.tif")
-        >>> image_from_file = AICSImage("image_data.czi")
-    NOTE: If you construct with a data/image block less than 5D the class upscales the data to be 5 D
+        zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" cube
+
+
+        File Examples
+        -------------
+        OmeTif
+            img = AICSImage("filename.ome.tif")
+        CZI (Zeiss)
+            img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
+        Tif/Png/Gif
+            img = AICSImage("filename.png", known_dims="ZYX")
+            img = AICSImage("filename.tif", known_dims="CZYX")
+
+        Bytestream Examples
+        -------------------
+        OmeTif
+            with open("filename.ome.tif", 'rb') as fp:
+                img = AICSImage(fp)
+        CZI
+            with open("filename.czi", 'rb') as fp:
+                img = AICSImage(fp, max_workers=7)
+        Tif/Png/Gif
+            with open("filename.png", 'rb') as fp:
+                img = AICSImage(fp, known_dims="YX")
+
+        Numpy.ndarray Example
+        ---------------------
+        blank = numpy.zeros((2, 600, 900))
+        img = AICSImage(blank, known_dims="CYX")
     """
-
-    default_dims = "TCZYX"
+    DEFAULT_DIMS = "BTCZYX"
+    SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
     def __init__(self, data: typing.Union[types.FileLike, types.SixDArray], **kwargs):
         """
-        Constructor for AICSImage class
-        :param data: String with path to ometif/czi file, or ndarray with up to 5 dimensions
-        :param kwargs: If ndarray is used for data, then you can specify the dim ordering
-                       with dims arg (ie dims="TZCYX").
+        Constructor for AICSImage class intended for providing a unified interface for dealing with
+        microscopy images. To extend support to a new reader simply add a new reader child class of
+        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS in AICSImage.
+
+        Parameters
+        ----------
+        data: String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions
+        kwargs: Parameters to be passed through to the reader class
+                       known_dims (required Tif/Png/Gif/numpy.ndarray) known Dimensions of input file, ie "TCZYX"
+                       max_workers (optional Czi) specifies the number of worker threads for the backend library
         """
-        self.metadata = None
-        self.dims = AICSImage.default_dims
-        if isinstance(data, types.SixDArray):
-            # input is a data array
-            self.data = data
-            dims = kwargs.get("dims")
-            if dims is None:
-                # guess at dims
-                dims = AICSImage.default_dims[-len(self.data.shape):]
-            if self.is_valid_dimension(dims):
-                self.dims = dims
+        self.dims = AICSImage.DEFAULT_DIMS
+        self._data = None
+        self._metadata = None
 
-            if len(self.dims) != len(self.data.shape):
-                raise ValueError(
-                    "Number of dimensions must match dimensions of array provided!"
-                )
-            self._reshape_data()
-            self.shape = self.data.shape
-
-        else:
-            try:
-                if isinstance(data, (str, Path)):
-                    # check input is a filepath
-                    check_file_path = Path(data).expanduser().resolve(strict=True)
-                    if not check_file_path.is_file():
-                        raise IsADirectoryError(str(check_file_path))
-                    # assign proven existing file to member variable (as string for compatibility with readers)
-                    self.file_path = check_file_path
-                elif not isinstance(data, (bytes, BufferedIOBase)):
-                    raise TypeError()
-                else:
-                    self.file_path = None
-
-                # Determine reader class and load data
-                reader_class = self.determine_reader(data)
-                self.reader = reader_class(data, **kwargs)
-
-                # TODO make this lazy, so we don't have to read all the pixels if all we want is metadata
-                self.data, self.dims, self.metadata = self.reader.load()
-                self.shape = self.data.shape
-                # we are not using the reader anymore
-                self.reader.close()
-            except Exception:
-                log.error("Unable to process item of type {}".format(type(data)))
-                raise
-
-        x = self.dims.find('T')
-        self.size_t = self.shape[x] if x > -1 else 1
-        x = self.dims.find('C')
-        self.size_c = self.shape[x] if x > -1 else 1
-        x = self.dims.find('Z')
-        self.size_z = self.shape[x] if x > -1 else 1
-        x = self.dims.find('Y')
-        self.size_y = self.shape[x] if x > -1 else 1
-        x = self.dims.find('X')
-        self.size_x = self.shape[x] if x > -1 else 1
+        # Determine reader class and load data
+        reader_class = self.determine_reader(data)
+        self.reader = reader_class(data, **kwargs)
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
@@ -146,24 +113,99 @@ class AICSImage:
 
         return True
 
-    def _transpose_to_defaults(self, data: types.SixDArray, dims: str) -> types.SixDArray:
-        match_map = {dim: self.default_dims.find(dim) for dim in self.dims}
-        transposer = []
-        for dim in self.dims:
-            if not match_map[dim] == -1:
-                transposer.append(match_map[dim])
-        self.data = self.data.transpose(transposer)
-        self.dims = self.default_dims
+    @property
+    def data(self):
+        if self._data is None:
+            self._data = AICSImage._reshape_data(data=self.reader.data,
+                                                 given_dims=self.reader.dims,
+                                                 return_dims=self.DEFAULT_DIMS
+                                                 )
+        return self._data
 
-    def _reshape_data(self, data, given_dims):
-        # this function will add in the missing dimensions in order to make a complete 5d array
-        # get each dimension not included in original data
+    @property
+    def metadata(self):
+        if self._metadata is None:
+            self._metadata = self.reader.metadata
+        return self._metadata
+
+    @staticmethod
+    def _reshape_data(data: np.ndarray, given_dims: str, return_dims: str, **kwargs) -> np.ndarray:
+        """
+        Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.
+        Warns the user to use the base reader if the depth of the Dimension being removed is not 1.
+
+        Parameters
+        ----------
+        data: a numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims
+        given_dims: the dimension ordering of data, "CZYX", "VBTCXZY" etc
+        return_dims: the dimension ordering of the return data
+        kwargs:
+            C=1 => desired specific channel, if C in the input data has depth 3 then C=1 takes index 1
+            copy=True => copy the data object passed in and return a new object
+        Returns
+        -------
+        a numpy.ndarray in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order "STCZYX"
+
+        """
+        # copy the data object if copy=True is in kwargs
+        data = data.copy() if kwargs.get('copy', False) else data
+        # this function will add in the missing dimensions in order to make a complete 6d array
+        # add each dimension not included in original data
         new_dims = given_dims
-        excluded_dims = self.default_dims.strip(given_dims)
+        excluded_dims = return_dims.strip(given_dims)
         for dim in excluded_dims:
             data = np.expand_dims(data, axis=0)
-            new_dims = dim + new_dims
-        self._transpose_to_defaults()
+            new_dims = dim + new_dims  # add the missing Dimension to the front
+        # if given dims contains a Dimension not in DEFAULT_DIMS and its depth is 1 remove it
+        # if it's larger than 1 give a warning and suggest interfacing with the Reader object
+        extra_dims = new_dims.strip(return_dims)
+        for dim in extra_dims:
+            index = new_dims.find(dim)
+            if data.shape[index] > 1:
+                index_depth = kwargs.get(dim, None)
+                if index_depth is None:
+                    msg = (f'data has dimension {dim} with depth {data.shape[index]}, assuming {dim}=0 is  '
+                           f'the desired value, if not the case specify {dim}=x where '
+                           f'x is an integer in [0, {data.shape[index]}).')
+                    log.warning(msg)
+                    index_depth = 0
+                if index_depth >= data.shape[index]:
+                    raise InvalidDimensionOrderingError(f'Dimension specified with {dim}={index_depth} '
+                                                        f'but Dimension shape is {data.shape[index]}.')
+                planes = np.split(data, data.shape[index], axis=index)  # split dim into list of arrays
+                data = planes[index_depth]  # take the specified value of the dim
+            data = np.squeeze(data, axis=index)  # remove the dim from ndarray
+            new_dims = new_dims[0:index:] + new_dims[index + 1::]  # clip out the Dimension from new_dims
+        # any extra dimensions have been removed, only a problem if the depth is > 1
+        return AICSImage._transpose_to_dims(data, known_dims=new_dims, return_dims=return_dims)
+
+    @staticmethod
+    def _transpose_to_dims(data: np.ndarray, known_dims: str, return_dims: str) -> np.ndarray:
+        """
+        This shuffles the data dimensions from know_dims to return_dims, return_dims can be and subset
+        of known_dims in any order.
+
+        Parameters
+        ----------
+        data: the input data with dimensions known_dims
+        known_dims: the dimensions of data
+        return_dims: the subset of known_dims to return
+
+        Returns
+        -------
+        a numpy.ndarray with known_dims
+
+        """
+        # resort the data into return_dims order
+        match_map = {dim: return_dims.find(dim) for dim in known_dims}
+        transposer = []
+        for dim in known_dims:
+            if match_map[dim] == -1:
+                msg = f'Dimension {dim} requested but not present in known_dims={known_dims}.'
+                raise InvalidDimensionOrderingError(msg)
+            transposer.append(match_map[dim])
+        data = data.transpose(transposer)
+        return data
 
     def get_channel_names(self):
         if self.metadata is not None:
@@ -217,151 +259,23 @@ class AICSImage:
         else:
             return None
 
-    # TODO get_reference_data if user is not going to manipulate data
-    # TODO (minor) allow uppercase and lowercase kwargs
-    def get_image_data(self, out_orientation="TCZYX", **kwargs):
+    def get_image_data(self, out_orientation=None, **kwargs) -> np.ndarray:
         """
-        :param out_orientation: A string containing the dimension ordering desired for the returned ndarray
-        :param kwargs: These can contain the dims you exclude from out_orientation (out of the set "TCZYX").
-                       If you want all slices of ZYX, but only one from T and C, you can enter:
-                       >>> image.get_image_data("ZYX", T=1, C=3)
-                       Unspecified dimensions that are left of out the out_orientation default to 0.
-                       :param reference: boolean value to get image data by reference or by value
-        :return: ndarray with dimension ordering that was specified with out_orientation
+
+        Parameters
+        ----------
+        out_orientation: A string containing the dimension ordering desired for the returned ndarray
+        kwargs:
+            copy: boolean value to get image data by reference or by value [True, False]
+            C=1: specifies Channel 1
+            T=3: specifies the fourth index in T
+            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation
+
+        Returns
+        -------
+        ndarray with dimension ordering that was specified with out_orientation
         Note: if you constructed AICSImage with a datablock with less than 5D you must still include the omitted
         dimensions in your out_orientation if you want the same < 5D block back
         """
-        if kwargs.get("reference", False):
-            # get data by reference
-            image_data = self.data
-        else:
-            # make a copy of the data
-            image_data = self.data.copy()
-
-        out_order, slice_dict = self.__process_args(out_orientation, **kwargs)
-        image_data = self.__transpose(image_data, self.dims, out_order)
-        return self.__get_slice(image_data, out_order, slice_dict)
-
-    def __process_args(self, out_order, **kwargs):
-        """
-        take the arguments and convert them from say out_order="ZYX", kwargs{'T':3, 'C':0} and
-        return out_order="TCZYX" and slice_dict = {'T':3, 'C':0, 'Z':slice(None,None), 'Y':slice(None,None),
-        'X':slice(None,None)}
-        :param out_order: The desired output order substring
-        :param kwargs: any specific slices T=3, C=0
-        :return: a 5 channel out_order, and a dictionary of specified slices
-        """
-        # use sets to get the channels that aren't in out_order
-        out_order_set = set(out_order)
-        ref_order_set = set(self.dims)
-        slice_set = ref_order_set - out_order_set
-        slice_dict = {}
-        for channel in slice_set:
-            specified_channel = kwargs.get(channel, 0)
-            # check that the specified channel is within the defined domain
-            if (
-                specified_channel >= self.shape[self.dims.find(channel)]
-                or specified_channel < 0
-            ):
-                raise ValueError(
-                    "{} is not a valid index for the {} dimension".format(
-                        specified_channel, channel
-                    )
-                )
-            slice_dict[channel] = specified_channel
-
-        # add the slice equivalent of : for the other channels
-        for channel in out_order_set:
-            slice_dict[channel] = slice(None, None)
-
-        # Add user-specified slices to the beginning of the returned order so subblock indexing is more efficient
-        indices = {
-            c: i for i, c in enumerate(self.dims)
-        }  # constructs ordering dictionary apply to the set
-        new_out_order = sorted(list(slice_set), key=indices.get)
-        new_out_order = "".join(new_out_order) + out_order
-        return new_out_order, slice_dict
-
-    @staticmethod
-    def __transpose(image_data, sdims, output_dims):
-        """
-        Takes an image data block and an ordered set of all channels
-        :param image_data: block of image date in a 5D matrix
-        :param sdims: the dims of the image data likely self.dims
-        :param output_dims: the dims ordered the way the user wants
-        :return: the image data block ordered as prescribed
-        """
-        match_map = {dim: sdims.find(dim) for dim in output_dims}
-        transposer = [
-            match_map[dim] for dim in output_dims
-        ]  # compose the order mapping
-        transposed_image_data = image_data.transpose(transposer)
-        # this changes the numpy wrapper around the data not the actual underlying data
-        # thus even if the user has requested a reference the internal object isn't changed
-        return transposed_image_data
-
-    @staticmethod
-    def __get_slice(image_data, out_order, slice_dict):
-        """
-        once the image data is sorted into out_order this function's purpose is to align the slice_dict to
-        the same order and return the relevant slice/subblock of the data
-        :param image_data:
-        :param out_order:
-        :param slice_dict:
-        :return:
-        """
-        slice_list = [slice_dict[channel] for channel in out_order]
-        return image_data[tuple(slice_list)]
-
-    def transpose_5d_to_STCZYX(self, reader):
-        # get the permutation of dimensionOrder from 'TZCYX', our preferred dimension order.
-        transposition = tuple("TCZYX".find(c) for c in reader.dims)
-        data = reader.data
-        # fixups to get a 5D array
-        if len(data.shape) == 1:
-            # add dimensions T,C,Z,Y
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-        elif len(data.shape) == 2:
-            # ASSUMPTION: both X and Y are > 1
-            # add dimensions T,C,Z
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-        elif len(data.shape) == 3:
-            # ASSUMPTION: both X and Y are > 1
-            # only one of z,c,t is > 1.  no transposing needed.
-            if self.size_z() > 1:
-                # insert C
-                data = np.expand_dims(data, axis=0)
-                # insert T
-                data = np.expand_dims(data, axis=0)
-            elif self.size_c() > 1:
-                # insert Z
-                data = np.expand_dims(data, axis=1)
-                # insert T
-                data = np.expand_dims(data, axis=0)
-            elif self.size_t() > 1:
-                # insert C and Z after T
-                data = np.expand_dims(data, axis=1)
-                data = np.expand_dims(data, axis=1)
-        elif len(data.shape) == 4:
-            # ASSUMPTION: both X and Y are > 1
-            # only one of z,c,t is dimension 1.
-            if self.size_z() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find("Z"))
-            elif self.size_c() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find("C"))
-            elif self.size_t() == 1:
-                data = np.expand_dims(data, axis=dimension_order.find("T"))
-            else:
-                data = np.expand_dims(data, axis=0)
-            data = np.transpose(data, transposition)
-        elif len(data.shape) == 5:
-            data = np.transpose(data, transposition)
-
-        if not len(data.shape) == 5:
-            raise ValueError("Unexpected number of dimensions in ome.tif file")
-        return data
+        out_orientation = self.DEFAULT_DIMS if out_orientation is None else out_orientation
+        return AICSImage._reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)

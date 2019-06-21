@@ -117,6 +117,12 @@ class AICSImage:
 
     @property
     def data(self):
+        """
+
+        Returns
+        -------
+        returns a numpy.ndarray with dimension ordering "STCZYX"
+        """
         if self._data is None:
             self._data = AICSImage._reshape_data(data=self.reader.data,
                                                  given_dims=self.reader.dims,

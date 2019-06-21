@@ -35,3 +35,10 @@ class MultiSceneCziException(Exception):
     to read multi-scene CZI.
     """
     pass
+
+
+class ConflictingArgsError(Exception):
+    """
+    This exception is returned when 2 arguments to the same function are in conflict.
+    """
+    pass

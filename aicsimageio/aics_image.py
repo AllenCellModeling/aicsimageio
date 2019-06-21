@@ -1,13 +1,15 @@
+from collections import Counter
 import logging
 import typing
 from io import BufferedIOBase
 from pathlib import Path
 from typing import Type
+import re
 
 import numpy as np
 
 from . import types
-from .exceptions import UnsupportedFileFormatError, InvalidDimensionOrderingError
+from .exceptions import UnsupportedFileFormatError, InvalidDimensionOrderingError, ConflictingArgsError
 from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
 from .readers.reader import Reader
 
@@ -149,16 +151,20 @@ class AICSImage:
         """
         # copy the data object if copy=True is in kwargs
         data = data.copy() if kwargs.get('copy', False) else data
-        # this function will add in the missing dimensions in order to make a complete 6d array
+        # check for conflicting return_dims and fixed channels 'C=1'
+        for dim in return_dims:
+            if kwargs.get(dim, None) is not None:
+                msg = f"argument return_dims={return_dims} and argument {dim}={kwargs.get(dim)} conflict. Check usage."
+                raise ConflictingArgsError(msg)
         # add each dimension not included in original data
         new_dims = given_dims
-        excluded_dims = return_dims.strip(given_dims)
+        excluded_dims = re.sub('|'.join(given_dims), '', return_dims)
         for dim in excluded_dims:
             data = np.expand_dims(data, axis=0)
             new_dims = dim + new_dims  # add the missing Dimension to the front
         # if given dims contains a Dimension not in DEFAULT_DIMS and its depth is 1 remove it
         # if it's larger than 1 give a warning and suggest interfacing with the Reader object
-        extra_dims = new_dims.strip(return_dims)
+        extra_dims = re.sub('|'.join(return_dims), '', given_dims)
         for dim in extra_dims:
             index = new_dims.find(dim)
             if data.shape[index] > 1:
@@ -170,17 +176,17 @@ class AICSImage:
                     log.warning(msg)
                     index_depth = 0
                 if index_depth >= data.shape[index]:
-                    raise InvalidDimensionOrderingError(f'Dimension specified with {dim}={index_depth} '
-                                                        f'but Dimension shape is {data.shape[index]}.')
+                    raise IndexError(f'Dimension specified with {dim}={index_depth} '
+                                     f'but Dimension shape is {data.shape[index]}.')
                 planes = np.split(data, data.shape[index], axis=index)  # split dim into list of arrays
                 data = planes[index_depth]  # take the specified value of the dim
             data = np.squeeze(data, axis=index)  # remove the dim from ndarray
             new_dims = new_dims[0:index:] + new_dims[index + 1::]  # clip out the Dimension from new_dims
         # any extra dimensions have been removed, only a problem if the depth is > 1
-        return AICSImage._transpose_to_dims(data, known_dims=new_dims, return_dims=return_dims)
+        return AICSImage._transpose_to_dims(data, given_dims=new_dims, return_dims=return_dims)
 
     @staticmethod
-    def _transpose_to_dims(data: np.ndarray, known_dims: str, return_dims: str) -> np.ndarray:
+    def _transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str) -> np.ndarray:
         """
         This shuffles the data dimensions from know_dims to return_dims, return_dims can be and subset
         of known_dims in any order.
@@ -188,7 +194,7 @@ class AICSImage:
         Parameters
         ----------
         data: the input data with dimensions known_dims
-        known_dims: the dimensions of data
+        given_dims: the dimensions of data
         return_dims: the subset of known_dims to return
 
         Returns
@@ -196,16 +202,20 @@ class AICSImage:
         a numpy.ndarray with known_dims
 
         """
+        if Counter(given_dims) != Counter(return_dims):
+            print(Counter(given_dims), Counter(return_dims))
+            raise ConflictingArgsError(f"given_dims={given_dims} and return_dims={return_dims} are incompatible.")
         # resort the data into return_dims order
-        match_map = {dim: return_dims.find(dim) for dim in known_dims}
+        match_map = {dim: given_dims.find(dim) for dim in given_dims}
         transposer = []
-        for dim in known_dims:
+        for dim in return_dims:
             if match_map[dim] == -1:
-                msg = f'Dimension {dim} requested but not present in known_dims={known_dims}.'
-                raise InvalidDimensionOrderingError(msg)
+                msg = f'Dimension {dim} requested but not present in given_dims={given_dims}.'
+                raise ConflictingArgsError(msg)
             transposer.append(match_map[dim])
         data = data.transpose(transposer)
         return data
+
 
     def get_channel_names(self):
         if self.metadata is not None:

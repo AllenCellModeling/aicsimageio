@@ -68,14 +68,14 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, **kwargs) 
 
 def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str) -> np.ndarray:
     """
-    This shuffles the data dimensions from know_dims to return_dims, return_dims can be and subset
-    of known_dims in any order.
+    This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in
+    given_dims must be used in return_dims
 
     Parameters
     ----------
-    data: the input data with dimensions known_dims
+    data: the input data with dimensions given_dims
     given_dims: the dimensions of data
-    return_dims: the subset of known_dims to return
+    return_dims: the reordered set of given_dims to return
 
     Returns
     -------

@@ -57,19 +57,35 @@ class OmeTifWriter:
     def close(self):
         pass
 
-    def save(self, data, omexml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None):
-        """Save an image with the proper OME xml metadata.
+    def save(self, data, ome_xml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None):
+        """
+        Save an image with the proper OME xml metadata.
 
-        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a file.
-        :param channel_names: The names for each channel to be put into the OME metadata
-        :param image_name: The name of the image to be put into the OME metadata
-        :param pixels_physical_size: The physical size of each pixel in the image
-        :param channel_colors: The channel colors to be put into the OME metadata
+        Parameters
+        ----------
+        data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a file.
+        ome_xml:
+        channel_names: The names for each channel to be put into the OME metadata
+        image_name: The name of the image to be put into the OME metadata
+        pixels_physical_size: The physical size of each pixel in the image
+        channel_colors: The channel colors to be put into the OME metadata
+
+        Returns
+        -------
+
+        """
+        """
+
+        :param data
+        :param channel_names
+        :param image_name
+        :param pixels_physical_size
+        :param channel_colors
         """
         if self.silent_pass:
             return
 
-        tif = tifffile.TiffWriter(self.file_path, bigtiff=True)
+        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._use_big_tiff(data=data))
 
         shape = data.shape
         assert (len(shape) == 5 or len(shape) == 4 or len(shape) == 3)
@@ -82,13 +98,13 @@ class OmeTifWriter:
         elif len(shape) == 4:
             data = np.expand_dims(data, axis=0)
 
-        if omexml is None:
+        if ome_xml is None:
             self._make_meta(data, channel_names=channel_names, image_name=image_name,
                             pixels_physical_size=pixels_physical_size, channel_colors=channel_colors)
         else:
-            pixels = omexml.image().Pixels
+            pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()
-            self.omeMetadata = omexml
+            self.omeMetadata = ome_xml
         xml = self.omeMetadata.to_xml().encode()
 
         # check data shape for TZCYX or ZCYX or ZYX
@@ -140,6 +156,19 @@ class OmeTifWriter:
 
     def size_y(self):
         return self.omeMetadata.image().Pixels.SizeY
+
+    @classmethod
+    def _use_big_tiff(cls, data: np.ndarray, boundary: int = 2**21) -> bool:
+        """
+        Check if the data is large enough to require bigtiff
+        Returns
+        -------
+        True if > 2 GB, False if < 2 GB
+        """
+        if data is None:
+            return False
+        size = data.size * data.itemsize
+        return True if size >= boundary else False
 
     # set up some sensible defaults from provided info
     def _make_meta(self, data, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None):

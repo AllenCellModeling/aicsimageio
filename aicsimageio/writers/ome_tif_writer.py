@@ -69,7 +69,7 @@ class OmeTifWriter:
         if self.silent_pass:
             return
 
-        tif = tifffile.TiffWriter(self.file_path)
+        tif = tifffile.TiffWriter(self.file_path, bigtiff=True)
 
         shape = data.shape
         assert (len(shape) == 5 or len(shape) == 4 or len(shape) == 3)

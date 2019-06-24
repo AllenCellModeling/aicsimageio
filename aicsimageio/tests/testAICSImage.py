@@ -81,7 +81,6 @@ def test_get_image_data_small_data(example_img3ctx):
 @pytest.mark.parametrize("filepath", [
         "img40_1.ome.tif",
         pytest.param("fakeimage.ome.tif", marks=pytest.mark.raises(exception=FileNotFoundError)),
-        #pytest.param(b"not-a-valid-image-byte-array", marks=pytest.mark.raises(exception=ValueError)),
         pytest.param("a/bogus/file.ome.tif", marks=pytest.mark.raises(exception=FileNotFoundError)),
 ])
 def test_file_exceptions(image_dir, filepath):
@@ -93,4 +92,9 @@ def test_file_passed_was_directory(image_dir):
     with pytest.raises(IsADirectoryError):
         AICSImage(image_dir)
 
+
+def test_file_passed_was_byte_string(image_dir):
+    with pytest.raises(ValueError):
+        img = AICSImage(b"not-a-valid-image-byte-array")
+        img.data
 

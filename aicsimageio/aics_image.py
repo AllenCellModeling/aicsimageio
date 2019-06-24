@@ -8,7 +8,7 @@ from . import types
 from .exceptions import UnsupportedFileFormatError
 from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
 from .readers.reader import Reader
-from .transforms import reshape_data
+from . import transforms
 
 log = logging.getLogger(__name__)
 
@@ -104,10 +104,9 @@ class AICSImage:
         returns a numpy.ndarray with dimension ordering "STCZYX"
         """
         if self._data is None:
-            self._data = reshape_data(data=self.reader.data,
-                                      given_dims=self.reader.dims,
-                                      return_dims=self.DEFAULT_DIMS
-                                      )
+            self._data = transforms.reshape_data(data=self.reader.data,
+                                                 given_dims=self.reader.dims,
+                                                 return_dims=self.DEFAULT_DIMS)
         return self._data
 
     @property
@@ -158,7 +157,7 @@ class AICSImage:
         out_orientation = self.DEFAULT_DIMS if out_orientation is None else out_orientation
         if out_orientation == self.DEFAULT_DIMS:
             return self.data
-        return reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)
+        return transforms.reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)
 
     # Do We want to add this functionality back in?
     # def get_channel_names(self):

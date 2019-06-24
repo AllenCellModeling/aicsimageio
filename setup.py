@@ -49,7 +49,6 @@ setup(name=PACKAGE_NAME,
       # For test setup. This will allow JUnit XML output for Jenkins
       setup_requires=['pytest-runner'],
       tests_require=test_deps,
-
       extras_require=extras,
       zip_safe=False
       )

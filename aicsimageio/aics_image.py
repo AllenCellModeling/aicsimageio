@@ -8,7 +8,7 @@ import numpy as np
 
 from . import types
 from .exceptions import UnsupportedFileFormatError
-from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
+from .readers import CziReader, DefaultReader, OmeTiffReader, TiffReader
 from .readers.reader import Reader
 
 log = logging.getLogger(__name__)
@@ -122,6 +122,8 @@ class AICSImage:
         If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.
         Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.
         """
+        # The order of the readers in this list is important.
+        # Example: if TiffReader was placed before OmeTiffReader, we would never use the OmeTiffReader.
         for reader_class in [CziReader, OmeTiffReader, TiffReader, DefaultReader]:
             if reader_class.is_this_type(data):
                 return reader_class

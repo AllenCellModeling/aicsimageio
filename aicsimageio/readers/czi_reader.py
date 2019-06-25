@@ -1,14 +1,15 @@
 import io
 import logging
-import numpy as np
-from typing import Optional
 import warnings
 import xml.etree
+from typing import Optional
 
+import numpy as np
 from aicsimageio import types
-from .reader import Reader
+
 from ..buffer_reader import BufferReader
-from ..exceptions import UnsupportedFileFormatError, MultiSceneCziException
+from ..exceptions import MultiSceneCziException, UnsupportedFileFormatError
+from .reader import Reader
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -22,8 +23,6 @@ class CziReader(Reader):
     CziReader is intended for reading single scene Czi files. It is meant to handle the specifics of using the backend
     library to create a unified interface. This enables higher level functions to duck type the File Readers.
     """
-    CZI_NATIVE_ARRAY = np.ndarray
-
     ZEISS_2BYTE = b'ZI'             # First two characters of a czi file according to Zeiss docs
     ZEISS_10BYTE = b'ZISRAWFILE'    # First 10 characters of a well formatted czi file.
 
@@ -58,7 +57,7 @@ class CziReader(Reader):
             return header == CziReader.ZEISS_10BYTE
 
     @property
-    def data(self) -> CZI_NATIVE_ARRAY:
+    def data(self) -> np.ndarray:
         """
         Returns
         -------

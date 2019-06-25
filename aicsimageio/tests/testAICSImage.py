@@ -1,10 +1,8 @@
 import random
-from pathlib import Path
 
 import numpy as np
 import pytest
-
-from aicsimageio.aics_image import AICSImage
+from aicsimageio import AICSImage, readers
 
 
 class ImgContainer(object):
@@ -97,4 +95,3 @@ def test_file_passed_was_byte_string(image_dir):
     with pytest.raises(ValueError):
         img = AICSImage(b"not-a-valid-image-byte-array")
         img.data
-

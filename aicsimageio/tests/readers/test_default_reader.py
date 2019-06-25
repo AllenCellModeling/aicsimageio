@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-
-from aicsimageio.readers.default_reader import DefaultReader
 from aicsimageio import exceptions
+from aicsimageio.readers.default_reader import DefaultReader
 
 
 @pytest.mark.parametrize("filename", [

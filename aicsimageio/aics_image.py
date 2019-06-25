@@ -4,11 +4,11 @@ from typing import Type
 
 import numpy as np
 
-from . import types
+from . import transforms, types
 from .exceptions import UnsupportedFileFormatError
-from .readers import CziReader, OmeTiffReader, TiffReader, DefaultReader
+from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
+                      TiffReader)
 from .readers.reader import Reader
-from . import transforms
 
 log = logging.getLogger(__name__)
 
@@ -90,11 +90,11 @@ class AICSImage:
         """
         # The order of the readers in this list is important.
         # Example: if TiffReader was placed before OmeTiffReader, we would never use the OmeTiffReader.
-        for reader_class in [CziReader, OmeTiffReader, TiffReader, DefaultReader]:
+        for reader_class in [NdArrayReader, CziReader, OmeTiffReader, TiffReader, DefaultReader]:
             if reader_class.is_this_type(data):
                 return reader_class
-        else:
-            raise UnsupportedFileFormatError(type(data))
+
+        raise UnsupportedFileFormatError(type(data))
 
     @property
     def data(self):

@@ -4,10 +4,9 @@ from typing import Optional
 import numpy as np
 import tifffile
 
-from . import reader
 from .. import types
 from ..buffer_reader import BufferReader
-from ..constants import DEFAULT_DIMENSION_ORDER
+from . import reader
 
 
 class TiffReader(reader.Reader):
@@ -92,7 +91,7 @@ class TiffReader(reader.Reader):
                     entries = buffer_reader.read_uint64()
                     for n in range(0, entries):
                         tag = buffer_reader.read_uint16()
-                        type = buffer_reader.read_uint16()
+                        type = buffer_reader.read_uint16()  # noqa: F841
                         count = buffer_reader.read_uint64()
                         offset = buffer_reader.read_uint64()
                         if tag == 270:

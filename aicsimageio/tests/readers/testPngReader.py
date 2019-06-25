@@ -21,4 +21,3 @@ class TestPngReader(unittest.TestCase):
     def test_shapeOutput(self):
         self.assertEqual(len(self.input.shape), 3)
         self.assertEqual(self.input.shape[2], 3)
-

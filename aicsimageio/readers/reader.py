@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from abc import ABC, abstractmethod
 import io
-import numpy as np
+from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from .. import types
+import numpy as np
+
+from .. import constants, types
 
 
 class Reader(ABC):

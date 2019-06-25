@@ -127,7 +127,8 @@ class TiffReader(reader.Reader):
     @property
     def dims(self) -> str:
         if self._dims is None:
-            return DEFAULT_DIMENSION_ORDER[len(DEFAULT_DIMENSION_ORDER) - len(self.data.shape):]
+            self._dims = self.guess_dim_order(self.data.shape)
+
         return self._dims
 
     @dims.setter

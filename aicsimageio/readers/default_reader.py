@@ -41,9 +41,7 @@ class DefaultReader(Reader):
         but it's our assumption to make. You can override the dims by using the property setter.
         """
         if self._dims is None:
-            self._dims = (
-                constants.DEFAULT_DIMENSION_ORDER[len(constants.DEFAULT_DIMENSION_ORDER) - len(self.data.shape):]
-            )
+            self._dims = self.guess_dim_order(self.data.shape)
 
         return self._dims
 

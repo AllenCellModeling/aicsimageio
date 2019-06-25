@@ -24,6 +24,10 @@ class Reader(ABC):
         self._bytes = self.convert_to_buffer(file)
 
     @staticmethod
+    def guess_dim_order(shape: tuple) -> str:
+        return constants.DEFAULT_DIMENSION_ORDER[len(constants.DEFAULT_DIMENSION_ORDER) - len(shape):]
+
+    @staticmethod
     def convert_to_buffer(file: types.FileLike) -> io.BufferedIOBase:
         # Check path
         if isinstance(file, (str, Path)):

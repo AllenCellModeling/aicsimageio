@@ -79,7 +79,7 @@ class AICSImage:
 
         # Determine reader class and load data
         reader_class = self.determine_reader(data)
-        self.reader = reader_class(data, **kwargs)
+        self._reader = reader_class(data, **kwargs)
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
@@ -104,9 +104,9 @@ class AICSImage:
         returns a numpy.ndarray with dimension ordering "STCZYX"
         """
         if self._data is None:
-            reader_data = self.reader.data
+            reader_data = self._reader.data
             self._data = transforms.reshape_data(data=reader_data,
-                                                 given_dims=self.reader.dims,
+                                                 given_dims=self._reader.dims,
                                                  return_dims=self.DEFAULT_DIMS)
         return self._data
 
@@ -120,11 +120,11 @@ class AICSImage:
 
         """
         if self._metadata is None:
-            self._metadata = self.reader.metadata
+            self._metadata = self._reader.metadata
         return self._metadata
 
     @property
-    def base_reader(self) -> Reader:
+    def reader(self) -> Reader:
         """
         This property returns the class created to read the image file type.
         The intent is that if the AICSImage class doesn't provide a raw enough
@@ -135,7 +135,7 @@ class AICSImage:
         A child of Reader, CziReader OmeTiffReader, TiffReader, DefaultReader, etc.
 
         """
-        return self.reader
+        return self._reader
 
     def get_image_data(self, out_orientation=None, **kwargs) -> np.ndarray:
         """

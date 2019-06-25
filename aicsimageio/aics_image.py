@@ -57,7 +57,7 @@ class AICSImage:
         blank = numpy.zeros((2, 600, 900))
         img = AICSImage(blank, known_dims="CYX")
     """
-    DEFAULT_DIMS = "BTCZYX"
+    DEFAULT_DIMS = "STCZYX"
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
     def __init__(self, data: typing.Union[types.FileLike, types.SixDArray], **kwargs):

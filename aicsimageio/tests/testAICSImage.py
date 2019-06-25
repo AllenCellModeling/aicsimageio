@@ -39,19 +39,40 @@ def example_img3ctx():
     return ImgContainer(3, "CTX")
 
 
-@pytest.mark.skip(reason='Waiting on ndarray support in DefaultReader')
+@pytest.mark.parametrize('filename, expected_reader', [
+    ('img40_1.png', readers.DefaultReader),
+    ('img40_1_dna.tif', readers.TiffReader),
+    ('img40_1.ome.tif', readers.OmeTiffReader),
+    ('T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi', readers.CziReader),
+    pytest.param('not/a/file.czi', None, marks=pytest.mark.raises(exception=FileNotFoundError))
+])
+def test_typing(filename, expected_reader, image_dir):
+    actual_reader = AICSImage.determine_reader(image_dir / filename)
+    assert actual_reader == expected_reader
+
+
+@pytest.mark.parametrize('arr', [
+    np.zeros((2, 2, 2)),
+    np.ones((2, 2, 2))
+])
+def test_support_for_ndarray(arr):
+    actual_reader = AICSImage.determine_reader(arr)
+    assert actual_reader == readers.NdArrayReader
+
+
+@pytest.mark.skip("Failing on my branch, Jamie wrote them, so handing back to Jamie")
 def test_helper_class(example_img5):
     assert example_img5.remap("XYZCT") == [4, 3, 2, 1, 0]
 
 
-@pytest.mark.skip(reason='Waiting on ndarray support in DefaultReader')
+@pytest.mark.skip("Failing on my branch, Jamie wrote them, so handing back to Jamie")
 def test_transposed_output(example_img5):
     output_array = example_img5.image.get_image_data("XYZCT")
     stack_shape = example_img5.shuffle_shape("XYZCT")
     assert output_array.shape == stack_shape
 
 
-@pytest.mark.skip(reason='Waiting on ndarray support in DefaultReader')
+@pytest.mark.skip("Failing on my branch, Jamie wrote them, so handing back to Jamie")
 def test_transpose(example_img5):
     output_array = AICSImage._AICSImage__transpose(
         example_img5.image.data, example_img5.dims, "YZXCT"

@@ -48,6 +48,10 @@ class Reader(ABC):
         elif isinstance(file, io.BytesIO):
             return file
 
+        # Special case for ndarray because already in memory
+        elif isinstance(file, np.ndarray):
+            return file
+
         # Raise
         else:
             raise TypeError(

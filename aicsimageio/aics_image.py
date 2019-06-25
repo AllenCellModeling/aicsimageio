@@ -104,7 +104,8 @@ class AICSImage:
         returns a numpy.ndarray with dimension ordering "STCZYX"
         """
         if self._data is None:
-            self._data = transforms.reshape_data(data=self.reader.data,
+            reader_data = self.reader.data
+            self._data = transforms.reshape_data(data=reader_data,
                                                  given_dims=self.reader.dims,
                                                  return_dims=self.DEFAULT_DIMS)
         return self._data

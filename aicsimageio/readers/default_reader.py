@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import io
+
 import imageio
 import numpy as np
 
-from .. import exceptions, types
+from .. import exceptions
 from .reader import Reader
 
 
@@ -63,5 +65,5 @@ class DefaultReader(Reader):
         return None
 
     @staticmethod
-    def _is_this_type(buffer: types.FileLike) -> bool:
+    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         return True

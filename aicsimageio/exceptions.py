@@ -37,7 +37,7 @@ class MultiSceneCziException(Exception):
     pass
 
 
-class ConflictingArgsError(Exception):
+class ConflictingArgumentsError(Exception):
     """
     This exception is returned when 2 arguments to the same function are in conflict.
     """

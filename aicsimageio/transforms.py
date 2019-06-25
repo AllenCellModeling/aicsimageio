@@ -4,7 +4,7 @@ from collections import Counter
 
 import numpy as np
 
-from .exceptions import ConflictingArgsError
+from .exceptions import ConflictingArgumentsError
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, copy: bool
     for dim in return_dims:
         if kwargs.get(dim, None) is not None:
             msg = f"argument return_dims={return_dims} and argument {dim}={kwargs.get(dim)} conflict. Check usage."
-            raise ConflictingArgsError(msg)
+            raise ConflictingArgumentsError(msg)
 
     # add each dimension not included in original data
     new_dims = given_dims
@@ -88,14 +88,14 @@ def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str, copy:
     data = data.copy() if copy else data
 
     if Counter(given_dims) != Counter(return_dims) or max(Counter(given_dims).values()) > 1:
-        raise ConflictingArgsError(f"given_dims={given_dims} and return_dims={return_dims} are incompatible.")
+        raise ConflictingArgumentsError(f"given_dims={given_dims} and return_dims={return_dims} are incompatible.")
     # resort the data into return_dims order
     match_map = {dim: given_dims.find(dim) for dim in given_dims}
     transposer = []
     for dim in return_dims:
         if match_map[dim] == -1:
             msg = f'Dimension {dim} requested but not present in given_dims={given_dims}.'
-            raise ConflictingArgsError(msg)
+            raise ConflictingArgumentsError(msg)
         transposer.append(match_map[dim])
     data = data.transpose(transposer)
     return data

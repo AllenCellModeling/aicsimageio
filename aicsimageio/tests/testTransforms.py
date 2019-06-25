@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 from aicsimageio.transforms import transpose_to_dims, reshape_data
-from aicsimageio.exceptions import ConflictingArgsError
+from aicsimageio.exceptions import ConflictingArgumentsError
 
 
 # test _reshape_data which is called when data is accessed
@@ -12,9 +12,9 @@ from aicsimageio.exceptions import ConflictingArgsError
     pytest.param({'data': np.zeros((6, 200, 400)), 'given_dims': 'ZYX', 'return_dims': 'TYXC', 'Z': 7}, 5,
                  marks=pytest.mark.raises(exception=IndexError)),
     pytest.param({'data': np.zeros((6, 200, 400)), 'given_dims': 'ZYX', 'return_dims': 'TYXCZ', 'Z': 7}, 5,
-                 marks=pytest.mark.raises(exception=ConflictingArgsError)),
+                 marks=pytest.mark.raises(exception=ConflictingArgumentsError)),
     pytest.param({'data': np.zeros((6, 200, 400)), 'given_dims': 'ZYX', 'return_dims': 'TYXCZX', 'Z': 7}, 5,
-                 marks=pytest.mark.raises(exception=ConflictingArgsError)),
+                 marks=pytest.mark.raises(exception=ConflictingArgumentsError)),
 ])
 def test_reshape_data_shape(kwargs, expected):
     ans = reshape_data(**kwargs)
@@ -41,9 +41,9 @@ def test_reshape_data_values(kwargs, idx_in, idx_out):
     ({'data': np.zeros((1, 2, 3, 4, 5, 6)), 'given_dims': "STCZYX", 'return_dims': "XYZCTS"}, (6, 5, 4, 3, 2, 1)),
     ({'data': np.zeros((1, 2, 3)), 'given_dims': "ZYX", 'return_dims': "ZXY"}, (1, 3, 2)),
     pytest.param({'data': np.zeros((6, 200, 400)), 'given_dims': 'ZYX', 'return_dims': 'TYXC'}, 5,
-                 marks=pytest.mark.raises(exception=ConflictingArgsError)),
+                 marks=pytest.mark.raises(exception=ConflictingArgumentsError)),
     pytest.param({'data': np.zeros((6, 200, 400)), 'given_dims': 'ZYX', 'return_dims': 'TYXCZ'}, 5,
-                 marks=pytest.mark.raises(exception=ConflictingArgsError)),
+                 marks=pytest.mark.raises(exception=ConflictingArgumentsError)),
 ])
 def test_transpose_to_dims(kwargs, expected):
     data = transpose_to_dims(**kwargs)

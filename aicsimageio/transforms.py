@@ -9,7 +9,7 @@ from .exceptions import ConflictingArgsError
 log = logging.getLogger(__name__)
 
 
-def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, **kwargs) -> np.ndarray:
+def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, copy: bool = False, **kwargs) -> np.ndarray:
     """
     Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.
     Warns the user to use the base reader if the depth of the Dimension being removed is not 1.
@@ -19,16 +19,17 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, **kwargs) 
     data: a numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims
     given_dims: the dimension ordering of data, "CZYX", "VBTCXZY" etc
     return_dims: the dimension ordering of the return data
+    copy: True or False, if true copy the data object if false modify the object/view into the object
     kwargs:
-        C=1 => desired specific channel, if C in the input data has depth 3 then C=1 takes index 1
-        copy=True => copy the data object passed in and return a new object
+        C=1 => desired specific channel, if C in the input data has depth 3 then C=1 returns the 2nd slice (0 indexed)
+        Z=10 => desired specific channel, if Z in the input data has depth 20 then Z=10 returns the 11th slice
     Returns
     -------
     a numpy.ndarray in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order "STCZYX"
 
     """
     # copy the data object if copy=True is in kwargs
-    data = data.copy() if kwargs.get('copy', False) else data
+    data = data.copy() if copy else data
     # check for conflicts like return_dims='TCZYX' and fixed channels 'C=1'
     for dim in return_dims:
         if kwargs.get(dim, None) is not None:
@@ -63,10 +64,10 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, **kwargs) 
         data = np.squeeze(data, axis=index)  # remove the dim from ndarray
         new_dims = new_dims[0:index:] + new_dims[index + 1::]  # clip out the Dimension from new_dims
     # any extra dimensions have been removed, only a problem if the depth is > 1
-    return transpose_to_dims(data, given_dims=new_dims, return_dims=return_dims)
+    return transpose_to_dims(data, given_dims=new_dims, return_dims=return_dims)  # don't pass kwargs or 2 copies
 
 
-def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str) -> np.ndarray:
+def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str, copy: bool = False) -> np.ndarray:
     """
     This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in
     given_dims must be used in return_dims
@@ -76,12 +77,16 @@ def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str) -> np
     data: the input data with dimensions given_dims
     given_dims: the dimensions of data
     return_dims: the reordered set of given_dims to return
+    copy: if True copy the data object passed in if false modify the numpy.ndarray
 
     Returns
     -------
     a numpy.ndarray with known_dims
 
     """
+    # copy the data object if copy=True is in kwargs
+    data = data.copy() if copy else data
+
     if Counter(given_dims) != Counter(return_dims) or max(Counter(given_dims).values()) > 1:
         raise ConflictingArgsError(f"given_dims={given_dims} and return_dims={return_dims} are incompatible.")
     # resort the data into return_dims order

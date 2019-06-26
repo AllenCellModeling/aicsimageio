@@ -61,7 +61,7 @@ class AICSImage:
     """
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
-    def __init__(self, data: typing.Union[types.FileLike, types.SixDArray], **kwargs):
+    def __init__(self, data: typing.Union[types.FileLike, np.ndarray], **kwargs):
         """
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of

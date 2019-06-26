@@ -1,5 +1,5 @@
 import logging
-import re
+import warnings
 from collections import Counter
 
 import numpy as np
@@ -32,29 +32,29 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, copy: bool
     data = data.copy() if copy else data
     # check for conflicts like return_dims='TCZYX' and fixed channels 'C=1'
     for dim in return_dims:
-        if kwargs.get(dim, None) is not None:
-            msg = f"argument return_dims={return_dims} and argument {dim}={kwargs.get(dim)} conflict. Check usage."
+        if kwargs.get(dim) is not None:
+            msg = f"Argument return_dims={return_dims} and argument {dim}={kwargs.get(dim)} conflict. Check usage."
             raise ConflictingArgumentsError(msg)
 
     # add each dimension not included in original data
     new_dims = given_dims
-    excluded_dims = re.sub('|'.join(given_dims), '', return_dims)
+    excluded_dims = "".join(set(return_dims) - set(given_dims))
     for dim in excluded_dims:
         data = np.expand_dims(data, axis=0)
         new_dims = dim + new_dims  # add the missing Dimension to the front
 
     # if given dims contains a Dimension not in DEFAULT_DIMS and its depth is 1 remove it
     # if it's larger than 1 give a warning and suggest interfacing with the Reader object
-    extra_dims = re.sub('|'.join(return_dims), '', given_dims)
+    extra_dims = "".join(set(given_dims) - set(return_dims))
     for dim in extra_dims:
         index = new_dims.find(dim)
         if data.shape[index] > 1:
-            index_depth = kwargs.get(dim, None)
+            index_depth = kwargs.get(dim)
             if index_depth is None:
-                msg = (f'data has dimension {dim} with depth {data.shape[index]}, assuming {dim}=0 is  '
+                msg = (f'Data has dimension {dim} with depth {data.shape[index]}, assuming {dim}=0 is  '
                        f'the desired value, if not the case specify {dim}=x where '
                        f'x is an integer in [0, {data.shape[index]}).')
-                log.warning(msg)
+                warnings.warn(msg=msg, category=UserWarning, stacklevel=2)
                 index_depth = 0
             if index_depth >= data.shape[index]:
                 raise IndexError(f'Dimension specified with {dim}={index_depth} '
@@ -62,7 +62,7 @@ def reshape_data(data: np.ndarray, given_dims: str, return_dims: str, copy: bool
             planes = np.split(data, data.shape[index], axis=index)  # split dim into list of arrays
             data = planes[index_depth]  # take the specified value of the dim
         data = np.squeeze(data, axis=index)  # remove the dim from ndarray
-        new_dims = new_dims[0:index:] + new_dims[index + 1::]  # clip out the Dimension from new_dims
+        new_dims = new_dims[0:index] + new_dims[index + 1:]  # clip out the Dimension from new_dims
     # any extra dimensions have been removed, only a problem if the depth is > 1
     return transpose_to_dims(data, given_dims=new_dims, return_dims=return_dims)  # don't pass kwargs or 2 copies
 
@@ -94,8 +94,7 @@ def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str, copy:
     transposer = []
     for dim in return_dims:
         if match_map[dim] == -1:
-            msg = f'Dimension {dim} requested but not present in given_dims={given_dims}.'
-            raise ConflictingArgumentsError(msg)
+            raise ConflictingArgumentsError(f'Dimension {dim} requested but not present in given_dims={given_dims}.')
         transposer.append(match_map[dim])
     data = data.transpose(transposer)
     return data

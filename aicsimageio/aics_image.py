@@ -4,7 +4,7 @@ from typing import Type
 
 import numpy as np
 
-from . import transforms, types
+from . import constants, transforms, types
 from .exceptions import UnsupportedFileFormatError
 from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
                       TiffReader)
@@ -57,7 +57,6 @@ class AICSImage:
         blank = numpy.zeros((2, 600, 900))
         img = AICSImage(blank, known_dims="CYX")
     """
-    DEFAULT_DIMS = "STCZYX"
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
     def __init__(self, data: typing.Union[types.FileLike, types.SixDArray], **kwargs):
@@ -73,7 +72,7 @@ class AICSImage:
                        known_dims (required Tif/Png/Gif/numpy.ndarray) known Dimensions of input file, ie "TCZYX"
                        max_workers (optional Czi) specifies the number of worker threads for the backend library
         """
-        self.dims = AICSImage.DEFAULT_DIMS
+        self.dims = constants.DEFAULT_DIMENSION_ORDER
         self._data = None
         self._metadata = None
 
@@ -107,7 +106,7 @@ class AICSImage:
             reader_data = self._reader.data
             self._data = transforms.reshape_data(data=reader_data,
                                                  given_dims=self._reader.dims,
-                                                 return_dims=self.DEFAULT_DIMS)
+                                                 return_dims=self.dims)
         return self._data
 
     @property
@@ -155,8 +154,8 @@ class AICSImage:
         Note: if a requested dimension is not present in the data the dimension is added with
         a depth of 1. The default return dimensions are "STCZYX".
         """
-        out_orientation = self.DEFAULT_DIMS if out_orientation is None else out_orientation
-        if out_orientation == self.DEFAULT_DIMS:
+        out_orientation = self.dims if out_orientation is None else out_orientation
+        if out_orientation == self.dims:
             return self.data
         return transforms.reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)
 

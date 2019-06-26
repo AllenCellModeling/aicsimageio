@@ -149,14 +149,15 @@ class AICSImage:
         """
         return self._reader
 
-    def get_image_data(self, out_orientation=None, **kwargs) -> np.ndarray:
+    def get_image_data(self, out_orientation: str = None, copy: bool = False, **kwargs) -> np.ndarray:
         """
 
         Parameters
         ----------
         out_orientation: A string containing the dimension ordering desired for the returned ndarray
+        copy: boolean value to get image data by reference or by value [True, False]
+
         kwargs:
-            copy: boolean value to get image data by reference or by value [True, False]
             C=1: specifies Channel 1
             T=3: specifies the fourth index in T
             D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation
@@ -170,4 +171,5 @@ class AICSImage:
         out_orientation = self.dims if out_orientation is None else out_orientation
         if out_orientation == self.dims:
             return self.data
-        return transforms.reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)
+        return transforms.reshape_data(data=self.data, given_dims=self.dims,
+                                       return_dims=out_orientation, copy=copy, **kwargs)

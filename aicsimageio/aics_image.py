@@ -36,9 +36,11 @@ class AICSImage:
             img = AICSImage("filename.ome.tif")
         CZI (Zeiss)
             img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
+        Tif
+            img = AICSImage("filename.tif")
         Tif/Png/Gif
-            img = AICSImage("filename.png", known_dims="ZYX")
-            img = AICSImage("filename.tif", known_dims="CZYX")
+            img = AICSImage("filename.png")
+            img = AICSImage("filename.gif")
 
         Bytestream Examples
         -------------------
@@ -158,56 +160,3 @@ class AICSImage:
         if out_orientation == self.dims:
             return self.data
         return transforms.reshape_data(self.data, given_dims=self.dims, return_dims=out_orientation, **kwargs)
-
-    # Do We want to add this functionality back in?
-    # def get_channel_names(self):
-    #     if self.metadata is not None:
-    #         if hasattr(self.metadata, "image"):
-    #             return [
-    #                 self.metadata.image().Pixels.Channel(i).Name
-    #                 for i in range(self.size_c)
-    #             ]
-    #         else:
-    #             # consider this to be CZI metadata!
-    #             chelem = self.metadata.findall(
-    #                 "./Metadata/Information/Image/Dimensions/Channels/Channel"
-    #             )
-    #             return [ch.get("Name") for ch in chelem]
-    #     else:
-    #         return None
-    #
-    # def _getmetadataxmltext(self, findpath, default=None):
-    #     ref = self.metadata.find(findpath)
-    #     if ref is None:
-    #         return default
-    #     return ref.text
-    #
-    # def get_physical_pixel_size(self):
-    #     if self.metadata is not None:
-    #         if hasattr(self.metadata, "image"):
-    #             p = self.metadata.image().Pixels
-    #             return [
-    #                 p.get_PhysicalSizeX(),
-    #                 p.get_PhysicalSizeY(),
-    #                 p.get_PhysicalSizeZ(),
-    #             ]
-    #         else:
-    #             # consider this to be CZI metadata!
-    #             px = float(
-    #                 self._getmetadataxmltext(
-    #                     "./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"
-    #                 )
-    #             )
-    #             py = float(
-    #                 self._getmetadataxmltext(
-    #                     "./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"
-    #                 )
-    #             )
-    #             pz = float(
-    #                 self._getmetadataxmltext(
-    #                     "./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"
-    #                 )
-    #             )
-    #             return [px, py, pz]
-    #     else:
-    #         return None

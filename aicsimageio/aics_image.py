@@ -17,47 +17,58 @@ class AICSImage:
     """
     AICSImage takes microscopy image data types (files / bytestreams) of varying dimensions ("ZYX", "TCZYX", "CYX") and
     puts them into a consistent 6D "STCZYX" ordered numpy.ndarray. The data, metadata are lazy loaded and can be
-    accessed as needed.
+    accessed as needed. Note the dims are assumed to match "STCZYX" from right to left meaning if 4 dimensional
+    data is provided then the dimensions are assigned to be "CZYX", 2 dimensional would be "YX". This guessed assignment
+    is only for file types without dimension metadata (ie not .ome.tiff or .czi).
 
-        Simple Example
-        --------------
-        with open("filename.czi", 'rb') as fp:
+    Note: if you absolutely know the dims and they are not as guessed then you can override them by immediately setting
+    them after initialization see example below.
+
+    Simple Example
+    --------------
+    with open("filename.czi", 'rb') as fp:
+        img = AICSImage(fp)
+        data = img.data  # data is a 6D "STCZYX" object
+        metadata = img.metadata  # metadata from the file, an xml.etree
+        zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy.ndarray
+
+    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" cube
+
+
+    File Examples
+    -------------
+    OmeTif
+        img = AICSImage("filename.ome.tif")
+    CZI (Zeiss)
+        img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
+    Tiff
+        img = AICSImage("filename.tif")
+    Png/Gif/...
+        img = AICSImage("filename.png")
+        img = AICSImage("filename.gif")
+
+    Bytestream Examples
+    -------------------
+    OmeTif
+        with open("filename.ome.tif", 'rb') as fp:
             img = AICSImage(fp)
-            data = img.data  # data is a 6D "STCZYX" object
-            metadata = img.metadata  # metadata from the file, an xml.etree
-            zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy.ndarray
+    CZI
+        with open("filename.czi", 'rb') as fp:
+            img = AICSImage(fp, max_workers=7)
+    Tiff/Png/Gif
+        with open("filename.png", 'rb') as fp:
+            img = AICSImage(fp)
 
-        zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" cube
+    Numpy.ndarray Example
+    ---------------------
+    blank = numpy.zeros((2, 600, 900))
+    img = AICSImage(blank)
 
-
-        File Examples
-        -------------
-        OmeTif
-            img = AICSImage("filename.ome.tif")
-        CZI (Zeiss)
-            img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
-        Tif
-            img = AICSImage("filename.tif")
-        Tif/Png/Gif
-            img = AICSImage("filename.png")
-            img = AICSImage("filename.gif")
-
-        Bytestream Examples
-        -------------------
-        OmeTif
-            with open("filename.ome.tif", 'rb') as fp:
-                img = AICSImage(fp)
-        CZI
-            with open("filename.czi", 'rb') as fp:
-                img = AICSImage(fp, max_workers=7)
-        Tif/Png/Gif
-            with open("filename.png", 'rb') as fp:
-                img = AICSImage(fp, known_dims="YX")
-
-        Numpy.ndarray Example
-        ---------------------
-        blank = numpy.zeros((2, 600, 900))
-        img = AICSImage(blank, known_dims="CYX")
+    Example with known dimensions different than guessed
+    ----------------------------------------------------
+    img = AICSImage('TCXimage.gif')
+    img.reader.dims = 'TCX'
+    data = img.data  # get a 6D ndarray back in "STCZYX" order
     """
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 

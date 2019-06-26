@@ -1,6 +1,7 @@
+from xml.etree import cElementTree as etree
+
 import numpy as np
 import pytest
-from xml.etree import cElementTree as etree
 
 from aicsimageio import AICSImage, readers, exceptions
 from aicsimageio.vendor import omexml

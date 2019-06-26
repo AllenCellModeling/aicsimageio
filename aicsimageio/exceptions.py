@@ -11,7 +11,7 @@ class UnsupportedFileFormatError(Exception):
         self.type_ = type_
 
     def __str__(self):
-        return f"AICSImage module does not support this image file type: \t{self.type_}"
+        return f"AICSImage module does not support this image file type: '{self.type_}'"
 
 
 class InvalidDimensionOrderingError(Exception):

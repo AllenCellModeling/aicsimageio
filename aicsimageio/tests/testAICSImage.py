@@ -1,9 +1,9 @@
 from xml.etree import cElementTree as etree
 
 import numpy as np
-import pytest
 
-from aicsimageio import AICSImage, readers, exceptions
+import pytest
+from aicsimageio import AICSImage, exceptions, readers
 from aicsimageio.vendor import omexml
 
 
@@ -13,16 +13,13 @@ from aicsimageio.vendor import omexml
     ('img40_1.ome.tif', readers.OmeTiffReader),
     ('T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi', readers.CziReader),
     pytest.param('not/a/file.czi', None, marks=pytest.mark.raises(exception=FileNotFoundError)),
+    pytest.param(
+        'not_an_image.txt', None, marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError)
+    )
 ])
 def test_typing(filename, expected_reader, image_dir):
     actual_reader = AICSImage.determine_reader(image_dir / filename)
     assert actual_reader == expected_reader
-
-
-@pytest.mark.skip(reason="exception state is unreachable")
-def test_unsupported_typing():
-    with pytest.raises(exceptions.UnsupportedFileFormatError):
-        AICSImage.determine_reader(data=b"")
 
 
 @pytest.mark.parametrize('arr', [
@@ -74,9 +71,8 @@ def test_file_passed_was_directory(image_dir):
 
 
 def test_file_passed_was_byte_string(image_dir):
-    with pytest.raises(ValueError):
-        img = AICSImage(b"not-a-valid-image-byte-array")
-        img.data
+    with pytest.raises(exceptions.UnsupportedFileFormatError):
+        AICSImage(b"not-a-valid-image-byte-array")
 
 
 @pytest.mark.parametrize('filename, expected_metadata_type', [

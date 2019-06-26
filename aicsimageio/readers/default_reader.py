@@ -66,4 +66,8 @@ class DefaultReader(Reader):
 
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
-        return True
+        try:
+            imageio.get_reader(buffer)
+            return True
+        except ValueError:
+            return False

@@ -18,3 +18,4 @@ venv/
 .pytest_cache/
 activate
 .coverage
+.DS_Store

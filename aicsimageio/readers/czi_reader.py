@@ -5,6 +5,7 @@ import xml.etree
 from typing import Optional
 
 import numpy as np
+
 from aicsimageio import types
 
 from ..buffer_reader import BufferReader
@@ -107,6 +108,14 @@ class CziReader(Reader):
         the data type of the ndarray being returned (uint16, uint8, etc)
         """
         return self.czi.dtype
+
+    def size_s(self):
+        """
+        Returns
+        -------
+        The number of scenes in the data
+        """
+        return self._size_of_dimension('S')
 
     def size_z(self):
         """

@@ -7,5 +7,5 @@ import pytest
 
 
 @pytest.fixture
-def image_dir() -> Path:
-    return Path(__file__).parent / "img"
+def resources_dir() -> Path:
+    return Path(__file__).parent / "resources"

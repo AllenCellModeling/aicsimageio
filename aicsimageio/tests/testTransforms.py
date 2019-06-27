@@ -30,8 +30,7 @@ def test_reshape_data_shape(data, given_dims, return_dims, other_args, expected)
 def test_reshape_data_values(data, given_dims, return_dims, idx_in, idx_out):
     slice_in = data[idx_in]
     ans = reshape_data(data=data, given_dims=given_dims, return_dims=return_dims)
-    for a, b in zip(slice_in.flat, ans[idx_out].flat):
-        assert a == b
+    np.testing.assert_array_equal(slice_in, ans[idx_out])
 
 
 @pytest.mark.parametrize("data, given_dims, return_dims, expected", [

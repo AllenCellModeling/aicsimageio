@@ -87,6 +87,7 @@ def transpose_to_dims(data: np.ndarray, given_dims: str, return_dims: str, copy:
     # copy the data object if copy=True is in kwargs
     data = data.copy() if copy else data
 
+    # Use a counter to track that the contents are composed of the same letters and that no letter is repeated
     if Counter(given_dims) != Counter(return_dims) or max(Counter(given_dims).values()) > 1:
         raise ConflictingArgumentsError(f"given_dims={given_dims} and return_dims={return_dims} are incompatible.")
     # resort the data into return_dims order

@@ -10,11 +10,11 @@ from aicsimageio.readers.default_reader import DefaultReader
     "example.bmp",
     "example.png",
     "example.jpg",
-    "very_good_seattle_boi.gif"
+    "example.gif"
 ])
-def test_default_reader_get_default_dims(image_dir, filename):
+def test_default_reader_get_default_dims(resources_dir, filename):
     # Get file
-    f = image_dir / filename
+    f = resources_dir / filename
 
     # Open
     with DefaultReader(f) as r:
@@ -30,7 +30,7 @@ def test_default_reader_get_default_dims(image_dir, filename):
     pytest.param("HELLOWORLD", marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError)),
     pytest.param("NO", marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError))
 ])
-def test_default_reader_set_dims(image_dir, expected):
-    with DefaultReader(image_dir / "example.png") as r:
+def test_default_reader_set_dims(resources_dir, expected):
+    with DefaultReader(resources_dir / "example.png") as r:
         r.dims = expected
         assert r.dims == expected

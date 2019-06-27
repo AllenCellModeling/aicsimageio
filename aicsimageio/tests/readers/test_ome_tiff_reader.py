@@ -11,7 +11,7 @@ class TestOmeTifReader(unittest.TestCase):
     def setUpClass(cls):
         cls.dir_path = os.path.dirname(os.path.realpath(__file__))
         with OmeTiffReader(
-            os.path.join(cls.dir_path, "..", "img", "img40_1.ome.tif")
+            os.path.join(cls.dir_path, "..", "resources", "s_1_t_1_c_1_z_1.ome.tiff")
         ) as reader:
             cls.load = reader.data
             cls.load_sizes = [
@@ -25,7 +25,7 @@ class TestOmeTifReader(unittest.TestCase):
             cls.metadata = reader.metadata
 
     def test_omeTifLoadShapeCorrectDimensions(self):
-        self.assertEqual(len(self.load.shape), 4)
+        self.assertEqual(len(self.load.shape), 2)
 
     def test_omeTifEmptyFileError(self):
         with self.assertRaises(Exception):
@@ -36,34 +36,22 @@ class TestOmeTifReader(unittest.TestCase):
         with self.assertRaises(Exception):
             with OmeTiffReader(
                 os.path.join(
-                    self.dir_path, "img", "T=5_Z=3_CH=2_CZT_All_CH_per_Slice.czi"
+                    self.dir_path, "resources", "s_1_t_1_c_1_z_1.czi"
                 )
             ) as reader:
                 assert reader.data
 
     def test_loadSampleOmeTif(self):
         names = [
-            "single-channel.ome.tif",
-            "multi-channel.ome.tif",
-            "z-series.ome.tif",
-            "time-series.ome.tif",
-            "multi-channel-z-series.ome.tif",
-            "multi-channel-time-series.ome.tif",
-            "4D-series.ome.tif",
-            "multi-channel-4D-series.ome.tif",
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            "s_3_t_1_c_3_z_5.ome.tiff"
         ]
         dims = [
-            (167, 439),
-            (3, 167, 439),
-            (5, 167, 439),
-            (7, 167, 439),
-            (3, 5, 167, 439),
-            (7, 3, 167, 439),
-            (7, 5, 167, 439),
-            (7, 3, 5, 167, 439),
+            (325, 475),
+            (5, 3, 325, 475),
         ]
         for i, x in enumerate(names):
-            with OmeTiffReader(os.path.join(self.dir_path, "..", "img", x)) as reader:
+            with OmeTiffReader(os.path.join(self.dir_path, "..", "resources", x)) as reader:
                 assert reader.is_ome()
                 data = reader.data
                 self.assertEqual(data.shape, dims[i])

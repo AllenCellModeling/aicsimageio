@@ -2,8 +2,8 @@
 
 import os
 import unittest
-import numpy as np
 
+import numpy as np
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 from aicsimageio.writers import OmeTifWriter
 
@@ -11,7 +11,7 @@ from aicsimageio.writers import OmeTifWriter
 class TestOmeTifWriter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "img")
+        cls.dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
         cls.file = os.path.join(cls.dir_path, "ometif_test_output.ome.tif")
         cls.image = np.random.rand(1, 40, 3, 128, 256).astype(np.uint16)
         cls.writer = OmeTifWriter(cls.file, overwrite_file=True)

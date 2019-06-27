@@ -76,5 +76,4 @@ class TestOmeTifWriter(unittest.TestCase):
 
     def test_big_tiff(self):
         x = np.zeros((10, 10))
-        assert OmeTifWriter._use_big_tiff(data=x, boundary=4) is True
-        assert OmeTifWriter._use_big_tiff(data=x) is False
+        assert OmeTifWriter._size_of_ndarray(data=x) == 10*10*x.itemsize

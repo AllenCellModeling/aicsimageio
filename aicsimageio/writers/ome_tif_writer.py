@@ -5,6 +5,13 @@ import os
 import tifffile
 from aicsimageio.vendor import omexml
 
+BYTE_BOUNDARY = 2 ** 21
+
+# This is the threshold to use BigTiff, if it's the 4GB boundary it should be 2**22 but
+# the libtiff writer was unable to handle a 2GB numpy array. It would be great if we better
+# understood exactly what this threshold is and how to calculate it but for now this is a
+# stopgap working value
+
 
 class OmeTifWriter:
     """This class can take arrays of pixel values and do the necessary metadata creation to write them
@@ -57,7 +64,8 @@ class OmeTifWriter:
     def close(self):
         pass
 
-    def save(self, data, ome_xml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None):
+    def save(self, data, ome_xml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None,
+             channel_colors=None):
         """
         Save an image with the proper OME xml metadata.
 
@@ -85,7 +93,7 @@ class OmeTifWriter:
         if self.silent_pass:
             return
 
-        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._use_big_tiff(data=data))
+        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY)
 
         shape = data.shape
         assert (len(shape) == 5 or len(shape) == 4 or len(shape) == 3)
@@ -157,18 +165,18 @@ class OmeTifWriter:
     def size_y(self):
         return self.omeMetadata.image().Pixels.SizeY
 
-    @classmethod
-    def _use_big_tiff(cls, data: np.ndarray, boundary: int = 2**21) -> bool:
+    @staticmethod
+    def _size_of_ndarray(data: np.ndarray) -> int:
         """
-        Check if the data is large enough to require bigtiff
+        Calculate the size of data to determine if we require bigtiff
         Returns
         -------
-        True if > 2 GB, False if < 2 GB
+        the size of data in bytes
         """
         if data is None:
-            return False
+            return 0
         size = data.size * data.itemsize
-        return True if size >= boundary else False
+        return size
 
     # set up some sensible defaults from provided info
     def _make_meta(self, data, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None):
@@ -222,12 +230,12 @@ class OmeTifWriter:
 
         if channel_names is None:
             for i in range(pixels.SizeC):
-                pixels.Channel(i).set_ID("Channel:0:"+str(i))
-                pixels.Channel(i).set_Name("C:"+str(i))
+                pixels.Channel(i).set_ID("Channel:0:" + str(i))
+                pixels.Channel(i).set_Name("C:" + str(i))
         else:
             for i in range(pixels.SizeC):
                 name = channel_names[i]
-                pixels.Channel(i).set_ID("Channel:0:"+str(i))
+                pixels.Channel(i).set_ID("Channel:0:" + str(i))
                 pixels.Channel(i).set_Name(name)
 
         if channel_colors is not None:

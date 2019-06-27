@@ -5,11 +5,11 @@
 import os
 import unittest
 
-import pytest
 import numpy as np
-
+import pytest
 from aicsimageio.readers import DefaultReader
 from aicsimageio.writers import PngWriter
+
 from .transformation import transform
 
 
@@ -18,7 +18,7 @@ class TestPngWriter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.dir_path = os.path.dirname(os.path.realpath(__file__))
-        cls.file = os.path.join(cls.dir_path, 'img', 'pngwriter_test_output.png')
+        cls.file = os.path.join(cls.dir_path, 'resources', 'pngwriter_test_output.png')
         cls.writer = PngWriter(cls.file, overwrite_file=True)
         # unfortunately, the rounding is necessary - scipy.fromimage() only returns integer values for pixels
         cls.image = np.round(transform(np.random.rand(40, 3, 128, 256)))

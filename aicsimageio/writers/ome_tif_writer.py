@@ -82,14 +82,6 @@ class OmeTifWriter:
         -------
 
         """
-        """
-
-        :param data
-        :param channel_names
-        :param image_name
-        :param pixels_physical_size
-        :param channel_colors
-        """
         if self.silent_pass:
             return
 

@@ -3,7 +3,7 @@ from xml.etree import cElementTree as etree
 import numpy as np
 import pytest
 
-from aicsimageio import AICSImage, exceptions, readers
+from aicsimageio import AICSImage, exceptions, imread, readers
 from aicsimageio.vendor import omexml
 
 # Example files
@@ -106,3 +106,14 @@ def test_metadata(resources_dir, filename, expected_metadata_type):
 def test_reader(resources_dir, filename, expected_reader):
     img = AICSImage(resources_dir / filename)
     assert isinstance(img.reader, expected_reader)
+
+
+@pytest.mark.parametrize("filename, expected_shape", [
+    (PNG_FILE, (1, 1, 1, 800, 537, 4)),
+    (TIF_FILE, (1, 1, 1, 1, 325, 475)),
+    (OME_FILE, (1, 1, 1, 1, 325, 475)),
+    (CZI_FILE, (1, 1, 1, 1, 325, 475)),
+])
+def test_imread(resources_dir, filename, expected_shape):
+    img = imread(resources_dir / filename)
+    assert img.shape == expected_shape

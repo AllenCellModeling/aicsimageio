@@ -176,3 +176,7 @@ class AICSImage:
 
     def __repr__(self) -> str:
         return f'<AICSImage [{type(self.reader).__name__}]>'
+
+
+def imread(data: types.ImageLike, **kwargs):
+    return AICSImage(data, **kwargs).data

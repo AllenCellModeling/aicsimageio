@@ -1,37 +1,54 @@
-# AICS Image library
-The aicsimageio package is designed to provide an easy interface with CZI, OME-TIFF, and PNG file formats.
+# AICSImageIO
 
-## Level of Support
-We are not currently supporting this code for external use, but simply releasing it 
-to the community AS IS. It is used for within our organization. We are not able to 
-provide any guarantees of support. The community is welcome to submit issues, but 
-you should not expect an active response.
+[![build status](https://travis-ci.com/AllenCellModeling/aicsimageio.svg?branch=master)](https://travis-ci.com/AllenCellModeling/aicsimageio)
+[![codecov](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
+
+A Python library for reading and writing image data with specific support for handling bio-formats.
+
+---
+
+## Features
+* Supports reading metadata and imaging data from file path or buffered bytes for:
+    * `CZI`
+    * `OME-TIFF`
+    * `TIFF`
+    * Any additional format supported by `imageio`
+* Supports writing metadata and imaging data for:
+    * `OME-TIFF`
+    * `TIFF`
+    * Any additional format supported by `imageio`
+
+### Disclaimer:
+This package is under heavy revision in preparation for version 3.0.0 release. The quick start below is representative
+of how to interact with the package under 3.0.0 and not under the current stable release.
+
+## Quick Start
+```
+from aicsimageio import AICSImage, imread
+
+# For numpy array of image data
+im = imread("/path/to/your/file_or_buffer.ome.tiff")
+
+# For AICSImage object that
+im = AICSImage("/path/to/your/file_or_buffer.ome.tiff")
+
+# Image data is stored in `data` attribute
+im.data  # returns the image data numpy array
+
+# Image metadata is stored in `metadata` attribute
+im.metadata  # returns whichever metadata parser best suites the file format
+```
+
+## Notes
+* Image data numpy arrays are always returned as six dimensional in dimension order `STCZYX`
+or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
+* Each file format may use a different metadata parser it is dependent on the reader's implementation.
+
+## Installation
+**Stable Release:** `pip install aicsimageio`<br>
+**Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
 
 ## Development
-See [BUILD.md](BUILD.md) for information operations related to developing the code.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
-## Usage
-
-```
-from aicsimageio import AICSImage
-
-img = AICSImage("my_ome.tiff_or_tiff_or_czi")
-
-# Get the image data as TCZYX
-img.data
-
-# Get channel information if you have an OME tiff
-pixels = img.metadata.image().Pixels
-channels = [pixels.Channel(i) for i in range(pixels.get_channel_count())]
-channels = [{"name": c.get_Name(), "index": c.get_ID()} for c in channels]
-
-
-# Note on channel id differences between aicsimageio.OMEXML and lxml.etree._Element:
-        # Under lxml.etree._Element, Channel Id looks like the following: `'Channel:0'`
-        # Where the single integer corresponds to the channel dimension index in image data.
-        # Under aicsimageio, the same Channel Id looks like the following: `'Channel:0:0'`
-        # Where it is the second of the two integers that corresponds to the channel dimension index in image data.
-        # Regardless of structure, these can both be parsed as integers with the following:
-        # `int(channel_id.split(":")[-1])`
-
-```
+***Free software: Allen Institute Software License***

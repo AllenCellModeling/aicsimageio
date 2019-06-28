@@ -1,0 +1,3 @@
+ignore:
+    - "aicsimageio/vendor/.*"
+    - "**/__init__.py"

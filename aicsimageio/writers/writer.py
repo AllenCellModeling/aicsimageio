@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .. import constants
-from .. import types
+from .. import constants, types
 
 
 class Writer(ABC):
@@ -45,4 +44,3 @@ class Writer(ABC):
     def save(self, data, dims=constants.DEFAULT_DIMENSION_ORDER, **kwargs) -> None:
         """Write to open file"""
         pass
-

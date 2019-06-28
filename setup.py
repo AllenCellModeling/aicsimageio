@@ -73,10 +73,9 @@ setup(
     ),
     author_email=(
         "danielt@alleninstitute.org, "
-        "mattb@alleninstitute.org, "
+        "bowdenm@spu.edu, "
         "jamies@alleninstitute.org, "
         "jacksonb@alleninstitute.org, "
-        "zacharyc@alleninstitute.org"
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",

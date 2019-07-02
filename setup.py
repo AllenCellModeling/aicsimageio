@@ -46,7 +46,7 @@ interactive_requirements = [
     "altair",
     "jupyterlab",
     "matplotlib",
-    "PIL",
+    "pillow",
 ]
 
 extra_requirements = {

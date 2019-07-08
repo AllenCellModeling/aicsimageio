@@ -64,18 +64,10 @@ extra_requirements = {
 }
 
 setup(
-    author=(
-        "Dan Toloudis, "
-        "Matthew Bowden, "
-        "Jamie Sherman, "
-        "Jackson Maxfield Brown, "
-        "Zach Crabtree"
-    ),
+    author="Allen Institute for Cell Science",
     author_email=(
-        "danielt@alleninstitute.org, "
-        "bowdenm@spu.edu, "
-        "jamies@alleninstitute.org, "
         "jacksonb@alleninstitute.org, "
+        "bowdenm@spu.edu"
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",

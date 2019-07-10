@@ -1,2 +1,2 @@
-from .ome_tif_writer import OmeTifWriter  # noqa: F401
-from .pngWriter import PngWriter  # noqa: F401
+from .ome_tiff_writer import OmeTiffWriter  # noqa: F401
+from .png_writer import PngWriter  # noqa: F401

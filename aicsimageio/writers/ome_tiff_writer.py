@@ -1,8 +1,10 @@
 from __future__ import print_function
 
-import numpy as np
 import os
+
+import numpy as np
 import tifffile
+
 from aicsimageio.vendor import omexml
 
 BYTE_BOUNDARY = 2 ** 21
@@ -13,24 +15,24 @@ BYTE_BOUNDARY = 2 ** 21
 # stopgap working value
 
 
-class OmeTifWriter:
+class OmeTiffWriter:
     """This class can take arrays of pixel values and do the necessary metadata creation to write them
     properly in OME xml format.
 
     Example:
         image = numpy.ndarray([1, 10, 3, 1024, 2048])
         # There needs to be some sort of data inside the image array
-        writer = omeTifWriter.OmeTifWriter("file.ome.tif")
+        writer = ome_tiff_writer.OmeTiffWriter("file.ome.tif")
         writer.save(image)
 
         image2 = numpy.ndarray([5, 486, 210])
         # There needs to be some sort of data inside the image2 array
-        with omeTifWriter.OmeTifWriter("file2.ome.tif") as writer2:
+        with ome_tiff_writer.OmeTiffWriter("file2.ome.tif") as writer2:
             writer2.save(image2)
 
         # Convert a CZI file into OME Tif.
         reader = cziReader.CziReader("file3.czi")
-        writer = omeTifWriter.OmeTifWriter("file3.ome.tif")
+        writer = ome_tiff_writer.OmeTiffWriter("file3.ome.tif")
         writer.save(reader.load())
 
     """

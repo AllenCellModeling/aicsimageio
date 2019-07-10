@@ -1,6 +1,7 @@
+import os
+
 import imageio
 import numpy as np
-import os
 
 
 class PngWriter:
@@ -9,12 +10,12 @@ class PngWriter:
     Example:
         image = numpy.ndarray([3, 1024, 2048])
         # There needs to be some sort of data inside the image array
-        writer = pngWriter.PngWriter("file.png")
+        writer = png_writer.PngWriter("file.png")
         writer.save(image)
 
         image2 = numpy.ndarray([3, 1024, 2048])
         # There needs to be some sort of data inside the image2 array
-        with pngWriter.PngWriter("file2.png") as writer2:
+        with png_writer.PngWriter("file2.png") as writer2:
             writer2.save(image2)
     """
 
@@ -70,7 +71,7 @@ class PngWriter:
         imageio.imwrite(self.file_path, data, format="png")
 
     def save_slice(self, data, z=0, c=0, t=0):
-        """Exactly the same functionality as save() but allows the interface to be the same as OmeTifWriter
+        """Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter
 
         :param data: a CYX or YX array with C being the rgb channels for each pixel value
         :param z: an arbitrary z index that does nothing

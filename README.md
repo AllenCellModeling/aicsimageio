@@ -51,4 +51,4 @@ or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
-***Free software: Allen Institute Software License***
+***Free software: BSD-3-Clause***

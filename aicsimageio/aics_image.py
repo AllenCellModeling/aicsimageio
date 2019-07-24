@@ -82,7 +82,6 @@ class AICSImage:
         ----------
         data: String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions
         kwargs: Parameters to be passed through to the reader class
-                       known_dims (required Tif/Png/Gif/numpy.ndarray) known Dimensions of input file, ie "TCZYX"
                        max_workers (optional Czi) specifies the number of worker threads for the backend library
         """
         self.dims = constants.DEFAULT_DIMENSION_ORDER

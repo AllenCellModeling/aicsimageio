@@ -18,13 +18,17 @@ script:
 # create the Github repo and add it to Travis, run the
 # following command to finish PyPI deployment setup:
 # $ travis encrypt --add deploy.password
+# Or just use this website:
+# Repository name: AllenCellModeling/aicsimageio
+# http://rkh.github.io/travis-encrypt/public/index.html
 deploy:
   provider: pypi
   distributions: sdist bdist_wheel
-  user: AllenCellModeling
+  user: aicspypi
   password:
-    secure: PLEASE_REPLACE_ME
+    secure: Br8fLgBI4xZoM+suSb6yylh/WY6YC4CKIB3/D+4tBRCpVuhs/KrNU1ZZIe6Q9HX6t6D1WNz7VKHc5qnDK8Ld4dN3M7Uxb3fqZxHDkKWiCjGZA5ALtzFeUOLzqFjbNhEjTGbErbyRt93br2cIL+PYHDRvN7CRTb41adb9cA1aRXQCs2qhvaahpaxD+XzqbnZQbzBuDK3TWtX/6kgdV1tLv0HSw2wbXlaC1ylYZJ5opjzZRrOAbBE/WHiXZsLK7x0Tgy2hLU77nIg83DzXhD61rkK+V9r1TUpP/JQeqdBcJgwEPyIi0M2GrsQG3Npcjv8G6jeylFQiW7qQQlRXT1PE+NrOHYRD1YuzRDNMS5OtMfc5sIMSOJntfJbqhKUw4cbGp9VXUaez1bGmrQ8aAb/99SesMES/1de09XjZKdpLm2mcJwaQdfncEYl95X9qdVGDdrDq39vY4UsZltkA8DuqgVkZgIXeZn/FIn9y/YmYn/5TF2cH5Ds10X0LAeFrIyzWhETBJo3s2AayGxSfkJsT73n+YW8Ic1FtLQ5jRzQZ6BApSoAup2/4za4YGQ5f8Rva7OejutFQrmHmfC30T01FQGkeEvcoBV/78XLT/zmoema/UyOd36WpJHdcVTHaXoNBd6vxRMnLfu5u02wyzFUfnwoVTJqHdud9j/0xOc9osUo=
   on:
+    branch: master
     tags: true
     repo: AllenCellModeling/aicsimageio
     python: 3.7

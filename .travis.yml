@@ -34,7 +34,6 @@ deploy:
   password:
     secure: wnLqFMs7RBxSw94HR72bMu9wplrPUgASPgP+U1ur5T+MUy8xBjgOn5qSzh+LzyJ4y9ziQ9VMI+JyYdBqLpp+vrYpNuh1vq+Tv4o/hLrLj40WJs1DyqgglZSmTwHnjXgRwrCxg4ctHfrbsH+pFPmwpqWp1fbA9FPiPtUFTdAMf//IfXtsbPZlOru7HSMnn5mHSuRV74Bzp1tUHDr4QeBchLP4aen9KyGOcMrw76UqPXHrg0ESCqh/GKeNcGhsFk/pJbYfUUkdmNirZEVCUF68L7GJHWw43qs7ekXyt2E2qk8a3rz8t8R2wOuOK418u3/KOmM3NBb20r+CijyYc44wtvLNUgS9YLA8Do01DLF19+MExWS6XDWRcwUI5BMAjx8ajBFeqOYB2eiwqYRyb+K2ujoq2380PBDb2bIoZ/DqpyGuMv/Py5P+Dby86m+cXExC/hkDJ2/PT1Pn6RKZWHi1D12fnZ6fQfTdSpKgdY5Gay42SuaphmrCSDAWydqOikUEYusob3oDLkjKmJPAvsHR+tMn7KBQ2sLtpbYQn0L9yc4Jk4mxZnL4oBvZP2FnPLtatQLN6ztBBUq2fr4u7RAmKlpxi9i1wLpnFkh217lV61zS428htCEkBtF/Jvr7pz9myoULPMYdLExg8p+Z+j9XbkuuaQ1rKuV0KJo5Zd1XyMQ=
   on:
-    branch: fix-release
     tags: true
     repo: AllenCellModeling/aicsimageio
     python: 3.7

@@ -109,7 +109,7 @@ def test_reader(resources_dir, filename, expected_reader):
 
 
 @pytest.mark.parametrize("filename, expected_shape", [
-    (PNG_FILE, (1, 1, 1, 800, 537, 4)),
+    (PNG_FILE, (1, 1, 4, 1, 800, 537)),
     (TIF_FILE, (1, 1, 1, 1, 325, 475)),
     (OME_FILE, (1, 1, 1, 1, 325, 475)),
     (CZI_FILE, (1, 1, 1, 1, 325, 475)),

@@ -28,6 +28,8 @@ script:
 # Details here:
 # https://docs.travis-ci.com/user/deployment/pypi/
 deploy:
+  skip_cleanup: true
+  skip_existing: true
   provider: pypi
   distributions: sdist bdist_wheel
   user: aicspypi

@@ -25,6 +25,12 @@ class DefaultReader(Reader):
     -----
     Because this is simply a wrapper around imageio, no metadata is returned. However, dimension order is returned with
     dimensions assumed in order but with extra dimensions removed depending on image shape.
+
+    This reader always returns the first YX plane of an image. If you need to read GIFs for example, please use
+    `imageio.mimread` to get a list of YXC planes for the frames of the GIF.
+
+    For more details about how `imageio.imread`, differs from `imageio.volread` and `imageio.mimread`, please refer to
+    their documentation.
     """
 
     @property
@@ -37,13 +43,21 @@ class DefaultReader(Reader):
     @property
     def dims(self) -> str:
         """
-        Remove n number of characters from dimension order where n is number of dimensions in image data.
+        `imageio.imread` returns the first YX plane of an image, except in the case where the image is RGB / RGBA, in
+        which case it returns the first YXC plane of an image.
 
-        That said these dimensions are probably incorrect because jpg for example is actually 'XYC' dimension order,
-        but it's our assumption to make. You can override the dims by using the property setter.
+        This dims property handles those cases by making assumptions about the dimension order based off the shape of
+        the data stored in the reader. In the case where more data than an YXC plane is returned, it uses the
+        `guess_dim_order` function. However, I can't tell when that should ever get run and is really just used as a
+        safety catch all.
         """
         if self._dims is None:
-            self._dims = self.guess_dim_order(self.data.shape)
+            if len(self.data.shape) == 2:
+                self._dims = "YX"
+            elif len(self.data.shape) == 3:
+                self._dims = "YXC"
+            else:
+                self._dims = self.guess_dim_order(self.data.shape)
 
         return self._dims
 

@@ -87,6 +87,7 @@ setup(
     install_requires=requirements,
     license="BSD-3-Clause",
     long_description=readme,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords="aicsimageio, allen cell, imaging, computational biology",
     name="aicsimageio",

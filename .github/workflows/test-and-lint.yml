@@ -23,8 +23,7 @@ jobs:
         pip install .[test]
     - name: Test with pytest
       run: |
-        python quilt3distribute/tests/data/zzz_generate_fake_dataset.py
-        pytest --cov-report html --cov-report xml --cov=quilt3distribute quilt3distribute/tests/
+        pytest --cov-report html --cov-report xml --cov=aicsimageio aicsimageio/tests/
         codecov -t ${{ secrets.CODECOV_TOKEN }}
 
   lint:
@@ -42,4 +41,4 @@ jobs:
         pip install .[test]
     - name: Lint with flake8
       run: |
-        flake8 quilt3distribute --count --verbose --max-line-length=127 --show-source --statistics
+        flake8 aicsimageio --count --verbose --max-line-length=127 --show-source --statistics

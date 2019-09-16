@@ -4,7 +4,7 @@
 * Remember that this is a volunteer-driven project, and that contributions are welcome :)
 
 ## Bug reports:
-* Quilt3Distribute version:
+* aicsimageio version:
 * Python version:
 * Operating System:
 

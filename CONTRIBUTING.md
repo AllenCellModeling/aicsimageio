@@ -25,9 +25,9 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     Now you can make your changes locally.
 
 5. When you're done making changes, check that your changes pass linting and
-   tests, including testing other Python versions with tox:
+   tests, including testing other Python versions with make:
 
-    $ tox
+    $ make build
 
 6. Commit your changes and push your branch to GitHub:
 
@@ -47,4 +47,4 @@ $ bumpversion patch # possible: major / minor / patch
 $ git push
 $ git push --tags
 
-Travis will then deploy to PyPI if tests pass.
+Make and merge a PR to `stable` and GitHub will then deploy to PyPI once merged.

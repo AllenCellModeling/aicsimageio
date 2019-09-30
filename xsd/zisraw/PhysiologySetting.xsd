@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         elementFormDefault="qualified"
+         attributeFormDefault="unqualified">
+  <xs:include schemaLocation="CommonTypes.xsd"/>
+  <xs:include schemaLocation="DisplaySetting.xsd"/>
+
+  <xs:element name="PhysiologyData">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="ViewMode" minOccurs="0" type="PhysiologyViewMode"/>
+        <xs:element name="MeasurementSettings" minOccurs="0" type="PhysiologyMeasurementSettings"/>
+        <xs:element name="ChartSettings" minOccurs="0" type="PhysiologyChartSettings"/>
+        <xs:element name="DisplaySetting" minOccurs="0" type="DisplaySetting"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="PhysiologyViewMode">
+    <xs:all>
+      <xs:element name="Mode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The physiology view mode.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="ImageChartViewMode"/>
+            <xs:enumeration value="ImageChartTableViewMode"/>
+            <xs:enumeration value="ImageMultiChartViewMode"/>
+            <xs:enumeration value="ImageMultiChartTableViewMode"/>
+            <xs:enumeration value="MultiImageMultiChartViewMode"/>
+            <xs:enumeration value="MultiImageMultiChartTableViewMode"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="FollowAcquisition" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Defines whether to follow the acquisition.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ShowTimeLineView" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Defines whether the timeline view is shown or not.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="PhysiologyMeasurementSettings">
+    <xs:all>
+      
+      <xs:element name="FeatureMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The modes of the measurement feature.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Area"/>
+            <xs:enumeration value="Mean"/>
+            <xs:enumeration value="Sum1"/>
+            <xs:enumeration value="Maximum"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="CorrectionMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The background correction mode for physiology.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="LocalROI"/>
+            <xs:enumeration value="Constant"/>
+            <xs:enumeration value="Camera"/>
+            <xs:enumeration value="Series"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="PhysiologyChartSettings">
+    <xs:all>
+
+      <xs:element name="XAxisUnitType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Units of the Axis.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Auto"/>
+            <xs:enumeration value="Fixed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="XAxisUnit" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The time unit for the x axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="XAxisScalingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Scaling of the X axis.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Auto"/>
+            <xs:enumeration value="Normalized"/>
+            <xs:enumeration value="Fixed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="YAxisScalingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Scaling of the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Auto"/>
+            <xs:enumeration value="Normalized"/>
+            <xs:enumeration value="Fixed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="XAxisMaxValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum value for the x axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="XAxisMinValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The minimum value for the x axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="MaxXAxisMinValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum for the minimum value of the x axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="YAxisMaxValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum value for the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="YAxisMinValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The minimum value for the Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="MaxYAxisLeftMinValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum for the minimum value of the left Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="MaxYAxisRightMinValue" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum for the minimum value of the right Y axis.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TickSettingType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Tick Settings. 
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Auto"/>
+            <xs:enumeration value="Fixed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="TickSettingMajor" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum of the tick settings.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TickSettingMajorMin" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>
+            The minimum for the maximum of the tick settings.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TickSettingMinimum" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>
+            The minimum of the tick settings.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TickSettingMinimumMin" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>
+            The minimum for the minimum of the tick settings.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TickSettingMinimumMax" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum for the minimum of the tick settings.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>
+
+

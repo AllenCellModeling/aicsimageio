@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  ImageAnalysisSetting - XSD Definition for ImageAnalysisSetting
+  H.Zoephel, 2011
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         elementFormDefault="qualified"
+         attributeFormDefault="unqualified">
+  <xs:include schemaLocation="CommonTypes.xsd"/>
+  <xs:include schemaLocation="Layers.xsd"/>
+  
+  <!-- ELEMENT: MeasurementAppData -->
+  <xs:element name="MeasurementAppData">
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="ImageAnalysisSetting" type="ImageAnalysisSetting"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- COMPLEXTYPE: ImageAnalysisSetting-->
+  <xs:complexType name="ImageAnalysisSetting">
+    <xs:all>
+      <xs:element name="Version" type="xs:string" minOccurs="0" default="1.0"/>
+
+      <!-- START Additional items for Version = 1.1 -->
+      <xs:element name="TilingMode" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="NoTiling"/>
+            <xs:enumeration value="TilingDefault"/>
+            <xs:enumeration value="Tiling"/>
+            <xs:enumeration value="AutoTiling"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="TileSize" type="xs:integer" minOccurs="0"/>
+      <xs:element name="MaxParticleSize" type="xs:double" minOccurs="0"/>
+      <xs:element name="MaxDisplaySize" type="xs:integer" minOccurs="0"/>
+
+      <xs:element name="AnalysisStepCollection" type="AnalysisStepCollection"/>
+      <xs:element name="AdditionalChannelSetting" type="AdditionalChannelSetting"/>
+
+      <xs:element name="AnalysisFrameTeach" type="AnalysisSourceItem"/>
+      <xs:element name="AnalysisFrameRun" type="AnalysisSourceItem"/>
+      <xs:element name="AnalysisFeatures" type="AnalysisSourceItem"/>
+      <xs:element name="AnalysisClass" type="AnalysisSourceItem"/>
+      <xs:element name="AnalysisClassSelect" type="AnalysisSourceItem"/>
+
+      <xs:element name="MeasureFrame" type="MeasureFrame"/>
+      <!-- END Additional items for Version = 1.1 -->
+      
+      <xs:element name="Geometry" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="GenerateImageDocument" type="xs:boolean"/>
+            <xs:element name="GenerateTableDocuments" type="xs:boolean"/>
+            <xs:element name="AddTablesToImage" type="xs:boolean"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Script">
+        <xs:complexType>
+          <xs:all>
+            <!-- New element for V 1.1 -->
+            <xs:element name="SegmenterSource" type="xs:string" minOccurs="0"/>
+          </xs:all>
+          <xs:attribute name="Name" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      
+      <xs:element name="SubImageDimension" type="xs:string"/>
+      <xs:element name="RegionClass" type="RegionClass"/>
+      <xs:element name="RegionClassTemplate" type="RegionClass"/>
+    </xs:all>
+      
+  </xs:complexType>
+
+
+  <!-- COMPLEXTYPE: RegionClass-->
+  <xs:complexType name="RegionClass">
+    <xs:sequence>
+      <xs:element name="InstanceRegionType" type="InstanceRegionType" minOccurs="0"/>
+      <xs:element name="Type" type="RegionClassType"/>
+      <xs:element name="ChannelName" type="xs:string" minOccurs="0"/>
+      <xs:element name="Color" type="xs:string"/>
+      
+      <!-- Note / compare: -->
+      <!-- V 1.0 -->
+      <xs:element name="Parameters" type="Parameters1" minOccurs="0"/>
+      <!-- V 1.1 -->
+      <xs:element name="ParametersCollection" type="ParametersCollection" minOccurs="0"/>
+      
+      <!-- START Additional element for V 1.1: -->
+      <xs:element name="InteractiveParameters" type="Parameters1" minOccurs="0"/>
+      <xs:element name="Conditions" type="RegionClassConditions" minOccurs="0"/>
+      <!-- END Additional element for V 1.1 -->
+
+      <xs:element name="FeatureMinMaxCollections" type="FeatureMinMaxCollections" minOccurs="0"/>
+      <xs:element name="RegionClass" type="RegionClass" minOccurs="0" maxOccurs="unbounded"/>
+      
+      
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="Id" type="xs:integer"/>
+  </xs:complexType>
+
+  <xs:complexType name="Parameters1">
+    <xs:sequence>
+      <xs:choice  maxOccurs="unbounded">
+        <xs:element name="Parameter" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="Key" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <!-- Additional attributes for V 1.1 -->
+    <xs:attribute name="Key" type="xs:string"/>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="ParametersCollection">
+    <xs:sequence>
+      <xs:element name="Parameters" type="Parameters1" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name ="RegionClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Single"/>
+      <xs:enumeration value="Collection"/>
+      <xs:enumeration value="Or"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name ="InstanceRegionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Polygon" />
+      <xs:enumeration value="Rectangle" />
+      <xs:enumeration value="Ellipse" />
+      <xs:enumeration value="Point" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name ="AttributeDescription">
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeRange">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Minimum" type="xs:double"/>
+          <xs:element name="Maximum" type="xs:double"/>
+          <xs:element name="ValueLower" type="xs:double"/>
+          <xs:element name="ValueUpper" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeValueDouble">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Minimum" type="xs:double"/>
+          <xs:element name="Maximum" type="xs:double"/>
+          <xs:element name="Value" type="xs:double"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeValueInteger">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Minimum" type="xs:integer"/>
+          <xs:element name="Maximum" type="xs:integer"/>
+          <xs:element name="Value" type="xs:integer"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeBoolean">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Value" type="xs:boolean"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeText">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Text" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeThreshold">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Minimum1" type="xs:integer"/>
+          <xs:element name="Maximum1" type="xs:integer"/>
+          <xs:element name="ValueLower1" type="xs:integer"/>
+          <xs:element name="ValueUpper1" type="xs:integer"/>
+          <xs:element name="Minimum2" type="xs:integer"/>
+          <xs:element name="Maximum2" type="xs:integer"/>
+          <xs:element name="ValueLower2" type="xs:integer"/>
+          <xs:element name="ValueUpper2" type="xs:integer"/>
+          <xs:element name="Minimum3" type="xs:integer"/>
+          <xs:element name="Maximum3" type="xs:integer"/>
+          <xs:element name="ValueLower3" type="xs:integer"/>
+          <xs:element name="ValueUpper3" type="xs:integer"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeSetItem">
+    <xs:sequence>
+      <xs:element name="ID" type="xs:integer"/>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name ="AttributeSet">
+    <xs:complexContent>
+      <xs:extension base="AttributeDescription">
+        <xs:sequence>
+          <xs:element name="Value" type="AttributeSetItem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name ="FeatureMinMax">
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="Minimum" type="xs:double"/>
+    <xs:attribute name="Maximum" type="xs:double"/>
+    <xs:attribute name="IsMinimumEnabled" type="xs:boolean"/>
+    <xs:attribute name="IsMaximumEnabled" type="xs:boolean"/>
+  </xs:complexType>
+
+  <xs:complexType name="FeatureMinMaxCollection">
+    <xs:sequence>
+      <xs:element name="FeatureMinMax" type="FeatureMinMax" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FeatureMinMaxCollections">
+    <xs:sequence>
+      <xs:element name="FeatureMinMaxCollection" type="FeatureMinMaxCollection" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RegionClassConditions">
+    <xs:sequence>
+      <xs:element name="Condition" type="RegionClassCondition" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RegionClassCondition">
+    <xs:all>
+      <xs:element name="Name" type="xs:string" minOccurs="0"/>
+      <xs:element name="Source" type="xs:string" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Key" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="AnalysisStepCollection">
+    <xs:sequence>
+      <xs:element name="AnalysisStep" type="AnalysisStep" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AnalysisStep">
+    <xs:all>
+      <xs:element name="MustExecute" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="IsInteractive" type="xs:boolean" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="AdditionalChannelSetting">
+    <xs:all>
+      <xs:element name="ParametersCollection" type="ParametersCollection" minOccurs="0"/>
+      <xs:element name="AdditionalChannels" type="AdditionalChannelCollection" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="AdditionalChannelCollection">
+    <xs:sequence>
+      <xs:element name="AdditionalChannel" type="AdditionalChannel" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="AdditionalChannel">
+    <xs:all>
+      <xs:element name="ChannelName" type="xs:string" minOccurs="0"/>
+      <xs:element name="MustExecute" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="IsInteractive" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="Parameters" type="Parameters1" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="AnalysisSourceItem">
+    <xs:all>
+      <xs:element name="Source" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="MeasureFrame">
+    <xs:all>
+      <xs:element name="FrameMode" type="FrameMode" minOccurs="0"/>
+      <xs:element name="IsFrameMaximize" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="Complement" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="GraphicLayer" type="Layer" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:simpleType name ="FrameMode">
+    <xs:restriction base ="xs:string">
+      <xs:enumeration value="InsideOn" />
+      <xs:enumeration value="Inside" />
+      <xs:enumeration value="Cut" />
+      <xs:enumeration value="TouchedOnly" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+</xs:schema>
+
+
+
+

@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  INFORMATION - XSD Definition for (Image)Information
+  W.Bayerlein, Apr-2010
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="CommonTypes.xsd" />
+  <xs:include schemaLocation="Dimensions.xsd" />
+  <xs:include schemaLocation="Instrument.xsd" />
+  <xs:include schemaLocation="ImageAnalysisSetting.xsd"/>
+  <xs:include schemaLocation="Timeline.xsd"/>
+
+  <!-- Element: Information -->
+  <xs:element name="Information" type="Information"/>
+
+  <!-- COMPLEXTYPE : Information -->
+  <xs:complexType name="Information">
+    <xs:all>
+      <xs:element minOccurs="0" name="Image" type="Image" />
+      <xs:element minOccurs="0" name="TimelineTracks" type="TimelineTracks" />
+      <xs:element minOccurs="0" name="User" type="User" />
+      <xs:element minOccurs="0" name="Institution" type="Institution" />
+      <xs:element minOccurs="0" name="Document" type="Document" />
+      <xs:element minOccurs="0" name="Application" type="Application" />
+      <xs:element minOccurs="0" name="Environment" type="Environment" />
+      <xs:element minOccurs="0" name="Processing" type="Processing" />
+      <xs:element minOccurs="0" name="Instrument" type="Instrument" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Image -->
+  <xs:complexType name="Image">
+    <xs:all>
+      <xs:element name="SizeX" type="xs:integer" default="1" minOccurs="0"/>
+      <xs:element name="SizeY" type="xs:integer" default="1" minOccurs="0"/>
+      <xs:element name="SizeC" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeZ" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeT" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeH" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeR" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeV" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeS" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeI" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeM" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="SizeB" type="xs:integer" default="1" minOccurs="0" />
+
+      <xs:element name="PixelType" type="PixelType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            PixelType for the entire image is for informative purpose only.
+            In Dimensions/Channels/Channel each Channel has its own PixelType which might be different
+            from the other channels' pixel types.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ComponentBitCount" type="xs:integer" default="0" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Valid bits per pixel of a pixel component.
+            ComponentBitCount for the entire image is for informative purpose only. In Dimensions/Channels/Channel each Channel has its own ComponentBitCount element.
+            If not specified or 0, the component bit count is derived from the pixel type.
+            Normally, this value is used with 16 bit images only to indicate the maximum possible valid bits
+            of the sensor, e.g. 12 defines a 12 bit camera.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="OriginalScanData" type="xs:boolean" default="true" minOccurs="0" />
+
+      <xs:element name="AcquisitionDateAndTime" type="xs:dateTime" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The acquisition date of the Image.
+            The element contains a string in the ISO 8601 dateTime format (i.e. 1988-04-07T18:39:09)
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AcquisitionDuration" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The duration of the image acquisition. [unit: ms]
+            In case of Pollux, the acquisition duration includes the focus surface evaluation as well as the tiles scan duration.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="OriginalCompressionMethod" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The original compression method used when the file was initially saved.
+            Use members of the CompressionMethods type for string content, e.g. "Jpg" or "JpgXr".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OriginalEncodingQuality" type="xs:integer" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The original encoding quality (10..100) used when the file was initially saved and has used a compression method.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- Dimensions Info -->
+      <xs:element name="Dimensions" type="Dimensions" minOccurs="0"/>
+
+      <!-- Hardware Info -->
+      <xs:element name="MicroscopeRef" type="MicroscopeRef" minOccurs="0"/>
+      <xs:element name="MicroscopeSettings" type="ImageMicroscopeSettings" minOccurs="0"/>
+      <xs:element name="ObjectiveSettings" type="InstrumentObjectiveSettings" minOccurs="0"/>
+      <xs:element name="TubeLenses" type="ImageTubeLenses" minOccurs="0"/>
+      <xs:element name="Specimen" type="SpecimenInfo" minOccurs="0"/>
+      
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: ImageMicroscopeSettings -->
+  <xs:complexType name="ImageMicroscopeSettings">
+    <xs:all>
+      <xs:element name="ZoomSettings" type="MicroscopeZoomSettings" minOccurs="0"/>
+      <xs:element name="EyepieceSettings" type="MicroscopeEyepieceSettings" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: MicroscopeZoomSettings -->
+  <xs:complexType name="MicroscopeZoomSettings">
+    <xs:all>
+      <xs:element name="Magnification" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The Zoom value of the microscope (e.g. in a Stereo microscope). [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: MicroscopeEyepieceSettings -->
+  <xs:complexType name="MicroscopeEyepieceSettings">
+    <xs:all>
+      <xs:element name="TotalMagnification" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The total magnification present at the eyepiece. [units:none]
+            This is for informational purpose.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: SpecimenInfo -->
+  <xs:complexType name="SpecimenInfo">
+    <xs:annotation>
+      <xs:documentation>
+        Information about the specimen that was used in the acquisition.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="CoverglassRefractiveIndex" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The refractive index of the cover glass or the sample carrier bottom. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CoverglassThickness" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The thickness of the cover glass or the sample carrier bottom. [units:µm]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="CoverglassOffset" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The offset specifies the distance of the bottom to the contact surface of the microscope stage.
+            E.g. for multi wells this is typically a skirt which may also be 0 for skirt-less multi wells. For slide holders,
+            this may be the thickness or the slide holder itself. The bottom offset may be used to calculate 
+            the optimal or working focus position or other optical parameters, e.g. the optimal value for correctable objectives.
+            [units:µm]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CoverglassMaterial" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The material of the coverglass or the sample carrier bottom.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Glass"/>
+            <xs:enumeration value="Polystyrene"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="EmbeddingThickness" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The thickness of the embedding media (between coverglass and specimen).
+            [units:µm]
+          </xs:documentation>
+        </xs:annotation>
+        <!--TODO: this definition is rather fuzzy...-->
+      </xs:element>
+
+      <xs:element name="EmbeddingRefractiveIndex" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The refractive index of the embedding media. [units:none]
+            E.g. necessary for TIRF.
+          </xs:documentation>
+        </xs:annotation>
+        <!--TODO: this definition is rather fuzzy...-->
+      </xs:element>
+
+      <xs:element name="TIRFGlassRefractiveIndex" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The TIRF refractive index glass describes at the same time the refractive index
+            of the objective, of the immersion and of the bottom of the petri dish for a TIRF system
+            (i.e. the refractive indices of these three objects should ideally have the same value).
+            [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DiameterAgarCylinder" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The diameter of the agar cylinder (for SPIM-acquisitions).
+            [units:µm]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: ImageTubeLenses -->
+  <xs:complexType name="ImageTubeLenses">
+    <xs:annotation>
+      <xs:documentation>
+        This collection of tube lenses can contain one or two tube lenses, in general.
+        Two lenses are possible e.g. if the optovar revolver has a Bertrand lens at its current position, while
+        at the same time the reflector changer has selected an optovar lens as its current element.
+        Then, both of these lenses are supposed to be contained in this list.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TubeLensRef" type="TubeLensRef" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ComplexType: User -->
+  <xs:complexType name="User">
+    <xs:all>
+      <xs:element name="DisplayName" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Name to be displayed in user interface elements. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FirstName" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>First name, sometime called christian name or given name or forename. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MiddleName" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Any other names. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LastName" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A person's last name sometimes called surname or family name. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Email" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A person's email address. [valid email address as string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Institution" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            A person's institution.
+            The organizing structure that people belong to other than groups.  A university, or company, etc.
+            We do not specify a department element, and do not mean for Institution to be used in this way.
+            We simply wish to say XXX at YYY. Where YYY has a better chance of being tied to a geographically fixed location
+            and of being more recognizable than a group of experimenters. [plain text string]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UserName" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>This is the username of the experimenter (in a 'logon' or 'database' sense). [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Phone" type="xs:string" />
+      <xs:element minOccurs="0" name="Fax" type="xs:string" />
+      <xs:element minOccurs="0" name="Address" type="xs:string" />
+      <xs:element minOccurs="0" name="City" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" type="xs:string" />
+      <xs:element minOccurs="0" name="State" type="xs:string" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute use="optional" name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType: Institution -->
+  <xs:complexType name="Institution">
+    <xs:all>
+      <xs:element minOccurs="0" name="Name" type="xs:string"/>
+      <xs:element minOccurs="0" name="Email" type="xs:string" />
+      <xs:element minOccurs="0" name="Phone" type="xs:string" />
+      <xs:element minOccurs="0" name="Fax" type="xs:string" />
+      <xs:element minOccurs="0" name="Address" type="xs:string" />
+      <xs:element minOccurs="0" name="ZIP" type="xs:string" />
+      <xs:element minOccurs="0" name="City" type="xs:string" />
+      <xs:element minOccurs="0" name="Country" type="xs:string" />
+      <xs:element minOccurs="0" name="Logo" type="xs:string" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Document -->
+  <xs:complexType name="Document">
+    <xs:all>
+      <xs:element minOccurs="0" name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            Name of the Image
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Author" type="xs:string" />
+      <xs:element minOccurs="0" name="UserName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            User Name defined by the Operating System
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="SubType" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            Defines the type of the image. If the value is not "Image" or "NULL" a special
+            viewer is required to display the image. The following sub types are available:
+
+            Image
+            MeanOfRois
+            Spectral
+            Point
+            Topography
+            TopoGraphyMask
+            Kinetic
+            IcsMap
+            PalRawData
+            Pal
+            PalSumTirfRawData
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Title" type="xs:string" />
+      <xs:element minOccurs="0" name="CreationDate" type="xs:dateTime" />
+      <xs:element minOccurs="0" name="Description" type="xs:string" />
+      <xs:element minOccurs="0" name="Thumbnail" type="xs:string" />
+      <xs:element minOccurs="0" name="Comment" type="xs:string" />
+      <xs:element minOccurs="0" name="Rating" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>The Rating of the image document. Values: 0-5.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="Keywords" type="xs:string" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Application -->
+  <xs:complexType name="Application">
+    <xs:all>
+      <xs:element minOccurs="1" maxOccurs="1" name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Name of the application which created the document.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Version" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Version of the application which created the document.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Environment -->
+  <xs:complexType name="Environment">
+    <xs:all>
+      <xs:element minOccurs="0" name="Temperature" type="xs:double" default="0">
+        <xs:annotation>
+          <xs:documentation>Temperature (°C)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="AirPressure" type="xs:double" default="0">
+        <xs:annotation>
+          <xs:documentation>Air pressure in millibars (mbar)</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Humidity" type="xs:double" default="0">
+        <xs:annotation>
+          <xs:documentation>Humidity as a fraction from 0.0 to 1.0.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CO2Percent" type="xs:double" default="0">
+        <xs:annotation>
+          <xs:documentation>CO2 as a fraction from 0.0 to 1.0.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing -->
+  <xs:complexType name="Processing">
+    <xs:all>
+      <xs:element minOccurs="0" name="DFT" type="Processing.DFT" />
+      <xs:element minOccurs="0" name="PSF" type="Processing.PSF"/>
+      <xs:element minOccurs="0" name="SIM" type="Processing.SIM"/>
+      <xs:element minOccurs="0" name="Unmixing" type="Processing.UnmixingParameters"/>
+      <xs:element minOccurs="0" name="StructuredIllumination" type="Processing.StructuredIllumination"/>
+      <xs:element minOccurs="0" name="Airyscan" type="Processing.Airyscan"/>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing.DFT -->
+  <xs:complexType name="Processing.DFT">
+    <xs:all>
+      <xs:element name="ProcessingDimension" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="ThirdDimension" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="WindowMode" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="BlockShift" type="xs:boolean" default="false" minOccurs="0" />
+      <xs:element name="RefPixelType" type="xs:string" default="Gray8" minOccurs="0" />
+      <xs:element name="RefWidth" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="ImageType" minOccurs="0" >
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Basic"/>
+            <xs:enumeration value="DFT"/>
+            <xs:enumeration value="PSF"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing.PSF -->
+  <xs:complexType name="Processing.PSF">
+    <xs:all>
+      <xs:element name="AnticipatedPolarHeight" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="AnticipatedPolarWidth" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="AxialResolution" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="Defocus" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="DesignCoverglassIndex" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="DesignCoverglassThickness" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="DesignImmersionIndex" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="DetectionWavelength" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="Dimension" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="DisplayMode" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="EmbeddingIndex" type="xs:double" default="1.334" minOccurs="0" />
+      <xs:element name="EmbeddingThickness" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="Illumination" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="IlluminationWavelength" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="ImageFormation" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="Instrument" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="LateralMagnification" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="NACondenser" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="NAObjective" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="Optovar" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="PinholeGeometry" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="PinholeSize" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="PupilGeometry" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="Source" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element name="TestObjectGeometry" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="TestObjectSize" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="TransverseResolution" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="Type" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="UsedCoverglassIndex" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="UsedCoverglassThickness" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="UsedImmersionIndex" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="WorkingDistance" type="xs:double" default="0" minOccurs="0" />
+      <xs:element name="ZStackDirection" type="xs:integer" default="0" minOccurs="0" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: SIM -->
+  <xs:complexType name="Processing.SIM">
+    <xs:all>
+      <xs:element name="HardwareVersion" type="xs:string" default="AT1" minOccurs="0" />
+      <xs:element name="ProcessingMode" type="xs:integer" default="1" minOccurs="0" />
+      <xs:element name="GratingPeriod" type="xs:double" default="NaN" minOccurs="0" />
+      <xs:element name="SimCorrectionMode" type="xs:int" default="1" minOccurs="0" />
+      <xs:element name="Epsilon" type="xs:double" default="0.03" minOccurs="0" />
+      <xs:element name="Normalize" type="xs:boolean" default="true" minOccurs="0" />
+      <xs:element name="FilterName" type="xs:string" default="0" minOccurs="0" />
+      <xs:element name="FilterSize" type="xs:double" default="14.0" minOccurs="0" />
+      <xs:element name="FilterHarmonics" type="xs:integer" default="36" minOccurs="0" />
+      <!-- TODO: FilterOrientation - Type? Default? -->
+      <!--<xs:element name="FilterOrientation" type="xs:integer" minOccurs="0" />-->
+      <xs:element name="PhaseAngles" type="xs:string" default="0.0" minOccurs="0" />
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing.UnmixingParameters -->
+  <xs:complexType name="Processing.UnmixingParameters">
+    <xs:annotation>
+      <xs:documentation>
+        Unmixing contains the parameters that have been used to generate the image pixel
+        data by linear unmixing from an image generated with the spectral imager.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Autoscale" type="xs:boolean" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The "Autoscale" property specifies whether or not the results of the
+            linear unmixing have been auto scaled to maximum intensity. Auto
+            scaling is always done for the individual result channels separately.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CalculateResiduals" type="xs:boolean" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The "CalculateResiduals" property specifies whether or not an additional
+            result image channel has been generated where the maximum deviation from
+            the calculated linear combination of the unmixing results is stored.
+            The calculation of the residual image is done for each image pixel
+            individually. The deviation of the acquired spectrum from the linear
+            combination of the unmixing results is determined for each wavelength
+            and the maximum of the absolute value of the deviations is determined
+            and written to the additional result channel.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="IgnoreNegativeResults" type="xs:boolean" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The "IgnoreNegativeResults" property specifies whether or not a constrained
+            linear unmixing algorithm has been used. The constrained linear unmixing
+            algorithm checks for each pixel if unmix results are negative. If so, the
+            unmixing is recalculated without the spectrum for the dye where the result
+            was negative.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BackgroundSpectrum" type="xs:long" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The "BackgroundSpectrum" property specifies the index of the spectrum in
+            the unmix spectra array that contains the spectrum of the background.
+            The background is subtracted from the input spectra for the individual
+            pixels before the linear unmixing is performed. A spectrum index less than
+            zero indicates that there is no background spectrum. If a valid spectrum
+            index is specified the linear umnixing has not generated an image channel
+            for that spectrum.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Weighted" type="xs:boolean" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            "Weighted" option includes a statistical analysis of the signal-related (Poisson-) noise and
+            weighs the respective contribution to the fitting of the combination of reference spectra to the
+            experimental data.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ConfidenceIntervals" type="xs:boolean" minOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The "ConfidenceIntervals" property specifies if one additional channel representing relative standard deviation (RSD) is generated for each unmixed component.
+            It shows the statistical uncertainty of the pixel intensity in the unmixed channel calculated based on the (Poisson-) noise of the acquired input-channels.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Spectra">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Spectrum" minOccurs="1" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:all>
+                  <xs:element name="Color" type="xs:long" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "Color" property specifies the color of the channel corresponding to the spectral component.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="ComponentName" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "ComponentName" property specifies the name of the spectral component that has been used for
+                        linear unmixing. Corresponding spectrum can be loaded from the spectral database, manualy defined from the spectral image by the ROI or calculated by the Automated Component Extraction (ACE).
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="MainBeamSplitter" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "MainBeamSplitter" property specifies the name of the main beam
+                        splitter that has been used to record the spectrum with the index. The information is stored to be able to write the spectra
+                        prameters to a spectra database.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="Objective" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "Objective" property specifies the name of the objective that has been
+                        used to record the spectrum. The information is stored to be able to write back the spectra parameters to a spectra database.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="SpectralData" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Spectral Data can be loaded from the spectral database, manualy defined from the spectral image by the ROI or calculated by the Automated Component Extraction (ACE).
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="SpectralChannel">
+                          <xs:complexType>
+                            <xs:all>
+                              <xs:element name="Intensity" type="xs:double" minOccurs="0">
+                                <xs:annotation>
+                                  <xs:documentation>
+                                    The "Intensity" property specifies the intensity of the spectral channel.
+                                  </xs:documentation>
+                                </xs:annotation>
+                              </xs:element>
+                              <xs:element name="Wavelength" type="xs:double" minOccurs="0">
+                                <xs:annotation>
+                                  <xs:documentation>
+                                    The "Wavelength" specifies the center wavelength corresponding to the spectral detection channel.
+                                  </xs:documentation>
+                                </xs:annotation>
+                              </xs:element>
+                              <xs:element name="StandardDeviation" type="xs:double" minOccurs="0">
+                                <xs:annotation>
+                                  <xs:documentation>
+                                    The "StandardDeviation" property sepcifies the standard deviation of one
+                                    intensity in a particular spectrum.
+                                  </xs:documentation>
+                                </xs:annotation>
+                              </xs:element>
+                            </xs:all>
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="Excitations" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "Excitations" property provides access the arrays with the excitation
+                        wavelengths that have been used to record the spectrum with the index.
+                        The information is stored to be able to write the
+                        spectra parameters to a spectra database.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="ExcitationWavelength" type="xs:double" minOccurs="1" maxOccurs="unbounded">
+                        </xs:element>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:all>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing.StructuredIllumination -->
+  <xs:complexType name="Processing.StructuredIllumination">
+    <xs:annotation>
+      <xs:documentation>
+        The "StructuredIllumination" provides access to the parameters which are used for resolution
+        enhancement form data of acquisitions whith structured illumination.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="DimensionH" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The "DimensionH" property specifies the number of phases.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DimensionR" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The "DimensionR" property specifies the number of rotations.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DimensionC" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The "DimensionC" property specifies the number of channels.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Phases" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The "Phases" property specifies the phase angle of the grating in structured
+            illumination acquisition with the specified phase index.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:list itemType="xs:double"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Rotations" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The "Rotations" properties specifies the rotation angles of the pixels
+            of the image data with the specified rotation index.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:list itemType="xs:double"/>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Channels" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Channel" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:all>
+                  <xs:element name="ExcitationWavelength" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "ExcitationWavelength" property specifies the wavelength of the light
+                        which has been used to excite the dye for the detector that generated the
+                        data for the specified channel. If the wavelength is 0 the excitation
+                        wavelength is not known. [units:meters].
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="GratingPeriod" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "GratingPeriod" property specifies the distance of the maxima of the
+                        grating which has been used to acquire the data of the channel.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="GratingPixels" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        The "GratingPixels" property specifies the number of pixels which span the
+                        distance of the maxima of the grating which has been used to acquire the
+                        data of the channel.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="DiffractionEfficiency1" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="DiffractionEfficiency2" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="DiffractionEfficiency3" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:all>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: Processing.Airyscan -->
+  <xs:complexType name="Processing.Airyscan">
+    <xs:annotation>
+      <xs:documentation>
+        The "Airyscan" provides access to the parameters which are used for resolution
+        enhancement with Airyscan acquisition.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Channels" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Channel" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:all>
+                  <xs:element name="SuperResolutionParameter" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        SuperResolutionParameter determines the Wiener filtering level. Typical values vary between ‐5 and ‐7 and depend on the signal-to-noise ratio of the sample. [units:none].
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="ParameterEstimationType" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Determines if the SuperResolutionParameter is estimated by the software (automatic mode) or is defined by the user (manual). [units:none].
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">
+                        <xs:enumeration value="Manual"/>
+                        <xs:enumeration value="Automatic"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+                  <xs:element name="DeconvolutionType" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Resolution enhancement in z can be achieved by using 3D processing.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                      <xs:restriction base="xs:string">                        
+                        <xs:enumeration value="2D"/>
+                        <xs:enumeration value="3D"/>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xs:element>
+                  <xs:element name="IsTileBased" type="xs:boolean" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Tile-based 3D processing of the large image data is done to reduce memory usage.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="VirtualPinholeParameter" type="xs:double" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Number of airyscan detector rings that defines the size of the virtual pinhole. For example, the value 2,5 means, that 3 inner rings are selected, the first two rings with the weight "1", and the third ring with the weight "0.5". [units:none].
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:all>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>

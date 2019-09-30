@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  Layers.xsd - XSD definition for Graphic Layers
+  W.Bayerlein, R.Schaefer, M.Ringler (3D), Feb-Oct-2010
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+         elementFormDefault="qualified"
+         attributeFormDefault="unqualified">
+  <xs:include schemaLocation="CommonTypes.xsd"/>
+
+  <!-- ELEMENT: Layers -->
+  <xs:element name="Layers" type="Layers"/>
+
+  <!-- COMPLEXTYPE : Layers -->
+  <xs:complexType name="Layers">
+    <xs:sequence>
+      <xs:element name="Layer" type="Layer" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="Id" type="xs:string" default="1"/>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Layer -->
+  <xs:complexType name="Layer">
+    <xs:all>
+      <xs:element name="Elements">
+        <xs:complexType>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:choice  maxOccurs="unbounded">
+              <xs:element name="Line" type="LineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="OpenArrow" type="LineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ClosedArrow" type="LineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Arrow" type="LineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Rectangle" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Image" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="MaskImage" type="RectangleGraphics"  minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="NavigatorImage" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="RectRoi" type="RectangleGraphics"  minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="TextBox" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Text" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Ellipse" type="EllipseGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Circle" type="CircleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ThreePointCircle" type="ThreePointCircleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="InOutCircle" type="CircleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="OutInCircle" type="CircleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="PointsCircle" type="CircleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Polygon" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Bezier" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="OpenBezier" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ClosedBezier" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ArrowBezier" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Polyline" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ArrowPolyline" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="OpenPolyline" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ClosedPolyline" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ScaleBar" type="ScaleBarGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Caliper" type="CaliperGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Distance" type="CaliperGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Length" type="CaliperGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="MultiCalipers" type="MultiCalipersGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="MultiDistance" type="MultiCalipersGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Angle" type="AngleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ConnectedAngle" type="AngleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="DisconnectedAngle" type="AngleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Events" type="EventsGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Marker" type="MarkerGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Grid" type="GridGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="OrthoCutLine" type="OrthoCutLineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="TiltRectangle" type="TiltBoundsGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ActivePolygon" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="ActivePolyline" type="PolygonGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="PointsRelative" type="PointsRelativeGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="HorizontalRange" type="ScaleBarGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="VerticalRange" type="ScaleBarGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Range" type="ScaleBarGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Palette" type="PaletteGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Cross" type="CrossGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Cuboid" type="CuboidGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="EllipticCylinder" type="EllipticCylinderGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Cylinder" type="CylinderGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Prism" type="PolylineGraphics3D" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="BezierCylinder" type="PolylineGraphics3D" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="Line3D"
+                          type="PolylineGraphics3D"
+                          minOccurs="0"
+                          maxOccurs="unbounded"/>
+              <xs:element name="Angle3D"
+                          type="PolylineGraphics3D"
+                          minOccurs="0"
+                          maxOccurs="unbounded"/>
+              <xs:element name="Polygon3D"
+                          type="PolylineGraphics3D"
+                          minOccurs="0"
+                          maxOccurs="unbounded"/>
+              <xs:element name="Polyline3D"
+                          type="PolylineGraphics3D"
+                          minOccurs="0"
+                          maxOccurs="unbounded"/>
+              <xs:element name="SFRoi" type="RectangleGraphics" minOccurs="0" maxOccurs="unbounded"/>
+              <xs:element name="SFPoi" type="MarkerGraphics" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:choice>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="LayerFlags" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A bit flag for the enumeration:
+            Visible = 0
+            ElementsNoCreate = 1
+            ElementsNoMove = 2
+            ElementsNoResize = 4
+            ElementsNoRemove = 8
+            ElementsNoSelect = 16
+            ElementsNoAttributeChange = 32
+            NoPersist = 64
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Visibility" default="Visible">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Visible"/>
+            <xs:enumeration value="Hidden"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Usage" type="xs:string" minOccurs="0" default="Annotation">
+        <!-- To review: 
+             Usage is not an enum in Code, so this definition maybe shouldn't be a restricted type. -->
+        <xs:annotation>
+          <xs:documentation>
+            Defines the graphic layer usage. By default, the layer is used for annotation and interactive measurement (Annotation).
+            AutoFocus, The layer for automatic focus ROI elements.
+            Acquisition, The layer for acquisition ROI elements.
+            AcquisitionHistory, The layer for acquisition history.
+            Selection, The layer for selection ROI elements.
+            Annotation, The layer for annotation/interactive measure elements.
+            AutoMeasure, The layer for automatic measure elements.
+            Preview, The layer for preview/background elements of IP or others.
+            Group, The layer for grouping elements.
+
+            For Lsms the follwoing graphic layer usages are defined.
+            Annotation, The layer for 2D display.
+            Acquisition, The layer for the scan ROIs.
+            Linescan, The layer for the overlay with the line scan selection line or Bezier curve.
+            TopoProfile, The layer for the overlay in topography profile display.
+            TopoIsoline, The layer for the topography display with the profile selection line.
+            MeanOfRois, The layer for the ROIs used during a scan in “Mean of ROIs” mode.
+          </xs:documentation>
+        </xs:annotation>        
+      </xs:element>
+      <xs:element minOccurs="0" name="CoordinateUnitX" type="CoordinateUnitType">
+        <xs:annotation>
+          <xs:documentation>
+            The "CoordinateUnitX" property specifies the unit in which the x-coordinate of the drawing element is specified.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CoordinateUnitY" type="CoordinateUnitType">
+        <xs:annotation>
+          <xs:documentation>
+            The "CoordinateUnitY" property specifies the unit in which the y-coordinate of the drawing element is specified.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CoordinateUnitZ" type="CoordinateUnitType">
+        <xs:annotation>
+          <xs:documentation>
+            The "CoordinateUnitZ" property specifies the unit in which the z-coordinate of the drawing element is specified.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsProtected" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="Active" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="InactiveOpacity" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Defines the opacity when the layer is inactive.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="ActiveOpacity" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Defines the opacity when the layer is active.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsAnimationEnabled" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="AnimationDimension" type="xs:string"/>
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="PaletteGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        Filled rectangle for display of the currently used color palette.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all minOccurs="0" >
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="RectangleGeometry">
+              <xs:sequence minOccurs="0">
+                <xs:element name="Red" type="xs:string" minOccurs="0"/>
+                <xs:element name="Green" type="xs:string" minOccurs="0"/>
+                <xs:element name="Blue" type="xs:string" minOccurs="0"/>
+                <xs:element name="PaletteName" type="xs:string" minOccurs="0"/>
+                <xs:element name="ScaleMinimum" type="xs:double" minOccurs="0"/>
+                <xs:element name="ScaleMaximum" type="xs:double" minOccurs="0"/>
+                <xs:element name="ScaleUnit" type="xs:string" minOccurs="0"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="CrossGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        A cross with one horizontal and one vertical line and a circle where the center is the crosspoint of the two lines.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0"/>
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0">
+            <xs:element name="CenterX" type="xs:double"/>
+            <xs:element name="CenterY" type="xs:double"/>
+            <xs:element name="Size" type="xs:double"/>
+            <xs:element name="Length" type="xs:double"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="CuboidGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        A rectangle in x, y, z-space.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="RectangleGeometry">
+              <xs:sequence minOccurs="0">
+                <xs:element name="Z1" type="xs:double"/>
+                <xs:element name="Z2" type="xs:double"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="EllipticCylinderGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        An ellipse in x, y, z-space.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="EllipseGeometry">
+              <xs:sequence minOccurs="0">
+                <xs:element name="Z1" type="xs:double"/>
+                <xs:element name="Z2" type="xs:double"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="CylinderGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        A circle in x, y, z-space.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="CircleGeometry">
+              <xs:sequence minOccurs="0">
+                <xs:element name="Z1" type="xs:double"/>
+                <xs:element name="Z2" type="xs:double"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>  
+
+  <xs:complexType name="LineGraphics">
+    <xs:all minOccurs="0" >
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry" type="LineGeometry"/>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="LineGeometry">
+    <xs:sequence minOccurs="0">
+      <xs:element name="X1" type="xs:double"/>    
+      <xs:element name="Y1" type="xs:double"/>
+      <xs:element name="X2" type="xs:double"/>
+      <xs:element name="Y2" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="RectangleGraphics">
+    <xs:all minOccurs="0" >
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry" type="RectangleGeometry"/>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="RectangleGeometry">
+    <xs:sequence minOccurs="0">
+      <xs:element name="Left" type="xs:double"/>
+      <xs:element name="Top" type="xs:double"/>
+      <xs:element name="Width" type="xs:double"/>
+      <xs:element name="Height" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EllipseGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry" type="EllipseGeometry"/>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="EllipseGeometry">
+    <xs:sequence minOccurs="0">
+      <xs:element name="CenterX" type="xs:double"/>
+      <xs:element name="CenterY" type="xs:double"/>
+      <xs:element name="RadiusX" type="xs:double"/>
+      <xs:element name="RadiusY" type="xs:double"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CircleGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry" type ="CircleGeometry"/>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="CircleGeometry">
+    <xs:sequence minOccurs="0">    
+      <xs:element name="CenterX" type="xs:double"/>
+      <xs:element name="CenterY" type="xs:double"/>
+      <xs:element name="Radius" type="xs:double"/>
+      <xs:element name="ReferenceLine" type="LineGraphics" minOccurs="0" >
+        <xs:annotation>
+          <xs:documentation>Defines the line for the radius if it is required for interaction and is displayed.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ThreePointCircleGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0">
+            <xs:element name="X1" type="xs:double"/>
+            <xs:element name="Y1" type="xs:double"/>
+            <xs:element name="X2" type="xs:double"/>
+            <xs:element name="Y2" type="xs:double"/>
+            <xs:element name="X3" type="xs:double"/>
+            <xs:element name="Y3" type="xs:double"/>            
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="PolygonGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry" type="PolygonGeometry"/>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="PolygonGeometry">
+    <xs:sequence>
+      <xs:element name="Points" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Format: "X1,Y1 X2,Y2 .. Xn,Yn"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PointsRelativeGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        This element can be created by use of a set of points and a caliper that defines the local coordinate system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all >
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0" >
+            <xs:element name="LocalCoordinateSystem">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="AxisX" type="LineGraphics"/>
+                  <xs:element name="DeltaX" type="xs:double">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Defines the delta X which is the X-coordinate of the end point of the normal line.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="DeltaY" type="xs:double">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Defines the delta Y which is the Y-coordinate of the end point of the normal line.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>                
+              </xs:complexType>              
+            </xs:element>
+            <xs:element name="Points" type="PolygonGeometry"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="ScaleBarGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="LineGeometry">
+              <xs:sequence minOccurs="0">
+                <xs:element name="Orientation">
+                  <xs:simpleType>
+                    <xs:restriction base = "xs:string">
+                      <xs:enumeration value="Horizontal"/>
+                      <xs:enumeration value="Vertical"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="CaliperGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        A caliper can be created by using a base line and the endpoint of the normal line.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all >
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0" >
+            <xs:element name="BaseLine" type="LineGraphics"/>
+            <xs:element name="DeltaX" type="xs:double">
+              <xs:annotation>
+                <xs:documentation>
+                  Defines the delta X which is the X-coordinate of the end point of the normal line.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="DeltaY" type="xs:double">
+              <xs:annotation>
+                <xs:documentation>
+                  Defines the delta Y which is the Y-coordinate of the end point of the normal line.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="MultiCalipersGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        A multiple caliper can be created by using a base line and the end points of each normal line.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0" >
+            <xs:element name="BaseLine" type="LineGraphics"/>
+            <xs:element name="Distances">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies a collection of distances. The distances are the end points of the normal lines.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Distance"  maxOccurs="unbounded">
+                    <xs:annotation>
+                      <xs:documentation>
+                        Specifies a distance. The distance is the end point of one normal line.
+                      </xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                      <xs:all>
+                        <xs:element name="DeltaX" type="xs:double">
+                          <xs:annotation>
+                            <xs:documentation>
+                              Defines the delta X which is the X-coordinate of the end point of one normal line.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:element>
+                        <xs:element name="DeltaY" type="xs:double">
+                          <xs:annotation>
+                            <xs:documentation>
+                              Defines the delta Y which is the Y-coordinate of the end point of one normal line.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:element>
+                      </xs:all>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="AngleGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0">
+            <xs:element name="FirstLine" type="LineGraphics"/>
+            <xs:element name="SecondLine" type="LineGraphics"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="EventsGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="Points" type="xs:string"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="MarkerGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="X" type="xs:double"/>
+            <xs:element name="Y" type="xs:double"/>
+            <xs:element minOccurs="0" name="IsSizeZoomable" type="xs:boolean"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="GridGraphics">
+    <xs:annotation>
+      <xs:documentation>
+        This element consists of a grid and multiple circles and a cross.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0">
+            <xs:element name="Rows" type="xs:integer"/>
+            <xs:element name="Columns" type="xs:integer"/>
+            <xs:element name="CirclesCount" type="xs:integer"/>
+            <xs:element name="GridSize" type="xs:string"/>
+            <xs:element name="HorizontalLinesVisible" type="xs:boolean"/>
+            <xs:element name="VerticalLinesVisible" type="xs:boolean"/>
+            <xs:element name="CirclesVisible" type="xs:boolean"/>
+            <xs:element name="CrossVisible" type="xs:boolean"/>            
+            <xs:element name="CrossStrokeThickness" type="xs:double"/>            
+            <xs:element name="CrossStroke" type="Brush" default="#FFFF0000"/>            
+            <xs:element name="CrossLineDrawStyle" default="Solid" minOccurs="0">
+              <xs:simpleType>
+                <xs:restriction base = "xs:string">
+                  <xs:enumeration value="None"/>
+                  <xs:enumeration value="Solid"/>
+                  <xs:enumeration value="Dash"/>
+                  <xs:enumeration value="Dot"/>
+                  <xs:enumeration value="DashDot"/>
+                  <xs:enumeration value="DashDotDot"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="GridStrokeThickness" type="xs:double"/>
+            <xs:element name="GridStroke" type="Brush" default="#FFFF0000"/>
+            <xs:element name="GridLineDrawStyle" default="Solid" minOccurs="0">
+              <xs:simpleType>
+                <xs:restriction base = "xs:string">
+                  <xs:enumeration value="None"/>
+                  <xs:enumeration value="Solid"/>
+                  <xs:enumeration value="Dash"/>
+                  <xs:enumeration value="Dot"/>
+                  <xs:enumeration value="DashDot"/>
+                  <xs:enumeration value="DashDotDot"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="CircleStrokeThickness" type="xs:double"/>
+            <xs:element name="CircleStroke" type="Brush" default="#FFFF0000"/>
+            <xs:element name="CircleLineDrawStyle" default="Solid" minOccurs="0">
+              <xs:simpleType>
+                <xs:restriction base = "xs:string">
+                  <xs:enumeration value="None"/>
+                  <xs:enumeration value="Solid"/>
+                  <xs:enumeration value="Dash"/>
+                  <xs:enumeration value="Dot"/>
+                  <xs:enumeration value="DashDot"/>
+                  <xs:enumeration value="DashDotDot"/>
+                </xs:restriction>
+              </xs:simpleType>              
+            </xs:element>
+
+            <xs:element name="StartPoisition" default="Center">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="TopLeft"/>
+                  <xs:enumeration value="Center"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="TiltBoundsGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all minOccurs="0">
+            <xs:element name="ReferenceLines">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="ReferenceLine" type="LineGraphics" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name ="OrthoCutLineGraphics">
+    <xs:all>
+      <xs:element name="Features" type="Features" minOccurs="0" />
+      <xs:element name="TextElements" type="GraphicTextElements" minOccurs="0"/>
+      <xs:element name="Attributes" type="GraphicAttributes" minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartX" type="xs:double"/>
+            <xs:element name="StartY" type="xs:double"/>
+            <xs:element name="CutLineWidth" type="xs:double"/>
+            <xs:element name="Length" type="xs:double"/>
+            <xs:element name="Orientation">
+              <xs:simpleType>
+                <xs:restriction base = "xs:string">
+                  <xs:enumeration value="Horizontal"/>
+                  <xs:enumeration value="Vertical"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="CutLineOpacity" type="xs:double"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="PolylineGraphics3D">
+    <xs:all>
+      <xs:element name="Features"
+                  type="Features"
+                  minOccurs="0" />
+      <xs:element name="TextElements"
+                  type="GraphicTextElements"
+                  minOccurs="0"/>
+      <xs:element name="Attributes"
+                  type="GraphicAttributes"
+                  minOccurs="0"/>
+      <xs:element name="Geometry">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="Points3D"
+                        type="Points.type">
+              <xs:annotation>
+                <xs:documentation>Format: "X1,Y1,Z1 X2,Y2,Z2 .. Xn,Yn,Zn"</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id"
+                  type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:simpleType name="Points.type">
+    <xs:list itemType="xs:double"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="CoordinateUnitType">
+    <xs:restriction base = "xs:string">
+      <xs:enumeration value="Pixel"/>
+      <xs:enumeration value="Meter"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- COMPLEXTYPE : GraphicAttributes -->
+  <xs:complexType name="GraphicAttributes">
+    <xs:annotation>
+      <xs:documentation>
+        Common attributes for graphic elements.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" name="Name" type="xs:string"/>
+      <xs:element minOccurs="0" name="UniqueName" type="xs:string"/>
+      <xs:element minOccurs="0" name="DataSource" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>Specifies the text or visual representation of this element.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="Rotation" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The rotation angle of this element. Unit: degrees.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="MouseCatchArea" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>Size of the mouse catch area for activation of a drawing element with a mouse click. The value is used for new generated drawing elements in the LSM program.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CharacterSet">
+        <xs:annotation>
+          <xs:documentation>The character set used for the elements text.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="ANSI"/>
+            <xs:enumeration value="Other"/>
+            <xs:enumeration value="Symbol"/>
+            <xs:enumeration value="Dos"/>
+            <xs:enumeration value="Japanese"/>
+            <xs:enumeration value="Korean"/>
+            <xs:enumeration value="ChineseSimplified"/>
+            <xs:enumeration value="ChineseTraditional"/>
+            <xs:enumeration value="Vietnamese"/>
+            <xs:enumeration value="Thai"/>
+            <xs:enumeration value="CentralEuropean"/>
+            <xs:enumeration value="Cyrillic"/>
+            <xs:enumeration value="Baltic"/>
+            <xs:enumeration value="Greek"/>
+            <xs:enumeration value="Turkish"/>
+            <xs:enumeration value="Arabic"/>
+            <xs:enumeration value="Hebrew"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="Valid" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>If "true" the drawing element was completely edited.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsProtected" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Visibility" default="Visible">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Visible"/>
+            <xs:enumeration value="Hidden"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="Opacity" type="xs:double"/>
+      <xs:element minOccurs="0" name="Foreground" type="Brush" default="#FFFF0000"/>
+      <xs:element minOccurs="0" name="FontFamily" type="FontFamily" />
+      <xs:element minOccurs="0" name="FontSize" type="xs:double"/>
+      <xs:element minOccurs="0" name="FontStretch" default="Normal">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Medium"/>
+            <xs:enumeration value="Condensed"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="FontWeight" default="Normal">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Light"/>
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Medium"/>
+            <xs:enumeration value="Bold"/>
+            <xs:enumeration value="Heavy"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="FontStyle" default="Normal">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Italic"/>
+            <xs:enumeration value="Oblique"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="HorizontalAlignment" default="Left">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Left"/>
+            <xs:enumeration value="Center"/>
+            <xs:enumeration value="Right"/>
+            <xs:enumeration value="Stretch"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="VerticalAlignment" default="Top">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Top"/>
+            <xs:enumeration value="Center"/>
+            <xs:enumeration value="Bottom"/>
+            <xs:enumeration value="Stretch"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="Background" type="Brush" default="#FFFFFFFF"/>
+      <xs:element minOccurs="0" name="FillStyle" default="None">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Solid"/>
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="HorizontalLine"/>
+            <xs:enumeration value="VerticalLine"/>
+            <xs:enumeration value="DownwardsDiagonal"/>
+            <xs:enumeration value="UpwardsDiagonal"/>
+            <xs:enumeration value="Cross"/>
+            <xs:enumeration value="DiagonalCross"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="Fill" type="Brush" default="#FFFFFFFF"/>
+      <xs:element minOccurs="0" name="Stroke" type="Brush" default="#FFFF0000"/>
+      <xs:element minOccurs="0" name="StrokeThickness" type="xs:double"/>
+      <xs:element minOccurs="0" name="StrokeZoomWithImage" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="LineDrawStyle" default="Solid">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="Solid"/>
+            <xs:enumeration value="Dash"/>
+            <xs:enumeration value="Dot"/>
+            <xs:enumeration value="DashDot"/>
+            <xs:enumeration value="DashDotDot"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="LineBeginStyle" default="Flat">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Flat"/>
+            <xs:enumeration value="Round"/>
+            <xs:enumeration value="SmalBar"/>
+            <xs:enumeration value="LargeBar"/>
+            <xs:enumeration value="OpenArrow"/>
+            <xs:enumeration value="ClosedArrow"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="LineEndStyle" default="Flat">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Flat"/>
+            <xs:enumeration value="Round"/>
+            <xs:enumeration value="SmallBar"/>
+            <xs:enumeration value="LargeBar"/>
+            <xs:enumeration value="OpenArrow"/>
+            <xs:enumeration value="ClosedArrow"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="BorderEffect" default="None">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="Shadow1"/>
+            <xs:enumeration value="Shadow2"/>
+            <xs:enumeration value="Shadow3"/>
+            <xs:enumeration value="Shadow4"/>
+            <xs:enumeration value="EdgeRaised"/>
+            <xs:enumeration value="EdgeSunken"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="MarkerSize" type="xs:double" />
+      <xs:element minOccurs="0" name="MarkerStyle" default="Cross">
+        <xs:simpleType>
+          <xs:restriction base = "xs:string">
+            <xs:enumeration value="Cross"/>
+            <xs:enumeration value="Rect"/>
+            <xs:enumeration value="Triangle"/>
+            <xs:enumeration value="Circle"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="MeasureEnabled" type="xs:boolean"/>    
+      <xs:element minOccurs="0" name="IsMeasurementVisible" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="IsDisplayIdVisible" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="IsAnnotationVisible" type="xs:boolean"/>
+      <xs:element name="AcquisitionFlags" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A bit flag for the enumeration:
+            Visible = 0x80000000
+            Acquisition = 0x0001
+            Bleach = 0x0002
+            Analysis = 0x0004
+            Background = 0x0010
+            Reference = 0x0020
+            Group1 = 0x0040
+            Group2 = 0x0080
+            Group3 = 0x0100
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : GraphicTextElements -->
+  <xs:complexType name="GraphicTextElements">
+    <xs:annotation>
+      <xs:documentation>
+        Text collection for the additional text. E.g. annotations, label and custom text.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TextElement" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:all>
+            <xs:element minOccurs="0" name="IsEditable" type="xs:boolean" default="false"/>
+            <xs:element minOccurs="0" name="IsWrapping" type="xs:boolean" default="false"/>
+            <xs:element minOccurs="0" name="IsMovable" type="xs:boolean" default="true">
+              <xs:annotation>
+                <xs:documentation>Specifies the posibility to move the absolute or the relative position.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="IsAlignEnable" type="xs:boolean" default="true">
+              <xs:annotation>
+                <xs:documentation>Specifies if the text align with the properties horizontal and vertical alignment.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Text" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>
+                  The text can contain following wildcards:
+                  [m] measurement, [a] annotation, [i] displayId, [n] name, [t:TagName], ..
+                  The wildcards are replaced by the required graphicElement properties.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="Position" type="xs:string">
+              <xs:annotation>
+                <xs:documentation>Specify the top left position of the text. The position is set in absolute image coordinate. Format: "X1,Y1" or "X1,Y1,Z1"</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="TextRotation" type="xs:double" default="0.0">
+              <xs:annotation>
+                <xs:documentation>
+                  Specify the rotation of the text.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:all>
+          <xs:attribute name="Id">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="Annotation"/>
+                <xs:enumeration value="Label"/>
+                <xs:enumeration value="Custom"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="Type" default="AlignPosition">
+            <xs:annotation>
+              <xs:documentation>
+                Specify the type of text position. The relevants of the other attributes depends on this type.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="AbsoluteViewPosition"/>
+                <xs:enumeration value="AbsoluteImagePosition"/>
+                <xs:enumeration value="RelativePosition.TopLeft"/>
+                <xs:enumeration value="RelativePosition.TopRight"/>
+                <xs:enumeration value="RelativePosition.BottomLeft"/>
+                <xs:enumeration value="RelativePosition.BottomRight"/>
+                <xs:enumeration value="RelativePosition.Center"/>
+                <xs:enumeration value="AlignPosition"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Element: GraphicElement Features -->
+  <xs:complexType name="Features">
+    <xs:annotation>
+      <xs:documentation>Defines the selected features (measurements) information about the graphic element.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Feature" type="Feature" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Element: GraphicElement Feature -->
+  <xs:complexType name="Feature">
+    <xs:annotation>
+      <xs:documentation>Specifies the information about the selected Feature.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The name of the feature.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="LocalizedName" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The localized name to be displayed with the feature.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DisplayUnit" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The display unit of the feature.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Expression" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Defines the method and if required some properties for the feature. The available features are defined in a configuration file.
+            Eg. Features.FibreLength
+            Features.Area
+            Features.Radius
+            Features.Angle
+            Features.DistanceX
+            Features.DistanceY
+            For simple measurements, the (default) name defines the measurement method. 
+            For complex measurements, the Expression value is required.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IsDisplayEnabled" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Indicates if the feature is displayed or not.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IsUserDefined" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Indicates if the feature is user defined or not.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+</xs:schema>

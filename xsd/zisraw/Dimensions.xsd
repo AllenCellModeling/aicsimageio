@@ -1,0 +1,2620 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  DIMENSIONS - XSD Definition for dimensions
+  W.Bayerlein, P.Schwesig, S.Wagner-Conrad, I.Grabmair, B.Weiss, J.Bohl  Sep-Oct-2010
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="Instrument.xsd"/>
+
+  <!-- ELEMENT: Dimensions -->
+  <xs:element name="Dimensions" type="Dimensions"/>
+
+  <!-- COMPLEXTYPE: Dimensions -->
+  <xs:complexType name="Dimensions">
+    <xs:all>
+      <xs:element name="Channels" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Channel" type="DimensionChannel" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Tracks" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="MultiplexType" minOccurs="0" maxOccurs="1" >
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies at which event a track switch has been performed. Possible values are:
+                  Line      - after each scan line
+                  Frame     - after each frame
+                  FrameFast - after each frame without movement of slow hardware and
+                  ZStack    - after each z stack.
+                  The value is the same for all tracks in a recording.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Line"/>
+                  <xs:enumeration value="Frame"/>
+                  <xs:enumeration value="FrameFast"/>
+                  <xs:enumeration value="ZStack"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="MultiplexOrder" minOccurs="0" maxOccurs="1" >
+              <xs:annotation>
+                <xs:documentation>
+                  The switch order of the tracks.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:all>
+                  <xs:element name="TrackRefs" minOccurs="0">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="TrackRef" type="TrackRef" maxOccurs="unbounded"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:all>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="Track" type="DimensionTrack" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="LambdaStacks" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="LambdaStack" type="DimensionLambdaStack" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : T -->
+      <xs:element name="T" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates a timestamp to each t-coordinate. The data must not be confused
+            with the "acquisition time" of a camera frame. It has just the meaning of "some
+            representative and informative" timestamp which is associated with each t-coordinate.
+            For a simple timelapse document this might be the real acquisition time, but for a
+            tiled image there is no simple "acquisition time for an x-y-plane". In addition, we make
+            no promises if this corresponds to the "real acquisition time" or the interval which
+            was specified when setting up the experiment (=theoretical interval vs real interval).
+
+            The basic idea is: we have one absolute point in time (given by the StartTime field) which
+            acts as a reference point in time. Then we give the relative time to this reference for t=0,
+            t=1 and so on. Note that specifying the reference point is optional - if it is not given
+            then we just have time offsets for each t-coordinate.
+
+            Remarks:
+            - Specifying just the StartTime but not the TimeStamps is quite pointless, although it
+            is not forbidden.
+            - If there are less offsets given than there are t-coordinates in the documents it means
+            "no timestamp available" for the surplus t-coordinates.
+            - If there are more offsets given, they are simply ignored. [Unit: Seconds]
+
+            Time Stamps:
+            For each index in a time series acquisition, a time stamp can be stored in a list.
+            I.e. the number of time stamps equals Information/Image/SizeT.
+            (Time stamps must not be mixed up with the subblock/slice-specific acquisition time!
+            E.g. in case of an image with SizeT = 10 and SizeZ = 20, there are 10 time stamps,
+            but 200 different acquisition time items.)
+
+            In most LSM cases, there will be a large number of time stamps and then the time stamps will be
+            stored in an attachment.
+            Yet, for a small number of time stamps, they can be stored within this xml data.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartTime" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference point in time (optional), as round trip format string.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Positions" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the offsets for each T Index. This may be given as
+                  start+offset or as an explicit list [unit:s].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : Z -->
+      <xs:element name="Z" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates a spatial point for each Z Index. The data must not be confused
+            with the "focus position" of a camera frame. It has just the meaning of "some
+            representative and informative" position which is associated with each z-index.
+            The offsets may be positive or negative. They could also be not monotone - although
+            this would be an unusual experiment.
+            The position of Z=0 is StartZPosition + Start (in case of ZInterval) or Start + ZOffsetList[0].
+            This approach avoids ambiguities when StartZPosition is not given. [unit:micrometers]
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+
+          <xs:all>
+            <xs:element name="XYZHandedness" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the chirality of the coordinate system defined by
+                  - X axis in a subblock, from left to right
+                  - Y axis in a subblock, from top to bottom  (-> origin in the top-left corner)
+                  - Z axis given by Z-index
+
+                  This chirality is used when arranging the z-slices spatially according to their Z-index.
+                  It is recommended to ensure that the chirality (and the order of the z-slices) is unchanged
+                  when arranging the z-slices according to their associated distances (as given by ../Dimensions/Z/Positions).
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="LeftHanded">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The coordinate-system is orientated left-handed.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="RightHanded">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The coordinate-system is orientated right-handed.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="undefined">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The orientation of the coordinate-system is undefined or not known.
+                        This is the default to be assumened if this field is not present.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="ZAxisDirection" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  THIS IS AN EXPERIMENTAL DEFINITION!
+                  
+                  We define the z-axis to be collinear with the optical axis. On this axis the z-coordinates 
+                  of the focal plane are measured, and their distances are found in the Z-labels 
+                  (defined under ../Dimensions/Z/Positions) and the FocusPosition-field found in subblock-metadata. 
+                  The direction of the axis may either be “from specimen to objective” or “from objective to specimen”. 
+                  In this coordinate system the specimen is at a fixed position. Note that the origin of the coordinate 
+                  system is _not_ defined here.
+                  Possible values are: FromSpecimenToObjective, FromObjectiveToSpecimen and undefined.
+                  Undefined is the default (and to be assumed if this element is not present).
+                  
+                  Note that the coordinate system defined here is different to the one defined with "XYZHandedness".
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="FromSpecimenToObjective">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The z-axis is pointing from specimen to objective.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="FromObjectiveToSpecimen">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The z-axis is pointing from objective to specimen.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                  <xs:enumeration value="undefined">
+                    <xs:annotation>
+                      <xs:appinfo>
+                        The direction of the z-axis is undefined/not known.
+                        This is the default to be assumed if this field is not present.
+                      </xs:appinfo>
+                    </xs:annotation>
+                  </xs:enumeration>
+                </xs:restriction>
+              </xs:simpleType>
+
+            </xs:element>
+
+            <xs:element name="ZDriveMode" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Description of mode of operation of the Z-Drive. "Continuous" means that
+                  the z-drive did not stop while acquiring the image. "Step" means that the
+                  Z-drive did not move during the acquisition of the image.
+                  Used for SPIM.
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Continuous"/>
+                  <xs:enumeration value="Step"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="ZDriveSpeed" minOccurs="0" type="xs:double">
+              <xs:annotation>
+                <xs:documentation>
+                  In Continuous-mode, this specifies the speed of the z-drive.
+                  Used for SPIM. [unit:µm/s].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+
+
+            <xs:element name="StartPosition" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Positions" type="PositionDefinitionMultiZ" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the offsets for each Z index. This may be given as
+                  start+offset or as an explicit list [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+
+          </xs:all>
+
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : R -->
+      <xs:element name="R" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates a rotation angle to each R index. [unit: degrees]
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartPosition" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position [unit=degrees].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Positions" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the angles (for each R index).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : H -->
+      <xs:element name="H" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates a phase to each H index. [unit: none]
+            Used in SIM acquisitions where the data is recorded from various illumination grating phase shifts.
+
+            If a channel in this document is marked as an Airy-scan image (by Channel/ChannelType), then
+            the H-dimension has a different meaning - then the H-dimension is used to label the images
+            from the different fibers of an Airy-scan-detector-array.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartPosition" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Positions" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the phase offsets for each H index.
+                  This may be given as an explicit list or as start+offset [unit=none].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : I -->
+      <xs:element name="I" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates an illumination direction to each I index. Values: e.g. from left=0, from right=1.
+            [unit: none]
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartPosition" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Positions" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the illumination values for each I index. [unit: none]
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : V -->
+      <xs:element name="V" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This associates a rotation angle to each V index. This dimension is used
+            with SPIM-acquisitions, where it denotes the rotation of the
+            specimen [unit: degrees]
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+
+            <xs:element name="AxisOfRotation" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Directional vector specifying the axis of rotation. We have three numbers
+                  which give the components in (physical) x-, y- and z-direction (in a left-handed
+                  coordinate-system).
+                  The scaling used for the numbers is arbitrary (since only the direction is what matters),
+                  however the scaling must be the same for x-y- and z-direction.
+                  A rotation around the y-axis corresponds to "0 1 0", rotation
+                  around the x-axis corresponds to "1 0 0".
+                  For the time being, only these two values are expected.
+                  If this parameter is not given, we default to "rotation around y-axis ("0 1 0").
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType >
+                <xs:restriction>
+                  <xs:simpleType>
+                    <xs:list itemType="xs:double">
+                    </xs:list>
+                  </xs:simpleType>
+                  <xs:length value="3"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="CenterPosition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Tentative definition: Position of the "center of the image" in stage coordinates,
+                  given as three doubles for the X-,Y- and Z-position. [unit:µm]
+                </xs:documentation>
+                <!-- * Further explanation tbd or to be supplied. -->
+              </xs:annotation>
+              <xs:simpleType >
+                <xs:restriction>
+                  <xs:simpleType>
+                    <xs:list itemType="xs:double">
+                    </xs:list>
+                  </xs:simpleType>
+                  <xs:length value="3"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+
+            <xs:element name="StartPosition" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position [unit=degrees].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Views" type="PositionDefinitionsV" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Definition of the angles (for each V-index).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : S -->
+      <xs:element name="S" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Regions from Tiles Acquisition.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="Scenes" minOccurs="0">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Scene" type="Scene" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <!-- (Dimension) ELEMENT : M -->
+      <xs:element name="M" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Mosaic Tiles.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StartPositionX" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position for X dimension [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="StartPositionY" type="xs:double" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Reference position for Y dimension [unit=µm].
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="PositionsX" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Tile offset in X [unit: micrometers]
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="PositionsY" type="PositionDefinition" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  Tile offset in Y [unit: micrometers]
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: Scene -->
+  <xs:complexType name="Scene">
+    <xs:all>
+      <xs:element name="PyramidInfo" type="PyramidInfoMetaData" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Information about pyramid for this scene.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="RegionId" type="xs:long" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The unique identifier of the corresponding region (tile region or single tile region).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ScanMode" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Comb"/>
+            <xs:enumeration value="Meander"/>
+            <xs:enumeration value="Spiral"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="Category" type="TileRegionCategoryMetadata" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The category which is optionally specified for the scene/region.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CenterPosition" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The contour center position (X and Y) of the scene/region in absolute stage coordinates (µm). This specifies the center position of the bounding box.
+            Note the string representation of the center position: value for X and Y are separated by comma, e.g. "-8000.2,6000.5".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ContourSize" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The contour size of the scene/region in absolute stage coordinates (µm). This specifies the bounding box size of the contour which was defined to setup the region.
+            It makes only sense for extended regions, e.g. tile regions with more than one tile.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Shape" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Shape definition from which this scene/region is part of. This is relevant if the region
+            was setup from an underlying sample carrier, e.g. a multiwell.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="ColumnIndex" type="xs:integer" />
+            <xs:element name="RowIndex" type="xs:integer" />
+            <xs:element name="CenterPosition" type="xs:string" />
+            <xs:element name="Size" type="xs:string" />
+            <xs:element name="Contour" type="ShapeContour"/>
+          </xs:all>
+          <xs:attribute name="Id" type="xs:string" use="required"/>
+          <xs:attribute name="Name" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Columns" type="xs:integer" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            If the region is rectangular, this is the column number of tiles in the region.
+            This parameter only makes sense if the tiling is like a checkerboard.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Rows" type="xs:integer" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            If the region is rectangular, this is the row number of tiles in the region.
+            This parameter only makes sense if the tiling is like a checkerboard.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Positions" minOccurs="0">
+        <!-- If we store the complete list of all acquired tiles, including the different channels, T, Z and M,
+        the positions list might be very large. E.g. for SizeT = 100, SizeZ = 10, SizeC = 3 and SizeM = 6 we would have
+        18000 position entries. Therefore, it might not be feasible to store the complete list in all situations.
+        We may also think of extracting this data to a separate binary attachment. -->
+        <xs:annotation>
+          <xs:documentation>
+            The "Positions" define a list of all stage positions for acquired tiles.
+            This list might not be complete. For example, if the number of positions is too large,
+            it might only contain the first acquired position.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Position" type="PositionDefinitionS" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Index" type="xs:integer" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The zero based scene index which corresponds to the StartS immage coordinate.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string"/>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PyramidInfoMetaData -->
+  <xs:complexType name="PyramidInfoMetaData">
+    <xs:all>
+      <xs:element name="IsSane" type="xs:boolean" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies whether the pyramid is complete. It it is marked as sane, then we assume
+            that the whole scene is covered by the pyramid _and_ that all pyramid-layers are present
+            and have the correct content.
+            If this element is not present, we assume that the pyramid is broken (and it might not be leveraged
+            in some cases).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PyramidLayersCount" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The number of pyramid layers. Counting starts with the layer above the original resolution layer.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IsMinimalCoverage" type="xs:boolean" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            A boolean describing whether the tiles provide a minimal coverage.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="MinificationFactor" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The factor by which consecutive pyramid layers have been shrunken.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="MinificationMethod" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the method that was used for minifying the pyramid tiles.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="PointSampling"/>
+            <xs:enumeration value="Gaussian"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="MinificationParameters" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: TileRegionCategoryMetadata -->
+  <xs:complexType name="TileRegionCategoryMetadata">
+    <xs:all>
+      <xs:element name="Description" type="xs:string" />
+      <xs:element name="Color" type="xs:string" />
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: ShapeContour -->
+  <xs:complexType name="ShapeContour">
+    <xs:all>
+      <xs:element name="Points" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Format: "X1,Y1 X2,Y2 .. Xn,Yn"</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Type" type="xs:string" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionDefinitionS -->
+  <xs:complexType name="PositionDefinitionS">
+    <xs:annotation>
+      <xs:documentation>
+        The X, Y and Z attributes are the real hardware device positions (stage and focus). [unit: micrometers]
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="X" type="xs:float" />
+    <xs:attribute name="Y" type="xs:float" />
+    <xs:attribute name="Z" type="xs:float" />
+    <xs:attribute name="TheM" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          The TheM attribute defines the corresponding M index for this position.
+          It is numbered from 0 and corresponds to the StartM-index of the subblocks of this image document.
+          NOTE:
+          If there is a TheM defined, the stage position refers to the center of the tile with index=TheM.
+          If there is no TheM defined, then the stage position refers to the center of the complete scene.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: DimensionChannel -->
+  <xs:complexType name="DimensionChannel">
+    <xs:annotation>
+      <xs:documentation>
+        There must be at least one element per channel in the Image, even for a single-plane image.
+        Information about how each channel was acquired is stored here.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+
+      <xs:element name="GroupId1" type="xs:string" minOccurs="0"/>
+      <xs:element name="GroupId2" type="xs:string" minOccurs="0"/>
+      <xs:element name="GroupId3" type="xs:string" minOccurs="0"/>
+      <xs:element name="ChannelType" minOccurs="0">
+        <xs:annotation>
+          <xs:appinfo>AiryScan Draft</xs:appinfo>
+          <xs:documentation>
+            This field (in a sense) has the highest precedence when determining/assigning
+            the microscopy method how a channel was acquired. Usually, the AcquisitionMode-field
+            is used to give an indication which microscopy method was used. But if this field
+            "ChannelType" is present, it has higher precedence - i. e. it should be checked first.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Heightmap">
+              <xs:annotation>
+                <xs:appinfo>
+                  This channel represents a heightmap. Note that additional restrictions apply when declaring a channel as heightmap.
+                  Some of the restrictions are: a corresponding "TopographyDataItem"-structure has to be present, the channel must
+                  be of pixel-type Gray32Float.
+                  For details see DS_TopoImageExtensions.docx.
+                </xs:appinfo>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="PalHR"/>
+            <xs:enumeration value="PalWidefield"/>
+            <xs:enumeration value="SimHR"/>
+            <xs:enumeration value="SimWidefield"/>
+            <xs:enumeration value="SimDWF"/>
+
+            <xs:enumeration value="AiryScanSum">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains a processed (combined) super-resolution from an Airy-scan-acquisition in draft quality
+                  - for preview purposes.
+                  TODO: - Do we find this one for all Airy-Scan-types or only for Super-Resolution?
+                  - Do we need to distinguish between super-resolution and virtual pinhole and multibeam?
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+
+            <xs:enumeration value="AiryScanRawSr">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the images of all sensors in the Airy-Scan-sensor-
+                  array. The scan is intended to give a higher-resolution image.
+                  This also implies that an H-dimension is present in this document, and
+                  that (in this document) the H-dimension is used to label the images
+                  captured from the different sensors in the Airy-Scan-sensor-array.
+                  Note that this value is used for all types of Airy-Scan (currently, this is
+                  Super-Resolution, Virtual-Pinhole and Multibeam).
+                  Note: this value "AiryScanRawSr" is deprecated, use "AiryScanRaw" instead.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="AiryScanRaw">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the images of all sensors in the Airy-Scan-sensor-
+                  array. The scan is intended to give a higher-resolution image.
+                  This also implies that an H-dimension is present in this document, and
+                  that (in this document) the H-dimension is used to label the images
+                  captured from the different sensors in the Airy-Scan-sensor-array.
+                  Note that this value is used for all types of Airy-Scan (currently, this is
+                  Super-Resolution, Virtual-Pinhole and Multibeam).
+                  Note: this value is synonymous to "AiryScanRawSr", this one is the recommended one.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="AiryScanSr">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the (processed) super-resolution image (typically processed
+                  from a raw image of ChannelType=AiryScanRaw, all the different H-dimension
+                  images have been condensed into a resolution-enhanced image).
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="AiryScanVp">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the (processed) "virtual pinhole" image (typically processed
+                  from a raw image of ChannelType=AiryScanRaw, all the different H-dimension
+                  images have been condensed into a "virtual-pinhole" image).
+                  TODO - find better wording...
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="AiryScanMb">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the (processed) "multi-beam" image (typically processed
+                  from a raw image of ChannelType=AiryScanRaw, all the different H-dimension
+                  images have been condensed into a "multi-beam" image).
+                  TODO - find better wording...
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="AiryScanRingSheppardSum">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  This channel contains the Sheppard-sum created from 4 fiber-rings.
+                  TODO: add explanation...
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+
+            <xs:enumeration value="Unspecified"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="ChannelUnit" type="xs:string" minOccurs="0"/>
+
+      <xs:element name="PixelType" type="PixelType" default="Gray8" minOccurs="0"/>
+      <xs:element name="ComponentBitCount" type="xs:integer" default="0" minOccurs="0" />
+
+      <xs:element name="AcquisitionMode" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            AcquisitionMode describes the type of microscopy performed for each channel.
+            Possible modes:
+            WideField
+            LaserScanningConfocalMicroscopy     - CLSM or LSCM
+            SpinningDiskConfocal
+            SlitScanConfocal
+            StructuredIllumination
+            SingleMoleculeImaging
+            TotalInternalReflection
+            FluorescenceLifetime
+            SpectralImaging
+            FluorescenceCorrelationSpectroscopy
+            NearFieldScanningOpticalMicroscopy  - NSOM
+            SecondHarmonicGenerationImaging     - Second harmonic imaging microscopy (SHIM)
+            PALM                                - photo-activated localization microscopy, photo-activation localization microscopy
+            STORM                               - stochastic optical reconstruction microscopy
+            STED                                - stimulated emission depletion
+            TIRF                                - total internal reflection fluorescence (TIRFM)
+            FSM                                 - Fluorescence speckle microscopy
+            LCM                                 - Laser capture microdissection
+            SPIM                                - Selective Plane Illumination
+            SEM                                 - Scanning Electron Microscopy
+            Other
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="WideField"/>
+            <xs:enumeration value="LaserScanningConfocalMicroscopy"/>
+            <xs:enumeration value="SpinningDiskConfocal"/>
+            <xs:enumeration value="SlitScanConfocal"/>
+            <!-- Note: Multiphoton excitation is characterized by ContrastMethod=MultiPhotonMicroscopy -->
+            <xs:enumeration value="MultiPhotonMicroscopy"/>
+            <!-- laser scanning multiphoton microscopy (LSMM), two photon microscopy -->
+            <xs:enumeration value="StructuredIllumination"/>
+            <xs:enumeration value="SingleMoleculeImaging"/>
+            <xs:enumeration value="TotalInternalReflection"/>
+            <xs:enumeration value="FluorescenceLifetime"/>
+            <xs:enumeration value="SpectralImaging"/>
+            <!-- Spectral Imaging produces Lambda channel -->
+            <xs:enumeration value="FluorescenceCorrelationSpectroscopy"/>
+            <xs:enumeration value="NearFieldScanningOpticalMicroscopy"/>
+            <!-- NSOM -->
+            <xs:enumeration value="SecondHarmonicGenerationImaging"/>
+            <!-- Second harmonic imaging microscopy (SHIM) -->
+            <xs:enumeration value="PALM"/>
+            <!-- photo-activated localization microscopy, photo-activation localization microscopy -->
+            <xs:enumeration value="STORM"/>
+            <!-- stochastic optical reconstruction microscopy -->
+            <xs:enumeration value="STED"/>
+            <!-- stimulated emission depletion -->
+            <xs:enumeration value="TIRF"/>
+            <!-- total internal reflection fluorescence (TIRFM) -->
+            <xs:enumeration value="FSM"/>
+            <!-- Fluorescence speckle microscopy -->
+            <xs:enumeration value="LCM"/>
+            <!-- Laser capture microdissection -->
+            <xs:enumeration value="SPIM"/>
+            <!-- Selective Plane Illumination -->
+            <xs:enumeration value="SEM"/>
+            <!-- Scanning Electron Microscopy - relevant for correlative microscopy (CorrMic) -->
+            <xs:enumeration value="ApertureCorrelation"/>
+            <!-- Aperture Correlation. A specific application of Structured Illumination. -->
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="IlluminationType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The method of illumination used to capture the channel.
+            Possible values:
+            Transmitted
+            Epifluorescence
+            Oblique
+            NonLinear
+            Other
+            "Epifluorescence" in this context just describes the fact that the objective is used to bring
+            the fluorescence inducing light ("the illumination") to the specimen (in contrast to transmitted illumination e.g.).
+            This does not neccessarily require that we do a fluorescence acquisition.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Transmitted"/>
+            <xs:enumeration value="Epifluorescence"/>
+            <!-- Should actually have the name Epi-Illumination. -->
+            <xs:enumeration value="Oblique"/>
+            <!-- Possible for SPIM and TIRF. -->
+            <xs:enumeration value="NonLinear"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="ContrastMethod" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            ContrastMethod describes the technique used to achieve contrast for each channel.
+            Possible values:
+            Brightfield
+            Phase
+            DIC                      - Differential Interference Contrast
+            HoffmanModulation        - Hoffman Modulation Contrast (HMC)
+            ObliqueIllumination
+            PolarizedLight           - Polarization Microscopy
+            Darkfield
+            Fluorescence
+            MultiPhotonFluorescence  - multi-photon excitation was employed
+            Other
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Brightfield"/>
+            <xs:enumeration value="Phase"/>
+            <xs:enumeration value="DIC"/>
+            <xs:enumeration value="HoffmanModulation"/>
+            <xs:enumeration value="ObliqueIllumination"/>
+            <xs:enumeration value="PolarizedLight"/>
+            <xs:enumeration value="Darkfield"/>
+            <xs:enumeration value="Fluorescence"/>
+            <xs:enumeration value="MultiPhotonFluorescence"/>
+            <!-- multi-photon excitation was employed, in other respects it is similar to "Fluorescence" -->
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="IlluminationWavelength" type="SpectrumCharacteristic" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Illumination Wavelength as either a single Peak or a list of Ranges.
+            This characterizes the light used for illuminating the specimen.
+            More specific, it is about the light that actually hits the specimen, not the light as it leaves the light source.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DetectionWavelength" type="SpectrumCharacteristic" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Detection Wavelength as either a single Peak or a list of Ranges.
+            This characterizes the part of the spectrum for which the detector used for this channel is actually sensitive for.
+            It gives in any case the "net result" - it does not matter what technique is used to limit the detection range.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ExcitationWavelength" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Wavelength of excitation for this channel in nanometers.
+            This characterizes the fluorochrome - the fluorochrome one was interested in this channel.
+            It has just an informative meaning - it is not meant to characterize the fluorochrome in depth,
+            that is what the DyeId is meant for. [units:nanometers].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element >
+
+      <xs:element name="EmissionWavelength" type="xs:double"  minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Wavelength of emission for this particular channel, in nanometres[nm].
+            This information refers to the fluorochrome.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DyeId" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The dye id which is unique within the original dye database.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DyeDatabaseId" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The id (Guid) of the original database this dye is taken from.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PinholeSize" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The optional PinholeSize element allows specifying adjustable pinhole diameters for confocal microscopes.
+            The Pinhole is track specific. I.e. channels of the same track need to have the same value here.
+            [units:micrometers].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PinholeSizeAiry" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The size of the pinhole in units of the airy disc. Since this value cannot (easily)
+            be derived from the above PinholeSize (in micrometers), the rule is that we store this
+            value separately.
+            [units:none].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PinholeGeometry" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The geometry of the pinhole, either circular or rectangular.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Circular"/>
+            <xs:enumeration value="Rectangular"/>
+            <xs:enumeration value="Other"/>
+            <!-- Note: "Other" then means: not Circular and not Rectangular, it does not mean: don't know or don't care! -->
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="Fluor" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The Fluor element is used for fluorescence images.
+            This is the name of the fluorophor used to produce this channel [plain text string].
+            This element is just for informative purposes. The fluorochrome is far better identified by the
+            DyeId. However - if you do not have a DyeId at hand, you may use this field in order to give at least
+            an informative string.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="NDFilter" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            The NDfilter element is used to specify the combined effect of any neutral density filters used.
+            [units:optical density expressed as a PercentFraction]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PockelCellSetting" type="xs:integer" minOccurs="0"  maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The PockelCellSetting used for this channel.
+            This is the amount the polarization of the beam is rotated by. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Color" minOccurs="0" type="xs:string" default="#FFFFFFFF">
+        <xs:annotation>
+          <xs:documentation>
+            The original color of the channel (the color that was defined by the dye or the user before the acquisition).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ExposureTime" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Exposure time used to acquire this channel for informative purposes.
+            The value may be given as a single number or a range.
+            Examples: "4000" "89944" "887-1100" "100-1000"
+            This element gives just an informative value for the exposure time used to acquire this channel.
+            It must not be understood to have the meaning of "exposure time is constant for all pictures in this channel".
+            If the exposure time is not constant, then a range may be given here.
+            If it does not apply at all (e. g. because no CCD-camera or similar was used as detector), leave it out. [units:nanoseconds].
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="\s*((\d+)|(\d+-\d+))\s*"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="DepthOfFocus" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            The depth of focus [unit: micrometers].
+            There are several formulas how to evaluate the depth of focus.
+            The following one is used for images acquired on ZENblue:
+            depth of focus = 2 * n * w / (objectiveNA)^2.
+            where: n = ImmersionRefractiveIndex, w = emission wavelength, objectiveNA = numerical aperture of objective lens.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="SectionThickness" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The thickness of the section (e.g. for SIM acquisition). [unit: micrometers].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="DetectorSettings" type="ChannelDetectorSettings" minOccurs="0" maxOccurs="1" />
+
+      <!-- The LightPath is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="LightSourcesSettings" type="ChannelLightSourcesSettings" minOccurs="0" maxOccurs="1" />
+
+      <!-- The LightPath is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="LightPath" type="ChannelLightPath" minOccurs="0" maxOccurs="1" />
+
+      <!-- The FilterSet is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="FilterSet" type="FilterSetRef" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Refers to an instance of InstrumentFilterSet in Information/Instrument/FilterSets.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="LaserScanInfo" type="ChannelLaserScanInfo" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>Here we find information how the laser operated when scanning the field.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- BEGIN: PROPOSED ADDITION for SPIM-->
+      <xs:element name="SPIMIlluminationSettings" type="ChannelSPIMIlluminationSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Here we find information about the details of the illumination for a SPIM-acquisition.
+            This element is only expected to be present if AcquisitionMode=SPIM.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <!-- END: PROPOSED ADDITION for SPIM-->
+
+      <xs:element name="SPIMDetectionSettings" type="ChannelSPIMDetectionSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Here we find information about the details of the detection lightpath for a SPIM-acquisition.
+            This element is only expected to be present if AcquisitionMode=SPIM.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- Proposal - metadata extension for SIM -->
+      <xs:element name="SIMSettings" type="ChannelSIMSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Information about the details of a SIM acquisition.
+            This element is only expected to be present if AcquisitionMode=StructuredIllumination.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="AiryscanSettings" type="ChannelAiryscanSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Information about the details of a Airyscan acquisition.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- The Reflector is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="Reflector" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The name of the reflector which was used for this channel.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- CondenserContrast is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="CondenserContrast" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The condenser contrast that was used for this channel.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- NACondenser is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="NACondenser" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The numerical aperture of the condenser.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- Might be of interest in the future: -->
+      <!-- Are these items set somewhere else? Within the experiment? -->
+      <!--
+      <xs:element name="KineticSettings" type="xs:string" minOccurs="0"/>
+      <xs:element name="MeasurementTime" type="xs:double" minOccurs="0"/>
+      <xs:element name="BleachTime" type="xs:double" minOccurs="0"/>
+      <xs:element name="Repetitions" type="xs:integer" minOccurs="0"/>
+      <xs:element name="CorrelatorBinning" type="xs:string" minOccurs="0"/>
+      -->
+
+      <!-- Are these items set somewhere else? Within the experiment? -->
+      <!--
+      <xs:element name="MaxCorrelationTime" type="xs:double" minOccurs="0"/>
+      <xs:element name="CorrelatorTauCh" type="xs:string" minOccurs="0"/>
+      <xs:element name="AutoCut" type="xs:string" minOccurs="0"/>
+      <xs:element name="CountRateBinning" type="xs:double" minOccurs="0"/>
+      <xs:element name="PhotoCtHistoBin" type="xs:double" minOccurs="0"/>
+      -->
+
+      <xs:element name="Ratio" type="Ratio" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The ratio between two active channels.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this channel.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Name" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>A name for the channel that is suitable to be presented to the user.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="Ratio">
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The type of an online calculation where the channel is the destination.
+
+            The following values are possible:
+
+            NoOnlineCalculation    - The data channel receives raw scan data.
+            OnlineRatio            - (S1+C1)/(S2+C2)*C3+C4
+            OnlineSubtraction      - (S1*C1-S2*C3)/C2+C4
+            OnlineSubtractionRatio - (S1-S2*C1)/(S1+S2*C2)*C3+C4
+            OnlineHillFunction     - C3*(C4/C5)*(S1-C1)/(C2-S2)
+            OnlineReferenceRatio   - (S1-S2+C1)/(S2-C2)*C3+C4
+            OnlineLinearUnmixing   - The Linear Unmixing processing.
+
+            The operands and constants are:
+
+            S1 - Source1
+            S2 - Source2
+            C1 - RatioConstant1
+            C2 - RatioConstant2
+            C3 - RatioConstant3
+            C4 - RatioConstant4
+            C5 - RatioConstant5
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="NoOnlineCalculation"/>
+            <xs:enumeration value="OnlineRatio"/>
+            <xs:enumeration value="OnlineSubtraction"/>
+            <xs:enumeration value="OnlineSubtractionRatio"/>
+            <xs:enumeration value="OnlineHillFunction"/>
+            <xs:enumeration value="OnlineReferenceRatio"/>
+            <xs:enumeration value="OnlineLinearUnmixing"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Const1" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C1 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Const2" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C2 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Const3" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C3 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Const4" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C4 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Const5" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C5 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Const6" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Contains the constant C6 for online ratio calculations.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Source1" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the source operands S1 for an online calculation.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ChannelRef" type="ChannelRef" minOccurs="1" maxOccurs="1"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Source2" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Specifies the source operands S2 for an online calculation.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ChannelRef" type="ChannelRef" minOccurs="1" maxOccurs="1"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelLaserScanInfo">
+    <xs:all>
+      <xs:element name="PixelTime" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The time it takes the laser to sweep through the distance that corresponds to one pixel.
+            Also known as PixelDwellTime.
+            [unit:s]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LineTime" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The time it takes the laser to sweep through the distance that corresponds to one line.
+            [unit:s]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FrameTime" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The time it takes the laser to sweep through the area of a frame.
+            [unit:s]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Averaging" type="xs:integer" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The scan can be performed more than once and for the resulting image, each pixel value is gained by
+            averaging the different scanning results for this pixel.
+            The Averaging element says how often the scanning was done.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ScanningMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The scanning mode for the channel.
+            For the moment, all channels of an LSM image are acquired with the same scanning mode.
+            That means, all channels are supposed to have the same value here.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Frame"/>
+            <xs:enumeration value="FastFrame"/>
+            <xs:enumeration value="LineSequential"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="SampleRotation" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The rotation angle of the scan coordinates relative to the microscope coordinates in degrees. This value is used for rotated scans.
+            [unit:degrees]
+            Note: The subblock metadata contains a corresponding element (name: RoiRotation).
+            Ensure to keep the values synchronized if possible.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="SampleOffsetX" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            X-scanner-offset of the center of the scanned image relative to the center for the maximum possible scan field.
+            [unit:microns]
+            Note: The subblock metadata contains a corresponding element (name: RoiCenterOffsetX).
+            Ensure to keep the values synchronized if possible.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="SampleOffsetY" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Y-scanner-offset of the center of the scanned image relative to the center for the maximum possible scan field.
+            [unit:microns]
+            Note: The subblock metadata contains a corresponding element (name: RoiCenterOffsetY).
+            Ensure to keep the values synchronized if possible.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ScanDirection" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Defines whether a bidirectional or unidirectional scan was employed.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Bidirectional"/>
+            <xs:enumeration value="Unidirectional"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="ZoomX" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The x-scanner zoom factor.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ZoomY" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The y-scanner zoom factor.
+            [unit:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="ZoomZ" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The z-scanner zoom factor.
+            [unit:none]
+            This value is currently not used.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CropOffset" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The CropOffset is a relict, it is not used. For sample offset, see elements SampleOffsetX and SampleOffsetY.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- LaserAttenuatorMeas is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="LaserAttenuatorMeas" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The attenuation of the laser in percentage (valid range: [0, 1]).
+            The laser intensity is then gained via '1 - LaserAttenuatorMeas'.
+            - This element is not supported by ZEN any more. Use DimensionChannel/LightSourcesSettings/LightSourceSettings/Attenuation instead.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- LaserBlanking is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="LaserBlanking" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The time that the laser is not ON while re-positioning for the next scan line.
+            [unit:s]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <!-- LaserAttenuatorBleach is track specific. I.e. channels of the same track need to have the same value here. -->
+      <xs:element name="LaserAttenuatorBleach" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The attenuation of the laser bleaching in percentage (valid range: [0, 1]).
+            The 'intensity' is then gained via '1 - LaserAttenuatorBleach'.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="VariableChannelDetectorSetting">
+    <xs:all>
+      <xs:element name="Gain" type="xs:double" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+    <xs:attribute name="Z" type="xs:integer" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="VariableChannelDetectorSettings">
+    <xs:all>
+      <xs:element name="VariableParameters" minOccurs="0" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Parameters" type="VariableChannelDetectorSetting" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelDetectorSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This holds the setting applied to a detector as well as a reference to the detector.
+        The ID is the detector used in this case.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Detector" type="DetectorRef" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Refers to an instance of InstrumentDetector in Information/Instrument/Detectors.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Binning" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Represents the number of pixels that are combined to form larger pixels.</xs:documentation>
+          <!-- It is very unlikely that we will ever see other binnings than the ones listed below, or is it? -->
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="1x1"/>
+            <xs:enumeration value="2x2"/>
+            <xs:enumeration value="4x4"/>
+            <xs:enumeration value="8x8"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="Shutter" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Specifies the behavior of the shutter. This field is only to be expected with CCD/CMOS detectors.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Rolling"/>
+            <xs:enumeration value="Global"/>
+            <!-- "Other" means: not "Rolling" and not "Global", it does not mean "don't know" or "not applicable". For the
+            cases "don't know" or "not applicable" simply do not write this element. -->
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="PhotonConversionFactor" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The PhotonConversionFactor (PCF) allows to recalculate the number of detected photons out of the grey values.
+            PCF is defined as the number of photons at scale maximum (1.). In order to get the number of photons per gray scale value (digit)
+            it should be normalized (divided) to the maximum gray value (U16->65535).
+            Potential dependencies: gain (EMGain, Master Gain, digital Gain / Bitshift), Averaging Mode. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Gain" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The Gain of the detector. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DigitalGain" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The digital gain of the detector. Can be applied additionally to the ('electronical') detector gain. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Offset" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The digital Offset for the detector. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="EMGain" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Voltage" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The Voltage of the detector. volts[V]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ReadOutRate" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The speed at which the detector can read out the pixels.
+            Unit of ReadOutRate is MBytes per second (1MByte=1,000,000 bytes!).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="UseBrightnessContrastCorrection" type="xs:boolean" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The brightness and contrast correction for stacks and z-scans was active
+            during acquisition and is defined by sets of variable values for AOTF power,
+            PMT gain and detector amplifier gain and offset for the positions of the focus drive.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PixelMaximum" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The maximum possible pixel value that the camera can acquire.
+            If the bit depth can be changed for the detector, this value is different for different bit depths.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PixelAccuracy" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The pixel accuracy. This is a normalized value calculated as (1.0 / possible number of values).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PixelScaleFactor" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The pixel scale factor. This typically coincides with the camera pixel maximum.
+            If not defined, it can be derived from the normalized pixel accuracy by: pixel scale factor = (1.0 / pixel accuracy) - 1.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <!-- Proposal - metadata extension for SIM -->
+      <xs:element name="CameraProcessingMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The processing mode of the camera (concerning H (=phase) dimension).
+            This is of interest when using ApoTome: The camera can either send raw images (containing phase dimension),
+            or it can process the raw images such that the resulting image does not contain an H index any more.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="None">
+              <xs:annotation>
+                <xs:documentation>No phase images were acquired at all.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Widefield">
+              <xs:annotation>
+                <xs:documentation>Phase images were acquired and processed to a Widefield image internally.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Sectioned">
+              <xs:annotation>
+                <xs:documentation>Phase images were acquired and internally processed to get an optical section.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="RawDataMode">
+              <xs:annotation>
+                <xs:documentation>Phase images were acquired, no internal processing.</xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="VariableDetectorSettings" type="VariableChannelDetectorSettings" minOccurs="0" maxOccurs="1"/>
+
+      <xs:element name="Processing" type="ProcessingSettings" minOccurs="0" maxOccurs="1"/>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!--proposal HDR-metadata BEGIN -->
+  <xs:complexType name="ProcessingSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This holds a list of image processing operation which take place on the images
+        acquired from the camera before the image is stored in the document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ProcessingOperation" type="ProcessingOperation" maxOccurs="unbounded" minOccurs="0">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ProcessingOperation">
+    <xs:annotation>
+      <xs:documentation>
+        This identifies the image processing operation which occurs on the image from the detector.
+        The list is expected to be extended (e.g. shading correction would fit in here).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="Hdr" type="HdrProcessingOperation"></xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="HdrProcessingOperation">
+    <xs:annotation>
+      <xs:documentation>
+        Information about the HDR processing.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="RelativeBrightness">
+        <xs:annotation>
+          <xs:documentation>
+            A HDR-image is composed by a couple of images with different brightness. This is a list of (dimensionless) numbers which describe
+            the brightness of the images (that make up the sequence used to compose the HDR-image). The brightness of each image is given as the ratio
+            brightness_of_image(n) / brightness_of_image(1). The brightness of the first image is therefore always 1, and it is to be included in the list
+            (the list must therefore always start with the value 1).
+            So, the number of images (that make up the HDR-sequence) is equal to the number of elements.
+            By definition, each element must be greater or equal zero. If a negative number is given, it has the meaning "unknown".
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType >
+          <xs:restriction>
+            <xs:simpleType>
+              <xs:list itemType="xs:double">
+              </xs:list>
+            </xs:simpleType>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="HdrParameters" type="HdrParameters" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            In this node more specicialized parameters for the employed method of HDR-processing may be given.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="HdrParameters">
+    <xs:annotation>
+      <xs:documentation>
+        In this node more specialized parameters for the employed method of HDR-processing may be given.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="LsmHdrProcessingParameters" type="LsmHdrProcessingParameters"></xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="LsmHdrProcessingParameters">
+    <xs:annotation>
+      <xs:documentation>
+        The specialized parameters for HDR-processing in case of LSM.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="Mode">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Illumination"/>
+            <xs:enumeration value="Sampling"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  <!--proposal HDR-metadata END -->
+
+  <xs:complexType name="ChannelLightSourcesSettings">
+    <xs:sequence>
+      <xs:element name="LightSourceSettings" type="ChannelLightSourceSettings" maxOccurs="unbounded">
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- BEGIN: PROPOSED ADDITION for SPIM-->
+  <xs:complexType name="ChannelSPIMIlluminationSettings">
+    <xs:all>
+
+      <xs:element name="NALightSheet" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The "effective" numerical aperture of the lighthsheet optics.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="BeamType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Describes the characteristic of the light sheet.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Gauss"/>
+            <xs:enumeration value="Bessel"/>
+            <!-- note: "Other" means "not Gauss and not Bessel", it does not mean: don't know! 
+            If you "don't know", then do not write this field! -->
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="CylinderLensRef" type="CylindricalLensRef" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            A reference to a cylindrical lens listed under "Instruments".
+            If this entry is not present, it means "no cylindrical lens" present. If one wants
+            to describe the situation "a cylindrical lens is present, but I do not know anything
+            about its parameters", then you have to create an empty cylindrical-lens-entry under
+            "Instruments" (empty means: no parameters are given).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IlluminationObjectiveSettings" type="InstrumentObjectiveSettings" minOccurs="0" maxOccurs="1"/>
+
+      <xs:element name="ResonanceScannerSettings" type="SPIMIlluminationResonanceScannerSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The parameters which describe the operation of the resonance scanner.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="GalvoScannerSettings" type="SPIMIlluminationGalvoScannerSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The parameters which describe the operation of the galvo scanner.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:all>
+
+  </xs:complexType>
+
+  <xs:complexType name="ChannelSPIMDetectionSettings">
+    <xs:all>
+      <xs:element name="NADetection" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The "effective" numerical aperture of the detection lightpath (in case of SPIM).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="SPIMIlluminationResonanceScannerSettings">
+    <xs:all>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Amplitude" type="xs:double" minOccurs="0" maxOccurs="1">
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="SPIMIlluminationGalvoScannerSettings">
+    <xs:all>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="AmplitudeYScan" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Frequency" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Offset1Left" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Offset1Right" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Offset2Left" type="xs:double" minOccurs="0" maxOccurs="1"/>
+      <!-- TODO: provide description and definition of unit! -->
+      <xs:element name="Offset2Right" type="xs:double" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+  <!-- END: PROPOSED ADDITION for SPIM-->
+
+  <!-- Proposal - metadata extension for SIM -->
+  <xs:complexType name="ChannelSIMSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This holds the setting applied to a SIM device as well as a reference to the SIM device.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="SIMDeviceRef" type="SIMDeviceRef" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Refers to an instance of InstrumentSIMDevice in Information/Instrument/SIMDevices.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="GratingPeriod" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The grating period (i.e. the distance of the maxima of the grating which has been used
+            to acquire the data of the channel) in pixel units.
+            Crucial for SIM processing.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="GratingRotation" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The grating rotation in degrees.
+            Normally, this value would be 0 or 90 degree.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="GridDescription" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A descriptive text about the grid that was used for the acquisition.
+            Typically, this should include the position number, the number of lines and some additional information.
+            E.g. used for Vivatome.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Reflector" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The name of the reflector/filter set that is used in the SIM device. (E.g. VivaTome2 contains a particular reflector.)
+            For additional information about wavelenghts, see the element FilterSet.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FilterSetRef" type="FilterSetRef" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            Refers to an instance of InstrumentFilterSet in Information/Instrument/FilterSets (reference by ID).
+            The referenced filter set contains wavelength information about the filters that are applied in the reflector/filter set of the SIM device
+            (see also Reflector element which contains the name of the reflector/filter set).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiffractionEfficiency1" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            In the Elyra setting, three diffracted beams of the order -1, 0 and +1 are interfered
+            to produce five orders in the interference pattern.
+            The “DiffractionEfficiency” corresponds to the amplitude of the diffraction orders:
+            DiffractionEfficiency1 is for the “-1” diffraction order.
+            Normally, the amplitude of the “-1” diffraction order is equal to the amplitude of the “1” diffraction order.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiffractionEfficiency2" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            In the Elyra setting, three diffracted beams of the order -1, 0 and +1 are interfered
+            to produce five orders in the interference pattern.
+            The “DiffractionEfficiency” corresponds to the amplitude of the diffraction orders:
+            DiffractionEfficiency2 is for the “0” diffraction order.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="DiffractionEfficiency3" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            In the Elyra setting, three diffracted beams of the order -1, 0 and +1 are interfered
+            to produce five orders in the interference pattern.
+            The “DiffractionEfficiency” corresponds to the amplitude of the diffraction orders:
+            DiffractionEfficiency3 is for the “1” diffraction order.
+            Normally, the amplitude of the “-1” diffraction order is equal to the amplitude of the “1” diffraction order.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelAiryscanSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This holds the settings applied to an Airyscan system.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="Mode">
+        <xs:simpleType>
+          <xs:annotation>
+            <xs:appinfo>AiryScan Draft</xs:appinfo>
+            <xs:documentation>
+              The Airy-scan mode. Possible values are "SuperResolution", "VirtualPinhole" and "MultiBeam".
+            </xs:documentation>
+          </xs:annotation>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="SuperResolution">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  The Airy-mode is Super-Resolution.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="VirtualPinhole">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  The Airy-mode is "Virtual-Pinhole".
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="MultiBeam">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  The Airy-mode is "Multi-Beam" aka FAST.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="Off">
+              <xs:annotation>
+                <xs:appinfo>AiryScan Draft</xs:appinfo>
+                <xs:documentation>
+                  TODO: What exactly does this mean? We have results from an Airy-scan-detector, but this scan
+                  has had no "clearly definied purpose" (not SuperResolution, not VirtualPinhole and not MultiBeam)?
+                  Or does it mean that not the Airy-scan-detector-array was used? Please provide a description - or remove
+                  this entry.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:enumeration>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="MultiBeamSettings" type="AiryScanMultiBeamSettings" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:appinfo>AiryScan Draft</xs:appinfo>
+          <xs:documentation>
+            Parameters specific for the Airy-scan mode "MultiBeam" are found here. This element is only
+            to be expected if Mode=MultiBeam.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="VirtualPinholeSize"/>
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="Magnification"/>
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="TransformationXX"/>
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="TransformationXY"/>
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="TransformationYX"/>
+      <xs:element type="xs:double" minOccurs="0" maxOccurs="1" name="TransformationYY"/>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="AiryScanMultiBeamSettings">
+    <xs:annotation>
+      <xs:appinfo>AiryScan Draft</xs:appinfo>
+      <xs:documentation>
+        Parameters specific to the airy-scan mode "MultiBeam".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="IlluminationLinePixels" minOccurs="0" maxOccurs="1">
+        <xs:simpleType >
+          <xs:annotation>
+            <xs:appinfo>AiryScan Draft</xs:appinfo>
+            <xs:documentation>
+              Assuming that the shape of the illumination spot is a line, this is a (2D) directional vector describing
+              the orientation and the length of the line.
+              The vector is given in "units of pixels" (in the resulting image) in a coordinate system where the origin
+              is at the upper left corner.
+              The norm of this vector (usually) gives the parallelization factor.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:restriction>
+            <xs:simpleType>
+              <xs:list itemType="xs:double">
+              </xs:list>
+            </xs:simpleType>
+            <xs:length value="2"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="IlluminationLine" minOccurs="0" maxOccurs="1">
+        <xs:simpleType >
+          <xs:annotation>
+            <xs:appinfo>AiryScan Draft</xs:appinfo>
+            <xs:documentation>
+              Assuming that the shape of the illumination spot is a line, this is a (2D) directional vector describing
+              the orientation and the length of the line (as found on the specimen). The vector is given in units of µm.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:restriction>
+            <xs:simpleType>
+              <xs:list itemType="xs:double">
+              </xs:list>
+            </xs:simpleType>
+            <xs:length value="2"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="EffectiveNA_in_x" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:appinfo>AiryScan Draft</xs:appinfo>
+          <xs:documentation>
+            This gives the numerical aperture in x-direction for the illumination lightpath.
+            TODO: check explanation
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="EffectiveNA_in_y" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:appinfo>AiryScan Draft</xs:appinfo>
+          <xs:documentation>
+            This gives the numerical aperture in y-direction for the illumination lightpath.
+            TODO: check explanation
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelLightSourceSettings">
+    <xs:all>
+      <xs:element name="LightSource" type="LightSourceRef" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>This ID refers to an instance of InstrumentLightSource in Information/Instrument/LightSources.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Wavelength" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The Wavelength of the light source. Unit: nanometres[nm]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Attenuation" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The attenuation of the light source [units:none]
+            A fraction, as a value from 0.0 to 1.0.
+            A value of 0.0 means "no attenuation", and 1.0 means "all light was blocked".
+            So, the attenuation equals: 1 - light_intensity_after_attenuation / light_intensity_before_attentuation.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Intensity" type="xs:string" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            An information string about the intensity of the light source.
+            The intensity might be set in percent or in Volt; the unit is part of the string value.
+            Note: to get the exact numerical intensity value, use the Attenuation element to calculate the intensity
+            (normalized_intensity = 1 - attenuation).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FlashDuration" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The duration of the flashing light in milliseconds.
+            This value refers to the Intensity value, i.e. the light source had the intensity of the Intensity value for the duration of the Duration value.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="TIRFAngle" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This parameter gives the TIRF-angle (in degrees).
+            It is only to be expected if "LightSource" is referencing a light-source
+            of type "TIRF", otherwise it may be considered noise.
+          </xs:documentation>
+        </xs:annotation>
+        <!-- TODO: we should define here what we understand in detail by this angle. -->
+      </xs:element>
+
+      <xs:element name="TIRFDepthOfPenetration" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This parameter gives the depth of penetration (in µm) of the TIRF-laserbeam.
+            It is only to be expected if "LightSource" is referencing a light-source
+            of type "TIRF", otherwise it may be considered noise.
+            If value == 99999, it means infinity (=Epi).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IsTIRFCalibrated" type="xs:boolean" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This parameter gives the calibration state of the TIRF device for this channel.
+            It is only to be expected if "LightSource" is referencing a light-source
+            of type "TIRF", otherwise it may be considered noise.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Polarization" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="StokesParameter1" type="xs:double" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="StokesParameter2" type="xs:double" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="StokesParameter3" type="xs:double" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="StokesParameter4" type="xs:double" minOccurs="0" maxOccurs="1"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelLightPath">
+    <xs:annotation>
+      <xs:documentation>Lists filters and dichroic which are used for the particular channel.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ExcitationFilter" type="FilterRef" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The Filters placed in the Excitation light path.
+            This ID refers to an instance of InstrumentFilter in Information/Instrument/Filters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Dichroic" type="DichroicRef"  minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>This ID refers to an instance of InstrumentDichroic in Information/Instrument/Dichroics.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="EmissionFilter" type="FilterRef" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The Filters placed in the Emission light path.
+            This ID refers to an instance of InstrumentFilter in Information/Instrument/Filters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="SpectrumCharacteristic">
+    <xs:choice>
+      <xs:element name="SinglePeak" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The spectrum is characterized by giving the wavelength of the (single) peak [unit:nm].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Ranges">
+        <xs:annotation>
+          <xs:documentation>
+            The spectrum is characterized by single peaks or start-end intervals in a
+            textual form [units=nm].
+            The numbers may be given with a decimal point (e.g. "42" or "42.484")
+            Valid examples: "430.45,440-,500"  "440,460,490"  "480.85-490,510,530"
+            "400-" means: "400-infinity"
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:pattern value="\s*(((\d*\.)?\d+)|(((\d*\.)?\d+)-((\d*\.)?\d+)*)|(((\d*\.)?\d+)*-((\d*\.)?\d+)))+(,(((\d*\.)?\d+)|(((\d*\.)?\d+)-((\d*\.)?\d+)*)|(((\d*\.)?\d+)*-((\d*\.)?\d+))))*\s*"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: DimensionTrack -->
+  <xs:complexType name="DimensionTrack">
+    <xs:annotation>
+      <xs:documentation>Each track holds a collection of all channels that it contains. The channels are referenced by Id.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ChannelRefs" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ChannelRef" type="ChannelRef" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this track.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" use="optional" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the track as specified by the user.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="DimensionLambdaStack">
+    <xs:annotation>
+      <xs:documentation>Each lambda stack holds a collection of all (lambda) channels that it contains. The channels are referenced by Id.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ChannelRefs" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ChannelRef" type="ChannelRef" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Lambda Stack.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+  <!-- COMPLEXTYPE: PositionDefinitionMultiZ -->
+  <xs:complexType name="PositionDefinitionMultiZ">
+    <xs:annotation>
+      <xs:documentation>
+        The positions in most of the dimensions may be given in three ways: as start+offset,
+        as a list of doubles in XML or as a link to a BLOB somewhere in the document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="Interval" type="PositionInterval">
+      </xs:element>
+      <xs:element name="List" type="PositionList">
+        <xs:annotation>
+          <xs:documentation>
+            The offsets specified as an explicit list. The first value corresponds
+            to Index=0, the next to t=1 and so on. [unit is the base unit for this dimension]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BinaryList" type="PositionBinaryList"/>
+      <xs:element name="MultiView" type="MultiViewPositionDefinition"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: MultiViewPositionDefinition -->
+  <xs:complexType name="MultiViewPositionDefinition">
+    <xs:sequence>
+      <xs:element name="View" type="ViewTablePositionDefinition" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: ViewTablePositionDefinition -->
+  <xs:complexType name="ViewTablePositionDefinition">
+    <xs:complexContent>
+      <xs:extension base="PositionDefinition">
+        <xs:attribute name="V" use="required" type="xs:integer"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionDefinitionsV -->
+  <xs:complexType name="PositionDefinitionsV">
+    <xs:sequence>
+      <xs:element name="View" type="PositionDefinitionV" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionDefinitionV -->
+  <xs:complexType name="PositionDefinitionV">
+    <xs:annotation>
+      <xs:documentation>
+        This lists the parameters associated with each V-index. We have the offset (=the angle of rotation),
+        and (optionally and just for informative purposes) the start of the Z-stack, the Z-spacing and X- and Y-coordinates.
+        "Informative" means: if these parameters are given, then it can be assumed that
+        the Z-coordinates obey the formation rule: Z(z_index,v_index) = ZStart(v_index) + ZSpacing(v_index) * z_index,
+        and it can be assumed that all images with v_index=const have the same x- and y-position.
+        Nevertheless - even if these parameters are given here, we still need to give
+        the corresponding description in Dimensions/Z.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Offset" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The offset to the angle. [unit=degree]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PositionZ" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The z-start-position. [unit=µm]
+            NOTE: This is just a promise, the truth is what you find under Dimension/Z
+            or (an even deeper truth) in the subblock-metadata.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="IncrementZ" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The z-start-position. [unit=µm]
+            NOTE: This is just a promise, the truth is what you find under Dimension/Z
+            or (an even deeper truth) in the subblock-metadata.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="SizeZ" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The number of Z-Slices (how many "Z's" you will find for this V-index).
+            NOTE: This is just a promise.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PositionX" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The x-coordinate [unit=µm].
+            NOTE: This gives an offset to the StartX-coordinate in the subblock-metadata.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="PositionY" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The y-coordinate [unit=µm].
+            NOTE: This gives an offset to the StartY-coordinate in the subblock-metadata.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+    </xs:all>
+    <xs:attribute name="V" use="required" type="xs:integer"/>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionDefinition -->
+  <xs:complexType name="PositionDefinition">
+    <xs:annotation>
+      <xs:documentation>
+        The positions in most of the dimensions may be given in three ways: as start+offset,
+        as a list of doubles in XML or as a link to a BLOB somewhere in the
+        document (the latter is not yet implemented!).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice minOccurs="1" maxOccurs="1">
+      <xs:element name="Interval" type="PositionInterval">
+      </xs:element>
+      <xs:element name="List" type="PositionList">
+        <xs:annotation>
+          <xs:documentation>
+            The offsets specified as an explicit list. The first value corresponds
+            to Index=0, the next to t=1 and so on. [unit is the base unit for this dimension]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="BinaryList" type="PositionBinaryList"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionInterval -->
+  <xs:complexType name="PositionInterval">
+    <xs:annotation>
+      <xs:documentation>
+        The offset specified as start+increment. If Start is given but not Increment
+        this means that all dimension indices have the same offset (same as Increment=0),
+        if Increment is given but not Start then the offset for index=0 defaults to 0.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Start" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The offset for the first coordinate. [unit=see where this type is used]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Increment" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The increment for consecutive coordinates. [unit=see where this type is used]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionList -->
+  <xs:complexType name="PositionList">
+    <xs:annotation>
+      <xs:documentation>
+        The offsets specified as an explicit list. The first value corresponds
+        to the first coordinate and so on.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Offsets" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The list of offsets. [unit=specified where this type is used]
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType >
+          <xs:list itemType="xs:double"/>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: PositionBinaryList -->
+  <xs:complexType name="PositionBinaryList">
+    <xs:annotation>
+      <xs:documentation>
+        The time offset are given in a binary data block somewhere else in the document.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="AttachmentName" type="xs:string" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            This string refers to a BLOB in the document file which contains the offsets
+            in some binary form.
+          </xs:documentation>
+        </xs:annotation>
+        <!-- The format of the string (and everything else in this regard...) is TBD! -->
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ChannelRef">
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="TrackRef">
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+</xs:schema>

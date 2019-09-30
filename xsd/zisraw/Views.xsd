@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  Views - XSD Definition for image views
+  W.Bayerlein, Feb-2010
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="DisplaySetting.xsd"></xs:include>
+
+  <!-- Element: Views -->
+  <xs:element name="Views" type="Views"/>
+
+  <!-- COMPLEXTYPE : Views -->
+  <xs:complexType name="Views">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="View" type="View" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: View -->
+  <!-- This is still in a design state - must be reviewed and decided. -->
+  <xs:complexType name="View">
+    <xs:all>
+      <xs:element minOccurs="0" name="ViewAspect" type="ViewAspect" />
+      <xs:element minOccurs="0" name="DisplaySetting" type="DisplaySetting" />
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string" use="required" />
+    <xs:attribute name="Name" type="xs:string"  />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: ViewAspect -->
+    <xs:complexType name="ViewAspect">
+      <xs:all>
+        <xs:element name="DimensionViews">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element maxOccurs="unbounded" name="DimensionView" type="DimensionView" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element minOccurs="0" name="IsInterpolationEnabled" type="xs:boolean" default="true"/>
+        <xs:element minOccurs="0" name="Zoom" type="xs:double" default="1.0"/>
+      </xs:all>
+    </xs:complexType>
+
+  <!-- COMPLEXTYPE: DimensionView -->
+  <xs:complexType name="DimensionView">
+    <xs:all>
+      <xs:element name="Current" type="xs:integer"/>
+      <xs:element name="Start" type="xs:integer" minOccurs="0"/>
+      <xs:element name="Minimum" type="xs:integer" minOccurs="0"/>
+      <xs:element name="Maximum" type="xs:integer" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Id" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="X" />
+          <xs:enumeration value="Y" />
+          <xs:enumeration value="C" />
+          <xs:enumeration value="Z" />
+          <xs:enumeration value="T" />
+          <xs:enumeration value="S" />
+          <xs:enumeration value="I" />
+          <xs:enumeration value="R" />
+          <xs:enumeration value="H" />
+          <xs:enumeration value="B" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+</xs:schema>

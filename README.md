@@ -1,6 +1,6 @@
 # AICSImageIO
 
-[![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
+[![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Master/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
 
 A Python library for reading and writing image data with specific support for handling bio-formats.

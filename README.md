@@ -23,7 +23,7 @@ This package is under heavy revision in preparation for version 3.0.0 release. T
 of how to interact with the package under 3.0.0 and not under the current stable release.
 
 ## Quick Start
-```
+```python
 from aicsimageio import AICSImage, imread
 
 # For numpy array of image data

@@ -1,0 +1,372 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 
+  TIMELINE - XSD Definition for timeline events
+  W.Bayerlein, I.Grabmair, B. Weiss, D. Svejdar, J. Bohl Apr-2011
+-->
+
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="CommonTypes.xsd" />
+
+  <xs:element name="TimelineTracks" type="TimelineTracks"/>
+
+  <xs:complexType name="TimelineTracks">
+    <xs:sequence>
+      <xs:element name="TimelineTrack"  type="TimelineTrack" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="TimelineTrack">
+    <xs:all>
+      <xs:element name="TimelineElements" type="TimelineElements"  minOccurs="0"/>
+    </xs:all>
+
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this track.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="TimelineElements">
+    <xs:sequence>
+      <xs:element name="TimelineElement" type="TimelineElement" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TimelineElement">
+    <xs:all>
+      <xs:element name="Time" type="xs:dateTime" minOccurs="0"/>
+      
+      <!-- relative to start of experiment? -->
+      <xs:element name="Start" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The start time when the event occurred [s].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Duration" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The duration of the event [s].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Bounds" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The bounds associated with this event.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attributeGroup ref="SubsetBounds" />
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Trigger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about how this event was triggered.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="AtFixedTime"/>
+            <xs:enumeration value="AtFixedBounds"/>
+            <xs:enumeration value="UserInteraction"/>
+            <xs:enumeration value="TriggeredByAction"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="EventInformation" type="EventInformation"/>
+    </xs:all>
+
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this timeline-element.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <xs:complexType name="EventInformation">
+    <xs:annotation>
+      <xs:documentation>Event description. Information about what happened.</xs:documentation>
+    </xs:annotation>
+    <xs:choice minOccurs="0" maxOccurs="1">
+      <xs:element name="Bleaching" type="BleachingEvent"/>
+      <xs:element name="UserMarker" type="UserMarkerEvent"/>
+      <xs:element name="UserSetting" type="UserSettingEvent"/>
+      <xs:element name="IncubationRecording" type="IncubationRecordingEvent"/>
+      <xs:element name="LinkamRecording" type="LinkamRecordingEvent"/>
+      <xs:element name="FocusAction" type="FocusActionEvent"/>
+      <xs:element name="ExecutionInformation" type="ExecutionInformationEvent"/>
+      <xs:element name="DigitalInput" type="DigitalInputEvent"/>
+      <xs:element name="SetInterval" type="SetIntervalEvent"/>
+      <xs:element name="Immersion" type="ImmersionEvent"/>
+    </xs:choice>
+  </xs:complexType>
+  
+  <xs:complexType name="Laserline">
+    <xs:all>
+      <xs:element name="Intensity" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Laser intensity in range of [0..100].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Wavelength" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>Laser wavelength in [nm].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Laserlines">
+    <xs:sequence>
+      <xs:element name="Laserline" type="Laserline" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- 
+  PROPOSAL for Bleaching regions - will be needed for ScanFrap (maybe also necessary for ZENblack?) 
+  -->
+  <!--<xs:complexType name="LaserlineRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a Laserline contained in the Laserlines list can be referenced. Ensure
+        there exists a Laserline with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="BleachingRegion">
+    <xs:all>
+      <xs:element name="Laserlines" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Laserline" type="LaserlineRef" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string"/>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="BleachingRegions">
+    <xs:sequence>
+      <xs:element name="Region" type="BleachingRegion" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>-->
+
+  <xs:complexType name="IncubationSensor">
+    <xs:all>
+      <xs:element name="IsEnabled" minOccurs="0" type="xs:boolean"/>
+      <xs:element name="Value" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The unit of the 'Value' elements depends on the sensor type, e.g. Celsius for temperature channels.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="TargetValue" minOccurs="0" type="xs:double"/>
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="IncubationComponents">
+    <xs:all>
+      <xs:element name="MTBIncubationTemperatureChannel0" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureChannel1" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureChannel2" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureChannel3" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureChannel4" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationCalibrationSensor" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationHumiditySensor" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationAirHeaterChannel" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationCO2Channel" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationO2Channel" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureSwitch" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureSwitchChannel1" type="IncubationSensor" minOccurs="0"/>
+      <xs:element name="MTBIncubationTemperatureSwitchChannel2" type="IncubationSensor" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+  
+  <xs:complexType name="BleachingEvent">
+    <xs:annotation>
+      <xs:documentation>Information about a FRAP/Bleaching event.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="BleachWithLaser"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Laserlines" type="Laserlines"/>
+      <!--<xs:element name="Regions" type="BleachingRegions" minOccurs="0"/>-->
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="UserMarkerEvent">
+    <xs:annotation>
+      <xs:documentation>Information about an event marker created by user interaction.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="PressedButton"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Comment" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="UserSettingEvent">
+    <xs:annotation>
+      <xs:documentation>Information about a hardware setting event, applied by user interaction.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Setting"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Comment" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="IncubationRecordingEvent">
+    <xs:annotation>
+      <xs:documentation>Record current incubation values.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Components" type="IncubationComponents" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="LinkamRecordingEvent">
+    <xs:annotation>
+      <xs:documentation>Record current Linkam heating stage values.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Temperature" type="xs:double" minOccurs="0"/>
+      <xs:element name="Pressure" type="xs:double" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="FocusActionEvent">
+    <xs:annotation>
+      <xs:documentation>Information about a focus action event and its result.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Action" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Unspecified" />
+            <xs:enumeration value="SoftwareAutofocusRun" />
+            <xs:enumeration value="HardwareAutofocusRun" />
+            <xs:enumeration value="HardwareSupportedBySoftwareAutofocusRun" />
+            <xs:enumeration value="DefiniteFocusInitialize" />
+            <xs:enumeration value="DefiniteFocusStabilize" />
+            <xs:enumeration value="DefiniteFocusStabilizePeriodically" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Result" type="FocusActionResult" minOccurs="0"/>
+      <xs:element name="PrimaryActionResult" type="FocusActionResult" minOccurs="0"/>
+      <xs:element name="StartPosition" type="xs:double" minOccurs="0"/>
+      <xs:element name="ResultPosition" type="xs:double" minOccurs="0"/>
+      <xs:element name="Deviation" type="xs:double" minOccurs="0"/>
+      <xs:element name="Quality" type="xs:double" minOccurs="0"/>
+      <xs:element name="PrimaryActionQuality" type="xs:double" minOccurs="0"/>
+      <xs:element name="Hint" type="xs:string" minOccurs="0"/>
+      <xs:element name="X" type="xs:double" minOccurs="0"/>
+      <xs:element name="Y" type="xs:double" minOccurs="0"/>
+      <xs:element name="RegionId" type="xs:long" minOccurs="0"/>
+      <xs:element name="RegionName" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:simpleType name="FocusActionResult">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unknown" />
+      <xs:enumeration value="Success" />
+      <xs:enumeration value="SuccessWithLowQuality" />
+      <xs:enumeration value="Failure" />
+    </xs:restriction>
+  </xs:simpleType>        
+
+  <xs:complexType name="ExecutionInformationEvent">
+    <xs:annotation>
+      <xs:documentation>Information about an event marker, created by changes of experiment execution.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Type" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Pause"/>
+            <xs:enumeration value="Resume"/>
+            <xs:enumeration value="Stop"/>
+            <xs:enumeration value="StartWaitBlock"/>
+            <xs:enumeration value="EndWaitBlock"/>
+            <xs:enumeration value="StartDelayBlock"/>
+            <xs:enumeration value="EndDelayBlock"/>
+            <xs:enumeration value="JumpBlock"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Comment" type="xs:string" minOccurs="0"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="DigitalInputEvent">
+    <xs:annotation>
+      <xs:documentation>Information about an event marker, created by changes of a digital input port.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Name" type="xs:string" minOccurs="1"/>
+      <xs:element name="Value" minOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="High"/>
+            <xs:enumeration value="Low"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="SetIntervalEvent">
+    <xs:annotation>
+      <xs:documentation>Information about an event marker, created by changes of a time series interval. Interval time is provided in [ms].</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Interval" type="xs:double"  minOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="ImmersionEvent">
+    <xs:annotation>
+      <xs:documentation>Information about an immersion event.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Action" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Refill" />
+            <xs:enumeration value="Other" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  
+</xs:schema>

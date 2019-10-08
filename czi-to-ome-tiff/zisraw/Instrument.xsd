@@ -1,0 +1,1470 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  INSTRUMENT - XSD Definition for Information.Instrument
+  W.Bayerlein, I.Grabmair Feb-2011
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="CommonTypes.xsd" />
+
+  <!-- ComplexType : Manufacturer-->
+  <xs:complexType name="Manufacturer">
+    <xs:annotation>
+      <xs:appinfo>abstract</xs:appinfo>
+      <xs:documentation>
+        Manufacturer info to be added to various microscope components. E.g Objective, Filter etc.
+        Provides attributes for recording common properties of these components such as Manufacturer name, Model etc,
+        all of which are optional.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The manufacturer of the component. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Model" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The Model of the component. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SerialNumber" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The serial number of the component. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LotNumber" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The lot number of the component. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType : Instrument -->
+  <xs:complexType name="Instrument">
+    <xs:all>
+      <xs:element name="Microscopes" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Microscope" type="InstrumentMicroscope" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="LightSources" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="LightSource" type="InstrumentLightSource" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Detectors" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Detector" type="InstrumentDetector" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Objectives" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Objective" type="InstrumentObjective" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="TubeLenses" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The Tube Lenses collection holds all the tube lenses that are available from within the
+            microscope's tube lens revolver, optovar revolver or reflector changer.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="TubeLens" type="InstrumentTubeLens" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="FilterSets" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="FilterSet" type="InstrumentFilterSet" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Filters" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Filter" type="InstrumentFilter" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="Dichroics" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Dichroic" type="InstrumentDichroic" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="CylindricalLenses" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="CylindricalLens" type="InstrumentCylindricalLens" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="OTFs" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="OTF" type="InstrumentOTF" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <!--<xs:element name="LightsheetModulators" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="LightsheetModulator" type="InstrumentLightsheetModulator" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>-->
+
+      <xs:element name="SIMDevices" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SIMDevice" type="InstrumentSIMDevice" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+    </xs:all>
+
+    <xs:attribute name="Id" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentMicroscope -->
+  <xs:complexType name="InstrumentMicroscope">
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="System" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            A list of components where each part is divided by a colon. The purpose is to name the whole system.
+            For a confocal system the schema is "[LsmName][, RtScannerName][, CameraName][, StandName]".
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Upright"/>
+            <xs:enumeration value="Inverted"/>
+            <xs:enumeration value="Dissection"/>
+            <xs:enumeration value="Electrophysiology"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Microscope (unique among all microscope in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType: InstrumentLightSource -->
+  <xs:complexType name="InstrumentLightSource">
+    <xs:annotation>
+      <xs:documentation>
+        The lightsource for the instrument. An instrument may have several light sources.
+        The type of lightsource is specified by one of the child-elements which are 'Laser', 'Filament', 'Arc' or 'LightEmittingDiode'.
+        Each of the light source types has its own Type attribute to further differentiate the light source
+        (eg, Nd-YAG for Laser or Hg for Arc).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Power" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The light-source power. Units milliwatts[mW]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="LightSourceType" type="LightSourceType" minOccurs="0"/>
+      <xs:element name="CustomAttributes" type="CustomAttributes"  minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          A LightSource ID must be specified for each light source, and the individual
+          light sources can be referred to by their LightSource IDs (eg from Channel).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceType-->
+  <xs:complexType name="LightSourceType">
+    <xs:choice maxOccurs="1" minOccurs="1">
+      <xs:element name="Laser" minOccurs="1" maxOccurs="1" type="LightSourceLaser"/>
+      <xs:element name="Filament" minOccurs="1" maxOccurs="1" type="LightSourceFilament"/>
+      <xs:element name="Arc" minOccurs="1" maxOccurs="1" type="LightSourceArc"/>
+      <xs:element name="LightEmittingDiode" minOccurs="1" maxOccurs="1" type="LightSourceLightEmittingDiode"/>
+      <xs:element name="TIRF" minOccurs="1" maxOccurs="1" type="LightSourceTIRF"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceLightEmittingDiode -->
+  <xs:complexType name="LightSourceLightEmittingDiode">
+    <xs:annotation>
+      <xs:documentation>
+        The LightEmittingDiode element is used to describe
+        various kinds of LED lamps. The content model is yet unspecific.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceFilament -->
+  <xs:complexType name="LightSourceFilament">
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The type of filament.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Incandescent"/>
+            <xs:enumeration value="Halogen"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceArc -->
+  <xs:complexType name="LightSourceArc">
+    <xs:all>
+      <xs:element name="Type" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The type of Arc lamp.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Hg"/>
+            <xs:enumeration value="Xe"/>
+            <xs:enumeration value="HgXe"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceLaser -->
+  <xs:complexType name="LightSourceLaser">
+    <!-- top level definition -->
+    <xs:annotation>
+      <xs:documentation>Laser types are specified using two elements - the Type and the LaserMedium.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Pump" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The Laser element may contain a Pump sub-element which refers to
+            a LightSource used as a laser pump.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Type" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Type is the general category of laser.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Excimer"/>
+            <xs:enumeration value="Gas"/>
+            <xs:enumeration value="MetalVapor"/>
+            <xs:enumeration value="SolidState"/>
+            <xs:enumeration value="Dye"/>
+            <xs:enumeration value="Semiconductor"/>
+            <xs:enumeration value="FreeElectron"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="LaserMedium" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The Medium attribute specifies the actual laser medium
+            for a given laser type.
+
+            Possible media for type MetalVapor:
+            Cu, Ag
+
+            Possible media for type Excimer:
+            ArFl, ArCl, KrFl, KrCl, XeFl, XeCl, XeBr
+
+            Possible media for type Gas:
+            N, Ar, Kr, Xe, HeNe, HeCd, CO, CO2, H2O, HFl
+
+            Possible media for type SolidState:
+            NdGlass, NdYAG, ErGlass, ErYAG, HoYLF, HoYAG, Ruby, TiSapphire, Alexandrite
+
+            Possible media for type Dye:
+            Rhodamine6G, CoumarinC30
+
+            Possible media for type Semiconductor:
+            GaAs, GaAlAs
+
+            Possible media for type FreeElectron:
+            EMinus
+
+            Possible media for type Other:
+            Other
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <!-- MetalVaporLaserMedia -->
+            <xs:enumeration value="Cu"/>
+            <xs:enumeration value="Ag"/>
+            <!-- ExcimerLaserMedia -->
+            <xs:enumeration value="ArFl"/>
+            <xs:enumeration value="ArCl"/>
+            <xs:enumeration value="KrFl"/>
+            <xs:enumeration value="KrCl"/>
+            <xs:enumeration value="XeFl"/>
+            <xs:enumeration value="XeCl"/>
+            <xs:enumeration value="XeBr"/>
+            <!-- GasLaserMedia -->
+            <xs:enumeration value="N"/>
+            <xs:enumeration value="Ar"/>
+            <xs:enumeration value="Kr"/>
+            <xs:enumeration value="Xe"/>
+            <xs:enumeration value="HeNe"/>
+            <xs:enumeration value="HeCd"/>
+            <xs:enumeration value="CO"/>
+            <xs:enumeration value="CO2"/>
+            <xs:enumeration value="H2O"/>
+            <xs:enumeration value="HFl"/>
+            <!-- SolidStateLaserMedia -->
+            <xs:enumeration value="NdGlass"/>
+            <xs:enumeration value="NdYAG"/>
+            <xs:enumeration value="ErGlass"/>
+            <xs:enumeration value="ErYAG"/>
+            <xs:enumeration value="HoYLF"/>
+            <xs:enumeration value="HoYAG"/>
+            <xs:enumeration value="Ruby"/>
+            <xs:enumeration value="TiSapphire"/>
+            <xs:enumeration value="Alexandrite"/>
+            <!-- DyeLaserMedia -->
+            <xs:enumeration value="Rhodamine6G"/>
+            <xs:enumeration value="CoumarinC30"/>
+            <!-- SemiconductorLaserMedia -->
+            <xs:enumeration value="GaAs"/>
+            <xs:enumeration value="GaAlAs"/>
+            <!-- FreeElectronLaserMedia -->
+            <xs:enumeration value="EMinus"/>
+            <!-- OtherLaserMedia -->
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Wavelength" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The Wavelength of the laser in nanometres[nm]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FrequencyMultiplication" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>FrequencyMultiplication that may be specified. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Tuneable" minOccurs="0" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Whether or not the laser is tuneable [flag]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Pulse" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The Pulse mode of the laser.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="CW"/>
+            <xs:enumeration value="Single"/>
+            <xs:enumeration value="QSwitched"/>
+            <xs:enumeration value="Repetitive"/>
+            <xs:enumeration value="ModeLocked"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="PockelCell" minOccurs="0" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>If true the laser has a PockelCell to rotate the polarization of the beam. [flag]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RepetitionRate" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            The rate in Hz at which the laser pulses if the Pulse type is 'Repetitive'. hertz[Hz]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType: LightSourceTIRF -->
+  <xs:complexType name="LightSourceTIRF">
+    <!-- top level definition -->
+    <xs:annotation>
+      <xs:documentation>
+        This describes a TIRF light-source. 
+      </xs:documentation>
+    </xs:annotation>
+    <!-- Here we would describe the immutable properties of the TIRF-lightsource (like e. g. its manufacturer...).-->
+    <xs:all>
+      <!-- The maximimum TIRF-angle this TIRF-device supports [radians]. I have no idea if it makes
+      sense to have this parameter, just a sample... -->
+      <xs:element name="MaxAngle" minOccurs="0" type="xs:double"/>
+      <!-- The minimum TIRF-angle this TIRF-device supports [radians]. I have no idea if it makes
+      sense to have this parameter, just a sample... -->
+      <xs:element name="MinAngle" minOccurs="0" type="xs:double"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentDetector -->
+  <xs:complexType name="InstrumentDetector">
+    <xs:annotation>
+      <xs:documentation>
+        The detector used to capture the image.
+        The Detector ID can be used as a reference within the Channel element in the Image element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="Gain" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The Detector Gain for this detector, as a float. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Voltage" minOccurs="0"  type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The Voltage of the detector (e.g. PMT voltage) as a float. volts[V]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Offset" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The Detector Offset. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Zoom" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The Zoom or "Confocal Zoom" or "Scan Zoom" for a detector. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AmplificationGain" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            Gain applied to the detector signal.
+            This is the electronic gain (as apposed to the inherent gain) that is set for the detector. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="AmplificationOffset" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            Offset applied to the detector signal. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Type" minOccurs="0" >
+        <xs:annotation>
+          <xs:documentation>
+            The Type of detector.
+            E.g.
+            CCD   - Charge-Coupled Device
+            PMT   - Photomultiplier tube
+            EMCCD - Electron Multiplying Charge Coupled Device
+            FTIR  - Fourier transform infrared spectroscopy
+            APD   - Avalanche Photodiode
+            CMOS  - complementary metal oxide semiconducto
+            EBCCD - electron-bombarded charge-coupled device
+            etc.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="CCD"/>
+            <xs:enumeration value="IntensifiedCCD"/>
+            <xs:enumeration value="AnalogVideo"/>
+            <xs:enumeration value="PMT"/>
+            <xs:enumeration value="Photodiode"/>
+            <xs:enumeration value="Spectroscopy"/>
+            <xs:enumeration value="LifetimeImaging"/>
+            <xs:enumeration value="CorrelationSpectroscopy"/>
+            <xs:enumeration value="FTIR"/>
+            <xs:enumeration value="EMCCD"/>
+            <xs:enumeration value="APD"/>
+            <xs:enumeration value="CMOS"/>
+            <xs:enumeration value="EBCCD"/>
+            <xs:enumeration value="Camera"/>
+            <xs:enumeration value="Airyscan"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      
+      <xs:element name="Adapter" type="DetectorAdapter" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            If the detector type is supposed to have an adapter, this is the respective adapter data.
+            E.g. a CCD can have a camera adapter with a magnification; a PMT or a Photodiode doesn't
+            have an adapter.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="GammaDefault" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            The default gamma value. [units:none]
+            The Reset function of the DisplaySetting will reset the gamma to this value.
+            The default is 1.0.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Detector (unique among all detectors in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : DetectorAdapter -->
+  <xs:complexType name="DetectorAdapter">
+    <xs:annotation>
+      <xs:documentation>
+        The type of detector adapter used to capture the image.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="Magnification" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The magnification of the detector adapter [units:none].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentObjective -->
+  <xs:complexType name="InstrumentObjective">
+    <xs:annotation>
+      <xs:documentation>
+        A description of the microscope's objective lens.
+        Required elements include the lens numerical aperture,
+        and the magnification, both of which are floating
+        point (real) numbers.
+        The values are those that are fixed for a particular
+        objective: either because it has been manufactured to
+        this specification or the value has been measured on
+        this particular objective.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="Correction" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>This is the type of correction coating applied to this lens.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="UV"/>
+            <xs:enumeration value="PlanApo"/>
+            <xs:enumeration value="PlanFluor"/>
+            <xs:enumeration value="SuperFluor"/>
+            <xs:enumeration value="VioletCorrected"/>
+            <xs:enumeration value="Achro"/>
+            <xs:enumeration value="Achromat"/>
+            <xs:enumeration value="Fluor"/>
+            <xs:enumeration value="Fl"/>
+            <xs:enumeration value="Fluar"/>
+            <xs:enumeration value="Neofluar"/>
+            <xs:enumeration value="Fluotar"/>
+            <xs:enumeration value="Apo"/>
+            <xs:enumeration value="PlanNeofluar"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Immersion" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This is the type of immersion medium the lens is designed to work with.
+            It is not the same as 'Medium' in Information/Image/ObjectiveSettings
+            (a single type) as here Immersion can have compound values like 'Multi'.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Oil"/>
+            <xs:enumeration value="Water"/>
+            <xs:enumeration value="WaterDipping"/>
+            <xs:enumeration value="Air"/>
+            <xs:enumeration value="Multi"/>
+            <xs:enumeration value="Glycerol"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="ImmersionRefractiveIndex" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            The refractive index of the immersion. [units:none]
+            If this field is empty, the refractive index is assumed to be the default refractive index of the specified immersion.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="LensNA" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>
+            The numerical aperture of the lens expressed as a floating point (real) number.
+            Expected range 0.02 - 1.5 [units:none]
+            The depth of focus can be retrieved via the formula: depthOfField = 2 * n * w / (lensNA)^2.
+            where: n = ImmersionRefractiveIndex, w = emission wavelength.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="NominalMagnification" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The magnification of the lens as specified by the manufacturer - i.e. '40' is a 40x lens. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CalibratedMagnification" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The magnification of the lens as measured by a calibration process - i.e. '39.987' for a 40x lens. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="WorkingDistance" minOccurs="0" type="xs:float">
+        <xs:annotation>
+          <xs:documentation>The working distance of the lens expressed as a floating point (real) number. Units are microns[um].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Iris" minOccurs="0" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>Records whether or not the objective was fitted with an Iris. [flag]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="PupilGeometry" minOccurs="0" maxOccurs="1">
+        <!-- This corresponds to PSF/PupilGeometry. -->
+        <xs:annotation>
+          <xs:documentation>
+            Records what type of phase-rings ("Phasenringe") the objective has.
+            Possible values:
+            Circular   - Circular geometry
+            Annular    - Annular geometry
+            PhaseRing0 - Phase ring 0 geometry
+            PhaseRing1 - Phase ring 1 geometry
+            PhaseRing2 - Phase ring 2 geometry
+            PhaseRing3 - Phase ring 3 geometry
+            Other      - a phase ring is present, but its geometry is neither of the above ones.
+            
+            The rules are:
+            - If it is known for sure that the objective has no phase-rings, set the value "Circular" here.
+            - If one has no idea whether there is a phase-ring (and what type) or not, do not set this field at all.
+            - "Other" means: there is a phase-ring present, it is not of the type "Annular", "PhaseRing1", "PhaseRing2",
+            "PhaseRing3". In a future version it will be possible to parametrize the phasering in this case.
+            - "Annular" phase-ring currently is not supported by ZEN (however, it is a valid entry).
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Circular"/>
+            <xs:enumeration value="Annular"/>
+            <!-- Annular geometry, sizes of annulus given elsewhere (tbd) -->
+            <xs:enumeration value="PhaseRing0"/>
+            <!-- Phase ring 0 geometry (this is a well-known geometry, its parameters are considered known and not given here) -->
+            <xs:enumeration value="PhaseRing1"/>
+            <!-- Phase ring 1 geometry (this is a well-known geometry, its parameters are considered known and not given here) -->
+            <xs:enumeration value="PhaseRing2"/>
+            <!-- Phase ring 2 geometry (this is a well-known geometry, its parameters are considered known and not given here) -->
+            <xs:enumeration value="PhaseRing3"/>
+            <!-- Phase ring 3 geometry (this is a well-known geometry, its parameters are considered known and not given here) -->
+            <xs:enumeration value="Other"/>
+            <!-- Unknown geometry, it parameterization is to given (in a structure tbd)  -->
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element name="FocalLength" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            Focal length [unit:micrometers]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="SlitAperture" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            Slit Aperture [unit.none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="LightSheetWidth" minOccurs="0" type="xs:double">
+        <!--<xs:annotation>
+          <xs:documentation>
+            TODO
+          </xs:documentation>
+        </xs:annotation>-->
+      </xs:element>
+
+      <xs:element name="CoverglassRefractiveIndex" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The refractive index of the cover glass this objective was designed for. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="CoverglassThickness" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The thickness of the cover glass this objective was designed for. [units:µm]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Objective.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentTubeLens -->
+  <xs:complexType name="InstrumentTubeLens">
+    <xs:annotation>
+      <xs:documentation>
+        A description of the tube lens.
+        Required elements include the magnification.
+        A tube lens might be a tube lens, an optovar lens or a Bertrand lens.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="Magnification" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The magnification of the lens as specified by the manufacturer [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element name="Type" minOccurs="0">
+        <!-- Jbo: should we make this a mandatory element? -->
+        <xs:annotation>
+          <xs:documentation>
+            The type of the lens in the revolver element (might be a tube lens (aka "Optovar-lens") or a Bertrand lens or "other").
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="BertrandLens"/>
+            <xs:enumeration value="TubeLens"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this TubeLens.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentFilterSet -->
+  <xs:complexType name="InstrumentFilterSet">
+    <xs:annotation>
+      <xs:documentation>
+        Filter set manufacturer specification.
+        Reflector information can be stored in a filter set:
+        - Excitation Wavelength:
+        lower wavelength -> ExcitationFilter.TransmittanceRange.CutIn,
+        upper wavelength -> ExcitationFilter.TransmittanceRange.CutOut,
+        - Emission Wavelength:
+        lower wavelength -> EmissionFilter.TransmittanceRange.CutIn,
+        upper wavelength -> EmissionFilter.TransmittanceRange.CutOut,
+        - BeamSplitter: store within Dichroic element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="ExcitationFilters" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The Filters placed in the Excitation light path.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ExcitationFilterRef" type="FilterRef" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="DichroicRef" type="DichroicRef" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="EmissionFilters" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The Filters placed in the Emission light path.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="EmissionFilterRef" type="FilterRef" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this FilterSet (unique among all filter-sets in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>The name can be used to store the reflector name.
+        However, the canonical place for a human-readable name is Manufacturer.Model.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentFilter -->
+  <xs:complexType name="InstrumentFilter">
+    <xs:annotation>
+      <xs:documentation>
+        A filter is either an excitation or emission filter.
+        It can be associated with an optional FilterWheel - Note: this is not the same as a FilterSet.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="TransmittanceRange" type="TransmittanceRange" minOccurs="0">
+      </xs:element>
+      <xs:element name="Type" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Dichroic"/>
+            <xs:enumeration value="LongPass"/>
+            <xs:enumeration value="ShortPass"/>
+            <xs:enumeration value="BandPass"/>
+            <xs:enumeration value="MultiPass"/>
+            <xs:enumeration value="NeutralDensity"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FilterWheel" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>A filter 'wheel' in OME can refer to any arrangement of filters in a filter holder of any shape. It could, for example, be a filter slider. [plain text string]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Filter (unique among all filters in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : TransmittanceRange -->
+  <xs:complexType name="TransmittanceRange">
+    <xs:annotation>
+      <xs:documentation>This records the range of wavelengths that are transmitted by the filter. It also records the maximum amount of light transmitted.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="CutIn" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>CutIn is the wavelength below which there is less than 50% transmittance for a filter. Units: nanometres[nm].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CutOut" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>CutOut is the wavelength above which there is less than 50% transmittance for a filter. Units: nanometres[nm].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CutInTolerance" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>CutInTolerance. Units: nanometres[nm].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CutOutTolerance" minOccurs="0" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>CutOutTolerance. Units: nanometres[nm].</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Transmittance" minOccurs="0" type="PercentFraction">
+        <xs:annotation>
+          <xs:documentation>
+            The amount of light the filter transmits at a maximum [units:none].
+            A fraction, as a value from 0.0 to 1.0.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this TransmittanceRange (unique among all transmittance ranges in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentDichroic -->
+  <xs:complexType name="InstrumentDichroic">
+    <xs:annotation>
+      <xs:documentation>The dichromatic beamsplitter or dichroic mirror used for this filter combination.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="Wavelengths" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The beamsplitter for a filter combination may consist of more than one components,
+            e.g. if the respective filter set has three emission and three excitation wavelength ranges,
+            the beam splitter is supposed to consist of 3 splitter components.
+            Each is described by a wavelength.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Wavelength" type="xs:float" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:documentation>
+                  Wavelength in nm.
+                  Light with a wavelength lower than this specified wavelength is reflected whereas light
+                  with a larger wavelength is transmitted. Yet, this does not mean "perfectly reflected" or "perfectly
+                  transmitted", it only gives an appropriate description of the beamsplitter.
+                </xs:documentation>
+                <!-- (By means of the filter set name, one can get more precise information from the Zeiss filter set database:
+                https://www.micro-shop.zeiss.com/de/de_de/spektral.php?f=fi) -->
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Dichroic (unique among all dichroics in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- LightSheet modulator seems not to be necessary. -->
+  <!-- ComplexType : InstrumentLightsheetModulator -->
+  <!--<xs:complexType name="InstrumentLightsheetModulator">
+    <xs:annotation>
+      <xs:documentation>Light sheet modulator for SPIM.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <xs:element name="GratingPeriod" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            TODO
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="StartingPhase" minOccurs="0" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            TODO
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ModulationPattern" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            TODO
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ModulationDepth" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            TODO
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+    <xs:attribute name="Name" type="xs:string"/>
+  </xs:complexType>-->
+
+  <!-- ComplexType : InstrumentCylindricalLens -->
+  <xs:complexType name="InstrumentCylindricalLens">
+    <xs:annotation>
+      <xs:documentation>Description of a cylindrical lens (used for SPIM).</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+
+      <xs:element name="FocalLength" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The focal length of the cylindrical lens. If this parameter is not given (or if it is NaN)
+            this means that no cylinder lens is present. The special value "0" means: a cylinder lens
+            is present, but its focal length is unknown.
+            [units: millimeter]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this CylindricalLens (unique among all cylindrical lenses in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- Proposal - metadata extension for SIM -->
+  <xs:complexType name="InstrumentSIMDevice">  
+    <xs:annotation>
+      <xs:documentation>
+        Description of a device with which a SIM (= Structured Illumination Microscopy) acquisition is performed 
+        (e.g. ApoTome, Elyra HR-SIM).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Manufacturer" type="Manufacturer" minOccurs="0"/>
+      <!-- The HardwareVersion information could possibly also be determined from the Manufacturer information. 
+      But maybe it is easier to just set and get the HardwareVersion without transformation...? -->
+      <xs:element name="HardwareVersion" default="AT1" minOccurs="0">
+        <!--See Enum ApoTomeHardwareVersion (ApoTomeEnums.cs).-->
+        <xs:annotation>
+          <xs:documentation>The hardware version used for the acquisition.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="AT1"/>
+            <xs:enumeration value="AT2"/>
+            <xs:enumeration value="VivaTome1"/>
+            <xs:enumeration value="VivaTome2"/>
+            <xs:enumeration value="Elyra1"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <!--
+      COMMENT:
+      The following parameters are processing parameters actually, no physical parameters of a SIM device.
+      Those parameters are only necessary to fulfill the requirement that the SIM plugin viewer has some default values set
+      and that - when reopening the image - the latest plugin settings for this document are restored.
+      So, this would be VIEWER METADATA actually...
+      -->
+      <!--<xs:element name="SABCEpsilon" type="xs:double" default="0.03" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The epsilon for the Spatially Adapted Bleaching Correction (=SABC).
+            Necessary for SIM processing. [unit: none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      --><!--
+      COMMENT:
+      SABCEpsilon and SABCDecay actually define the same thing, so we must only keep one of those. 
+      The naming Epsilon is currently used in code, yet, maybe Decay is the more appropriate naming?
+      --><!--
+      <xs:element name="Normalize" type="xs:boolean" default="true" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            True if Normalize is 'On', false if Normalize is 'Off'. 
+            Necessary for SIM processing.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="FilterHarmonics" default="SecondAndFifthHarmonic" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The filter harmonics for SIM processing. See Enum FourierFilterComponents (File IpEnums.cs).</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="PrincipalComponent"/>
+            <xs:enumeration value="FirstHarmonic"/>
+            <xs:enumeration value="SecondHarmonic"/>
+            <xs:enumeration value="ThirdHarmonic"/>
+            <xs:enumeration value="FourthHarmonic"/>
+            <xs:enumeration value="FifthHarmonic"/>
+            <xs:enumeration value="SixthHarmonic"/>
+            <xs:enumeration value="SeventhHarmonic"/>
+            <xs:enumeration value="SecondAndFifthHarmonic"/>
+            <xs:enumeration value="PrincipalSecondAndFifthHarmonic"/>
+            <xs:enumeration value="PrincipalFirstSecondAndFifthHarmonic"/>
+            <xs:enumeration value="All"/>
+            <xs:enumeration value="None"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FilterSize" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>The filter size for SIM processing [unit: none].</xs:documentation>
+        </xs:annotation>
+      </xs:element>-->
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />            
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this SIMDevice (unique among all SIM-devices in this document).</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          Use of this field is deprecated. The canonical place for a human-readable
+          name is Manufacturer.Model.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentOTF -->
+  <xs:complexType name="InstrumentOTF">
+    <xs:annotation>
+      <xs:documentation>
+        The optical transfer function. FilterSetRef refers to the set of
+        filters used in computing the OTF.
+        This element must contain a BinData element containing the
+        Base64-encoded OTF. These work the same way as they do for the
+        Data element within Image.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ObjectiveSettings" minOccurs="1" type="InstrumentObjectiveSettings"/>
+      <xs:element name="FilterSet" type="InstrumentFilterSet" minOccurs="0"/>
+      <xs:element name="BIN.BinaryFile" minOccurs="1" type="xs:string"/>
+      <xs:element name="Type" minOccurs="0" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The variable type used to specify the size of pixel the OTF is designed for.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="OpticalAxisAveraged" minOccurs="0" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            The OpticalAxisAveraged is a boolean specifying whether or not
+            optical axis averaging was done. [flag]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SizeX" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>The width of the OTF. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="SizeY" type="xs:integer">
+        <xs:annotation>
+          <xs:documentation>The height of the OTF. [units:none]</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : InstrumentObjectiveSettings -->
+  <xs:complexType name="InstrumentObjectiveSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This holds the setting applied to an objective as well as a
+        reference to the objective.
+        The ID is the objective used in this case.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ObjectiveRef" type="ObjectiveRef" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>This ID refers to an instance of InstrumentObjective in Information/Instrument/Objectives.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Medium" minOccurs="0" maxOccurs="1" >
+        <xs:simpleType>
+          <xs:annotation>
+            <xs:documentation>
+              A description of a Medium used for the lens.
+              The Medium is the actual immersion medium used in this case.
+            </xs:documentation>
+          </xs:annotation>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Air"/>
+            <xs:enumeration value="Oil"/>
+            <xs:enumeration value="Water"/>
+            <xs:enumeration value="Glycerol"/>
+            <xs:enumeration value="Other"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="CorrectionCollar" type="xs:float" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+            The position of the (first) correction collar (= correction ring) of an objective.
+            The CorrectionCollar is an adjustable ring on the objective.
+            If the parameter is not available, double.NaN is returned.
+            Each correction collar has an arbitrary scale on it. So, use percentage as unit. [units:percentage].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectionCollar2" type="xs:float" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+            The position of the second correction collar (= correction ring) of an objective.
+            The CorrectionCollar is an adjustable ring on the objective.
+            If the parameter is not available, double.NaN is returned.
+            Each correction collar has an arbitrary scale on it. So, use percentage as unit. [units:percentage].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectionControllerMode" type="xs:string" minOccurs="0" maxOccurs="1" >
+        <xs:annotation>
+          <xs:documentation>
+            A description of a correction controller operating mode used for the lens.
+            Depending on the mode, either values of CorrectionCollar and CorrectionCollar2, 
+            or values of CorrectionControllerBottomThickness and CorrectionControllerImagingDepth are available.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectionControllerBottomThickness" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The parameter cover bottom thickness of the correction controller [unit: microns].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="CorrectionControllerImagingDepth" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The parameter imaging depth of the correction controller [unit: microns].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="RefractiveIndex" type="xs:double" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            The RefractiveIndex is that of the immersion medium. This is
+            a ratio so it is also unit-less. [units:none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- ComplexType : MicroscopeRef -->
+  <xs:complexType name="MicroscopeRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a microscope contained in the Instrument list can be referenced. Ensure
+        there exists a microscope with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : LightSourceRef (necessary for Dimensions/Channels) -->
+  <xs:complexType name="LightSourceRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a LightSource contained in the Instrument list can be referenced. Ensure
+        there exists a LightSource with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : DetectorRef -->
+  <xs:complexType name="DetectorRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a Detector contained in the Instrument list can be referenced. Ensure
+        there exists a Detector with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : ObjectiveRef -->
+  <xs:complexType name="ObjectiveRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, an Objective contained in the Instrument list can be referenced. Ensure
+        there exists an Objective with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : CylindricalLensRef -->
+  <xs:complexType name="CylindricalLensRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a cylindrical lens contained in the Instrument list can be referenced. Ensure
+        there exists a CylindricalLens with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : TubeLensRef -->
+  <xs:complexType name="TubeLensRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a Tube Lens contained in the Instrument list can be referenced. Ensure
+        there exists a Tube Lens with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : FilterSetRef -->
+  <xs:complexType name="FilterSetRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a FilterSet contained in the Instrument list can be referenced. Ensure
+        there exists a FilterSet with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : FilterRef -->
+  <xs:complexType name="FilterRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a Filter contained in the Instrument list can be referenced. Ensure
+        there exists a Filter with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : DichroicRef -->
+  <xs:complexType name="DichroicRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a Dichroic contained in the Instrument list can be referenced. Ensure
+        there exists a Dichroic with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : SIMDeviceRef -->
+  <xs:complexType name="SIMDeviceRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, a SIMDevice contained in the Instrument list can be referenced. Ensure
+        there exists a SIMDevice with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+  <!-- ComplexType : OTFRef -->
+  <xs:complexType name="OTFRef">
+    <xs:annotation>
+      <xs:documentation>
+        By the Id value, an OTF contained in the Instrument list can be referenced. Ensure
+        there exists an OTF with the referenced Id.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="Id" use="required" type="xs:string"/>
+  </xs:complexType>
+
+</xs:schema>

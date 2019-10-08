@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  COMMONTYPES - XSD Definition for ZIS Common Types
+  W.Bayerlein, P.Schwesig, S.Wagner-Conrad, I.Grabmair, B.Weiss,  Feb-Oct-2010
+  -->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- SIMPLETYPE: PercentFraction -->
+  <xs:simpleType name="PercentFraction">
+    <xs:annotation>
+      <xs:documentation>A simple type that restricts the value to a float between 0 and 1 (inclusive).</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:float">
+      <xs:maxInclusive value="1.0"/>
+      <xs:minInclusive value="0.0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- COMPLEXTYPE : DistanceUnitItem -->
+  <xs:complexType name="DistanceUnitItem">
+    <xs:all>
+      <xs:element name="Value" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The distance value in meters.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="DefaultUnitFormat" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If the format parameter is not specified in a UnitItem method that expects a format value,
+            then this DefaultUnitFormat is used.
+            Note that this is "just a hint" which unit of measurement should be used to present
+            the distance value to the user, it does not change the unit of the Value-field (which is
+            always meters, irrespective of the content of this element).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsReciprocal" type="xs:boolean"  />
+      <xs:element minOccurs="0" name="Origin" type="xs:double"  />
+      <xs:element minOccurs="0" name="Direction" type="xs:integer"  />
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : DateTimeUnitItem -->
+  <xs:complexType name="DateTimeUnitItem">
+    <xs:all>
+      <xs:element name="Value" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The date time value in ticks.
+          </xs:documentation>
+        </xs:annotation>
+        <!-- TODO: clarify what a "tick" is -->
+      </xs:element>
+      <xs:element minOccurs="0" name="DefaultUnitFormat" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If the format parameter is not specified in a UnitItem method that expects a format value,
+            then this DefaultUnitFormat is used.
+            Note that this is "just a hint" which unit of measurement should be used to present
+            the date-time value to the user, it does not change the unit of the Value-field (which is
+            always 'ticks', irrespective of the content of this element).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsReciprocal" type="xs:boolean"  />
+      <xs:element minOccurs="0" name="Origin" type="xs:double"  />
+      <xs:element minOccurs="0" name="Direction" type="xs:integer"  />
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : TimeSpanUnitItem -->
+  <xs:complexType name="TimeSpanUnitItem">
+    <xs:all>
+      <xs:element name="Value" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The time value in seconds.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="DefaultUnitFormat" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If the format parameter is not specified in a UnitItem method that expects a format value,
+            then this DefaultUnitFormat is used.
+            Note that this is "just a hint" which unit of measurement should be used to present
+            the time value to the user, it does not change the unit of the Value-field (which is
+            always 'ticks', irrespective of the content of this element).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsReciprocal" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Origin" type="xs:double"  />
+      <xs:element minOccurs="0" name="Direction" type="xs:integer"  />
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : PixelUnitItem -->
+  <xs:complexType name="PixelUnitItem">
+    <xs:all>
+      <xs:element name="Value" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The number of pixels (no unit).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="DefaultUnitFormat" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If the format parameter is not specified in a UnitItem method that expects a format value,
+            then this DefaultUnitFormat is used.
+            Note that this is "just a hint" which unit of measurement should be used to present
+            the value 'number of pixels' to the user, it does not change the unit of the Value-field (which is
+            always 'number of pixels', irrespective of the content of this element).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" name="IsReciprocal" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Origin" type="xs:double"  />
+      <xs:element minOccurs="0" name="Direction" type="xs:integer"  />
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string" />
+  </xs:complexType>
+
+  <!-- ATTRIBUTEGROUP: SubsetBounds -->
+  <xs:attributeGroup name="SubsetBounds">
+    <xs:attribute name="StartX" type="xs:integer"  />
+    <xs:attribute name="SizeX" type="xs:integer"  />
+    <xs:attribute name="StartY" type="xs:integer"  />
+    <xs:attribute name="SizeY" type="xs:integer"  />
+    <xs:attribute name="StartZ" type="xs:integer"  />
+    <xs:attribute name="SizeZ" type="xs:integer"  />
+    <xs:attribute name="StartC" type="xs:integer"  />
+    <xs:attribute name="SizeC" type="xs:integer"  />
+    <xs:attribute name="StartT" type="xs:integer"  />
+    <xs:attribute name="SizeT" type="xs:integer"  />
+    <xs:attribute name="StartS" type="xs:integer"  />
+    <xs:attribute name="SizeS" type="xs:integer"  />
+    <xs:attribute name="StartR" type="xs:integer"  />
+    <xs:attribute name="SizeR" type="xs:integer"  />
+    <xs:attribute name="StartI" type="xs:integer"  />
+    <xs:attribute name="SizeI" type="xs:integer"  />
+    <xs:attribute name="StartM" type="xs:integer"  />
+    <xs:attribute name="SizeM" type="xs:integer"  />
+    <xs:attribute name="StartH" type="xs:integer"  />
+    <xs:attribute name="SizeH" type="xs:integer"  />
+    <xs:attribute name="StartB" type="xs:integer"  />
+    <xs:attribute name="SizeB" type="xs:integer"  />
+    <xs:attribute name="StartV" type="xs:integer"  />
+    <xs:attribute name="SizeV" type="xs:integer"  />
+    <xs:attribute name="ValidX" type="xs:boolean"  />
+    <xs:attribute name="ValidY" type="xs:boolean"  />
+    <xs:attribute name="ValidZ" type="xs:boolean"  />
+    <xs:attribute name="ValidC" type="xs:boolean"  />
+    <xs:attribute name="ValidT" type="xs:boolean"  />
+    <xs:attribute name="ValidR" type="xs:boolean"  />
+    <xs:attribute name="ValidS" type="xs:boolean"  />
+    <xs:attribute name="ValidI" type="xs:boolean"  />
+    <xs:attribute name="ValidM" type="xs:boolean"  />
+    <xs:attribute name="ValidH" type="xs:boolean"  />
+    <xs:attribute name="ValidB" type="xs:boolean"  />
+    <xs:attribute name="ValidV" type="xs:boolean"  />
+  </xs:attributeGroup>
+
+  <!-- COMPLEXTYPE : UnspecificElementList -->
+  <xs:complexType name ="UnspecificElementList">
+    <xs:sequence>
+      <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : FileInfo -->
+  <xs:complexType name="FileInfo">
+    <xs:attribute name="FullName" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Rect (WPF)  -->
+  <xs:complexType name="Rect">
+    <xs:attribute name="X" />
+    <xs:attribute name="Y" />
+    <xs:attribute name="Width" />
+    <xs:attribute name="Height" />
+  </xs:complexType>
+
+  <!-- SIMPLETYPE: StringSize (WPF)  -->
+  <xs:simpleType name="StringSize">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+  <xs:complexType name="Custom">
+    <xs:sequence>
+      <xs:any />
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SIMPLETYPE: Point (WPF)  -->
+  <xs:complexType name="Point">
+    <xs:attribute name="X" />
+    <xs:attribute name="Y" />
+  </xs:complexType>
+
+  <!-- SIMPLETYPE: StringPoint (WPF)  X;Y X;Z ... -->
+  <xs:simpleType name="StringPoint">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+  <!-- SIMPLETYPE: Brush (WPF = Color or name)  -->
+  <xs:simpleType name="Brush">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+  <!-- SIMPLETYPE: FontFamily (LSM) -->
+  <xs:simpleType name="FontFamily">
+    <xs:restriction base="xs:string" />
+  </xs:simpleType>
+
+  <!-- SIMPLETYPE: PixelType) -->
+  <xs:simpleType name="PixelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Gray8"/>
+      <xs:enumeration value="Gray16"/>
+      <xs:enumeration value="Bgr24"/>
+      <xs:enumeration value="Bgra32"/>
+      <xs:enumeration value="Gray32Float"/>
+      <xs:enumeration value="Bgr48"/>
+      <xs:enumeration value="Bgr96Float"/>
+      <xs:enumeration value="Gray64ComplexFloat"/>
+      <xs:enumeration value="Gray32Float"/>
+      <xs:enumeration value="Bgr192ComplexFloat"/>
+
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <!-- SIMPLETYPE: TagType (LSM) -->
+  <xs:simpleType name="TagType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="String"/>
+      <xs:enumeration value="Integer"/>
+      <xs:enumeration value="Double"/>
+      <xs:enumeration value="Date"/>
+      <xs:enumeration value="Boolean"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- ATTRIBUTEGROUP: ParameterAttributes -->
+  <xs:attributeGroup name="ParameterAttributes">
+    <xs:attribute name="Status" >
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Unknown" />
+          <xs:enumeration value="Dirty" />
+          <xs:enumeration value="Pending" />
+          <xs:enumeration value="Valid" />
+          <xs:enumeration value="SuperValid" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- COMPLEXTYPE: CustomAttributes -->
+  <xs:complexType name="CustomAttributes">
+    <xs:sequence>
+      <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: ApplicationTag (LSM) -->
+  <xs:complexType name="ApplicationTag">
+    <xs:all>
+      <xs:element name="TagType" type="TagType"/>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Value" type="xs:string"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: ApplicationTags (LSM) -->
+  <xs:complexType name="ApplicationTags">
+    <xs:annotation>
+      <xs:documentation>Application Tags</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Tag" type="ApplicationTag"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: Parameters -->
+  <xs:complexType name="Parameters">
+    <xs:sequence>
+      <xs:element name="Parameter" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:simpleContent>
+            <xs:extension base="xs:string">
+              <xs:attribute name="Name" type="xs:string" use="required"/>
+              <xs:attribute name="Type" use="required">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:enumeration value="integer"/>
+                    <xs:enumeration value="string"/>
+                    <xs:enumeration value="double"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:attribute>
+              <xs:attribute name="MaxLength" type="xs:integer"/>
+            </xs:extension>
+          </xs:simpleContent>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : StringParameter -->
+  <xs:complexType name="StringParameter">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attributeGroup ref="ParameterAttributes" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : IntegerParameter -->
+  <xs:complexType name="IntegerParameter">
+    <xs:simpleContent>
+      <xs:extension base="xs:integer">
+        <xs:attributeGroup ref="ParameterAttributes" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : BooleanParameter -->
+  <xs:complexType name="BooleanParameter">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean">
+        <xs:attributeGroup ref="ParameterAttributes" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : DoubleParameter -->
+  <xs:complexType name="DoubleParameter">
+    <xs:simpleContent>
+      <xs:extension base="xs:double">
+        <xs:attributeGroup ref="ParameterAttributes" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE: FileReference -->
+  <xs:complexType name="FileReference">
+    <xs:attribute name="href" type="xs:string" use="required" />
+  </xs:complexType>
+
+  
+<!-- COMPLEXTYPE : MetadataListItem -->
+  <xs:complexType name="MetadataListItem">
+    <xs:all>
+      <xs:element   name="Value" />
+    </xs:all>
+    <xs:attribute name="DoOneTimeLocalization" type="xs:boolean"  />
+    <xs:attribute name="TextLocalizeId" type="xs:string"  />
+    <xs:attribute name="Text" type="xs:string"  />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : RangeMetadata -->
+  <xs:complexType name="RangeMetadata">
+    <xs:attribute name="Minimum" type="xs:double"  />
+    <xs:attribute name="Maximum" type="xs:double"  />
+    <xs:attribute name="SmallChange" type="xs:double"  />
+    <xs:attribute name="LargeChange" type="xs:double"  />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : CombinedMetadata -->
+  <xs:complexType name="CombinedMetadata">
+    <xs:all>
+      <xs:element   name="List">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element  maxOccurs="unbounded" name="Item" type="MetadataListItem" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element   name="Range" type="RangeMetadata" />
+    </xs:all>
+    <xs:attribute name="Key" type="xs:string"  />
+  </xs:complexType>
+
+  <!-- SIMPLETYPE : EventType (LSM) -->
+  <xs:simpleType name="EventType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Invalid"/>
+      <xs:enumeration value="Marker"/>
+      <xs:enumeration value="TimerChange"/>
+      <xs:enumeration value="BleachStart "/>
+      <xs:enumeration value="BleachStop"/>
+      <xs:enumeration value="AdcTrigger"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- SIMPLETYPE : ImageUnit(LSM) -->
+  <xs:simpleType name="ImageUnit">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unknown"/>
+      <xs:enumeration value="Concentration"/>
+      <xs:enumeration value="Meter"/>
+      <xs:enumeration value="PhotonCountImageDisplay"/>
+      <xs:enumeration value="PerCent"/>
+      <xs:enumeration value="PalMoleculeDensity"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- SIMPLETYPE : MoleculeType (LSM) -->
+  <xs:simpleType name="MoleculeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Molecule"/>
+      <xs:enumeration value="Fiducials"/>
+      <xs:enumeration value="UserFiducials"/>
+      <xs:enumeration value="Trajectory"/>
+      <xs:enumeration value="Unindentified"/>
+      <xs:enumeration value="Simulation"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- COMPLEXTYPE : Position (LSM => Rename ?) -->
+  <xs:complexType name="Position">
+    <xs:all>
+      <xs:element name="Frame" type="xs:long"/>
+      <xs:element name="PositionX" type="xs:double"/>
+      <xs:element name="PositionY" type="xs:double"/>
+      <xs:element name="PositionZ" type="xs:double"/>
+      <xs:element name="ChiSquare" type="xs:double"/>
+      <xs:element name="Sigma" type="xs:double"/>
+      <xs:element name="SigmaZ" type="xs:double"/>
+      <xs:element name="Background" type="xs:double"/>
+      <xs:element name="NumberPhotons" type="xs:double"/>
+      <xs:element name="LocalizationPrecision" type="xs:double"/>
+      <xs:element name="LocalizationPrecisionZ" type="xs:double"/>
+    </xs:all>
+  </xs:complexType>
+
+
+  <!-- COMPLEXTYPE : Molecule (LSM) -->
+  <xs:complexType name="Molecule">
+    <xs:all>
+      <xs:element name="MoleculeIndex" type="xs:string"/>
+      <xs:element name="MoleculeType" type="MoleculeType"/>
+      <xs:element name="FirstFrame" type="xs:long"/>
+      <xs:element name="Frames" type="xs:long"/>
+      <xs:element name="Missing" type="xs:long"/>
+      <xs:element name="NumberPhotons" type="xs:long"/>
+      <xs:element name="PositionX" type="xs:double"/>
+      <xs:element name="PositionY" type="xs:double"/>
+      <xs:element name="PositionZ" type="xs:double"/>
+      <xs:element name="LocalizationPrecision" type="xs:double"/>
+      <xs:element name="LocalizationPrecisionZ" type="xs:double"/>
+      <xs:element name="ChiSquare" type="xs:double"/>
+      <xs:element name="Sigma" type="xs:double"/>
+      <xs:element name="SigmaZ" type="xs:double"/>
+      <xs:element name="Background" type="xs:double"/>
+      <xs:element name="PositionListIndex" type="xs:string"/>
+      <xs:element name="PositionListSize" type="xs:long"/>
+      <xs:element name="Positions">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Position" type="Position" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Plane (LSM) -->
+  <xs:complexType name="Plane">
+    <xs:all>
+      <xs:element name="Gain" type="xs:double"/>
+      <xs:element name="Offset" type="xs:double"/>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : LsmChannelSetting (LSM => Merge With (DisplaySettings) / ChannelSetting) -->
+  <xs:complexType name="LsmChannelSetting">
+    <xs:all>
+      <!--LOOKUPTABLE-->
+      <!--[Gamma,Brightness,Contrast] Array with the exponents for gamma correction for the channels.-->
+      <xs:element name="Gamma" type="xs:long"/>
+      <!--[Gamma,Brightness,Contrast] Array with the brightness values in the range 0..1 the channels.-->
+      <xs:element name="Brightness" type="xs:long"/>
+      <!--[Gamma,Brightness,Contrast] Array with the contrast values in the range 0..1 for the channels.-->
+      <xs:element name="Contrast" type="xs:long"/>
+      <xs:element name="Knots">
+        <xs:complexType>
+          <xs:all>
+            <!--[eLutSubblockRamp] Two dimensional array with the coordinates of the knots for "ramp" editing. The inner array dimension is in every case 2 because it needs exactly 2 knots to define a ramp.-->
+            <!--[eLutSubblockKnots] Two dimensional arrays with the coordinates of the knots for "polyline" and "spline" curve editing.-->
+            <xs:element name="KnotX" type="xs:long"/>
+            <xs:element name="KnotY" type="xs:long"/>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+      <!--[eLutSubblockPalette]-->
+      <xs:element name="Palette">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Value" type="xs:short" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!--STRUCTUREDILLUMINATION-->
+      <xs:element name="ExcitationWavelength" type="xs:double"/>
+      <xs:element name="GratingPeriod" type="xs:double"/>
+      <xs:element name="GratingPixels" type="xs:double"/>
+      <xs:element name="DiffractionEfficiency1" type="xs:double"/>
+      <xs:element name="DiffractionEfficiency2" type="xs:double"/>
+      <xs:element name="DiffractionEfficiency3" type="xs:double"/>
+      <!--PALMOLECULELIST-->
+      <xs:element name="Molecules">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Molecule" type="Molecule" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!--CHANNELINFORMATION-->
+      <!--ChannelOn == true, if Color != Black-->
+      <xs:element name="ChannelColor" type="xs:double"/>
+      <xs:element name="ChannelName" type="xs:string"/>
+      <xs:element name="Planes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Plane" type="Plane" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <!--CHANNELUNIT-->
+      <xs:element name="FactorI" type="xs:double"/>
+      <xs:element name="OffsetI" type="xs:double"/>
+      <!--UnitI-->
+      <xs:element name="UnitI" type="ImageUnit"/>
+      <!--really "long"? Better be "double"?-->
+      <xs:element name="Offset" type="xs:long"/>
+    </xs:all>
+  </xs:complexType>
+  
+  <!-- COMPLEXTYPE : WaveLength (LSM) -->
+  <xs:complexType name="Wavelength">
+    <xs:all>
+      <xs:element name="Intensity" type="xs:long"/>
+      <xs:element name="Wavelength" type="xs:long"/>
+      <xs:element name="StandardDeviation" type="xs:long"/>
+      <!--CHANNELINFORMATION-->
+      <xs:element name="NumberChannels" type="xs:long"/>
+      <xs:element name="WavelengthStart" type="xs:double"/>
+      <xs:element name="WavelengthEnd" type="xs:double"/>
+    </xs:all>
+  </xs:complexType>
+
+
+  <!-- COMPLEXTYPE : Characteristics (LSM => Information.Document) -->
+  <xs:complexType name="LsmCharacteristics">
+    <xs:annotation>
+      <xs:documentation>Characteristics</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ImageName" type="xs:string"/>
+      <xs:element name="Description" type="xs:string"/>
+      <xs:element name="Notes" type="xs:string"/>
+      <!--Detailed description of the image. This description is specified by the user in "Save/Save As" dialog boxes.-->
+      <xs:element name="CreatedByUser" type="xs:string"/>
+      <!--Name of the user who has aqcuired the image.-->
+      <xs:element name="AcquisitionDateAndTime" type="xs:date"/>
+      <!--Acquisition date and time.-->
+      <xs:element name="OriginalScanData" type="xs:boolean"/>
+      <!--The information whether the image has been modified after image acquisition by image operations.-->
+      <xs:element name="Device" type="xs:string"/>
+      <!--The name of the acquisition device.-->
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>
+

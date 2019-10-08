@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="CommonTypes.xsd"/>
+
+  <!-- ELEMENT : Scaling -->
+  <xs:element name="Scaling" type="Scaling"/>
+
+  <!-- COMPLEXTYPE: AutoScalingSetting -->
+  <xs:complexType name="AutoScalingSetting">
+    <xs:all>
+      <xs:element minOccurs="0" name="CameraFramePixelDistance" type="xs:integer" />
+      <xs:element minOccurs="0" name="CameraFrameBinning" type="xs:integer" />
+      <xs:element minOccurs="0" name="CameraAdapterMagnification" type="xs:double" />
+      <xs:element minOccurs="0" name="Optovar" type="xs:double" />
+      <xs:element minOccurs="0" name="ReflectorMagnification" type="xs:double" />
+      <xs:element minOccurs="0" name="Objective" type="xs:string" />
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Scaling -->
+  <xs:complexType name="Scaling">
+    <xs:all>
+      <xs:element minOccurs="0" name="AutoScaling" type="AutoScalingSetting" />
+      <xs:element name="Items">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="Distance" type="DistanceUnitItem"/>
+            <xs:element name="TimeSpan" type="TimeSpanUnitItem"/>
+            <xs:element name="Pixels" type="PixelUnitItem"/>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>

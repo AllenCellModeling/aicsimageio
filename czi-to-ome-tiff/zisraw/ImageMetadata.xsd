@@ -1,0 +1,1006 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  IMAGEMETADATA - XSD Definition for Image Metadata
+  W.Bayerlein, P.Schwesig, S.Wagner-Conrad, I.Grabmair, B.Weiss,  Feb-Oct-2010
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+  <xs:include schemaLocation="Views.xsd"></xs:include>
+  <xs:include schemaLocation="Information.xsd"></xs:include>
+  <xs:include schemaLocation="Layers.xsd"></xs:include>
+  <xs:include schemaLocation="Scaling.xsd"></xs:include>
+
+  <!-- this schema is used for physiology-related data (stored under Appliances) -->
+  <xs:include schemaLocation="PhysiologySetting.xsd"></xs:include>
+
+  <!-- ELEMENT : ImageDocument -->
+  <xs:element name="ImageDocument">
+    <xs:annotation>
+      <xs:documentation>Use this element as the root element for stand-alone image metadata XML file.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Metadata" type="ImageMetadata" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ELEMENT : ImageMetadata-->
+  <xs:element name="Metadata" type="ImageMetadata"/>
+
+  <!-- COMPLEXTYPE : ImageMetadata-->
+  <xs:complexType name="ImageMetadata">
+    <xs:all>
+      <xs:element name="Version" type="xs:string" minOccurs="0" default="1.0"/>
+      <xs:element name="Information" type="Information" minOccurs="0"/>
+      <xs:element name="Layers" type="Layers"  minOccurs="0"/>
+      <xs:element name="DisplaySetting" type="DisplaySetting"  minOccurs="0"/>
+      <xs:element name="Scaling" type="Scaling"  minOccurs="0"/>
+      <xs:element name="Views" type="Views"  minOccurs="0"/>
+      <xs:element name="MetadataNodes" minOccurs="0" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="MetadataNode" type="MetadataNode"  maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="HardwareSetting" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The element is opaque in this schema, for validation of contained XML refer to HardwareSetting.xsd.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Experiment" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The element is opaque in this schema, for validation of contained XML refer to Experiment.xsd.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Appliances" type="Appliances" minOccurs="0"/>
+      <xs:element name="AttachmentInfos" type="AttachmentInfos" minOccurs="0"/>
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    </xs:all>
+    <xs:attribute name="Id" />
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : MetadataNode -->
+  <xs:complexType name="MetadataNode">
+    <xs:all>
+      <xs:element name="HardwareSetting" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The element is opaque in this schema, for validation of contained XML refer to HardwareSetting.xsd.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Information" type="Information" minOccurs="0"/>
+      <xs:element name="Layers" type="Layers"  minOccurs="0"/>
+      <xs:element name="DisplaySetting" type="DisplaySetting"  minOccurs="0"/>
+      <xs:element name="Scaling" type="Scaling"  minOccurs="0"/>
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    </xs:all>
+    <xs:attributeGroup ref="SubsetBounds"/>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Appliances -->
+  <xs:complexType name="Appliances">
+    <xs:annotation>
+      <xs:documentation>Arbitrary "appliances" may store their data here.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="Appliance" type="Appliance"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Appliance -->
+  <xs:complexType name="Appliance">
+    <xs:all>
+      <xs:element minOccurs="0" name="Data">
+        <xs:complexType>
+          <xs:sequence>
+            <!-- E.g. might be of type MeasurementData.
+            If the "any" content is to be validated, there must exist a schema for an element with the same name 
+            as the node name (a type schema is not sufficient). -->
+            <xs:any processContents="lax" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="CustomAttributes" type="CustomAttributes" />
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this application data.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ELEMENT : TopographyData -->
+  <xs:element name="TopographyData">
+    <xs:annotation>
+      <xs:documentation>
+        Contains information about "topography data items", which can be thought of
+        as a group of channels, where each channel (within this group) can be
+        attributed as "heightmap" or "texture".
+        NOTES:
+        (1) The Id of the Appliances node specifying a "topography data item" must be "Topography:1".
+            Everything else will not be recognized as specifying a "topography data item".
+        (2) It is _not_ recommended to rely on Metadata.Information.Document.SubType in order
+            to detect the presence of "topography data items" in a document. Instead, it is
+            recommended to actively discover whether this information is present (and if
+            the document is usable for the respective application).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Items" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="TopographyDataItem" type="TopographyDataItem" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+        <xs:element name="TopographyScaling" minOccurs="0">
+          <xs:annotation>
+            <xs:documentation>
+              This node exists for legacy reasons - its content is not used.
+            </xs:documentation>
+          </xs:annotation>
+
+          <xs:complexType>
+            <xs:sequence>
+              <xs:any processContents="lax" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+      </xs:all>
+      <xs:attribute name="Id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            An identifier to uniquely identify this Topography data.
+          </xs:documentation>
+        </xs:annotation>
+        <!-- Maybe Id is useful if more than one TopoData can be contained in one image in the future. -->
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+    <!-- COMPLEXTYPE : TopographyDataItem -->
+  <xs:complexType name="TopographyDataItem">
+    <xs:annotation>
+      <xs:documentation>
+        Contains optional advanced information about Height maps and textures.
+      </xs:documentation>
+    </xs:annotation>
+ 
+    <xs:all>
+        <xs:element name="Textures">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Texture" type="TopographyTexture" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+
+    <xs:element name="HeightMaps">
+      <xs:complexType>
+        <xs:sequence>
+          <xs:element name="HeightMap" type="TopographyHeightMap" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+   
+    <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    
+    </xs:all>
+
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this Topography Scaling within a collection.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attributeGroup ref="SubsetBounds"/>
+
+  </xs:complexType>
+
+  
+  <!-- COMPLEXTYPE : TopographyHeightMap -->
+  <xs:complexType name="TopographyHeightMap">
+    <xs:annotation>
+      <xs:documentation>
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:all>
+      <xs:element name="Scaling" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            This node exists for legacy reasons - its content is not used.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:any processContents="lax" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    </xs:all>
+
+    <xs:attributeGroup ref="SubsetBounds">
+      <xs:annotation>
+        <xs:documentation>
+          For legacy reasons, all attributes in the attribute grout "SubsetBounds" are
+          syntactically allowed, but only "StartC" is honored, the remaining are ignored
+          (and should not be written or used in any way).
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attributeGroup>
+  </xs:complexType>
+  
+  <!-- COMPLEXTYPE : TopographyTexture -->
+  <xs:complexType name="TopographyTexture">
+    <xs:annotation>
+      <xs:documentation>
+      </xs:documentation>
+    </xs:annotation>
+ 
+    <xs:all>
+      <xs:element name="CustomAttributes" type="CustomAttributes" minOccurs="0" />
+    </xs:all>
+
+  <xs:attributeGroup ref="SubsetBounds">
+    <xs:annotation>
+      <xs:documentation>
+        For legacy reasons, all attributes in the attribute group "SubsetBounds" are
+        syntactically allowed, but only "StartC" is honored, the remaining are ignored
+        (and should not be written or used in any way).
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attributeGroup>
+  </xs:complexType>
+
+  <!-- ELEMENT : HermesAnalysisResult -->
+  <!-- further information about this data and discussion can be found at http://adefue01sapp30/Sites/ZIS/ZISFramework/SitePages/Hermes-ZEN-interop.aspx -->
+  <xs:element name="HermesAnalysisResult" type="HermesAnalysisResult">
+  </xs:element>
+
+  <xs:complexType name="HermesAnalysisResult">
+    <xs:annotation>
+      <xs:documentation>
+        This data structure contains the results of a GrainSize-Measurement by the
+        product "Hermes".
+        TODO: please provide a reasonable description
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="GrainsInterceptAnalysisResult" type="GrainsInterceptAnalysisResult">
+        <xs:annotation>
+          <xs:documentation>
+            This is the measurement result of one plane (=plane is spreading only in X-Y-dimension). The annotations
+            "TheC", "TheZ" specify to which plane this measurement applies. An attribute (TheC, TheT, TheZ, TheS, TheV) can only be
+            omitted if the document does not contain this dimension (or, more precise: if the corresponding dimension has a size less than
+            or equal to 1). If the document e. g. has T-dimension, then "TheT" must be present, otherwise the data is illegal.
+            Also, it is illegal to have a duplicate plane.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GrainsInterceptAnalysisResult">
+    <xs:annotation>
+      <xs:documentation>
+        TODO: please provide a reasonable description
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="GrainSizeNumber" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            TODO: please provide a reasonable description what this number means.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="MeanDistance" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            TODO: please provide a reasonable description what this number means.
+            [unit:micrometer]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ChordPattern" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The Chord Pattern contains multiple chord segments.
+            TODO: please provide a reasonable description
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Scale" type="xs:double" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  The zoom of the pattern.
+                  TODO: please provide a reasonable description what this number means.
+                  How is "Zoom" defined? Is there a unit associated with this number?
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="Standard"  minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  Specifies the standard that was used to perform the measurement.
+                  TODO: please provide a reasonable description
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="ASTM E112"/>
+                  <xs:enumeration value="ISO 643"/>
+                  <xs:enumeration value="GB/T 6394-2002"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="Type" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation>
+                  The type of of measuring pattern, can be one of the following: "Combined", "HorizontalLines", "VerticalLines", "XCross", "ConcentricCircles".
+                  TODO: please provide a reasonable description
+                </xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Combined"/>
+                  <xs:enumeration value="HorizontalLines"/>
+                  <xs:enumeration value="VerticalLines"/>
+                  <xs:enumeration value="XCross"/>
+                  <xs:enumeration value="ConcentricCircles"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="Chords" minOccurs="0" maxOccurs="1">
+              <xs:annotation>
+                <xs:documentation>
+                  This node contains any number of Line or Circle children.
+                  TODO: please provide a reasonable description
+                </xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                  <xs:choice>
+                    <xs:element name="Line">
+                      <xs:annotation>
+                        <xs:documentation>
+                          A Choord of type Line.
+                          TODO: please provide a reasonable description
+                        </xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:all>
+                          <xs:element name="X1" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The X1-coordinate for "line-choord".
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="X2" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The X2-coordinate for "line-choord".
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Y1" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The Y1-coordinate for "line-choord".
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Y2" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The Y2-coordinate for "line-choord".
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="IntersectionPoints" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                An array of numbers, which specify the intersections points. The list is to be interpreted
+                                as the x-coordinate of an intersection point followed by the y-coordinate of the point.
+                                So, this list must contain an even number of floating-point numbers.
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType >
+                              <xs:restriction>
+                                <xs:simpleType>
+                                  <xs:list itemType="xs:double">
+                                  </xs:list>
+                                </xs:simpleType>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                        </xs:all>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Circle">
+                      <xs:complexType>
+                        <xs:all>
+                          <xs:element name="X" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The X-coordinate of the center of a "circle-choord"
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Y" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The Y-coordinate of the center of a "circle-choord"
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Radius" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                The radius of a "circle-choord"
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="IntersectionPoints" minOccurs="0">
+                            <xs:annotation>
+                              <xs:documentation>
+                                An array of numbers, which specify the intersections points. The list is to be interpreted
+                                as the x-coordinate of an intersection point followed by the y-coordinate of the point.
+                                So, this list must contain an even number of floating-point numbers.
+                                [unit: pixel]
+                                TODO: please provide a reasonable description
+                              </xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType >
+                              <xs:restriction>
+                                <xs:simpleType>
+                                  <xs:list itemType="xs:double">
+                                  </xs:list>
+                                </xs:simpleType>
+                              </xs:restriction>
+                            </xs:simpleType>
+                          </xs:element>
+                        </xs:all>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:choice>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+
+    <xs:attribute name="TheC" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          This gives the coordinate of the plane to which this measurement applies.
+          Note that the specification of the plane must be sufficient which means that
+          if the document contains e. g. the C-dimension (SizeC greater than 1), then
+          the C-coordinate MUST be given here.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="TheT" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          This gives the coordinate of the plane to which this measurement applies.
+          Note that the specification of the plane must be sufficient which means that
+          if the document contains e. g. the T-dimension (SizeT greater than 1), then
+          the T-coordinate MUST be given here.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="TheZ" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          This gives the coordinate of the plane to which this measurement applies.
+          Note that the specification of the plane must be sufficient which means that
+          if the document contains e. g. the Z-dimension (SizeZ greater than 1), then
+          the Z-coordinate MUST be given here.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="TheV" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          This gives the coordinate of the plane to which this measurement applies.
+          Note that the specification of the plane must be sufficient which means that
+          if the document contains e. g. the V-dimension (SizeV greater than 1), then
+          the V-coordinate MUST be given here.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="TheS" type="xs:integer" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          This gives the coordinate of the plane to which this measurement applies.
+          Note that the specification of the plane must be sufficient which means that
+          if the document contains e. g. the S-dimension (SizeS greater than 1), then
+          the S-coordinate MUST be given here.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+
+  </xs:complexType>
+
+        
+  <!-- ELEMENT : ShuttleAndFindData -->
+  <xs:element name="ShuttleAndFindData">
+    <xs:annotation>
+      <xs:documentation>
+        The ShuttleAndFindData contains the calibration of the marker points for Shuttle and Find.
+        This data is added to metadata via the Appliances node (path: Appliances/Appliance/Data/ShuttleAndFindData).
+        NOTE: Ensure that the Id of the respective Appliance node obeys the following naming guideline:
+        Id="ShuttleAndFind:*".
+        ('*' generally is an integer but might be anything.)
+        Hence, algorithms can search for Ids which start with "ShuttleAndFind:".
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Calibration" type="ShuttleAndFindCalibration"/>
+      </xs:all>
+      <xs:attribute name="Id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            An identifier to uniquely identify this ShuttleAndFind data.
+          </xs:documentation>
+        </xs:annotation>
+        <!-- Id is not needed currently, but maybe it is useful if more than one ShuttleAndFindData can be contained in one image in the future. -->
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- COMPLEXTYPE : ShuttleAndFindCalibration -->
+  <xs:complexType name="ShuttleAndFindCalibration">
+    <xs:all>
+      <xs:element name="Markers">
+        <xs:annotation>
+          <xs:documentation>
+            Calibration data is not valid without marker data.
+            For current usage of Shuttle and Find, there must be 3 marker points. There might be more for future applications.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Marker" type="CalibrationMarker" minOccurs="3" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="StageOrientation" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            Defines the stage X and stage Y orientation.
+            If the acquisition is not directed to the image center, the offset to the image center needs to be added to the stage position.
+            Before adding, the offsets need to be multiplied with the stage orientation values.
+            Typical values: LM: X=-1, Y=-1. SEM: X=1, Y=-1.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:attribute name="X">
+            <xs:annotation>
+              <xs:documentation>Stage X axis orientation. Possible values: 1, -1.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:integer">
+                <xs:maxInclusive value="1"/>
+                <xs:minInclusive value="-1"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="Y">
+            <xs:annotation>
+              <xs:documentation>Stage Y axis orientation. Possible values: 1, -1.</xs:documentation>
+            </xs:annotation>
+            <xs:simpleType>
+              <xs:restriction base="xs:integer">
+                <xs:maxInclusive value="1"/>
+                <xs:minInclusive value="-1"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="MicroscopeType" minOccurs="0" >
+        <xs:annotation>
+          <xs:documentation>Defines the type of the microscope with which the image was created.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="LM"/>
+            <xs:enumeration value="LSM"/>
+            <xs:enumeration value="SEM"/>
+            <xs:enumeration value="DigiMic"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="Holder" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The name of the Shuttle-and-Find holder which was used when the calibration was created. This field is intended to provide information only.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : CalibrationMarker -->
+  <xs:complexType name="CalibrationMarker">
+    <xs:attribute name="StageXPosition" type="xs:double" use="required">
+      <xs:annotation>
+        <xs:documentation>The stage X axis position [unit: micrometers].</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="StageYPosition" type="xs:double" use="required">
+      <xs:annotation>
+        <xs:documentation>The stage Y axis position [unit: micrometers].</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="FocusPosition" type="xs:double" use="required">
+      <xs:annotation>
+        <xs:documentation>The focus position [unit: micrometers].</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>An identifier to uniquely identify this calibration point.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ELEMENT : SEMData -->
+  <xs:element name="SEMData">
+    <xs:annotation>
+      <xs:documentation>
+        The SEMData appliances hold the SEM parameters.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="Parameters" minOccurs="0" type="SEMParameters"/>        
+      </xs:all>
+      <xs:attribute name="Id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            An identifier to uniquely identify this SEM data.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- COMPLEXTYPE : SEMParameters -->
+  <xs:complexType name="SEMParameters">
+    <xs:annotation>
+      <xs:documentation>
+        The SEM parameters have informational character, e.g. to be displayed as info in applications.
+        Hence, all parameters are stored as strings, not as numerical values.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="AcceleratingVoltage" type="xs:string" minOccurs="0"/>
+      <xs:element name="Magnification" type="xs:string" minOccurs="0"/>
+      <xs:element name="StageZPosition" type="xs:string" minOccurs="0"/>
+      <xs:element name="StageTilt" type="xs:string" minOccurs="0"/>
+      <xs:element name="StageRotation" type="xs:string" minOccurs="0"/>
+      <xs:element name="Brightness" type="xs:string" minOccurs="0"/>
+      <xs:element name="Contrast" type="xs:string" minOccurs="0"/>
+      <xs:element name="CollectorBias" type="xs:string" minOccurs="0"/>
+      <xs:element name="SampleId" type="xs:string" minOccurs="0"/>
+      <xs:element name="PhotoNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="ChamberPressure" type="xs:string" minOccurs="0"/>
+      <xs:element name="SystemVacuum" type="xs:string" minOccurs="0"/>
+      <xs:element name="SpecimenCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="ScanSpeed" type="xs:string" minOccurs="0"/>
+      <xs:element name="NoiseReductionMode" type="xs:string" minOccurs="0"/>
+      <xs:element name="NoiseReduction" type="xs:string" minOccurs="0"/>
+      <xs:element name="StigmationX" type="xs:string" minOccurs="0"/>
+      <xs:element name="StigmationY" type="xs:string" minOccurs="0"/>
+      <xs:element name="ApertureSize" type="xs:string" minOccurs="0"/>
+      <xs:element name="System" minOccurs="0" type="SEMSystemParameters"/>
+    </xs:all>
+  </xs:complexType>
+  
+  <!-- COMPLEXTYPE : SEMSystemParameters -->
+  <xs:complexType name="SEMSystemParameters">
+    <xs:annotation>
+      <xs:documentation>
+        Depending on the used SEM system, some specific parameters are set additionally.
+
+        Parameters for system = Evo:
+        ProbeCurrent, FilamentType, FilamentCurrent, OptiBeamMode, ApertureSelection, 
+        VPAperture, AirWaterMode, StageTemperature, BeamCurrent.
+
+        Parameters for system = Supra, Ultra, Sigma, Merlin or Delta:
+        ExtractorVoltage, ExtractionCurrent, ApertureNumber, HighCurrentMode.
+
+        Parameters for system = XB, NVision, Neon or Auriga:
+        FIBVoltage, FIBMode, FIBProbeCurrent, FIBAperture, FIBGISChannel.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="ProbeCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="FilamentType" type="xs:string" minOccurs="0"/>
+      <xs:element name="FilamentCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="OptiBeamMode" type="xs:string" minOccurs="0"/>
+
+      <xs:element name="ApertureSelection" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The ApertureSelection field will only be available for older versions. Newer versions store the aperture size in the ApertureSize field under SEMParameters.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      
+      <xs:element name="VPAperture" type="xs:string" minOccurs="0"/>
+      <xs:element name="AirWaterMode" type="xs:string" minOccurs="0"/>
+      <xs:element name="StageTemperature" type="xs:string" minOccurs="0"/>
+      <xs:element name="BeamCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="ExtractorVoltage" type="xs:string" minOccurs="0"/>
+      <xs:element name="ExtractionCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="ApertureNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="HighCurrentMode" type="xs:string" minOccurs="0"/>
+      <xs:element name="FIBVoltage" type="xs:string" minOccurs="0"/>
+      <xs:element name="FIBMode" type="xs:string" minOccurs="0"/>
+      <xs:element name="FIBProbeCurrent" type="xs:string" minOccurs="0"/>
+      <xs:element name="FIBAperture" type="xs:string" minOccurs="0"/>
+      <xs:element name="FIBGISChannel" type="xs:string" minOccurs="0"/>
+    </xs:all>
+    <xs:attribute name="Name" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the system.
+          Possible values: Evo, Supra, Ultra, Sigma, Merlin, Delta, XB, NVision, Neon, Auriga.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- ELEMENT : SIMData -->
+  <xs:element name="SIMData">
+    <xs:annotation>
+      <xs:documentation>
+        This data contains the initial parameter values for SIM Plugin viewers, as defined by the user for the SIM experiment.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:all>
+        <xs:element name="ProcessingSettings" type="SIMProcessingSettings"/>
+      </xs:all>
+      <xs:attribute name="Id" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            An identifier to uniquely identify this SIM data.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- COMPLEXTYPE : SIMProcessingSettings -->
+  <xs:complexType name="SIMProcessingSettings">
+    <xs:annotation>
+      <xs:documentation>
+        This data contains the initial parameter values for SIM Plugin viewers, as defined by the user for the SIM experiment.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="SABCEpsilon" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The epsilon for the Spatially Adapted Bleaching Correction (=SABC). [unit: none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <!--COMMENT: SABCEpsilon and SABCDecay actually define the same thing, so it might be wise to keep only one of them.
+      (Lutz' opinion: The naming Epsilon is currently used in code, yet, maybe Decay is the more appropriate naming?)
+      YET, ZVI import makes use of both parameters.-->
+      <!--<xs:element name="SABCDecay" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The decay for the Spatially Adapted Bleaching Correction (=SABC). [unit: none]
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>-->
+      <xs:element name="NormalizeMode" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The normalize mode.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Clip"/>
+            <xs:enumeration value="Auto"/>
+            <xs:enumeration value="Wrap"/>
+            <xs:enumeration value="ShiftClip"/>
+            <xs:enumeration value="Absolute"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FilterName" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The name of the processing filter. Also referred to as filter mode.
+            The filter name actually is redundant with filter harmonics and size.
+          </xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Off"/>
+            <xs:enumeration value="Weak"/>
+            <xs:enumeration value="Medium"/>
+            <xs:enumeration value="Strong"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FilterHarmonics" default="SecondAndFifthHarmonic" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The filter harmonics for SIM processing. Also referred to as filter component.
+          </xs:documentation>
+        </xs:annotation>
+        <!--See Enum FourierFilterComponents (File IpEnums.cs).-->
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="PrincipalComponent"/>
+            <xs:enumeration value="FirstHarmonic"/>
+            <xs:enumeration value="SecondHarmonic"/>
+            <xs:enumeration value="ThirdHarmonic"/>
+            <xs:enumeration value="FourthHarmonic"/>
+            <xs:enumeration value="FifthHarmonic"/>
+            <xs:enumeration value="SixthHarmonic"/>
+            <xs:enumeration value="SeventhHarmonic"/>
+            <xs:enumeration value="SecondAndFifthHarmonic"/>
+            <xs:enumeration value="PrincipalSecondAndFifthHarmonic"/>
+            <xs:enumeration value="PrincipalFirstSecondAndFifthHarmonic"/>
+            <xs:enumeration value="All"/>
+            <xs:enumeration value="None"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="FilterSize" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The filter size for SIM processing [unit: none].
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+  
+  <!-- COMPLEXTYPE : AttachmentInfos -->
+  <xs:complexType name="AttachmentInfos">
+    <xs:annotation>
+      <xs:documentation>Additional information about attachments may be stored here.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="unbounded" name="AttachmentInfo" type="AttachmentInfo"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : AttachmentInfo -->
+  <xs:complexType name="AttachmentInfo">
+    <xs:choice maxOccurs="1" minOccurs="1">
+      <xs:element name="Label" minOccurs="1" maxOccurs="1" type="LabelInfo"/>
+    </xs:choice>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An identifier to uniquely identify this AttachmentInfo data.
+          The identifier string equals the name of the corresponding attachment.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : LabelInfo -->
+  <xs:complexType name="LabelInfo">
+    <xs:annotation>
+      <xs:documentation>Additional information about a Label attachment.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="DisplayRotationAngle" type="xs:double" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The angle (in degrees) with which to rotate the label image for GUI display.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Barcodes" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the barcodes contained on this label.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="Barcode" type="Barcode"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="OCRs" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Information about the OCR (Optical Character Recognition) result for this label.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="unbounded" name="OCR" type="OCR"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : Barcode -->
+  <xs:complexType name="Barcode">
+    <xs:annotation>
+      <xs:documentation>Data to describe a barcode.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Type" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The barcode type.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Content" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The content of the barcode.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An identifier to uniquely identify this barcode.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+  <!-- COMPLEXTYPE : OCR -->
+  <xs:complexType name="OCR">
+    <xs:annotation>
+      <xs:documentation>Data to describe an OCR (Optical Character Recognition) result.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element name="Content" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>The content of the OCR.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" use="required" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An identifier to uniquely identify this OCR data.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  
+</xs:schema>

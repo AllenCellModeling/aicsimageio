@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- 
+  DISPLAYSETTING - XSD Definition for display settings and channel settings.
+  W.Bayerlein, P.Schwesig, S.Wagner-Conrad, I.Grabmair, B.Weiss,  Feb-Oct-2010
+-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="CommonTypes.xsd" />
+
+  <!-- Element : DisplaySetting-->
+  <xs:element name="DisplaySetting" type="DisplaySetting"/>
+
+  <!-- COMPLEXTYPE : DisplaySetting-->
+  <xs:complexType name="DisplaySetting">
+    <xs:all>
+      <xs:element name="Channels">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Channel" type="Channel" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="MergeChannels" type="xs:boolean"  default="true">
+      <xs:annotation>
+        <xs:documentation>True if channel-merge display is enabled.</xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="ShowRangeIndicator" type="xs:boolean"  default="false" />
+    <xs:attribute name="HistogramRange">
+      <xs:annotation>
+        <xs:documentation>The bit range for the histogram display.</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="8" />
+          <xs:enumeration value="10" />
+          <xs:enumeration value="12" />
+          <xs:enumeration value="14" />
+          <xs:enumeration value="16" />
+          <xs:enumeration value="Auto" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+
+  </xs:complexType>
+
+  <!-- ComplexType: Channel -->
+  <xs:complexType name="Channel">
+    <xs:annotation>
+      <xs:documentation>Defines the display setting for a single channel.</xs:documentation>
+    </xs:annotation>
+    <xs:all>
+      <xs:element minOccurs="0"  default="0.0" name="Low" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The normalized low (=black) value of the mapping range.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="1.0" name="High" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The normalized high (=white) value of the mapping range.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="1.0" name="Gamma" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The gamma value to be applied to the mapping range.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="false" name="IsAutoApplyEnabled" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            Indicates whether the command specified in AutoApplyMode is applied each time a new image
+            subset is selected (e.g. when the player is running).
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="MinMax" name="AutoApplyMode">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="BestFit" />
+            <xs:enumeration value="MinMax" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0"  default="2.0" name="LowerBestFitThreshold" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The lower threshold for the BestFit operation.
+            The value is useful e.g. to skip large nearly black areas with some noise.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="0.1" name="UpperBestFitThreshold" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>
+            The upper threshold for the BestFit operation.
+            The value is useful e.g. to skip large white or nearly white areas.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0" default="8" name="BitCountRange" type="xs:int">
+        <xs:annotation>
+          <xs:documentation>
+            The bit range.
+            Note: to persist the histogram range selected by the user, use the element HistogramRange of DisplaySetting.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  name="Mode">
+        <xs:annotation>
+          <xs:documentation>The mode: can be Spline, Ramp or None. Default is None.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Spline" />
+            <xs:enumeration value="Ramp" />
+            <xs:enumeration value="None" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0"  name="Points" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If mode is Spline, these are the Spline Points.
+            If mode is Ramp, these are the Points for the Ramp mode.
+            If mode is None, there is supposed to be no Points node, i.e. Points are ignored.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  name="Description" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>User-defined description of the channel.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  name="DyeName" type="xs:string" />
+      <xs:element minOccurs="0"  name="ShortName" type="xs:string" />
+      <xs:element minOccurs="0"  default="#FFFFFFFF" name="Color" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The color in which to display the channel if ColorMode=Color.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="Color" name="ColorMode">
+        <xs:annotation>
+          <xs:documentation>The color mode in which to display the channel.</xs:documentation>
+        </xs:annotation>
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Indeterminate" />
+            <xs:enumeration value="None" />
+            <xs:enumeration value="Color" />
+            <xs:enumeration value="Palette" />
+            <xs:enumeration value="Dye" />
+            <xs:enumeration value="Custom" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0"  default="#FFFFFFFF" name="OriginalColor" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The original color of the channel, i.e. the color the channel had on the most recent save event.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="true" name="IsSelected" type="xs:boolean">
+        <xs:annotation>
+          <xs:documentation>
+            If the DisplaySetting is in MergeChannels mode,
+            the channel is only displayed if IsSelected is true.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="dawn" name="PaletteName" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>
+            If ColorMode=Palette, the channel is displayed with the lookup-table (LUT)
+            defined by the PaletteName.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element minOccurs="0"  default="1.0" name="Weight" type="xs:double">
+        <xs:annotation>
+          <xs:documentation>The channel weight (ratio among all selected channels).</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="ChannelUnit" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            The ChannelUnit contains scaling factor, offset and unit for each image
+            channel. The data are currently used by images with ion concentration
+            data. The display value is calculated by
+
+            DisplayValue = Factor * PixelIntensity / MaxPixelIntensity + Offset.
+
+            where "MaxPixelIntensity" is the maximum possible pixel intensity for the
+            data type (4095 or 255).
+          </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:all>
+            <xs:element name="FactorI" type="xs:double">
+              <xs:annotation>
+                <xs:documentation>A new factor value for the channel.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="OffsetI" type="xs:double">
+              <xs:annotation>
+                <xs:documentation>A new offset value for the channel.</xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="UnitI">
+              <xs:annotation>
+                <xs:documentation>The Unit identifier.</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Unknown"/>
+                  <xs:enumeration value="Concentration"/>
+                  <xs:enumeration value="Meter"/>
+                  <xs:enumeration value="PhotonCountImageDisplay"/>
+                  <xs:enumeration value="PerCent"/>
+                  <xs:enumeration value="PalMoleculeDensity"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="ChannelType">
+              <xs:annotation>
+                <xs:documentation>The channel type identifier.</xs:documentation>
+              </xs:annotation>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="PalHR"/>
+                  <xs:enumeration value="PalWidefield"/>
+                  <xs:enumeration value="SimHR"/>
+                  <xs:enumeration value="SimWidefield"/>
+                  <xs:enumeration value="SimDWF"/>
+                  <xs:enumeration value="AiryScanSum"/>
+                  <xs:enumeration value="AiryScanRawSr"/>
+                  <xs:enumeration value="AiryScanSr"/>
+                  <xs:enumeration value="AiryScanVp"/>
+                  <xs:enumeration value="Unspecified"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+          </xs:all>
+        </xs:complexType>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Id" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          An identifier to uniquely identify this channel.
+          Use this Id to refer to the respective Channel node within Dimensions/Channels/Channel.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="Name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+          The (user-defined) channel name.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="StartC" type="xs:integer">
+      <xs:annotation>
+        <xs:documentation>
+          The index of the channel.
+          In general, the channel elements in the channels collection are indexed by 0, 1, 2, etc.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+
+</xs:schema>

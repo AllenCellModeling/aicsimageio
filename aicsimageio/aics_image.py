@@ -87,10 +87,7 @@ class AICSImage:
         """
 
         # Hold onto known dims until data is requested
-        if known_dims:
-            self._known_dims = known_dims
-        else:
-            self._known_dims = None
+        self._known_dims = known_dims
 
         # Dims should nearly always be default dim order unless explictly overridden
         self.dims = constants.DEFAULT_DIMENSION_ORDER
@@ -128,15 +125,9 @@ class AICSImage:
         if self._data is None:
             reader_data = self._reader.data
 
-            # Handle delayed known dims reshape
-            if self._known_dims:
-                pass_dims = self._known_dims
-            else:
-                pass_dims = self.reader.dims
-
-            # Read and reshape
+            # Read and reshape and handle delayed known dims reshape
             self._data = transforms.reshape_data(data=reader_data,
-                                                 given_dims=pass_dims,
+                                                 given_dims=self._known_dims or self.reader.dims,
                                                  return_dims=self.dims)
         return self._data
 

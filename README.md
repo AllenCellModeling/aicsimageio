@@ -32,6 +32,9 @@ im = imread("/path/to/your/file_or_buffer.ome.tiff")
 # For AICSImage object that
 im = AICSImage("/path/to/your/file_or_buffer.ome.tiff")
 
+# To specify a known dimension order
+im = AICSImage("/path/to/your/file_or_buffer.ome.tiff", known_dims="SYX")
+
 # Image data is stored in `data` attribute
 im.data  # returns the image data numpy array
 

@@ -61,7 +61,8 @@ def test_default_dims(data, expected):
 @pytest.mark.parametrize("data, dims, expected_shape", [
     (np.zeros((5, 4, 3)), "SYX", (5, 1, 1, 1, 4, 3)),
     (np.zeros((1, 2, 3, 4, 5)), "STCYX", (1, 2, 3, 1, 4, 5)),
-    (np.zeros((10, 20)), "XY", (1, 1, 1, 1, 20, 10))
+    (np.zeros((10, 20)), "XY", (1, 1, 1, 1, 20, 10)),
+    pytest.param(np.zeros((2, 2, 2)), "ABI", None, marks=pytest.mark.raises(exception=TypeError))
 ])
 def test_known_dims(data, dims, expected_shape):
     img = AICSImage(data, known_dims=dims)

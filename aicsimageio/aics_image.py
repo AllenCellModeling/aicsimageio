@@ -1,6 +1,6 @@
 import logging
 import typing
-from typing import Type
+from typing import Optional, Type
 
 import numpy as np
 
@@ -72,7 +72,7 @@ class AICSImage:
     """
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
-    def __init__(self, data: typing.Union[types.FileLike, np.ndarray], **kwargs):
+    def __init__(self, data: typing.Union[types.FileLike, np.ndarray], known_dims: Optional[str] = None, **kwargs):
         """
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of
@@ -81,10 +81,21 @@ class AICSImage:
         Parameters
         ----------
         data: String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions
+        known_dims: Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
         kwargs: Parameters to be passed through to the reader class
                        max_workers (optional Czi) specifies the number of worker threads for the backend library
         """
+
+        # Hold onto known dims until data is requested
+        if known_dims:
+            self._known_dims = known_dims
+        else:
+            self._known_dims = None
+
+        # Dims should nearly always be default dim order unless explictly overridden
         self.dims = constants.DEFAULT_DIMENSION_ORDER
+
+        # Lazy load later
         self._data = None
         self._metadata = None
 
@@ -112,12 +123,20 @@ class AICSImage:
         """
         Returns
         -------
-        returns a numpy.ndarray with dimension ordering "STCZYX"
+        Returns a numpy.ndarray with dimension ordering "STCZYX"
         """
         if self._data is None:
             reader_data = self._reader.data
+
+            # Handle delayed known dims reshape
+            if self._known_dims:
+                pass_dims = self._known_dims
+            else:
+                pass_dims = self.reader.dims
+
+            # Read and reshape
             self._data = transforms.reshape_data(data=reader_data,
-                                                 given_dims=self._reader.dims,
+                                                 given_dims=pass_dims,
                                                  return_dims=self.dims)
         return self._data
 

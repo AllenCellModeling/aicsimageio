@@ -1,15 +1,14 @@
-import logging
 import io
+import logging
 import re
 
 import numpy as np
 import tifffile
 
+from .. import types
 from ..vendor import omexml
 from .reader import Reader
 from .tiff_reader import TiffReader
-from .. import types
-
 
 log = logging.getLogger(__name__)
 
@@ -69,9 +68,9 @@ class OmeTiffReader(Reader):
         # this is a tifffile implementation detail -- see squeeze_axes in tifffile.
         if self.size_t() < 2:
             dimension_order = dimension_order.replace("T", "")
-        if self.size_c() < 2:
-            dimension_order = dimension_order.replace("Z", "")
         if self.size_z() < 2:
+            dimension_order = dimension_order.replace("Z", "")
+        if self.size_c() < 2:
             dimension_order = dimension_order.replace("C", "")
         return dimension_order
 

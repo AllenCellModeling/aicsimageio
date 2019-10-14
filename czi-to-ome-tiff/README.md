@@ -19,8 +19,10 @@ _I would recommend watching the videos on 1.5x speed._
 
 * [Simple XSLT Tutorial](https://www.youtube.com/watch?v=BujLy71JY1k)
 _an eight minute video detailing how to convert xml to html_
-* [XSLT Reference](https://www.w3schools.com/xml/xsl_elementref.asp)
-_w3schools reference for all possible templating elements_
+* [XSLT Reference](https://developer.mozilla.org/en-US/docs/Web/XSLT)
+_mozilla reference for all possible templating elements_
+* [XSLT Deep Reference](https://developer.mozilla.org/en-US/docs/Web/XSLT/Transforming_XML_with_XSLT)
+_mozilla reference for all possible attributes, elements, and functions_
 * [A Bit More In Depth XSLT Tutorial](https://www.youtube.com/watch?v=Rn1bvTYYsCY)
 _a thirty minute video with more details on nested for-each, etc_
 

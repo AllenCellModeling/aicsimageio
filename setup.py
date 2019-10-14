@@ -28,6 +28,7 @@ dev_requirements = [
     "coverage>=5.0a4",
     "flake8>=3.7.7",
     "ipython>=7.5.0",
+    "lxml>=4.4.1",
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",

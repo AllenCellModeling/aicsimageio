@@ -8,12 +8,7 @@ Using [XSLT](https://en.wikipedia.org/wiki/XSLT) to map CZI metadata schemas to 
 3. [Open Questions](#questions)
 
 ## Basics
-In short: XSLT is used to transform XML to other formats, primarily, other XML formats or HTML. We are fortunate that
-Python has a great library to do this transformation, [`lxml`](https://lxml.de). An example of `lxml` being used to
-transform one XML document into another can be found [here](https://stackoverflow.com/questions/16698935/how-to-transform-an-xml-file-using-xslt-in-python#answer-16699042).
-
-Simple enough right? Well that is assuming we already have the template file written. Below are a bunch of links that
-are relevant to writing an XSLT file:
+In short: XSLT is used to transform XML to other formats, primarily, other XML formats or HTML.
 
 _I would recommend watching the videos on 1.5x speed._
 
@@ -26,6 +21,14 @@ _mozilla reference for all possible attributes, elements, and functions_
 * [A Bit More In Depth XSLT Tutorial](https://www.youtube.com/watch?v=Rn1bvTYYsCY)
 _a thirty minute video with more details on nested for-each, etc_
 
+## Testing
+To test template changes run:
+
+```bash
+pip install -e .[dev]
+cd czi-to-ome-tiff/xslt/
+python transform.py
+```
 
 ## Notes
 To be added to as we write templates.

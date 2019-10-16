@@ -35,6 +35,12 @@ We are doing some interesting data passing between templates because we can pass
 To make components reusable we make base templates that return complete XML objects based off the data provided.
 An example of this is the Instrument "object" (template) which can be reused multiple times based off whatever
 `{type}_data` tree is passed in.
+```xml
+<!-- Attach Instrument -->
+<xsl:call-template name="Instrument">
+    <xsl:with-param name="instrument_data" select="/ImageDocument/Metadata/Information/Instrument"/>
+</xsl:call-template>
+```
 
 This can be written similarly in Python like so:
 ```python

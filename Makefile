@@ -54,4 +54,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	sphinx-apidoc -o docs/ aicsimageio
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+
+serve-docs: ## generate Sphinx HTML documentation, including API docs
+	make docs
 	$(BROWSER) docs/_build/html/index.html

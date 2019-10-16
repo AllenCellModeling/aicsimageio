@@ -9,9 +9,9 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Set up Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@master
       with:
         python-version: 3.7
     - name: Install dependencies

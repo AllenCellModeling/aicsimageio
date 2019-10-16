@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Master/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
+[![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Docs/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
 
 A Python library for reading and writing image data with specific support for handling bio-formats.
 
@@ -50,6 +51,9 @@ or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
 ## Installation
 **Stable Release:** `pip install aicsimageio`<br>
 **Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
+
+## Documentation
+For full package documentation please visit [allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

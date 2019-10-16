@@ -52,18 +52,26 @@
                             <!-- (referenced at zisraw/Instrument.xsd: 157) -->
                             <!-- ome/ome.xsd: 1429 -->
                             <xsl:if test="Microscope/Manufacturer">
-                                <xsl:attribute name="Manufacturer">
-                                    <xsl:value-of select="Microscope/Manufacturer/Manufacturer"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="Model">
-                                    <xsl:value-of select="Microscope/Manufacturer/Model"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="SerialNumber">
-                                    <xsl:value-of select="Microscope/Manufacturer/SerialNumber"/>
-                                </xsl:attribute>
-                                <xsl:attribute name="LotNumber">
-                                    <xsl:value-of select="Microscope/Manufacturer/LotNumber"/>
-                                </xsl:attribute>
+                                <xsl:if test="Microscope/Manufacturer/Manufacturer">
+                                    <xsl:attribute name="Manufacturer">
+                                        <xsl:value-of select="Microscope/Manufacturer/Manufacturer"/>
+                                    </xsl:attribute>
+                                </xsl:if>
+                                <xsl:if test="Microscope/Manufacturer/Model">
+                                    <xsl:attribute name="Model">
+                                        <xsl:value-of select="Microscope/Manufacturer/Model"/>
+                                    </xsl:attribute>
+                                </xsl:if>
+                                <xsl:if test="Microscope/Manufacturer/SerialNumber">
+                                    <xsl:attribute name="SerialNumber">
+                                        <xsl:value-of select="Microscope/Manufacturer/SerialNumber"/>
+                                    </xsl:attribute>
+                                </xsl:if>
+                                <xsl:if test="Microscope/Manufacturer/LotNumber">
+                                    <xsl:attribute name="LotNumber">
+                                        <xsl:value-of select="Microscope/Manufacturer/LotNumber"/>
+                                    </xsl:attribute>
+                                </xsl:if>
                             </xsl:if>
                         </xsl:if>
                     </xsl:for-each>

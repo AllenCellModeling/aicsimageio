@@ -12,9 +12,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@master
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -30,9 +30,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@master
     - name: Set up Python 3.7
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@master
       with:
         python-version: 3.7
     - name: Install dependencies

@@ -18,16 +18,18 @@ transform = ET.XSLT(template)
 # Parse CZI XML
 czixml = ET.parse(czixml)
 
-# Run transform
+# Attempt to run transform
 try:
     ome = transform(czixml)
+
+    # Write file
+    with open(output, "w") as write_out:
+        write_out.write(str(ome))
+
+# Catch any exception
 except Exception as e:
     print(f"Error: {e}")
     print("-" * 80)
     print("Full Log:")
     for entry in transform.error_log:
         print(f"<{entry.filename}: {entry.line}, {entry.column}> {entry.message}")
-
-# Write file
-with open(output, "w") as write_out:
-    write_out.write(str(ome))

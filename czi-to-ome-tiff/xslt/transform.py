@@ -32,4 +32,4 @@ except Exception as e:
     print("-" * 80)
     print("Full Log:")
     for entry in transform.error_log:
-        print(f"<{entry.filename}: {entry.line}, {entry.column}> {entry.message}")
+        print(f"{entry.filename}: {entry.line}, {entry.column}> {entry.message}>")

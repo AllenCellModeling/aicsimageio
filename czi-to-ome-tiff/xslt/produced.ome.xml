@@ -1,4 +1,2 @@
 <?xml version="1.0"?>
-<OME>
-    <Instrument ID="Instrument:0"><Microscope Type="Inverted"/></Instrument>
-</OME>
+<OME><Instrument ID="Instrument:0"><Microscope Type="Inverted" Manufacturer="" Model="" SerialNumber="" LotNumber=""/></Instrument></OME>

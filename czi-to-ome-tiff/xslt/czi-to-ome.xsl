@@ -15,7 +15,7 @@
 # because we can pass entire trees from template to template.
 # To make components reusable we make base templates that return
 # complete XML objects based off the data provided. An example of this is the
-# Instrument "object" (template) which can be reused multiple times based
+# Instrument "object" (template) which can be reused multiple times
 # based off whatever `{type}_data` tree is passed in.
 #
 # This can be written similarly in Python like so:

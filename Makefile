@@ -49,7 +49,7 @@ build: ## run tox / run tests and lint
 	tox
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/aicsimageio.rst
+	rm -f docs/aicsimageio*.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ aicsimageio
 	$(MAKE) -C docs clean

@@ -1,8 +1,8 @@
 import io
 import logging
 import warnings
-import xml.etree
 from typing import Optional
+from xml.etree import ElementTree
 
 import numpy as np
 
@@ -79,7 +79,7 @@ class CziReader(Reader):
         return self.czi.axes
 
     @property
-    def metadata(self) -> xml.etree.ElementTree:
+    def metadata(self) -> ElementTree:
         """
         Lazy load the metadata from the CZI file
         Returns

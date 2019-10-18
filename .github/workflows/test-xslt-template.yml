@@ -1,0 +1,25 @@
+name: Test XSLT Template
+
+on:
+  pull_request:
+    branches:
+      - 'czi-to-ome-xslt'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python
+      uses: actions/setup-python@master
+      with:
+        python-version: 3.7
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[dev]
+    - name: Test Template
+      run: |
+        cd czi-to-ome-tiff/xslt/
+        python transform.py

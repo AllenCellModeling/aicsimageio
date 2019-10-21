@@ -6,7 +6,6 @@ import os
 import unittest
 
 import numpy as np
-import pytest
 
 from aicsimageio.readers import DefaultReader
 from aicsimageio.writers import PngWriter

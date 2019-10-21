@@ -1,0 +1,6 @@
+{
+    "python.pythonPath": "C:\\Users\\danielt\\AppData\\Local\\Continuum\\anaconda3\\envs\\aicsimageio\\python.exe",
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
+}

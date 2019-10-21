@@ -88,24 +88,24 @@ class OmeTiffWriter:
         if self.silent_pass:
             return
 
-        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY)
-
         shape = data.shape
-        assert (len(shape) == 5 or len(shape) == 4 or len(shape) == 3), "Expected 3, 4, or 5 dimensions in data array"
+        ndims = len(shape)
+
+        assert (ndims == 5 or ndims == 4 or ndims == 3), "Expected 3, 4, or 5 dimensions in data array"
 
         # assert valid characters in dimension_order
         assert (all(d in "STCZYX" for d in dimension_order)), f"Invalid dimension_order {dimension_order}"
         assert (dimension_order[-2:] == "YX"), f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
-        assert (len(dimension_order) >= len(shape)), f"dimension_order {dimension_order} must have at least as many dimensions as data shape {shape}"
+        assert (len(dimension_order) >= ndims), f"dimension_order {dimension_order} must have at least as many dimensions as data shape {shape}"
         assert (dimension_order.find("S") == 0 or dimension_order.find("S") == -1), f"S must be the leading dim in dimension_order {dimension_order}"
         # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape
-        if len(dimension_order) > len(shape):
-            dimension_order = dimension_order[-len(shape):]
+        if len(dimension_order) > ndims:
+            dimension_order = dimension_order[-ndims:]
 
         # if this is 3d data, then expand to 5D and add appropriate dimensions
-        if len(shape) == 3:
+        if ndims == 3:
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             # prepend either TC, TZ or CZ
@@ -117,7 +117,7 @@ class OmeTiffWriter:
                 dimension_order = "TC" + dimension_order
 
         # if this is 4d data, then expand to 5D and add appropriate dimensions
-        elif len(shape) == 4:
+        elif ndims == 4:
             data = np.expand_dims(data, axis=0)
             # prepend either T, C, or Z
             first2 = dimension_order[:2]
@@ -137,9 +137,10 @@ class OmeTiffWriter:
             self.omeMetadata = ome_xml
         xml = self.omeMetadata.to_xml().encode()
 
+        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY)
+
         # check data shape for TZCYX or ZCYX or ZYX
-        dims = len(shape)
-        if dims == 5 or dims == 4 or dims == 3:
+        if ndims == 5 or ndims == 4 or ndims == 3:
             # minisblack instructs TiffWriter to not try to infer rgb color within the data array
             # metadata param fixes the double image description bug
             tif.save(data, compress=9, description=xml, photometric='minisblack', metadata=None)

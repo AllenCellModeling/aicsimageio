@@ -7,7 +7,7 @@ import numpy as np
 
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
-
+from aicsimageio.exceptions import InvalidDimensionOrderingError
 
 filename = "ometif_test_output.ome.tif"
 
@@ -16,7 +16,7 @@ image = np.random.rand(1, 40, 3, 128, 256).astype(np.uint16)
 
 def test_writerShapeComparison(resources_dir):
     """
-    Test to check that OmeTiffWriter saves arrays that are reflexive with OmeTifReader
+    Test to check that OmeTiffWriter saves arrays that are reflexive with OmeTiffReader
     """
     writer = OmeTiffWriter(resources_dir / filename, overwrite_file=True)
     writer.save(image)
@@ -26,8 +26,6 @@ def test_writerShapeComparison(resources_dir):
         output = test_output_reader.data
 
     assert output.shape == image.shape[1:]
-
-    # os.remove(resources_dir / filename)
 
 
 def test_loadAssertionError(resources_dir):
@@ -68,27 +66,61 @@ def test_noopOverwriteFile(resources_dir):
     with open(resources_dir / filename, "r") as f:
         line = f.readline().strip()
         assert "test" == line
-    # os.remove(resources_dir / filename)
 
 
 def test_big_tiff():
     x = np.zeros((10, 10))
-    assert OmeTiffWriter._size_of_ndarray(data=x) == 10*10*x.itemsize
+    assert OmeTiffWriter._size_of_ndarray(data=x) == 10 * 10 * x.itemsize
 
 
-@pytest.mark.parametrize("dims, expected_t, expected_c, expected_z, expected_y, expected_x", [
-    ("TCZYX", 1, 40, 3, 128, 256),
-    ("TZCYX", 1, 3, 40, 128, 256),
-    ("CZTYX", 3, 1, 40, 128, 256),
-    ("CTZYX", 40, 1, 3, 128, 256),
-    ("ZCTYX", 3, 40, 1, 128, 256),
-    ("ZTCYX", 40, 3, 1, 128, 256),
-    ("STCZYX", 1, 40, 3, 128, 256),
-    (pytest.param("XY", 1, 40, 3, 128, 256, marks=pytest.mark.raises(exception=AssertionError))),
-    (pytest.param("ABCD", 1, 40, 3, 128, 256, marks=pytest.mark.raises(exception=AssertionError))),
-    (pytest.param("XXXXX", 1, 40, 3, 128, 256, marks=pytest.mark.raises(exception=AssertionError))),
-])
-def test_dimensionOrder(resources_dir, dims, expected_t, expected_c, expected_z, expected_y, expected_x):
+@pytest.mark.parametrize(
+    "dims, expected_t, expected_c, expected_z, expected_y, expected_x",
+    [
+        ("TCZYX", 1, 40, 3, 128, 256),
+        ("TZCYX", 1, 3, 40, 128, 256),
+        ("CZTYX", 3, 1, 40, 128, 256),
+        ("CTZYX", 40, 1, 3, 128, 256),
+        ("ZCTYX", 3, 40, 1, 128, 256),
+        ("ZTCYX", 40, 3, 1, 128, 256),
+        ("STCZYX", 1, 40, 3, 128, 256),
+        (
+            pytest.param(
+                "XY",
+                1,
+                40,
+                3,
+                128,
+                256,
+                marks=pytest.mark.raises(exception=InvalidDimensionOrderingError),
+            )
+        ),
+        (
+            pytest.param(
+                "ABCD",
+                1,
+                40,
+                3,
+                128,
+                256,
+                marks=pytest.mark.raises(exception=InvalidDimensionOrderingError),
+            )
+        ),
+        (
+            pytest.param(
+                "XXXXX",
+                1,
+                40,
+                3,
+                128,
+                256,
+                marks=pytest.mark.raises(exception=InvalidDimensionOrderingError),
+            )
+        ),
+    ],
+)
+def test_dimensionOrder(
+    resources_dir, dims, expected_t, expected_c, expected_z, expected_y, expected_x
+):
     writer = OmeTiffWriter(resources_dir / filename, overwrite_file=True)
     writer.save(image, dimension_order=dims)
     writer.close()

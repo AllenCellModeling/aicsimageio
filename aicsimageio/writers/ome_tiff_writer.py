@@ -6,6 +6,7 @@ import numpy as np
 import tifffile
 
 from aicsimageio.vendor import omexml
+from aicsimageio.exceptions import InvalidDimensionOrderingError
 
 BYTE_BOUNDARY = 2 ** 21
 
@@ -79,7 +80,7 @@ class OmeTiffWriter:
         image_name: The name of the image to be put into the OME metadata
         pixels_physical_size: The physical size of each pixel in the image
         channel_colors: The channel colors to be put into the OME metadata
-        dimension_order: The dimension ordering in the data array.  Will be assumed STCZYX if not specified
+        dimension_order: The dimension ordering in the data array.  Will be assumed STZCYX if not specified
 
         Returns
         -------
@@ -94,13 +95,16 @@ class OmeTiffWriter:
         assert (ndims == 5 or ndims == 4 or ndims == 3), "Expected 3, 4, or 5 dimensions in data array"
 
         # assert valid characters in dimension_order
-        assert (all(d in "STCZYX" for d in dimension_order)), f"Invalid dimension_order {dimension_order}"
-        assert (dimension_order[-2:] == "YX"), \
-            f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
-        assert (len(dimension_order) >= ndims), \
-            f"dimension_order {dimension_order} must have at least as many dimensions as data shape {shape}"
-        assert (dimension_order.find("S") == 0 or dimension_order.find("S") == -1), \
-            f"S must be the leading dim in dimension_order {dimension_order}"
+        if not (all(d in "STCZYX" for d in dimension_order)):
+            raise InvalidDimensionOrderingError(f"Invalid dimension_order {dimension_order}")
+        if (dimension_order[-2:] != "YX"):
+            raise InvalidDimensionOrderingError(f"Last two characters of dimension_order {dimension_order} expected to \
+                be YX.  Please transpose your data.")
+        if (len(dimension_order) < ndims):
+            raise InvalidDimensionOrderingError(f"dimension_order {dimension_order} must have at least as many \
+                dimensions as data shape {shape}")
+        if (dimension_order.find("S") > 0):
+            raise InvalidDimensionOrderingError(f"S must be the leading dim in dimension_order {dimension_order}")
         # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape

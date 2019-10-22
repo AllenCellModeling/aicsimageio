@@ -95,9 +95,12 @@ class OmeTiffWriter:
 
         # assert valid characters in dimension_order
         assert (all(d in "STCZYX" for d in dimension_order)), f"Invalid dimension_order {dimension_order}"
-        assert (dimension_order[-2:] == "YX"), f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
-        assert (len(dimension_order) >= ndims), f"dimension_order {dimension_order} must have at least as many dimensions as data shape {shape}"
-        assert (dimension_order.find("S") == 0 or dimension_order.find("S") == -1), f"S must be the leading dim in dimension_order {dimension_order}"
+        assert (dimension_order[-2:] == "YX"), \
+            f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
+        assert (len(dimension_order) >= ndims), \
+            f"dimension_order {dimension_order} must have at least as many dimensions as data shape {shape}"
+        assert (dimension_order.find("S") == 0 or dimension_order.find("S") == -1), \
+            f"S must be the leading dim in dimension_order {dimension_order}"
         # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape
@@ -130,7 +133,8 @@ class OmeTiffWriter:
 
         if ome_xml is None:
             self._make_meta(data, channel_names=channel_names, image_name=image_name,
-                            pixels_physical_size=pixels_physical_size, channel_colors=channel_colors, dimension_order=dimension_order)
+                            pixels_physical_size=pixels_physical_size, channel_colors=channel_colors,
+                            dimension_order=dimension_order)
         else:
             pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()
@@ -202,7 +206,8 @@ class OmeTiffWriter:
         return size
 
     # set up some sensible defaults from provided info
-    def _make_meta(self, data, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None, dimension_order="TCZYX"):
+    def _make_meta(self, data, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None,
+                   dimension_order="TCZYX"):
         """Creates the necessary metadata for an OME tiff image
 
         :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a file.

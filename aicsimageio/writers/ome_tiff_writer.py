@@ -67,7 +67,7 @@ class OmeTiffWriter:
         pass
 
     def save(self, data, ome_xml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None,
-             channel_colors=None, dimension_order="STCZYX"):
+             channel_colors=None, dimension_order="STZCYX"):
         """
         Save an image with the proper OME xml metadata.
 

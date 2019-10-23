@@ -1,4 +1,2 @@
 <?xml version="1.0"?>
-<OME>
-    <Instrument ID="Instrument:0"><Microscope Type="Inverted"/></Instrument>
-</OME>
+<OME><Instrument><Microscopes><Microscope ID="Microscope:1" Name="Axio Observer.Z1 / 7"><Type>Inverted</Type></Microscope></Microscopes></Instrument></OME>

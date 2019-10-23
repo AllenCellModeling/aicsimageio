@@ -5,81 +5,75 @@ ome/ome.xsd: 979 # # This means that for more details on how this section of the
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <!-- Microscope -->
+    <!-- zisraw/Instrument.xsd: 50 -->
+    <!-- ome/ome.xsd: 1016 -->
+    <xsl:template match="Microscope">
+        <Microscope>
+            <xsl:apply-templates select="@Id"/>
+            <xsl:apply-templates select="@Name"/>
+            <xsl:apply-templates select="Type"/>
+            <xsl:apply-templates select="Manufacturer"/>
+        </Microscope>
+    </xsl:template>
+
+    <xsl:template match="Type" name="Instrument_type">
+        <Type>
+            <xsl:value-of select="."/>
+        </Type>
+    </xsl:template>
+
+    <xsl:template match="@Name">
+        <xsl:attribute name="Name"> <xsl:value-of select="."/> </xsl:attribute>
+    </xsl:template>
+
+
+
+    <xsl:template match="Model">
+        <xsl:value-of select="."/>
+    </xsl:template>
+
+
     <!-- Manufacturer -->
     <!-- zisraw/Instrument.xsd: 11 -->
     <!-- (referenced at zisraw/Instrument.xsd: 157) -->
     <!-- ome/ome.xsd: 1429 -->
-    <xsl:template name="Manufacturer">
-        <xsl:param name="manufacturer_data"/>
+    <xsl:template match="Manufacturer">
 
-        <xsl:if test="$manufacturer_data/Manufacturer">
             <xsl:attribute name="Manufacturer">
-                <xsl:value-of select="$manufacturer_data/Manufacturer"/>
+                <xsl:value-of select="."/>
             </xsl:attribute>
-        </xsl:if>
 
-        <xsl:if test="$manufacturer_data/Model">
-            <xsl:attribute name="Model">
-                <xsl:value-of select="$manufacturer_data/Model"/>
-            </xsl:attribute>
-        </xsl:if>
+            <xsl:apply-templates select="Model"/>
 
-        <xsl:if test="$manufacturer_data/SerialNumber">
             <xsl:attribute name="SerialNumber">
-                <xsl:value-of select="$manufacturer_data/SerialNumber"/>
+                <xsl:value-of select="SerialNumber"/>
             </xsl:attribute>
-        </xsl:if>
 
-        <xsl:if test="$manufacturer_data/LotNumber">
             <xsl:attribute name="LotNumber">
-                <xsl:value-of select="$manufacturer_data/LotNumber"/>
+                <xsl:value-of select="LotNumber"/>
             </xsl:attribute>
-        </xsl:if>
 
     </xsl:template>
 
-    <!-- Microscope -->
-    <!-- zisraw/Instrument.xsd: 50 -->
-    <!-- ome/ome.xsd: 1016 -->
-    <xsl:template name="Microscope">
-        <xsl:param name="microscope_data"/>
-        <Microscope>
 
-            <xsl:attribute name="Type">
-                <xsl:value-of select="$microscope_data/Type"/>
-            </xsl:attribute>
-
-            <xsl:if test="$microscope_data/Manufacturer">
-                <xsl:call-template name="Manufacturer">
-                    <xsl:with-param name="manufacturer_data" select="$microscope_data/Manufacturer"/>
-                </xsl:call-template>
-            </xsl:if>
-
-        </Microscope>
-    </xsl:template>
 
     <!-- Instrument -->
     <!-- zisraw/Instrument.xsd: 45 -->
     <!-- ome/ome.xsd: 979 -->
-    <xsl:template name="Instrument">
-        <xsl:param name="instrument_data"/>
+    <xsl:template match="Instrument" name="Instrument">
         <Instrument>
-
-            <xsl:attribute name="ID">
-                <xsl:choose>
-                    <xsl:when test="@Id">
-                        <xsl:value-of select="$instrument_data/@Id"/>
-                    </xsl:when>
-                    <xsl:otherwise>Instrument:0</xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-
-            <!-- Attach Microscope -->
-            <xsl:call-template name="Microscope">
-                <xsl:with-param name="microscope_data" select="$instrument_data/Microscopes/Microscope[1]"/>
-            </xsl:call-template>
-
+            <Microscopes>
+                <xsl:apply-templates select="Microscopes/Microscope"  />
+            </Microscopes>
         </Instrument>
     </xsl:template>
+
+    <xsl:template match="@Id">
+        <xsl:attribute name="ID">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
 
 </xsl:stylesheet>

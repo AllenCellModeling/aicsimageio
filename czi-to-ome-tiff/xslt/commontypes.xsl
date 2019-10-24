@@ -2,4 +2,10 @@
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <xsl:template match="@Id">
+        <xsl:attribute name="ID">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
 </xsl:stylesheet>

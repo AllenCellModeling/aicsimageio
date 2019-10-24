@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <Instrument>
     <Microscopes>
-        <MicroscopeBody ID="Microscope:1" Type="Inverted"/>
+        <MicroscopeBody ID="urn:lsid:allencell.org:Microscope:1" Name="Axio Observer.Z1 / 7" Type="Inverted"/>
     </Microscopes>
 </Instrument>

@@ -68,16 +68,6 @@ ome/ome.xsd: 979 # # This means that for more details on how this section of the
         </xsl:attribute>
     </xsl:template>
 
-    <!-- System -->
-    <!-- zisraw/Instrument.xsd: 158 -->
-    <!-- ome/ome.xsd: 2059 -->
-    <!-- This is the closest we get to a canonical name for the system -->
-    <xsl:template match="System">
-        <xsl:attribute name="Name">
-            <xsl:value-of select="."/>
-        </xsl:attribute>
-    </xsl:template>
-
     <!-- Microscope -->
     <!-- zisraw/Instrument.xsd: 50 -->
     <!-- ome/ome.xsd: 2039 -->
@@ -85,8 +75,8 @@ ome/ome.xsd: 979 # # This means that for more details on how this section of the
         <MicroscopeBody>
 
             <xsl:apply-templates select="@Id"/>
+            <xsl:apply-templates select="@Name"/>
             <xsl:apply-templates select="Type"/>
-            <xsl:apply-templates select="System"/>
             <xsl:apply-templates select="Manufacturer"/>
 
         </MicroscopeBody>
@@ -98,6 +88,7 @@ ome/ome.xsd: 979 # # This means that for more details on how this section of the
     <xsl:template match="Instrument">
         <Instrument>
             <xsl:apply-templates select="@Id"/>
+            <xsl:apply-templates select="@Name"/>
 
             <!-- Plural pulled from ome/ome.xsd: 2042 -->
             <Microscopes>

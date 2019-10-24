@@ -44,12 +44,7 @@
 
     <!-- Begin Template -->
     <xsl:template match="/">
-        <OME>
-            <!-- Attach Instrument -->
-            <xsl:call-template name="Instrument">
-              <xsl:with-param name="instrument_data" select="/ImageDocument/Metadata/Information/Instrument"/>
-            </xsl:call-template>
-        </OME>
+        <xsl:apply-templates select="/ImageDocument/Metadata/Information/Instrument"/>
     </xsl:template>
 
 </xsl:stylesheet>

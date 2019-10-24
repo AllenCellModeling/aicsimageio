@@ -5,80 +5,104 @@ ome/ome.xsd: 979 # # This means that for more details on how this section of the
 
 <xsl:stylesheet version="3.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
+    <!-- Includes -->
+    <xsl:include href="commontypes.xsl"/>
+
+    <!-- ManufacturerSpec/Model -->
+    <!-- zisraw/Instrument.xsd: 26 -->
+    <!-- ome/ome.xsd: 6389 -->
+    <xsl:template match="Model">
+        <xsl:attribute name="Model">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
+    <!-- ManufacturerSpec/SerialNumber -->
+    <!-- zisraw/Instrument.xsd: 31 -->
+    <!-- ome/ome.xsd: 6395 -->
+    <xsl:template match="SerialNumber">
+        <xsl:attribute name="SerialNumber">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
+    <!-- ManufacturerSpec/LotNumber -->
+    <!-- zisraw/Instrument.xsd: 36 -->
+    <!-- ome/ome.xsd: 6401 -->
+    <xsl:template match="LotNumber">
+        <xsl:attribute name="LotNumber">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
+    <!-- ManufacturerSpec/SpecsFile -->
+    <!-- zisraw: No valid zisraw spec -->
+    <!-- ome/ome.xsd: 6407 -->
+    <!-- Note: This is required by the OME-4DN spec but not provided by ZISRAW -->
+    <xsl:template match="SpecsFile">
+        <xsl:attribute name="SpecsFile">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
+
     <!-- Manufacturer -->
     <!-- zisraw/Instrument.xsd: 11 -->
-    <!-- (referenced at zisraw/Instrument.xsd: 157) -->
-    <!-- ome/ome.xsd: 1429 -->
-    <xsl:template name="Manufacturer">
-        <xsl:param name="manufacturer_data"/>
+    <!-- ome/ome.xsd: 6378 -->
+    <xsl:template match="Manufacturer">
+        <xsl:attribute name="Manufacturer">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
 
-        <xsl:if test="$manufacturer_data/Manufacturer">
-            <xsl:attribute name="Manufacturer">
-                <xsl:value-of select="$manufacturer_data/Manufacturer"/>
-            </xsl:attribute>
-        </xsl:if>
+        <xsl:apply-templates select="Model"/>
+        <xsl:apply-templates select="SerialNumber"/>
+        <xsl:apply-templates select="LotNumber"/>
+        <xsl:apply-templates select="SpecsFile"/>
+    </xsl:template>
 
-        <xsl:if test="$manufacturer_data/Model">
-            <xsl:attribute name="Model">
-                <xsl:value-of select="$manufacturer_data/Model"/>
-            </xsl:attribute>
-        </xsl:if>
+    <!-- Type -->
+    <!-- zisraw/Instrument.xsd: 166 -->
+    <!-- ome/ome.xsd: 7996 -->
+    <xsl:template match="Type">
+        <xsl:attribute name="Type">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
+    </xsl:template>
 
-        <xsl:if test="$manufacturer_data/SerialNumber">
-            <xsl:attribute name="SerialNumber">
-                <xsl:value-of select="$manufacturer_data/SerialNumber"/>
-            </xsl:attribute>
-        </xsl:if>
-
-        <xsl:if test="$manufacturer_data/LotNumber">
-            <xsl:attribute name="LotNumber">
-                <xsl:value-of select="$manufacturer_data/LotNumber"/>
-            </xsl:attribute>
-        </xsl:if>
-
+    <!-- System -->
+    <!-- zisraw/Instrument.xsd: 158 -->
+    <!-- ome/ome.xsd: 2059 -->
+    <!-- This is the closest we get to a canonical name for the system -->
+    <xsl:template match="System">
+        <xsl:attribute name="Name">
+            <xsl:value-of select="."/>
+        </xsl:attribute>
     </xsl:template>
 
     <!-- Microscope -->
     <!-- zisraw/Instrument.xsd: 50 -->
-    <!-- ome/ome.xsd: 1016 -->
-    <xsl:template name="Microscope">
-        <xsl:param name="microscope_data"/>
-        <Microscope>
+    <!-- ome/ome.xsd: 2039 -->
+    <xsl:template match="Microscope">
+        <MicroscopeBody>
 
-            <xsl:attribute name="Type">
-                <xsl:value-of select="$microscope_data/Type"/>
-            </xsl:attribute>
+            <xsl:apply-templates select="@Id"/>
+            <xsl:apply-templates select="Type"/>
+            <xsl:apply-templates select="System"/>
+            <xsl:apply-templates select="Manufacturer"/>
 
-            <xsl:if test="$microscope_data/Manufacturer">
-                <xsl:call-template name="Manufacturer">
-                    <xsl:with-param name="manufacturer_data" select="$microscope_data/Manufacturer"/>
-                </xsl:call-template>
-            </xsl:if>
-
-        </Microscope>
+        </MicroscopeBody>
     </xsl:template>
 
     <!-- Instrument -->
     <!-- zisraw/Instrument.xsd: 45 -->
-    <!-- ome/ome.xsd: 979 -->
-    <xsl:template name="Instrument">
-        <xsl:param name="instrument_data"/>
+    <!-- ome/ome.xsd: 1235 -->
+    <xsl:template match="Instrument">
         <Instrument>
+            <xsl:apply-templates select="@Id"/>
 
-            <xsl:attribute name="ID">
-                <xsl:choose>
-                    <xsl:when test="@Id">
-                        <xsl:value-of select="$instrument_data/@Id"/>
-                    </xsl:when>
-                    <xsl:otherwise>Instrument:0</xsl:otherwise>
-                </xsl:choose>
-            </xsl:attribute>
-
-            <!-- Attach Microscope -->
-            <xsl:call-template name="Microscope">
-                <xsl:with-param name="microscope_data" select="$instrument_data/Microscopes/Microscope[1]"/>
-            </xsl:call-template>
-
+            <!-- Plural pulled from ome/ome.xsd: 2042 -->
+            <Microscopes>
+                <xsl:apply-templates select="Microscopes"/>
+            </Microscopes>
         </Instrument>
     </xsl:template>
 

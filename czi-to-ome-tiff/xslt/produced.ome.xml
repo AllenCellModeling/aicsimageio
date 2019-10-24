@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
-<OME>
-    <Instrument ID="Instrument:0"><Microscope Type="Inverted"/></Instrument>
-</OME>
+<Instrument>
+    <Microscopes>
+        <MicroscopeBody ID="Microscope:1" Type="Inverted"/>
+    </Microscopes>
+</Instrument>

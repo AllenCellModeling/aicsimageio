@@ -41,15 +41,23 @@
 
     <!-- Includes -->
     <xsl:include href="instrument.xsl"/>
+    <xsl:include href="CommonTypes.xsl"/>
+    <xsl:include href="Information.xsl"/>
+
+<!--    <xsl:template match="/preceding-sibling:comment()">-->
+<!--        <xsl:analyze-string select="." regex="Original Filename:\s(\S+)">-->
+<!--            <xsl:matching-substring>-->
+<!--                <xsl:variable name="CziFileName" select="."/>-->
+<!--            </xsl:matching-substring>-->
+<!--        </xsl:analyze-string>-->
+<!--    </xsl:template>-->
 
     <!-- Begin Template -->
     <xsl:template match="/">
         <OME>
             <xsl:apply-templates select="/ImageDocument/Metadata/Information/Instrument"/>
-            <!-- Attach Instrument -->
-<!--            <xsl:call-template name="Instrument">-->
-<!--              <xsl:with-param name="instrument_data" select="/ImageDocument/Metadata/Information/Instrument"/>-->
-<!--            </xsl:call-template>-->
+            <xsl:apply-templates select="//PixelType"/>
+            <xsl:apply-templates select="/ImageDocument/Metadata/Information/Image"/>
         </OME>
     </xsl:template>
 

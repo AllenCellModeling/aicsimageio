@@ -13,22 +13,22 @@ output = Path("produced.ome.xml").resolve()
 ###############################################################################
 
 # Parse template and generate transform function
-template = ET.parse(template)
-transform = ET.XSLT(template)
+# template = ET.parse(template)
+# transform = ET.XSLT(template)
 
 # Parse CZI XML
-czixml = ET.parse(czixml)
+# czixml = ET.parse(czixml)
 
 # Attempt to run transform
 try:
 
-#     with saxonc.PySaxonProcessor(license=False) as proc:
-#         xdmAtomicval = proc.make_boolean_value(False)
-#         xslt_process = proc.new_xslt30_processor()
-#         #xslt_process.set_source(czixml)
-#         ome = xslt_process.transform_to_string(source_file=czixml, stylesheet_file=template)
+    with saxonc.PySaxonProcessor(license=False) as proc:
+        xdmAtomicval = proc.make_boolean_value(False)
+        xslt_process = proc.new_xslt30_processor()
+        #xslt_process.set_source(czixml)
+        ome = xslt_process.transform_to_string(source_file=czixml, stylesheet_file=template)
 
-    ome = transform(czixml)
+    #ome = transform(czixml)
 
     # Write file
     with open(output, "w") as write_out:

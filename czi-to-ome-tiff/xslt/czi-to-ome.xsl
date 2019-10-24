@@ -11,27 +11,6 @@
 # This means that for more details on how this section of the template was created
 # view line 45 of the zisraw/Instrument.xsd file and view line 979 of the ome/ome.xsd file.
 #
-# We are doing some interesting data passing between templates
-# because we can pass entire trees from template to template.
-# To make components reusable we make base templates that return
-# complete XML objects based off the data provided. An example of this is the
-# Instrument "object" (template) which can be reused multiple times
-# based off whatever `{type}_data` tree is passed in.
-#
-# This can be written similarly in Python like so:
-# ```python
-# class Microscope():
-#   def __init__(self, microscope_data):
-#       self.type = microscope_data["Type"]
-#       ...
-#
-# class Instrument():
-#   def __init__(self, instrument_data):
-#       self.id = instrument_data[Id]
-#       self.microscope = Microscope(instrument_data["Microscopes"][0])
-#
-# obj = Instrument("/xpath/...")
-# ```
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -->
 

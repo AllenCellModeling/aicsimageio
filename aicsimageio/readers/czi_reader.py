@@ -4,9 +4,9 @@ import warnings
 from typing import Optional
 
 import numpy as np
+from lxml.etree import _Element
 
 from aicsimageio import types
-from lxml.etree import ElementTree
 
 from ..buffer_reader import BufferReader
 from ..exceptions import MultiSceneCziException, UnsupportedFileFormatError
@@ -79,7 +79,7 @@ class CziReader(Reader):
         return self.czi.axes
 
     @property
-    def metadata(self) -> ElementTree:
+    def metadata(self) -> _Element:
         """
         Lazy load the metadata from the CZI file
         Returns

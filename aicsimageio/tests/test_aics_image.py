@@ -1,7 +1,6 @@
-from xml.etree import cElementTree as etree
-
 import numpy as np
 import pytest
+from lxml.etree import _Element
 
 from aicsimageio import AICSImage, exceptions, imread, readers
 from aicsimageio.vendor import omexml
@@ -100,7 +99,7 @@ def test_file_passed_was_directory(resources_dir):
     (PNG_FILE, (str, type(None))),
     (TIF_FILE, (str, type(None))),
     (OME_FILE, (str, omexml.OMEXML)),
-    (CZI_FILE, (str, etree.Element)),
+    (CZI_FILE, (str, _Element)),
 ])
 def test_metadata(resources_dir, filename, expected_metadata_type):
     img = AICSImage(resources_dir / filename)

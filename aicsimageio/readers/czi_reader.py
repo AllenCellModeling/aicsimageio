@@ -2,11 +2,11 @@ import io
 import logging
 import warnings
 from typing import Optional
-from xml.etree import ElementTree
 
 import numpy as np
 
 from aicsimageio import types
+from lxml.etree import ElementTree
 
 from ..buffer_reader import BufferReader
 from ..exceptions import MultiSceneCziException, UnsupportedFileFormatError

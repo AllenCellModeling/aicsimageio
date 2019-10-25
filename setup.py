@@ -1,5 +1,4 @@
-from setuptools import setup, find_packages
-
+from setuptools import find_packages, setup
 
 PACKAGE_NAME = 'oldaicsimageio'
 
@@ -31,6 +30,7 @@ setup(name=PACKAGE_NAME,
       version=MODULE_VERSION,
       description='A generalized scientific image processing module from the Allen Institute for Cell Science.',
       long_description=readme(),
+      long_description_content_type="text/markdown",
       author='AICS',
       author_email='!AICS_SW@alleninstitute.org',
       license='Allen Institute Software License',
@@ -46,7 +46,7 @@ setup(name=PACKAGE_NAME,
             'scipy>=1.1.0',
             'matplotlib>=2.2.2', # get >=2.2.3 when available, because of https://github.com/matplotlib/matplotlib/pull/10867
             'scikit-image>=0.14.0',
-            'tifffile==0.15.1'
+            MODULE_VERSION
       ],
 
       # For test setup. This will allow JUnit XML output for Jenkins

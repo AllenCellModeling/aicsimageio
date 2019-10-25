@@ -22,7 +22,7 @@ The structure has a number of top level files
 ## Package Folder Structure
 
 ### Modules and submodules
-The package directory (e.g. `aicsimageio` in this example repo) contains an `__init__.py` file to signify it is a module. Any subdirectory that will be treated as a submodule for packaging or testing should have a `__init__.py` file. You can create module (`*.py`) files in this directory or in subdirectories that will be treated as submodules.
+The package directory (e.g. `oldaicsimageio` in this example repo) contains an `__init__.py` file to signify it is a module. Any subdirectory that will be treated as a submodule for packaging or testing should have a `__init__.py` file. You can create module (`*.py`) files in this directory or in subdirectories that will be treated as submodules.
 
 ### Why is `bin` a submodule?
 The `bin/` directory under the top level is a special submodule. This hosts python files that are meant to be run as command line tools. We could have them anywhere in the package heirarchy, but this ensure proper organization. If necessary you could create associated modules and submodules in here purely for CLI management. 
@@ -32,8 +32,8 @@ The `bin/` directory under the top level is a special submodule. This hosts pyth
   setup(...,
       entry_points={
             "console_scripts": [
-                "time-xfer=aicsimageio.bin.xfer_time:main",
-                "timing-demo=aicsimageio.bin.timing_demo:main"
+                "time-xfer=oldaicsimageio.bin.xfer_time:main",
+                "timing-demo=oldaicsimageio.bin.timing_demo:main"
             ]
           },
   ...)

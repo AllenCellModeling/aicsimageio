@@ -1,4 +1,4 @@
-from aicsimageio.version import MODULE_VERSION
+from oldaicsimageio.version import MODULE_VERSION
 
 from .aicsImage import *
 from .cziReader import CziReader

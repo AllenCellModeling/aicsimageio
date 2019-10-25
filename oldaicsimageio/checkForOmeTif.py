@@ -2,7 +2,7 @@
 
 import logging
 import sys
-from aicsimageio.typeChecker import TypeChecker as CheckForOmeTif
+from oldaicsimageio.typeChecker import TypeChecker as CheckForOmeTif
 
 if __name__ == '__main__':
     log = logging.getLogger()

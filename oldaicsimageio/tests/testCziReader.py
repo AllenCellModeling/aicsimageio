@@ -3,7 +3,7 @@
 import os
 import unittest
 
-from aicsimageio import CziReader
+from oldaicsimageio import CziReader
 from .transformation import *
 
 class TestCziReader(unittest.TestCase):

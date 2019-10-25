@@ -5,7 +5,7 @@ import random
 import numpy as np
 import pytest
 
-from aicsimageio import AICSImage
+from oldaicsimageio import AICSImage
 
 
 TEST_DATA_DIR = Path(__file__).parent / 'img'

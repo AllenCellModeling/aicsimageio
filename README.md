@@ -1,5 +1,5 @@
 # AICS Image library
-The aicsimageio package is designed to provide an easy interface with CZI, OME-TIFF, and PNG file formats.
+The oldaicsimageio package is designed to provide an easy interface with CZI, OME-TIFF, and PNG file formats.
 
 ## Level of Support
 We are not currently supporting this code for external use, but simply releasing it 
@@ -13,7 +13,7 @@ See [BUILD.md](BUILD.md) for information operations related to developing the co
 ## Usage
 
 ```
-from aicsimageio import AICSImage
+from oldaicsimageio import AICSImage
 
 img = AICSImage("my_ome.tiff_or_tiff_or_czi")
 
@@ -26,10 +26,10 @@ channels = [pixels.Channel(i) for i in range(pixels.get_channel_count())]
 channels = [{"name": c.get_Name(), "index": c.get_ID()} for c in channels]
 
 
-# Note on channel id differences between aicsimageio.OMEXML and lxml.etree._Element:
+# Note on channel id differences between oldaicsimageio.OMEXML and lxml.etree._Element:
         # Under lxml.etree._Element, Channel Id looks like the following: `'Channel:0'`
         # Where the single integer corresponds to the channel dimension index in image data.
-        # Under aicsimageio, the same Channel Id looks like the following: `'Channel:0:0'`
+        # Under oldaicsimageio, the same Channel Id looks like the following: `'Channel:0:0'`
         # Where it is the second of the two integers that corresponds to the channel dimension index in image data.
         # Regardless of structure, these can both be parsed as integers with the following:
         # `int(channel_id.split(":")[-1])`

@@ -8,7 +8,7 @@ import os
 import unittest
 import numpy as np
 
-from aicsimageio import TifReader
+from oldaicsimageio import TifReader
 
 
 class TestTifReader(unittest.TestCase):

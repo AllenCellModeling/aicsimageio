@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from aicsimageio import TypeChecker
+from oldaicsimageio import TypeChecker
 
 class TestTypeChecker(unittest.TestCase):
 

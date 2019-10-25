@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 
-PACKAGE_NAME = 'aicsimageio'
+PACKAGE_NAME = 'oldaicsimageio'
 
 
 """

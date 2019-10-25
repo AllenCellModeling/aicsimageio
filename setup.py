@@ -9,6 +9,7 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
+    "lxml>=4.4.1",
     "numpy>=1.16",
     "imageio>=2.3.0",
     "scipy>=1.1.0",
@@ -28,12 +29,13 @@ dev_requirements = [
     "coverage>=5.0a4",
     "flake8>=3.7.7",
     "ipython>=7.5.0",
-    "lxml>=4.4.1",
+    "m2r>=0.2.1",
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
     "pytest-raises>=0.10",
     "pytest-runner>=4.4",
     "Sphinx>=2.0.0b1",
+    "sphinx_rtd_theme>=0.1.2",
     "tox>=3.5.2",
     "twine>=1.13.0",
     "wheel>=0.33.1",
@@ -101,6 +103,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.0.0",
+    version="3.0.2",
     zip_safe=False,
 )

@@ -1,10 +1,10 @@
 import io
 import logging
 import warnings
-import xml.etree
 from typing import Optional
 
 import numpy as np
+from lxml.etree import _Element
 
 from aicsimageio import types
 
@@ -79,7 +79,7 @@ class CziReader(Reader):
         return self.czi.axes
 
     @property
-    def metadata(self) -> xml.etree.ElementTree:
+    def metadata(self) -> _Element:
         """
         Lazy load the metadata from the CZI file
         Returns

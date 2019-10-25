@@ -44,14 +44,22 @@ class TestOmeTifReader(unittest.TestCase):
     def test_loadSampleOmeTif(self):
         names = [
             "s_1_t_1_c_1_z_1.ome.tiff",
+            "s_1_t_1_c_10_z_1.ome.tiff",
             "s_3_t_1_c_3_z_5.ome.tiff"
         ]
         dims = [
             (325, 475),
+            (10, 1736, 1776),
             (5, 3, 325, 475),
+        ]
+        dim_orders = [
+            "YX",
+            "CYX",  # Inferred from metadata not shape
+            "ZCYX",
         ]
         for i, x in enumerate(names):
             with OmeTiffReader(os.path.join(self.dir_path, "..", "resources", x)) as reader:
                 assert reader.is_ome()
                 data = reader.data
                 self.assertEqual(data.shape, dims[i])
+                self.assertEqual(reader.dims, dim_orders[i])

@@ -39,8 +39,19 @@ im = AICSImage("/path/to/your/file_or_buffer.ome.tiff", known_dims="SYX")
 # Image data is stored in `data` attribute
 im.data  # returns the image data numpy array
 
+# Image dimension sizes can be obtained via properties:
+im.size_z  # returns the size of the Z dimension. X,Y,Z,C,T, and S supported.
+
+# Image dimensions can also be obtained as a tuple in two ways:
+im.size("ZYX")  # returns a tuple containing the Z, Y, and X sizes only
+im.get_image_data(out_orientation="ZYX").shape  # returns same as above
+
 # Image metadata is stored in `metadata` attribute
-im.metadata  # returns whichever metadata parser best suites the file format
+im.metadata  # returns whichever metadata parser best suits the file format
+
+# Subsets or transposes of the image data can be requested:
+im.get_image_data(out_orientation="ZYX")  # returns a 3d data block containing only the ZYX dimensions
+
 ```
 
 ## Notes

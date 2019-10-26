@@ -80,6 +80,13 @@ def test_force_dims(data_shape, dims, expected):
     img._reader.dims = dims
     assert img.data.shape == expected
     assert data_shape == img.get_image_data(out_orientation=dims).shape
+    assert img.size_x == expected[5]
+    assert img.size_y == expected[4]
+    assert img.size_z == expected[3]
+    assert img.size_c == expected[2]
+    assert img.size_t == expected[1]
+    assert img.size_s == expected[0]
+    assert img.size(dims) == data_shape
 
 
 @pytest.mark.parametrize("filepath", [

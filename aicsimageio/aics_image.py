@@ -131,6 +131,72 @@ class AICSImage:
                                                  return_dims=self.dims)
         return self._data
 
+    def size(self, dims: str = "STCZYX"):
+        """
+        Parameters
+        ----------
+        dims: A string containing a list of dimensions being requested.  The default is to return the 6 standard dims
+
+        Returns
+        -------
+        Returns a tuple with the requested dimensions filled in
+        """
+        return tuple([self.data.shape[self.dims.index(dim)] for dim in dims])
+
+    @property
+    def size_x(self):
+        """
+        Returns
+        -------
+        Returns the x size
+        """
+        return self.size("X")[0]
+
+    @property
+    def size_y(self):
+        """
+        Returns
+        -------
+        Returns the y size
+        """
+        return self.size("Y")[0]
+
+    @property
+    def size_z(self):
+        """
+        Returns
+        -------
+        Returns the z size
+        """
+        return self.size("Z")[0]
+
+    @property
+    def size_c(self):
+        """
+        Returns
+        -------
+        Returns the c size
+        """
+        return self.size("C")[0]
+
+    @property
+    def size_t(self):
+        """
+        Returns
+        -------
+        Returns the t size
+        """
+        return self.size("T")[0]
+
+    @property
+    def size_s(self):
+        """
+        Returns
+        -------
+        Returns the s size
+        """
+        return self.size("S")[0]
+
     @property
     def metadata(self):
         """

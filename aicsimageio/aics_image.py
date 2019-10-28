@@ -5,9 +5,8 @@ from typing import Optional, Type
 import numpy as np
 
 from . import constants, transforms, types
-from .exceptions import UnsupportedFileFormatError
-from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
-                      TiffReader)
+from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
+from .readers import CziReader, DefaultReader, NdArrayReader, OmeTiffReader, TiffReader
 from .readers.reader import Reader
 
 log = logging.getLogger(__name__)
@@ -70,9 +69,15 @@ class AICSImage:
     img.reader.dims = 'TCX'
     data = img.data  # get a 6D ndarray back in "STCZYX" order
     """
+
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
-    def __init__(self, data: typing.Union[types.FileLike, np.ndarray], known_dims: Optional[str] = None, **kwargs):
+    def __init__(
+        self,
+        data: typing.Union[types.FileLike, np.ndarray],
+        known_dims: Optional[str] = None,
+        **kwargs,
+    ):
         """
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of
@@ -109,7 +114,13 @@ class AICSImage:
         """
         # The order of the readers in this list is important.
         # Example: if TiffReader was placed before OmeTiffReader, we would never use the OmeTiffReader.
-        for reader_class in [NdArrayReader, CziReader, OmeTiffReader, TiffReader, DefaultReader]:
+        for reader_class in [
+            NdArrayReader,
+            CziReader,
+            OmeTiffReader,
+            TiffReader,
+            DefaultReader,
+        ]:
             if reader_class.is_this_type(data):
                 return reader_class
 
@@ -126,10 +137,83 @@ class AICSImage:
             reader_data = self._reader.data
 
             # Read and reshape and handle delayed known dims reshape
-            self._data = transforms.reshape_data(data=reader_data,
-                                                 given_dims=self._known_dims or self.reader.dims,
-                                                 return_dims=self.dims)
+            self._data = transforms.reshape_data(
+                data=reader_data,
+                given_dims=self._known_dims or self.reader.dims,
+                return_dims=self.dims,
+            )
         return self._data
+
+    def size(self, dims: str = "STCZYX"):
+        """
+        Parameters
+        ----------
+        dims: A string containing a list of dimensions being requested.  The default is to return the 6 standard dims
+
+        Returns
+        -------
+        Returns a tuple with the requested dimensions filled in
+        """
+        dims = dims.upper()
+        if not (all(d in "STCZYX" for d in dims)):
+            raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
+        if not (all(d in self.dims for d in dims)):
+            raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
+        return tuple([self.data.shape[self.dims.index(dim)] for dim in dims])
+
+    @property
+    def size_x(self):
+        """
+        Returns
+        -------
+        Returns the x size
+        """
+        return self.size("X")[0]
+
+    @property
+    def size_y(self):
+        """
+        Returns
+        -------
+        Returns the y size
+        """
+        return self.size("Y")[0]
+
+    @property
+    def size_z(self):
+        """
+        Returns
+        -------
+        Returns the z size
+        """
+        return self.size("Z")[0]
+
+    @property
+    def size_c(self):
+        """
+        Returns
+        -------
+        Returns the c size
+        """
+        return self.size("C")[0]
+
+    @property
+    def size_t(self):
+        """
+        Returns
+        -------
+        Returns the t size
+        """
+        return self.size("T")[0]
+
+    @property
+    def size_s(self):
+        """
+        Returns
+        -------
+        Returns the s size
+        """
+        return self.size("S")[0]
 
     @property
     def metadata(self):
@@ -158,7 +242,9 @@ class AICSImage:
         """
         return self._reader
 
-    def get_image_data(self, out_orientation: str = None, copy: bool = False, **kwargs) -> np.ndarray:
+    def get_image_data(
+        self, out_orientation: str = None, copy: bool = False, **kwargs
+    ) -> np.ndarray:
         """
 
         Parameters
@@ -180,11 +266,16 @@ class AICSImage:
         out_orientation = self.dims if out_orientation is None else out_orientation
         if out_orientation == self.dims:
             return self.data
-        return transforms.reshape_data(data=self.data, given_dims=self.dims,
-                                       return_dims=out_orientation, copy=copy, **kwargs)
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims,
+            return_dims=out_orientation,
+            copy=copy,
+            **kwargs,
+        )
 
     def __repr__(self) -> str:
-        return f'<AICSImage [{type(self.reader).__name__}]>'
+        return f"<AICSImage [{type(self.reader).__name__}]>"
 
 
 def imread(data: types.ImageLike, **kwargs):

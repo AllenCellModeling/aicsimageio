@@ -214,6 +214,6 @@ class CziReader(Reader):
         img_shape = self.czi.filtered_subblock_directory[0].shape
         return img_shape[index] != 1
 
-    def get_channel_names(self, scene=0):
+    def get_channel_names(self, scene: int = 0):
         chelem = self.metadata.findall("./Metadata/Information/Image/Dimensions/Channels/Channel")
         return [ch.get("Name") for ch in chelem]

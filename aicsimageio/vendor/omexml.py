@@ -819,6 +819,9 @@ class OMEXML(object):
             """
             return len(self.node.findall(qn(self.ns['ome'], "Channel")))
 
+        def get_channel_names(self):
+            return [self.Channel(i).Name for i in range(self.get_channel_count())]
+
         def set_channel_count(self, value):
             assert value >= 0
             channel_count = self.channel_count

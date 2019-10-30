@@ -274,6 +274,23 @@ class AICSImage:
             **kwargs,
         )
 
+    def get_channel_names(self, scene=0):
+        """
+
+        Parameters
+        ----------
+        scene: the index of the scene for which to return channel names
+
+        Returns
+        -------
+        list of strings representing the channel names
+        """
+        try:
+            names = self._reader.get_channel_names(scene)
+        except AttributeError:
+            names = [str(i) for i in range(self.size_c)]
+        return names
+
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 

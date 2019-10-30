@@ -102,3 +102,6 @@ class OmeTiffReader(Reader):
 
     def is_ome(self):
         return OmeTiffReader._is_this_type(self._bytes)
+
+    def get_channel_names(self, scene=0):
+        return self.metadata.image(scene).Pixels.get_channel_names()

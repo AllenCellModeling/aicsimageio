@@ -183,3 +183,17 @@ def test_reader(resources_dir, filename, expected_reader):
 def test_imread(resources_dir, filename, expected_shape):
     img = imread(resources_dir / filename)
     assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
+    "filename, expected_channel_names",
+    [
+        (PNG_FILE, ["0", "1", "2", "3"]),
+        (TIF_FILE, ["0"]),
+        (CZI_FILE, ["Bright"]),
+        (OME_FILE, ["Bright"]),
+    ],
+)
+def test_channel_names(resources_dir, filename, expected_channel_names):
+    img = AICSImage(resources_dir / filename)
+    assert img.get_channel_names() == expected_channel_names

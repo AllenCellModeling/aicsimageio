@@ -274,7 +274,7 @@ class AICSImage:
             **kwargs,
         )
 
-    def get_channel_names(self, scene=0):
+    def get_channel_names(self, scene: int = 0):
         """
 
         Parameters

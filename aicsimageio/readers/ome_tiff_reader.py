@@ -105,3 +105,7 @@ class OmeTiffReader(Reader):
 
     def get_channel_names(self, scene: int = 0):
         return self.metadata.image(scene).Pixels.get_channel_names()
+
+    def get_physical_pixel_size(self, scene: int = 0):
+        p = self.metadata.image(scene).Pixels
+        return [p.get_PhysicalSizeX(), p.get_PhysicalSizeY(), p.get_PhysicalSizeZ()]

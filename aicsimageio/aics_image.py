@@ -33,18 +33,29 @@ class AICSImage:
 
     zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" cube
 
-
     File Examples
     -------------
+
+    with AICSImage("filename.ome.tif") as img:
+        # do work with img
+        data = img.data
+        metadata = img.metadata
+        # img will be closed automatically at end of scope
+
     OmeTif
         img = AICSImage("filename.ome.tif")
+        img.close()
     CZI (Zeiss)
         img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
+        img.close()
     Tiff
         img = AICSImage("filename.tif")
+        img.close()
     Png/Gif/...
         img = AICSImage("filename.png")
+        img.close()
         img = AICSImage("filename.gif")
+        img.close()
 
     Bytestream Examples
     -------------------
@@ -291,9 +302,20 @@ class AICSImage:
             names = [str(i) for i in range(self.size_c)]
         return names
 
+    def close(self):
+        self.reader.close()
+
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
+    def __enter__(self):
+        return self
 
-def imread(data: types.ImageLike, **kwargs):
-    return AICSImage(data, **kwargs).data
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+
+def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
+    with AICSImage(data, **kwargs) as image:
+        imagedata = image.data
+    return imagedata

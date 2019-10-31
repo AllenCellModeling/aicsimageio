@@ -57,9 +57,15 @@ class TestOmeTifReader(unittest.TestCase):
             "CYX",  # Inferred from metadata not shape
             "ZCYX",
         ]
+        physical_pixel_sizes = [
+            (1.0833333333333333, 1.0833333333333333, 1.0),
+            (1.0, 1.0, 1.0),
+            (1.0833333333333333, 1.0833333333333333, 1.0),
+        ]
         for i, x in enumerate(names):
             with OmeTiffReader(os.path.join(self.dir_path, "..", "resources", x)) as reader:
                 assert reader.is_ome()
                 data = reader.data
                 self.assertEqual(data.shape, dims[i])
                 self.assertEqual(reader.dims, dim_orders[i])
+                self.assertEqual(reader.get_physical_pixel_size(), physical_pixel_sizes[i])

@@ -273,10 +273,10 @@ def get_namespaces(node):
     return ns_lib
 
 
-def get_float_attr(node, attribute):
+def get_float_attr(node, attribute, default=None):
     """Cast an element attribute to a float or return None if not present"""
     attr = node.get(attribute)
-    return None if attr is None else float(attr)
+    return default if attr is None else float(attr)
 
 
 def get_int_attr(node, attribute):
@@ -782,7 +782,7 @@ class OMEXML(object):
 
         def get_PhysicalSizeX(self):
             """The dimensions of the image in the X direction in physical units"""
-            return get_float_attr(self.node, "PhysicalSizeX")
+            return get_float_attr(self.node, "PhysicalSizeX", 1.0)
 
         def set_PhysicalSizeX(self, value):
             self.node.set("PhysicalSizeX", str(value))
@@ -791,7 +791,7 @@ class OMEXML(object):
 
         def get_PhysicalSizeY(self):
             """The dimensions of the image in the Y direction in physical units"""
-            return get_float_attr(self.node, "PhysicalSizeY")
+            return get_float_attr(self.node, "PhysicalSizeY", 1.0)
 
         def set_PhysicalSizeY(self, value):
             self.node.set("PhysicalSizeY", str(value))
@@ -800,7 +800,7 @@ class OMEXML(object):
 
         def get_PhysicalSizeZ(self):
             """The dimensions of the image in the Z direction in physical units"""
-            return get_float_attr(self.node, "PhysicalSizeZ")
+            return get_float_attr(self.node, "PhysicalSizeZ", 1.0)
 
         def set_PhysicalSizeZ(self, value):
             self.node.set("PhysicalSizeZ", str(value))
@@ -1255,7 +1255,7 @@ class OMEXML(object):
             return get_text(description)
 
         def set_Description(self, text):
-            make_text_node(self.node, NS_SPW, "Description", test)
+            make_text_node(self.node, self.ns['spw'], "Description", text)
         Description = property(get_Description, set_Description)
 
         def get_Well(self):

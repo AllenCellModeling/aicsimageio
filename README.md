@@ -31,10 +31,17 @@ from aicsimageio import AICSImage, imread
 im = imread("/path/to/your/file_or_buffer.ome.tiff")
 
 # For AICSImage object that
-im = AICSImage("/path/to/your/file_or_buffer.ome.tiff")
+with AICSImage("/path/to/your/file_or_buffer.ome.tiff") as im:
+    # use im object
 
 # To specify a known dimension order
-im = AICSImage("/path/to/your/file_or_buffer.ome.tiff", known_dims="SYX")
+with AICSImage("/path/to/your/file_or_buffer.ome.tiff", known_dims="SYX") as im:
+    # use im object
+
+# if you instantiate an AICSImage:
+im = AICSImage("/path/to/your/file_or_buffer.ome.tiff")
+# you should close it when done:
+im.close()
 
 # Image data is stored in `data` attribute
 im.data  # returns the image data numpy array

@@ -61,8 +61,8 @@ def test_dtype(resources_dir, test_input, expected):
 
 
 @pytest.mark.parametrize("test_input, expected", [
-    (TWO_DIM_CZI, [1.0833333333333333e-06, 1.0833333333333333e-06, 1.0]),
-    (SIX_DIM_CZI, [1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06])
+    (TWO_DIM_CZI, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
+    (SIX_DIM_CZI, (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06))
 ])
 def test_pixel_size(resources_dir, test_input, expected):
     czi = CziReader(resources_dir / test_input)

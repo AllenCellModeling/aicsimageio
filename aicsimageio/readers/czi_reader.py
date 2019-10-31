@@ -1,7 +1,7 @@
 import io
 import logging
 import warnings
-from typing import Optional
+from typing import Optional, Tuple
 from xml.etree import ElementTree
 
 import numpy as np
@@ -225,8 +225,8 @@ class CziReader(Reader):
             return default
         return ref.text
 
-    def get_physical_pixel_size(self, scene: int = 0):
+    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
         px = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"))
         py = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"))
         pz = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"))
-        return [px, py, pz]
+        return (px, py, pz)

@@ -58,9 +58,9 @@ class TestOmeTifReader(unittest.TestCase):
             "ZCYX",
         ]
         physical_pixel_sizes = [
-            [1.0833333333333333, 1.0833333333333333, 1.0],
-            [1.0, 1.0, 1.0],
-            [1.0833333333333333, 1.0833333333333333, 1.0],
+            (1.0833333333333333, 1.0833333333333333, 1.0),
+            (1.0, 1.0, 1.0),
+            (1.0833333333333333, 1.0833333333333333, 1.0),
         ]
         for i, x in enumerate(names):
             with OmeTiffReader(os.path.join(self.dir_path, "..", "resources", x)) as reader:

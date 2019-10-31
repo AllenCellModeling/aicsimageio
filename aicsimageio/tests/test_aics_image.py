@@ -203,9 +203,8 @@ def test_aicsimage_close(resources_dir):
     filename = resources_dir / PNG_FILE
     img = AICSImage(filename)
     assert img.reader._bytes.closed is False
+    img.close()
 
-    # there is no assertion because the test here is that
-    # the following code should not raise.
     with AICSImage(filename) as img:
         img.metadata
     assert img.reader._bytes.closed is True

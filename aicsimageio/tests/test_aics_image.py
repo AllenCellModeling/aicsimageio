@@ -1,6 +1,7 @@
 from xml.etree import cElementTree as etree
 
 import numpy as np
+import os
 import pytest
 
 from aicsimageio import AICSImage, exceptions, imread, readers
@@ -197,3 +198,16 @@ def test_imread(resources_dir, filename, expected_shape):
 def test_channel_names(resources_dir, filename, expected_channel_names):
     img = AICSImage(resources_dir / filename)
     assert img.get_channel_names() == expected_channel_names
+
+
+def test_aicsimage_close(resources_dir):
+    filename = resources_dir / PNG_FILE
+    with pytest.raises(IOError):
+        img = AICSImage(filename)
+        img.metadata
+        os.rename(filename, filename)
+    # there is no assertion because the test here is that
+    # the following code should not raise.
+    with AICSImage(filename) as img:
+        img.metadata
+    os.rename(filename, filename)

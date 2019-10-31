@@ -3,6 +3,7 @@ from xml.etree import cElementTree as etree
 import numpy as np
 import os
 import pytest
+import shutil
 
 from aicsimageio import AICSImage, exceptions, imread, readers
 from aicsimageio.vendor import omexml
@@ -202,12 +203,14 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
 
 def test_aicsimage_close(resources_dir):
     filename = resources_dir / PNG_FILE
+    tempfilename = resources_dir / "temp.png"
+    shutil.copy(filename, tempfilename)
     with pytest.raises(IOError):
-        img = AICSImage(filename)
+        img = AICSImage(tempfilename)
         img.metadata
-        os.rename(filename, filename)
+        os.remove(tempfilename)
     # there is no assertion because the test here is that
     # the following code should not raise.
-    with AICSImage(filename) as img:
+    with AICSImage(tempfilename) as img:
         img.metadata
-    os.rename(filename, filename)
+    os.remove(tempfilename)

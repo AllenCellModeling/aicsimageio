@@ -1255,7 +1255,7 @@ class OMEXML(object):
             return get_text(description)
 
         def set_Description(self, text):
-            make_text_node(self.node, NS_SPW, "Description", test)
+            make_text_node(self.node, self.ns['spw'], "Description", text)
         Description = property(get_Description, set_Description)
 
         def get_Well(self):

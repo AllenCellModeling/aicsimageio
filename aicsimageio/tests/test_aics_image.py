@@ -199,12 +199,20 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
     assert img.get_channel_names() == expected_channel_names
 
 
-def test_aicsimage_close(resources_dir):
-    filename = resources_dir / PNG_FILE
-    img = AICSImage(filename)
+@pytest.mark.parametrize(
+    "filename",
+    [
+        PNG_FILE,
+        TIF_FILE,
+        CZI_FILE,
+        OME_FILE,
+    ],
+)
+def test_aicsimage_close(resources_dir, filename):
+    img = AICSImage(resources_dir / filename)
     assert img.reader._bytes.closed is False
     img.close()
 
-    with AICSImage(filename) as img:
+    with AICSImage(resources_dir / filename) as img:
         img.metadata
     assert img.reader._bytes.closed is True

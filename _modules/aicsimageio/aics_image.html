@@ -1,0 +1,543 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aicsimageio.aics_image &mdash; aicsimageio 3.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.aics_image</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.aics_image</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">,</span> <span class="n">UnsupportedFileFormatError</span>
+<span class="kn">from</span> <span class="nn">.readers</span> <span class="k">import</span> <span class="n">CziReader</span><span class="p">,</span> <span class="n">DefaultReader</span><span class="p">,</span> <span class="n">NdArrayReader</span><span class="p">,</span> <span class="n">OmeTiffReader</span><span class="p">,</span> <span class="n">TiffReader</span>
+<span class="kn">from</span> <span class="nn">.readers.reader</span> <span class="k">import</span> <span class="n">Reader</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="AICSImage"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage">[docs]</a><span class="k">class</span> <span class="nc">AICSImage</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    AICSImage takes microscopy image data types (files / bytestreams) of varying dimensions (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and</span>
+<span class="sd">    puts them into a consistent 6D &quot;STCZYX&quot; ordered numpy.ndarray. The data, metadata are lazy loaded and can be</span>
+<span class="sd">    accessed as needed. Note the dims are assumed to match &quot;STCZYX&quot; from right to left meaning if 4 dimensional</span>
+<span class="sd">    data is provided then the dimensions are assigned to be &quot;CZYX&quot;, 2 dimensional would be &quot;YX&quot;. This guessed assignment</span>
+<span class="sd">    is only for file types without dimension metadata (ie not .ome.tiff or .czi).</span>
+
+<span class="sd">    Note: if you absolutely know the dims and they are not as guessed then you can override them by immediately setting</span>
+<span class="sd">    them after initialization see example below.</span>
+
+<span class="sd">    Simple Example</span>
+<span class="sd">    --------------</span>
+<span class="sd">    with open(&quot;filename.czi&quot;, &#39;rb&#39;) as fp:</span>
+<span class="sd">        img = AICSImage(fp)</span>
+<span class="sd">        data = img.data  # data is a 6D &quot;STCZYX&quot; object</span>
+<span class="sd">        metadata = img.metadata  # metadata from the file, an xml.etree</span>
+<span class="sd">        zstack_t8 = img.get_image_data(&quot;ZYX&quot;, S=0, T=8, C=0)  # returns a 3D &quot;ZYX&quot; numpy.ndarray</span>
+
+<span class="sd">    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 &quot;ZYX&quot; cube</span>
+
+<span class="sd">    File Examples</span>
+<span class="sd">    -------------</span>
+
+<span class="sd">    with AICSImage(&quot;filename.ome.tif&quot;) as img:</span>
+<span class="sd">        # do work with img</span>
+<span class="sd">        data = img.data</span>
+<span class="sd">        metadata = img.metadata</span>
+<span class="sd">        # img will be closed automatically at end of scope</span>
+
+<span class="sd">    OmeTif</span>
+<span class="sd">        img = AICSImage(&quot;filename.ome.tif&quot;)</span>
+<span class="sd">        img.close()</span>
+<span class="sd">    CZI (Zeiss)</span>
+<span class="sd">        img = AICSImage(&quot;filename.czi&quot;) or AICSImage(&quot;filename.czi&quot;, max_workers=8)</span>
+<span class="sd">        img.close()</span>
+<span class="sd">    Tiff</span>
+<span class="sd">        img = AICSImage(&quot;filename.tif&quot;)</span>
+<span class="sd">        img.close()</span>
+<span class="sd">    Png/Gif/...</span>
+<span class="sd">        img = AICSImage(&quot;filename.png&quot;)</span>
+<span class="sd">        img.close()</span>
+<span class="sd">        img = AICSImage(&quot;filename.gif&quot;)</span>
+<span class="sd">        img.close()</span>
+
+<span class="sd">    Bytestream Examples</span>
+<span class="sd">    -------------------</span>
+<span class="sd">    OmeTif</span>
+<span class="sd">        with open(&quot;filename.ome.tif&quot;, &#39;rb&#39;) as fp:</span>
+<span class="sd">            img = AICSImage(fp)</span>
+<span class="sd">    CZI</span>
+<span class="sd">        with open(&quot;filename.czi&quot;, &#39;rb&#39;) as fp:</span>
+<span class="sd">            img = AICSImage(fp, max_workers=7)</span>
+<span class="sd">    Tiff/Png/Gif</span>
+<span class="sd">        with open(&quot;filename.png&quot;, &#39;rb&#39;) as fp:</span>
+<span class="sd">            img = AICSImage(fp)</span>
+
+<span class="sd">    Numpy.ndarray Example</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    blank = numpy.zeros((2, 600, 900))</span>
+<span class="sd">    img = AICSImage(blank)</span>
+
+<span class="sd">    Example with known dimensions different than guessed</span>
+<span class="sd">    ----------------------------------------------------</span>
+<span class="sd">    img = AICSImage(&#39;TCXimage.gif&#39;)</span>
+<span class="sd">    img.reader.dims = &#39;TCX&#39;</span>
+<span class="sd">    data = img.data  # get a 6D ndarray back in &quot;STCZYX&quot; order</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">SUPPORTED_READERS</span> <span class="o">=</span> <span class="p">[</span><span class="n">CziReader</span><span class="p">,</span> <span class="n">OmeTiffReader</span><span class="p">,</span> <span class="n">TiffReader</span><span class="p">,</span> <span class="n">DefaultReader</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">Union</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">known_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor for AICSImage class intended for providing a unified interface for dealing with</span>
+<span class="sd">        microscopy images. To extend support to a new reader simply add a new reader child class of</span>
+<span class="sd">        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS in AICSImage.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions</span>
+<span class="sd">        known_dims: Optional string with the known dimension order. If None, the reader will attempt to parse dim order.</span>
+<span class="sd">        kwargs: Parameters to be passed through to the reader class</span>
+<span class="sd">                       max_workers (optional Czi) specifies the number of worker threads for the backend library</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Hold onto known dims until data is requested</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_known_dims</span> <span class="o">=</span> <span class="n">known_dims</span>
+
+        <span class="c1"># Dims should nearly always be default dim order unless explictly overridden</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_DIMENSION_ORDER</span>
+
+        <span class="c1"># Lazy load later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Determine reader class and load data</span>
+        <span class="n">reader_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">determine_reader</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="n">reader_class</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AICSImage.determine_reader"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.determine_reader">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">determine_reader</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Reader</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Cheaply check to see if a given file is a recognized type.</span>
+<span class="sd">        Currently recognized types are TIFF, OME TIFF, and CZI.</span>
+<span class="sd">        If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.</span>
+<span class="sd">        Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># The order of the readers in this list is important.</span>
+        <span class="c1"># Example: if TiffReader was placed before OmeTiffReader, we would never use the OmeTiffReader.</span>
+        <span class="k">for</span> <span class="n">reader_class</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="n">NdArrayReader</span><span class="p">,</span>
+            <span class="n">CziReader</span><span class="p">,</span>
+            <span class="n">OmeTiffReader</span><span class="p">,</span>
+            <span class="n">TiffReader</span><span class="p">,</span>
+            <span class="n">DefaultReader</span><span class="p">,</span>
+        <span class="p">]:</span>
+            <span class="k">if</span> <span class="n">reader_class</span><span class="o">.</span><span class="n">is_this_type</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">reader_class</span>
+
+        <span class="k">raise</span> <span class="n">UnsupportedFileFormatError</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns a numpy.ndarray with dimension ordering &quot;STCZYX&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">reader_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">data</span>
+
+            <span class="c1"># Read and reshape and handle delayed known dims reshape</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">reshape_data</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">reader_data</span><span class="p">,</span>
+                <span class="n">given_dims</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_known_dims</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
+                <span class="n">return_dims</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+<div class="viewcode-block" id="AICSImage.size"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;STCZYX&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dims: A string containing a list of dimensions being requested.  The default is to return the 6 standard dims</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns a tuple with the requested dimensions filled in</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="s2">&quot;STCZYX&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{dims}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{dims}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">])</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the x size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the y size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the z size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the c size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the t size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Returns the s size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.</span>
+<span class="sd">        For pure image files and empty string or None is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">reader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Reader</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This property returns the class created to read the image file type.</span>
+<span class="sd">        The intent is that if the AICSImage class doesn&#39;t provide a raw enough</span>
+<span class="sd">        interface then the base class can be used directly.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        A child of Reader, CziReader OmeTiffReader, TiffReader, DefaultReader, etc.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span>
+
+<div class="viewcode-block" id="AICSImage.get_image_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        out_orientation: A string containing the dimension ordering desired for the returned ndarray</span>
+<span class="sd">        copy: boolean value to get image data by reference or by value [True, False]</span>
+
+<span class="sd">        kwargs:</span>
+<span class="sd">            C=1: specifies Channel 1</span>
+<span class="sd">            T=3: specifies the fourth index in T</span>
+<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray with dimension ordering that was specified with out_orientation</span>
+<span class="sd">        Note: if a requested dimension is not present in the data the dimension is added with</span>
+<span class="sd">        a depth of 1. The default return dimensions are &quot;STCZYX&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out_orientation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="k">if</span> <span class="n">out_orientation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">out_orientation</span>
+        <span class="k">if</span> <span class="n">out_orientation</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">transforms</span><span class="o">.</span><span class="n">reshape_data</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">given_dims</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
+            <span class="n">return_dims</span><span class="o">=</span><span class="n">out_orientation</span><span class="p">,</span>
+            <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AICSImage.get_channel_names"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scene: the index of the scene for which to return channel names</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of strings representing the channel names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size_c</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">names</span></div>
+
+<div class="viewcode-block" id="AICSImage.close"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;&lt;AICSImage [{type(self.reader).__name__}]&gt;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">as</span> <span class="n">image</span><span class="p">:</span>
+        <span class="n">imagedata</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">return</span> <span class="n">imagedata</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aicsimageio.readers.czi_reader &mdash; aicsimageio 3.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.readers.czi_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.readers.czi_reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">xml.etree</span> <span class="k">import</span> <span class="n">ElementTree</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="k">import</span> <span class="n">types</span>
+
+<span class="kn">from</span> <span class="nn">..buffer_reader</span> <span class="k">import</span> <span class="n">BufferReader</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="k">import</span> <span class="n">MultiSceneCziException</span><span class="p">,</span> <span class="n">UnsupportedFileFormatError</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="k">import</span> <span class="n">Reader</span>
+
+<span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">..vendor</span> <span class="k">import</span> <span class="n">czifile</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CziReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader">[docs]</a><span class="k">class</span> <span class="nc">CziReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CziReader is intended for reading single scene Czi files. It is meant to handle the specifics of using the backend</span>
+<span class="sd">    library to create a unified interface. This enables higher level functions to duck type the File Readers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ZEISS_2BYTE</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZI&#39;</span>             <span class="c1"># First two characters of a czi file according to Zeiss docs</span>
+    <span class="n">ZEISS_10BYTE</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWFILE&#39;</span>    <span class="c1"># First 10 characters of a well formatted czi file.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span> <span class="n">max_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file : a file like object (&quot;Filename.czi&quot;, Path(&quot;/path/Filename.czi&quot;) or an open stream to the data</span>
+<span class="sd">        max_workers : (Optional) the number of cores the backend library is allowed to use to load the data in the file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">czi</span> <span class="o">=</span> <span class="n">czifile</span><span class="o">.</span><span class="n">CziFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;czifile could not parse this input&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">UnsupportedFileFormatError</span><span class="p">(</span><span class="s2">&quot;exception from with CziFile backend library.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_multiscene</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">MultiSceneCziException</span><span class="p">(</span>
+                <span class="s2">&quot;File is Multiscene. The backend library CziFile can only read single scene images.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span> <span class="o">=</span> <span class="n">max_workers</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">BufferReader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="k">as</span> <span class="n">buffer_reader</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="o">!=</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">ZEISS_2BYTE</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="o">+</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">header</span> <span class="o">==</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">ZEISS_10BYTE</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the data from the czi file with the native order (i.e. &quot;TZCYX&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># load the data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_workers</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The native shape of the image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">axes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ElementTree</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Lazy load the metadata from the CZI file</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The xml Element Tree of the metadata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># load the metadata</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+<div class="viewcode-block" id="CziReader.close"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Close the czi file handle and perform any upstream cleanup</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CziReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the data type of the ndarray being returned (uint16, uint8, etc)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">dtype</span></div>
+
+<div class="viewcode-block" id="CziReader.size_s"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_s">[docs]</a>    <span class="k">def</span> <span class="nf">size_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of scenes in the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_z"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_z">[docs]</a>    <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of Z slices in the stack</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;Z&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_c"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_c">[docs]</a>    <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of Channels present in the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;C&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_t"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_t">[docs]</a>    <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of time steps in the data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_x"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_x">[docs]</a>    <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of pixels in the images X axis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_y"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_y">[docs]</a>    <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The number of pixels in the images Y axis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_size_of_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dimension : str (a single character)</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        If a string of length greater or smaller than 1 is passed in raise a TypeError</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The size of the dimension in the data, if the dimension is not found in the &quot;BTCZYX&quot; type string</span>
+<span class="sd">        then the default dimension size of 1 is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_dimension_index</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_lookup_dimension_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Use the axes metadata in the czi file to find the dimension index, additionally this</span>
+<span class="sd">        function should be used for determining if a Dimension is present in the native data.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dimension : str (a single character)</span>
+<span class="sd">            sensible values are any one of (&#39;V&#39;, &#39;H&#39;, &#39;M&#39;, &#39;B&#39;, &#39;I&#39;, &#39;S&#39;, &#39;T&#39;, &#39;R&#39;, &#39;Z&#39;, &#39;C&#39;, &#39;Y&#39;, &#39;X&#39;)</span>
+<span class="sd">            most likely values are one of (&#39;S&#39;, &#39;T&#39;, &#39;C&#39;, &#39;Z&#39;, &#39;Y&#39;, &#39;X&#39;)</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        If a string of length greater or smaller than 1 is passed in raise a TypeError</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the integer position of the channel or -1 if the character is not present in the file description</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;channel lookup requested with channel </span><span class="si">{dimension}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_multiscene</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the metadata the czi is multiscene</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        True if multi-scene, False if single-scene</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_dimension_index</span><span class="p">(</span><span class="s1">&#39;S&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">img_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">czi</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="n">img_shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="CziReader.get_channel_names"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">chelem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;./Metadata/Information/Image/Dimensions/Channels/Channel&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chelem</span><span class="p">]</span></div>
+
+    <span class="c1"># TODO refactor this utility function into a metadata wrapper class</span>
+    <span class="k">def</span> <span class="nf">_getmetadataxmltext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">findpath</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">findpath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">return</span> <span class="n">ref</span><span class="o">.</span><span class="n">text</span>
+
+<div class="viewcode-block" id="CziReader.get_physical_pixel_size"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="n">px</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span><span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;X&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span><span class="p">))</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span><span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;Y&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span><span class="p">))</span>
+        <span class="n">pz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span><span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;Z&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">pz</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

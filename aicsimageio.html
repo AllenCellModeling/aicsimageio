@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aicsimageio package &mdash; aicsimageio 3.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aicsimageio.readers package" href="aicsimageio.readers.html" />
+    <link rel="prev" title="aicsimageio" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Package modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">aicsimageio</a> &raquo;</li>
+        
+      <li>aicsimageio package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/aicsimageio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="aicsimageio.readers.html" class="btn btn-neutral float-right" title="aicsimageio.readers package" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="aicsimageio" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="aicsimageio-package">
+<h1>aicsimageio package<a class="headerlink" href="#aicsimageio-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.czi_reader">aicsimageio.readers.czi_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.default_reader">aicsimageio.readers.default_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.ndarray_reader">aicsimageio.readers.ndarray_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.ome_tiff_reader">aicsimageio.readers.ome_tiff_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.reader">aicsimageio.readers.reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.tiff_reader">aicsimageio.readers.tiff_reader module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#module-aicsimageio.vendor.czifile">aicsimageio.vendor.czifile module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.vendor.html#requirements">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.vendor.html#revisions">Revisions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#id1">aicsimageio.vendor.czifile module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.vendor.html#id3">Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.vendor.html#id9">Revisions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#module-aicsimageio.vendor.omexml">aicsimageio.vendor.omexml module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#module-aicsimageio.vendor">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.ome_tiff_writer">aicsimageio.writers.ome_tiff_writer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.png_writer">aicsimageio.writers.png_writer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.writer">aicsimageio.writers.writer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-aicsimageio.aics_image">
+<span id="aicsimageio-aics-image-module"></span><h2>aicsimageio.aics_image module<a class="headerlink" href="#module-aicsimageio.aics_image" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.aics_image.AICSImage">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">AICSImage</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray], known_dims: Optional[str] = None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>AICSImage takes microscopy image data types (files / bytestreams) of varying dimensions (“ZYX”, “TCZYX”, “CYX”) and
+puts them into a consistent 6D “STCZYX” ordered numpy.ndarray. The data, metadata are lazy loaded and can be
+accessed as needed. Note the dims are assumed to match “STCZYX” from right to left meaning if 4 dimensional
+data is provided then the dimensions are assigned to be “CZYX”, 2 dimensional would be “YX”. This guessed assignment
+is only for file types without dimension metadata (ie not .ome.tiff or .czi).</p>
+<p>Note: if you absolutely know the dims and they are not as guessed then you can override them by immediately setting
+them after initialization see example below.</p>
+<dl class="simple">
+<dt>with open(“filename.czi”, ‘rb’) as fp:</dt><dd><p>img = AICSImage(fp)
+data = img.data  # data is a 6D “STCZYX” object
+metadata = img.metadata  # metadata from the file, an xml.etree
+zstack_t8 = img.get_image_data(“ZYX”, S=0, T=8, C=0)  # returns a 3D “ZYX” numpy.ndarray</p>
+</dd>
+</dl>
+<p>zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 “ZYX” cube</p>
+<dl class="simple">
+<dt>with AICSImage(“filename.ome.tif”) as img:</dt><dd><p># do work with img
+data = img.data
+metadata = img.metadata
+# img will be closed automatically at end of scope</p>
+</dd>
+<dt>OmeTif</dt><dd><p>img = AICSImage(“filename.ome.tif”)
+img.close()</p>
+</dd>
+<dt>CZI (Zeiss)</dt><dd><p>img = AICSImage(“filename.czi”) or AICSImage(“filename.czi”, max_workers=8)
+img.close()</p>
+</dd>
+<dt>Tiff</dt><dd><p>img = AICSImage(“filename.tif”)
+img.close()</p>
+</dd>
+<dt>Png/Gif/…</dt><dd><p>img = AICSImage(“filename.png”)
+img.close()
+img = AICSImage(“filename.gif”)
+img.close()</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>OmeTif</dt><dd><dl class="simple">
+<dt>with open(“filename.ome.tif”, ‘rb’) as fp:</dt><dd><p>img = AICSImage(fp)</p>
+</dd>
+</dl>
+</dd>
+<dt>CZI</dt><dd><dl class="simple">
+<dt>with open(“filename.czi”, ‘rb’) as fp:</dt><dd><p>img = AICSImage(fp, max_workers=7)</p>
+</dd>
+</dl>
+</dd>
+<dt>Tiff/Png/Gif</dt><dd><dl class="simple">
+<dt>with open(“filename.png”, ‘rb’) as fp:</dt><dd><p>img = AICSImage(fp)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>blank = numpy.zeros((2, 600, 900))
+img = AICSImage(blank)</p>
+<p>img = AICSImage(‘TCXimage.gif’)
+img.reader.dims = ‘TCX’
+data = img.data  # get a 6D ndarray back in “STCZYX” order</p>
+<p>Constructor for AICSImage class intended for providing a unified interface for dealing with
+microscopy images. To extend support to a new reader simply add a new reader child class of
+Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS in AICSImage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions</em>)</p></li>
+<li><p><strong>known_dims</strong> (<em>Optional string with the known dimension order. If None, the reader will attempt to parse dim order.</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Parameters to be passed through to the reader class</em>) – max_workers (optional Czi) specifies the number of worker threads for the backend library</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="aicsimageio.aics_image.AICSImage.SUPPORTED_READERS">
+<code class="sig-name descname">SUPPORTED_READERS</code><em class="property"> = [&lt;class 'aicsimageio.readers.czi_reader.CziReader'&gt;, &lt;class 'aicsimageio.readers.ome_tiff_reader.OmeTiffReader'&gt;, &lt;class 'aicsimageio.readers.tiff_reader.TiffReader'&gt;, &lt;class 'aicsimageio.readers.default_reader.DefaultReader'&gt;]</em><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.SUPPORTED_READERS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns a numpy.ndarray with dimension ordering “STCZYX”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.determine_reader">
+<em class="property">static </em><code class="sig-name descname">determine_reader</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray]</em><span class="sig-paren">)</span> &#x2192; Type[aicsimageio.readers.reader.Reader]<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.determine_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.determine_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cheaply check to see if a given file is a recognized type.
+Currently recognized types are TIFF, OME TIFF, and CZI.
+If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.
+Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.get_channel_names">
+<code class="sig-name descname">get_channel_names</code><span class="sig-paren">(</span><em class="sig-param">scene: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_channel_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_channel_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scene</strong> (<em>the index of the scene for which to return channel names</em>)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of strings representing the channel names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.get_image_data">
+<code class="sig-name descname">get_image_data</code><span class="sig-paren">(</span><em class="sig-param">out_orientation: str = None</em>, <em class="sig-param">copy: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_image_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_orientation</strong> (<em>A string containing the dimension ordering desired for the returned ndarray</em>)</p></li>
+<li><p><strong>copy</strong> (<em>boolean value to get image data by reference or by value [True, False]</em>)</p></li>
+<li><p><strong>kwargs</strong> – C=1: specifies Channel 1
+T=3: specifies the fourth index in T
+D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>ndarray with dimension ordering that was specified with out_orientation</em></p></li>
+<li><p><strong>Note</strong> (<em>if a requested dimension is not present in the data the dimension is added with</em>)</p></li>
+<li><p><em>a depth of 1. The default return dimensions are “STCZYX”.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.metadata">
+<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.</em></p></li>
+<li><p><em>For pure image files and empty string or None is returned.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.reader">
+<em class="property">property </em><code class="sig-name descname">reader</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>This property returns the class created to read the image file type.
+The intent is that if the AICSImage class doesn’t provide a raw enough
+interface then the base class can be used directly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>A child of Reader, CziReader OmeTiffReader, <a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader" title="aicsimageio.readers.tiff_reader.TiffReader">TiffReader</a>, <a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader" title="aicsimageio.readers.default_reader.DefaultReader">DefaultReader</a>, etc.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size">
+<code class="sig-name descname">size</code><span class="sig-paren">(</span><em class="sig-param">dims: str = 'STCZYX'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dims</strong> (<em>A string containing a list of dimensions being requested.  The default is to return the 6 standard dims</em>)</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Returns a tuple with the requested dimensions filled in</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_c">
+<em class="property">property </em><code class="sig-name descname">size_c</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_c" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the c size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_s">
+<em class="property">property </em><code class="sig-name descname">size_s</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_s" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the s size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_t">
+<em class="property">property </em><code class="sig-name descname">size_t</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_t" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the t size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_x">
+<em class="property">property </em><code class="sig-name descname">size_x</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_x" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the x size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_y">
+<em class="property">property </em><code class="sig-name descname">size_y</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_y" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the y size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.aics_image.AICSImage.size_z">
+<em class="property">property </em><code class="sig-name descname">size_z</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_z" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Returns the z size</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="aicsimageio.aics_image.imread">
+<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray], **kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.buffer_reader">
+<span id="aicsimageio-buffer-reader-module"></span><h2>aicsimageio.buffer_reader module<a class="headerlink" href="#module-aicsimageio.buffer_reader" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.buffer_reader.BufferReader">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.buffer_reader.</code><code class="sig-name descname">BufferReader</code><span class="sig-paren">(</span><em class="sig-param">buffer: Union[str, pathlib.Path, bytes, io.BufferedIOBase]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="aicsimageio.buffer_reader.BufferReader.INTEL_ENDIAN">
+<code class="sig-name descname">INTEL_ENDIAN</code><em class="property"> = b'II'</em><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.INTEL_ENDIAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="aicsimageio.buffer_reader.BufferReader.MOTOROLA_ENDIAN">
+<code class="sig-name descname">MOTOROLA_ENDIAN</code><em class="property"> = b'MM'</em><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.MOTOROLA_ENDIAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.buffer_reader.BufferReader.read_bytes">
+<code class="sig-name descname">read_bytes</code><span class="sig-paren">(</span><em class="sig-param">n_bytes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_bytes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.buffer_reader.BufferReader.read_uint16">
+<code class="sig-name descname">read_uint16</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint16" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.buffer_reader.BufferReader.read_uint32">
+<code class="sig-name descname">read_uint32</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint32" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.buffer_reader.BufferReader.read_uint64">
+<code class="sig-name descname">read_uint64</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint64" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.buffer_reader.BufferReader.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.constants">
+<span id="aicsimageio-constants-module"></span><h2>aicsimageio.constants module<a class="headerlink" href="#module-aicsimageio.constants" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-aicsimageio.exceptions">
+<span id="aicsimageio-exceptions-module"></span><h2>aicsimageio.exceptions module<a class="headerlink" href="#module-aicsimageio.exceptions" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="aicsimageio.exceptions.ConflictingArgumentsError">
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">ConflictingArgumentsError</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#ConflictingArgumentsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.ConflictingArgumentsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>This exception is returned when 2 arguments to the same function are in conflict.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="aicsimageio.exceptions.InvalidDimensionOrderingError">
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InvalidDimensionOrderingError</code><span class="sig-paren">(</span><em class="sig-param">message: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InvalidDimensionOrderingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InvalidDimensionOrderingError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>A general exception that can be thrown when handling dimension ordering or validation. Should be provided a message
+for the user to be given more context.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="aicsimageio.exceptions.MultiSceneCziException">
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">MultiSceneCziException</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#MultiSceneCziException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.MultiSceneCziException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>This exception is intended to be thrown when a CZI file has multiple scenes. This is only to
+be thrown if the Reader is given a multi-scene CZI files and the backend library isn’t able
+to read multi-scene CZI.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="aicsimageio.exceptions.UnsupportedFileFormatError">
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">UnsupportedFileFormatError</code><span class="sig-paren">(</span><em class="sig-param">type_</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#UnsupportedFileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.UnsupportedFileFormatError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>This exception is intended to communicate that the file extension is not one of
+the supported file types and cannot be parsed with AICSImage.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.transforms">
+<span id="aicsimageio-transforms-module"></span><h2>aicsimageio.transforms module<a class="headerlink" href="#module-aicsimageio.transforms" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="aicsimageio.transforms.reshape_data">
+<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">reshape_data</code><span class="sig-paren">(</span><em class="sig-param">data: numpy.ndarray</em>, <em class="sig-param">given_dims: str</em>, <em class="sig-param">return_dims: str</em>, <em class="sig-param">copy: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/transforms.html#reshape_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.reshape_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.
+Warns the user to use the base reader if the depth of the Dimension being removed is not 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>a numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</em>)</p></li>
+<li><p><strong>given_dims</strong> (<em>the dimension ordering of data, “CZYX”, “VBTCXZY” etc</em>)</p></li>
+<li><p><strong>return_dims</strong> (<em>the dimension ordering of the return data</em>)</p></li>
+<li><p><strong>copy</strong> (<em>True or False, if true copy the data object if false modify the object/view into the object</em>)</p></li>
+<li><p><strong>kwargs</strong> – C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1 returns the 2nd slice (0 indexed)
+Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=10 returns the 11th slice</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a numpy.ndarray in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order “STCZYX”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="aicsimageio.transforms.transpose_to_dims">
+<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">transpose_to_dims</code><span class="sig-paren">(</span><em class="sig-param">data: numpy.ndarray</em>, <em class="sig-param">given_dims: str</em>, <em class="sig-param">return_dims: str</em>, <em class="sig-param">copy: bool = False</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/transforms.html#transpose_to_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.transpose_to_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in
+given_dims must be used in return_dims</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>the input data with dimensions given_dims</em>)</p></li>
+<li><p><strong>given_dims</strong> (<em>the dimensions of data</em>)</p></li>
+<li><p><strong>return_dims</strong> (<em>the reordered set of given_dims to return</em>)</p></li>
+<li><p><strong>copy</strong> (<em>if True copy the data object passed in if false modify the numpy.ndarray</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a numpy.ndarray with known_dims</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.types">
+<span id="aicsimageio-types-module"></span><h2>aicsimageio.types module<a class="headerlink" href="#module-aicsimageio.types" title="Permalink to this headline">¶</a></h2>
+<p>Collection of types used across multiple objects and functions.</p>
+<dl class="class">
+<dt id="aicsimageio.types.LoadResults">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.types.</code><code class="sig-name descname">LoadResults</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dims</em>, <em class="sig-param">metadata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/types.html#LoadResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.types.LoadResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Create new instance of LoadResults(data, dims, metadata)</p>
+<dl class="method">
+<dt id="aicsimageio.types.LoadResults.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.types.LoadResults.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.types.LoadResults.dims">
+<em class="property">property </em><code class="sig-name descname">dims</code><a class="headerlink" href="#aicsimageio.types.LoadResults.dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.types.LoadResults.metadata">
+<em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.types.LoadResults.metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

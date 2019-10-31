@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aicsimageio.readers.ome_tiff_reader &mdash; aicsimageio 3.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.readers.ome_tiff_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.readers.ome_tiff_reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tifffile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..vendor</span> <span class="k">import</span> <span class="n">omexml</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="k">import</span> <span class="n">Reader</span>
+<span class="kn">from</span> <span class="nn">.tiff_reader</span> <span class="k">import</span> <span class="n">TiffReader</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="OmeTiffReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Opening and processing the contents of an OME Tiff file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;tiffile could not parse this input&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+
+    <span class="k">def</span> <span class="nf">_lazy_init_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">is_ome</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">description</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;?xml version=&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">description</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&lt;/OME&gt;&quot;</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Description does not conform to OME specification: </span><span class="si">{description[:100]}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">is_tif</span> <span class="o">=</span> <span class="n">TiffReader</span><span class="o">.</span><span class="n">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_tif</span><span class="p">:</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">TiffReader</span><span class="o">.</span><span class="n">get_image_description</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">&quot;&lt;?xml&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+                <span class="sa">b</span><span class="s1">&#39;&lt;(</span><span class="se">\\</span><span class="s1">w*)(:?)OME [^&gt;]*xmlns</span><span class="se">\\</span><span class="s1">2</span><span class="se">\\</span><span class="s1">1=&quot;http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/&#39;</span><span class="p">,</span>
+                <span class="n">buf</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># load the data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_init_metadata</span><span class="p">()</span>
+        <span class="n">dimension_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">DimensionOrder</span>
+        <span class="c1"># reverse the string</span>
+        <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># see if t,z,or c is squeezed out.</span>
+        <span class="c1"># this is a tifffile implementation detail -- see squeeze_axes in tifffile.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_t</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_z</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_c</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dimension_order</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_init_metadata</span><span class="p">()</span>
+
+<div class="viewcode-block" id="OmeTiffReader.load_slice"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.load_slice">[docs]</a>    <span class="k">def</span> <span class="nf">load_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slice_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">slice_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.size_z"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_z">[docs]</a>    <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeZ</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.size_c"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_c">[docs]</a>    <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeC</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.size_t"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_t">[docs]</a>    <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeT</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.size_x"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_x">[docs]</a>    <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeX</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.size_y"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_y">[docs]</a>    <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeY</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.is_ome"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.is_ome">[docs]</a>    <span class="k">def</span> <span class="nf">is_ome</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">OmeTiffReader</span><span class="o">.</span><span class="n">_is_this_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.get_channel_names"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OmeTiffReader.get_physical_pixel_size"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">image</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span><span class="o">.</span><span class="n">Pixels</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_PhysicalSizeX</span><span class="p">(),</span> <span class="n">p</span><span class="o">.</span><span class="n">get_PhysicalSizeY</span><span class="p">(),</span> <span class="n">p</span><span class="o">.</span><span class="n">get_PhysicalSizeZ</span><span class="p">())</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

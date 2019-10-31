@@ -1,0 +1,1549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>aicsimageio.vendor.czifile &mdash; aicsimageio 3.0.6 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.0.6
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.vendor.czifile</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.vendor.czifile</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># czifile.py</span>
+
+<span class="c1"># Copyright (c) 2013-2017, Christoph Gohlke</span>
+<span class="c1"># Copyright (c) 2013-2017, The Regents of the University of California</span>
+<span class="c1"># Produced at the Laboratory for Fluorescence Dynamics.</span>
+<span class="c1"># All rights reserved.</span>
+<span class="c1">#</span>
+<span class="c1"># Redistribution and use in source and binary forms, with or without</span>
+<span class="c1"># modification, are permitted provided that the following conditions are met:</span>
+<span class="c1">#</span>
+<span class="c1"># * Redistributions of source code must retain the above copyright</span>
+<span class="c1">#   notice, this list of conditions and the following disclaimer.</span>
+<span class="c1"># * Redistributions in binary form must reproduce the above copyright</span>
+<span class="c1">#   notice, this list of conditions and the following disclaimer in the</span>
+<span class="c1">#   documentation and/or other materials provided with the distribution.</span>
+<span class="c1"># * Neither the name of the copyright holders nor the names of any</span>
+<span class="c1">#   contributors may be used to endorse or promote products derived</span>
+<span class="c1">#   from this software without specific prior written permission.</span>
+<span class="c1">#</span>
+<span class="c1"># THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot;</span>
+<span class="c1"># AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</span>
+<span class="c1"># IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</span>
+<span class="c1"># ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE</span>
+<span class="c1"># LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</span>
+<span class="c1"># CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</span>
+<span class="c1"># SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</span>
+<span class="c1"># INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</span>
+<span class="c1"># CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</span>
+<span class="c1"># ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</span>
+<span class="c1"># POSSIBILITY OF SUCH DAMAGE.</span>
+
+<span class="sd">&quot;&quot;&quot;Read image and metadata from Carl Zeiss(r) ZISRAW (CZI) files.</span>
+
+<span class="sd">CZI is the native image file format of the ZEN(r) software by Carl Zeiss</span>
+<span class="sd">Microscopy GmbH. It stores multidimensional images and metadata from</span>
+<span class="sd">microscopy experiments.</span>
+
+<span class="sd">:Author:</span>
+<span class="sd">  `Christoph Gohlke &lt;http://www.lfd.uci.edu/~gohlke/&gt;`_</span>
+
+<span class="sd">:Organization:</span>
+<span class="sd">  Laboratory for Fluorescence Dynamics, University of California, Irvine</span>
+
+<span class="sd">:Version: 2017.09.12</span>
+
+<span class="sd">Requirements</span>
+<span class="sd">------------</span>
+<span class="sd">* `CPython 3.6 64-bit &lt;http://www.python.org&gt;`_</span>
+<span class="sd">* `Numpy 1.13 &lt;http://www.numpy.org&gt;`_</span>
+<span class="sd">* `Scipy 0.19 &lt;http://www.scipy.org&gt;`_</span>
+<span class="sd">* `Tifffile.py 2017.09.12 &lt;http://www.lfd.uci.edu/~gohlke/&gt;`_</span>
+<span class="sd">* `Czifle.pyx 2017.07.20 &lt;http://www.lfd.uci.edu/~gohlke/&gt;`_</span>
+<span class="sd">  (for decoding JpegXrFile and JpgFile images)</span>
+
+<span class="sd">Revisions</span>
+<span class="sd">---------</span>
+<span class="sd">2017.09.12</span>
+<span class="sd">    Require tifffile.py 2017.09.12</span>
+<span class="sd">2017.07.21</span>
+<span class="sd">    Use multi-threading in CziFile.asarray to decode and copy segment data.</span>
+<span class="sd">    Always convert BGR to RGB. Remove bgr2rgb options.</span>
+<span class="sd">    Decode JpegXR directly from byte arrays.</span>
+<span class="sd">2017.07.13</span>
+<span class="sd">    Add function to convert CZI file to memory-mappable TIFF file.</span>
+<span class="sd">2017.07.11</span>
+<span class="sd">    Add &#39;out&#39; parameter to CziFile.asarray.</span>
+<span class="sd">    Remove memmap option from CziFile.asarray (backwards incompatible).</span>
+<span class="sd">    Change spline interpolation order to 0 (backwards incompatible).</span>
+<span class="sd">    Make axes return a string.</span>
+<span class="sd">    Require tifffile 2017.07.11.</span>
+<span class="sd">2015.08.17</span>
+<span class="sd">    Require tifffile 2015.08.17.</span>
+<span class="sd">2014.10.10</span>
+<span class="sd">    Read data into a memory mapped array (optional).</span>
+<span class="sd">2013.12.04</span>
+<span class="sd">    Decode JpegXrFile and JpgFile via _czifle extension module.</span>
+<span class="sd">    Attempt to reconstruct tiled mosaic images.</span>
+<span class="sd">2013.11.20</span>
+<span class="sd">    Initial release.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">The API is not stable yet and might change between revisions.</span>
+
+<span class="sd">The file format design specification [1] is confidential and the licence</span>
+<span class="sd">agreement does not permit to write data into CZI files.</span>
+
+<span class="sd">Only a subset of the 2012 specification is implemented in the initial release.</span>
+<span class="sd">Specifically, multifile images are not yet supported.</span>
+
+<span class="sd">Tested on Windows with a few example files only.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">(1) ZISRAW (CZI) File Format Design specification Release Version 1.2.2.</span>
+<span class="sd">    CZI 07-2016/CZI-DOC ZEN 2.3/DS_ZISRAW-FileFormat.pdf (confidential).</span>
+<span class="sd">    Documentation can be requested at</span>
+<span class="sd">    &lt;http://microscopy.zeiss.com/microscopy/en_us/downloads/zen.html&gt;</span>
+<span class="sd">(2) CZI The File Format for the Microscope | ZEISS International</span>
+<span class="sd">    &lt;http://microscopy.zeiss.com/microscopy/en_us/products/microscope-software/</span>
+<span class="sd">    zen-2012/czi.html&gt;</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; with CziFile(&#39;test.czi&#39;) as czi:</span>
+<span class="sd">...     image = czi.asarray()</span>
+<span class="sd">&gt;&gt;&gt; image.shape</span>
+<span class="sd">(3, 3, 3, 250, 200, 3)</span>
+<span class="sd">&gt;&gt;&gt; image[0, 0, 0, 0, 0]</span>
+<span class="sd">array([10, 10, 10], dtype=uint8)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="k">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">lxml</span> <span class="k">import</span> <span class="n">etree</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">xml.etree</span> <span class="k">import</span> <span class="n">cElementTree</span> <span class="k">as</span> <span class="n">etree</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage.interpolation</span> <span class="k">import</span> <span class="n">zoom</span>
+
+<span class="kn">from</span> <span class="nn">tifffile</span> <span class="k">import</span> <span class="p">(</span><span class="n">FileHandle</span><span class="p">,</span> <span class="n">memmap</span><span class="p">,</span> <span class="n">decode_lzw</span><span class="p">,</span> <span class="n">lazyattr</span><span class="p">,</span> <span class="n">repeat_nd</span><span class="p">,</span>
+                      <span class="n">product</span><span class="p">,</span> <span class="n">stripnull</span><span class="p">,</span> <span class="n">format_size</span><span class="p">,</span> <span class="n">squeeze_axes</span><span class="p">,</span>
+                      <span class="n">create_output</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">__package__</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="k">import</span> <span class="n">_czifile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">_czifile</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="s2">&quot;ImportError: No module named &#39;_czifile&#39;. &quot;</span>
+        <span class="s2">&quot;Decoding of JXR and JPEG encoded images will not be available. &quot;</span>
+        <span class="s2">&quot;Czifile.pyx can be obtained at http://www.lfd.uci.edu/~gohlke/&quot;</span><span class="p">)</span>
+    <span class="n">_czifile</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;2017.09.12&#39;</span>
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext en&#39;</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="s1">&#39;imread&#39;</span><span class="p">,</span> <span class="s1">&#39;CziFile&#39;</span>
+
+
+<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return image data from CZI file as numpy array.</span>
+
+<span class="sd">    &#39;args&#39; and &#39;kwargs&#39; are arguments to the CziFile.asarray function.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; image = imread(&#39;test.czi&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; image.shape</span>
+<span class="sd">    (3, 3, 3, 250, 200, 3)</span>
+<span class="sd">    &gt;&gt;&gt; image.dtype</span>
+<span class="sd">    dtype(&#39;uint8&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">CziFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">czi</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="CziFile"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile">[docs]</a><span class="k">class</span> <span class="nc">CziFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Carl Zeiss Image (CZI) file.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    header : FileHeaderSegment</span>
+<span class="sd">        Global file metadata such as file version and GUID.</span>
+<span class="sd">    metadata : etree.ElementTree.Element</span>
+<span class="sd">        Global image metadata in UTF-8 encoded XML format.</span>
+
+<span class="sd">    All attributes are read-only.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">multifile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">detectmosaic</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Open CZI file and read header.</span>
+
+<span class="sd">        Raise ValueError if file is not a ZISRAW file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        multifile : bool</span>
+<span class="sd">            If True (default), the master file of a multifile CZI file</span>
+<span class="sd">            will be opened if applicable.</span>
+<span class="sd">        filesize : int</span>
+<span class="sd">            Size of file if arg is a file handle pointing to an</span>
+<span class="sd">            embedded CZI file.</span>
+<span class="sd">        detectmosaic : bool</span>
+<span class="sd">            If True (default), mosaic images will be reconstructed from</span>
+<span class="sd">            SubBlocks with a tile index.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        CziFile instances created from file name must be closed using the</span>
+<span class="sd">        &#39;close&#39; method, which is automatically called when using the</span>
+<span class="sd">        &#39;with&#39; statement.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">FileHandle</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">filesize</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWFILE&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not a CZI file&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">raise</span>
+
+        <span class="k">if</span> <span class="n">multifile</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">file_part</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+            <span class="c1"># open master file instead</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">match_filename</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">FileHandle</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">primary_file_guid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">file_guid</span><span class="p">)</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">file_part</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update_pending</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;file is pending update&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filter_mosaic</span> <span class="o">=</span> <span class="n">detectmosaic</span>
+
+<div class="viewcode-block" id="CziFile.segments"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.segments">[docs]</a>    <span class="k">def</span> <span class="nf">segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over Segment data of specified kind.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kind : bytestring or sequence thereof</span>
+<span class="sd">            Segment id(s) as listed in SEGMENT_ID.</span>
+<span class="sd">            If None (default), all segments are returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fpos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">fpos</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">SegmentNotFoundError</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">sid</span> <span class="ow">in</span> <span class="n">kind</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+            <span class="n">fpos</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">+</span> <span class="n">segment</span><span class="o">.</span><span class="n">allocated_size</span></div>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return data from MetadataSegment as xml.ElementTree root Element.</span>
+
+<span class="sd">        Return None if no Metadata segment is found.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">metadata_position</span><span class="p">:</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">metadata_position</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">sid</span> <span class="o">==</span> <span class="n">MetadataSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Metadata segment not found&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">(</span><span class="n">MetadataSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">subblock_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of all DirectoryEntryDV in file.</span>
+
+<span class="sd">        Use SubBlockDirectorySegment if exists, else find SubBlockSegments.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">directory_position</span><span class="p">:</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">directory_position</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">sid</span> <span class="o">==</span> <span class="n">SubBlockDirectorySegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">entries</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;SubBlockDirectory segment not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">directory_entry</span> <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">(</span><span class="n">SubBlockSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">))</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">attachment_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of all AttachmentEntryA1 in file.</span>
+
+<span class="sd">        Use AttachmentDirectorySegment if exists, else find AttachmentSegments.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">attachment_directory_position</span><span class="p">:</span>
+            <span class="n">segment</span> <span class="o">=</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">attachment_directory_position</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">segment</span><span class="o">.</span><span class="n">sid</span> <span class="o">==</span> <span class="n">AttachmentDirectorySegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">segment</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">entries</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;AttachmentDirectory segment not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">segment</span><span class="o">.</span><span class="n">attachment_entry</span> <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">segments</span><span class="p">(</span><span class="n">AttachmentSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">))</span>
+
+<div class="viewcode-block" id="CziFile.subblocks"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.subblocks">[docs]</a>    <span class="k">def</span> <span class="nf">subblocks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over all SubBlock segments in file.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblock_directory</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">entry</span><span class="o">.</span><span class="n">data_segment</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CziFile.attachments"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.attachments">[docs]</a>    <span class="k">def</span> <span class="nf">attachments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return iterator over all Attachment segments in file.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_directory</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">entry</span><span class="o">.</span><span class="n">data_segment</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CziFile.save_attachments"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.save_attachments">[docs]</a>    <span class="k">def</span> <span class="nf">save_attachments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save all attachments to files.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">directory</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;.attachments&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">attachment</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachments</span><span class="p">():</span>
+            <span class="n">attachment</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="n">directory</span><span class="p">)</span></div>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">filtered_subblock_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return sorted list of DirectoryEntryDV if mosaic, else all.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_mosaic</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblock_directory</span>
+        <span class="n">filtered</span> <span class="o">=</span> <span class="p">[</span><span class="n">directory_entry</span>
+                    <span class="k">for</span> <span class="n">directory_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblock_directory</span>
+                    <span class="k">if</span> <span class="n">directory_entry</span><span class="o">.</span><span class="n">mosaic_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filtered</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subblock_directory</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">filtered</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">mosaic_index</span><span class="p">))</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return shape of image data in file.&quot;&quot;&quot;</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dim</span><span class="o">.</span><span class="n">start</span> <span class="o">+</span> <span class="n">dim</span><span class="o">.</span><span class="n">size</span>
+                  <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">directory_entry</span><span class="o">.</span><span class="n">dimension_entries</span>
+                  <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">directory_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">]</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="n">sampleshape</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="n">sampleshape</span> <span class="k">if</span> <span class="n">sampleshape</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="n">shape</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return minimum start indices per dimension of sub images in file.&quot;&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="p">[[</span><span class="n">dim</span><span class="o">.</span><span class="n">start</span>
+                  <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">directory_entry</span><span class="o">.</span><span class="n">dimension_entries</span>
+                  <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">]</span>
+                 <span class="k">for</span> <span class="n">directory_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
+        <span class="k">return</span> <span class="n">start</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return axes of image data in file.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return numpy dtype of image data in file.&quot;&quot;&quot;</span>
+        <span class="c1"># subblock data can be of different pixel type</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">for</span> <span class="n">directory_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">directory_entry</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="k">return</span> <span class="n">dtype</span>
+
+<div class="viewcode-block" id="CziFile.asarray"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.asarray">[docs]</a>    <span class="k">def</span> <span class="nf">asarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_workers</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return image data from file(s) as numpy array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        resize : bool</span>
+<span class="sd">            If True (default), resize sub/supersampled subblock data.</span>
+<span class="sd">        order : int</span>
+<span class="sd">            The order of spline interpolation used to resize sub/supersampled</span>
+<span class="sd">            subblock data. Default is 0 (nearest neighbor).</span>
+<span class="sd">        out : numpy.ndarray, str, or file-like object; optional</span>
+<span class="sd">            Buffer where image data will be saved.</span>
+<span class="sd">            If numpy.ndarray, a writable array of compatible dtype and shape.</span>
+<span class="sd">            If str or open file, the file name or file object used to</span>
+<span class="sd">            create a memory-map to an array stored in a binary file on disk.</span>
+<span class="sd">        max_workers : int</span>
+<span class="sd">            Maximum number of threads to read and decode subblock data.</span>
+<span class="sd">            By default up to half the CPU cores are used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">create_output</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_workers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_workers</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="o">//</span> <span class="mi">2</span>
+
+        <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">directory_entry</span><span class="p">,</span> <span class="n">resize</span><span class="o">=</span><span class="n">resize</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
+                 <span class="n">start</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Read, decode, and copy subblock data.&quot;&quot;&quot;</span>
+            <span class="n">subblock</span> <span class="o">=</span> <span class="n">directory_entry</span><span class="o">.</span><span class="n">data_segment</span><span class="p">()</span>
+            <span class="n">tile</span> <span class="o">=</span> <span class="n">subblock</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">resize</span><span class="o">=</span><span class="n">resize</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="n">j</span><span class="o">+</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span>
+                     <span class="nb">zip</span><span class="p">(</span><span class="n">directory_entry</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">tile</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">tile</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">max_workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+                <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filtered_subblock_directory</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39;flush&#39;</span><span class="p">):</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+<div class="viewcode-block" id="CziFile.close"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span>
+            <span class="s2">&quot;(Carl Zeiss Image File)&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">),</span>
+            <span class="s2">&quot;MetadataSegment&quot;</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">))))</span></div>
+
+
+<span class="k">class</span> <span class="nc">Segment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAW Segment.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;allocated_size&#39;</span><span class="p">,</span> <span class="s1">&#39;used_size&#39;</span><span class="p">,</span> <span class="s1">&#39;data_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;_fh&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">fpos</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read segment header from file.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">fpos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">fpos</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">allocated_size</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">used_size</span>
+             <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;16sqq&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SegmentNotFoundError</span><span class="p">(</span><span class="s2">&quot;can not read ZISRAW segment&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sid</span> <span class="o">=</span> <span class="n">stripnull</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEGMENT_ID</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;ZISRAW&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">SegmentNotFoundError</span><span class="p">(</span><span class="s2">&quot;not a ZISRAW segment&quot;</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;unknown segment type </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read segment data from file and return as *Segment instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SEGMENT_ID</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="p">,</span> <span class="n">UnknownSegment</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Segment </span><span class="si">%s</span><span class="s2"> </span><span class="si">%i</span><span class="s2"> of </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">used_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">allocated_size</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">SegmentNotFoundError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception to indicate that file position does not contain Segment.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">FileHeaderSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWFILE file header segment data.</span>
+
+<span class="sd">    Contains global file metadata such as file version and GUID.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;primary_file_guid&#39;</span><span class="p">,</span> <span class="s1">&#39;file_guid&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;file_part&#39;</span><span class="p">,</span> <span class="s1">&#39;directory_position&#39;</span><span class="p">,</span> <span class="s1">&#39;metadata_position&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;update_pending&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_directory_position&#39;</span><span class="p">)</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWFILE&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">major</span><span class="p">,</span>
+         <span class="n">minor</span><span class="p">,</span>
+         <span class="n">reserved1</span><span class="p">,</span>
+         <span class="n">reserved2</span><span class="p">,</span>
+         <span class="n">primary_file_guid</span><span class="p">,</span>
+         <span class="n">file_guid</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">file_part</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">directory_position</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">metadata_position</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">update_pending</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">attachment_directory_position</span><span class="p">,</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;iiii16s16siqqiq&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">80</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="p">(</span><span class="n">major</span><span class="p">,</span> <span class="n">minor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_pending</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_pending</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_file_guid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="nb">bytes</span><span class="o">=</span><span class="n">primary_file_guid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_guid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="nb">bytes</span><span class="o">=</span><span class="n">file_guid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;FileHeaderSegment</span><span class="se">\n</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">FileHeaderSegment</span><span class="o">.</span><span class="vm">__slots__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MetadataSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWMETADATA segment data.</span>
+
+<span class="sd">    Contains global image metadata in UTF-8 encoded XML format.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;xml_size&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_size&#39;</span><span class="p">,</span> <span class="s1">&#39;xml_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;_fh&#39;</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWMETADATA&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_size</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;ii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">248</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># spare</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xml_offset</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read XML from file and return as unicode string.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xml_offset</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xml_size</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">unicode</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;MetadataSegment</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">SubBlockSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWSUBBLOCK segment data.</span>
+
+<span class="sd">    Contains XML metadata, optional attachments, and homogenous,</span>
+<span class="sd">    contiguous pixel data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;metadata_size&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_size&#39;</span><span class="p">,</span> <span class="s1">&#39;data_size&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;directory_entry&#39;</span><span class="p">,</span> <span class="s1">&#39;data_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;_fh&#39;</span><span class="p">)</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWSUBBLOCK&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read ZISRAWSUBBLOCK segment data from file.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_size</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">attachment_size</span><span class="p">,</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
+             <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;iiq&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">directory_entry</span> <span class="o">=</span> <span class="n">DirectoryEntryDV</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+            <span class="c1"># fh.seek(max(240 - self.directory_entry.storage_size, 0), 1)</span>
+            <span class="c1"># self.metadata = unicode(fh.read(self.metadata_size), &#39;utf-8&#39;)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">+=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">240</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory_entry</span><span class="o">.</span><span class="n">storage_size</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read metadata from file and return as XML string.&quot;&quot;&quot;</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span>
+        <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_size</span><span class="p">)</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_size</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read image data from file and return as numpy array.&quot;&quot;&quot;</span>
+        <span class="n">de</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory_entry</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span>
+        <span class="k">if</span> <span class="n">raw</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">data</span>
+        <span class="k">elif</span> <span class="n">de</span><span class="o">.</span><span class="n">compression</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">de</span><span class="o">.</span><span class="n">compression</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DECOMPRESS</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;compression unknown or not supported&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">DECOMPRESS</span><span class="p">[</span><span class="n">de</span><span class="o">.</span><span class="n">compression</span><span class="p">](</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">de</span><span class="o">.</span><span class="n">compression</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># LZW</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">de</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">de</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+                <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">read_array</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span> <span class="o">//</span> <span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">de</span><span class="o">.</span><span class="n">stored_shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">de</span><span class="o">.</span><span class="n">stored_shape</span> <span class="o">==</span> <span class="n">de</span><span class="o">.</span><span class="n">shape</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">resize</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="c1"># sub / supersampling</span>
+        <span class="n">factors</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="o">/</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">de</span><span class="o">.</span><span class="n">stored_shape</span><span class="p">,</span> <span class="n">de</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+        <span class="n">factors</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">f</span><span class="o">-</span><span class="nb">round</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mf">0.0001</span> <span class="k">else</span> <span class="n">f</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">]</span>
+
+        <span class="c1"># use repeat if possible</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">factors</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">repeat_nd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">factors</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">shape</span>
+            <span class="k">return</span> <span class="n">data</span>
+
+        <span class="c1"># remove leading dimensions with size 1 for speed</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">de</span><span class="o">.</span><span class="n">stored_shape</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+        <span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+        <span class="c1"># resize RGB components separately for speed</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="ow">and</span> <span class="n">factors</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">de</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">de</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:])</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">zoom</span><span class="p">(</span><span class="n">old</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">zoom</span><span class="o">=</span><span class="n">factors</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">zoom</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">zoom</span><span class="o">=</span><span class="n">factors</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">de</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="k">def</span> <span class="nf">attachments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read optional attachments from file and return as bytes.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_size</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span>
+        <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+            <span class="n">attachments</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attachment_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">attachments</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Directly access DirectoryEntryDV attributes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_entry</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;SubBlockSegment</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">(),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory_entry</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">DirectoryEntryDV</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Directory Entry - Schema DV.&quot;&quot;&quot;</span>
+
+    <span class="c1"># __slots__ = (&#39;file_position&#39;, &#39;file_part&#39;, &#39;compression&#39;, &#39;pyramid_type&#39;,</span>
+    <span class="c1">#             &#39;dimension_entries&#39;, &#39;dtype&#39;, &#39;shape&#39;, &#39;stored_shape&#39;,</span>
+    <span class="c1">#             &#39;axes&#39;, &#39;mosaic_index&#39;, &#39;storage_size&#39;, &#39;start&#39;, &#39;_fh&#39;)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read_file_position</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return file position of associated SubBlock segment.&quot;&quot;&quot;</span>
+        <span class="p">(</span><span class="n">schema_type</span><span class="p">,</span>
+         <span class="n">file_position</span><span class="p">,</span>
+         <span class="n">dimensions_count</span><span class="p">,</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;2s4xq14xi&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">dimensions_count</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">schema_type</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;DV&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_position</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+        <span class="p">(</span><span class="n">schema_type</span><span class="p">,</span>
+         <span class="n">pixel_type</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">file_position</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">file_part</span><span class="p">,</span>  <span class="c1"># reserved</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">compression</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">pyramid_type</span><span class="p">,</span>  <span class="c1"># internal</span>
+         <span class="n">reserved1</span><span class="p">,</span>
+         <span class="n">reserved2</span><span class="p">,</span>
+         <span class="n">dimensions_count</span><span class="p">,</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;2siqiiBB4si&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">schema_type</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;DV&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not a DirectoryEntryDV&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">PIXEL_TYPE</span><span class="p">[</span><span class="n">pixel_type</span><span class="p">]</span>
+
+        <span class="c1"># reverse dimension_entries to match C contiguous data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">DimensionEntryDV1</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dimensions_count</span><span class="p">)]))</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">storage_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">32</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span><span class="p">)</span> <span class="o">*</span> <span class="mi">20</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">pixel_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PIXEL_TYPE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">axes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span>
+                        <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bytes2str</span><span class="p">(</span><span class="n">axes</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;0&#39;</span><span class="p">)</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">size</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span>
+                      <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+        <span class="n">sampleshape</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="n">sampleshape</span> <span class="k">if</span> <span class="n">sampleshape</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">start</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span>
+                      <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">start</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">stored_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">stored_size</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span>
+                      <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">)</span>
+        <span class="n">sampleshape</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">return</span> <span class="n">shape</span> <span class="o">+</span> <span class="p">(</span><span class="n">sampleshape</span> <span class="k">if</span> <span class="n">sampleshape</span> <span class="k">else</span> <span class="p">(</span><span class="mi">1</span><span class="p">,))</span>
+
+    <span class="nd">@lazyattr</span>
+    <span class="k">def</span> <span class="nf">mosaic_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span><span class="o">.</span><span class="n">dimension</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;M&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">dim</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">def</span> <span class="nf">data_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and return SubBlockSegment at file_position.&quot;&quot;&quot;</span>
+        <span class="c1"># return Segment(self._fh, self.file_position).data()</span>
+        <span class="n">fh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span>
+        <span class="k">with</span> <span class="n">fh</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_position</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">sid</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;16sqq&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">struct</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SegmentNotFoundError</span><span class="p">(</span><span class="s2">&quot;can not read ZISRAW segment&quot;</span><span class="p">)</span>
+            <span class="n">sid</span> <span class="o">=</span> <span class="n">stripnull</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEGMENT_ID</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">SegmentNotFoundError</span><span class="p">(</span><span class="s2">&quot;not a ZISRAW segment&quot;</span><span class="p">)</span>
+            <span class="n">data_segment</span> <span class="o">=</span> <span class="n">SEGMENT_ID</span><span class="p">[</span><span class="n">sid</span><span class="p">](</span><span class="n">fh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data_segment</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;DirectoryEntryDV</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">COMPRESSION</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compression</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">compression</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pixel_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension_entries</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">DimensionEntryDV1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dimension Entry - Schema DV.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;dimension&#39;</span><span class="p">,</span> <span class="s1">&#39;start&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;start_coordinate&#39;</span><span class="p">,</span> <span class="s1">&#39;stored_size&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">start_coordinate</span><span class="p">,</span>
+         <span class="n">stored_size</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;4siifi&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="n">stripnull</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stored_size</span> <span class="o">=</span> <span class="n">stored_size</span> <span class="k">if</span> <span class="n">stored_size</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;DimensionEntryDV1 </span><span class="si">%s</span><span class="s2"> </span><span class="si">%i</span><span class="s2"> </span><span class="si">%i</span><span class="s2"> </span><span class="si">%f</span><span class="s2"> </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_coordinate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stored_size</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">SubBlockDirectorySegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWDIRECTORY segment data.</span>
+
+<span class="sd">    Contains entries of any kind, currently only DirectoryEntryDV.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;entries&#39;</span><span class="p">,</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWDIRECTORY&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">file_positions</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of file positions of associated SubBlock segments.&quot;&quot;&quot;</span>
+        <span class="n">entry_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">124</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># reserved</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">DirectoryEntryDV</span><span class="o">.</span><span class="n">read_file_position</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">entry_count</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">entry_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">124</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># reserved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">DirectoryEntryDV</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">entry_count</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;SubBlockDirectorySegment</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">AttachmentSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWATTACH segment data.</span>
+
+<span class="sd">    Contains binary or text data as specified in attachment_entry.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;data_size&#39;</span><span class="p">,</span> <span class="s1">&#39;attachment_entry&#39;</span><span class="p">,</span> <span class="s1">&#39;data_offset&#39;</span><span class="p">,</span> <span class="s1">&#39;_fh&#39;</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWATTACH&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_size</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># reserved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attachment_entry</span> <span class="o">=</span> <span class="n">AttachmentEntryA1</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">112</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># reserved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save attachment to file in directory.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_entry</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read embedded file and return content.</span>
+
+<span class="sd">        If &#39;raw&#39; is False (default), try return content according to</span>
+<span class="sd">        CONTENT_FILE_TYPE, else return raw bytes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_offset</span><span class="p">)</span>
+        <span class="n">cotype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_entry</span><span class="o">.</span><span class="n">content_file_type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span> <span class="ow">and</span> <span class="n">cotype</span> <span class="ow">in</span> <span class="n">CONTENT_FILE_TYPE</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CONTENT_FILE_TYPE</span><span class="p">[</span><span class="n">cotype</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;AttachmentSegment</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">attachment_entry</span>
+
+
+<span class="k">class</span> <span class="nc">AttachmentEntryA1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;AttachmentEntry - Schema A1.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;content_guid&#39;</span><span class="p">,</span> <span class="s1">&#39;content_file_type&#39;</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span>
+                 <span class="s1">&#39;file_position&#39;</span><span class="p">,</span> <span class="s1">&#39;_fh&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">read_file_position</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return file position of associated Attachment segment.&quot;&quot;&quot;</span>
+        <span class="n">schema_type</span><span class="p">,</span> <span class="n">file_position</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;2s10xq&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">108</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">schema_type</span> <span class="o">==</span> <span class="sa">b</span><span class="s1">&#39;A1&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">file_position</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">shema_type</span><span class="p">,</span>
+         <span class="n">reserved</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">file_position</span><span class="p">,</span>
+         <span class="n">file_part</span><span class="p">,</span>  <span class="c1"># reserved</span>
+         <span class="n">content_guid</span><span class="p">,</span>
+         <span class="n">content_file_type</span><span class="p">,</span>
+         <span class="n">name</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;2s10sqi16s8s80s&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">shema_type</span> <span class="o">!=</span> <span class="sa">b</span><span class="s1">&#39;A1&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;not a AttachmentEntryA1&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_guid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">UUID</span><span class="p">(</span><span class="nb">bytes</span><span class="o">=</span><span class="n">content_guid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_file_type</span> <span class="o">=</span> <span class="n">stripnull</span><span class="p">(</span><span class="n">content_file_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">stripnull</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fh</span> <span class="o">=</span> <span class="n">fh</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return unique file name for attachment.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">@</span><span class="si">%i</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_position</span><span class="p">,</span>
+                             <span class="n">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">content_file_type</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">data_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and return AttachmentSegment at file_position.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Segment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fh</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_position</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">&quot;AttachmentEntryA1&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_file_type</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_guid</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">AttachmentDirectorySegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ZISRAWATTDIR segment data. Sequence of AttachmentEntryA1.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;entries&#39;</span><span class="p">,</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;ZISRAWATTDIR&#39;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">file_positions</span><span class="p">(</span><span class="n">fh</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return list of file positions of associated Attachment segments.&quot;&quot;&quot;</span>
+        <span class="n">entry_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">252</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">AttachmentEntryA1</span><span class="o">.</span><span class="n">read_file_position</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">entry_count</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">entry_count</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fh</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">252</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">entries</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">AttachmentEntryA1</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">entry_count</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;AttachmentDirectorySegment</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">DeletedSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;DELETED segment data. Ignore.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">SID</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;DELETED&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;DeletedSegment&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">UnknownSegment</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Unknown segment data. Ignore.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;UnknownSegment&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">TimeStamps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CZTIMS TimeStamps content schema.</span>
+
+<span class="sd">    Contains sequence of floting point numbers, i.e. seconds relative</span>
+<span class="sd">    to start time of acquisition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;time_stamps&#39;</span><span class="p">,</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;ii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_stamps</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;</span><span class="si">%i</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="n">number</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">number</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_stamps</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_stamps</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_stamps</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_stamps</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FocusPositions</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CZFOC FocusPositions content schema.</span>
+
+<span class="sd">    Contains sequence of floting point numbers, i.e. micrometers relative</span>
+<span class="sd">    to Z start position of acquisition.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;positions&#39;</span><span class="p">,</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;ii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">positions</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;</span><span class="si">%i</span><span class="s1">d&#39;</span> <span class="o">%</span> <span class="n">number</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">number</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">positions</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">EventList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CZEVL EventList content schema. Sequence of EventListEntry.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;events&#39;</span><span class="p">,</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;ii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[</span><span class="n">EventListEntry</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">event</span><span class="p">)</span> <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">EventListEntry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;EventListEntry content schema.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;event_type&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span>
+
+    <span class="n">EV_TYPE</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;MARKER&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;TIME_CHANGE&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;BLEACH_START&#39;</span><span class="p">,</span>
+               <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;BLEACH_STOP&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;TRIGGER&#39;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">size</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">event_type</span><span class="p">,</span>
+         <span class="n">description_size</span><span class="p">,</span>
+         <span class="p">)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;idii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">20</span><span class="p">))</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="n">stripnull</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">description_size</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> @ </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">EventListEntry</span><span class="o">.</span><span class="n">EV_TYPE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">event_type</span><span class="p">],</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LookupTables</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;CZLUT LookupTables content schema. Sequence of LookupTableEntry.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;lookup_tables&#39;</span><span class="p">,</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">,</span> <span class="n">filesize</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;ii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lookup_tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">LookupTableEntry</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_tables</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_tables</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_tables</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;LookupTables</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_tables</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LookupTableEntry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;LookupTableEntry content schema. Sequence of ComponentEntry.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;identifier&#39;</span><span class="p">,</span> <span class="s1">&#39;components&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;i80si&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">88</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">stripnull</span><span class="p">(</span><span class="n">identifier</span><span class="p">),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span><span class="n">ComponentEntry</span><span class="p">(</span><span class="n">fh</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;LookupTableEntry</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="se">\n</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">identifier</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">ComponentEntry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;ComponentEntry content schema.&quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;component_type&#39;</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span>
+
+    <span class="n">CO_TYPE</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;RGB&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;RED&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;GREEN&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;BLUE&#39;</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fh</span><span class="p">):</span>
+        <span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_type</span><span class="p">,</span> <span class="n">number</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&lt;iii&#39;</span><span class="p">,</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="n">fh</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;&lt;i2&#39;</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="n">number</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_type</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;ComponentEntry </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">ComponentEntry</span><span class="o">.</span><span class="n">CO_TYPE</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">component_type</span><span class="p">],</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">intensity</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">xml_reader</span><span class="p">(</span><span class="n">fh</span><span class="p">,</span> <span class="n">filesize</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read XML from file and return as xml.ElementTree root Element.&quot;&quot;&quot;</span>
+    <span class="n">xml</span> <span class="o">=</span> <span class="n">unicode</span><span class="p">(</span><span class="n">stripnull</span><span class="p">(</span><span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filesize</span><span class="p">)),</span> <span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">etree</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">match_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return master file name and file part number from CZI file name.&quot;&quot;&quot;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(.*?)(?:\((\d+)\))?\.czi$&#39;</span><span class="p">,</span>
+                      <span class="n">filename</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.czi&#39;</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">name</span><span class="p">,</span> <span class="n">part</span>
+
+
+<span class="k">def</span> <span class="nf">decode_jxr</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decode JXR data stream into ndarray.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_czifile</span><span class="o">.</span><span class="n">decode_jxr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">decode_jpeg</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Decode JPEG data stream into ndarray.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_czifile</span><span class="o">.</span><span class="n">decode_jpeg</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+
+<span class="c1"># map Segment.sid to data reader</span>
+<span class="n">SEGMENT_ID</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">FileHeaderSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">FileHeaderSegment</span><span class="p">,</span>
+    <span class="n">SubBlockDirectorySegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">SubBlockDirectorySegment</span><span class="p">,</span>
+    <span class="n">SubBlockSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">SubBlockSegment</span><span class="p">,</span>
+    <span class="n">MetadataSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">MetadataSegment</span><span class="p">,</span>
+    <span class="n">AttachmentSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">AttachmentSegment</span><span class="p">,</span>
+    <span class="n">AttachmentDirectorySegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">AttachmentDirectorySegment</span><span class="p">,</span>
+    <span class="n">DeletedSegment</span><span class="o">.</span><span class="n">SID</span><span class="p">:</span> <span class="n">DeletedSegment</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># map AttachmentEntryA1.content_file_type to attachment reader.</span>
+<span class="n">CONTENT_FILE_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sa">b</span><span class="s1">&#39;CZI&#39;</span><span class="p">:</span> <span class="n">CziFile</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;ZISRAW&#39;</span><span class="p">:</span> <span class="n">CziFile</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;CZTIMS&#39;</span><span class="p">:</span> <span class="n">TimeStamps</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;CZEVL&#39;</span><span class="p">:</span> <span class="n">EventList</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;CZLUT&#39;</span><span class="p">:</span> <span class="n">LookupTables</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;CZFOC&#39;</span><span class="p">:</span> <span class="n">FocusPositions</span><span class="p">,</span>
+    <span class="sa">b</span><span class="s1">&#39;CZEXP&#39;</span><span class="p">:</span> <span class="n">xml_reader</span><span class="p">,</span>  <span class="c1"># Experiment</span>
+    <span class="sa">b</span><span class="s1">&#39;CZHWS&#39;</span><span class="p">:</span> <span class="n">xml_reader</span><span class="p">,</span>  <span class="c1"># HardwareSetting</span>
+    <span class="sa">b</span><span class="s1">&#39;CZMVM&#39;</span><span class="p">:</span> <span class="n">xml_reader</span><span class="p">,</span>  <span class="c1"># MultiviewMicroscopy</span>
+    <span class="c1"># b&#39;CZPML&#39;: PalMoleculeList,  # undocumented</span>
+    <span class="c1"># b&#39;ZIP&#39;</span>
+    <span class="c1"># b&#39;JPG&#39;</span>
+<span class="p">}</span>
+
+<span class="c1"># map DirectoryEntryDV.pixeltype to numpy dtypes</span>
+<span class="n">PIXEL_TYPE</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;&lt;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray8&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;u1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;u1&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray8&#39;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;&lt;u2&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray16&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;u2&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;u2&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray16&#39;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s1">&#39;&lt;f4&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray32Float&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;f4&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;f4&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray32Float&#39;</span><span class="p">,</span>
+    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;&lt;3u1&#39;</span><span class="p">,</span> <span class="s1">&#39;Bgr24&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;3u1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;3u1&#39;</span><span class="p">:</span> <span class="s1">&#39;Bgr24&#39;</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;&lt;3u2&#39;</span><span class="p">,</span> <span class="s1">&#39;Bgr48&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;3u2&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;3u2&#39;</span><span class="p">:</span> <span class="s1">&#39;Bgr48&#39;</span><span class="p">,</span>
+    <span class="mi">8</span><span class="p">:</span> <span class="s1">&#39;&lt;3f4&#39;</span><span class="p">,</span> <span class="s1">&#39;Bgr96Float&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;3f4&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;3f4&#39;</span><span class="p">:</span> <span class="s1">&#39;Bgr96Float&#39;</span><span class="p">,</span>
+    <span class="mi">9</span><span class="p">:</span> <span class="s1">&#39;&lt;4u1&#39;</span><span class="p">,</span> <span class="s1">&#39;Bgra32&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;4u1&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;4u1&#39;</span><span class="p">:</span> <span class="s1">&#39;Bgra32&#39;</span><span class="p">,</span>
+    <span class="mi">10</span><span class="p">:</span> <span class="s1">&#39;&lt;F8&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray64ComplexFloat&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;F8&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;F8&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray64ComplexFloat&#39;</span><span class="p">,</span>
+    <span class="mi">11</span><span class="p">:</span> <span class="s1">&#39;&lt;3F8&#39;</span><span class="p">,</span> <span class="s1">&#39;Bgr192ComplexFloat&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;3F8&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;3F8&#39;</span><span class="p">:</span> <span class="s1">&#39;Bgr192ComplexFloat&#39;</span><span class="p">,</span>
+    <span class="mi">12</span><span class="p">:</span> <span class="s1">&#39;&lt;i4&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray32&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;i4&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i4&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray32&#39;</span><span class="p">,</span>
+    <span class="mi">13</span><span class="p">:</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">,</span> <span class="s1">&#39;Gray64&#39;</span><span class="p">:</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">,</span> <span class="s1">&#39;&lt;i8&#39;</span><span class="p">:</span> <span class="s1">&#39;Gray64&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c1"># map dimension character to description</span>
+<span class="n">DIMENSIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;Sample&#39;</span><span class="p">,</span>  <span class="c1"># e.g. RGBA</span>
+    <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="s1">&#39;Width&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s1">&#39;Height&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="s1">&#39;Channel&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="s1">&#39;Slice&#39;</span><span class="p">,</span>  <span class="c1"># depth</span>
+    <span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="s1">&#39;Time&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;R&#39;</span><span class="p">:</span> <span class="s1">&#39;Rotation&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="s1">&#39;Scene&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;I&#39;</span><span class="p">:</span> <span class="s1">&#39;Illumination&#39;</span><span class="p">,</span>  <span class="c1"># direction</span>
+    <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="s1">&#39;Block&#39;</span><span class="p">,</span>  <span class="c1"># acquisition</span>
+    <span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="s1">&#39;Mosaic&#39;</span><span class="p">,</span>  <span class="c1"># tile</span>
+    <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="s1">&#39;Phase&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;V&#39;</span><span class="p">:</span> <span class="s1">&#39;View&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># map DirectoryEntryDV.compression to description</span>
+<span class="n">COMPRESSION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;Uncompressed&quot;</span><span class="p">,</span>
+    <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;JpgFile&quot;</span><span class="p">,</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;LZW&quot;</span><span class="p">,</span>
+    <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;JpegXrFile&quot;</span><span class="p">,</span>
+    <span class="c1"># 100 and up: camera/system specific specific RAW data</span>
+<span class="p">}</span>
+
+<span class="c1"># map DirectoryEntryDV.compression to decompression function</span>
+<span class="n">DECOMPRESS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>  <span class="c1"># uncompressed</span>
+    <span class="mi">2</span><span class="p">:</span> <span class="n">decode_lzw</span><span class="p">,</span>  <span class="c1"># LZW</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="n">_czifile</span><span class="p">:</span>
+    <span class="n">DECOMPRESS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_czifile</span><span class="o">.</span><span class="n">decode_jpeg</span>
+    <span class="n">DECOMPRESS</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">_czifile</span><span class="o">.</span><span class="n">decode_jxr</span>
+
+
+<span class="k">def</span> <span class="nf">czi2tif</span><span class="p">(</span><span class="n">czifile</span><span class="p">,</span> <span class="n">tiffile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert CZI file to memory-mappable TIFF file.</span>
+
+<span class="sd">    To read the image data from the created TIFF file: Read the &#39;StripOffsets&#39;</span>
+<span class="sd">    and &#39;ImageDescription&#39; tags from the first TIFF page. Get the &#39;dtype&#39; and</span>
+<span class="sd">    &#39;shape&#39; attributes from the ImageDescription string using a JSON decoder.</span>
+<span class="sd">    Memory-map &#39;product(shape) * sizeof(dtype)&#39; bytes in the file starting at</span>
+<span class="sd">    StripOffsets[0]. Cast the mapped bytes to an array of &#39;dtype&#39; and &#39;shape&#39;.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="n">print_</span> <span class="k">if</span> <span class="n">verbose</span> <span class="k">else</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">a</span><span class="p">,</span> <span class="o">**</span><span class="n">b</span><span class="p">:</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="n">tiffile</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tiffile</span> <span class="o">=</span> <span class="n">czifile</span> <span class="o">+</span> <span class="s1">&#39;.tif&#39;</span>
+    <span class="k">elif</span> <span class="n">tiffile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="n">tiffile</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Opening CZI file... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">CziFile</span><span class="p">(</span><span class="n">czifile</span><span class="p">)</span> <span class="k">as</span> <span class="n">czi</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">squeeze</span><span class="p">:</span>
+            <span class="n">shape</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">squeeze_axes</span><span class="p">(</span><span class="n">czi</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">czi</span><span class="o">.</span><span class="n">axes</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">shape</span>
+            <span class="n">axes</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">axes</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">czi</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">czi</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">itemsize</span>
+
+        <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2"> s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;Image</span><span class="se">\n</span><span class="s2">  axes:  </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  shape: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  dtype: </span><span class="si">%s</span><span class="se">\n</span><span class="s2">  size:  </span><span class="si">%s</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">format_size</span><span class="p">(</span><span class="n">size</span><span class="p">)),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tiffile</span><span class="p">:</span>
+            <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;Copying image from CZI file to RAM... &quot;</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;Creating empty TIF file... &quot;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;software&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;software&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;czi2tif&#39;</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;metadata&#39;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">memmap</span><span class="p">(</span><span class="n">tiffile</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                          <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">czi</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2"> s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+            <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;Copying image from CZI to TIF file... &quot;</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">verbose</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%.3f</span><span class="s2"> s&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Print function with flush support.&quot;&quot;&quot;</span>
+        <span class="n">flush</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;flush&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">flush</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">bytes2str</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return string from bytes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">b</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">basestring</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span>
+    <span class="n">unicode</span> <span class="o">=</span> <span class="nb">str</span>
+    <span class="n">print_</span> <span class="o">=</span> <span class="nb">print</span>
+
+    <span class="k">def</span> <span class="nf">bytes2str</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;cp1252&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return unicode string from bytes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">encoding</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">doctest</span>
+    <span class="n">numpy</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

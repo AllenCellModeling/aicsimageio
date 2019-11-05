@@ -925,16 +925,27 @@ class OMEXML(object):
             for td in tiffdatas:
                 self.node.remove(td)
 
-            # assumes xyczt
+            sizes = {
+                "Z": self.SizeZ,
+                "C": self.SizeC,
+                "T": self.SizeT
+            }
+            setters = {
+                "Z": OMEXML.TiffData.set_FirstZ,
+                "C": OMEXML.TiffData.set_FirstC,
+                "T": OMEXML.TiffData.set_FirstT,
+            }
+            # use DimensionOrder's last 3 characters
+            dims = self.DimensionOrder[-3:]
             ifd = 0
-            for i in range(self.SizeT):
-                for j in range(self.SizeZ):
-                    for k in range(self.SizeC):
+            for i in range(sizes[dims[2]]):
+                for j in range(sizes[dims[1]]):
+                    for k in range(sizes[dims[0]]):
                         new_tiffdata = OMEXML.TiffData(
                             ElementTree.SubElement(self.node, qn(self.ns['ome'], "TiffData")))
-                        new_tiffdata.set_FirstC(k)
-                        new_tiffdata.set_FirstZ(j)
-                        new_tiffdata.set_FirstT(i)
+                        setters[dims[2]](new_tiffdata, i)
+                        setters[dims[1]](new_tiffdata, j)
+                        setters[dims[0]](new_tiffdata, k)
                         new_tiffdata.set_IFD(ifd)
                         new_tiffdata.set_PlaneCount(1)
                         # child element <UUID FileName=""></UUID> is omitted here for single file ome tiffs

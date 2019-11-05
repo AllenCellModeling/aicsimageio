@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aicsimageio.vendor.omexml &mdash; aicsimageio 3.0.6 documentation</title>
+  <title>aicsimageio.vendor.omexml &mdash; aicsimageio 3.0.7 documentation</title>
   
 
   
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                3.0.6
+                3.0.7
               </div>
             
           
@@ -1105,16 +1105,27 @@
             <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="n">tiffdatas</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
 
-            <span class="c1"># assumes xyczt</span>
+            <span class="n">sizes</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SizeZ</span><span class="p">,</span>
+                <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SizeC</span><span class="p">,</span>
+                <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">SizeT</span>
+            <span class="p">}</span>
+            <span class="n">setters</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">TiffData</span><span class="o">.</span><span class="n">set_FirstZ</span><span class="p">,</span>
+                <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">TiffData</span><span class="o">.</span><span class="n">set_FirstC</span><span class="p">,</span>
+                <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">TiffData</span><span class="o">.</span><span class="n">set_FirstT</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="c1"># use DimensionOrder&#39;s last 3 characters</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DimensionOrder</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span>
             <span class="n">ifd</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SizeT</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SizeZ</span><span class="p">):</span>
-                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SizeC</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">]]):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]]):</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sizes</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]]):</span>
                         <span class="n">new_tiffdata</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">TiffData</span><span class="p">(</span>
                             <span class="n">ElementTree</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">,</span> <span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;ome&#39;</span><span class="p">],</span> <span class="s2">&quot;TiffData&quot;</span><span class="p">)))</span>
-                        <span class="n">new_tiffdata</span><span class="o">.</span><span class="n">set_FirstC</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-                        <span class="n">new_tiffdata</span><span class="o">.</span><span class="n">set_FirstZ</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
-                        <span class="n">new_tiffdata</span><span class="o">.</span><span class="n">set_FirstT</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                        <span class="n">setters</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">2</span><span class="p">]](</span><span class="n">new_tiffdata</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                        <span class="n">setters</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]](</span><span class="n">new_tiffdata</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+                        <span class="n">setters</span><span class="p">[</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]](</span><span class="n">new_tiffdata</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
                         <span class="n">new_tiffdata</span><span class="o">.</span><span class="n">set_IFD</span><span class="p">(</span><span class="n">ifd</span><span class="p">)</span>
                         <span class="n">new_tiffdata</span><span class="o">.</span><span class="n">set_PlaneCount</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
                         <span class="c1"># child element &lt;UUID FileName=&quot;&quot;&gt;&lt;/UUID&gt; is omitted here for single file ome tiffs</span>

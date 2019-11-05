@@ -52,7 +52,6 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/aicsimageio*.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ aicsimageio **/tests/
-	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 
 serve-docs: ## generate Sphinx HTML documentation, including API docs

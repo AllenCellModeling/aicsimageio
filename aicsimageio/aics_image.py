@@ -1,15 +1,18 @@
 import logging
-import typing
-from typing import Optional, Type
+from typing import Optional, Type, Union
 
 import numpy as np
 
 from . import constants, transforms, types
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import CziReader, DefaultReader, NdArrayReader, OmeTiffReader, TiffReader
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
+                      TiffReader)
 from .readers.reader import Reader
 
 log = logging.getLogger(__name__)
+
+###############################################################################
 
 
 class AICSImage:
@@ -85,7 +88,7 @@ class AICSImage:
 
     def __init__(
         self,
-        data: typing.Union[types.FileLike, np.ndarray],
+        data: Union[types.FileLike, np.ndarray],
         known_dims: Optional[str] = None,
         **kwargs,
     ):

@@ -155,7 +155,7 @@ class AICSImage:
             )
         return self._data
 
-    def size(self, dims: str = "STCZYX"):
+    def size(self, dims: str = constants.DEFAULT_DIMENSION_ORDER):
         """
         Parameters
         ----------
@@ -166,7 +166,7 @@ class AICSImage:
         Returns a tuple with the requested dimensions filled in
         """
         dims = dims.upper()
-        if not (all(d in "STCZYX" for d in dims)):
+        if not (all(d in constants.DEFAULT_DIMENSION_ORDER for d in dims)):
             raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
         if not (all(d in self.dims for d in dims)):
             raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")

@@ -42,3 +42,16 @@ class ConflictingArgumentsError(Exception):
     This exception is returned when 2 arguments to the same function are in conflict.
     """
     pass
+
+
+class InconsitentDataShapeException(Exception):
+    """
+    Intended to be thrown when data shapes between multiple arrays aren't equal.
+    """
+
+    def __init__(self, message: str, **kwargs):
+        super().__init__(**kwargs)
+        self.message = message
+
+    def __str__(self):
+        return self.message

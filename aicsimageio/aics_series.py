@@ -347,10 +347,9 @@ class AICSSeries:
         if self.series_dim in expected_dims:
             data = np.stack(read_data, axis=expected_dims.index(self.series_dim))
 
-        # Otherwise just make a fake axis and select first after
+        # Otherwise we know it is just a single image because operating axis didn't matter so pull that image data out
         else:
-            data = np.stack(read_data, axis=0)
-            data = data[0, ]
+            data = read_data[0]
 
         # Clean up read data to save on memory
         del read_data

@@ -96,3 +96,110 @@ def test_valid_data_shape(data_shape, operating_index, prior_shape):
 def test_size(images, series_dim, dims, expected_size):
     series = AICSSeries(images, series_dim)
     assert series.size(dims) == expected_size
+
+
+@pytest.mark.parametrize("images, series_dim, expected_sizes", [
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (1, 2, 1, 1, 325, 475)
+    ),
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "S",
+        (2, 1, 1, 1, 325, 475)
+    )
+])
+def test_single_dim_size_properties(images, series_dim, expected_sizes):
+    series = AICSSeries(images, series_dim)
+    assert series.size_s == expected_sizes[0]
+    assert series.size_t == expected_sizes[1]
+    assert series.size_c == expected_sizes[2]
+    assert series.size_z == expected_sizes[3]
+    assert series.size_y == expected_sizes[4]
+    assert series.size_x == expected_sizes[5]
+
+
+@pytest.mark.parametrize("images, series_dim, selections, expected_shape", [
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, 0, 0, 0, slice(None, None, None), slice(None, None, None)),
+        (325, 475)
+    ),
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, slice(None, None, None), 0, 0, slice(None, None, None), slice(None, None, None)),
+        (2, 325, 475)
+    ),
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0,),
+        (2, 1, 1, 325, 475)
+    ),
+    (
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, 1, 0, ),
+        (1, 325, 475)
+    ),
+    (
+        [DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff"],
+        "T",
+        (0, 1, ),
+        (10, 1, 1736, 1776,)
+    ),
+    # Fails because too many operations provided
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, 1, 0, 0, 0, 0, 0, 0),
+        None,
+        marks=pytest.mark.raises(exception=IndexError)
+    ),
+    # Fails because "hello" isn't a valid slice operation
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, 1, 0, "hello", ),
+        None,
+        marks=pytest.mark.raises(exception=TypeError)
+    ),
+    # Fails because requested index is out of range (for list of images)
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "T",
+        (0, 10, ),
+        None,
+        marks=pytest.mark.raises(exception=IndexError)
+    ),
+    # Fails because requested index is out of range (for actual data array)
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"],
+        "C",
+        (0, 10, ),
+        None,
+        marks=pytest.mark.raises(exception=IndexError)
+    ),
+    # Fails because different overall shape changes
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff"],
+        "T",
+        (0, ),
+        None,
+        marks=pytest.mark.raises(exception=exceptions.InconsitentDataShapeException)
+    ),
+    # Fails because size of c changes
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff"],
+        "C",
+        (0, ),
+        None,
+        marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError)
+    )
+])
+def test_getitem(images, series_dim, selections, expected_shape):
+    series = AICSSeries(images, series_dim)
+    assert series[selections].shape == expected_shape

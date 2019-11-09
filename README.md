@@ -19,10 +19,6 @@ A Python library for reading and writing image data with specific support for ha
     * `TIFF`
     * Any additional format supported by `imageio`
 
-### Disclaimer:
-This package is under heavy revision in preparation for version 3.0.0 release. The quick start below is representative
-of how to interact with the package under 3.0.0 and not under the current stable release.
-
 ## Quick Start
 ```python
 from aicsimageio import AICSImage, imread

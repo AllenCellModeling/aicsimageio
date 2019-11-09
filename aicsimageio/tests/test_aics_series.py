@@ -3,9 +3,10 @@
 
 from pathlib import Path
 
+import numpy as np
 import pytest
 
-from aicsimageio import AICSSeries, constants, exceptions
+from aicsimageio import AICSImage, AICSSeries, constants, exceptions
 
 ###############################################################################
 
@@ -200,6 +201,107 @@ def test_single_dim_size_properties(images, series_dim, expected_sizes):
         marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError)
     )
 ])
-def test_getitem(images, series_dim, selections, expected_shape):
+def test_getitem_fast_checks(images, series_dim, selections, expected_shape):
     series = AICSSeries(images, series_dim)
     assert series[selections].shape == expected_shape
+
+
+@pytest.mark.parametrize("image, selections", [
+    (
+        DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff",
+        (
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff",
+        (
+            0,
+            0,
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff",
+        (
+            0,
+            slice(None, None, None),
+            0,
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff",
+        (
+            slice(None, None, None),
+            slice(None, None, None),
+            0,
+            0,
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff",
+        (
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff",
+        (
+            0,
+            0,
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff",
+        (
+            0,
+            slice(None, None, None),
+            0,
+            slice(None, None, None),
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+    (
+        DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff",
+        (
+            slice(None, None, None),
+            slice(None, None, None),
+            0,
+            0,
+            slice(None, None, None),
+            slice(None, None, None)
+        )
+    ),
+])
+def test_getitem_deep_equal(image, selections):
+    with AICSImage(image) as img:
+        data = img.get_image_data("SCZYX")
+
+    stacked = np.stack([data, data], axis=1)
+    expected = stacked[selections]
+
+    series = AICSSeries([image, image], "T")
+    assert np.array_equal(series[selections], expected)

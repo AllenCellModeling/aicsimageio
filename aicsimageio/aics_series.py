@@ -305,11 +305,15 @@ class AICSSeries:
             to_read = [to_read]
 
         # Get the other operations required on each image by selection all operations except the one occuring on the
-        # operating index
+        # operating index, additionally, keep track of what we expect the dims to be out of these operations
         ops = []
+        expected_dims = []
         for i, op in enumerate(selections):
             if i != self.operating_index:
                 ops.append(op)
+
+            if isinstance(op, slice):
+                expected_dims.append(constants.DEFAULT_DIMENSION_ORDER[i])
 
         # Convert to Tuple
         ops = tuple(ops)
@@ -339,16 +343,17 @@ class AICSSeries:
             # TODO: Fix aicsimageio to do this clean up for us? I am not sure why it is being held onto
             del img
 
-        # Stack data
-        data = np.stack(read_data, axis=0)
+        # Stack data on series dim axis if expected and return
+        if self.series_dim in expected_dims:
+            data = np.stack(read_data, axis=expected_dims.index(self.series_dim))
+
+        # Otherwise just make a fake axis and select first after
+        else:
+            data = np.stack(read_data, axis=0)
+            data = data[0, ]
 
         # Clean up read data to save on memory
         del read_data
-
-        # If only a single point in the series dimension was requested, the stack should only be size 1 on axis 0
-        # In which case, we can simply reduce, as desired
-        if len(to_read) == 1:
-            data = data[0, ]
 
         return data
 

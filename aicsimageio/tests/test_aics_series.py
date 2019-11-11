@@ -22,21 +22,22 @@ DATA_DIR = Path(__file__).parent / "resources"
         [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"]
     ),
     (
-        DATA_DIR,
+        DATA_DIR / "series_data_valid",
         "T",
         [
-            DATA_DIR / "example.bmp",
-            DATA_DIR / "example.gif",
-            DATA_DIR / "example.jpg",
-            DATA_DIR / "example.png",
-            DATA_DIR / "example.txt",
-            DATA_DIR / "s_1_t_10_c_3_z_1.tiff",
-            DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff",
-            DATA_DIR / "s_1_t_1_c_1_z_1.czi",
-            DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff",
-            DATA_DIR / "s_1_t_1_c_1_z_1.tiff",
-            DATA_DIR / "s_3_t_1_c_3_z_5.czi",
-            DATA_DIR / "s_3_t_1_c_3_z_5.ome.tiff"
+            DATA_DIR / "series_data_valid" / "s_1_t_1_c_1_z_1_(0).ome.tiff",
+            DATA_DIR / "series_data_valid" / "s_1_t_1_c_1_z_1_(1).ome.tiff",
+            DATA_DIR / "series_data_valid" / "s_1_t_1_c_1_z_1_(2).ome.tiff",
+        ]
+    ),
+    # Doesn't fail because no checks are done on init
+    (
+        DATA_DIR / "series_data_invalid",
+        "T",
+        [
+            DATA_DIR / "series_data_invalid" / "example.png",
+            DATA_DIR / "series_data_invalid" / "s_1_t_1_c_10_z_1.ome.tiff",
+            DATA_DIR / "series_data_invalid" / "s_1_t_1_c_1_z_1.ome.tiff",
         ]
     ),
     pytest.param(
@@ -47,9 +48,9 @@ DATA_DIR = Path(__file__).parent / "resources"
     ),
     pytest.param(1, None, None, marks=pytest.mark.raises(exception=TypeError)),
     pytest.param([DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"], None, None, marks=pytest.mark.raises(exception=ValueError)),
-    pytest.param(DATA_DIR, 1, None, marks=pytest.mark.raises(exception=ValueError)),
-    pytest.param(DATA_DIR, "B", None, marks=pytest.mark.raises(exception=ValueError)),
-    pytest.param(DATA_DIR, "ABC", None, marks=pytest.mark.raises(exception=ValueError))
+    pytest.param(DATA_DIR / "series_data_valid", 1, None, marks=pytest.mark.raises(exception=ValueError)),
+    pytest.param(DATA_DIR / "series_data_valid", "B", None, marks=pytest.mark.raises(exception=ValueError)),
+    pytest.param(DATA_DIR / "series_data_valid", "ABC", None, marks=pytest.mark.raises(exception=ValueError))
 ])
 def test_aics_series_init(images, series_dim, expected_images):
     series = AICSSeries(images, series_dim)
@@ -151,6 +152,20 @@ def test_single_dim_size_properties(images, series_dim, expected_sizes):
         "T",
         (0, 1, ),
         (10, 1, 1736, 1776,)
+    ),
+    (
+        DATA_DIR / "series_data_valid",
+        "T",
+        (0, slice(None, None, None), 0, 0, ),
+        (3, 325, 475)
+    ),
+    # Fails because images found in directory have mixed shapes
+    pytest.param(
+        DATA_DIR / "series_data_invalid",
+        "T",
+        (0, slice(None, None, None), 0, 0, ),
+        None,
+        marks=pytest.mark.raises(exception=exceptions.InconsitentDataShapeException)
     ),
     # Fails because too many operations provided
     pytest.param(

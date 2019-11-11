@@ -48,7 +48,7 @@ DATA_DIR = Path(__file__).parent / "resources"
     ),
     pytest.param(1, None, None, marks=pytest.mark.raises(exception=TypeError)),
     pytest.param([DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"], None, None, marks=pytest.mark.raises(exception=ValueError)),
-    pytest.param(DATA_DIR / "series_data_valid", 1, None, marks=pytest.mark.raises(exception=ValueError)),
+    pytest.param(DATA_DIR / "series_data_valid", 1, None, marks=pytest.mark.raises(exception=AttributeError)),
     pytest.param(DATA_DIR / "series_data_valid", "B", None, marks=pytest.mark.raises(exception=ValueError)),
     pytest.param(DATA_DIR / "series_data_valid", "ABC", None, marks=pytest.mark.raises(exception=ValueError))
 ])
@@ -120,6 +120,33 @@ def test_single_dim_size_properties(images, series_dim, expected_sizes):
     assert series.size_z == expected_sizes[3]
     assert series.size_y == expected_sizes[4]
     assert series.size_x == expected_sizes[5]
+
+
+@pytest.mark.parametrize("images, series_dim", [
+    ([DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff"], "T"),
+    (DATA_DIR / "series_data_valid", "T"),
+    # Fails because different size C dimensions
+    pytest.param(
+        [DATA_DIR / "s_1_t_1_c_1_z_1.ome.tiff", DATA_DIR / "s_1_t_1_c_10_z_1.ome.tiff"],
+        "C",
+        marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError)
+    ),
+    # Fails because different size C dimensions
+    pytest.param(
+        DATA_DIR / "series_data_invalid",
+        "C",
+        marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError)
+    ),
+    # Fails because different image shapes
+    pytest.param(
+        DATA_DIR / "series_data_invalid",
+        "T",
+        marks=pytest.mark.raises(exception=exceptions.InconsitentDataShapeException)
+    )
+])
+def test_validate_series(images, series_dim):
+    series = AICSSeries(images, series_dim)
+    series.validate_series()
 
 
 @pytest.mark.parametrize("images, series_dim, selections, expected_shape", [

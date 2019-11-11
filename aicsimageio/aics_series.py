@@ -33,7 +33,7 @@ class AICSSeries:
     * Because each image is lazy loaded, we validate on every image read. If the image has different dimensions or
     sizes from the prior read image, an InvalidDimensionOrderingError or InconsitentDataShapeException is raised.
     * This class may be a temporary stop gap until chunked image reading is added to the core `AICSImage` class and if
-    and when that occurs, this class will be depreciated.
+    and when that occurs, this class will be deprecated.
     * No metadata is checked for ensuring that the data in each image is consistent across them all. Example being,
     channels in different indicies in different files across the series.
     """
@@ -44,7 +44,7 @@ class AICSSeries:
         series_dim: str
     ):
         """
-        Constructor for AICSSeries class intended for providing an interface for image reading of a list of file like
+        Constructor for AICSSeries class intended for providing an interface for image reading of a list of path like
         references.
 
         Parameters
@@ -92,6 +92,7 @@ class AICSSeries:
         images = [Path(img).expanduser().resolve(strict=True) for img in images]
 
         # Ensure that the series dim provided is part of the normal set and that only one dim is provided
+        series_dim = series_dim.upper()
         if (
             not isinstance(series_dim, str)
             or series_dim not in constants.DEFAULT_DIMENSION_ORDER
@@ -104,13 +105,31 @@ class AICSSeries:
 
         # All easy checks are now complete, store the image list and the series dim
         self._images = images
-        self._series_dim = series_dim.upper()
+        self._series_dim = series_dim
 
         # Set the initial state of the series for future validation
         # _shape is for ndarray shape consistency
         # _size is for fast access after read
         self._shape = None
         self._size = None
+
+    def validate_series(self):
+        """
+        Runs the validation conditions against every image provided to the series.
+
+        Raises an InvalidDimensionOrderingError or InconsitentDataShapeException if any images fail validation.
+        """
+        for img_path in self.images:
+            with AICSImage(img_path) as img:
+                # Set self._shape if not already set
+                if self._shape is None:
+                    self._shape = img.size()
+
+                # Ensure data consistency
+                self._ensure_valid_data_shape(img.size(), self.operating_index, self._shape)
+
+            # Clean up memory
+            del img
 
     @property
     def series_dim(self) -> str:
@@ -175,15 +194,17 @@ class AICSSeries:
                     f"Read shape: {data_shape}, prior shape: {prior_shape}"
                 )
 
-    def size(self, dims: str = constants.DEFAULT_DIMENSION_ORDER):
+    def size(self, dims: str = constants.DEFAULT_DIMENSION_ORDER) -> Tuple[int]:
         """
         Parameters
         ----------
-        dims: A string containing a list of dimensions being requested.  The default is to return the 6 standard dims
+        dims: str
+            A string containing a list of dimensions being requested.  The default is to return the six standard dims.
 
         Returns
         -------
-        Returns a tuple with the requested dimensions filled in
+        dims: Tuple[int]
+            Returns a tuple with the requested dimensions filled in
         """
         # Only run if shape has never been retrieved before
         if self._size is None:

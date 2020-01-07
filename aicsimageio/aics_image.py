@@ -1,93 +1,74 @@
-import logging
-import typing
-from typing import Optional, Type
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+import logging
+from typing import Any, List, Optional, Tuple, Type
+
+import dask.array as da
 import numpy as np
 
-from . import constants, transforms, types
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import CziReader, DefaultReader, NdArrayReader, OmeTiffReader, TiffReader
+from . import transforms, types
+from .constants import Dimensions
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
+                      TiffReader)
 from .readers.reader import Reader
 
+###############################################################################
+
 log = logging.getLogger(__name__)
+
+###############################################################################
 
 
 class AICSImage:
     """
-    AICSImage takes microscopy image data types (files / bytestreams) of varying dimensions ("ZYX", "TCZYX", "CYX") and
-    puts them into a consistent 6D "STCZYX" ordered numpy.ndarray. The data, metadata are lazy loaded and can be
+    AICSImage takes microscopy image data types (files) of varying dimensions ("ZYX", "TCZYX", "CYX") and
+    puts them into a consistent 6D "STCZYX" ordered dask array. The data, metadata are lazy loaded and can be
     accessed as needed. Note the dims are assumed to match "STCZYX" from right to left meaning if 4 dimensional
     data is provided then the dimensions are assigned to be "CZYX", 2 dimensional would be "YX". This guessed assignment
-    is only for file types without dimension metadata (ie not .ome.tiff or .czi).
-
-    Note: if you absolutely know the dims and they are not as guessed then you can override them by immediately setting
-    them after initialization see example below.
+    is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).
 
     Simple Example
     --------------
-    with open("filename.czi", 'rb') as fp:
-        img = AICSImage(fp)
-        data = img.data  # data is a 6D "STCZYX" object
-        metadata = img.metadata  # metadata from the file, an xml.etree
-        zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy.ndarray
-
-    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" cube
+    img = AICSImage("my_file.tiff")
+    data = img.data  # data is a 6D "STCZYX" dask array
+    metadata = img.metadata  # metadata from the file, an xml.etree
+    zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy array
+    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" dask array
+    zstack_t10_np = zstack_t10.compute()  # read the data from the file and convert from dask array to numpy array
 
     File Examples
     -------------
-
-    with AICSImage("filename.ome.tif") as img:
-        # do work with img
-        data = img.data
-        metadata = img.metadata
-        # img will be closed automatically at end of scope
-
-    OmeTif
-        img = AICSImage("filename.ome.tif")
-        img.close()
+    OME-TIFF
+        img = AICSImage("filename.ome.tiff")
     CZI (Zeiss)
-        img = AICSImage("filename.czi") or AICSImage("filename.czi", max_workers=8)
-        img.close()
-    Tiff
-        img = AICSImage("filename.tif")
-        img.close()
-    Png/Gif/...
+        img = AICSImage("filename.czi")
+    TIFF
+        img = AICSImage("filename.tiff")
+    PNG / GIF / ...
         img = AICSImage("filename.png")
-        img.close()
         img = AICSImage("filename.gif")
-        img.close()
 
-    Bytestream Examples
-    -------------------
-    OmeTif
-        with open("filename.ome.tif", 'rb') as fp:
-            img = AICSImage(fp)
-    CZI
-        with open("filename.czi", 'rb') as fp:
-            img = AICSImage(fp, max_workers=7)
-    Tiff/Png/Gif
-        with open("filename.png", 'rb') as fp:
-            img = AICSImage(fp)
+    dask.array.Array Example
+    ------------------------
+    blank = dask.array.zeros((2, 600, 900))
+    img = AICSImage(blank)
 
-    Numpy.ndarray Example
+    numpy.ndarray Example
     ---------------------
     blank = numpy.zeros((2, 600, 900))
     img = AICSImage(blank)
-
-    Example with known dimensions different than guessed
-    ----------------------------------------------------
-    img = AICSImage('TCXimage.gif')
-    img.reader.dims = 'TCX'
-    data = img.data  # get a 6D ndarray back in "STCZYX" order
     """
 
     SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
     def __init__(
         self,
-        data: typing.Union[types.FileLike, np.ndarray],
+        data: types.ImageLike,
         known_dims: Optional[str] = None,
-        **kwargs,
+        **kwargs
     ):
         """
         Constructor for AICSImage class intended for providing a unified interface for dealing with
@@ -96,36 +77,34 @@ class AICSImage:
 
         Parameters
         ----------
-        data: String with path to ometif/czi/tif/png/gif file, or ndarray with up to 6 dimensions
-        known_dims: Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
-        kwargs: Parameters to be passed through to the reader class
-                       max_workers (optional Czi) specifies the number of worker threads for the backend library
+        data: types.ImageLike
+            String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.
+        known_dims: Optional[str]
+            Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
         """
-
         # Hold onto known dims until data is requested
         self._known_dims = known_dims
 
         # Dims should nearly always be default dim order unless explictly overridden
-        self.dims = constants.DEFAULT_DIMENSION_ORDER
+        self.dims = Dimensions.DefaultOrder
 
-        # Lazy load later
-        self._data = None
-        self._metadata = None
+        # Determine reader class and create dask delayed array
+        reader_class = self.determine_reader(data=data)
+        self._reader = reader_class(data=data, **kwargs)
 
-        # Determine reader class and load data
-        reader_class = self.determine_reader(data)
-        self._reader = reader_class(data, **kwargs)
+        # Store dask arrays
+        self._data = self._reader.data
+        self._metadata = self._reader.metadata
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
-        """Cheaply check to see if a given file is a recognized type.
-        Currently recognized types are TIFF, OME TIFF, and CZI.
-        If the file is a TIFF, then the description (OME XML if it is OME TIFF) can be retrieved via read_description.
-        Similarly, if the file is a CZI, then the metadata XML can be retrieved via read_description.
+        """
+        Cheaply check to see if a given file is a recognized type and return the appropriate reader for the file.
         """
         # The order of the readers in this list is important.
-        # Example: if TiffReader was placed before OmeTiffReader, we would never use the OmeTiffReader.
+        # Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.
         for reader_class in [
+            # DaskArrayReader,
             NdArrayReader,
             CziReader,
             OmeTiffReader,
@@ -135,15 +114,16 @@ class AICSImage:
             if reader_class.is_this_type(data):
                 return reader_class
 
-        raise UnsupportedFileFormatError(type(data))
+        raise UnsupportedFileFormatError(data)
 
     @property
-    def data(self):
+    def data(self) -> da.core.Array:
         """
         Returns
         -------
-        Returns a numpy.ndarray with dimension ordering "STCZYX"
+        Returns a dask array with dimension ordering "STCZYX"
         """
+        # Construct dask array if never before constructed
         if self._data is None:
             reader_data = self._reader.data
 
@@ -155,85 +135,99 @@ class AICSImage:
             )
         return self._data
 
-    def size(self, dims: str = "STCZYX"):
+    def size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
         """
         Parameters
         ----------
-        dims: A string containing a list of dimensions being requested.  The default is to return the 6 standard dims
+        dims: str
+            A string containing a list of dimensions being requested. The default is to return the six standard dims.
 
         Returns
         -------
         Returns a tuple with the requested dimensions filled in
         """
+        # Ensure dims is an uppercase string
         dims = dims.upper()
-        if not (all(d in "STCZYX" for d in dims)):
+
+        # Check that dims requested are all a part of the available dims in the package
+        if not (all(d in Dimensions.DefaultOrder for d in dims)):
             raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
+
+        # Check that the dims requested are in the image dims
         if not (all(d in self.dims for d in dims)):
             raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
+
+        # Return the shape of the data for the dimensions requested
         return tuple([self.data.shape[self.dims.index(dim)] for dim in dims])
 
     @property
-    def size_x(self):
+    def size_x(self) -> int:
         """
         Returns
         -------
-        Returns the x size
+        size: int
+            The size of the Spatial X dimension.
         """
-        return self.size("X")[0]
+        return self.size(Dimensions.SpatialX)[0]
 
     @property
-    def size_y(self):
+    def size_y(self) -> int:
         """
         Returns
         -------
-        Returns the y size
+        size: int
+            The size of the Spatial Y dimension.
         """
-        return self.size("Y")[0]
+        return self.size(Dimensions.SpatialY)[0]
 
     @property
-    def size_z(self):
+    def size_z(self) -> int:
         """
         Returns
         -------
-        Returns the z size
+        size: int
+            The size of the Spatial Z dimension.
         """
-        return self.size("Z")[0]
+        return self.size(Dimensions.SpatialZ)[0]
 
     @property
-    def size_c(self):
+    def size_c(self) -> int:
         """
         Returns
         -------
-        Returns the c size
+        size: int
+            The size of the Channel dimension.
         """
-        return self.size("C")[0]
+        return self.size(Dimensions.Channel)[0]
 
     @property
-    def size_t(self):
+    def size_t(self) -> int:
         """
         Returns
         -------
-        Returns the t size
+        size: int
+            The size of the Time dimension.
         """
-        return self.size("T")[0]
+        return self.size(Dimensions.Time)[0]
 
     @property
-    def size_s(self):
+    def size_s(self) -> int:
         """
         Returns
         -------
-        Returns the s size
+        size: int
+            The size of the Scene dimension.
         """
-        return self.size("S")[0]
+        return self.size(Dimensions.Scene)[0]
 
     @property
-    def metadata(self):
+    def metadata(self) -> Any:
         """
         Returns
         -------
-        The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.
-        For pure image files and empty string or None is returned.
-
+        metadata: Any
+            The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.
+            For pure image files an empty string or None is returned.
         """
         if self._metadata is None:
             self._metadata = self._reader.metadata
@@ -248,20 +242,22 @@ class AICSImage:
 
         Returns
         -------
-        A child of Reader, CziReader OmeTiffReader, TiffReader, DefaultReader, etc.
-
+        reader: Reader
+            A child of Reader; CziReader OmeTiffReader, TiffReader, DefaultReader, etc.
         """
         return self._reader
 
-    def get_image_data(
-        self, out_orientation: str = None, copy: bool = False, **kwargs
-    ) -> np.ndarray:
+    # TODO:
+    # Convert from kwargs to labeled S, T, C, Z, Y, X arguments
+    def get_image_data(self, out_orientation: Optional[str] = None, **kwargs) -> np.ndarray:
         """
+        Get specific dimension image data out of an image as a numpy array.
 
         Parameters
         ----------
-        out_orientation: A string containing the dimension ordering desired for the returned ndarray
-        copy: boolean value to get image data by reference or by value [True, False]
+        out_orientation: Optional[str]
+            A string containing the dimension ordering desired for the returned ndarray.
+            Default: The current image dimensions. i.e. `self.dims`
 
         kwargs:
             C=1: specifies Channel 1
@@ -270,23 +266,27 @@ class AICSImage:
 
         Returns
         -------
-        ndarray with dimension ordering that was specified with out_orientation
-        Note: if a requested dimension is not present in the data the dimension is added with
-        a depth of 1. The default return dimensions are "STCZYX".
+        data: np.ndarray
+            The read data with the dimension ordering that was specified with out_orientation.
+
+        Note: If a requested dimension is not present in the data the dimension is added with
+        a depth of 1.
         """
-        out_orientation = self.dims if out_orientation is None else out_orientation
-        if out_orientation == self.dims:
-            return self.data
+        # If no out orientation, simply return current data as numpy array
+        if out_orientation is None:
+            return self.data.compute()
+
+        # Transform and return
         return transforms.reshape_data(
             data=self.data,
             given_dims=self.dims,
             return_dims=out_orientation,
-            copy=copy,
             **kwargs,
-        )
+        ).compute()
 
-    def get_channel_names(self, scene: int = 0):
+    def get_channel_names(self, scene: int = 0) -> List[str]:
         """
+        Get the image's channel names.
 
         Parameters
         ----------
@@ -302,20 +302,9 @@ class AICSImage:
             names = [str(i) for i in range(self.size_c)]
         return names
 
-    def close(self):
-        self.reader.close()
-
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
-    def __enter__(self):
-        return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-
-
-def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
-    with AICSImage(data, **kwargs) as image:
-        imagedata = image.data
-    return imagedata
+def imread(data: types.ImageLike, **kwargs) -> da.core.Array:
+    return AICSImage(data, **kwargs).data

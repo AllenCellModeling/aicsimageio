@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from .aics_image import AICSImage  # noqa: F401
 from .aics_image import imread  # noqa: F401
 

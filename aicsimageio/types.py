@@ -7,8 +7,9 @@ Collection of types used across multiple objects and functions.
 
 from io import BufferedIOBase
 from pathlib import Path
-from typing import Union, NamedTuple, Any
+from typing import Any, NamedTuple, Union
 
+import dask.array as da
 import numpy as np
 
 # Imaging Data Types
@@ -18,7 +19,7 @@ SixDArray = np.ndarray  # In order STCZYX
 PathLike = Union[str, Path]
 BufferLike = Union[bytes, BufferedIOBase]
 FileLike = Union[PathLike, BufferLike]
-ImageLike = Union[FileLike, np.ndarray]
+ImageLike = Union[FileLike, np.ndarray, da.core.Array]
 
 
 class LoadResults(NamedTuple):

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 class UnsupportedFileFormatError(Exception):
@@ -6,12 +8,12 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, type_, **kwargs):
+    def __init__(self, data, **kwargs):
         super().__init__(**kwargs)
-        self.type_ = type_
+        self.data = data
 
     def __str__(self):
-        return f"AICSImage module does not support this image file type: '{self.type_}'"
+        return f"AICSImage module does not support this image file type: '{self.data}'."
 
 
 class InvalidDimensionOrderingError(Exception):

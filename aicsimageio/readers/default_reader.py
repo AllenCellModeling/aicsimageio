@@ -3,8 +3,8 @@
 
 import io
 
+import dask.array as da
 import imageio
-import numpy as np
 
 from .. import exceptions
 from .reader import Reader
@@ -12,29 +12,19 @@ from .reader import Reader
 
 class DefaultReader(Reader):
     """
-    DefaultReader('file.jpg')
-
-    A catch all for image file reading that uses imageio as its back end.
+    A catch all for image file reading that uses imageio for reading.
 
     Parameters
     ----------
-    file: types.FileLike
+    data: types.FileLike
         A path or bytes object to read from.
-
-    Notes
-    -----
-    Because this is simply a wrapper around imageio, no metadata is returned. However, dimension order is returned with
-    dimensions assumed in order but with extra dimensions removed depending on image shape.
-
-    This reader always returns the first YX plane of an image. If you need to read GIFs for example, please use
-    `imageio.mimread` to get a list of YXC planes for the frames of the GIF.
-
-    For more details about how `imageio.imread`, differs from `imageio.volread` and `imageio.mimread`, please refer to
-    their documentation.
     """
 
     @property
-    def data(self) -> np.ndarray:
+    def data(self) -> da.core.Array:
+        # TODO:
+        # try catch mimread then imread from imageio
+        # wrap the results in dask array
         if self._data is None:
             self._data = imageio.imread(self._bytes)
 
@@ -79,7 +69,8 @@ class DefaultReader(Reader):
         return None
 
     @staticmethod
-    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
+    def _is_this_type(buffer: io.BytesIO) -> bool:
+        # Use imageio to check if they have a reader for this file
         try:
             imageio.get_reader(buffer)
             return True

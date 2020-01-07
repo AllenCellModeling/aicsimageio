@@ -1,4 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
-DEFAULT_DIMENSION_ORDER = "STCZYX"
+class Dimensions:
+    B = "B"
+    Scene = "S"
+    Time = "T"
+    Channel = "C"
+    SpatialZ = "Z"
+    SpatialY = "Y"
+    SpatialX = "X"
+    DefaultOrderList = [Scene, Time, Channel, SpatialZ, SpatialY, SpatialX]
+    DefaultOrder = "".join(DefaultOrderList)

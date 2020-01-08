@@ -9,9 +9,9 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
+    "aicspylibczi>=2.4.1",
     "numpy>=1.16",
     "imageio>=2.3.0",
-    "scipy>=1.1.0",
     "tifffile==0.15.1",
 ]
 

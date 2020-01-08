@@ -30,15 +30,6 @@ class InvalidDimensionOrderingError(Exception):
         return self.message
 
 
-class MultiSceneCziException(Exception):
-    """
-    This exception is intended to be thrown when a CZI file has multiple scenes. This is only to
-    be thrown if the Reader is given a multi-scene CZI files and the backend library isn't able
-    to read multi-scene CZI.
-    """
-    pass
-
-
 class ConflictingArgumentsError(Exception):
     """
     This exception is returned when 2 arguments to the same function are in conflict.

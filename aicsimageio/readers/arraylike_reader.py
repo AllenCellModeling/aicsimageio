@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Union
+
+import dask.array as da
 import numpy as np
 
 from .. import exceptions
 from .reader import Reader
 
 
-class NdArrayReader(Reader):
+class ArrayLikeReader(Reader):
     """
-    NdArrayReader(np.ones((1,2,3)))
-
-    A catch all for numpy ndarray reading.
+    A catch all for numpy ndarray and dask array reading.
 
     Parameters
     ----------
-    arr: numpy.ndarray
-        An in memory numpy ndarray.
+    arr: Union[numpy.ndarray, da.core.Array]
+        An in memory numpy ndarray or preconfigured dask array.
 
     Notes
     -----
@@ -24,12 +25,20 @@ class NdArrayReader(Reader):
     returned with dimensions assumed in order but with extra dimensions removed depending on image shape.
     """
 
-    def __init__(self, arr: np.ndarray):
-        self._data = arr
+    def __init__(self, arr: Union[np.ndarray, da.core.Array]):
+        # Store data as dask array
+        if isinstance(arr, np.ndarray):
+            self._data = da.from_array(arr)
+        elif isinstance(arr, da.core.Array):
+            self._data = arr
+        else:
+            raise TypeError(arr)
+
+        # Guess dims
         self._dims = self.guess_dim_order(self.data.shape)
 
     @property
-    def data(self) -> np.ndarray:
+    def data(self) -> da.core.Array:
         return self._data
 
     @property
@@ -54,8 +63,8 @@ class NdArrayReader(Reader):
         return None
 
     @staticmethod
-    def _is_this_type(arr: np.ndarray) -> bool:
-        return isinstance(arr, np.ndarray)
+    def _is_this_type(arr: Union[np.ndarray, da.core.Array]) -> bool:
+        return isinstance(arr, (np.ndarray, da.core.Array))
 
     def close(self) -> None:
         pass

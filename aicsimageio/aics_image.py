@@ -11,13 +11,19 @@ from . import transforms, types
 from .constants import Dimensions
 from .exceptions import (InvalidDimensionOrderingError,
                          UnsupportedFileFormatError)
-from .readers import (CziReader, DefaultReader, NdArrayReader, OmeTiffReader,
+from .readers import (ArrayLikeReader, CziReader, DefaultReader, OmeTiffReader,
                       TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
 
 log = logging.getLogger(__name__)
+
+###############################################################################
+
+# The order of the readers in this list is important.
+# Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.
+SUPPORTED_READERS = [ArrayLikeReader, CziReader, OmeTiffReader, TiffReader, DefaultReader]
 
 ###############################################################################
 
@@ -62,8 +68,6 @@ class AICSImage:
     img = AICSImage(blank)
     """
 
-    SUPPORTED_READERS = [CziReader, OmeTiffReader, TiffReader, DefaultReader]
-
     def __init__(
         self,
         data: types.ImageLike,
@@ -73,7 +77,7 @@ class AICSImage:
         """
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of
-        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS in AICSImage.
+        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.
 
         Parameters
         ----------
@@ -101,16 +105,8 @@ class AICSImage:
         """
         Cheaply check to see if a given file is a recognized type and return the appropriate reader for the file.
         """
-        # The order of the readers in this list is important.
-        # Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.
-        for reader_class in [
-            # DaskArrayReader,
-            NdArrayReader,
-            CziReader,
-            OmeTiffReader,
-            TiffReader,
-            DefaultReader,
-        ]:
+        # Iterate through the ordered supported readers to find the right one
+        for reader_class in SUPPORTED_READERS:
             if reader_class.is_this_type(data):
                 return reader_class
 

@@ -327,5 +327,39 @@ class AICSImage:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
 
-def imread(data: types.ImageLike, **kwargs) -> da.core.Array:
+def imreada(data: types.ImageLike, **kwargs) -> da.core.Array:
+    """
+    Read image as a dask array.
+
+    Parameters
+    ----------
+    data: types.ImageLike
+        A filepath, in memory numpy array, or preconfigured dask array.
+    kwargs: Dict[str, Any]
+        Any extra arguments to passed down to AICSImage and subsequent readers.
+
+    Returns
+    -------
+    data: da.core.Array
+        The image read and configured as a dask array.
+    """
     return AICSImage(data, **kwargs).data
+
+
+def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
+    """
+    Read image as a numpy ndarray.
+
+    Parameters
+    ----------
+    data: types.ImageLike
+        A filepath, in memory numpy array, or preconfigured dask array.
+    kwargs: Dict[str, Any]
+        Any extra arguments to passed down to AICSImage and subsequent readers.
+
+    Returns
+    -------
+    data: np.ndarray
+        The image read and configured as a numpy ndarray.
+    """
+    return imreada(data, **kwargs).compute()

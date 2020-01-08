@@ -19,6 +19,13 @@ class Reader(ABC):
     _metadata = None
 
     def __init__(self, file: types.ImageLike, **kwargs):
+        # This will both fully expand and enforce that the filepath exists
+        file = Path(file).expanduser().resolve(strict=True)
+
+        # This will check if the above enforced filepath is a directory
+        if file.is_dir():
+            raise IsADirectoryError(file)
+
         self._file = file
 
     @staticmethod

@@ -16,7 +16,7 @@ class ArrayLikeReader(Reader):
 
     Parameters
     ----------
-    arr: Union[numpy.ndarray, da.core.Array]
+    data: Union[numpy.ndarray, da.core.Array]
         An in memory numpy ndarray or preconfigured dask array.
 
     Notes
@@ -25,14 +25,14 @@ class ArrayLikeReader(Reader):
     returned with dimensions assumed in order but with extra dimensions removed depending on image shape.
     """
 
-    def __init__(self, arr: Union[np.ndarray, da.core.Array]):
+    def __init__(self, data: Union[np.ndarray, da.core.Array], **kwargs):
         # Store data as dask array
-        if isinstance(arr, np.ndarray):
-            self._data = da.from_array(arr)
-        elif isinstance(arr, da.core.Array):
-            self._data = arr
+        if isinstance(data, np.ndarray):
+            self._data = da.from_array(data)
+        elif isinstance(data, da.core.Array):
+            self._data = data
         else:
-            raise TypeError(arr)
+            raise TypeError(data)
 
         # Guess dims
         self._dims = self.guess_dim_order(self.data.shape)

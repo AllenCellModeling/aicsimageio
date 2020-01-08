@@ -96,9 +96,11 @@ class AICSImage:
         reader_class = self.determine_reader(data=data)
         self._reader = reader_class(data=data, **kwargs)
 
-        # Store dask arrays
-        self._data = self._reader.data
-        self._metadata = self._reader.metadata
+        # todo:
+        # switch from lazy load to load dask arrays on init
+        # Lazy load data from reader and reformat to standard dimensions
+        self._data = None
+        self._metadata = None
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:

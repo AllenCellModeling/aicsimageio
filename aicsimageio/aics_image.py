@@ -249,6 +249,41 @@ class AICSImage:
 
     # TODO:
     # Convert from kwargs to labeled S, T, C, Z, Y, X arguments
+    def get_image_data_da(self, out_orientation: Optional[str] = None, **kwargs) -> da.core.Array:
+        """
+        Get specific dimension image data out of an image as a dask array.
+
+        Parameters
+        ----------
+        out_orientation: Optional[str]
+            A string containing the dimension ordering desired for the returned ndarray.
+            Default: The current image dimensions. i.e. `self.dims`
+
+        kwargs:
+            C=1: specifies Channel 1
+            T=3: specifies the fourth index in T
+            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation
+
+        Returns
+        -------
+        data: dask array
+            The read data with the dimension ordering that was specified with out_orientation.
+
+        Note: If a requested dimension is not present in the data the dimension is added with
+        a depth of 1.
+        """
+        # If no out orientation, simply return current data as numpy array
+        if out_orientation is None:
+            return self.data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims,
+            return_dims=out_orientation,
+            **kwargs,
+        )
+
     def get_image_data(self, out_orientation: Optional[str] = None, **kwargs) -> np.ndarray:
         """
         Get specific dimension image data out of an image as a numpy array.
@@ -272,17 +307,7 @@ class AICSImage:
         Note: If a requested dimension is not present in the data the dimension is added with
         a depth of 1.
         """
-        # If no out orientation, simply return current data as numpy array
-        if out_orientation is None:
-            return self.data.compute()
-
-        # Transform and return
-        return transforms.reshape_data(
-            data=self.data,
-            given_dims=self.dims,
-            return_dims=out_orientation,
-            **kwargs,
-        ).compute()
+        return self.get_image_data(out_orientation=out_orientation, **kwargs).compute()
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """

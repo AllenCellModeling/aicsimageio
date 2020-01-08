@@ -18,6 +18,7 @@ requirements = [
 test_requirements = [
     "codecov",
     "flake8",
+    "psutil",
     "pytest",
     "pytest-cov",
     "pytest-raises",

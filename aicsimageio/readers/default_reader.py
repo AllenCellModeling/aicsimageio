@@ -2,9 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import io
+from pathlib import Path
+from typing import Any, Dict
 
 import dask.array as da
 import imageio
+import numpy as np
+from dask import delayed
 
 from .. import exceptions
 from .reader import Reader
@@ -16,36 +20,69 @@ class DefaultReader(Reader):
 
     Parameters
     ----------
-    data: types.FileLike
-        A path or bytes object to read from.
+    file: types.ImageLike
+        String with path to file.
     """
+
+    @staticmethod
+    def _get_data(file: Path, index: int) -> np.ndarray:
+        with imageio.get_reader(file) as reader:
+            return np.asarray(reader.get_data(index))
 
     @property
     def data(self) -> da.core.Array:
-        # TODO:
-        # try catch mimread then imread from imageio
-        # wrap the results in dask array
+        # Construct delayed many image reads
         if self._data is None:
-            self._data = imageio.imread(self._bytes)
+            try:
+                with imageio.get_reader(self._file) as reader:
+                    # Store length as it is used a bunch
+                    image_length = reader.get_length()
+
+                    # Handle single image formats like png, jpeg, etc
+                    if image_length == 1:
+                        self._data = da.from_array(self._get_data(self._file, 0))
+
+                    # Handle many image formats like gif, mp4, etc
+                    elif image_length > 1:
+                        # Get a sample image
+                        sample = self._get_data(self._file, 0)
+
+                        # Create operating shape for the final dask array by prepending image length to a tuple of
+                        # ones that is the same length as the sample shape
+                        operating_shape = (image_length, ) + ((1, ) * len(sample.shape))
+                        # Create numpy array of empty arrays for delayed get data functions
+                        lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                        for indicies, _ in np.ndenumerate(lazy_arrays):
+                            lazy_arrays[indicies] = da.from_delayed(
+                                delayed(self._get_data)(self._file, indicies[0]),
+                                shape=sample.shape,
+                                dtype=sample.dtype
+                            )
+
+                        # Block them into a single dask array
+                        self._data = da.block(lazy_arrays.tolist())
+
+                    # Catch all other image types as unsupported
+                    # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
+                    else:
+                        raise ValueError()
+
+            # Catch not a supported image
+            except ValueError:
+                raise exceptions.UnsupportedFileFormatError(self._file)
 
         return self._data
 
     @property
     def dims(self) -> str:
-        """
-        `imageio.imread` returns the first YX plane of an image, except in the case where the image is RGB / RGBA, in
-        which case it returns the first YXC plane of an image.
-
-        This dims property handles those cases by making assumptions about the dimension order based off the shape of
-        the data stored in the reader. In the case where more data than an YXC plane is returned, it uses the
-        `guess_dim_order` function. However, I can't tell when that should ever get run and is really just used as a
-        safety catch all.
-        """
+        # Set dims if not set
         if self._dims is None:
             if len(self.data.shape) == 2:
                 self._dims = "YX"
             elif len(self.data.shape) == 3:
                 self._dims = "YXC"
+            elif len(self.data.shape) == 4:
+                self._dims = "TYXC"
             else:
                 self._dims = self.guess_dim_order(self.data.shape)
 
@@ -65,14 +102,19 @@ class DefaultReader(Reader):
         self._dims = dims
 
     @property
-    def metadata(self) -> None:
-        return None
+    def metadata(self) -> Dict[str, Any]:
+        if self._metadata is None:
+            with imageio.get_reader(self._file) as reader:
+                reader = imageio.get_reader(self._file)
+                self._metadata = reader.get_meta_data()
+
+        return self._metadata
 
     @staticmethod
     def _is_this_type(buffer: io.BytesIO) -> bool:
         # Use imageio to check if they have a reader for this file
         try:
-            imageio.get_reader(buffer)
-            return True
+            with imageio.get_reader(buffer):
+                return True
         except ValueError:
             return False

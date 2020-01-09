@@ -4,8 +4,9 @@
 import logging
 from typing import Any, List, Optional, Tuple, Type
 
-import dask.array as da
 import numpy as np
+
+import dask.array as da
 
 from . import transforms, types
 from .constants import Dimensions
@@ -329,7 +330,7 @@ class AICSImage:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
 
-def imreada(data: types.ImageLike, **kwargs) -> da.core.Array:
+def imread_da(data: types.ImageLike, **kwargs) -> da.core.Array:
     """
     Read image as a dask array.
 
@@ -364,4 +365,4 @@ def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
     data: np.ndarray
         The image read and configured as a numpy ndarray.
     """
-    return imreada(data, **kwargs).compute()
+    return imread_da(data, **kwargs).compute()

@@ -30,9 +30,9 @@ class DefaultReader(Reader):
             return np.asarray(reader.get_data(index))
 
     @property
-    def data(self) -> da.core.Array:
+    def dask_data(self) -> da.core.Array:
         # Construct delayed many image reads
-        if self._data is None:
+        if self._dask_data is None:
             try:
                 with imageio.get_reader(self._file) as reader:
                     # Store length as it is used a bunch
@@ -40,7 +40,7 @@ class DefaultReader(Reader):
 
                     # Handle single image formats like png, jpeg, etc
                     if image_length == 1:
-                        self._data = da.from_array(self._get_data(self._file, 0))
+                        self._dask_data = da.from_array(self._get_data(self._file, 0))
 
                     # Handle many image formats like gif, mp4, etc
                     elif image_length > 1:
@@ -60,7 +60,7 @@ class DefaultReader(Reader):
                             )
 
                         # Block them into a single dask array
-                        self._data = da.block(lazy_arrays.tolist())
+                        self._dask_data = da.block(lazy_arrays.tolist())
 
                     # Catch all other image types as unsupported
                     # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
@@ -71,7 +71,7 @@ class DefaultReader(Reader):
             except ValueError:
                 raise exceptions.UnsupportedFileFormatError(self._file)
 
-        return self._data
+        return self._dask_data
 
     @property
     def dims(self) -> str:

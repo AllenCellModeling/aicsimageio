@@ -4,9 +4,8 @@
 import logging
 from typing import Any, List, Optional, Tuple, Type
 
-import numpy as np
-
 import dask.array as da
+import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
@@ -100,6 +99,7 @@ class AICSImage:
         # todo:
         # switch from lazy load to load dask arrays on init
         # Lazy load data from reader and reformat to standard dimensions
+        self._dask_data = None
         self._data = None
         self._metadata = None
 
@@ -116,22 +116,29 @@ class AICSImage:
         raise UnsupportedFileFormatError(data)
 
     @property
-    def data(self) -> da.core.Array:
+    def dask_data(self) -> da.core.Array:
         """
         Returns
         -------
         Returns a dask array with dimension ordering "STCZYX"
         """
         # Construct dask array if never before constructed
-        if self._data is None:
-            reader_data = self._reader.data
+        if self._dask_data is None:
+            reader_data = self._reader.dask_data
 
             # Read and reshape and handle delayed known dims reshape
-            self._data = transforms.reshape_data(
+            self._dask_data = transforms.reshape_data(
                 data=reader_data,
                 given_dims=self._known_dims or self.reader.dims,
                 return_dims=self.dims,
             )
+        return self._dask_data
+
+    @property
+    def data(self) -> np.ndarray:
+        if self._data is None:
+            self._data = self.dask_data.compute()
+
         return self._data
 
     def size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
@@ -157,7 +164,7 @@ class AICSImage:
             raise InvalidDimensionOrderingError(f"Invalid dimensions requested: {dims}")
 
         # Return the shape of the data for the dimensions requested
-        return tuple([self.data.shape[self.dims.index(dim)] for dim in dims])
+        return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
 
     @property
     def size_x(self) -> int:
@@ -248,7 +255,7 @@ class AICSImage:
 
     # TODO:
     # Convert from kwargs to labeled S, T, C, Z, Y, X arguments
-    def get_image_data_da(self, out_orientation: Optional[str] = None, **kwargs) -> da.core.Array:
+    def get_image_dask_data(self, out_orientation: Optional[str] = None, **kwargs) -> da.core.Array:
         """
         Get specific dimension image data out of an image as a dask array.
 
@@ -273,11 +280,11 @@ class AICSImage:
         """
         # If no out orientation, simply return current data as numpy array
         if out_orientation is None:
-            return self.data
+            return self.dask_data
 
         # Transform and return
         return transforms.reshape_data(
-            data=self.data,
+            data=self.dask_data,
             given_dims=self.dims,
             return_dims=out_orientation,
             **kwargs,
@@ -330,7 +337,7 @@ class AICSImage:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
 
-def imread_da(data: types.ImageLike, **kwargs) -> da.core.Array:
+def imread_dask(data: types.ImageLike, **kwargs) -> da.core.Array:
     """
     Read image as a dask array.
 
@@ -346,7 +353,7 @@ def imread_da(data: types.ImageLike, **kwargs) -> da.core.Array:
     data: da.core.Array
         The image read and configured as a dask array.
     """
-    return AICSImage(data, **kwargs).data
+    return AICSImage(data, **kwargs).dask_data
 
 
 def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
@@ -365,4 +372,4 @@ def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
     data: np.ndarray
         The image read and configured as a numpy ndarray.
     """
-    return imread_da(data, **kwargs).compute()
+    return AICSImage(data, **kwargs).data

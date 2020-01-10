@@ -44,14 +44,16 @@ def test_default_reader(
     assert len(proc.open_files()) == 0
 
     # Check basics
-    assert img.data.shape == expected_shape
+    assert img.dask_data.shape == expected_shape
     assert img.dims == expected_dims
-    assert img.data.chunksize == expected_chunksize
+    assert img.dask_data.chunksize == expected_chunksize
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
-        in_mem = img.data.compute()
+        from_compute = img.dask_data.compute()
+        in_mem = img.data
         assert isinstance(in_mem, np.ndarray)
+        assert np.array_equal(from_compute, in_mem)
         assert in_mem.shape == expected_shape
         assert len(prof.results) == expected_task_count
 

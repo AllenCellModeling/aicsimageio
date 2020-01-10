@@ -14,6 +14,7 @@ from ..constants import Dimensions
 
 
 class Reader(ABC):
+    _dask_data = None
     _data = None
     _dims = None
     _metadata = None
@@ -72,8 +73,14 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def data(self) -> da.core.Array:
+    def dask_data(self) -> da.core.Array:
         pass
+
+    @property
+    def data(self) -> np.ndarray:
+        if self._data is None:
+            self._data = self.dask_data.compute()
+        return self._data
 
     @property
     @abstractmethod

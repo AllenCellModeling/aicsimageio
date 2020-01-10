@@ -28,9 +28,9 @@ class ArrayLikeReader(Reader):
     def __init__(self, data: Union[np.ndarray, da.core.Array], **kwargs):
         # Store data as dask array
         if isinstance(data, np.ndarray):
-            self._data = da.from_array(data)
+            self._dask_data = da.from_array(data)
         elif isinstance(data, da.core.Array):
-            self._data = data
+            self._dask_data = data
         else:
             raise TypeError(data)
 
@@ -38,8 +38,8 @@ class ArrayLikeReader(Reader):
         self._dims = self.guess_dim_order(self.data.shape)
 
     @property
-    def data(self) -> da.core.Array:
-        return self._data
+    def dask_data(self) -> da.core.Array:
+        return self._dask_data
 
     @property
     def dims(self) -> str:

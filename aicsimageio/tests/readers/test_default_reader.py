@@ -50,11 +50,8 @@ def test_default_reader(
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
-        from_compute = img.dask_data.compute()
-        in_mem = img.data
-        assert isinstance(in_mem, np.ndarray)
-        assert np.array_equal(from_compute, in_mem)
-        assert in_mem.shape == expected_shape
+        assert isinstance(img.data, np.ndarray)
+        assert img.data.shape == expected_shape
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after retrieval

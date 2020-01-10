@@ -77,25 +77,25 @@ class DefaultReader(Reader):
     def dims(self) -> str:
         # Set dims if not set
         if self._dims is None:
-            if len(self.data.shape) == 2:
+            if len(self.dask_data.shape) == 2:
                 self._dims = "YX"
-            elif len(self.data.shape) == 3:
+            elif len(self.dask_data.shape) == 3:
                 self._dims = "YXC"
-            elif len(self.data.shape) == 4:
+            elif len(self.dask_data.shape) == 4:
                 self._dims = "TYXC"
             else:
-                self._dims = self.guess_dim_order(self.data.shape)
+                self._dims = self.guess_dim_order(self.dask_data.shape)
 
         return self._dims
 
     @dims.setter
     def dims(self, dims: str):
         # Check amount of provided dims against data shape
-        if len(dims) != len(self.data.shape):
+        if len(dims) != len(self.dask_data.shape):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+                f"for image with {len(self.dask_data.shape)} dimensions [shape: {self.dask_data.shape}]."
             )
 
         # Set the dims

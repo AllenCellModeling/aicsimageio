@@ -35,7 +35,7 @@ class ArrayLikeReader(Reader):
             raise TypeError(data)
 
         # Guess dims
-        self._dims = self.guess_dim_order(self.data.shape)
+        self._dims = self.guess_dim_order(self.dask_data.shape)
 
     @property
     def dask_data(self) -> da.core.Array:
@@ -48,11 +48,11 @@ class ArrayLikeReader(Reader):
     @dims.setter
     def dims(self, dims: str):
         # Check amount of provided dims against data shape
-        if len(dims) != len(self.data.shape):
+        if len(dims) != len(self.dask_data.shape):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated array. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+                f"for image with {len(self.dask_data.shape)} dimensions [shape: {self.dask_data.shape}]."
             )
 
         # Set the dims

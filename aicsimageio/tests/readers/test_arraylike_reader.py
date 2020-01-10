@@ -36,9 +36,6 @@ def test_arraylike_reader(arr, expected_shape, expected_dims, expected_chunksize
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
-        from_compute = reader.dask_data.compute()
-        in_mem = reader.data
-        assert isinstance(in_mem, np.ndarray)
-        assert np.array_equal(from_compute, in_mem)
-        assert in_mem.shape == expected_shape
+        assert isinstance(reader.data, np.ndarray)
+        assert reader.data.shape == expected_shape
         assert len(prof.results) == expected_task_count

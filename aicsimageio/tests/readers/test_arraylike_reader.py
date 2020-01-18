@@ -30,9 +30,12 @@ def test_arraylike_reader(arr, expected_shape, expected_dims, expected_chunksize
     reader = ArrayLikeReader(arr)
 
     # Check basics
-    assert reader.dask_data.shape == expected_shape
-    assert reader.dims == expected_dims
-    assert reader.dask_data.chunksize == expected_chunksize
+    with Profiler() as prof:
+        assert reader.dask_data.shape == expected_shape
+        assert reader.dims == expected_dims
+        assert reader.dask_data.chunksize == expected_chunksize
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:

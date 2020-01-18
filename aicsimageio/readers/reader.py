@@ -9,7 +9,7 @@ from typing import Any, Tuple
 import dask.array as da
 import numpy as np
 
-from .. import types
+from .. import exceptions, types
 from ..constants import Dimensions
 
 
@@ -26,6 +26,12 @@ class Reader(ABC):
         # This will check if the above enforced filepath is a directory
         if file.is_dir():
             raise IsADirectoryError(file)
+
+        # Check type
+        if not self.is_this_type(file):
+            raise exceptions.UnsupportedFileFormatError(
+                f"Reader does not support file or object: {file}"
+            )
 
         self._file = file
 

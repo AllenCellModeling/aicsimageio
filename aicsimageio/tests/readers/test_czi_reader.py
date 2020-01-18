@@ -1,118 +1,148 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from io import BytesIO
-from pathlib import Path
 
+import numpy as np
 import pytest
+from dask.diagnostics import Profiler
+from psutil import Process
 
-from aicsimageio.exceptions import UnsupportedFileFormatError
+from aicsimageio import exceptions
 from aicsimageio.readers.czi_reader import CziReader
 
-# Example files
-TWO_DIM_CZI = "s_1_t_1_c_1_z_1.czi"
-SIX_DIM_CZI = "s_3_t_1_c_3_z_5.czi"
 
-
-# TODO It would be good to test that given a multiscene defined exception is raised
-
-
-@pytest.mark.parametrize("file", [
-    TWO_DIM_CZI,
-    SIX_DIM_CZI,
-    pytest.param(BytesIO(b"abcdef"), marks=pytest.mark.raises(exception=UnsupportedFileFormatError)),
-    pytest.param("non_existent_file.random", marks=pytest.mark.raises(exception=FileNotFoundError)),
-    pytest.param(Path("/nonexistent/file/file.random"), marks=pytest.mark.raises(exception=FileNotFoundError))
+@pytest.mark.parametrize(
+    "filename, "
+    "expected_shape, "
+    "expected_dims, "
+    "select_scene, "
+    "chunk_dims, "
+    "expected_chunksize, "
+    "expected_task_count",
+    [
+        # Expected task counts should be each non chunk dimension size multiplied againest each other * 2
+        (
+            "s_1_t_1_c_1_z_1.czi",
+            (1, 1, 325, 475),
+            "BCYX",
+            0,
+            ("Z", "Y", "X"),
+            (1, 1, 325, 475),
+            2  # 1 * 1 * 2 = 2
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            0,
+            ("Z", "Y", "X"),
+            (1, 1, 1, 5, 325, 475),
+            18  # 1 * 3 * 3 * 2 = 18
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            0,
+            ("Y", "X"),
+            (1, 1, 1, 1, 325, 475),
+            90  # 1 * 3 * 3 * 5 * 2 = 90
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            0,
+            ("C", "Y", "X"),
+            (1, 1, 3, 1, 325, 475),
+            30  # 1 * 3 * 5 * 2 = 30
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            0,
+            ("S", "Y", "X"),
+            (1, 3, 1, 1, 325, 475),
+            30  # 1 * 3 * 5 * 2 = 30
+        ),
+        # Interestingly this file actually has multiple scenes in the metadata but only 1 scene in the image data
+        # So we can use it to test the selected scene
+        pytest.param(
+            "s_1_t_1_c_1_z_1.czi",
+            None,
+            None,
+            1,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError)
+        ),
+        pytest.param(
+            "example.txt",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError)
+        )
     ]
 )
-def test_czi_reader(resources_dir, file):
-    fobj = file
-    if isinstance(file, str):
-        fobj = resources_dir / file
-    czi = CziReader(fobj)
-    czi.close()
+def test_czi_reader(
+    resources_dir,
+    filename,
+    expected_shape,
+    expected_dims,
+    select_scene,
+    chunk_dims,
+    expected_chunksize,
+    expected_task_count
+):
+    # Get file
+    f = resources_dir / filename
+
+    # Read file
+    img = CziReader(f, chunk_by_dims=chunk_dims, S=select_scene)
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert len(proc.open_files()) == 0
+
+    # Check basics
+    with Profiler() as prof:
+        assert img.dask_data.shape == expected_shape
+        assert img.dims == expected_dims
+        assert img.dask_data.chunksize == expected_chunksize
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check computed type is numpy array, computed shape is expected shape, and task count is expected
+    with Profiler() as prof:
+        assert isinstance(img.data, np.ndarray)
+        assert img.data.shape == expected_shape
+        assert len(prof.results) == expected_task_count
+
+    # Check that there are no open file pointers after retrieval
+    assert len(proc.open_files()) == 0
 
 
-@pytest.mark.parametrize("test_input, expected", [
+@pytest.mark.parametrize("raw_bytes, expected", [
     (BytesIO(b"ZInotaczinope"), False),
     (BytesIO(b"ZISRAWFILE"), True),
     (BytesIO(b"ZI"), False),
     (BytesIO(b""), False)
-    ]
-)
-def test_is_this_type(test_input, expected):
-    res = CziReader._is_this_type(test_input)
+])
+def test_is_this_type(raw_bytes, expected):
+    res = CziReader._is_this_type(raw_bytes)
     assert res == expected
 
 
-@pytest.mark.parametrize("test_input, expected", [
-    (TWO_DIM_CZI, "BCYX0"),
-    (SIX_DIM_CZI, "BSCZYX0")
+@pytest.mark.parametrize("filename, expected", [
+    ("s_1_t_1_c_1_z_1.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
+    ("s_3_t_1_c_3_z_5.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06))
 ])
-def test_dims(resources_dir, test_input, expected):
-    czi = CziReader(resources_dir / test_input)
-    assert czi.dims == expected
-
-
-@pytest.mark.parametrize("test_input, expected", [
-    (TWO_DIM_CZI, "uint16"),
-    (SIX_DIM_CZI, "uint16")
-])
-def test_dtype(resources_dir, test_input, expected):
-    czi = CziReader(resources_dir / test_input)
-    assert czi.dtype() == expected
-
-
-@pytest.mark.parametrize("test_input, expected", [
-    (TWO_DIM_CZI, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
-    (SIX_DIM_CZI, (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06))
-])
-def test_pixel_size(resources_dir, test_input, expected):
-    czi = CziReader(resources_dir / test_input)
-    assert czi.get_physical_pixel_size() == expected
-
-
-def test_shape(resources_dir):
-    czi = CziReader(resources_dir / SIX_DIM_CZI)
-    data = czi.data
-    data_shape = data.shape
-    # BSCZYX0
-    assert data_shape[0] == 1
-    assert data_shape[1] == czi.size_s()
-    assert data_shape[2] == czi.size_c()
-    assert data_shape[3] == czi.size_z()
-    assert data_shape[4] == czi.size_y()
-    assert data_shape[5] == czi.size_x()
-    assert czi._is_multiscene() is False
-
-
-@pytest.mark.parametrize("test_input, expected", [
-    ("T", -1), ("C", 2), ("Z", 3), ("Y", 4), ("X", 5), ("S", 1), ("B", 0), ("M", -1), ("V", -1),
-    pytest.param("TZ", False, marks=pytest.mark.raises(exception=TypeError))
-])
-def test_dimension_index(resources_dir, test_input, expected):
-    czi = CziReader(resources_dir / SIX_DIM_CZI)
-    # BSCZYX0
-    assert czi._lookup_dimension_index(test_input) == expected
-
-
-def test_missing_dimension(resources_dir):
-    czi = CziReader(resources_dir / SIX_DIM_CZI)
-    assert czi._size_of_dimension("V") == 1
-    assert czi._lookup_dimension_index("V") == -1
-
-
-# NOTE:
-# These are all going to have the same channel setup id because they were all created from the same base file
-# As in, look at the most complex czi, and all of the other czis are just various slices of that one.
-@pytest.mark.parametrize("test_input, expected", [
-    (TWO_DIM_CZI, "636972569326165806"),
-    (SIX_DIM_CZI, "636972569326165806")
-])
-def test_metadata(resources_dir, test_input, expected):
-    czi = CziReader(resources_dir / test_input)
-    checked = False
-    for it in czi.metadata.iter("Channel"):
-        x = it.attrib.get("ChannelSetupId")
-        if x:
-            assert x == expected
-            checked = True
-            break
-    assert checked
+def test_pixel_size(resources_dir, filename, expected):
+    assert CziReader(resources_dir / filename).get_physical_pixel_size() == expected

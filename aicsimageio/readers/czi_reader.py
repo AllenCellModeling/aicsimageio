@@ -134,6 +134,29 @@ class CziReader(Reader):
         chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
         S: int = 0
     ) -> Tuple[da.core.Array, str]:
+        """
+        Safely read a CZI image file as a delayed dask array where certain dimensions act as the chunk size.
+
+        Parameters
+        ----------
+        img: Union[str, Path]
+            The filepath to read.
+        chunk_by_dims: List[str]
+            The dimensions to use as the for mapping the chunks / blocks.
+            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
+            Note: SpatialY and SpatialX will always be added to the list if not present.
+        S: int
+            If the image has different dimensions on any scene from another, the dask array construction will fail.
+            In that case, use this parameter to specify a specific scene to construct a dask array for.
+            Default: 0 (select the first scene)
+
+        Returns
+        -------
+        img: dask.array.core.Array
+            The constructed dask array where certain dimensions are chunked.
+        dims: str
+            The dimension order as a string.
+        """
         # Resolve image path
         img = CziReader._resolve_image_path(img)
 
@@ -163,8 +186,10 @@ class CziReader(Reader):
 
         Parameters
         ----------
-        img: Union[str, Path]
+        img: Path
             The filepath to read.
+        czi: CziFile
+            The loaded CziFile object created from reading the filepath.
         chunk_by_dims: List[str]
             The dimensions to use as the for mapping the chunks / blocks.
             Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
@@ -178,6 +203,8 @@ class CziReader(Reader):
         -------
         img: dask.array.core.Array
             The constructed dask array where certain dimensions are chunked.
+        dims: str
+            The dimension order as a string.
         """
         # Get image dims shape
         image_dims = czi.dims_shape()
@@ -197,7 +224,7 @@ class CziReader(Reader):
         # Uppercase dimensions provided to chunk by dims
         chunk_by_dims = [d.upper() for d in chunk_by_dims]
 
-        # Add Y and X dims to chunk by dims
+        # Always add Y and X dims to chunk by dims because that is how CZI files work
         if Dimensions.SpatialY not in chunk_by_dims:
             log.info(f"Adding the Spatial Y dimension to chunk by dimensions as it was not found.")
             chunk_by_dims.append(Dimensions.SpatialY)
@@ -230,13 +257,14 @@ class CziReader(Reader):
             # Unpack dim info
             dim, size = dim_info
 
-            # If the dim is part of the specified chunk dims then append it to the sample, and,
-            # append a dimension of size 1 to the operating shape
+            # If the dim is part of the specified chunk dims then append it to the sample, and, append the dimension
+            # to the chunk dimension ordering
             if dim in chunk_by_dims:
                 sample_chunk_shape.append(size)
                 chunk_dimension_ordering.append(dim)
 
-            # Otherwise, append it to the operating shape by getting it from the czi.size at the specified index
+            # Otherwise, append the dimension to the non chunk dimension ordering, and, append the true size of the
+            # image at that dimension
             else:
                 non_chunk_dimension_ordering.append(dim)
                 operating_shape.append(czi.size[i])
@@ -244,8 +272,13 @@ class CziReader(Reader):
         # Convert shapes to tuples and combine the non and chunked dimension orders as that is the order the data will
         # actually come out of the read data as
         sample_chunk_shape = tuple(sample_chunk_shape)
-        operating_shape = tuple(operating_shape) + (1, ) * len(sample_chunk_shape)
         blocked_dimension_order = non_chunk_dimension_ordering + chunk_dimension_ordering
+
+        # Fill out the rest of the operating shape with dimension sizes of 1 to match the length of the sample chunk
+        # When dask.block happens it fills the dimensions from inner-most to outer-most with the chunks as long as
+        # the dimension is size 1
+        # Basically, we are adding empty dimensions to the operating shape that will be filled by the chunks from dask
+        operating_shape = tuple(operating_shape) + (1, ) * len(sample_chunk_shape)
 
         # Create empty numpy array with the operating shape so that we can iter through and use the multi_index to
         # create the readers.
@@ -271,17 +304,20 @@ class CziReader(Reader):
                 if d in this_chunk_read_dims:
                     this_chunk_read_dims.pop(d)
 
-            # Add array to lazy arrays at index from delayed
+            # Add delayed array to lazy arrays at index
             lazy_arrays[i] = da.from_delayed(
                 delayed(CziReader._imread)(img, this_chunk_read_dims),
                 shape=sample_chunk_shape,
                 dtype=sample.dtype,
             )
 
-        # Convert the numpy array of lazy readers into a dask array
+        # Convert the numpy array of lazy readers into a dask array and fill the inner-most empty dimensions with chunks
         merged = da.block(lazy_arrays.tolist())
 
-        # Transpose back to original dimension ordering
+        # Because we have set certain dimensions to be chunked and others not
+        # we will need to transpose back to original dimension ordering
+        # Example being, if the original dimension ordering was "SZYX" and we want to chunk by "S", "Y", and "X"
+        # We created an array with dimensions ordering "ZSYX"
         transpose_indices = []
         transpose_required = False
         for i, d in enumerate(czi.dims):
@@ -293,6 +329,8 @@ class CziReader(Reader):
                 transpose_indices.append(i)
 
         # Only run if the transpose is actually required
+        # The default case is "Z", "Y", "X", which _usually_ doesn't need to be transposed because that is _usually_
+        # The normal dimension order of the CZI file anyway
         if transpose_required:
             merged = da.transpose(merged, tuple(transpose_indices))
 

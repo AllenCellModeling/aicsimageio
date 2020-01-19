@@ -67,6 +67,16 @@ from aicsimageio.readers.czi_reader import CziReader
             (1, 3, 1, 1, 325, 475),
             30  # 1 * 3 * 5 * 2 = 30
         ),
+        # Check that Spatial Y and Spatial X dims are always added to chunk dims
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            0,
+            ("S"),
+            (1, 3, 1, 1, 325, 475),
+            30  # 1 * 3 * 5 * 2 = 30
+        ),
         # Interestingly this file actually has multiple scenes in the metadata but only 1 scene in the image data
         # So we can use it to test the selected scene
         pytest.param(

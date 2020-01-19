@@ -94,10 +94,8 @@ class AICSImage:
 
         # Determine reader class and create dask delayed array
         reader_class = self.determine_reader(data=data)
-        self._reader = reader_class(data=data, **kwargs)
+        self._reader = reader_class(data, **kwargs)
 
-        # todo:
-        # switch from lazy load to load dask arrays on init
         # Lazy load data from reader and reformat to standard dimensions
         self._dask_data = None
         self._data = None
@@ -132,6 +130,7 @@ class AICSImage:
                 given_dims=self._known_dims or self.reader.dims,
                 return_dims=self.dims,
             )
+
         return self._dask_data
 
     @property
@@ -237,6 +236,7 @@ class AICSImage:
         """
         if self._metadata is None:
             self._metadata = self._reader.metadata
+
         return self._metadata
 
     @property
@@ -253,8 +253,6 @@ class AICSImage:
         """
         return self._reader
 
-    # TODO:
-    # Convert from kwargs to labeled S, T, C, Z, Y, X arguments
     def get_image_dask_data(self, out_orientation: Optional[str] = None, **kwargs) -> da.core.Array:
         """
         Get specific dimension image data out of an image as a dask array.
@@ -313,7 +311,7 @@ class AICSImage:
         Note: If a requested dimension is not present in the data the dimension is added with
         a depth of 1.
         """
-        return self.get_image_data(out_orientation=out_orientation, **kwargs).compute()
+        return self.get_image_dask_data(out_orientation=out_orientation, **kwargs).compute()
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """

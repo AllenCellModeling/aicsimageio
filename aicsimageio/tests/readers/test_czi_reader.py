@@ -142,9 +142,21 @@ def test_is_this_type(raw_bytes, expected):
     assert res == expected
 
 
+@pytest.mark.parametrize("filename, scene, expected", [
+    ("s_1_t_1_c_1_z_1.czi", 0, ["Bright"]),
+    ("s_3_t_1_c_3_z_5.czi", 0, ["EGFP", "TaRFP", "Bright"]),
+    ("s_3_t_1_c_3_z_5.czi", 1, ["EGFP", "TaRFP", "Bright"]),
+    ("s_3_t_1_c_3_z_5.czi", 2, ["EGFP", "TaRFP", "Bright"]),
+    # Our current get channel names doesn't take scene into account
+    # pytest.param("s_3_t_1_c_3_z_5.czi", 3, None, marks=pytest.mark.raises(exception=IndexError))
+])
+def test_get_channel_names(resources_dir, filename, scene, expected):
+    assert CziReader(resources_dir / filename).get_channel_names(scene) == expected
+
+
 @pytest.mark.parametrize("filename, expected", [
     ("s_1_t_1_c_1_z_1.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
     ("s_3_t_1_c_3_z_5.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06))
 ])
-def test_pixel_size(resources_dir, filename, expected):
+def test_get_physical_pixel_size(resources_dir, filename, expected):
     assert CziReader(resources_dir / filename).get_physical_pixel_size() == expected

@@ -48,8 +48,12 @@ def test_default_reader(
         assert img.dask_data.shape == expected_shape
         assert img.dims == expected_dims
         assert img.dask_data.chunksize == expected_chunksize
+        assert img.metadata
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after basics
+    assert len(proc.open_files()) == 0
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:

@@ -57,7 +57,7 @@ class CziReader(Reader):
 
         # Store parameters needed for _daread
         self.chunk_by_dims = chunk_by_dims
-        self.specific_s_dim = S
+        self.specific_s_index = S
 
     @staticmethod
     def _is_this_type(buffer: io.BytesIO) -> bool:
@@ -350,7 +350,7 @@ class CziReader(Reader):
             self._dask_data, self._dims = CziReader._daread_safe(
                 self._file,
                 chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_dim
+                S=self.specific_s_index
             )
 
         return self._dask_data
@@ -361,7 +361,7 @@ class CziReader(Reader):
             self._dask_data, self._dims = CziReader._daread_safe(
                 self._file,
                 chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_dim
+                S=self.specific_s_index
             )
 
         return self._dims

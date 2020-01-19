@@ -77,18 +77,6 @@ from aicsimageio.readers.czi_reader import CziReader
             (1, 3, 1, 1, 325, 475),
             30  # 1 * 3 * 5 * 2 = 30
         ),
-        # Interestingly this file actually has multiple scenes in the metadata but only 1 scene in the image data
-        # So we can use it to test the selected scene
-        pytest.param(
-            "s_1_t_1_c_1_z_1.czi",
-            None,
-            None,
-            1,
-            None,
-            None,
-            None,
-            marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError)
-        ),
         pytest.param(
             "example.txt",
             None,

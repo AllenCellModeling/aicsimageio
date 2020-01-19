@@ -140,7 +140,7 @@ class CziReader(Reader):
         image_dims = czi.dims_shape()
 
         # Catch inconsistent scene dimension sizes
-        if isinstance(image_dims, list):
+        if len(image_dims) > 1:
             # Choose the provided scene
             try:
                 image_dims = image_dims[S]
@@ -150,6 +150,8 @@ class CziReader(Reader):
                     f"Please provide a valid index to the 'S' parameter to create a dask array for the index provided. "
                     f"Provided scene index: {S}. Scene index range: 0-{len(image_dims)}."
                 )
+        else:
+            image_dims = image_dims[0]
 
         # Uppercase dimensions provided to chunk by dims
         chunk_by_dims = [d.upper() for d in chunk_by_dims]
@@ -334,12 +336,7 @@ class CziReader(Reader):
     @property
     def dims(self) -> str:
         if self._dims is None:
-            self._dask_data, self._dims = CziReader._daread_safe(
-                self._file,
-                chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_index
-            )
-
+            self._dims = CziFile(self._file).dims
         return self._dims
 
     @property

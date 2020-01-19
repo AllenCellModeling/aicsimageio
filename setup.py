@@ -13,6 +13,7 @@ requirements = [
     "dask>=2.9.0",
     "numpy>=1.16",
     "imageio>=2.3.0",
+    "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
     "toolz>=0.10.0",
 ]

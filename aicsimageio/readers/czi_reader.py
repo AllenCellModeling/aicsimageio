@@ -5,12 +5,12 @@ import io
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
-from xml.etree import ElementTree
 
 import dask.array as da
 import numpy as np
 from aicspylibczi import CziFile
 from dask import delayed
+from lxml.etree import _Element
 
 from .. import exceptions, types
 from ..buffer_reader import BufferReader
@@ -340,7 +340,7 @@ class CziReader(Reader):
         return self._dims
 
     @property
-    def metadata(self) -> ElementTree:
+    def metadata(self) -> _Element:
         """
         Lazy load the metadata from the CZI file
 

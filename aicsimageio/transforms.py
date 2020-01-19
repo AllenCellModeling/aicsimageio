@@ -17,6 +17,57 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 
+def _array_split(operator, ary, indices_or_sections, axis=0):
+    """
+    A reimplementation of array split that doesn't cast to numpy and returns a list of
+    whichever object type it is currently operating on.
+
+    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L723
+    """
+    try:
+        Ntotal = ary.shape[axis]
+    except AttributeError:
+        Ntotal = len(ary)
+    try:
+        # handle array case.
+        Nsections = len(indices_or_sections) + 1
+        div_points = [0] + list(indices_or_sections) + [Ntotal]
+    except TypeError:
+        # indices_or_sections is a scalar, not an array.
+        Nsections = int(indices_or_sections)
+        if Nsections <= 0:
+            raise ValueError("number sections must be larger than 0.")
+        Neach_section, extras = divmod(Ntotal, Nsections)
+        section_sizes = ([0] + extras * [Neach_section+1] + (Nsections-extras) * [Neach_section])
+        div_points = operator.array(section_sizes, dtype=ary.dtype).cumsum()
+
+    sub_arys = []
+    sary = operator.swapaxes(ary, axis, 0)
+    for i in range(Nsections):
+        st = div_points[i]
+        end = div_points[i + 1]
+        sub_arys.append(operator.swapaxes(sary[st:end], axis, 0))
+
+    return sub_arys
+
+
+def _split(operator, ary, indices_or_sections, axis=0):
+    """
+    A reimplementation of split that doesn't cast to numpy and returns a list of
+    whichever object type it is currently operating on.
+
+    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L782
+    """
+    try:
+        len(indices_or_sections)
+    except TypeError:
+        sections = indices_or_sections
+        N = ary.shape[axis]
+        if N % sections:
+            raise ValueError("array split does not result in an equal division")
+    return _array_split(operator, ary, indices_or_sections, axis)
+
+
 def reshape_data(
     data: Union[da.core.Array, np.ndarray],
     given_dims: str,
@@ -82,7 +133,7 @@ def reshape_data(
             if index_depth >= data.shape[index]:
                 raise IndexError(f"Dimension specified with {dim}={index_depth} "
                                  f"but Dimension shape is {data.shape[index]}.")
-            planes = operator.split(data, data.shape[index], axis=index)  # split dim into list of arrays
+            planes = _split(operator, data, data.shape[index], axis=index)  # split dim into list of arrays
             data = planes[index_depth]  # take the specified value of the dim
         data = operator.squeeze(data, axis=index)  # remove the dim from ndarray
         new_dims = new_dims[0:index] + new_dims[index + 1:]  # clip out the Dimension from new_dims

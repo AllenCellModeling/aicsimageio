@@ -11,6 +11,7 @@ with open("README.md") as readme_file:
 requirements = [
     "aicspylibczi>=2.4.1",
     "dask>=2.9.0",
+    "dask_image>=0.2.0",
     "numpy>=1.16",
     "imageio>=2.3.0",
     "tifffile==0.15.1",

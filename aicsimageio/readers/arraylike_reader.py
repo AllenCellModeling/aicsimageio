@@ -6,7 +6,6 @@ from typing import Union
 import dask.array as da
 import numpy as np
 
-from .. import exceptions
 from .reader import Reader
 
 ###############################################################################
@@ -47,19 +46,6 @@ class ArrayLikeReader(Reader):
     def dims(self) -> str:
         return self._dims
 
-    @dims.setter
-    def dims(self, dims: str):
-        # Check amount of provided dims against data shape
-        if len(dims) != len(self.dask_data.shape):
-            raise exceptions.InvalidDimensionOrderingError(
-                f"Provided too many dimensions for the associated array. "
-                f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.dask_data.shape)} dimensions [shape: {self.dask_data.shape}]."
-            )
-
-        # Set the dims
-        self._dims = dims
-
     @property
     def metadata(self) -> None:
         return None
@@ -67,6 +53,3 @@ class ArrayLikeReader(Reader):
     @staticmethod
     def _is_this_type(arr: Union[np.ndarray, da.core.Array]) -> bool:
         return isinstance(arr, (np.ndarray, da.core.Array))
-
-    def close(self) -> None:
-        pass

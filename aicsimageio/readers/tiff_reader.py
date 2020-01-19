@@ -24,9 +24,17 @@ log = logging.getLogger(__name__)
 
 class TiffReader(Reader):
     """
-    This class is used to open and process the contents of a generic tiff file.
+    TiffReader wraps tifffile to provide the same reading capabilities but abstracts the specifics of using the
+    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.
 
-    This will create create a delayed dask array where each chunk is a ZYX plane.
+    Parameters
+    ----------
+    data: types.FileLike
+        A string or path to the TIFF file to be read.
+    S: int
+        If the image has different dimensions on any scene from another, the dask array construction will fail.
+        In that case, use this parameter to specify a specific scene to construct a dask array for.
+        Default: 0 (select the first scene)
     """
 
     def __init__(self, data: types.FileLike, S: int = 0, **kwargs):
@@ -82,6 +90,14 @@ class TiffReader(Reader):
 
     @property
     def dask_data(self) -> da.core.Array:
+        """
+        Read a TIFF image file as a delayed dask array where each chunk of the constructed array is a delayed YX plane.
+
+        Returns
+        -------
+        img: dask.array.core.Array
+            The constructed delayed YX plane dask array.
+        """
         if self._dask_data is None:
             # Load Tiff
             with TiffFile(self._file) as tiff:

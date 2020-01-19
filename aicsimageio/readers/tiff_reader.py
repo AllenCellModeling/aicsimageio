@@ -1,19 +1,40 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import io
+import logging
+from pathlib import Path
 from typing import Optional
 
+import dask.array as da
 import numpy as np
-import tifffile
+from dask import delayed
+from tifffile import TiffFile
 
 from .. import types
 from ..buffer_reader import BufferReader
-from . import reader
+from .reader import Reader
+
+###############################################################################
+
+log = logging.getLogger(__name__)
+
+###############################################################################
 
 
-class TiffReader(reader.Reader):
-    """This class is used to open and process the contents of a generic tiff file.
-
-    The load function will get a 3D ZYX array from a tiff file.
+class TiffReader(Reader):
     """
+    This class is used to open and process the contents of a generic tiff file.
+
+    This will create create a delayed dask array where each chunk is a ZYX plane.
+    """
+
+    def __init__(self, data: types.FileLike, S: int = 0, **kwargs):
+        # Run super init to check filepath provided
+        super().__init__(data, **kwargs)
+
+        # Store parameters needed for dask read
+        self.specific_s_index = S
 
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
@@ -41,6 +62,81 @@ class TiffReader(reader.Reader):
                 if ifd_offset == 0:
                     return False
             return True
+
+    @staticmethod
+    def _imread(
+        img: Path,
+        scene: int,
+        page: int
+    ) -> np.ndarray:
+        # Load Tiff
+        with TiffFile(img) as tiff:
+            # Get proper scene
+            scene = tiff.series[scene]
+
+            # Get proper page
+            page = scene.pages[page]
+
+            # Return numpy
+            return page.asarray()
+
+    @property
+    def dask_data(self) -> da.core.Array:
+        if self._dask_data is None:
+            # Load Tiff
+            with TiffFile(self._file) as tiff:
+                # Check each scene has the same shape
+                # If scene shape checking fails, use the specified scene and update operating shape
+                scenes = tiff.series
+                operating_shape = scenes[0].shape
+                for scene in scenes:
+                    if scene.shape != operating_shape:
+                        operating_shape = scenes[self.specific_s_index].shape
+                        scenes = [scenes[self.specific_s_index]]
+
+                # Get sample yx plane
+                sample = scenes[0].pages[0].asarray()
+
+                # Combine length of scenes and operating shape
+                # Replace YX dims with empty dimensions
+                operating_shape = (len(scenes), *operating_shape)
+                operating_shape = operating_shape[:-2] + (1, 1)
+
+                # Make ndarray for lazy arrays to fill
+                lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                for all_page_index, np_tuple in enumerate(np.ndenumerate(lazy_arrays)):
+                    # Unpack np_tuple
+                    np_index, _ = np_tuple
+
+                    # Scene index is the first index in np_index
+                    scene_index = np_index[0]
+
+                    # This page index is current enumeration divided by scene index + 1
+                    # For example if the image has 10 Z slices and 5 scenes, there would be 50 total pages
+                    this_page_index = all_page_index // (scene_index + 1)
+
+                    # Fill the numpy array with the delayed arrays
+                    lazy_arrays[np_index] = da.from_delayed(
+                        delayed(TiffReader._imread)(self._file, scene_index, this_page_index),
+                        shape=sample.shape,
+                        dtype=sample.dtype
+                    )
+
+                # Convert the numpy array of lazy readers into a dask array
+                self._dask_data = da.block(lazy_arrays.tolist())
+
+        return self._dask_data
+
+    @property
+    def dims(self) -> str:
+        if self._dims is None:
+            # Get a single scenes dimensions in order
+            with TiffFile(self._file) as tiff:
+                single_scene_dims = tiff.series[0].pages.axes
+
+            self._dims = f"S{single_scene_dims}"
+
+        return self._dims
 
     @staticmethod
     def get_image_description(buffer: io.BufferedIOBase) -> Optional[bytearray]:
@@ -107,40 +203,13 @@ class TiffReader(reader.Reader):
                 buffer_reader.buffer.seek(description_offset, 0)
                 return bytearray(buffer_reader.buffer.read(description_length))
 
-    def __init__(self, file: types.FileLike, **kwargs):
-        super().__init__(file, **kwargs)
-        self.tiff = tifffile.TiffFile(self._bytes)
-
-    def close(self):
-        self.tiff.close()
-        super().close()
-
-    def dtype(self):
-        return self.tiff.pages[0].dtype
-
-    @property
-    def data(self) -> np.ndarray:
-        if self._data is None:
-            self._data = self.tiff.asarray()
-        return self._data
-
-    @property
-    def dims(self) -> str:
-        if self._dims is None:
-            self._dims = self.guess_dim_order(self.data.shape)
-
-        return self._dims
-
-    @dims.setter
-    def dims(self, value: str) -> None:
-        self._dims = value
-
     @property
     def metadata(self) -> str:
         if self._metadata is None:
-            description = self.get_image_description(self._bytes)
+            with open(self._file, "rb") as rb:
+                description = self.get_image_description(rb)
             if description is None:
-                self._metadata = ''
+                self._metadata = ""
             else:
                 self._metadata = description.decode()
         return self._metadata

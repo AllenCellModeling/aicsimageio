@@ -123,10 +123,10 @@ def test_czi_reader(
 
     # Check basics
     with Profiler() as prof:
-        assert img.dask_data.shape == expected_shape
         assert img.dims == expected_dims
-        assert img.dask_data.chunksize == expected_chunksize
         assert img.metadata
+        assert img.dask_data.shape == expected_shape
+        assert img.dask_data.chunksize == expected_chunksize
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 

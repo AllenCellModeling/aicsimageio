@@ -31,8 +31,9 @@ def test_arraylike_reader(arr, expected_shape, expected_dims, expected_chunksize
 
     # Check basics
     with Profiler() as prof:
-        assert reader.dask_data.shape == expected_shape
         assert reader.dims == expected_dims
+        assert reader.metadata is None
+        assert reader.dask_data.shape == expected_shape
         assert reader.dask_data.chunksize == expected_chunksize
         # Check that basic details don't require task computation
         assert len(prof.results) == 0

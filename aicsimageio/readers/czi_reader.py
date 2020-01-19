@@ -129,52 +129,6 @@ class CziReader(Reader):
         return img
 
     @staticmethod
-    def _daread_safe(
-        img: Union[str, Path],
-        chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
-        S: int = 0
-    ) -> Tuple[da.core.Array, str]:
-        """
-        Safely read a CZI image file as a delayed dask array where certain dimensions act as the chunk size.
-
-        Parameters
-        ----------
-        img: Union[str, Path]
-            The filepath to read.
-        chunk_by_dims: List[str]
-            The dimensions to use as the for mapping the chunks / blocks.
-            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
-            Note: SpatialY and SpatialX will always be added to the list if not present.
-        S: int
-            If the image has different dimensions on any scene from another, the dask array construction will fail.
-            In that case, use this parameter to specify a specific scene to construct a dask array for.
-            Default: 0 (select the first scene)
-
-        Returns
-        -------
-        img: dask.array.core.Array
-            The constructed dask array where certain dimensions are chunked.
-        dims: str
-            The dimension order as a string.
-        """
-        # Resolve image path
-        img = CziReader._resolve_image_path(img)
-
-        # Init temp czi
-        czi = CziFile(img)
-
-        # Safely construct the dask array or catch any exception
-        try:
-            return CziReader._daread(img=img, czi=czi, chunk_by_dims=chunk_by_dims, S=S)
-
-        except Exception as e:
-            # A really bad way to close any connection to the CZI object
-            czi._bytes = None
-            czi.reader = None
-
-            raise e
-
-    @staticmethod
     def _daread(
         img: Path,
         czi: CziFile,
@@ -337,6 +291,52 @@ class CziReader(Reader):
         # Because dimensions outside of Y and X can be in any order and present or not
         # we also return the dimension order string.
         return merged, "".join(dims)
+
+    @staticmethod
+    def _daread_safe(
+        img: Union[str, Path],
+        chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
+        S: int = 0
+    ) -> Tuple[da.core.Array, str]:
+        """
+        Safely read a CZI image file as a delayed dask array where certain dimensions act as the chunk size.
+
+        Parameters
+        ----------
+        img: Union[str, Path]
+            The filepath to read.
+        chunk_by_dims: List[str]
+            The dimensions to use as the for mapping the chunks / blocks.
+            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
+            Note: SpatialY and SpatialX will always be added to the list if not present.
+        S: int
+            If the image has different dimensions on any scene from another, the dask array construction will fail.
+            In that case, use this parameter to specify a specific scene to construct a dask array for.
+            Default: 0 (select the first scene)
+
+        Returns
+        -------
+        img: dask.array.core.Array
+            The constructed dask array where certain dimensions are chunked.
+        dims: str
+            The dimension order as a string.
+        """
+        # Resolve image path
+        img = CziReader._resolve_image_path(img)
+
+        # Init temp czi
+        czi = CziFile(img)
+
+        # Safely construct the dask array or catch any exception
+        try:
+            return CziReader._daread(img=img, czi=czi, chunk_by_dims=chunk_by_dims, S=S)
+
+        except Exception as e:
+            # A really bad way to close any connection to the CZI object
+            czi._bytes = None
+            czi.reader = None
+
+            raise e
 
     @property
     def dask_data(self) -> da.core.Array:

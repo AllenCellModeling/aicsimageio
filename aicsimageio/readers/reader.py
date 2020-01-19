@@ -4,7 +4,7 @@
 import io
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -19,13 +19,33 @@ class Reader(ABC):
     _dims = None
     _metadata = None
 
+    @staticmethod
+    def _resolve_image_path(img: Union[str, Path]) -> Path:
+        # Convert pathlike to Path
+        if isinstance(img, (str, Path)):
+            # Resolve path
+            img = Path(img).expanduser().resolve(strict=True)
+
+            # Check path
+            if img.is_dir():
+                raise IsADirectoryError(
+                    f"Please provide a single file to the `img` parameter. "
+                    f"Received directory: {img}"
+                )
+
+        # Check that no other type was provided
+        if not isinstance(img, Path):
+            raise TypeError(
+                f"Please provide a path to a file as a string, or an pathlib.Path, to the "
+                f"`img` parameter. "
+                f"Received type: {type(img)}"
+            )
+
+        return img
+
     def __init__(self, file: types.ImageLike, **kwargs):
         # This will both fully expand and enforce that the filepath exists
-        file = Path(file).expanduser().resolve(strict=True)
-
-        # This will check if the above enforced filepath is a directory
-        if file.is_dir():
-            raise IsADirectoryError(file)
+        file = self._resolve_image_path(file)
 
         # Check type
         if not self.is_this_type(file):
@@ -33,6 +53,7 @@ class Reader(ABC):
                 f"Reader does not support file or object: {file}"
             )
 
+        # Store this filepath
         self._file = file
 
     @staticmethod

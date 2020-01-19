@@ -105,30 +105,6 @@ class CziReader(Reader):
         return data
 
     @staticmethod
-    def _resolve_image_path(img: Union[str, Path]) -> Path:
-        # Convert pathlike to CziFile
-        if isinstance(img, (str, Path)):
-            # Resolve path
-            img = Path(img).expanduser().resolve(strict=True)
-
-            # Check path
-            if img.is_dir():
-                raise IsADirectoryError(
-                    f"Please provide a single file to the `img` parameter. "
-                    f"Received directory: {img}"
-                )
-
-        # Check that no other type was provided
-        if not isinstance(img, Path):
-            raise TypeError(
-                f"Please provide a path to a file as a string, or an pathlib.Path, to the "
-                f"`img` parameter. "
-                f"Received type: {type(img)}"
-            )
-
-        return img
-
-    @staticmethod
     def _daread(
         img: Path,
         czi: CziFile,

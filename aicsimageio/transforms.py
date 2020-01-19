@@ -124,7 +124,7 @@ def reshape_data(
         if data.shape[index] > 1:
             index_depth = kwargs.get(dim)
             if index_depth is None:
-                log.warn(
+                log.warning(
                     f"Data has dimension {dim} with depth {data.shape[index]}, assuming {dim}=0 is "
                     f"the desired value, if not the case specify {dim}=x where "
                     f"x is an integer in [0, {data.shape[index]})."

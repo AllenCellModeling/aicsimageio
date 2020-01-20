@@ -52,6 +52,10 @@ def _array_split(operator, ary, indices_or_sections, axis=0):
             st = st.compute()
             end = end.compute()
 
+        # Make sure start and end are integers
+        st = int(st)
+        end = int(end)
+
         sub_arys.append(operator.swapaxes(sary[st:end], axis, 0))
 
     return sub_arys

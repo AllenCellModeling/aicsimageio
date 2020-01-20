@@ -16,6 +16,8 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
     (da.zeros((6, 200, 400)), "ZYX", "STCZYX", {}, (1, 1, 1, 6, 200, 400)),
     (np.zeros((6, 200, 400)), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
     (da.zeros((6, 200, 400)), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
+    (np.zeros((2, 2, 2)), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
+    (da.zeros((2, 2, 2)), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
     pytest.param(
         np.zeros((6, 200, 400)),
         "ZYX",

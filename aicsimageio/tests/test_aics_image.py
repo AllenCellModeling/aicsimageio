@@ -140,7 +140,7 @@ def test_default_shape_expansion(data, expected):
             np.zeros((2, 2, 2)),
             "ABI",
             None,
-            marks=pytest.mark.raises(exception=TypeError),
+            marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError),
         ),
         (da.zeros((5, 4, 3)), "SYX", (5, 1, 1, 1, 4, 3)),
         (da.zeros((1, 2, 3, 4, 5)), "STCYX", (1, 2, 3, 1, 4, 5)),
@@ -149,7 +149,7 @@ def test_default_shape_expansion(data, expected):
             da.zeros((2, 2, 2)),
             "ABI",
             None,
-            marks=pytest.mark.raises(exception=TypeError),
+            marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )

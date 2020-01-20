@@ -122,7 +122,7 @@ def reshape_data(
         data = operator.reshape(data, (1, *data.shape))
         new_dims = dim + new_dims  # add the missing Dimension to the front
 
-    # If given dims contains a Dimension not in DEFAULT_DIMS and its depth is 1 remove it
+    # If given dims contains a Dimension not in return dims and its depth is 1 remove it
     # If it's larger than 1 give a warning and suggest interfacing with the Reader object
     extra_dims = "".join(set(given_dims) - set(return_dims))
     for dim in extra_dims:

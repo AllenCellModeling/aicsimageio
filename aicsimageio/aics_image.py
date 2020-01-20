@@ -86,6 +86,14 @@ class AICSImage:
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
         """
+        # Check known dims
+        if known_dims is not None:
+            if not all([d in Dimensions.DefaultOrder for d in known_dims]):
+                raise InvalidDimensionOrderingError(
+                    f"The provided dimension string to the 'known_dims' argument includes dimensions that AICSImage "
+                    f"does not support. Received: '{known_dims}'. Supported dimensions: {Dimensions.DefaultOrderList}."
+                )
+
         # Hold onto known dims until data is requested
         self._known_dims = known_dims
 

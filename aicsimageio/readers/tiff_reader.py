@@ -13,6 +13,7 @@ from tifffile import TiffFile
 
 from .. import types
 from ..buffer_reader import BufferReader
+from ..constants import Dimensions
 from .reader import Reader
 
 ###############################################################################
@@ -150,7 +151,21 @@ class TiffReader(Reader):
             with TiffFile(self._file) as tiff:
                 single_scene_dims = tiff.series[0].pages.axes
 
-            self._dims = f"S{single_scene_dims}"
+                # We can sometimes trust the dimension info in the image
+                if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):
+                    self._dims = f"S{single_scene_dims}"
+                # Sometimes the dimension info is wrong in certain dimensions, so guess that dimension
+                else:
+                    guess = self.guess_dim_order(tiff.series[0].pages.shape)
+                    best_guess = []
+                    for dim_from_meta, guessed_dim in zip(single_scene_dims, guess):
+                        if dim_from_meta in Dimensions.DefaultOrder:
+                            best_guess.append(dim_from_meta)
+                        else:
+                            best_guess.append(guessed_dim)
+
+                    best_guess = "".join(best_guess)
+                    self._dims = f"S{best_guess}"
 
         return self._dims
 

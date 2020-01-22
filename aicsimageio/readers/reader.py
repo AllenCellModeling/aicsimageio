@@ -23,8 +23,12 @@ class Reader(ABC):
     def _resolve_image_path(img: Union[str, Path]) -> Path:
         # Convert pathlike to Path
         if isinstance(img, (str, Path)):
-            # Resolve path
-            img = Path(img).expanduser().resolve(strict=True)
+            # Strictly do not fully resolve the path because Mac is bad with mounted drives
+            img = Path(img).expanduser()
+
+            # Check the file exists
+            if not img.exists():
+                raise FileNotFoundError(img)
 
             # Check path
             if img.is_dir():
@@ -64,8 +68,12 @@ class Reader(ABC):
     def is_this_type(cls, data: types.ImageLike) -> bool:
         # Check path
         if isinstance(data, (str, Path)):
-            # This will both fully expand and enforce that the filepath exists
-            f = Path(data).expanduser().resolve(strict=True)
+            # Strictly do not fully resolve the path because Mac is bad with mounted drives
+            f = Path(data).expanduser()
+
+            # Check the file exists
+            if not f.exists():
+                raise FileNotFoundError(img)
 
             # This will check if the above enforced filepath is a directory
             if f.is_dir():

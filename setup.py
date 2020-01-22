@@ -50,6 +50,9 @@ setup_requirements = [
 
 interactive_requirements = [
     "altair",
+    "bokeh",
+    "dask_jobqueue",
+    "distributed",
     "jupyterlab",
     "matplotlib",
     "pillow",

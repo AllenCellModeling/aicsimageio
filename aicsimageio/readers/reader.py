@@ -73,7 +73,7 @@ class Reader(ABC):
 
             # Check the file exists
             if not f.exists():
-                raise FileNotFoundError(img)
+                raise FileNotFoundError(f)
 
             # This will check if the above enforced filepath is a directory
             if f.is_dir():

@@ -94,7 +94,6 @@ class DefaultReader(Reader):
     def metadata(self) -> Dict[str, Any]:
         if self._metadata is None:
             with imageio.get_reader(self._file) as reader:
-                reader = imageio.get_reader(self._file)
                 self._metadata = reader.get_meta_data()
 
         return self._metadata

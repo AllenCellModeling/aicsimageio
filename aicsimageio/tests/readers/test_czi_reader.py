@@ -77,6 +77,34 @@ from aicsimageio.readers.czi_reader import CziReader
             (1, 3, 1, 1, 325, 475),
             30  # 1 * 3 * 5 * 2 = 30
         ),
+        (
+            "variable_per_scene_dims.czi",
+            (1, 1, 2, 1, 2, 1248, 1848),
+            "BSTCZYX",
+            0,
+            ("Z", "Y", "X"),
+            (1, 1, 1, 1, 2, 1248, 1848),
+            4  # 1 * 1 * 2 * 1 * 2 = 4
+        ),
+        (
+            "variable_per_scene_dims.czi",
+            (1, 1, 1, 1, 2, 1248, 1848),
+            "BSTCZYX",
+            1,
+            ("Z", "Y", "X"),
+            (1, 1, 1, 1, 2, 1248, 1848),
+            2  # 1 * 1 * 1 * 1 * 2 = 2
+        ),
+        pytest.param(
+            "variable_per_scene_dims.czi",
+            (1, 1, 1, 1, 2, 1248, 1848),
+            "BSTCZYX",
+            2,
+            ("Z", "Y", "X"),
+            None,
+            None,  # 1 * 1 * 1 * 1 * 2 = 2,
+            marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError)
+        ),
         pytest.param(
             "example.txt",
             None,

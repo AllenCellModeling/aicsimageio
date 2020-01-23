@@ -136,22 +136,25 @@ class CziReader(Reader):
         dims: str
             The dimension order as a string.
         """
-        # Get image dims shape
-        image_dims = czi.dims_shape()
+        # Get image dims indicies
+        image_dim_indices = czi.dims_shape()
 
         # Catch inconsistent scene dimension sizes
-        if len(image_dims) > 1:
+        if len(image_dim_indices) > 1:
             # Choose the provided scene
             try:
-                image_dims = image_dims[S]
+                image_dim_indices = image_dim_indices[S]
+                log.info(f"File contains variable dimensions per scene, selected scene: {S} for data retrieval.")
             except (IndexError, TypeError):
                 raise exceptions.InconsistentShapeError(
                     f"The CZI image provided has variable dimensions per scene. "
                     f"Please provide a valid index to the 'S' parameter to create a dask array for the index provided. "
-                    f"Provided scene index: {S}. Scene index range: 0-{len(image_dims)}."
+                    f"Provided scene index: {S}. Scene index range: 0-{len(image_dim_indices)}."
                 )
         else:
-            image_dims = image_dims[0]
+            # If the list if length one that means that all the scenes in the image have the same dimensions
+            # Just select the first dictionary in the list
+            image_dim_indices = image_dim_indices[0]
 
         # Uppercase dimensions provided to chunk by dims
         chunk_by_dims = [d.upper() for d in chunk_by_dims]
@@ -166,7 +169,7 @@ class CziReader(Reader):
 
         # Setup read dimensions for an example chunk
         first_chunk_read_dims = {}
-        for dim, dim_info in image_dims.items():
+        for dim, dim_info in image_dim_indices.items():
             # Only add the dimension if the dimension isn't a part of the chunk
             if dim not in chunk_by_dims:
                 # Unpack dimension info
@@ -199,7 +202,7 @@ class CziReader(Reader):
             # image at that dimension
             else:
                 non_chunk_dimension_ordering.append(dim)
-                operating_shape.append(czi.size[i])
+                operating_shape.append(image_dim_indices[dim][1] - image_dim_indices[dim][0])
 
         # Convert shapes to tuples and combine the non and chunked dimension orders as that is the order the data will
         # actually come out of the read data as
@@ -220,7 +223,7 @@ class CziReader(Reader):
         # the ordered dims list and the current multi-index plus the begin index for that plane. We then set the value
         # of the array at the same multi-index to the delayed reader using the constructed read_dims dictionary.
         dims = [d for d in czi.dims]
-        begin_indicies = tuple(image_dims[d][0] for d in dims)
+        begin_indicies = tuple(image_dim_indices[d][0] for d in dims)
         for i, _ in np.ndenumerate(lazy_arrays):
             # Add the czi file begin index for each dimension to the array dimension index
             this_chunk_read_indicies = (

@@ -178,7 +178,7 @@ class TiffReader(Reader):
                     if len(tiff.series) == 1:
                         self._dims = single_scene_dims
                     else:
-                        self._dims = f"S{single_scene_dims}"
+                        self._dims = f"{Dimensions.Scene}{single_scene_dims}"
                 # Sometimes the dimension info is wrong in certain dimensions, so guess that dimension
                 else:
                     guess = self.guess_dim_order(tiff.series[0].pages.shape)
@@ -204,7 +204,7 @@ class TiffReader(Reader):
                     if len(tiff.series) == 1:
                         self._dims = best_guess
                     else:
-                        self._dims = f"S{best_guess}"
+                        self._dims = f"{Dimensions.Scene}{best_guess}"
 
         return self._dims
 

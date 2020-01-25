@@ -163,7 +163,7 @@ class CziReader(Reader):
             try:
                 image_dim_indices = image_dim_indices[S]
                 log.info(f"File contains variable dimensions per scene, selected scene: {S} for data retrieval.")
-            except (IndexError, TypeError):
+            except IndexError:
                 raise exceptions.InconsistentShapeError(
                     f"The CZI image provided has variable dimensions per scene. "
                     f"Please provide a valid index to the 'S' parameter to create a dask array for the index provided. "

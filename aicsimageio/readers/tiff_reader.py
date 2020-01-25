@@ -45,6 +45,9 @@ class TiffReader(Reader):
         # Store parameters needed for dask read
         self.specific_s_index = S
 
+        # Lazy load and hold on to dtype
+        self._dtype = None
+
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         with BufferReader(buffer) as buffer_reader:
@@ -154,6 +157,13 @@ class TiffReader(Reader):
                 self._dask_data = data
 
         return self._dask_data
+
+    def dtype(self):
+        if self._dtype is None:
+            with TiffFile(self._file) as tiff:
+                self._dtype = tiff.pages[0].dtype
+
+        return self._dtype
 
     @property
     def dims(self) -> str:

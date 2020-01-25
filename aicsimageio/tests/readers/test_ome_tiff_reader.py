@@ -99,6 +99,7 @@ def test_ome_tiff_reader(
                 assert getter() == img.dask_data.shape[img.dims.index(d)]
 
         assert img.dims == expected_dims
+        assert img.is_ome()
         assert img.metadata
         assert img.dask_data.shape == expected_shape
         assert img.dask_data.chunksize == expected_chunksize

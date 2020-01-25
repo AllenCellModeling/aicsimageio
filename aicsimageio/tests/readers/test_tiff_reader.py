@@ -14,6 +14,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
     "filename, "
     "expected_shape, "
     "expected_dims, "
+    "expected_dtype, "
     "select_scene, "
     "expected_chunksize, "
     "expected_task_count",
@@ -23,6 +24,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "s_1_t_1_c_1_z_1.ome.tiff",
             (325, 475),
             "YX",
+            np.uint16,
             0,
             (325, 475),
             2  # 2 = 2
@@ -31,6 +33,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "s_1_t_1_c_1_z_1.tiff",
             (325, 475),
             "YX",
+            np.uint16,
             0,
             (325, 475),
             2  # 2 = 2
@@ -39,6 +42,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "s_1_t_1_c_10_z_1.ome.tiff",
             (10, 1736, 1776),
             "CYX",
+            np.uint16,
             0,
             (1, 1736, 1776),
             20  # 2 = 2
@@ -47,6 +51,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "s_1_t_10_c_3_z_1.tiff",
             (10, 3, 325, 475),
             "TCYX",
+            np.uint16,
             0,
             (1, 1, 325, 475),
             60  # 10 * 3 * 2 = 60
@@ -55,12 +60,14 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "s_3_t_1_c_3_z_5.ome.tiff",
             (3, 5, 3, 325, 475),
             "SZCYX",
+            np.uint16,
             0,
             (1, 1, 1, 325, 475),
             90  # 3 * 5 * 3 * 2 = 90
         ),
         pytest.param(
             "example.txt",
+            None,
             None,
             None,
             None,
@@ -75,6 +82,7 @@ def test_tiff_reader(
     filename,
     expected_shape,
     expected_dims,
+    expected_dtype,
     select_scene,
     expected_chunksize,
     expected_task_count
@@ -92,6 +100,7 @@ def test_tiff_reader(
     # Check basics
     with Profiler() as prof:
         assert img.dims == expected_dims
+        assert img.dtype() == expected_dtype
         assert img.metadata
         assert img.dask_data.shape == expected_shape
         assert img.dask_data.chunksize == expected_chunksize

@@ -27,6 +27,9 @@ class OmeTiffReader(TiffReader):
     def __init__(self, data: types.FileLike, **kwargs):
         super().__init__(data, **kwargs)
 
+        # Lazy load is ome
+        self._is_ome = None
+
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         is_tif = TiffReader._is_this_type(buffer)
@@ -44,6 +47,9 @@ class OmeTiffReader(TiffReader):
                 return False
             return True
         return False
+
+    def is_ome(self):
+        return self.is_this_type(self._file)
 
     @property
     def metadata(self) -> omexml.OMEXML:

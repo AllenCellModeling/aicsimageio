@@ -39,18 +39,13 @@ def _array_split(operator, ary, indices_or_sections, axis=0):
             raise ValueError("number sections must be larger than 0.")
         Neach_section, extras = divmod(Ntotal, Nsections)
         section_sizes = ([0] + extras * [Neach_section+1] + (Nsections-extras) * [Neach_section])
-        div_points = operator.array(section_sizes, dtype=ary.dtype).cumsum(axis=None)
+        div_points = np.array(section_sizes, dtype=ary.dtype).cumsum(axis=None)
 
     sub_arys = []
     sary = operator.swapaxes(ary, axis, 0)
     for i in range(Nsections):
         st = div_points[i]
         end = div_points[i + 1]
-
-        # Catch dask array get items and compute them
-        if operator == da:
-            st = st.compute()
-            end = end.compute()
 
         # Make sure start and end are integers
         st = int(st)

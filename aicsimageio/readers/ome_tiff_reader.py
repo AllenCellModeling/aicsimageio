@@ -27,9 +27,6 @@ class OmeTiffReader(TiffReader):
     def __init__(self, data: types.FileLike, **kwargs):
         super().__init__(data, **kwargs)
 
-        # Set size s to be loaded later
-        self._size_s = None
-
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         is_tif = TiffReader._is_this_type(buffer)

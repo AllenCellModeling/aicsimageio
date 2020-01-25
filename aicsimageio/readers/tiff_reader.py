@@ -183,11 +183,20 @@ class TiffReader(Reader):
                 else:
                     guess = self.guess_dim_order(tiff.series[0].pages.shape)
                     best_guess = []
-                    for dim_from_meta, guessed_dim in zip(single_scene_dims, guess):
+                    for dim_from_meta in single_scene_dims:
                         if dim_from_meta in Dimensions.DefaultOrder:
                             best_guess.append(dim_from_meta)
                         else:
-                            best_guess.append(guessed_dim)
+                            appended_dim = False
+                            for guessed_dim in guess:
+                                if guessed_dim not in best_guess:
+                                    best_guess.append(guessed_dim)
+                                    appended_dim = True
+                                    break
+
+                            # All of our guess dims were already in the dim list, append the dim read from meta
+                            if not appended_dim:
+                                best_guess.append(dim_from_meta)
 
                     best_guess = "".join(best_guess)
 

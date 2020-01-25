@@ -3,7 +3,6 @@
 
 
 class Dimensions:
-    B = "B"
     Scene = "S"
     Time = "T"
     Channel = "C"

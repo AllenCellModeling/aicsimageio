@@ -11,7 +11,7 @@ import numpy as np
 from dask import delayed
 from tifffile import TiffFile
 
-from .. import types
+from .. import exceptions, types
 from ..buffer_reader import BufferReader
 from ..constants import Dimensions
 from .reader import Reader
@@ -188,6 +188,19 @@ class TiffReader(Reader):
                         self._dims = f"S{best_guess}"
 
         return self._dims
+
+    @dims.setter
+    def dims(self, dims: str):
+        # Check amount of provided dims against data shape
+        if len(dims) != len(self.dask_data.shape):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Provided too many dimensions for the associated file. "
+                f"Received {len(dims)} dimensions [dims: {dims}] "
+                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+            )
+
+        # Set the dims
+        self._dims = dims
 
     @staticmethod
     def get_image_description(buffer: io.BufferedIOBase) -> Optional[bytearray]:

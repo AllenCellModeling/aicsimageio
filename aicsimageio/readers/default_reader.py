@@ -90,6 +90,19 @@ class DefaultReader(Reader):
 
         return self._dims
 
+    @dims.setter
+    def dims(self, dims: str):
+        # Check amount of provided dims against data shape
+        if len(dims) != len(self.dask_data.shape):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Provided too many dimensions for the associated file. "
+                f"Received {len(dims)} dimensions [dims: {dims}] "
+                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+            )
+
+        # Set the dims
+        self._dims = dims
+
     @property
     def metadata(self) -> Dict[str, Any]:
         if self._metadata is None:

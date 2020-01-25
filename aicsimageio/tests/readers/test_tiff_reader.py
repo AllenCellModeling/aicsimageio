@@ -109,3 +109,46 @@ def test_tiff_reader(
 
     # Check that there are no open file pointers after retrieval
     assert len(proc.open_files()) == 0
+
+
+@pytest.mark.parametrize("expected_starting_dims, set_dims, expected_ending_dims", [
+    ("YX", "XY", "XY"),
+    pytest.param("YX", "ABCDE", None, marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError))
+])
+def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_ending_dims):
+    # Get file
+    f = resources_dir / "s_1_t_1_c_1_z_1.tiff"
+
+    # Read file
+    img = TiffReader(f)
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert len(proc.open_files()) == 0
+
+    # Check basics
+    with Profiler() as prof:
+        assert img.dims == expected_starting_dims
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after basics
+    assert len(proc.open_files()) == 0
+
+    # Check no tasks happen during dims setting
+    with Profiler() as prof:
+        img.dims = set_dims
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after basics
+    assert len(proc.open_files()) == 0
+
+    # Check no tasks happen during dims getting
+    with Profiler() as prof:
+        assert img.dims == expected_ending_dims
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after retrieval
+    assert len(proc.open_files()) == 0

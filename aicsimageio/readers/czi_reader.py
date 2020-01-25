@@ -170,7 +170,7 @@ class CziReader(Reader):
                     f"Provided scene index: {S}. Scene index range: 0-{len(image_dim_indices)}."
                 )
         else:
-            # If the list if length one that means that all the scenes in the image have the same dimensions
+            # If the list is length one that means that all the scenes in the image have the same dimensions
             # Just select the first dictionary in the list
             image_dim_indices = image_dim_indices[0]
 

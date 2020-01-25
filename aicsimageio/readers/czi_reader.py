@@ -68,7 +68,25 @@ class CziReader(Reader):
             return header == CziReader.ZEISS_10BYTE
 
     @staticmethod
-    def _read_image(img: Path, read_dims: Optional[Dict[str, str]] = None) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
+    def _read_image(img: Path, read_dims: Optional[Dict[str, int]] = None) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
+        """
+        Read and return the squeezed image data requested along with the dimension info that was read.
+
+        Parameters
+        ----------
+        img: Path
+            Path to the CZI file to read.
+        read_dims: Optional[Dict[str, int]]
+            The dimensions to read from the file as a dictionary of string to integer.
+            Default: None (Read all data from the image)
+
+        Returns
+        -------
+        data: np.ndarray
+            The data read for the dimensions provided.
+        read_dimensions: List[Tuple[str, int]]]
+            The dimension sizes that were returned from the read.
+        """
         # Catch optional read dim
         if read_dims is None:
             read_dims = {}

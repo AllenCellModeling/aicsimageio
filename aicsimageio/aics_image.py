@@ -174,6 +174,10 @@ class AICSImage:
         return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
 
     @property
+    def shape(self) -> Tuple[int]:
+        return self.size()
+
+    @property
     def size_x(self) -> int:
         """
         Returns

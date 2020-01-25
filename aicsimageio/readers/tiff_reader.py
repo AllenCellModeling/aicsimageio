@@ -110,6 +110,10 @@ class TiffReader(Reader):
                     if scene.shape != operating_shape:
                         operating_shape = scenes[self.specific_s_index].shape
                         scenes = [scenes[self.specific_s_index]]
+                        log.info(
+                            f"File contains variable dimensions per scene, "
+                            f"selected scene: {self.specific_s_index} for data retrieval."
+                        )
 
                 # Get sample yx plane
                 sample = scenes[0].pages[0].asarray()

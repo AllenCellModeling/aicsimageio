@@ -123,6 +123,7 @@ def test_default_shape_expansion(data, expected):
     with Profiler() as prof:
         img = AICSImage(data=data)
         assert img.dask_data.shape == expected
+        assert img.shape == expected
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 

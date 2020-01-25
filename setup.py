@@ -11,6 +11,7 @@ with open("README.md") as readme_file:
 requirements = [
     "aicspylibczi==2.4.1",
     "dask>=2.9.0",
+    "distributed>=2.9.3",
     "numpy>=1.16",
     "imageio>=2.3.0",
     "lxml>=4.4.2",
@@ -51,10 +52,9 @@ setup_requirements = [
 interactive_requirements = [
     "altair",
     "bokeh",
-    "dask_jobqueue",
-    "distributed",
     "jupyterlab",
     "matplotlib",
+    "napari>=0.2.10",
     "pillow",
 ]
 

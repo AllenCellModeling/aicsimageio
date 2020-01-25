@@ -144,7 +144,14 @@ class TiffReader(Reader):
                     )
 
                 # Convert the numpy array of lazy readers into a dask array
-                self._dask_data = da.block(lazy_arrays.tolist())
+                data = da.block(lazy_arrays.tolist())
+
+                # Only return the scene dimension if multiple scenes are present
+                if len(scenes) == 1:
+                    data = data[0, :]
+
+                # Set _dask_data
+                self._dask_data = data
 
         return self._dask_data
 
@@ -157,7 +164,11 @@ class TiffReader(Reader):
 
                 # We can sometimes trust the dimension info in the image
                 if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):
-                    self._dims = f"S{single_scene_dims}"
+                    # Add scene dimension only if there are multiple scenes
+                    if len(tiff.series) == 1:
+                        self._dims = single_scene_dims
+                    else:
+                        self._dims = f"S{single_scene_dims}"
                 # Sometimes the dimension info is wrong in certain dimensions, so guess that dimension
                 else:
                     guess = self.guess_dim_order(tiff.series[0].pages.shape)
@@ -169,7 +180,12 @@ class TiffReader(Reader):
                             best_guess.append(guessed_dim)
 
                     best_guess = "".join(best_guess)
-                    self._dims = f"S{best_guess}"
+
+                    # Add scene dimension only if there are multiple scenes
+                    if len(tiff.series) == 1:
+                        self._dims = best_guess
+                    else:
+                        self._dims = f"S{best_guess}"
 
         return self._dims
 

@@ -22,19 +22,19 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
         # Expected task counts should be each non chunk dimension size multiplied againest each other * 2
         (
             "s_1_t_1_c_1_z_1.ome.tiff",
-            (1, 325, 475),
-            "SYX",
+            (325, 475),
+            "YX",
             0,
-            (1, 325, 475),
-            2  # 1 * 2 = 2
+            (325, 475),
+            2  # 2 = 2
         ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
-            (1, 10, 1736, 1776),
-            "SCYX",
+            (10, 1736, 1776),
+            "CYX",
             0,
-            (1, 1, 1736, 1776),
-            20  # 1 * 2 = 2
+            (1, 1736, 1776),
+            20  # 10 * 2 = 2
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -42,7 +42,7 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
             "SZCYX",
             0,
             (1, 1, 1, 325, 475),
-            90  # 1 * 2 = 2
+            90  # 3 * 5 * 3 * 2 = 90
         ),
         pytest.param(
             "example.txt",

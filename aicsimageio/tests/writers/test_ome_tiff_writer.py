@@ -24,7 +24,7 @@ def test_writerShapeComparison(resources_dir):
 
     output = OmeTiffReader(resources_dir / filename).data
 
-    assert output.shape == image.shape
+    assert output.shape == image.shape[1:]
 
 
 def test_loadAssertionError(resources_dir):
@@ -133,7 +133,7 @@ def test_dimensionOrder(
 
     os.remove(resources_dir / filename)
 
-    assert output.shape == image.shape
+    assert output.shape == image.shape[1:]
     assert x == expected_x
     assert y == expected_y
     assert z == expected_z

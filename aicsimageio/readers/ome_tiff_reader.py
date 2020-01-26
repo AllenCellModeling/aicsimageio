@@ -31,7 +31,7 @@ class OmeTiffReader(TiffReader):
         self._is_ome = None
 
     @staticmethod
-    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
+    def _is_this_type(buffer: io.BytesIO) -> bool:
         is_tif = TiffReader._is_this_type(buffer)
         if is_tif:
             buf = TiffReader.get_image_description(buffer)

@@ -13,7 +13,6 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 
-@staticmethod
 def spawn_cluster(address: Optional[str], **kwargs) -> Tuple[Optional[LocalCluster], Optional[Client]]:
     """
     If provided an address, create a Dask Client connection.
@@ -31,7 +30,6 @@ def spawn_cluster(address: Optional[str], **kwargs) -> Tuple[Optional[LocalClust
     return cluster, client
 
 
-@staticmethod
 def shutdown_cluster_and_client(
     cluster: Optional[LocalCluster],
     client: Optional[Client]
@@ -42,6 +40,7 @@ def shutdown_cluster_and_client(
     if cluster is not None:
         cluster.close()
     if client is not None:
+        client.shutdown()
         client.close()
 
     return cluster, client

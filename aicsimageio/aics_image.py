@@ -475,7 +475,7 @@ class AICSImage:
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
-        self._cluster, self._client = dask_utils.spawn_cluster(self._address, self._kwargs)
+        self._cluster, self._client = dask_utils.spawn_cluster(self._address, **self._kwargs)
 
         return self
 

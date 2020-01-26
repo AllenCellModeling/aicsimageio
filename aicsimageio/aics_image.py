@@ -130,7 +130,7 @@ class AICSImage:
         """
         # Construct dask array if never before constructed
         if self._dask_data is None:
-            reader_data = self._reader.dask_data
+            reader_data = self.reader.dask_data
 
             # Read and reshape and handle delayed known dims reshape
             self._dask_data = transforms.reshape_data(
@@ -247,7 +247,7 @@ class AICSImage:
             For pure image files an empty string or None is returned.
         """
         if self._metadata is None:
-            self._metadata = self._reader.metadata
+            self._metadata = self.reader.metadata
 
         return self._metadata
 
@@ -427,7 +427,7 @@ class AICSImage:
         list of strings representing the channel names
         """
         try:
-            names = self._reader.get_channel_names(scene)
+            names = self.reader.get_channel_names(scene)
         except AttributeError:
             names = [str(i) for i in range(self.size_c)]
         return names

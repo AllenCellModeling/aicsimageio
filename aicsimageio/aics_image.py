@@ -356,6 +356,12 @@ class AICSImage:
             # Convert selected_dims to string
             dims = "".join(selected_dims)
 
+            # Create name for window
+            if isinstance(self.reader, ArrayLikeReader):
+                title = f"napari: {self.dask_data.shape}"
+            else:
+                title = f"napari: {self.reader._file.name}"
+
             # Handle RGB entirely differently
             if rgb:
                 # Swap channel to last dimension
@@ -372,7 +378,7 @@ class AICSImage:
                         data,
                         is_pyramid=False,
                         ndisplay=3 if Dimensions.SpatialZ in dims else 2,
-                        title=f"napari: {self.reader._file.name}",
+                        title=title,
                         axis_labels=dims.replace(Dimensions.Channel, ""),
                         rgb=rgb,
                         **kwargs
@@ -403,14 +409,14 @@ class AICSImage:
                         ndisplay=3 if Dimensions.SpatialZ in dims else 2,
                         channel_axis=c_axis,
                         axis_labels=dims,
-                        title=f"napari: {self.reader._file.name}",
+                        title=title,
                         visible=visible,
                         **kwargs
                     )
 
         except ModuleNotFoundError:
             raise ModuleNotFoundError(
-                f"'napari' has not been installed. To use this function either install napari with either: "
+                f"'napari' has not been installed. To use this function install napari with either: "
                 f"'pip install napari' or 'pip install aicsimageio[interactive]'"
             )
 

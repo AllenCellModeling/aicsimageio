@@ -360,6 +360,9 @@ class CziReader(Reader):
             self._dims = CziFile(self._file).dims
         return self._dims
 
+    def dtype(self) -> np.dtype:
+        return self.dask_data.dtype
+
     @property
     def metadata(self) -> _Element:
         """

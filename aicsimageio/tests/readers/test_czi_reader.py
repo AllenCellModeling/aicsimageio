@@ -16,6 +16,7 @@ from aicsimageio.readers.czi_reader import CziReader
     "filename, "
     "expected_shape, "
     "expected_dims, "
+    "expected_dtype, "
     "select_scene, "
     "chunk_dims, "
     "expected_chunksize, "
@@ -26,6 +27,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_1_t_1_c_1_z_1.czi",
             (1, 1, 325, 475),
             "BCYX",
+            np.uint16,
             0,
             ("Z", "Y", "X"),
             (1, 1, 325, 475),
@@ -35,6 +37,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
+            np.uint16,
             0,
             ("Z", "Y", "X"),
             (1, 1, 1, 5, 325, 475),
@@ -44,6 +47,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
+            np.uint16,
             0,
             ("Y", "X"),
             (1, 1, 1, 1, 325, 475),
@@ -53,6 +57,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
+            np.uint16,
             0,
             ("C", "Y", "X"),
             (1, 1, 3, 1, 325, 475),
@@ -62,6 +67,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
+            np.uint16,
             0,
             ("S", "Y", "X"),
             (1, 3, 1, 1, 325, 475),
@@ -72,6 +78,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
+            np.uint16,
             0,
             ("S"),
             (1, 3, 1, 1, 325, 475),
@@ -81,6 +88,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "variable_per_scene_dims.czi",
             (1, 1, 2, 1, 2, 1248, 1848),
             "BSTCZYX",
+            np.uint16,
             0,
             ("Z", "Y", "X"),
             (1, 1, 1, 1, 2, 1248, 1848),
@@ -90,6 +98,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "variable_per_scene_dims.czi",
             (1, 1, 1, 1, 2, 1248, 1848),
             "BSTCZYX",
+            np.uint16,
             1,
             ("Z", "Y", "X"),
             (1, 1, 1, 1, 2, 1248, 1848),
@@ -99,6 +108,7 @@ from aicsimageio.readers.czi_reader import CziReader
             "variable_per_scene_dims.czi",
             (1, 1, 1, 1, 2, 1248, 1848),
             "BSTCZYX",
+            np.uint16,
             2,
             ("Z", "Y", "X"),
             None,
@@ -107,6 +117,7 @@ from aicsimageio.readers.czi_reader import CziReader
         ),
         pytest.param(
             "example.txt",
+            None,
             None,
             None,
             None,
@@ -122,6 +133,7 @@ def test_czi_reader(
     filename,
     expected_shape,
     expected_dims,
+    expected_dtype,
     select_scene,
     chunk_dims,
     expected_chunksize,
@@ -143,6 +155,7 @@ def test_czi_reader(
         assert img.metadata
         assert img.dask_data.shape == expected_shape
         assert img.dask_data.chunksize == expected_chunksize
+        assert img.dtype() == expected_dtype
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 

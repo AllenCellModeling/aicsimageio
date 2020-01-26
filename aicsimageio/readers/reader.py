@@ -2,15 +2,23 @@
 # -*- coding: utf-8 -*-
 
 import io
+import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
+from distributed import Client, LocalCluster
 
-from .. import exceptions, types
+from .. import dask_utils, exceptions, types
 from ..constants import Dimensions
+
+###############################################################################
+
+log = logging.getLogger(__name__)
+
+###############################################################################
 
 
 class Reader(ABC):
@@ -47,7 +55,7 @@ class Reader(ABC):
 
         return img
 
-    def __init__(self, file: types.ImageLike, **kwargs):
+    def __init__(self, file: types.ImageLike, address: Optional[str] = None, **kwargs):
         # This will both fully expand and enforce that the filepath exists
         file = self._resolve_image_path(file)
 
@@ -59,6 +67,12 @@ class Reader(ABC):
 
         # Store this filepath
         self._file = file
+
+        # Store dask client and cluster setup
+        self._address = address
+        self._kwargs = kwargs
+        self._client = None
+        self._cluster = None
 
     @staticmethod
     def guess_dim_order(shape: Tuple[int]) -> str:
@@ -126,3 +140,35 @@ class Reader(ABC):
     @abstractmethod
     def metadata(self) -> Any:
         pass
+
+    @property
+    def cluster(self) -> Optional[LocalCluster]:
+        return self._cluster
+
+    @property
+    def client(self) -> Optional[Client]:
+        return self._client
+
+    def close(self):
+        """
+        Always close the Dask Client connection.
+        If connected to *strictly* a LocalCluster, close it down as well.
+        """
+        self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
+
+    def __enter__(self):
+        """
+        If provided an address, create a Dask Client connection.
+        If not provided an address, create a LocalCluster and Client connection.
+        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
+        """
+        self._cluster, self._client = dask_utils.spawn_cluster(self._address, self._kwargs)
+
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Always close the Dask Client connection.
+        If connected to *strictly* a LocalCluster, close it down as well.
+        """
+        self.close()

@@ -6,8 +6,9 @@ from typing import Any, List, Optional, Tuple, Type
 
 import dask.array as da
 import numpy as np
+from distributed import Client, LocalCluster
 
-from . import transforms, types
+from . import dask_utils, transforms, types
 from .constants import Dimensions
 from .exceptions import (InvalidDimensionOrderingError,
                          UnsupportedFileFormatError)
@@ -72,6 +73,7 @@ class AICSImage:
         self,
         data: types.ImageLike,
         known_dims: Optional[str] = None,
+        address: Optional[str] = None,
         **kwargs
     ):
         """
@@ -85,6 +87,11 @@ class AICSImage:
             String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
+        address: Optional[str]
+            Optional string tcp address that points to a Dask Cluster.
+        kwargs: Dict[str, Any]
+            Extra keyword arguments that can be passed down to either the reader subclass or, if using the context
+            manager, the LocalCluster initialization.
         """
         # Check known dims
         if known_dims is not None:
@@ -108,6 +115,12 @@ class AICSImage:
         self._dask_data = None
         self._data = None
         self._metadata = None
+
+        # Store dask client and cluster setup
+        self._address = address
+        self._kwargs = kwargs
+        self._client = None
+        self._cluster = None
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
@@ -440,6 +453,38 @@ class AICSImage:
 
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"
+
+    @property
+    def cluster(self) -> Optional[LocalCluster]:
+        return self._cluster
+
+    @property
+    def client(self) -> Optional[Client]:
+        return self._client
+
+    def close(self):
+        """
+        Always close the Dask Client connection.
+        If connected to *strictly* a LocalCluster, close it down as well.
+        """
+        self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
+
+    def __enter__(self):
+        """
+        If provided an address, create a Dask Client connection.
+        If not provided an address, create a LocalCluster and Client connection.
+        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
+        """
+        self._cluster, self._client = dask_utils.spawn_cluster(self._address, self._kwargs)
+
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        Always close the Dask Client connection.
+        If connected to *strictly* a LocalCluster, close it down as well.
+        """
+        self.close()
 
 
 def imread_dask(data: types.ImageLike, **kwargs) -> da.core.Array:

@@ -377,6 +377,30 @@ class CziReader(Reader):
             self._metadata = CziFile(self._file).meta
         return self._metadata
 
+    def _size_of_dimension(self, dim: str) -> int:
+        if dim in self.dims:
+            return self.dask_data.shape[self.dims.index(dim)]
+
+        return 1
+
+    def size_s(self) -> int:
+        return self._size_of_dimension(Dimensions.Scene)
+
+    def size_t(self) -> int:
+        return self._size_of_dimension(Dimensions.Time)
+
+    def size_c(self) -> int:
+        return self._size_of_dimension(Dimensions.Channel)
+
+    def size_z(self) -> int:
+        return self._size_of_dimension(Dimensions.SpatialZ)
+
+    def size_y(self) -> int:
+        return self._size_of_dimension(Dimensions.SpatialY)
+
+    def size_x(self) -> int:
+        return self._size_of_dimension(Dimensions.SpatialX)
+
     def get_channel_names(self, scene: int = 0):
         chelem = self.metadata.findall("./Metadata/Information/Image/Dimensions/Channels/Channel")
         return [ch.get("Name") for ch in chelem]

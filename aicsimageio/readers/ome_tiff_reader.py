@@ -48,37 +48,42 @@ class OmeTiffReader(TiffReader):
             return True
         return False
 
-    def is_ome(self):
-        return self.is_this_type(self._file)
-
-    @property
-    def metadata(self) -> omexml.OMEXML:
+    def _lazy_init_metadata(self) -> omexml.OMEXML:
         with TiffFile(self._file) as tiff:
             if self._metadata is None and tiff.is_ome:
                 description = tiff.pages[0].description.strip()
                 if not (description.startswith("<?xml version=") and description.endswith("</OME>")):
                     raise ValueError(f"Description does not conform to OME specification: {description[:100]}")
                 self._metadata = omexml.OMEXML(description)
+        return self._metadata
+
+    def is_ome(self):
+        return self.is_this_type(self._file)
+
+    @property
+    def metadata(self) -> omexml.OMEXML:
+        if self._metadata is None:
+            return self._lazy_init_metadata()
 
         return self._metadata
 
-    def size_s(self):
+    def size_s(self) -> int:
         return self.metadata.image_count
 
-    def size_z(self):
-        return self.metadata.image().Pixels.SizeZ
-
-    def size_c(self):
-        return self.metadata.image().Pixels.SizeC
-
-    def size_t(self):
+    def size_t(self) -> int:
         return self.metadata.image().Pixels.SizeT
 
-    def size_x(self):
-        return self.metadata.image().Pixels.SizeX
+    def size_c(self) -> int:
+        return self.metadata.image().Pixels.SizeC
 
-    def size_y(self):
+    def size_z(self) -> int:
+        return self.metadata.image().Pixels.SizeZ
+
+    def size_y(self) -> int:
         return self.metadata.image().Pixels.SizeY
+
+    def size_x(self) -> int:
+        return self.metadata.image().Pixels.SizeX
 
     def get_channel_names(self, scene: int = 0):
         return self.metadata.image(scene).Pixels.get_channel_names()

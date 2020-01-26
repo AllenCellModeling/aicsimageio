@@ -169,3 +169,24 @@ def test_get_physical_pixel_size(resources_dir, filename, scene, expected_pixel_
 
     # Check that there are no open file pointers after check
     assert len(proc.open_files()) == 0
+
+
+@pytest.mark.parametrize("filename, s, t, c, z, y, x", [
+    ("s_1_t_1_c_1_z_1.ome.tiff", 1, 1, 1, 1, 325, 475),
+    ("s_1_t_1_c_10_z_1.ome.tiff", 1, 1, 10, 1, 1736, 1776),
+    ("s_3_t_1_c_3_z_5.ome.tiff", 3, 1, 3, 5, 325, 475)
+])
+def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
+    # Get file
+    f = resources_dir / filename
+
+    # Init reader
+    img = OmeTiffReader(f)
+
+    # Check sizes
+    assert img.size_s() == s
+    assert img.size_t() == t
+    assert img.size_c() == c
+    assert img.size_z() == z
+    assert img.size_y() == y
+    assert img.size_x() == x

@@ -201,3 +201,23 @@ def test_get_channel_names(resources_dir, filename, scene, expected):
 ])
 def test_get_physical_pixel_size(resources_dir, filename, expected):
     assert CziReader(resources_dir / filename).get_physical_pixel_size() == expected
+
+
+@pytest.mark.parametrize("filename, s, t, c, z, y, x", [
+    ("s_1_t_1_c_1_z_1.czi", 1, 1, 1, 1, 325, 475),
+    ("s_3_t_1_c_3_z_5.czi", 3, 1, 3, 5, 325, 475)
+])
+def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
+    # Get file
+    f = resources_dir / filename
+
+    # Init reader
+    img = CziReader(f)
+
+    # Check sizes
+    assert img.size_s() == s
+    assert img.size_t() == t
+    assert img.size_c() == c
+    assert img.size_z() == z
+    assert img.size_y() == y
+    assert img.size_x() == x

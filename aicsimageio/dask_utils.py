@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 
-def spawn_cluster(address: Optional[str], **kwargs) -> Tuple[Optional[LocalCluster], Optional[Client]]:
+def spawn_cluster_and_client(address: Optional[str], **kwargs) -> Tuple[Optional[LocalCluster], Optional[Client]]:
     """
     If provided an address, create a Dask Client connection.
     If not provided an address, create a LocalCluster and Client connection.

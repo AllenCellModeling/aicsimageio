@@ -158,6 +158,10 @@ class TiffReader(Reader):
 
         return self._dask_data
 
+    def load_slice(self, slice_index: int = 0) -> np.ndarray:
+        with TiffFile(self._file) as tiff:
+            return tiff.asarray(key=slice_index)
+
     def dtype(self):
         if self._dtype is None:
             with TiffFile(self._file) as tiff:

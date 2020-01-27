@@ -11,7 +11,7 @@ from aicsimageio.readers import CziReader
 
 @pytest.mark.parametrize("address, nworkers", [
     (None, None),
-    (None, 4),
+    (None, 2),
     pytest.param("tcp://this.will.fail", None, marks=pytest.mark.raises(exception=ValueError))
 ])
 def test_aicsimage_context_manager(resources_dir, address, nworkers):
@@ -27,17 +27,17 @@ def test_aicsimage_context_manager(resources_dir, address, nworkers):
         else:
             assert len(img.cluster.workers) >= 1
 
+    # Give some time to the system to fully shutdown the cluster and workers prior to next test
+    time.sleep(5)
+
     # Check that the cluster and client were shutdown after exiting context manager
     assert img.cluster.status == "closed"
     assert img.client.status == "closed"
 
-    # Give some time to the system to fully shutdown the cluster and workers prior to next test
-    time.sleep(3)
-
 
 @pytest.mark.parametrize("address, nworkers", [
     (None, None),
-    (None, 4),
+    (None, 2),
     pytest.param("tcp://this.will.fail", None, marks=pytest.mark.raises(exception=ValueError))
 ])
 def test_reader_context_manager(resources_dir, address, nworkers):
@@ -53,9 +53,9 @@ def test_reader_context_manager(resources_dir, address, nworkers):
         else:
             assert len(img.cluster.workers) >= 1
 
+    # Give some time to the system to fully shutdown the cluster and workers prior to next test
+    time.sleep(5)
+
     # Check that the cluster and client were shutdown after exiting context manager
     assert img.cluster.status == "closed"
     assert img.client.status == "closed"
-
-    # Give some time to the system to fully shutdown the cluster and workers prior to next test
-    time.sleep(10)

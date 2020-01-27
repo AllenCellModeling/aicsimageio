@@ -67,6 +67,20 @@ class AICSImage:
     ---------------------
     blank = numpy.zeros((2, 600, 900))
     img = AICSImage(blank)
+
+    Dask Client / Cluster Example
+    -----------------------------
+    # Create a local dask cluster for the duration of the context manager
+    with AICSImage("filename.ome.tiff") as img:
+        # do your work like normal
+
+    # Specify arguments for the local cluster initialization
+    with AICSImage("filename.ome.tiff", nworkers=4) as img:
+        # do your work like normal
+
+    # Connect to a dask client for the duration of the context manager
+    with AICSImage("filename.ome.tiff", address="tcp://localhost:12345") as img:
+        # do your work like normal
     """
 
     def __init__(

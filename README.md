@@ -13,7 +13,7 @@ A Python library for reading and writing image data with specific support for ha
     * `CZI`
     * `OME-TIFF`
     * `TIFF`
-    * Any additional format supported by `imageio`
+    * Any additional format supported by [`imageio`](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
 
@@ -43,7 +43,7 @@ img.get_image_data("CZYX", S=0, T=0)  # returns 4D CZYX numpy array
 data = imread("my_file.tiff")
 ```
 
-### Delayed Slice Image Reading
+### Delayed Image Slice Reading
 ```python
 from aicsimageio import AICSImage, imread_dask
 
@@ -55,23 +55,25 @@ img.shape  # returns tuple of dimension sizes in STCZYX order
 img.size("STC")  # returns tuple of dimensions sizes for just STC
 img.get_image_dask_data("CZYX", S=0, T=0)  # returns 4D CZYX dask array
 
-# Get 6D STCZYX dask array
-data = imread_dask("my_file.tiff")
-
 # Read specified portion of dask array
 lazy_s0t0 = img.get_image_dask_data("CZYX", S=0, T=0)  # returns 4D CZYX dask array
 s0t0 = lazy_s0t0.compute()  # returns 4D CZYX numpy array
 
 # Or use normal numpy array slicing
-lazy_s0t0 = data[0, 0, :]
+lazy_data = imread_dask("my_file.tiff")
+lazy_s0t0 = lazy_data[0, 0, :]
 s0t0 = lazy_s0t0.compute()
 ```
 
-### Speed up IO and Processing with Dask Client and Clusters
+When using the `dask_data` array, it is important to know when to `compute` or `persist` data and when to keep
+chaining computation. [Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
+
+
+### Speed up IO and Processing with Dask Clients and Clusters
 ```python
 from aicsimageio import AICSImage, dask_utils
 
-# Create a local dask cluster for the duration of the context manager
+# Create a local dask cluster and client for the duration of the context manager
 with AICSImage("filename.ome.tiff") as img:
     # do your work like normal
 
@@ -83,17 +85,18 @@ with AICSImage("filename.ome.tiff", nworkers=4) as img:
 with AICSImage("filename.ome.tiff", address="tcp://localhost:12345") as img:
     # do your work like normal
 
-# Or spawn a cluster and client outside of a context manager
+# Or spawn a local cluster and / or connect to a client outside of a context manager
 # This uses the same "address" and dask kwargs as above
-# If you pass an address in, it will only shutdown the client and not the cluster
-# as it is assumed that the cluster you are connecting to is shared between multiple people.
+# If you pass an address in, it will create and shutdown the client and no cluster will be created.
 cluster, client = dask_utils.spawn_cluster_and_client()
 
 img1 = AICSImage("1.tiff")
 img2 = AICSImage("2.tiff")
 img3 = AICSImage("3.tiff")
 
-# And shut it down after
+# Do your image processing work
+
+# And shut down the cluster and / or client after
 cluster, client = dask_utils.shutdown_cluster_and_client(cluster, client)
 ```
 
@@ -108,6 +111,8 @@ img.get_channel_names()  # returns a list of string channel names if found in th
 ```
 
 ### Napari Interactive Viewer
+[napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional image viewer for python and
+it is pretty useful for imaging data that this package tends to interact with.
 ```python
 from aicsimageio import AICSImage
 

@@ -81,7 +81,7 @@ def test_ome_tiff_reader(
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
@@ -107,7 +107,7 @@ def test_ome_tiff_reader(
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
@@ -116,7 +116,7 @@ def test_ome_tiff_reader(
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after retrieval
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, scene, expected_channel_names", [
@@ -136,13 +136,13 @@ def test_get_channel_names(resources_dir, filename, scene, expected_channel_name
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check channel names
     assert img.get_channel_names(scene) == expected_channel_names
 
     # Check that there are no open file pointers after check
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, scene, expected_pixel_sizes", [
@@ -162,13 +162,13 @@ def test_get_physical_pixel_size(resources_dir, filename, scene, expected_pixel_
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check physical pixel sizes
     assert img.get_physical_pixel_size(scene) == expected_pixel_sizes
 
     # Check that there are no open file pointers after check
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, s, t, c, z, y, x", [

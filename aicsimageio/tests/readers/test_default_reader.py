@@ -41,7 +41,7 @@ def test_default_reader(
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
@@ -53,7 +53,7 @@ def test_default_reader(
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
@@ -62,7 +62,7 @@ def test_default_reader(
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after retrieval
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("expected_starting_dims, set_dims, expected_ending_dims", [
@@ -80,7 +80,7 @@ def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
@@ -89,7 +89,7 @@ def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check no tasks happen during dims setting
     with Profiler() as prof:
@@ -98,7 +98,7 @@ def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check no tasks happen during dims getting
     with Profiler() as prof:
@@ -107,4 +107,4 @@ def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after retrieval
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]

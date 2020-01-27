@@ -147,7 +147,7 @@ def test_czi_reader(
 
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
@@ -160,7 +160,7 @@ def test_czi_reader(
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check computed type is numpy array, computed shape is expected shape, and task count is expected
     with Profiler() as prof:
@@ -169,7 +169,7 @@ def test_czi_reader(
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after retrieval
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("raw_bytes, expected", [

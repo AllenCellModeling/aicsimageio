@@ -50,25 +50,31 @@ TXT_FILE = "example.txt"
     ],
 )
 def test_typing(filename, expected_reader, resources_dir):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        actual_reader = AICSImage.determine_reader(resources_dir / filename)
+        actual_reader = AICSImage.determine_reader(f)
         assert actual_reader == expected_reader
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 def test_file_passed_was_directory(resources_dir):
+    # Get filepath
+    f = resources_dir
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
@@ -78,7 +84,7 @@ def test_file_passed_was_directory(resources_dir):
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("arr", [
@@ -90,19 +96,12 @@ def test_file_passed_was_directory(resources_dir):
     da.random.random((2, 2, 2))
 ])
 def test_support_for_ndarray(arr):
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert len(proc.open_files()) == 0
-
     # Check basics
     with Profiler() as prof:
         actual_reader = AICSImage.determine_reader(arr)
         assert actual_reader == readers.ArrayLikeReader
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
-
-    # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
 
 
 @pytest.mark.parametrize(
@@ -117,10 +116,6 @@ def test_support_for_ndarray(arr):
     ],
 )
 def test_default_shape_expansion(data, expected):
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert len(proc.open_files()) == 0
-
     # Check basics
     with Profiler() as prof:
         img = AICSImage(data=data)
@@ -128,9 +123,6 @@ def test_default_shape_expansion(data, expected):
         assert img.shape == expected
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
-
-    # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
 
 
 @pytest.mark.parametrize(
@@ -157,10 +149,6 @@ def test_default_shape_expansion(data, expected):
     ],
 )
 def test_known_dims(data, dims, expected_shape):
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert len(proc.open_files()) == 0
-
     # Check basics
     with Profiler() as prof:
         img = AICSImage(data, known_dims=dims)
@@ -176,9 +164,6 @@ def test_known_dims(data, dims, expected_shape):
         # Due to reshape and transpose there will be 2 tasks in the graph
         assert len(prof.results) == 2
 
-    # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
-
 
 @pytest.mark.parametrize(
     "data_shape, dims, expected",
@@ -190,10 +175,6 @@ def test_known_dims(data, dims, expected_shape):
     ],
 )
 def test_force_dims(data_shape, dims, expected):
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert len(proc.open_files()) == 0
-
     # Check basics
     with Profiler() as prof:
         img = AICSImage(data=da.zeros(data_shape))
@@ -213,9 +194,6 @@ def test_force_dims(data_shape, dims, expected):
         # Then get_image_data is ran and two more reshape and transpose are ran
         assert len(prof.results) == 4
 
-    # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
-
 
 @pytest.mark.parametrize(
     "filename, expected_metadata_type",
@@ -227,20 +205,23 @@ def test_force_dims(data_shape, dims, expected):
     ],
 )
 def test_metadata(resources_dir, filename, expected_metadata_type):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        img = AICSImage(resources_dir / filename)
+        img = AICSImage(f)
         assert isinstance(img.metadata, expected_metadata_type)
 
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize(
@@ -253,20 +234,23 @@ def test_metadata(resources_dir, filename, expected_metadata_type):
     ],
 )
 def test_imread(resources_dir, filename, expected_shape):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        img = imread(resources_dir / filename)
+        img = imread(f)
         assert img.shape == expected_shape
 
         # Reshape and transpose are required so there should be two tasks in the graph
         assert len(prof.results) == 2
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, expected_shape, expected_task_count", [
@@ -276,18 +260,21 @@ def test_imread(resources_dir, filename, expected_shape):
     (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 18)
 ])
 def test_large_imread(resources_dir, filename, expected_shape, expected_task_count):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        img = imread(resources_dir / filename)
+        img = imread(f)
         assert img.shape == expected_shape
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, expected_shape, expected_task_count", [
@@ -297,18 +284,21 @@ def test_large_imread(resources_dir, filename, expected_shape, expected_task_cou
     (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 0)
 ])
 def test_large_imread_dask(resources_dir, filename, expected_shape, expected_task_count):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        img = imread_dask(resources_dir / filename)
+        img = imread_dask(f)
         assert img.shape == expected_shape
         assert len(prof.results) == expected_task_count
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize(
@@ -321,20 +311,23 @@ def test_large_imread_dask(resources_dir, filename, expected_shape, expected_tas
     ],
 )
 def test_channel_names(resources_dir, filename, expected_channel_names):
+    # Get filepath
+    f = resources_dir / filename
+
     # Check that there are no open file pointers after init
     proc = Process()
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
     with Profiler() as prof:
-        img = AICSImage(resources_dir / filename)
+        img = AICSImage(f)
         assert img.get_channel_names() == expected_channel_names
 
         # Check that basic details don't require task computation
         assert len(prof.results) == 0
 
     # Check that there are no open file pointers after basics
-    assert len(proc.open_files()) == 0
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels", [

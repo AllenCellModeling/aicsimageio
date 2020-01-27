@@ -6,8 +6,6 @@
 
 A Python library for reading and writing image data with specific support for handling bio-formats.
 
-![aicsimageio readers, and, image and metadata processing](docs/aicsimageio.png)
-
 ---
 
 ## Features

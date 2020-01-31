@@ -194,6 +194,10 @@ class TiffReader(Reader):
                                 if guessed_dim not in best_guess:
                                     best_guess.append(guessed_dim)
                                     appended_dim = True
+                                    log.info(
+                                        f"Unsure how to handle dimension: {dim_from_meta}. "
+                                        f"Replaced with guess: {guessed_dim}"
+                                    )
                                     break
 
                             # All of our guess dims were already in the dim list, append the dim read from meta

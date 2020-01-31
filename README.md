@@ -129,8 +129,8 @@ or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
 * The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X` dimensions from the reader.
 If your file has dimensions outside of those, use the base reader classes `CziReader`, `OmeTiffReader`, `TiffReader`,
 or `DefaultReader`.
-* We make some choices for the user based off the image data during `img.view_napari`. If you don't want this
-behavior, simply pass the `img.dask_data` into `napari.view_image` instead.
+* We make some choices for the user based off the image data during `img.view_napari`.
+If you don't want this behavior, simply pass the `img.dask_data` into `napari.view_image` instead.
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

@@ -67,10 +67,10 @@ class DefaultReader(Reader):
                     # Catch all other image types as unsupported
                     # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
                     else:
-                        raise ValueError()
+                        exceptions.UnsupportedFileFormatError(self._file)
 
-            # Catch not a supported image
-            except ValueError:
+            # Reraise unsupported file format
+            except exceptions.UnsupportedFileFormatError:
                 raise exceptions.UnsupportedFileFormatError(self._file)
 
         return self._dask_data

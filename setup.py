@@ -9,7 +9,7 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    "aicspylibczi==2.4.1",
+    "aicspylibczi>=2.5.0",
     "dask>=2.9.0",
     "distributed>=2.9.3",
     "numpy>=1.16",
@@ -86,6 +86,7 @@ setup(
         "Intended Audience :: Education",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
     ],
     description=(
@@ -101,7 +102,7 @@ setup(
     keywords="aicsimageio, allen cell, imaging, computational biology",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,

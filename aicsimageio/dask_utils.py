@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+from contextlib import contextmanager
 from typing import Optional, Tuple
 
 from distributed import Client, LocalCluster
@@ -47,3 +48,29 @@ def shutdown_cluster_and_client(
         client.close()
 
     return cluster, client
+
+
+@contextmanager
+def cluster_and_client(address: Optional[str] = None, **kwargs):
+    """
+    If provided an address, create a Dask Client connection.
+    If not provided an address, create a LocalCluster and Client connection.
+    If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
+
+    These objects will only live for the duration of this context manager.
+
+    Example
+    -------
+    ```
+    with cluster_and_client() as (cluster, client):
+        img1 = AICSImage("1.tiff")
+        img2 = AICSImage("2.czi")
+
+        # other processing
+    ```
+    """
+    try:
+        cluster, client = spawn_cluster_and_client(address=address, **kwargs)
+        yield cluster, client
+    finally:
+        cluster, client = shutdown_cluster_and_client(cluster=cluster, client=client)

@@ -117,6 +117,7 @@ class TiffReader(Reader):
                             f"File contains variable dimensions per scene, "
                             f"selected scene: {self.specific_s_index} for data retrieval."
                         )
+                        break
 
                 # Get sample yx plane
                 sample = scenes[0].pages[0].asarray()

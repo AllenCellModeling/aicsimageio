@@ -81,16 +81,8 @@ class Reader(ABC):
     def is_this_type(cls, data: types.ImageLike) -> bool:
         # Check path
         if isinstance(data, (str, Path)):
-            # Strictly do not fully resolve the path because Mac is bad with mounted drives
-            f = Path(data).expanduser()
-
-            # Check the file exists
-            if not f.exists():
-                raise FileNotFoundError(f)
-
-            # This will check if the above enforced filepath is a directory
-            if f.is_dir():
-                raise IsADirectoryError(f)
+            # Resolve image path
+            f = cls._resolve_image_path(data)
 
             # Return and close the open pointer
             with open(f, "rb") as read_bytes:

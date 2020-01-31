@@ -3,7 +3,6 @@
 
 import logging
 from collections import Counter
-from typing import Union
 
 import dask.array as da
 import numpy as np

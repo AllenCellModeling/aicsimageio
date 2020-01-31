@@ -187,12 +187,9 @@ class CziReader(Reader):
 
         # Setup read dimensions for an example chunk
         first_chunk_read_dims = {}
-        for dim, dim_info in image_dim_indices.items():
+        for dim, (dim_begin_index, dim_end_index) in image_dim_indices.items():
             # Only add the dimension if the dimension isn't a part of the chunk
             if dim not in chunk_by_dims:
-                # Unpack dimension info
-                dim_begin_index, dim_end_index = dim_info
-
                 # Add to read dims
                 first_chunk_read_dims[dim] = dim_begin_index
 

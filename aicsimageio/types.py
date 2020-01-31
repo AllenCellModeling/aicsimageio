@@ -19,7 +19,8 @@ SixDArray = np.ndarray  # In order STCZYX
 PathLike = Union[str, Path]
 BufferLike = Union[bytes, BufferedIOBase]
 FileLike = Union[PathLike, BufferLike]
-ImageLike = Union[FileLike, np.ndarray, da.core.Array]
+ArrayLike = Union[np.ndarray, da.core.Array]
+ImageLike = Union[FileLike, ArrayLike]
 
 
 class LoadResults(NamedTuple):

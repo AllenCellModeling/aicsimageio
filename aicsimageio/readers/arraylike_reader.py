@@ -6,7 +6,7 @@ from typing import Union
 import dask.array as da
 import numpy as np
 
-from .. import exceptions
+from .. import exceptions, types
 from .reader import Reader
 
 ###############################################################################
@@ -27,7 +27,7 @@ class ArrayLikeReader(Reader):
     returned with dimensions assumed in order but with extra dimensions removed depending on image shape.
     """
 
-    def __init__(self, data: Union[np.ndarray, da.core.Array], **kwargs):
+    def __init__(self, data: types.ArrayLike, **kwargs):
         # Store data as dask array
         if isinstance(data, np.ndarray):
             self._dask_data = da.from_array(data)
@@ -65,5 +65,5 @@ class ArrayLikeReader(Reader):
         return None
 
     @staticmethod
-    def _is_this_type(arr: Union[np.ndarray, da.core.Array]) -> bool:
+    def _is_this_type(arr: types.ArrayLike) -> bool:
         return isinstance(arr, (np.ndarray, da.core.Array))

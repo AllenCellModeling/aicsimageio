@@ -8,6 +8,7 @@ from typing import Union
 import dask.array as da
 import numpy as np
 
+from . import types
 from .exceptions import ConflictingArgumentsError
 
 ###############################################################################
@@ -74,18 +75,18 @@ def _split(operator, ary, indices_or_sections, axis=0):
 
 
 def reshape_data(
-    data: Union[da.core.Array, np.ndarray],
+    data: types.ArrayLike,
     given_dims: str,
     return_dims: str,
     **kwargs
-) -> Union[da.core.Array, np.ndarray]:
+) -> types.ArrayLike:
     """
     Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.
     Warns the user to use the base reader if the depth of the Dimension being removed is not 1.
 
     Parameters
     ----------
-    data: Union[da.core.Array, np.ndarray]
+    data: types.ArrayLike
         Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims
     given_dims: str
         The dimension ordering of data, "CZYX", "VBTCXZY" etc
@@ -97,7 +98,7 @@ def reshape_data(
 
     Returns
     -------
-    data: Union[da.core.Array, np.ndarray]
+    data: types.ArrayLike
         An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order "STCZYX"
 
     """
@@ -147,15 +148,15 @@ def reshape_data(
 
 
 def transpose_to_dims(
-    data: Union[np.ndarray, da.core.Array],
+    data: types.ArrayLike,
     given_dims: str,
     return_dims: str,
-) -> Union[np.ndarray, da.core.Array]:
+) -> types.ArrayLike:
     """
     This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in
     given_dims must be used in return_dims
 
-    data: Union[da.core.Array, np.ndarray]
+    data: types.ArrayLike
         Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims
     given_dims: str
         The dimension ordering of data, "CZYX", "VBTCXZY" etc
@@ -164,7 +165,7 @@ def transpose_to_dims(
 
     Returns
     -------
-    data: Union[np.ndarray, da.core.Array]
+    data: types.ArrayLike
         An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order "STCZYX"
     """
     # Use a counter to track that the contents are composed of the same letters and that no letter is repeated

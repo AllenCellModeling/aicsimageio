@@ -73,4 +73,4 @@ def cluster_and_client(address: Optional[str] = None, **kwargs):
         cluster, client = spawn_cluster_and_client(address=address, **kwargs)
         yield cluster, client
     finally:
-        cluster, client = shutdown_cluster_and_client(cluster=cluster, client=client)
+        shutdown_cluster_and_client(cluster=cluster, client=client)

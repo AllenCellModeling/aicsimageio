@@ -5,7 +5,7 @@ import io
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -55,7 +55,7 @@ class Reader(ABC):
 
         return img
 
-    def __init__(self, file: types.ImageLike, address: Optional[str] = None, **kwargs):
+    def __init__(self, file: types.ImageLike, dask_kwargs: Dict[str, Any] = {}, **kwargs):
         # This will both fully expand and enforce that the filepath exists
         file = self._resolve_image_path(file)
 
@@ -69,8 +69,7 @@ class Reader(ABC):
         self._file = file
 
         # Store dask client and cluster setup
-        self._address = address
-        self._kwargs = kwargs
+        self._dask_kwargs = dask_kwargs
         self._client = None
         self._cluster = None
 
@@ -162,7 +161,7 @@ class Reader(ABC):
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
-        self._cluster, self._client = dask_utils.spawn_cluster_and_client(self._address, **self._kwargs)
+        self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
 
         return self
 

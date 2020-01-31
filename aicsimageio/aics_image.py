@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Any, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional, Tuple, Type
 
 import dask.array as da
 import numpy as np
@@ -75,11 +75,11 @@ class AICSImage:
         # do your work like normal
 
     # Specify arguments for the local cluster initialization
-    with AICSImage("filename.ome.tiff", nworkers=4) as img:
+    with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
         # do your work like normal
 
     # Connect to a dask client for the duration of the context manager
-    with AICSImage("filename.ome.tiff", address="tcp://localhost:12345") as img:
+    with AICSImage("filename.ome.tiff", dask_kwargs={"address": "tcp://localhost:12345"}) as img:
         # do your work like normal
     """
 
@@ -87,7 +87,7 @@ class AICSImage:
         self,
         data: types.ImageLike,
         known_dims: Optional[str] = None,
-        address: Optional[str] = None,
+        dask_kwargs: Dict[str, Any] = {},
         **kwargs
     ):
         """
@@ -101,8 +101,8 @@ class AICSImage:
             String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
-        address: Optional[str]
-            Optional string tcp address that points to a Dask Cluster.
+        dask_kwargs: Dict[str, Any] = {}
+            A dictionary of arguments to pass to a dask cluster and or client.
         kwargs: Dict[str, Any]
             Extra keyword arguments that can be passed down to either the reader subclass or, if using the context
             manager, the LocalCluster initialization.
@@ -131,8 +131,7 @@ class AICSImage:
         self._metadata = None
 
         # Store dask client and cluster setup
-        self._address = address
-        self._kwargs = kwargs
+        self._dask_kwargs = dask_kwargs
         self._client = None
         self._cluster = None
 
@@ -489,7 +488,7 @@ class AICSImage:
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
-        self._cluster, self._client = dask_utils.spawn_cluster_and_client(self._address, **self._kwargs)
+        self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
 
         return self
 

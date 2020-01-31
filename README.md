@@ -79,12 +79,12 @@ with AICSImage("filename.ome.tiff") as img:
     print(img.dask_data.shape)
 
 # Specify arguments for the local cluster initialization
-with AICSImage("filename.ome.tiff", nworkers=4) as img:
+with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
     # do your work like normal
     print(img.dask_data.shape)
 
 # Connect to a dask client for the duration of the context manager
-with AICSImage("filename.ome.tiff", address="tcp://localhost:12345") as img:
+with AICSImage("filename.ome.tiff", dask_kwargs={"address": "tcp://localhost:12345"}) as img:
     # do your work like normal
     print(img.dask_data.shape)
 

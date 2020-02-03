@@ -1,5 +1,23 @@
-**Description:**
-A clear and concise description of what you want to happen.
+---
+name: Feature Request
+about: '"It would be really cool if x did y..."'
+title: ''
+labels: ''
+assignees: ''
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+---
+
+## Use Case
+*Please provide a use case to help us understand your request in context*
+
+
+
+
+## Solution
+*Please describe your ideal solution*
+
+
+
+
+## Alternatives
+*Please describe any alternatives you've considered, even if you've dismissed them*

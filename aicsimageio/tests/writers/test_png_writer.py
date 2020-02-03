@@ -38,7 +38,6 @@ class TestPngWriter(unittest.TestCase):
         self.writer.save(self.image.astype('uint8'))
         reader = DefaultReader(self.file)
         output_image = reader.data.T
-        reader.close()
         self.assertTrue(np.array_equal(self.image, output_image))
 
     """
@@ -49,14 +48,12 @@ class TestPngWriter(unittest.TestCase):
         self.writer.save_slice(self.image.astype('uint8'), z=1, c=2, t=3)
         reader = DefaultReader(self.file)
         output_image = reader.data.T
-        reader.close()
         self.assertTrue(np.array_equal(self.image, output_image))
 
     """
     Test to check if save() can overwrite a file
     """
     def test_overwriteFile(self):
-        print(self.file)
         with PngWriter(self.file, overwrite_file=True) as writer:
             writer.save(self.image.astype('uint8'))
 
@@ -91,9 +88,9 @@ class TestPngWriter(unittest.TestCase):
         image[1, 0] = 0
         image[1, 1] = 255
         self.writer.save(image)
-        with DefaultReader(self.file) as reader:
-            loaded_image = reader.data.T
-            self.assertTrue(np.array_equal(image, loaded_image))
+        reader = DefaultReader(self.file)
+        loaded_image = reader.data.T
+        self.assertTrue(np.array_equal(image, loaded_image))
 
     """
     Test saves an image with a single xy plane, but gives one channel
@@ -106,13 +103,13 @@ class TestPngWriter(unittest.TestCase):
         image[0, 1, 0] = 0
         image[0, 1, 1] = 255
         self.writer.save(image)
-        with DefaultReader(self.file) as reader:
-            all_channels = reader.data.T
-            channel_r = all_channels[0, :, :]
-            channel_g = all_channels[1, :, :]
-            channel_b = all_channels[2, :, :]
-            self.assertTrue(np.array_equal(channel_r, channel_g) and np.array_equal(channel_g, channel_b)
-                            and np.array_equal(channel_r, image[0, :, :]))
+        reader = DefaultReader(self.file)
+        all_channels = reader.data.T
+        channel_r = all_channels[0, :, :]
+        channel_g = all_channels[1, :, :]
+        channel_b = all_channels[2, :, :]
+        self.assertTrue(np.array_equal(channel_r, channel_g) and np.array_equal(channel_g, channel_b)
+                        and np.array_equal(channel_r, image[0, :, :]))
 
     """
     Test attempts to save an image with zcyx dims

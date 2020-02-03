@@ -2,69 +2,98 @@
 # -*- coding: utf-8 -*-
 
 import io
+from pathlib import Path
+from typing import Any, Dict
 
+import dask.array as da
 import imageio
 import numpy as np
+from dask import delayed
 
 from .. import exceptions
 from .reader import Reader
 
+###############################################################################
+
 
 class DefaultReader(Reader):
     """
-    DefaultReader('file.jpg')
-
-    A catch all for image file reading that uses imageio as its back end.
+    A catch all for image file reading that uses imageio for reading.
 
     Parameters
     ----------
-    file: types.FileLike
-        A path or bytes object to read from.
-
-    Notes
-    -----
-    Because this is simply a wrapper around imageio, no metadata is returned. However, dimension order is returned with
-    dimensions assumed in order but with extra dimensions removed depending on image shape.
-
-    This reader always returns the first YX plane of an image. If you need to read GIFs for example, please use
-    `imageio.mimread` to get a list of YXC planes for the frames of the GIF.
-
-    For more details about how `imageio.imread`, differs from `imageio.volread` and `imageio.mimread`, please refer to
-    their documentation.
+    file: types.ImageLike
+        String with path to file.
     """
 
-    @property
-    def data(self) -> np.ndarray:
-        if self._data is None:
-            self._data = imageio.imread(self._bytes)
+    @staticmethod
+    def _get_data(file: Path, index: int) -> np.ndarray:
+        with imageio.get_reader(file) as reader:
+            return np.asarray(reader.get_data(index))
 
-        return self._data
+    @property
+    def dask_data(self) -> da.core.Array:
+        # Construct delayed many image reads
+        if self._dask_data is None:
+            try:
+                with imageio.get_reader(self._file) as reader:
+                    # Store length as it is used a bunch
+                    image_length = reader.get_length()
+
+                    # Handle single image formats like png, jpeg, etc
+                    if image_length == 1:
+                        self._dask_data = da.from_array(self._get_data(self._file, 0))
+
+                    # Handle many image formats like gif, mp4, etc
+                    elif image_length > 1:
+                        # Get a sample image
+                        sample = self._get_data(self._file, 0)
+
+                        # Create operating shape for the final dask array by prepending image length to a tuple of
+                        # ones that is the same length as the sample shape
+                        operating_shape = (image_length, ) + ((1, ) * len(sample.shape))
+                        # Create numpy array of empty arrays for delayed get data functions
+                        lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                        for indicies, _ in np.ndenumerate(lazy_arrays):
+                            lazy_arrays[indicies] = da.from_delayed(
+                                delayed(self._get_data)(self._file, indicies[0]),
+                                shape=sample.shape,
+                                dtype=sample.dtype
+                            )
+
+                        # Block them into a single dask array
+                        self._dask_data = da.block(lazy_arrays.tolist())
+
+                    # Catch all other image types as unsupported
+                    # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
+                    else:
+                        exceptions.UnsupportedFileFormatError(self._file)
+
+            # Reraise unsupported file format
+            except exceptions.UnsupportedFileFormatError:
+                raise exceptions.UnsupportedFileFormatError(self._file)
+
+        return self._dask_data
 
     @property
     def dims(self) -> str:
-        """
-        `imageio.imread` returns the first YX plane of an image, except in the case where the image is RGB / RGBA, in
-        which case it returns the first YXC plane of an image.
-
-        This dims property handles those cases by making assumptions about the dimension order based off the shape of
-        the data stored in the reader. In the case where more data than an YXC plane is returned, it uses the
-        `guess_dim_order` function. However, I can't tell when that should ever get run and is really just used as a
-        safety catch all.
-        """
+        # Set dims if not set
         if self._dims is None:
-            if len(self.data.shape) == 2:
+            if len(self.dask_data.shape) == 2:
                 self._dims = "YX"
-            elif len(self.data.shape) == 3:
+            elif len(self.dask_data.shape) == 3:
                 self._dims = "YXC"
+            elif len(self.dask_data.shape) == 4:
+                self._dims = "TYXC"
             else:
-                self._dims = self.guess_dim_order(self.data.shape)
+                self._dims = self.guess_dim_order(self.dask_data.shape)
 
         return self._dims
 
     @dims.setter
     def dims(self, dims: str):
         # Check amount of provided dims against data shape
-        if len(dims) != len(self.data.shape):
+        if len(dims) != len(self.dask_data.shape):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
@@ -75,13 +104,18 @@ class DefaultReader(Reader):
         self._dims = dims
 
     @property
-    def metadata(self) -> None:
-        return None
+    def metadata(self) -> Dict[str, Any]:
+        if self._metadata is None:
+            with imageio.get_reader(self._file) as reader:
+                self._metadata = reader.get_meta_data()
+
+        return self._metadata
 
     @staticmethod
-    def _is_this_type(buffer: io.BufferedIOBase) -> bool:
+    def _is_this_type(buffer: io.BytesIO) -> bool:
+        # Use imageio to check if they have a reader for this file
         try:
-            imageio.get_reader(buffer)
-            return True
+            with imageio.get_reader(buffer):
+                return True
         except ValueError:
             return False

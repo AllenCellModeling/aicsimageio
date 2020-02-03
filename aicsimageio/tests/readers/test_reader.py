@@ -1,25 +1,25 @@
-from io import BytesIO
-from pathlib import Path
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pytest
+
 from aicsimageio.readers.reader import Reader
 
 
-@pytest.mark.parametrize("file", [
+@pytest.mark.parametrize("filename", [
+    ("example.png"),
+    pytest.param(None, marks=pytest.mark.raises(exception=IsADirectoryError)),
+    pytest.param(1, marks=pytest.mark.raises(exception=TypeError)),
     pytest.param("non_existent_file.random", marks=pytest.mark.raises(exception=FileNotFoundError)),
-    pytest.param(
-        Path("/non/existent/file/path/non_existent_file.random"),
-        marks=pytest.mark.raises(exception=FileNotFoundError)
-    ),
-    BytesIO(b"abcdef"),
-    b"abcdef"
-    ]
-)
-def test_reader_constructor(file):
-    """
-    Testing the arguments to the static member function on the ABC
-    Parameters
-    ----------
-    file The various objects [str(filename), pathlib.Path, BytesIO, bytestring]
+])
+def test_resolve_image_path(resources_dir, filename):
+    # Get file
+    if isinstance(filename, str):
+        f = resources_dir / filename
+    elif filename is None:
+        f = resources_dir
+    else:
+        f = filename
 
-    """
-    Reader.convert_to_buffer(file)
+    # Test path resolution
+    Reader._resolve_image_path(f)

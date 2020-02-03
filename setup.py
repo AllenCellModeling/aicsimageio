@@ -9,15 +9,21 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
+    "aicspylibczi>=2.5.0",
+    "dask>=2.9.0",
+    "distributed>=2.9.3",
     "numpy>=1.16",
     "imageio>=2.3.0",
-    "scipy>=1.1.0",
-    "tifffile==0.15.1",
+    "lxml>=4.4.2",
+    "tifffile>=2019.7.26.2",
+    "toolz>=0.10.0",
 ]
 
 test_requirements = [
     "codecov",
     "flake8",
+    "napari",
+    "psutil",
     "pytest",
     "pytest-cov",
     "pytest-raises",
@@ -46,8 +52,10 @@ setup_requirements = [
 
 interactive_requirements = [
     "altair",
+    "bokeh",
     "jupyterlab",
     "matplotlib",
+    "napari>=0.2.10",
     "pillow",
 ]
 

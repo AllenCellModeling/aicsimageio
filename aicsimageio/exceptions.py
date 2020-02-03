@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 class UnsupportedFileFormatError(Exception):
@@ -6,12 +8,12 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, type_, **kwargs):
+    def __init__(self, data, **kwargs):
         super().__init__(**kwargs)
-        self.type_ = type_
+        self.data = data
 
     def __str__(self):
-        return f"AICSImage module does not support this image file type: '{self.type_}'"
+        return f"AICSImage module does not support this image file type: '{self.data}'."
 
 
 class InvalidDimensionOrderingError(Exception):
@@ -28,17 +30,15 @@ class InvalidDimensionOrderingError(Exception):
         return self.message
 
 
-class MultiSceneCziException(Exception):
+class ConflictingArgumentsError(Exception):
     """
-    This exception is intended to be thrown when a CZI file has multiple scenes. This is only to
-    be thrown if the Reader is given a multi-scene CZI files and the backend library isn't able
-    to read multi-scene CZI.
+    This exception is returned when 2 arguments to the same function are in conflict.
     """
     pass
 
 
-class ConflictingArgumentsError(Exception):
+class InconsistentShapeError(Exception):
     """
-    This exception is returned when 2 arguments to the same function are in conflict.
+    A general function to use when the shape returned or requested from an array operation is invalid.
     """
     pass

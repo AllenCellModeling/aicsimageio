@@ -1,13 +1,14 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import os
-import pytest
 
 import numpy as np
+import pytest
 
+from aicsimageio.exceptions import InvalidDimensionOrderingError
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
-from aicsimageio.exceptions import InvalidDimensionOrderingError
 
 filename = "ometif_test_output.ome.tif"
 
@@ -18,12 +19,10 @@ def test_writerShapeComparison(resources_dir):
     """
     Test to check that OmeTiffWriter saves arrays that are reflexive with OmeTiffReader
     """
-    writer = OmeTiffWriter(resources_dir / filename, overwrite_file=True)
-    writer.save(image)
-    writer.close()
+    with OmeTiffWriter(resources_dir / filename, overwrite_file=True) as writer:
+        writer.save(image)
 
-    with OmeTiffReader(resources_dir / filename) as test_output_reader:
-        output = test_output_reader.data
+    output = OmeTiffReader(resources_dir / filename).data
 
     assert output.shape == image.shape[1:]
 
@@ -34,8 +33,8 @@ def test_loadAssertionError(resources_dir):
     """
     image_to_save = np.ones((1, 2, 3, 4, 5, 6))
     with pytest.raises(Exception):
-        writer = OmeTiffWriter(resources_dir / filename, overwrite_file=True)
-        writer.save(image_to_save)
+        with OmeTiffWriter(resources_dir / filename, overwrite_file=True) as writer:
+            writer.save(image_to_save)
 
 
 def test_overwriteFile(resources_dir):
@@ -121,17 +120,16 @@ def test_big_tiff():
 def test_dimensionOrder(
     resources_dir, dims, expected_t, expected_c, expected_z, expected_y, expected_x
 ):
-    writer = OmeTiffWriter(resources_dir / filename, overwrite_file=True)
-    writer.save(image, dimension_order=dims)
-    writer.close()
+    with OmeTiffWriter(resources_dir / filename, overwrite_file=True) as writer:
+        writer.save(image, dimension_order=dims)
 
-    with OmeTiffReader(resources_dir / filename) as test_output_reader:
-        output = test_output_reader.data
-        t = test_output_reader.size_t()
-        c = test_output_reader.size_c()
-        z = test_output_reader.size_z()
-        y = test_output_reader.size_y()
-        x = test_output_reader.size_x()
+    reader = OmeTiffReader(resources_dir / filename)
+    output = reader.data
+    t = reader.size_t()
+    c = reader.size_c()
+    z = reader.size_z()
+    y = reader.size_y()
+    x = reader.size_x()
 
     os.remove(resources_dir / filename)
 

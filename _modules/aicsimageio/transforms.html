@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -178,104 +179,182 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.transforms</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">Counter</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="k">import</span> <span class="n">ConflictingArgumentsError</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ConflictingArgumentsError</span>
+
+<span class="c1">###############################################################################</span>
 
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
+<span class="c1">###############################################################################</span>
 
-<div class="viewcode-block" id="reshape_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.reshape_data">[docs]</a><span class="k">def</span> <span class="nf">reshape_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+<span class="k">def</span> <span class="nf">_array_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A reimplementation of array split that doesn&#39;t cast to numpy and returns a list of</span>
+<span class="sd">    whichever object type it is currently operating on.</span>
+
+<span class="sd">    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L723</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">Ntotal</span> <span class="o">=</span> <span class="n">ary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">Ntotal</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># handle array case.</span>
+        <span class="n">Nsections</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">div_points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">Ntotal</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="c1"># indices_or_sections is a scalar, not an array.</span>
+        <span class="n">Nsections</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Nsections</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;number sections must be larger than 0.&quot;</span><span class="p">)</span>
+        <span class="n">Neach_section</span><span class="p">,</span> <span class="n">extras</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">Ntotal</span><span class="p">,</span> <span class="n">Nsections</span><span class="p">)</span>
+        <span class="n">section_sizes</span> <span class="o">=</span> <span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">extras</span> <span class="o">*</span> <span class="p">[</span><span class="n">Neach_section</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">Nsections</span><span class="o">-</span><span class="n">extras</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">Neach_section</span><span class="p">])</span>
+        <span class="n">div_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">section_sizes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ary</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">sub_arys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">sary</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">ary</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nsections</span><span class="p">):</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="n">div_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">div_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># Make sure start and end are integers</span>
+        <span class="n">st</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+
+        <span class="n">sub_arys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">sary</span><span class="p">[</span><span class="n">st</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">axis</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">sub_arys</span>
+
+
+<span class="k">def</span> <span class="nf">_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A reimplementation of split that doesn&#39;t cast to numpy and returns a list of</span>
+<span class="sd">    whichever object type it is currently operating on.</span>
+
+<span class="sd">    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L782</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="n">sections</span> <span class="o">=</span> <span class="n">indices_or_sections</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">ary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">N</span> <span class="o">%</span> <span class="n">sections</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;array split does not result in an equal division&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_array_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="reshape_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.reshape_data">[docs]</a><span class="k">def</span> <span class="nf">reshape_data</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.</span>
 <span class="sd">    Warns the user to use the base reader if the depth of the Dimension being removed is not 1.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    data: a numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</span>
-<span class="sd">    given_dims: the dimension ordering of data, &quot;CZYX&quot;, &quot;VBTCXZY&quot; etc</span>
-<span class="sd">    return_dims: the dimension ordering of the return data</span>
-<span class="sd">    copy: True or False, if true copy the data object if false modify the object/view into the object</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</span>
+<span class="sd">    given_dims: str</span>
+<span class="sd">        The dimension ordering of data, &quot;CZYX&quot;, &quot;VBTCXZY&quot; etc</span>
+<span class="sd">    return_dims: str</span>
+<span class="sd">        The dimension ordering of the return data</span>
 <span class="sd">    kwargs:</span>
 <span class="sd">        C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1 returns the 2nd slice (0 indexed)</span>
 <span class="sd">        Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=10 returns the 11th slice</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    a numpy.ndarray in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order &quot;STCZYX&quot;</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order &quot;STCZYX&quot;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># copy the data object if copy=True is in kwargs</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">copy</span> <span class="k">else</span> <span class="n">data</span>
-    <span class="c1"># check for conflicts like return_dims=&#39;TCZYX&#39; and fixed channels &#39;C=1&#39;</span>
+    <span class="c1"># Get operator</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">da</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">operator</span> <span class="o">=</span> <span class="n">np</span>
+
+    <span class="c1"># Check for conflicts like return_dims=&#39;TCZYX&#39; and fixed channels &#39;C=1&#39;</span>
     <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;Argument return_dims=</span><span class="si">{return_dims}</span><span class="s2"> and argument </span><span class="si">{dim}</span><span class="s2">={kwargs.get(dim)} conflict. Check usage.&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Argument return_dims=</span><span class="si">{return_dims}</span><span class="s2"> and argument </span><span class="si">{dim}</span><span class="s2">={kwargs.get(dim)} conflict. Check usage.&quot;</span>
             <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
-    <span class="c1"># add each dimension not included in original data</span>
+    <span class="c1"># Add each dimension not included in original data</span>
     <span class="n">new_dims</span> <span class="o">=</span> <span class="n">given_dims</span>
     <span class="n">excluded_dims</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">return_dims</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">given_dims</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">excluded_dims</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Dask doesn&#39;t have an explicit expand dims so we simply reshape with an extra dim</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="n">new_dims</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">+</span> <span class="n">new_dims</span>  <span class="c1"># add the missing Dimension to the front</span>
 
-    <span class="c1"># if given dims contains a Dimension not in DEFAULT_DIMS and its depth is 1 remove it</span>
-    <span class="c1"># if it&#39;s larger than 1 give a warning and suggest interfacing with the Reader object</span>
+    <span class="c1"># If given dims contains a Dimension not in return dims and its depth is 1 remove it</span>
+    <span class="c1"># If it&#39;s larger than 1 give a warning and suggest interfacing with the Reader object</span>
     <span class="n">extra_dims</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">return_dims</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">extra_dims</span><span class="p">:</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">new_dims</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">index_depth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">index_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="s1">&#39;Data has dimension </span><span class="si">{dim}</span><span class="s1"> with depth </span><span class="si">{data.shape[index]}</span><span class="s1">, assuming </span><span class="si">{dim}</span><span class="s1">=0 is  &#39;</span>
-                       <span class="n">f</span><span class="s1">&#39;the desired value, if not the case specify </span><span class="si">{dim}</span><span class="s1">=x where &#39;</span>
-                       <span class="n">f</span><span class="s1">&#39;x is an integer in [0, </span><span class="si">{data.shape[index]}</span><span class="s1">).&#39;</span><span class="p">)</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Data has dimension </span><span class="si">{dim}</span><span class="s2"> with depth </span><span class="si">{data.shape[index]}</span><span class="s2">, assuming </span><span class="si">{dim}</span><span class="s2">=0 is &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;the desired value, if not the case specify </span><span class="si">{dim}</span><span class="s2">=x where &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;x is an integer in [0, </span><span class="si">{data.shape[index]}</span><span class="s2">).&quot;</span>
+                <span class="p">)</span>
                 <span class="n">index_depth</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="n">index_depth</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dimension specified with </span><span class="si">{dim}</span><span class="s1">=</span><span class="si">{index_depth}</span><span class="s1"> &#39;</span>
-                                 <span class="n">f</span><span class="s1">&#39;but Dimension shape is </span><span class="si">{data.shape[index]}</span><span class="s1">.&#39;</span><span class="p">)</span>
-            <span class="n">planes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># split dim into list of arrays</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dimension specified with </span><span class="si">{dim}</span><span class="s2">=</span><span class="si">{index_depth}</span><span class="s2"> &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;but Dimension shape is </span><span class="si">{data.shape[index]}</span><span class="s2">.&quot;</span><span class="p">)</span>
+            <span class="n">planes</span> <span class="o">=</span> <span class="n">_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># split dim into list of arrays</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">planes</span><span class="p">[</span><span class="n">index_depth</span><span class="p">]</span>  <span class="c1"># take the specified value of the dim</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># remove the dim from ndarray</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># remove the dim from ndarray</span>
         <span class="n">new_dims</span> <span class="o">=</span> <span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_dims</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>  <span class="c1"># clip out the Dimension from new_dims</span>
-    <span class="c1"># any extra dimensions have been removed, only a problem if the depth is &gt; 1</span>
+    <span class="c1"># Any extra dimensions have been removed, only a problem if the depth is &gt; 1</span>
     <span class="k">return</span> <span class="n">transpose_to_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">new_dims</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">return_dims</span><span class="p">)</span>  <span class="c1"># don&#39;t pass kwargs or 2 copies</span></div>
 
 
-<div class="viewcode-block" id="transpose_to_dims"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.transpose_to_dims">[docs]</a><span class="k">def</span> <span class="nf">transpose_to_dims</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="transpose_to_dims"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.transpose_to_dims">[docs]</a><span class="k">def</span> <span class="nf">transpose_to_dims</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in</span>
 <span class="sd">    given_dims must be used in return_dims</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    data: the input data with dimensions given_dims</span>
-<span class="sd">    given_dims: the dimensions of data</span>
-<span class="sd">    return_dims: the reordered set of given_dims to return</span>
-<span class="sd">    copy: if True copy the data object passed in if false modify the numpy.ndarray</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</span>
+<span class="sd">    given_dims: str</span>
+<span class="sd">        The dimension ordering of data, &quot;CZYX&quot;, &quot;VBTCXZY&quot; etc</span>
+<span class="sd">    return_dims: str</span>
+<span class="sd">        The dimension ordering of the return data</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    a numpy.ndarray with known_dims</span>
-
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order &quot;STCZYX&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># copy the data object if copy=True is in kwargs</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">copy</span> <span class="k">else</span> <span class="n">data</span>
-
     <span class="c1"># Use a counter to track that the contents are composed of the same letters and that no letter is repeated</span>
     <span class="k">if</span> <span class="n">Counter</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">return_dims</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">max</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;given_dims=</span><span class="si">{given_dims}</span><span class="s2"> and return_dims=</span><span class="si">{return_dims}</span><span class="s2"> are incompatible.&quot;</span><span class="p">)</span>
-    <span class="c1"># resort the data into return_dims order</span>
+        <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;given_dims=</span><span class="si">{given_dims}</span><span class="s2"> and return_dims=</span><span class="si">{return_dims}</span><span class="s2"> are incompatible.&quot;</span><span class="p">)</span>
+    <span class="c1"># Resort the data into return_dims order</span>
     <span class="n">match_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">dim</span><span class="p">:</span> <span class="n">given_dims</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">}</span>
     <span class="n">transposer</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">match_map</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Dimension </span><span class="si">{dim}</span><span class="s1"> requested but not present in given_dims=</span><span class="si">{given_dims}</span><span class="s1">.&#39;</span><span class="p">)</span>
         <span class="n">transposer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_map</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">transposer</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>

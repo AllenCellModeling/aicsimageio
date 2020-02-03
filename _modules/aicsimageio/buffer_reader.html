@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -178,7 +179,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.buffer_reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">types</span>
+<span></span><span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
 
 
 <div class="viewcode-block" id="BufferReader"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.buffer_reader.BufferReader">[docs]</a><span class="k">class</span> <span class="nc">BufferReader</span><span class="p">:</span>
@@ -186,19 +187,19 @@
     <span class="n">INTEL_ENDIAN</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;II&#39;</span>
     <span class="n">MOTOROLA_ENDIAN</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;MM&#39;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="n">buffer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">previous_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">tell</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description_length</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description_offset</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">endianness</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <div class="viewcode-block" id="BufferReader.reset"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.buffer_reader.BufferReader.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

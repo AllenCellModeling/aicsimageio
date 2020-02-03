@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -178,15 +179,15 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.writers.ome_tiff_writer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">tifffile</span>
 
-<span class="kn">from</span> <span class="nn">aicsimageio.vendor</span> <span class="k">import</span> <span class="n">omexml</span>
-<span class="kn">from</span> <span class="nn">aicsimageio.exceptions</span> <span class="k">import</span> <span class="n">InvalidDimensionOrderingError</span>
+<span class="kn">from</span> <span class="nn">aicsimageio.vendor</span> <span class="kn">import</span> <span class="n">omexml</span>
+<span class="kn">from</span> <span class="nn">aicsimageio.exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span>
 
 <span class="n">BYTE_BOUNDARY</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span>
 
@@ -218,7 +219,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Class initializer</span>
 <span class="sd">        :param file_path: path to image output location</span>
@@ -238,10 +239,10 @@
             <span class="k">elif</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="OmeTiffWriter.close"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -276,15 +277,15 @@
 
         <span class="c1"># assert valid characters in dimension_order</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="s2">&quot;STCZYX&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> expected to </span><span class="se">\</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> expected to </span><span class="se">\</span>
 <span class="s2">                be YX.  Please transpose your data.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ndims</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
 <span class="s2">                dimensions as data shape </span><span class="si">{shape}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># todo ensure no letter appears more than once?</span>
 
         <span class="c1"># ensure dimension_order is same len as shape</span>

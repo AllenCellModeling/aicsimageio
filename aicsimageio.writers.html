@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -378,46 +379,8 @@ False: silently perform no write actions if file exists</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-aicsimageio.writers.writer">
-<span id="aicsimageio-writers-writer-module"></span><h2>aicsimageio.writers.writer module<a class="headerlink" href="#module-aicsimageio.writers.writer" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="aicsimageio.writers.writer.Writer">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.writer.</code><code class="sig-name descname">Writer</code><span class="sig-paren">(</span><em class="sig-param">file_path: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
-<p>Write STCZYX data arrays to file, with accompanying metadata
-Will overwrite existing files of same name.</p>
-<dl>
-<dt>Example:</dt><dd><p>1) construct and use as object
-image = numpy.ndarray([1, 10, 3, 1024, 2048])
-writer = DerivedWriter(“file.ome.tif”)
-writer.save(image)
-writer.close()</p>
-<p>2) use the “with” pattern
-image2 = numpy.ndarray([5, 486, 210])
-# There needs to be some sort of data inside the image2 array
-with DerivedWriter(“file2.ome.tif”) as writer2:</p>
-<blockquote>
-<div><p>write2.set_metadata(myMetaData)
-writer2.save(image2)</p>
-</div></blockquote>
-</dd>
-</dl>
-<p>Class initializer
-:param file_path: path to image output location</p>
-<dl class="method">
-<dt id="aicsimageio.writers.writer.Writer.close">
-<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close file objects</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.writers.writer.Writer.save">
-<em class="property">abstract </em><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dims='STCZYX'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write to open file</p>
-</dd></dl>
-
-</dd></dl>
-
+<div class="section" id="aicsimageio-writers-writer-module">
+<h2>aicsimageio.writers.writer module<a class="headerlink" href="#aicsimageio-writers-writer-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-aicsimageio.writers">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio.writers" title="Permalink to this headline">¶</a></h2>

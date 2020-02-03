@@ -37,6 +37,14 @@ aicsimageio.constants module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.dask\_utils module
+------------------------------
+
+.. automodule:: aicsimageio.dask_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.exceptions module
 -----------------------------
 

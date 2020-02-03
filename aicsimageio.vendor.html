@@ -104,6 +104,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -199,478 +200,6 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-aicsimageio.vendor.czifile">
-<span id="aicsimageio-vendor-czifile-module"></span><h2>aicsimageio.vendor.czifile module<a class="headerlink" href="#module-aicsimageio.vendor.czifile" title="Permalink to this headline">¶</a></h2>
-<p>Read image and metadata from Carl Zeiss(r) ZISRAW (CZI) files.</p>
-<p>CZI is the native image file format of the ZEN(r) software by Carl Zeiss
-Microscopy GmbH. It stores multidimensional images and metadata from
-microscopy experiments.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Author</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Christoph Gohlke</a></p>
-</dd>
-<dt class="field-even">Organization</dt>
-<dd class="field-even"><p>Laboratory for Fluorescence Dynamics, University of California, Irvine</p>
-</dd>
-<dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>2017.09.12</p>
-</dd>
-</dl>
-<div class="section" id="requirements">
-<h3>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><a class="reference external" href="http://www.python.org">CPython 3.6 64-bit</a></p></li>
-<li><p><a class="reference external" href="http://www.numpy.org">Numpy 1.13</a></p></li>
-<li><p><a class="reference external" href="http://www.scipy.org">Scipy 0.19</a></p></li>
-<li><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Tifffile.py 2017.09.12</a></p></li>
-<li><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Czifle.pyx 2017.07.20</a>
-(for decoding JpegXrFile and JpgFile images)</p></li>
-</ul>
-</div>
-<div class="section" id="revisions">
-<h3>Revisions<a class="headerlink" href="#revisions" title="Permalink to this headline">¶</a></h3>
-<dl class="simple">
-<dt>2017.09.12</dt><dd><p>Require tifffile.py 2017.09.12</p>
-</dd>
-<dt>2017.07.21</dt><dd><p>Use multi-threading in CziFile.asarray to decode and copy segment data.
-Always convert BGR to RGB. Remove bgr2rgb options.
-Decode JpegXR directly from byte arrays.</p>
-</dd>
-<dt>2017.07.13</dt><dd><p>Add function to convert CZI file to memory-mappable TIFF file.</p>
-</dd>
-<dt>2017.07.11</dt><dd><p>Add ‘out’ parameter to CziFile.asarray.
-Remove memmap option from CziFile.asarray (backwards incompatible).
-Change spline interpolation order to 0 (backwards incompatible).
-Make axes return a string.
-Require tifffile 2017.07.11.</p>
-</dd>
-<dt>2015.08.17</dt><dd><p>Require tifffile 2015.08.17.</p>
-</dd>
-<dt>2014.10.10</dt><dd><p>Read data into a memory mapped array (optional).</p>
-</dd>
-<dt>2013.12.04</dt><dd><p>Decode JpegXrFile and JpgFile via _czifle extension module.
-Attempt to reconstruct tiled mosaic images.</p>
-</dd>
-<dt>2013.11.20</dt><dd><p>Initial release.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The API is not stable yet and might change between revisions.</p>
-<p>The file format design specification [1] is confidential and the licence
-agreement does not permit to write data into CZI files.</p>
-<p>Only a subset of the 2012 specification is implemented in the initial release.
-Specifically, multifile images are not yet supported.</p>
-<p>Tested on Windows with a few example files only.</p>
-<p class="rubric">References</p>
-<ol class="arabic simple">
-<li><p>ZISRAW (CZI) File Format Design specification Release Version 1.2.2.
-CZI 07-2016/CZI-DOC ZEN 2.3/DS_ZISRAW-FileFormat.pdf (confidential).
-Documentation can be requested at
-&lt;<a class="reference external" href="http://microscopy.zeiss.com/microscopy/en_us/downloads/zen.html">http://microscopy.zeiss.com/microscopy/en_us/downloads/zen.html</a>&gt;</p></li>
-<li><p>CZI The File Format for the Microscope | ZEISS International
-&lt;<a class="reference external" href="http://microscopy.zeiss.com/microscopy/en_us/products/microscope-software/">http://microscopy.zeiss.com/microscopy/en_us/products/microscope-software/</a>
-zen-2012/czi.html&gt;</p></li>
-</ol>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">CziFile</span><span class="p">(</span><span class="s1">&#39;test.czi&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">czi</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">image</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(3, 3, 3, 250, 200, 3)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="go">array([10, 10, 10], dtype=uint8)</span>
-</pre></div>
-</div>
-<dl class="function">
-<dt id="aicsimageio.vendor.czifile.imread">
-<code class="sig-prename descclassname">aicsimageio.vendor.czifile.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.imread" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return image data from CZI file as numpy array.</p>
-<p>‘args’ and ‘kwargs’ are arguments to the CziFile.asarray function.</p>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s1">&#39;test.czi&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(3, 3, 3, 250, 200, 3)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype(&#39;uint8&#39;)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="class">
-<dt id="aicsimageio.vendor.czifile.CziFile">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.vendor.czifile.</code><code class="sig-name descname">CziFile</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">multifile=True</em>, <em class="sig-param">filesize=None</em>, <em class="sig-param">detectmosaic=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Carl Zeiss Image (CZI) file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>header</strong> (<em>FileHeaderSegment</em>) – Global file metadata such as file version and GUID.</p></li>
-<li><p><a class="reference internal" href="#aicsimageio.vendor.czifile.CziFile.metadata" title="aicsimageio.vendor.czifile.CziFile.metadata"><strong>metadata</strong></a> (<em>etree.ElementTree.Element</em>) – Global image metadata in UTF-8 encoded XML format.</p></li>
-<li><p><strong>attributes are read-only.</strong> (<em>All</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-<p>Open CZI file and read header.</p>
-<p>Raise ValueError if file is not a ZISRAW file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>multifile</strong> (<em>bool</em>) – If True (default), the master file of a multifile CZI file
-will be opened if applicable.</p></li>
-<li><p><strong>filesize</strong> (<em>int</em>) – Size of file if arg is a file handle pointing to an
-embedded CZI file.</p></li>
-<li><p><strong>detectmosaic</strong> (<em>bool</em>) – If True (default), mosaic images will be reconstructed from
-SubBlocks with a tile index.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>CziFile instances created from file name must be closed using the
-‘close’ method, which is automatically called when using the
-‘with’ statement.</p>
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.asarray">
-<code class="sig-name descname">asarray</code><span class="sig-paren">(</span><em class="sig-param">resize=True</em>, <em class="sig-param">order=0</em>, <em class="sig-param">out=None</em>, <em class="sig-param">max_workers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.asarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.asarray" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return image data from file(s) as numpy array.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>resize</strong> (<em>bool</em>) – If True (default), resize sub/supersampled subblock data.</p></li>
-<li><p><strong>order</strong> (<em>int</em>) – The order of spline interpolation used to resize sub/supersampled
-subblock data. Default is 0 (nearest neighbor).</p></li>
-<li><p><strong>out</strong> (<em>numpy.ndarray, str, or file-like object; optional</em>) – Buffer where image data will be saved.
-If numpy.ndarray, a writable array of compatible dtype and shape.
-If str or open file, the file name or file object used to
-create a memory-map to an array stored in a binary file on disk.</p></li>
-<li><p><strong>max_workers</strong> (<em>int</em>) – Maximum number of threads to read and decode subblock data.
-By default up to half the CPU cores are used.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.attachment_directory">
-<code class="sig-name descname">attachment_directory</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.attachment_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.attachments">
-<code class="sig-name descname">attachments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.attachments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.attachments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return iterator over all Attachment segments in file.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.axes">
-<code class="sig-name descname">axes</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.axes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.close" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.dtype">
-<code class="sig-name descname">dtype</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.filtered_subblock_directory">
-<code class="sig-name descname">filtered_subblock_directory</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.filtered_subblock_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.metadata">
-<code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.save_attachments">
-<code class="sig-name descname">save_attachments</code><span class="sig-paren">(</span><em class="sig-param">directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.save_attachments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.save_attachments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save all attachments to files.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.segments">
-<code class="sig-name descname">segments</code><span class="sig-paren">(</span><em class="sig-param">kind=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return iterator over Segment data of specified kind.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kind</strong> (<em>bytestring or sequence thereof</em>) – Segment id(s) as listed in SEGMENT_ID.
-If None (default), all segments are returned.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.shape">
-<code class="sig-name descname">shape</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.start">
-<code class="sig-name descname">start</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.vendor.czifile.CziFile.subblock_directory">
-<code class="sig-name descname">subblock_directory</code><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.subblock_directory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.vendor.czifile.CziFile.subblocks">
-<code class="sig-name descname">subblocks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.subblocks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.czifile.CziFile.subblocks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return iterator over all SubBlock segments in file.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="id1">
-<h2>aicsimageio.vendor.czifile module<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-aicsimageio.vendor.czifile"></span><p>Read image and metadata from Carl Zeiss(r) ZISRAW (CZI) files.</p>
-<p>CZI is the native image file format of the ZEN(r) software by Carl Zeiss
-Microscopy GmbH. It stores multidimensional images and metadata from
-microscopy experiments.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Author</dt>
-<dd class="field-odd"><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Christoph Gohlke</a></p>
-</dd>
-<dt class="field-even">Organization</dt>
-<dd class="field-even"><p>Laboratory for Fluorescence Dynamics, University of California, Irvine</p>
-</dd>
-<dt class="field-odd">Version</dt>
-<dd class="field-odd"><p>2017.09.12</p>
-</dd>
-</dl>
-<div class="section" id="id3">
-<h3>Requirements<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p><a class="reference external" href="http://www.python.org">CPython 3.6 64-bit</a></p></li>
-<li><p><a class="reference external" href="http://www.numpy.org">Numpy 1.13</a></p></li>
-<li><p><a class="reference external" href="http://www.scipy.org">Scipy 0.19</a></p></li>
-<li><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Tifffile.py 2017.09.12</a></p></li>
-<li><p><a class="reference external" href="http://www.lfd.uci.edu/~gohlke/">Czifle.pyx 2017.07.20</a>
-(for decoding JpegXrFile and JpgFile images)</p></li>
-</ul>
-</div>
-<div class="section" id="id9">
-<h3>Revisions<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
-<dl class="simple">
-<dt>2017.09.12</dt><dd><p>Require tifffile.py 2017.09.12</p>
-</dd>
-<dt>2017.07.21</dt><dd><p>Use multi-threading in CziFile.asarray to decode and copy segment data.
-Always convert BGR to RGB. Remove bgr2rgb options.
-Decode JpegXR directly from byte arrays.</p>
-</dd>
-<dt>2017.07.13</dt><dd><p>Add function to convert CZI file to memory-mappable TIFF file.</p>
-</dd>
-<dt>2017.07.11</dt><dd><p>Add ‘out’ parameter to CziFile.asarray.
-Remove memmap option from CziFile.asarray (backwards incompatible).
-Change spline interpolation order to 0 (backwards incompatible).
-Make axes return a string.
-Require tifffile 2017.07.11.</p>
-</dd>
-<dt>2015.08.17</dt><dd><p>Require tifffile 2015.08.17.</p>
-</dd>
-<dt>2014.10.10</dt><dd><p>Read data into a memory mapped array (optional).</p>
-</dd>
-<dt>2013.12.04</dt><dd><p>Decode JpegXrFile and JpgFile via _czifle extension module.
-Attempt to reconstruct tiled mosaic images.</p>
-</dd>
-<dt>2013.11.20</dt><dd><p>Initial release.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The API is not stable yet and might change between revisions.</p>
-<p>The file format design specification [1] is confidential and the licence
-agreement does not permit to write data into CZI files.</p>
-<p>Only a subset of the 2012 specification is implemented in the initial release.
-Specifically, multifile images are not yet supported.</p>
-<p>Tested on Windows with a few example files only.</p>
-<p class="rubric">References</p>
-<ol class="arabic simple">
-<li><p>ZISRAW (CZI) File Format Design specification Release Version 1.2.2.
-CZI 07-2016/CZI-DOC ZEN 2.3/DS_ZISRAW-FileFormat.pdf (confidential).
-Documentation can be requested at
-&lt;<a class="reference external" href="http://microscopy.zeiss.com/microscopy/en_us/downloads/zen.html">http://microscopy.zeiss.com/microscopy/en_us/downloads/zen.html</a>&gt;</p></li>
-<li><p>CZI The File Format for the Microscope | ZEISS International
-&lt;<a class="reference external" href="http://microscopy.zeiss.com/microscopy/en_us/products/microscope-software/">http://microscopy.zeiss.com/microscopy/en_us/products/microscope-software/</a>
-zen-2012/czi.html&gt;</p></li>
-</ol>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">CziFile</span><span class="p">(</span><span class="s1">&#39;test.czi&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">czi</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">image</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(3, 3, 3, 250, 200, 3)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-<span class="go">array([10, 10, 10], dtype=uint8)</span>
-</pre></div>
-</div>
-<dl class="function">
-<dt>
-<code class="sig-prename descclassname">aicsimageio.vendor.czifile.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#imread"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return image data from CZI file as numpy array.</p>
-<p>‘args’ and ‘kwargs’ are arguments to the CziFile.asarray function.</p>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s1">&#39;test.czi&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">shape</span>
-<span class="go">(3, 3, 3, 250, 200, 3)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">image</span><span class="o">.</span><span class="n">dtype</span>
-<span class="go">dtype(&#39;uint8&#39;)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.vendor.czifile.</code><code class="sig-name descname">CziFile</code><span class="sig-paren">(</span><em class="sig-param">arg</em>, <em class="sig-param">multifile=True</em>, <em class="sig-param">filesize=None</em>, <em class="sig-param">detectmosaic=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Carl Zeiss Image (CZI) file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Variables</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>header</strong> (<em>FileHeaderSegment</em>) – Global file metadata such as file version and GUID.</p></li>
-<li><p><a class="reference internal" href="#aicsimageio.vendor.czifile.CziFile.metadata" title="aicsimageio.vendor.czifile.CziFile.metadata"><strong>metadata</strong></a> (<em>etree.ElementTree.Element</em>) – Global image metadata in UTF-8 encoded XML format.</p></li>
-<li><p><strong>attributes are read-only.</strong> (<em>All</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-<p>Open CZI file and read header.</p>
-<p>Raise ValueError if file is not a ZISRAW file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>multifile</strong> (<em>bool</em>) – If True (default), the master file of a multifile CZI file
-will be opened if applicable.</p></li>
-<li><p><strong>filesize</strong> (<em>int</em>) – Size of file if arg is a file handle pointing to an
-embedded CZI file.</p></li>
-<li><p><strong>detectmosaic</strong> (<em>bool</em>) – If True (default), mosaic images will be reconstructed from
-SubBlocks with a tile index.</p></li>
-</ul>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>CziFile instances created from file name must be closed using the
-‘close’ method, which is automatically called when using the
-‘with’ statement.</p>
-<dl class="method">
-<dt>
-<code class="sig-name descname">asarray</code><span class="sig-paren">(</span><em class="sig-param">resize=True</em>, <em class="sig-param">order=0</em>, <em class="sig-param">out=None</em>, <em class="sig-param">max_workers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.asarray"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return image data from file(s) as numpy array.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>resize</strong> (<em>bool</em>) – If True (default), resize sub/supersampled subblock data.</p></li>
-<li><p><strong>order</strong> (<em>int</em>) – The order of spline interpolation used to resize sub/supersampled
-subblock data. Default is 0 (nearest neighbor).</p></li>
-<li><p><strong>out</strong> (<em>numpy.ndarray, str, or file-like object; optional</em>) – Buffer where image data will be saved.
-If numpy.ndarray, a writable array of compatible dtype and shape.
-If str or open file, the file name or file object used to
-create a memory-map to an array stored in a binary file on disk.</p></li>
-<li><p><strong>max_workers</strong> (<em>int</em>) – Maximum number of threads to read and decode subblock data.
-By default up to half the CPU cores are used.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">attachment_directory</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">attachments</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.attachments"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return iterator over all Attachment segments in file.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">axes</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.close"><span class="viewcode-link">[source]</span></a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">dtype</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">filtered_subblock_directory</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">metadata</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">save_attachments</code><span class="sig-paren">(</span><em class="sig-param">directory=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.save_attachments"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Save all attachments to files.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">segments</code><span class="sig-paren">(</span><em class="sig-param">kind=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.segments"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return iterator over Segment data of specified kind.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>kind</strong> (<em>bytestring or sequence thereof</em>) – Segment id(s) as listed in SEGMENT_ID.
-If None (default), all segments are returned.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">shape</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">start</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">subblock_directory</code></dt>
-<dd><p>Attribute whose value is computed on first access.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">subblocks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/czifile.html#CziFile.subblocks"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Return iterator over all SubBlock segments in file.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
 <div class="section" id="module-aicsimageio.vendor.omexml">
 <span id="aicsimageio-vendor-omexml-module"></span><h2>aicsimageio.vendor.omexml module<a class="headerlink" href="#module-aicsimageio.vendor.omexml" title="Permalink to this headline">¶</a></h2>
 <p>omexml.py read and write OME xml</p>
@@ -704,12 +233,12 @@ root_node of the DOM and explore it yourself using the DOM API
 (<a class="reference external" href="http://docs.python.org/library/xml.dom.html#module-xml.dom">http://docs.python.org/library/xml.dom.html#module-xml.dom</a>). The easy way,
 where it’s supported is to use properties on OMEXML and on some of its
 derived objects. For instance:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">o</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">AcquisitionDate</span>
 </pre></div>
 </div>
 <p>will get you the date that image # 0 was acquired.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">o</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;MyImage&quot;</span>
 </pre></div>
 </div>
@@ -718,7 +247,7 @@ derived objects. For instance:</p>
 handles hooking up and removing orphaned elements for you and should be
 less error prone than creating orphaned elements and attaching them. For
 instance, to create a three-color image:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">o</span> <span class="o">=</span> <span class="n">OMEXML</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">o</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">channel_count</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">o</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Red&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">o</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">&quot;Green&quot;</span>
@@ -1530,7 +1059,7 @@ X, Y, Z, exposure time and a relative time delta.</p>
 <p>It looks like a list of plates</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate">
-<code class="sig-name descname">newPlate</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">plate_id='3e3e2ecd-ad9a-4208-a66b-0d045510c109'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.PlatesDucktype.newPlate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">newPlate</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">plate_id='01c4597d-1362-4c44-94d4-bda71c23c54d'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.PlatesDucktype.newPlate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1923,7 +1452,7 @@ things like:
 wellsamples[0:2]</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new">
-<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">wellsample_id='75f6939b-fb89-463a-bd28-8ece55110eaf'</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellSampleDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">wellsample_id='c14b9a35-188f-4174-83fb-ccddb8cbf29e'</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellSampleDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new well sample</p>
 </dd></dl>
 
@@ -1948,7 +1477,7 @@ by ID - e.g. plate.Well[“Well:0:0:0”]</p>
 using an ID.</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new">
-<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">row</em>, <em class="sig-param">column</em>, <em class="sig-param">well_id='51135310-4bec-4d91-ba65-ffa290d200f4'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellsDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">row</em>, <em class="sig-param">column</em>, <em class="sig-param">well_id='83914421-509c-4182-a698-c3a0e779cc98'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellsDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new well at the given row and column</p>
 <p>row - index of well’s row
 column - index of well’s column

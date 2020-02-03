@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -189,16 +190,16 @@
 <span class="sd">omexml.py read and write OME xml</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ElementTree</span>
 
-<span class="kn">from</span> <span class="nn">io</span> <span class="k">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
 
 <span class="kn">import</span> <span class="nn">datetime</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># for ometypedict</span>
@@ -524,7 +525,7 @@
 <span class="sd">    &lt;http://git.openmicroscopy.org/src/develop/components/specification/Documentation/Generated/OME-2011-06/ome.html&gt;`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rootnode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xml</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rootnode</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">xml</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">rootnode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">xml</span> <span class="o">=</span> <span class="n">default_xml</span>
         <span class="k">if</span> <span class="n">rootnode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -549,7 +550,7 @@
             <span class="n">omeElem</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;UUID&#39;</span><span class="p">,</span> <span class="s1">&#39;urn:uuid:&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">uuidStr</span> <span class="o">=</span> <span class="n">omeElem</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;UUID&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1">#</span>
         <span class="c1"># need to register the ome namespace because BioFormats expects</span>
         <span class="c1"># that namespace to be the default or to be explicitly named &quot;ome&quot;</span>
@@ -634,7 +635,7 @@
 
 <div class="viewcode-block" id="OMEXML.Image"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Image">[docs]</a>    <span class="k">class</span> <span class="nc">Image</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Representation of the OME/Image element&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Initialize with the DOM Image node&quot;&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
@@ -691,7 +692,7 @@
 
 <div class="viewcode-block" id="OMEXML.Channel"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Channel">[docs]</a>    <span class="k">class</span> <span class="nc">Channel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The OME/Image/Pixels/Channel element&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
 
@@ -732,7 +733,7 @@
 <span class="sd">        &lt;/TiffData&gt;</span>
 <span class="sd">        For our purposes, there will be one TiffData per 2-dimensional image plane.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 
@@ -788,7 +789,7 @@
 <span class="sd">        has the Z, C and T indices of the plane and optionally has the</span>
 <span class="sd">        X, Y, Z, exposure time and a relative time delta.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 
@@ -874,7 +875,7 @@
 <span class="sd">        pixel data. It has the X, Y, Z, C, and T extents of the image</span>
 <span class="sd">        and it specifies the channel interleaving and channel depth.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ome_uuid</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -1155,17 +1156,17 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">child</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;ID &quot;</span><span class="si">%s</span><span class="s1">&quot; not found&#39;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
 <div class="viewcode-block" id="OMEXML.StructuredAnnotations.keys"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.StructuredAnnotations.keys">[docs]</a>        <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1285,24 +1286,24 @@
 <span class="sd">        Original metadata holds &quot;vendor-specific&quot; metadata including TIFF</span>
 <span class="sd">        tag values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sa</span><span class="p">):</span>
             <span class="sd">&#39;&#39;&#39;Initialized with the structured_annotations class instance&#39;&#39;&#39;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sa</span> <span class="o">=</span> <span class="n">sa</span>
 
-        <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sa</span><span class="o">.</span><span class="n">get_original_metadata_value</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sa</span><span class="o">.</span><span class="n">add_original_metadata</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">annotation_id</span><span class="p">,</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sa</span><span class="o">.</span><span class="n">iter_original_metadata</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">key</span>
 
-        <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sa_iter_original_metadata</span><span class="p">()))</span>
 
 <div class="viewcode-block" id="OMEXML.OriginalMetadata.keys"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.OriginalMetadata.keys">[docs]</a>        <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1322,20 +1323,20 @@
 
 <div class="viewcode-block" id="OMEXML.PlatesDucktype"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.PlatesDucktype">[docs]</a>    <span class="k">class</span> <span class="nc">PlatesDucktype</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;It looks like a list of plates&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="n">plates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;Plate&quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">OMEXML</span><span class="o">.</span><span class="n">Plate</span><span class="p">(</span><span class="n">plate</span><span class="p">)</span> <span class="k">for</span> <span class="n">plate</span> <span class="ow">in</span> <span class="n">plates</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
             <span class="k">return</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">Plate</span><span class="p">(</span><span class="n">plates</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
-        <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;Plate&quot;</span><span class="p">)))</span>
 
-        <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">plate</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">iterfind</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;Plate&quot;</span><span class="p">)):</span>
                 <span class="k">yield</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">Plate</span><span class="p">(</span><span class="n">plate</span><span class="p">)</span>
 
@@ -1353,7 +1354,7 @@
 <span class="sd">        This represents the plate element of the SPW schema:</span>
 <span class="sd">        http://www.openmicroscopy.org/Schemas/SPW/2007-06/</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 
@@ -1479,15 +1480,15 @@
 <span class="sd">        If the ducktype is unable to parse a well name, it assumes you&#39;re</span>
 <span class="sd">        using an ID.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plate</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plate_node</span> <span class="o">=</span> <span class="n">plate</span><span class="o">.</span><span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">plate</span> <span class="o">=</span> <span class="n">plate</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_node</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plate_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;Well&quot;</span><span class="p">)))</span>
 
-        <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="n">all_wells</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">plate_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;Well&quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">OMEXML</span><span class="o">.</span><span class="n">Well</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">all_wells</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
@@ -1508,7 +1509,7 @@
                     <span class="k">return</span> <span class="n">well</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Return the standard name for all wells on the plate</span>
 
 <span class="sd">            for instance, &#39;B03&#39; for a well with Row=1, Column=2 for a plate</span>
@@ -1536,7 +1537,7 @@
             <span class="k">return</span> <span class="n">well</span></div></div>
 
 <div class="viewcode-block" id="OMEXML.Well"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Well">[docs]</a>    <span class="k">class</span> <span class="nc">Well</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
 
 <div class="viewcode-block" id="OMEXML.Well.get_Column"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Well.get_Column">[docs]</a>        <span class="k">def</span> <span class="nf">get_Column</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1597,21 +1598,21 @@
 <span class="sd">        things like:</span>
 <span class="sd">        wellsamples[0:2]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">well_node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">well_node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">well_node</span> <span class="o">=</span> <span class="n">well_node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">well_node</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">well_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;WellSample&quot;</span><span class="p">)))</span>
 
-        <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
             <span class="n">all_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">well_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;WellSample&quot;</span><span class="p">))</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">[</span><span class="n">OMEXML</span><span class="o">.</span><span class="n">WellSample</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_samples</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
             <span class="k">return</span> <span class="n">OMEXML</span><span class="o">.</span><span class="n">WellSample</span><span class="p">(</span><span class="n">all_samples</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">key</span><span class="p">)])</span>
 
-        <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="sd">&quot;&quot;&quot;Iterate through the well samples.&quot;&quot;&quot;</span>
             <span class="n">all_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">well_node</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">qn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ns</span><span class="p">[</span><span class="s1">&#39;spw&#39;</span><span class="p">],</span> <span class="s2">&quot;WellSample&quot;</span><span class="p">))</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">all_samples</span><span class="p">:</span>
@@ -1629,7 +1630,7 @@
 
 <div class="viewcode-block" id="OMEXML.WellSample"><a class="viewcode-back" href="../../../aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.WellSample">[docs]</a>    <span class="k">class</span> <span class="nc">WellSample</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The WellSample is a location within a well&quot;&quot;&quot;</span>
-        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">node</span> <span class="o">=</span> <span class="n">node</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ns</span> <span class="o">=</span> <span class="n">get_namespaces</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">)</span>
 

@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -178,7 +179,9 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.exceptions</h1><div class="highlight"><pre>
-<span></span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
 
 <div class="viewcode-block" id="UnsupportedFileFormatError"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.exceptions.UnsupportedFileFormatError">[docs]</a><span class="k">class</span> <span class="nc">UnsupportedFileFormatError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -186,12 +189,12 @@
 <span class="sd">    the supported file types and cannot be parsed with AICSImage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">type_</span> <span class="o">=</span> <span class="n">type_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">f</span><span class="s2">&quot;AICSImage module does not support this image file type: &#39;</span><span class="si">{self.type_}</span><span class="s2">&#39;&quot;</span></div>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;AICSImage module does not support this image file type: &#39;</span><span class="si">{self.data}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 <div class="viewcode-block" id="InvalidDimensionOrderingError"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.exceptions.InvalidDimensionOrderingError">[docs]</a><span class="k">class</span> <span class="nc">InvalidDimensionOrderingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -200,26 +203,24 @@
 <span class="sd">    for the user to be given more context.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
-
-
-<div class="viewcode-block" id="MultiSceneCziException"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.exceptions.MultiSceneCziException">[docs]</a><span class="k">class</span> <span class="nc">MultiSceneCziException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This exception is intended to be thrown when a CZI file has multiple scenes. This is only to</span>
-<span class="sd">    be thrown if the Reader is given a multi-scene CZI files and the backend library isn&#39;t able</span>
-<span class="sd">    to read multi-scene CZI.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="ConflictingArgumentsError"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.exceptions.ConflictingArgumentsError">[docs]</a><span class="k">class</span> <span class="nc">ConflictingArgumentsError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This exception is returned when 2 arguments to the same function are in conflict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="InconsistentShapeError"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.exceptions.InconsistentShapeError">[docs]</a><span class="k">class</span> <span class="nc">InconsistentShapeError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A general function to use when the shape returned or requested from an array operation is invalid.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span></div>
 </pre></div>

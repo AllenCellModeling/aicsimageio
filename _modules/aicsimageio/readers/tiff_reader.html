@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -178,22 +179,55 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.readers.tiff_reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Optional</span>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tifffile</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">tifffile</span> <span class="kn">import</span> <span class="n">TiffFile</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">types</span>
-<span class="kn">from</span> <span class="nn">..buffer_reader</span> <span class="k">import</span> <span class="n">BufferReader</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">reader</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..buffer_reader</span> <span class="kn">import</span> <span class="n">BufferReader</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="TiffReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader">[docs]</a><span class="k">class</span> <span class="nc">TiffReader</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">Reader</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This class is used to open and process the contents of a generic tiff file.</span>
+<div class="viewcode-block" id="TiffReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader">[docs]</a><span class="k">class</span> <span class="nc">TiffReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    TiffReader wraps tifffile to provide the same reading capabilities but abstracts the specifics of using the</span>
+<span class="sd">    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.</span>
 
-<span class="sd">    The load function will get a 3D ZYX array from a tiff file.</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: types.FileLike</span>
+<span class="sd">        A string or path to the TIFF file to be read.</span>
+<span class="sd">    S: int</span>
+<span class="sd">        If the image has different dimensions on any scene from another, the dask array construction will fail.</span>
+<span class="sd">        In that case, use this parameter to specify a specific scene to construct a dask array for.</span>
+<span class="sd">        Default: 0 (select the first scene)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span> <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># Run super init to check filepath provided</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Store parameters needed for dask read</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span> <span class="o">=</span> <span class="n">S</span>
+
+        <span class="c1"># Lazy load and hold on to dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -221,6 +255,158 @@
                 <span class="k">if</span> <span class="n">ifd_offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">False</span>
             <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">page</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="c1"># Load Tiff</span>
+        <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+            <span class="c1"># Get proper scene</span>
+            <span class="n">scene</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="n">scene</span><span class="p">]</span>
+
+            <span class="c1"># Get proper page</span>
+            <span class="n">page</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="n">page</span><span class="p">]</span>
+
+            <span class="c1"># Return numpy</span>
+            <span class="k">return</span> <span class="n">page</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a TIFF image file as a delayed dask array where each chunk of the constructed array is a delayed YX plane.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        img: dask.array.core.Array</span>
+<span class="sd">            The constructed delayed YX plane dask array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Load Tiff</span>
+            <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+                <span class="c1"># Check each scene has the same shape</span>
+                <span class="c1"># If scene shape checking fails, use the specified scene and update operating shape</span>
+                <span class="n">scenes</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span>
+                <span class="n">operating_shape</span> <span class="o">=</span> <span class="n">scenes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">scene</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">operating_shape</span><span class="p">:</span>
+                        <span class="n">operating_shape</span> <span class="o">=</span> <span class="n">scenes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+                        <span class="n">scenes</span> <span class="o">=</span> <span class="p">[</span><span class="n">scenes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="p">]]</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{self.specific_s_index}</span><span class="s2"> for data retrieval.&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">break</span>
+
+                <span class="c1"># Get sample yx plane</span>
+                <span class="n">sample</span> <span class="o">=</span> <span class="n">scenes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
+
+                <span class="c1"># Combine length of scenes and operating shape</span>
+                <span class="c1"># Replace YX dims with empty dimensions</span>
+                <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scenes</span><span class="p">),</span> <span class="o">*</span><span class="n">operating_shape</span><span class="p">)</span>
+                <span class="n">operating_shape</span> <span class="o">=</span> <span class="n">operating_shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Make ndarray for lazy arrays to fill</span>
+                <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">all_page_index</span><span class="p">,</span> <span class="p">(</span><span class="n">np_index</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">)):</span>
+                    <span class="c1"># Scene index is the first index in np_index</span>
+                    <span class="n">scene_index</span> <span class="o">=</span> <span class="n">np_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                    <span class="c1"># This page index is current enumeration divided by scene index + 1</span>
+                    <span class="c1"># For example if the image has 10 Z slices and 5 scenes, there would be 50 total pages</span>
+                    <span class="n">this_page_index</span> <span class="o">=</span> <span class="n">all_page_index</span> <span class="o">//</span> <span class="p">(</span><span class="n">scene_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+                    <span class="c1"># Fill the numpy array with the delayed arrays</span>
+                    <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">np_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
+                        <span class="n">delayed</span><span class="p">(</span><span class="n">TiffReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">scene_index</span><span class="p">,</span> <span class="n">this_page_index</span><span class="p">),</span>
+                        <span class="n">shape</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># Convert the numpy array of lazy readers into a dask array</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+                <span class="c1"># Only return the scene dimension if multiple scenes are present</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scenes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+
+                <span class="c1"># Set _dask_data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span>
+
+<div class="viewcode-block" id="TiffReader.load_slice"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.load_slice">[docs]</a>    <span class="k">def</span> <span class="nf">load_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slice_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">tiff</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">slice_index</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TiffReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get a single scenes dimensions in order</span>
+            <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+                <span class="n">single_scene_dims</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">axes</span>
+
+                <span class="c1"># We can sometimes trust the dimension info in the image</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">d</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">single_scene_dims</span><span class="p">]):</span>
+                    <span class="c1"># Add scene dimension only if there are multiple scenes</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">single_scene_dims</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{Dimensions.Scene}{single_scene_dims}</span><span class="s2">&quot;</span>
+                <span class="c1"># Sometimes the dimension info is wrong in certain dimensions, so guess that dimension</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_dim_order</span><span class="p">(</span><span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="n">best_guess</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">dim_from_meta</span> <span class="ow">in</span> <span class="n">single_scene_dims</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">dim_from_meta</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">:</span>
+                            <span class="n">best_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_from_meta</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">appended_dim</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="k">for</span> <span class="n">guessed_dim</span> <span class="ow">in</span> <span class="n">guess</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="n">guessed_dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">best_guess</span><span class="p">:</span>
+                                    <span class="n">best_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">guessed_dim</span><span class="p">)</span>
+                                    <span class="n">appended_dim</span> <span class="o">=</span> <span class="kc">True</span>
+                                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                                        <span class="sa">f</span><span class="s2">&quot;Unsure how to handle dimension: </span><span class="si">{dim_from_meta}</span><span class="s2">. &quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot;Replaced with guess: </span><span class="si">{guessed_dim}</span><span class="s2">&quot;</span>
+                                    <span class="p">)</span>
+                                    <span class="k">break</span>
+
+                            <span class="c1"># All of our guess dims were already in the dim list, append the dim read from meta</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">appended_dim</span><span class="p">:</span>
+                                <span class="n">best_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_from_meta</span><span class="p">)</span>
+
+                    <span class="n">best_guess</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">best_guess</span><span class="p">)</span>
+
+                    <span class="c1"># Add scene dimension only if there are multiple scenes</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">best_guess</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{Dimensions.Scene}{best_guess}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span>
+
+    <span class="nd">@dims</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># Check amount of provided dims against data shape</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided too many dimensions for the associated file. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received {len(dims)} dimensions [dims: </span><span class="si">{dims}</span><span class="s2">] &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for image with {len(self.data.shape)} dimensions [shape: </span><span class="si">{self.data.shape}</span><span class="s2">].&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Set the dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">dims</span>
 
 <div class="viewcode-block" id="TiffReader.get_image_description"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.get_image_description">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_image_description</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">]:</span>
@@ -287,40 +473,13 @@
                 <span class="n">buffer_reader</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">description_offset</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
                 <span class="k">return</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">buffer_reader</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">description_length</span><span class="p">))</span></div>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span>
-
-<div class="viewcode-block" id="TiffReader.close"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="TiffReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span></div>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tiff</span><span class="o">.</span><span class="n">asarray</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_dim_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span>
-
-    <span class="nd">@dims</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">value</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_description</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">rb</span><span class="p">:</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_description</span><span class="p">(</span><span class="n">rb</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">description</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span></div>

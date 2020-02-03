@@ -103,6 +103,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -202,72 +203,19 @@
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p>Supports reading metadata and imaging data from file path or buffered bytes for:</p>
+<li><p>Supports reading metadata and imaging data for:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">CZI</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OME-TIFF</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">TIFF</span></code></p></li>
-<li><p>Any additional format supported by <code class="docutils literal notranslate"><span class="pre">imageio</span></code></p></li>
+<li><p>Any additional format supported by <cite>``imageio`</cite> &lt;<a class="reference external" href="https://github.com/imageio/imageio">https://github.com/imageio/imageio</a>&gt;`_</p></li>
 </ul>
 </li>
 <li><p>Supports writing metadata and imaging data for:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">OME-TIFF</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">TIFF</span></code></p></li>
-<li><p>Any additional format supported by <code class="docutils literal notranslate"><span class="pre">imageio</span></code></p></li>
 </ul>
 </li>
-</ul>
-<div class="section" id="disclaimer">
-<h3>Disclaimer:<a class="headerlink" href="#disclaimer" title="Permalink to this headline">¶</a></h3>
-<p>This package is under heavy revision in preparation for version 3.0.0 release. The quick start below is representative
-of how to interact with the package under 3.0.0 and not under the current stable release.</p>
-</div>
-</div>
-<div class="section" id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">imread</span>
-
-<span class="c1"># For numpy array of image data</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s2">&quot;/path/to/your/file_or_buffer.ome.tiff&quot;</span><span class="p">)</span>
-
-<span class="c1"># For AICSImage object that</span>
-<span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;/path/to/your/file_or_buffer.ome.tiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">im</span><span class="p">:</span>
-    <span class="c1"># use im object</span>
-
-<span class="c1"># To specify a known dimension order</span>
-<span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;/path/to/your/file_or_buffer.ome.tiff&quot;</span><span class="p">,</span> <span class="n">known_dims</span><span class="o">=</span><span class="s2">&quot;SYX&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">im</span><span class="p">:</span>
-    <span class="c1"># use im object</span>
-
-<span class="c1"># if you instantiate an AICSImage:</span>
-<span class="n">im</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;/path/to/your/file_or_buffer.ome.tiff&quot;</span><span class="p">)</span>
-<span class="c1"># you should close it when done:</span>
-<span class="n">im</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-<span class="c1"># Image data is stored in `data` attribute</span>
-<span class="n">im</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># returns the image data numpy array</span>
-
-<span class="c1"># Image dimension sizes can be obtained via properties:</span>
-<span class="n">im</span><span class="o">.</span><span class="n">size_z</span>  <span class="c1"># returns the size of the Z dimension. X,Y,Z,C,T, and S supported.</span>
-
-<span class="c1"># Image dimensions can also be obtained as a tuple in two ways:</span>
-<span class="n">im</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">)</span>  <span class="c1"># returns a tuple containing the Z, Y, and X sizes only</span>
-<span class="n">im</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="n">out_orientation</span><span class="o">=</span><span class="s2">&quot;ZYX&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns same as above</span>
-
-<span class="c1"># Image metadata is stored in `metadata` attribute</span>
-<span class="n">im</span><span class="o">.</span><span class="n">metadata</span>  <span class="c1"># returns whichever metadata parser best suits the file format</span>
-
-<span class="c1"># Subsets or transposes of the image data can be requested:</span>
-<span class="n">im</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="n">out_orientation</span><span class="o">=</span><span class="s2">&quot;ZYX&quot;</span><span class="p">)</span>  <span class="c1"># returns a 3d data block containing only the ZYX dimensions</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Image data numpy arrays are always returned as six dimensional in dimension order <code class="docutils literal notranslate"><span class="pre">STCZYX</span></code>
-or <code class="docutils literal notranslate"><span class="pre">Scene</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span></code>, <code class="docutils literal notranslate"><span class="pre">Channel</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>, and <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p></li>
-<li><p>Each file format may use a different metadata parser it is dependent on the reader’s implementation.</p></li>
 </ul>
 </div>
 <div class="section" id="installation">
@@ -277,7 +225,122 @@ or <code class="docutils literal notranslate"><span class="pre">Scene</span></co
 </div>
 <div class="section" id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>For full package documentation please visit <a class="reference external" href="https://allencellmodeling.github.io/aicsimageio/index.html">allencellmodeling.github.io/aicsimageio</a>.</p>
+<p>For full package documentation please visit
+<a class="reference external" href="https://allencellmodeling.github.io/aicsimageio/index.html">allencellmodeling.github.io/aicsimageio</a>.</p>
+</div>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="full-image-reading">
+<h3>Full Image Reading<a class="headerlink" href="#full-image-reading" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">imread</span>
+
+<span class="c1"># Get an AICSImage object</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># returns 6D STCZYX numpy array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns string &quot;STCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in STCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;STC&quot;</span><span class="p">)</span>  <span class="c1"># returns tuple of dimensions sizes for just STC</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+
+<span class="c1"># Get 6D STCZYX numpy array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="delayed-image-slice-reading">
+<h3>Delayed Image Slice Reading<a class="headerlink" href="#delayed-image-slice-reading" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">imread_dask</span>
+
+<span class="c1"># Get an AICSImage object</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dask_data</span>  <span class="c1"># returns 6D STCZYX dask array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns string &quot;STCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in STCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;STC&quot;</span><span class="p">)</span>  <span class="c1"># returns tuple of dimensions sizes for just STC</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
+
+<span class="c1"># Read specified portion of dask array</span>
+<span class="n">lazy_s0t0</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
+<span class="n">s0t0</span> <span class="o">=</span> <span class="n">lazy_s0t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+
+<span class="c1"># Or use normal numpy array slicing</span>
+<span class="n">lazy_data</span> <span class="o">=</span> <span class="n">imread_dask</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">lazy_s0t0</span> <span class="o">=</span> <span class="n">lazy_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">s0t0</span> <span class="o">=</span> <span class="n">lazy_s0t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>When using the <code class="docutils literal notranslate"><span class="pre">dask_data</span></code> array, it is important to know when to <code class="docutils literal notranslate"><span class="pre">compute</span></code> or <code class="docutils literal notranslate"><span class="pre">persist</span></code> data and when to keep
+chaining computation. <a class="reference external" href="https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160">Here is a good rundown on the trade offs.</a></p>
+</div>
+<div class="section" id="speed-up-io-and-processing-with-dask-clients-and-clusters">
+<h3>Speed up IO and Processing with Dask Clients and Clusters<a class="headerlink" href="#speed-up-io-and-processing-with-dask-clients-and-clusters" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">dask_utils</span>
+
+<span class="c1"># Create a local dask cluster and client for the duration of the context manager</span>
+<span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+    <span class="c1"># do your work like normal</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Specify arguments for the local cluster initialization</span>
+<span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nworkers&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+    <span class="c1"># do your work like normal</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Connect to a dask client for the duration of the context manager</span>
+<span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp://localhost:12345&quot;</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+    <span class="c1"># do your work like normal</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Or spawn a local cluster and / or connect to a client outside of a context manager</span>
+<span class="c1"># This uses the same &quot;address&quot; and dask kwargs as above</span>
+<span class="c1"># If you pass an address in, it will create and shutdown the client and no cluster will be created.</span>
+<span class="c1"># Similar to AICSImage, these objects will be connected and useable for the lifespan of the context manager.</span>
+<span class="k">with</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">cluster_and_client</span><span class="p">()</span> <span class="k">as</span> <span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+
+    <span class="n">img1</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;1.tiff&quot;</span><span class="p">)</span>
+    <span class="n">img2</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;2.tiff&quot;</span><span class="p">)</span>
+    <span class="n">img3</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;3.tiff&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Do your image processing work</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="metadata-reading">
+<h3>Metadata Reading<a class="headerlink" href="#metadata-reading" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span>
+
+<span class="c1"># Get an AICSImage object</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">metadata</span>  <span class="c1"># returns the metadata object for this image type</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">()</span>  <span class="c1"># returns a list of string channel names if found in the metadata</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="napari-interactive-viewer">
+<h3>Napari Interactive Viewer<a class="headerlink" href="#napari-interactive-viewer" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/Napari/napari">napari</a> is a fast, interactive, multi-dimensional image viewer for python and
+it is pretty useful for imaging data that this package tends to interact with.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span>
+
+<span class="c1"># Get an AICSImage object</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span><span class="o">.</span><span class="n">view_napari</span><span class="p">()</span>  <span class="c1"># launches napari GUI and viewer</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Image <code class="docutils literal notranslate"><span class="pre">data</span></code> and <code class="docutils literal notranslate"><span class="pre">dask_data</span></code> are always returned as six dimensional in dimension order <code class="docutils literal notranslate"><span class="pre">STCZYX</span></code>
+or <code class="docutils literal notranslate"><span class="pre">Scene</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span></code>, <code class="docutils literal notranslate"><span class="pre">Channel</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>, and <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p></li>
+<li><p>Each file format may use a different metadata parser it is dependent on the reader’s implementation.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code> object will only pull the <code class="docutils literal notranslate"><span class="pre">Scene</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span></code>, <code class="docutils literal notranslate"><span class="pre">Channel</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code> dimensions from the reader.
+If your file has dimensions outside of those, use the base reader classes <code class="docutils literal notranslate"><span class="pre">CziReader</span></code>, <code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code>, <code class="docutils literal notranslate"><span class="pre">TiffReader</span></code>,
+or <code class="docutils literal notranslate"><span class="pre">DefaultReader</span></code>.</p></li>
+<li><p>We make some choices for the user based off the image data during <code class="docutils literal notranslate"><span class="pre">img.view_napari</span></code>.
+If you don’t want this behavior, simply pass the <code class="docutils literal notranslate"><span class="pre">img.dask_data</span></code> into <code class="docutils literal notranslate"><span class="pre">napari.view_image</span></code> instead.</p></li>
+</ul>
 </div>
 <div class="section" id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>

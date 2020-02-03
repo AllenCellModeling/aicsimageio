@@ -103,6 +103,7 @@
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -202,6 +203,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
@@ -224,22 +226,24 @@
 </li>
       <li><a href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants (module)</a>
 </li>
+      <li><a href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils (module)</a>
+</li>
       <li><a href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions (module)</a>
 </li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers">aicsimageio.readers (module)</a>
 </li>
+      <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.arraylike_reader">aicsimageio.readers.arraylike_reader (module)</a>
+</li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.czi_reader">aicsimageio.readers.czi_reader (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.default_reader">aicsimageio.readers.default_reader (module)</a>
-</li>
-      <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.ndarray_reader">aicsimageio.readers.ndarray_reader (module)</a>
 </li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.ome_tiff_reader">aicsimageio.readers.ome_tiff_reader (module)</a>
 </li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.reader">aicsimageio.readers.reader (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.tiff_reader">aicsimageio.readers.tiff_reader (module)</a>
 </li>
       <li><a href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms (module)</a>
@@ -247,8 +251,6 @@
       <li><a href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types (module)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#module-aicsimageio.vendor">aicsimageio.vendor (module)</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#module-aicsimageio.vendor.czifile">aicsimageio.vendor.czifile (module)</a>, <a href="aicsimageio.vendor.html#module-aicsimageio.vendor.czifile">[1]</a>
 </li>
       <li><a href="aicsimageio.vendor.html#module-aicsimageio.vendor.omexml">aicsimageio.vendor.omexml (module)</a>
 </li>
@@ -258,17 +260,9 @@
 </li>
       <li><a href="aicsimageio.writers.html#module-aicsimageio.writers.png_writer">aicsimageio.writers.png_writer (module)</a>
 </li>
-      <li><a href="aicsimageio.writers.html#module-aicsimageio.writers.writer">aicsimageio.writers.writer (module)</a>
-</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.append_channel">append_channel() (aicsimageio.vendor.omexml.OMEXML.Pixels method)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.asarray">asarray() (aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.asarray">[1]</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.attachment_directory">attachment_directory (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.attachment_directory">[1]</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.attachments">attachments() (aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.attachments">[1]</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.axes">axes (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.axes">[1]</a>
+      <li><a href="aicsimageio.readers.html#aicsimageio.readers.arraylike_reader.ArrayLikeReader">ArrayLikeReader (class in aicsimageio.readers.arraylike_reader)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -284,32 +278,38 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.Channel">Channel (aicsimageio.constants.Dimensions attribute)</a>
+</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.Channel">Channel() (aicsimageio.vendor.omexml.OMEXML.Pixels method)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.channel_count">channel_count() (aicsimageio.vendor.omexml.OMEXML.Pixels property)</a>
 </li>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.client">client() (aicsimageio.aics_image.AICSImage property)</a>
+
+      <ul>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.client">(aicsimageio.readers.reader.Reader property)</a>
+</li>
+      </ul></li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.close">close() (aicsimageio.aics_image.AICSImage method)</a>
 
       <ul>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.close">(aicsimageio.readers.czi_reader.CziReader method)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ndarray_reader.NdArrayReader.close">(aicsimageio.readers.ndarray_reader.NdArrayReader method)</a>
-</li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.close">(aicsimageio.readers.reader.Reader method)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.close">(aicsimageio.readers.tiff_reader.TiffReader method)</a>
-</li>
-        <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.close">(aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.close">[1]</a>
 </li>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">(aicsimageio.writers.ome_tiff_writer.OmeTiffWriter method)</a>
 </li>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.png_writer.PngWriter.close">(aicsimageio.writers.png_writer.PngWriter method)</a>
 </li>
-        <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer.close">(aicsimageio.writers.writer.Writer method)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.cluster">cluster() (aicsimageio.aics_image.AICSImage property)</a>
+
+      <ul>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.cluster">(aicsimageio.readers.reader.Reader property)</a>
+</li>
+      </ul></li>
+      <li><a href="aicsimageio.html#aicsimageio.dask_utils.cluster_and_client">cluster_and_client() (in module aicsimageio.dask_utils)</a>
+</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Channel.Color">Color() (aicsimageio.vendor.omexml.OMEXML.Channel property)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Well.Column">Column() (aicsimageio.vendor.omexml.OMEXML.Well property)</a>
@@ -320,10 +320,6 @@
 </li>
       <li><a href="aicsimageio.html#aicsimageio.exceptions.ConflictingArgumentsError">ConflictingArgumentsError</a>
 </li>
-      <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.convert_to_buffer">convert_to_buffer() (aicsimageio.readers.reader.Reader static method)</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile">CziFile (class in aicsimageio.vendor.czifile)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile">[1]</a>
-</li>
       <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader">CziReader (class in aicsimageio.readers.czi_reader)</a>
 </li>
   </ul></td>
@@ -332,44 +328,52 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.dask_data">dask_data() (aicsimageio.aics_image.AICSImage property)</a>
+
+      <ul>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.arraylike_reader.ArrayLikeReader.dask_data">(aicsimageio.readers.arraylike_reader.ArrayLikeReader property)</a>
+</li>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dask_data">(aicsimageio.readers.czi_reader.CziReader property)</a>
+</li>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader.dask_data">(aicsimageio.readers.default_reader.DefaultReader property)</a>
+</li>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.dask_data">(aicsimageio.readers.reader.Reader property)</a>
+</li>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.dask_data">(aicsimageio.readers.tiff_reader.TiffReader property)</a>
+</li>
+      </ul></li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.data">data() (aicsimageio.aics_image.AICSImage property)</a>
 
       <ul>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.data">(aicsimageio.readers.czi_reader.CziReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader.data">(aicsimageio.readers.default_reader.DefaultReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ndarray_reader.NdArrayReader.data">(aicsimageio.readers.ndarray_reader.NdArrayReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.data">(aicsimageio.readers.ome_tiff_reader.OmeTiffReader property)</a>
-</li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.data">(aicsimageio.readers.reader.Reader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.data">(aicsimageio.readers.tiff_reader.TiffReader property)</a>
 </li>
         <li><a href="aicsimageio.html#aicsimageio.types.LoadResults.data">(aicsimageio.types.LoadResults property)</a>
 </li>
       </ul></li>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.DefaultOrder">DefaultOrder (aicsimageio.constants.Dimensions attribute)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.DefaultOrderList">DefaultOrderList (aicsimageio.constants.Dimensions attribute)</a>
+</li>
       <li><a href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader">DefaultReader (class in aicsimageio.readers.default_reader)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plane.DeltaT">DeltaT() (aicsimageio.vendor.omexml.OMEXML.Plane property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.Description">Description() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.determine_reader">determine_reader() (aicsimageio.aics_image.AICSImage static method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.DimensionOrder">DimensionOrder() (aicsimageio.vendor.omexml.OMEXML.Pixels property)</a>
 </li>
-      <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dims">dims() (aicsimageio.readers.czi_reader.CziReader property)</a>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions">Dimensions (class in aicsimageio.constants)</a>
+</li>
+      <li><a href="aicsimageio.readers.html#aicsimageio.readers.arraylike_reader.ArrayLikeReader.dims">dims() (aicsimageio.readers.arraylike_reader.ArrayLikeReader property)</a>
 
       <ul>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dims">(aicsimageio.readers.czi_reader.CziReader property)</a>
+</li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader.dims">(aicsimageio.readers.default_reader.DefaultReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ndarray_reader.NdArrayReader.dims">(aicsimageio.readers.ndarray_reader.NdArrayReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.dims">(aicsimageio.readers.ome_tiff_reader.OmeTiffReader property)</a>
 </li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.dims">(aicsimageio.readers.reader.Reader property)</a>
 </li>
@@ -380,13 +384,9 @@
       </ul></li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.DO_XYTZC">DO_XYTZC (in module aicsimageio.vendor.omexml)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.dtype">dtype (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.dtype">[1]</a>
-</li>
       <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dtype">dtype() (aicsimageio.readers.czi_reader.CziReader method)</a>
 
       <ul>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.dtype">(aicsimageio.readers.ome_tiff_reader.OmeTiffReader method)</a>
-</li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.dtype">(aicsimageio.readers.tiff_reader.TiffReader method)</a>
 </li>
       </ul></li>
@@ -414,8 +414,6 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.filtered_subblock_directory">filtered_subblock_directory (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.filtered_subblock_directory">[1]</a>
-</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.TiffData.FirstC">FirstC() (aicsimageio.vendor.omexml.OMEXML.TiffData property)</a>
 </li>
   </ul></td>
@@ -495,6 +493,8 @@
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.TiffData.get_IFD">get_IFD() (aicsimageio.vendor.omexml.OMEXML.TiffData method)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.get_image_count">get_image_count() (aicsimageio.vendor.omexml.OMEXML method)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_dask_data">get_image_dask_data() (aicsimageio.aics_image.AICSImage method)</a>
 </li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_data">get_image_data() (aicsimageio.aics_image.AICSImage method)</a>
 </li>
@@ -644,16 +644,16 @@
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.image_count">image_count() (aicsimageio.vendor.omexml.OMEXML property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.WellSample.ImageRef">ImageRef() (aicsimageio.vendor.omexml.OMEXML.WellSample property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.imread">imread() (in module aicsimageio.aics_image)</a>
-
-      <ul>
-        <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.imread">(in module aicsimageio.vendor.czifile)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.imread">[1]</a>
 </li>
-      </ul></li>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.imread_dask">imread_dask() (in module aicsimageio.aics_image)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.exceptions.InconsistentShapeError">InconsistentShapeError</a>
+</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.WellSample.Index">Index() (aicsimageio.vendor.omexml.OMEXML.WellSample property)</a>
 </li>
       <li><a href="aicsimageio.html#aicsimageio.buffer_reader.BufferReader.INTEL_ENDIAN">INTEL_ENDIAN (aicsimageio.buffer_reader.BufferReader attribute)</a>
@@ -686,12 +686,10 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader.load">load() (aicsimageio.readers.reader.Reader method)</a>
+      <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.load_slice">load_slice() (aicsimageio.readers.tiff_reader.TiffReader method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.load_slice">load_slice() (aicsimageio.readers.ome_tiff_reader.OmeTiffReader method)</a>
-</li>
       <li><a href="aicsimageio.html#aicsimageio.types.LoadResults">LoadResults (class in aicsimageio.types)</a>
 </li>
   </ul></td>
@@ -702,16 +700,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.make_text_node">make_text_node() (in module aicsimageio.vendor.omexml)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.metadata">metadata (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.metadata">[1]</a>
-</li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.metadata">metadata() (aicsimageio.aics_image.AICSImage property)</a>
 
       <ul>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.arraylike_reader.ArrayLikeReader.metadata">(aicsimageio.readers.arraylike_reader.ArrayLikeReader property)</a>
+</li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.metadata">(aicsimageio.readers.czi_reader.CziReader property)</a>
 </li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader.metadata">(aicsimageio.readers.default_reader.DefaultReader property)</a>
-</li>
-        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ndarray_reader.NdArrayReader.metadata">(aicsimageio.readers.ndarray_reader.NdArrayReader property)</a>
 </li>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.metadata">(aicsimageio.readers.ome_tiff_reader.OmeTiffReader property)</a>
 </li>
@@ -727,8 +723,6 @@
       <li><a href="aicsimageio.html#aicsimageio.buffer_reader.BufferReader.MOTOROLA_ENDIAN">MOTOROLA_ENDIAN (aicsimageio.buffer_reader.BufferReader attribute)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.MPI_CMYK">MPI_CMYK (in module aicsimageio.vendor.omexml)</a>
-</li>
-      <li><a href="aicsimageio.html#aicsimageio.exceptions.MultiSceneCziException">MultiSceneCziException</a>
 </li>
   </ul></td>
 </tr></table>
@@ -746,8 +740,6 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="aicsimageio.readers.html#aicsimageio.readers.ndarray_reader.NdArrayReader">NdArrayReader (class in aicsimageio.readers.ndarray_reader)</a>
-</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new">new() (aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype method)</a>
 
       <ul>
@@ -983,18 +975,14 @@
       <ul>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.png_writer.PngWriter.save">(aicsimageio.writers.png_writer.PngWriter method)</a>
 </li>
-        <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer.save">(aicsimageio.writers.writer.Writer method)</a>
-</li>
       </ul></li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.save_attachments">save_attachments() (aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.save_attachments">[1]</a>
-</li>
       <li><a href="aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice">save_slice() (aicsimageio.writers.ome_tiff_writer.OmeTiffWriter method)</a>
 
       <ul>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.png_writer.PngWriter.save_slice">(aicsimageio.writers.png_writer.PngWriter method)</a>
 </li>
       </ul></li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.segments">segments() (aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.segments">[1]</a>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.Scene">Scene (aicsimageio.constants.Dimensions attribute)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Image.set_AcquisitionDate">set_AcquisitionDate() (aicsimageio.vendor.omexml.OMEXML.Image method)</a>
 </li>
@@ -1092,12 +1080,12 @@
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Well.set_Row">set_Row() (aicsimageio.vendor.omexml.OMEXML.Well method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.set_RowNamingConvention">set_RowNamingConvention() (aicsimageio.vendor.omexml.OMEXML.Plate method)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.set_Rows">set_Rows() (aicsimageio.vendor.omexml.OMEXML.Plate method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Channel.set_SamplesPerPixel">set_SamplesPerPixel() (aicsimageio.vendor.omexml.OMEXML.Channel method)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.set_SizeC">set_SizeC() (aicsimageio.vendor.omexml.OMEXML.Pixels method)</a>
@@ -1126,7 +1114,9 @@
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.set_WellOriginY">set_WellOriginY() (aicsimageio.vendor.omexml.OMEXML.Plate method)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.shape">shape (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.shape">[1]</a>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.shape">shape() (aicsimageio.aics_image.AICSImage property)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.dask_utils.shutdown_cluster_and_client">shutdown_cluster_and_client() (in module aicsimageio.dask_utils)</a>
 </li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.size">size() (aicsimageio.aics_image.AICSImage method)</a>
 </li>
@@ -1144,6 +1134,8 @@
 
       <ul>
         <li><a href="aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_s">(aicsimageio.readers.czi_reader.CziReader method)</a>
+</li>
+        <li><a href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.size_s">(aicsimageio.readers.ome_tiff_reader.OmeTiffReader method)</a>
 </li>
       </ul></li>
       <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.size_t">size_t() (aicsimageio.aics_image.AICSImage property)</a>
@@ -1196,19 +1188,19 @@
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.SizeZ">SizeZ() (aicsimageio.vendor.omexml.OMEXML.Pixels property)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.split_qn">split_qn() (in module aicsimageio.vendor.omexml)</a>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.SpatialX">SpatialX (aicsimageio.constants.Dimensions attribute)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.start">start (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.start">[1]</a>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.SpatialY">SpatialY (aicsimageio.constants.Dimensions attribute)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.SpatialZ">SpatialZ (aicsimageio.constants.Dimensions attribute)</a>
+</li>
+      <li><a href="aicsimageio.html#aicsimageio.dask_utils.spawn_cluster_and_client">spawn_cluster_and_client() (in module aicsimageio.dask_utils)</a>
+</li>
+      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.split_qn">split_qn() (in module aicsimageio.vendor.omexml)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.Status">Status() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.structured_annotations">structured_annotations() (aicsimageio.vendor.omexml.OMEXML property)</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.subblock_directory">subblock_directory (aicsimageio.vendor.czifile.CziFile attribute)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.subblock_directory">[1]</a>
-</li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.subblocks">subblocks() (aicsimageio.vendor.czifile.CziFile method)</a>, <a href="aicsimageio.vendor.html#aicsimageio.vendor.czifile.CziFile.subblocks">[1]</a>
-</li>
-      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.SUPPORTED_READERS">SUPPORTED_READERS (aicsimageio.aics_image.AICSImage attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1228,6 +1220,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader">TiffReader (class in aicsimageio.readers.tiff_reader)</a>
 </li>
+      <li><a href="aicsimageio.html#aicsimageio.constants.Dimensions.Time">Time (aicsimageio.constants.Dimensions attribute)</a>
+</li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.WellSample.Timepoint">Timepoint() (aicsimageio.vendor.omexml.OMEXML.WellSample property)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.to_xml">to_xml() (aicsimageio.vendor.omexml.OMEXML method)</a>
@@ -1245,18 +1239,24 @@
   </ul></td>
 </tr></table>
 
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="aicsimageio.html#aicsimageio.aics_image.AICSImage.view_napari">view_napari() (aicsimageio.aics_image.AICSImage method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.Well">Well() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginX">WellOriginX() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginY">WellOriginY() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
+      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginX">WellOriginX() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
-      <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer">Writer (class in aicsimageio.writers.writer)</a>
+      <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginY">WellOriginY() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
   </ul></td>
 </tr></table>

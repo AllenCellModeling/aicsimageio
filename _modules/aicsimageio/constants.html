@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aicsimageio.types &mdash; aicsimageio 3.0.7 documentation</title>
+  <title>aicsimageio.constants &mdash; aicsimageio 3.0.7 documentation</title>
   
 
   
@@ -163,7 +163,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>aicsimageio.types</li>
+      <li>aicsimageio.constants</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -178,36 +178,20 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for aicsimageio.types</h1><div class="highlight"><pre>
+  <h1>Source code for aicsimageio.constants</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Collection of types used across multiple objects and functions.</span>
-<span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedIOBase</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Union</span>
-
-<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1"># Imaging Data Types</span>
-<span class="n">SixDArray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>  <span class="c1"># In order STCZYX</span>
-
-<span class="c1"># IO Types</span>
-<span class="n">PathLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
-<span class="n">BufferLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">BufferedIOBase</span><span class="p">]</span>
-<span class="n">FileLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">BufferLike</span><span class="p">]</span>
-<span class="n">ArrayLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">]</span>
-<span class="n">ImageLike</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">FileLike</span><span class="p">,</span> <span class="n">ArrayLike</span><span class="p">]</span>
-
-
-<div class="viewcode-block" id="LoadResults"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.types.LoadResults">[docs]</a><span class="k">class</span> <span class="nc">LoadResults</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-    <span class="n">data</span><span class="p">:</span> <span class="n">SixDArray</span>
-    <span class="n">dims</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">metadata</span><span class="p">:</span> <span class="n">Any</span></div>
+<div class="viewcode-block" id="Dimensions"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.constants.Dimensions">[docs]</a><span class="k">class</span> <span class="nc">Dimensions</span><span class="p">:</span>
+    <span class="n">Scene</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span>
+    <span class="n">Time</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span>
+    <span class="n">Channel</span> <span class="o">=</span> <span class="s2">&quot;C&quot;</span>
+    <span class="n">SpatialZ</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span>
+    <span class="n">SpatialY</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span>
+    <span class="n">SpatialX</span> <span class="o">=</span> <span class="s2">&quot;X&quot;</span>
+    <span class="n">DefaultOrderList</span> <span class="o">=</span> <span class="p">[</span><span class="n">Scene</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="n">Channel</span><span class="p">,</span> <span class="n">SpatialZ</span><span class="p">,</span> <span class="n">SpatialY</span><span class="p">,</span> <span class="n">SpatialX</span><span class="p">]</span>
+    <span class="n">DefaultOrder</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DefaultOrderList</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

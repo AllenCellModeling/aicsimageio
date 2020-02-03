@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -182,87 +183,121 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
 <span class="kn">import</span> <span class="nn">imageio</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">delayed</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">exceptions</span>
-<span class="kn">from</span> <span class="nn">.reader</span> <span class="k">import</span> <span class="n">Reader</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="c1">###############################################################################</span>
 
 
 <div class="viewcode-block" id="DefaultReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.default_reader.DefaultReader">[docs]</a><span class="k">class</span> <span class="nc">DefaultReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    DefaultReader(&#39;file.jpg&#39;)</span>
-
-<span class="sd">    A catch all for image file reading that uses imageio as its back end.</span>
+<span class="sd">    A catch all for image file reading that uses imageio for reading.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    file: types.FileLike</span>
-<span class="sd">        A path or bytes object to read from.</span>
-
-<span class="sd">    Notes</span>
-<span class="sd">    -----</span>
-<span class="sd">    Because this is simply a wrapper around imageio, no metadata is returned. However, dimension order is returned with</span>
-<span class="sd">    dimensions assumed in order but with extra dimensions removed depending on image shape.</span>
-
-<span class="sd">    This reader always returns the first YX plane of an image. If you need to read GIFs for example, please use</span>
-<span class="sd">    `imageio.mimread` to get a list of YXC planes for the frames of the GIF.</span>
-
-<span class="sd">    For more details about how `imageio.imread`, differs from `imageio.volread` and `imageio.mimread`, please refer to</span>
-<span class="sd">    their documentation.</span>
+<span class="sd">    file: types.ImageLike</span>
+<span class="sd">        String with path to file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_data</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+        <span class="c1"># Construct delayed many image reads</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+                    <span class="c1"># Store length as it is used a bunch</span>
+                    <span class="n">image_length</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_length</span><span class="p">()</span>
+
+                    <span class="c1"># Handle single image formats like png, jpeg, etc</span>
+                    <span class="k">if</span> <span class="n">image_length</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+                    <span class="c1"># Handle many image formats like gif, mp4, etc</span>
+                    <span class="k">elif</span> <span class="n">image_length</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1"># Get a sample image</span>
+                        <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+                        <span class="c1"># Create operating shape for the final dask array by prepending image length to a tuple of</span>
+                        <span class="c1"># ones that is the same length as the sample shape</span>
+                        <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">image_length</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+                        <span class="c1"># Create numpy array of empty arrays for delayed get data functions</span>
+                        <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">indicies</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">):</span>
+                            <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">indicies</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
+                                <span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">indicies</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                                <span class="n">shape</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span>
+                            <span class="p">)</span>
+
+                        <span class="c1"># Block them into a single dask array</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+                    <span class="c1"># Catch all other image types as unsupported</span>
+                    <span class="c1"># https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+
+            <span class="c1"># Reraise unsupported file format</span>
+            <span class="k">except</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        `imageio.imread` returns the first YX plane of an image, except in the case where the image is RGB / RGBA, in</span>
-<span class="sd">        which case it returns the first YXC plane of an image.</span>
-
-<span class="sd">        This dims property handles those cases by making assumptions about the dimension order based off the shape of</span>
-<span class="sd">        the data stored in the reader. In the case where more data than an YXC plane is returned, it uses the</span>
-<span class="sd">        `guess_dim_order` function. However, I can&#39;t tell when that should ever get run and is really just used as a</span>
-<span class="sd">        safety catch all.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Set dims if not set</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="s2">&quot;YX&quot;</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="s2">&quot;YXC&quot;</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="s2">&quot;TYXC&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_dim_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_dim_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span>
 
     <span class="nd">@dims</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="c1"># Check amount of provided dims against data shape</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
-                <span class="n">f</span><span class="s2">&quot;Provided too many dimensions for the associated file. &quot;</span>
-                <span class="n">f</span><span class="s2">&quot;Received {len(dims)} dimensions [dims: </span><span class="si">{dims}</span><span class="s2">] &quot;</span>
-                <span class="n">f</span><span class="s2">&quot;for image with {len(self.data.shape)} dimensions [shape: </span><span class="si">{self.data.shape}</span><span class="s2">].&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided too many dimensions for the associated file. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received {len(dims)} dimensions [dims: </span><span class="si">{dims}</span><span class="s2">] &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for image with {len(self.data.shape)} dimensions [shape: </span><span class="si">{self.data.shape}</span><span class="s2">].&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Set the dims</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">dims</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_meta_data</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="c1"># Use imageio to check if they have a reader for this file</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">imageio</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">with</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="n">buffer</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span></div>
 </pre></div>

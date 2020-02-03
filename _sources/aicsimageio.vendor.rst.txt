@@ -4,22 +4,6 @@ aicsimageio.vendor package
 Submodules
 ----------
 
-aicsimageio.vendor.czifile module
----------------------------------
-
-.. automodule:: aicsimageio.vendor.czifile
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-aicsimageio.vendor.czifile module
----------------------------------
-
-.. automodule:: aicsimageio.vendor.czifile
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 aicsimageio.vendor.omexml module
 --------------------------------
 

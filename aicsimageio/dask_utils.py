@@ -23,6 +23,7 @@ def spawn_cluster_and_client(
     If not provided an address, create a LocalCluster and Client connection.
     If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
     """
+    cluster = None
     if address is not None:
         client = Client(address)
         log.info(f"Connected to Remote Dask Cluster: {client}")

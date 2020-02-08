@@ -204,6 +204,7 @@
 <span class="sd">    If not provided an address, create a LocalCluster and Client connection.</span>
 <span class="sd">    If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to Remote Dask Cluster: </span><span class="si">{client}</span><span class="s2">&quot;</span><span class="p">)</span>

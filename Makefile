@@ -59,9 +59,6 @@ serve-docs: ## generate Sphinx HTML documentation, including API docs
 	$(BROWSER) docs/_build/html/index.html
 
 prepare-release: ## Checkout master, generate new section of changelog
-	git checkout master
-	git fetch
-	git pull
 	bumpversion patch
 	gitchangelog
 	git add docs/changelog.rst

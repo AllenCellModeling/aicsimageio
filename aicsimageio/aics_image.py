@@ -128,7 +128,6 @@ class AICSImage:
         # Lazy load data from reader and reformat to standard dimensions
         self._dask_data = None
         self._data = None
-        self._metadata = None
 
         # Store dask client and cluster setup
         self._dask_kwargs = dask_kwargs
@@ -272,10 +271,8 @@ class AICSImage:
             The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.
             For pure image files an empty string or None is returned.
         """
-        if self._metadata is None:
-            self._metadata = self.reader.metadata
-
-        return self._metadata
+        # The reader can implement read optimization or not.
+        return self.reader.metadata
 
     @property
     def reader(self) -> Reader:

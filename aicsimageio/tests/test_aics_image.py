@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pickle
 from unittest import mock
 
 import dask.array as da
@@ -442,3 +443,64 @@ def test_view_napari(data, rgb, expected_data, expected_visible, expected_ndim, 
             assert call_kwargs["axis_labels"] == expected_axis_labels
             if not rgb:
                 assert call_kwargs["visible"] == expected_visible
+
+
+@pytest.mark.parametrize("filename, expected_shape, expected_metadata_type, expected_task_count", [
+    (PNG_FILE, (1, 1, 4, 1, 800, 537), dict, 2),
+    (TIF_FILE, (1, 1, 1, 1, 325, 475), str, 2),
+    (OME_FILE, (1, 1, 1, 1, 325, 475), omexml.OMEXML, 2),
+    (CZI_FILE, (1, 1, 1, 1, 325, 475), _Element, 2),
+    (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), str, 60),
+    (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), omexml.OMEXML, 90),
+    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), _Element, 18),
+])
+def test_aicsimage_serialize(
+    resources_dir,
+    tmpdir,
+    filename,
+    expected_shape,
+    expected_metadata_type,
+    expected_task_count,
+):
+    """
+    Test that the entire AICSImage object can be serialized - a requirement to distribute on dask clusters.
+
+    https://distributed.dask.org/en/latest/serialization.html
+    """
+    # Get file
+    f = resources_dir / filename
+
+    # Read file
+    img = AICSImage(f)
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
+    # Check basics
+    with Profiler() as prof:
+        assert img.shape == expected_shape
+        assert isinstance(img.metadata, expected_metadata_type)
+
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after basics
+    assert str(f) not in [f.path for f in proc.open_files()]
+
+    # Serialize object
+    serialized = pickle.dumps(img)
+
+    # Reload
+    img = pickle.loads(serialized)
+
+    # Check computed type is numpy array, computed shape is expected shape, and task count is expected
+    with Profiler() as prof:
+        assert isinstance(img.data, np.ndarray)
+        assert img.shape == expected_shape
+        assert img.data.shape == expected_shape
+        assert isinstance(img.metadata, expected_metadata_type)
+        assert len(prof.results) == expected_task_count
+
+    # Check that there are no open file pointers after retrieval
+    assert str(f) not in [f.path for f in proc.open_files()]

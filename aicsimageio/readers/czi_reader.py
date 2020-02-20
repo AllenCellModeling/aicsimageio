@@ -363,16 +363,14 @@ class CziReader(Reader):
     @property
     def metadata(self) -> _Element:
         """
-        Lazy load the metadata from the CZI file
+        Load and return the metadata from the CZI file
 
         Returns
         -------
-        The xml Element Tree of the metadata
+        The lxml Element Tree of the metadata
         """
-        if self._metadata is None:
-            # load the metadata
-            self._metadata = CziFile(self._file).meta
-        return self._metadata
+        # We can't serialize lxml element trees so don't save the tree to the object state
+        return CziFile(self._file).meta
 
     def _size_of_dimension(self, dim: str) -> int:
         if dim in self.dims:

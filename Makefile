@@ -63,5 +63,5 @@ prepare-release: ## Checkout master, generate new section of changelog
 	gitchangelog
 	git add docs/changelog.rst
 	git commit -m "Update changelog"
-	git reset --soft HEAD~2
+	git reset --soft HEAD~1
 	git commit --amend

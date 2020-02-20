@@ -277,11 +277,11 @@ publish = FileRegexSubst(OUTPUT_FILE, INSERT_POINT_REGEX, r"\1\o\g<rev>")
 ##
 ## The default is to use all commits to make the changelog.
 #revs = ["^1.0.3", ]
-#revs = [
-#    Caret(
-#        FileFirstRegexMatch(
-#            "CHANGELOG.rst",
-#            r"(?P<rev>[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n")),
-#    "HEAD"
-#]
-revs = ["v3.1.0", "HEAD"]
+revs = [
+    Caret(
+        FileFirstRegexMatch(
+            "docs/changelog.rst",
+            r"(?P<rev>v[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n")),
+    "HEAD"
+]
+#revs = ["^v3.1.1", "HEAD"]

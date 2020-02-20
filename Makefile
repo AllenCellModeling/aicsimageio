@@ -64,4 +64,4 @@ prepare-release: ## Checkout master, generate new section of changelog
 	git add docs/changelog.rst
 	git commit -m "Update changelog"
 	git reset --soft HEAD~1
-	git commit --amend
+	git commit --amend  # This and the line above squash the "Update changelog" and bumpversion commits together

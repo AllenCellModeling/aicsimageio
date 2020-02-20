@@ -60,15 +60,12 @@ def cluster_and_client(address: Optional[str] = None, **kwargs):
 
     These objects will only live for the duration of this context manager.
 
-    Example
-    -------
-    ```
-    with cluster_and_client() as (cluster, client):
-        img1 = AICSImage("1.tiff")
-        img2 = AICSImage("2.czi")
-
-        # other processing
-    ```
+    Examples
+    --------
+    >>> with cluster_and_client() as (cluster, client):
+    ...     img1 = AICSImage("1.tiff")
+    ...     img2 = AICSImage("2.czi")
+    ...     other processing
     """
     try:
         cluster, client = spawn_cluster_and_client(address=address, **kwargs)

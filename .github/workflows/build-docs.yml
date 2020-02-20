@@ -20,6 +20,7 @@ jobs:
         pip install .[all]
     - name: Generate Docs
       run: |
+        gitchangelog
         make docs
         touch docs/_build/html/.nojekyll
     - name: Publish Docs

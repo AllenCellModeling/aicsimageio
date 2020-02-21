@@ -43,8 +43,13 @@ A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed.
 Then run:
 
-$ bumpversion patch # possible: major / minor / patch
-$ git push
-$ git push --tags
+```bash
+make prepare-release
+git push
+git push --tags
+git branch -D stable
+git checkout -b stable
+git push --set-upstream origin stable -f
+```
 
-Make and merge a PR to `stable` and GitHub will then deploy to PyPI once merged.
+This will release a new package version on Git + GitHub and publish to PyPI.

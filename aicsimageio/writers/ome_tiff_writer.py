@@ -5,8 +5,8 @@ import os
 import numpy as np
 import tifffile
 
-from aicsimageio.vendor import omexml
 from aicsimageio.exceptions import InvalidDimensionOrderingError
+from aicsimageio.vendor import omexml
 
 BYTE_BOUNDARY = 2 ** 21
 
@@ -17,35 +17,38 @@ BYTE_BOUNDARY = 2 ** 21
 
 
 class OmeTiffWriter:
-    """This class can take arrays of pixel values and do the necessary metadata creation to write them
-    properly in OME xml format.
-
-    Example:
-        image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        # There needs to be some sort of data inside the image array
-        writer = ome_tiff_writer.OmeTiffWriter("file.ome.tif")
-        writer.save(image)
-
-        image2 = numpy.ndarray([5, 486, 210])
-        # There needs to be some sort of data inside the image2 array
-        with ome_tiff_writer.OmeTiffWriter("file2.ome.tif") as writer2:
-            writer2.save(image2)
-
-        # Convert a CZI file into OME Tif.
-        reader = cziReader.CziReader("file3.czi")
-        writer = ome_tiff_writer.OmeTiffWriter("file3.ome.tif")
-        writer.save(reader.load())
-
-    """
-
     def __init__(self, file_path, overwrite_file=None):
         """
-        Class initializer
-        :param file_path: path to image output location
-        :param overwrite_file: flag to overwrite image or pass over image if it already exists
-            None : (default) throw IOError if file exists
-            True : overwrite existing file if file exists
+        This class can take arrays of pixel values and do the necessary metadata creation to write them
+        properly in OME xml format.
+
+        Parameters
+        ----------
+        file_path
+            Path to image output location
+        overwrite_file
+            Flag to overwrite image or pass over image if it already exists.
+            None: (default) throw IOError if file exists
+            True: overwrite existing file if file exists
             False: silently perform no write actions if file exists
+
+        Example
+        -------
+        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
+        ... writer = ome_tiff_writer.OmeTiffWriter("file.ome.tif")
+        ... writer.save(image)
+
+        Using the context manager to close the write once done.
+
+        >>> image2 = numpy.ndarray([5, 486, 210])
+        ... with ome_tiff_writer.OmeTiffWriter("file2.ome.tif") as writer2:
+        ...     writer2.save(image2)
+
+        Convert a CZI file into OME-Tiff
+
+        >>> reader = cziReader.CziReader("file3.czi")
+        ... with ome_tiff_writer.OmeTiffWriter("file3.ome.tif") as writer3:
+        ...     writer.save(reader.load())
         """
         self.file_path = file_path
         self.omeMetadata = omexml.OMEXML()
@@ -67,24 +70,28 @@ class OmeTiffWriter:
     def close(self):
         pass
 
-    def save(self, data, ome_xml=None, channel_names=None, image_name="IMAGE0", pixels_physical_size=None,
-             channel_colors=None, dimension_order="STZCYX"):
+    def save(
+        self,
+        data,
+        ome_xml=None,
+        channel_names=None,
+        image_name="IMAGE0",
+        pixels_physical_size=None,
+        channel_colors=None,
+        dimension_order="STZCYX"
+    ):
         """
-        Save an image with the proper OME xml metadata.
+        Save an image with the proper OME XML metadata.
 
         Parameters
         ----------
         data: An array of 3, 4, or 5 dimensions to be written out to a file.
-        ome_xml:
+        ome_xml: A premade omexml.OMEXML object to use for metadata.
         channel_names: The names for each channel to be put into the OME metadata
         image_name: The name of the image to be put into the OME metadata
         pixels_physical_size: The physical size of each pixel in the image
         channel_colors: The channel colors to be put into the OME metadata
         dimension_order: The dimension ordering in the data array.  Will be assumed STZCYX if not specified
-
-        Returns
-        -------
-
         """
         if self.silent_pass:
             return

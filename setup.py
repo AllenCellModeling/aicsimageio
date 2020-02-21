@@ -33,6 +33,7 @@ dev_requirements = [
     "bumpversion>=0.5.3",
     "coverage>=5.0a4",
     "flake8>=3.7.7",
+    "gitchangelog>=3.0.4",
     "ipython>=7.5.0",
     "m2r>=0.2.1",
     "pytest>=4.3.0",

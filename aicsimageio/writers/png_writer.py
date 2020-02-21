@@ -5,28 +5,33 @@ import numpy as np
 
 
 class PngWriter:
-    """This class can take 3D arrays of CYX pixel values and writes them to a png
-
-    Example:
-        image = numpy.ndarray([3, 1024, 2048])
-        # There needs to be some sort of data inside the image array
-        writer = png_writer.PngWriter("file.png")
-        writer.save(image)
-
-        image2 = numpy.ndarray([3, 1024, 2048])
-        # There needs to be some sort of data inside the image2 array
-        with png_writer.PngWriter("file2.png") as writer2:
-            writer2.save(image2)
-    """
-
     def __init__(self, file_path, overwrite_file=None):
         """
-        Class initializer
-        :param file_path: path to image output location
-        :param overwrite_file: flag to overwrite image or pass over image if it already exists
-            None : (default) throw IOError if file exists
-            True : overwrite existing file if file exists
-            False: silently perform no write actions if file exists
+        This class can take 3D arrays of CYX pixel values and writes them to a PNG.
+
+        Parameters
+        ----------
+        file_path
+            Path to image output location
+        overwrite_file
+            Flag to overwrite image or pass over image if it already exists.
+            None : (default) throw IOError if file exists.
+            True : overwrite existing file if file exists.
+            False: silently perform no write actions if file exists.
+
+        Examples
+        --------
+        Construct and use as object
+
+        >>> image = numpy.ndarray([3, 1024, 2048])
+        ... writer = png_writer.PngWriter("file.png")
+        ... writer.save(image)
+
+        Construct within a context manager
+
+        >>> image2 = numpy.ndarray([3, 1024, 2048])
+        ... with png_writer.PngWriter("file2.png") as writer2:
+        ...     writer2.save(image2)
         """
         self.file_path = file_path
         self.silent_pass = False
@@ -48,9 +53,13 @@ class PngWriter:
         pass
 
     def save(self, data):
-        """Takes in an array of CYX pixel values and writes them to a png
+        """
+        Takes in an array of CYX pixel values and writes them to a PNG.
 
-        :param data: a CYX or YX array with C being the rgb channels for each pixel value
+        Parameters
+        ----------
+        data
+            A CYX or YX array with C being the rgb channels for each pixel value.
         """
         if self.silent_pass:
             return
@@ -71,12 +80,19 @@ class PngWriter:
         imageio.imwrite(self.file_path, data, format="png")
 
     def save_slice(self, data, z=0, c=0, t=0):
-        """Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter
+        """
+        Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter.
 
-        :param data: a CYX or YX array with C being the rgb channels for each pixel value
-        :param z: an arbitrary z index that does nothing
-        :param c: an arbitrary c index that does nothing
-        :param t: an arbitrary t index that does nothing
+        Parameters
+        ----------
+        data
+            A CYX or YX array with C being the rgb channels for each pixel value.
+        z
+            An arbitrary Z index that does nothing.
+        c
+            An arbitrary C index that does nothing.
+        t
+            An arbitrary T index that does nothing.
         """
         if self.silent_pass:
             return

@@ -4,28 +4,31 @@ from .. import constants, types
 
 
 class Writer(ABC):
-    """Write STCZYX data arrays to file, with accompanying metadata
-    Will overwrite existing files of same name.
-
-    Example:
-        1) construct and use as object
-        image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        writer = DerivedWriter("file.ome.tif")
-        writer.save(image)
-        writer.close()
-
-        2) use the "with" pattern
-        image2 = numpy.ndarray([5, 486, 210])
-        # There needs to be some sort of data inside the image2 array
-        with DerivedWriter("file2.ome.tif") as writer2:
-            write2.set_metadata(myMetaData)
-            writer2.save(image2)
-    """
-
     def __init__(self, file_path: types.PathLike):
         """
-        Class initializer
-        :param file_path: path to image output location
+        Write STCZYX data arrays to file, with accompanying metadata
+        Will overwrite existing files of same name.
+
+        Parameters
+        ----------
+        file_path: types.PathLike
+            Path to image output location
+
+        Examples
+        --------
+        Construct and use as object
+
+        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
+        ... writer = DerivedWriter("file.ome.tif")
+        ... writer.save(image)
+        ... writer.close()
+
+        Construct with a context manager
+
+        >>> image2 = numpy.ndarray([5, 486, 210])
+        ... with DerivedWriter("file2.ome.tif") as writer2:
+        ...     writer2.set_metadata(myMetaData)
+        ...     writer2.save(image2)
         """
         self.file_path = file_path
 
@@ -41,6 +44,6 @@ class Writer(ABC):
         pass
 
     @abstractmethod
-    def save(self, data, dims=constants.DEFAULT_DIMENSION_ORDER, **kwargs) -> None:
+    def save(self, data, dims=constants.Dimensions.DefaultOrder, **kwargs) -> None:
         """Write to open file"""
         pass

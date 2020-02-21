@@ -30,59 +30,6 @@ SUPPORTED_READERS = [ArrayLikeReader, CziReader, OmeTiffReader, TiffReader, Defa
 
 
 class AICSImage:
-    """
-    AICSImage takes microscopy image data types (files) of varying dimensions ("ZYX", "TCZYX", "CYX") and
-    puts them into a consistent 6D "STCZYX" ordered dask array. The data, metadata are lazy loaded and can be
-    accessed as needed. Note the dims are assumed to match "STCZYX" from right to left meaning if 4 dimensional
-    data is provided then the dimensions are assigned to be "CZYX", 2 dimensional would be "YX". This guessed assignment
-    is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).
-
-    Simple Example
-    --------------
-    img = AICSImage("my_file.tiff")
-    data = img.data  # data is a 6D "STCZYX" dask array
-    metadata = img.metadata  # metadata from the file, an xml.etree
-    zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)  # returns a 3D "ZYX" numpy array
-    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 "ZYX" dask array
-    zstack_t10_np = zstack_t10.compute()  # read the data from the file and convert from dask array to numpy array
-
-    File Examples
-    -------------
-    OME-TIFF
-        img = AICSImage("filename.ome.tiff")
-    CZI (Zeiss)
-        img = AICSImage("filename.czi")
-    TIFF
-        img = AICSImage("filename.tiff")
-    PNG / GIF / ...
-        img = AICSImage("filename.png")
-        img = AICSImage("filename.gif")
-
-    dask.array.Array Example
-    ------------------------
-    blank = dask.array.zeros((2, 600, 900))
-    img = AICSImage(blank)
-
-    numpy.ndarray Example
-    ---------------------
-    blank = numpy.zeros((2, 600, 900))
-    img = AICSImage(blank)
-
-    Dask Client / Cluster Example
-    -----------------------------
-    # Create a local dask cluster for the duration of the context manager
-    with AICSImage("filename.ome.tiff") as img:
-        # do your work like normal
-
-    # Specify arguments for the local cluster initialization
-    with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
-        # do your work like normal
-
-    # Connect to a dask client for the duration of the context manager
-    with AICSImage("filename.ome.tiff", dask_kwargs={"address": "tcp://localhost:12345"}) as img:
-        # do your work like normal
-    """
-
     def __init__(
         self,
         data: types.ImageLike,
@@ -91,9 +38,11 @@ class AICSImage:
         **kwargs
     ):
         """
-        Constructor for AICSImage class intended for providing a unified interface for dealing with
-        microscopy images. To extend support to a new reader simply add a new reader child class of
-        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.
+        AICSImage takes microscopy image data types (files) of varying dimensions ("ZYX", "TCZYX", "CYX") and
+        puts them into a consistent 6D "STCZYX" ordered dask array. The data, metadata are lazy loaded and can be
+        accessed as needed. Note the dims are assumed to match "STCZYX" from right to left meaning if 4 dimensional
+        data is provided then the dimensions are assigned to be "CZYX", 2 dimensional would be "YX". This guessed
+        assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).
 
         Parameters
         ----------
@@ -106,6 +55,50 @@ class AICSImage:
         kwargs: Dict[str, Any]
             Extra keyword arguments that can be passed down to either the reader subclass or, if using the context
             manager, the LocalCluster initialization.
+
+        Examples
+        --------
+        Initialize an image and read the slices specified as a numpy array.
+
+        >>> img = AICSImage("my_file.tiff")
+        ... zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)
+
+        Initialize an image, construct a delayed dask array for certain slices, then read the data.
+
+        >>> img = AICSImage("my_file.czi")
+        ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)
+        ... zstack_t8_data = zstack_t8.compute()
+
+        Initialize an image with a dask or numpy array.
+
+        >>> data = np.random.rand(100, 100)
+        ... img = AICSImage(data)
+
+        Initialize an image and pass arguments to the reader using kwargs.
+
+        >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
+
+        Create a local dask cluster for the duration of the context manager.
+
+        >>> with AICSImage("filename.ome.tiff") as img:
+        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
+
+        Create a local dask cluster with arguments for the duration of the context manager.
+
+        >>> with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
+        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
+
+        Connect to a specific dask cluster for the duration of the context manager.
+
+        >>> with AICSImage("filename.ome.tiff", dask_kwargs={"address": "tcp://localhost:1234"}) as img:
+        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
+        ```
+
+        Notes
+        -----
+        Constructor for AICSImage class intended for providing a unified interface for dealing with
+        microscopy images. To extend support to a new reader simply add a new reader child class of
+        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.
         """
         # Check known dims
         if known_dims is not None:
@@ -149,9 +142,7 @@ class AICSImage:
     @property
     def dask_data(self) -> da.core.Array:
         """
-        Returns
-        -------
-        Returns a dask array with dimension ordering "STCZYX"
+        Returns a dask array with dimension ordering "STCZYX".
         """
         # Construct dask array if never before constructed
         if self._dask_data is None:
@@ -168,6 +159,9 @@ class AICSImage:
 
     @property
     def data(self) -> np.ndarray:
+        """
+        Return the entire image as a numpy array with dimension ordering "STCZYX".
+        """
         if self._data is None:
             self._data = self.dask_data.compute()
 
@@ -182,7 +176,8 @@ class AICSImage:
 
         Returns
         -------
-        Returns a tuple with the requested dimensions filled in
+        size: Tuple[int]
+            A tuple with the requested dimensions filled in.
         """
         # Ensure dims is an uppercase string
         dims = dims.upper()
@@ -200,6 +195,12 @@ class AICSImage:
 
     @property
     def shape(self) -> Tuple[int]:
+        """
+        Returns
+        -------
+        shape: Tuple[int]
+            A tuple with the size of all dimensions.
+        """
         return self.size()
 
     @property
@@ -445,15 +446,17 @@ class AICSImage:
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """
-        Get the image's channel names.
+        Attempts to use the image's metadata to get the image's channel names.
 
         Parameters
         ----------
-        scene: the index of the scene for which to return channel names
+        scene: int
+            The index of the scene for which to return channel names.
 
         Returns
         -------
-        list of strings representing the channel names
+        channels_names: List[str]
+            List of strings representing the channel names.
         """
         try:
             names = self.reader.get_channel_names(scene)
@@ -466,16 +469,22 @@ class AICSImage:
 
     @property
     def cluster(self) -> Optional[LocalCluster]:
+        """
+        If this object created a local Dask cluster, return it.
+        """
         return self._cluster
 
     @property
     def client(self) -> Optional[Client]:
+        """
+        If connected to a Dask cluster, return the connected Client.
+        """
         return self._client
 
     def close(self):
         """
-        Always close the Dask Client connection.
-        If connected to *strictly* a LocalCluster, close it down as well.
+        Close the connection to the Dask distributed Client.
+        If this object created a LocalCluster, close it down as well.
         """
         self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
 

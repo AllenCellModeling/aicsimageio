@@ -1,12 +1,18 @@
 Changelog
 =========
 
-(unreleased)
-------------
+v3.1.1 (2020-02-21)
+-------------------
 
 Fix
 ~~~
+- Bugfix/make-aicsimage-serializable(#74) [JacksonMaxfield]
 - Bugfix/return-none-cluster (#73) [Jamie Sherman]
+
+Other
+~~~~~
+- Admin/auto-changelog (#75) [JacksonMaxfield]
+- Admin/test-py38 (#76) [JacksonMaxfield]
 
 
 v3.1.0 (2020-02-03)

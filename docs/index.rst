@@ -1,5 +1,5 @@
 Welcome to aicsimageio's documentation!
-======================================
+=======================================
 
 .. toctree::
    :hidden:

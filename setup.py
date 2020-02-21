@@ -88,6 +88,7 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     description=(
         "Python library for reading and writing image data with special handlers for bio-formats "

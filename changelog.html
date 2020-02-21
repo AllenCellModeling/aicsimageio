@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Changelog &mdash; aicsimageio 3.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Contributing" href="contributing.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Changelog</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/changelog.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+      
+        <a href="contributing.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unreleased">
+<h2>(unreleased)<a class="headerlink" href="#unreleased" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="fix">
+<h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Bugfix/make-aicsimage-serializable(#74) [JacksonMaxfield]</p></li>
+<li><p>Bugfix/return-none-cluster (#73) [Jamie Sherman]</p></li>
+</ul>
+</div>
+<div class="section" id="other">
+<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Admin/auto-changelog (#75) [JacksonMaxfield]</p></li>
+<li><p>Admin/test-py38 (#76) [JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-0-2020-02-03">
+<h2>v3.1.0 (2020-02-03)<a class="headerlink" href="#v3-1-0-2020-02-03" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="new">
+<h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Feature/use-dask (#63) [JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h3>Fix<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix pypi publish action. [Jackson Brown]</p></li>
+<li><p>Bugfix/auto-doc-gen (#70) [JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-7-2019-11-05">
+<h2>v3.0.7 (2019-11-05)<a class="headerlink" href="#v3-0-7-2019-11-05" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Remove make clean command from make docs call (#49) [JacksonMaxfield]</p></li>
+<li><p>Populate_tiffdata should respect dimension order (#48) [toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-6-2019-10-31">
+<h2>v3.0.6 (2019-10-31)<a class="headerlink" href="#v3-0-6-2019-10-31" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>New<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Feature/physical pixel size (#43) [toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h3>Fix<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix imread bug and allow AICSImage class to close its reader (#44)
+[toloudis]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-5-2019-10-30">
+<h2>v3.0.5 (2019-10-30)<a class="headerlink" href="#v3-0-5-2019-10-30" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Clean up from PR comments. [Daniel Toloudis]</p></li>
+<li><p>Add get_channel_names to AICSImage class. [Daniel Toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-4-2019-10-28">
+<h2>v3.0.4 (2019-10-28)<a class="headerlink" href="#v3-0-4-2019-10-28" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Add size getters to the AICSImage class (#38) [toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-3-2019-10-25">
+<h2>v3.0.3 (2019-10-25)<a class="headerlink" href="#v3-0-3-2019-10-25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>Fix<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix linting. [Daniel Toloudis]</p></li>
+<li><p>Fix png writer and tests. [Daniel Toloudis]</p></li>
+<li><p>Fix linter. [Daniel Toloudis]</p></li>
+<li><p>Fix png writer and tests. [Daniel Toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="id5">
+<h3>Other<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Remove patch coverage check (#36) [JacksonMaxfield]</p></li>
+<li><p>Pull request code review revisions. [Dan Toloudis]</p></li>
+<li><p>Revert “fix png writer and tests” [Daniel Toloudis]</p></li>
+<li><p>Use old default for dimension_order so that existing code does not
+break. [Daniel Toloudis]</p></li>
+<li><p>Add a unit test for dimension_order and refactor test_ome_tiff_writer.
+[Daniel Toloudis]</p></li>
+<li><p>Allow dimension order in ome-tiff writer. [Daniel Toloudis]</p></li>
+<li><p>Remove accidentally added file. [Daniel Toloudis]</p></li>
+<li><p>Remove CRON from doc build workflow. [Jackson Brown]</p></li>
+<li><p>Remove double builds from github actions. [Jackson Brown]</p></li>
+<li><p>Wrap CRON string in quotes. [Jackson Brown]</p></li>
+<li><p>Update CRON strings. [Jackson Brown]</p></li>
+<li><p>Do not build documentation for tests module. [Jackson Brown]</p></li>
+<li><p>Update makefile to remove all generated rst’s on doc gen. [Jackson
+Brown]</p></li>
+<li><p>Update czireader import so that it doesn’t fail on etree. [Jackson
+Brown]</p></li>
+<li><p>Move documentation badge to before codecov. [JacksonMaxfield]</p></li>
+<li><p>Update readme to have doc badge. [JacksonMaxfield]</p></li>
+<li><p>Add doc generation workflow. [JacksonMaxfield]</p></li>
+<li><p>Add required documentation files and update requirements.
+[JacksonMaxfield]</p></li>
+<li><p>Update task version pins to point at master / latest.
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-2-2019-10-11">
+<h2>v3.0.2 (2019-10-11)<a class="headerlink" href="#v3-0-2-2019-10-11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Pull in feedback from team. [Jackson Brown]</p></li>
+<li><p>Update README to include known_dim functionality. [Jackson Brown]</p></li>
+<li><p>Add test for invalid dim names. [Jackson Brown]</p></li>
+<li><p>Resolves [gh-22], allow passing of known dim order to AICSImage.
+[Jackson Brown]</p></li>
+<li><p>Resolves [gh-23], use OME-Tiff metadata to parse dim sizes and order.
+[Jackson Brown]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-1-2019-10-04">
+<h2>v3.0.1 (2019-10-04)<a class="headerlink" href="#v3-0-1-2019-10-04" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Label Quickstart code block as python. [Jackson Brown]</p></li>
+<li><p>Update setup.cfg to properly bumpversion. [Jackson Brown]</p></li>
+<li><p>Rename build workflow to build master. [Jackson Brown]</p></li>
+<li><p>Update to new cookiecutter gh templates after matts feedback. [Jackson
+Brown]</p></li>
+<li><p>Remove cov report html from actions as not needed on remote. [Jackson
+Brown]</p></li>
+<li><p>Add PR to test and lint action triggers. [Jackson Brown]</p></li>
+<li><p>Remove references to quilt3distribute that were copied over. [Jackson
+Brown]</p></li>
+<li><p>Update CI/CD, README badge, local developement, and contributing docs.
+[Jackson Brown]</p></li>
+<li><p>CODE_OF_CONDUCT.md. [Jamie Sherman]</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Allen Institute for Cell Science
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

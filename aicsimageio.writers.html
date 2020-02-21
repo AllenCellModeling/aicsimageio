@@ -118,6 +118,34 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -208,31 +236,35 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>This class can take arrays of pixel values and do the necessary metadata creation to write them
 properly in OME xml format.</p>
-<dl>
-<dt>Example:</dt><dd><p>image = numpy.ndarray([1, 10, 3, 1024, 2048])
-# There needs to be some sort of data inside the image array
-writer = ome_tiff_writer.OmeTiffWriter(“file.ome.tif”)
-writer.save(image)</p>
-<p>image2 = numpy.ndarray([5, 486, 210])
-# There needs to be some sort of data inside the image2 array
-with ome_tiff_writer.OmeTiffWriter(“file2.ome.tif”) as writer2:</p>
-<blockquote>
-<div><p>writer2.save(image2)</p>
-</div></blockquote>
-<p># Convert a CZI file into OME Tif.
-reader = cziReader.CziReader(“file3.czi”)
-writer = ome_tiff_writer.OmeTiffWriter(“file3.ome.tif”)
-writer.save(reader.load())</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – Path to image output location</p></li>
+<li><p><strong>overwrite_file</strong> – Flag to overwrite image or pass over image if it already exists.
+None: (default) throw IOError if file exists
+True: overwrite existing file if file exists
+False: silently perform no write actions if file exists</p></li>
+</ul>
 </dd>
 </dl>
-<p>Class initializer
-:param file_path: path to image output location
-:param overwrite_file: flag to overwrite image or pass over image if it already exists</p>
-<blockquote>
-<div><p>None : (default) throw IOError if file exists
-True : overwrite existing file if file exists
-False: silently perform no write actions if file exists</p>
-</div></blockquote>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file.ome.tif&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the context manager to close the write once done.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">486</span><span class="p">,</span> <span class="mi">210</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file2.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Convert a CZI file into OME-Tiff</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reader</span> <span class="o">=</span> <span class="n">cziReader</span><span class="o">.</span><span class="n">CziReader</span><span class="p">(</span><span class="s2">&quot;file3.czi&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file3.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer3</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">load</span><span class="p">())</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">
 <code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close" title="Permalink to this definition">¶</a></dt>
@@ -241,12 +273,12 @@ False: silently perform no write actions if file exists</p>
 <dl class="method">
 <dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">ome_xml=None</em>, <em class="sig-param">channel_names=None</em>, <em class="sig-param">image_name='IMAGE0'</em>, <em class="sig-param">pixels_physical_size=None</em>, <em class="sig-param">channel_colors=None</em>, <em class="sig-param">dimension_order='STZCYX'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save an image with the proper OME xml metadata.</p>
+<dd><p>Save an image with the proper OME XML metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<em>An array of 3, 4, or 5 dimensions to be written out to a file.</em>)</p></li>
-<li><p><strong>ome_xml</strong></p></li>
+<li><p><strong>ome_xml</strong> (<em>A premade omexml.OMEXML object to use for metadata.</em>)</p></li>
 <li><p><strong>channel_names</strong> (<em>The names for each channel to be put into the OME metadata</em>)</p></li>
 <li><p><strong>image_name</strong> (<em>The name of the image to be put into the OME metadata</em>)</p></li>
 <li><p><strong>pixels_physical_size</strong> (<em>The physical size of each pixel in the image</em>)</p></li>
@@ -322,28 +354,31 @@ False: silently perform no write actions if file exists</p>
 <dt id="aicsimageio.writers.png_writer.PngWriter">
 <em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.png_writer.</code><code class="sig-name descname">PngWriter</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">overwrite_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>This class can take 3D arrays of CYX pixel values and writes them to a png</p>
-<dl>
-<dt>Example:</dt><dd><p>image = numpy.ndarray([3, 1024, 2048])
-# There needs to be some sort of data inside the image array
-writer = png_writer.PngWriter(“file.png”)
-writer.save(image)</p>
-<p>image2 = numpy.ndarray([3, 1024, 2048])
-# There needs to be some sort of data inside the image2 array
-with png_writer.PngWriter(“file2.png”) as writer2:</p>
-<blockquote>
-<div><p>writer2.save(image2)</p>
-</div></blockquote>
+<p>This class can take 3D arrays of CYX pixel values and writes them to a PNG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – Path to image output location</p></li>
+<li><p><strong>overwrite_file</strong> – Flag to overwrite image or pass over image if it already exists.
+None : (default) throw IOError if file exists.
+True : overwrite existing file if file exists.
+False: silently perform no write actions if file exists.</p></li>
+</ul>
 </dd>
 </dl>
-<p>Class initializer
-:param file_path: path to image output location
-:param overwrite_file: flag to overwrite image or pass over image if it already exists</p>
-<blockquote>
-<div><p>None : (default) throw IOError if file exists
-True : overwrite existing file if file exists
-False: silently perform no write actions if file exists</p>
-</div></blockquote>
+<p class="rubric">Examples</p>
+<p>Construct and use as object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">png_writer</span><span class="o">.</span><span class="n">PngWriter</span><span class="p">(</span><span class="s2">&quot;file.png&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Construct within a context manager</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">png_writer</span><span class="o">.</span><span class="n">PngWriter</span><span class="p">(</span><span class="s2">&quot;file2.png&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="aicsimageio.writers.png_writer.PngWriter.close">
 <code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.close" title="Permalink to this definition">¶</a></dt>
@@ -352,10 +387,10 @@ False: silently perform no write actions if file exists</p>
 <dl class="method">
 <dt id="aicsimageio.writers.png_writer.PngWriter.save">
 <code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes in an array of CYX pixel values and writes them to a png</p>
+<dd><p>Takes in an array of CYX pixel values and writes them to a PNG.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> – a CYX or YX array with C being the rgb channels for each pixel value</p>
+<dd class="field-odd"><p><strong>data</strong> – A CYX or YX array with C being the rgb channels for each pixel value.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -363,14 +398,14 @@ False: silently perform no write actions if file exists</p>
 <dl class="method">
 <dt id="aicsimageio.writers.png_writer.PngWriter.save_slice">
 <code class="sig-name descname">save_slice</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">z=0</em>, <em class="sig-param">c=0</em>, <em class="sig-param">t=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.save_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.save_slice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter</p>
+<dd><p>Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – a CYX or YX array with C being the rgb channels for each pixel value</p></li>
-<li><p><strong>z</strong> – an arbitrary z index that does nothing</p></li>
-<li><p><strong>c</strong> – an arbitrary c index that does nothing</p></li>
-<li><p><strong>t</strong> – an arbitrary t index that does nothing</p></li>
+<li><p><strong>data</strong> – A CYX or YX array with C being the rgb channels for each pixel value.</p></li>
+<li><p><strong>z</strong> – An arbitrary Z index that does nothing.</p></li>
+<li><p><strong>c</strong> – An arbitrary C index that does nothing.</p></li>
+<li><p><strong>t</strong> – An arbitrary T index that does nothing.</p></li>
 </ul>
 </dd>
 </dl>
@@ -379,8 +414,48 @@ False: silently perform no write actions if file exists</p>
 </dd></dl>
 
 </div>
-<div class="section" id="aicsimageio-writers-writer-module">
-<h2>aicsimageio.writers.writer module<a class="headerlink" href="#aicsimageio-writers-writer-module" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-aicsimageio.writers.writer">
+<span id="aicsimageio-writers-writer-module"></span><h2>aicsimageio.writers.writer module<a class="headerlink" href="#module-aicsimageio.writers.writer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.writers.writer.Writer">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.writer.</code><code class="sig-name descname">Writer</code><span class="sig-paren">(</span><em class="sig-param">file_path: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Write STCZYX data arrays to file, with accompanying metadata
+Will overwrite existing files of same name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>types.PathLike</em>) – Path to image output location</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Construct and use as object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">DerivedWriter</span><span class="p">(</span><span class="s2">&quot;file.ome.tif&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Construct with a context manager</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">486</span><span class="p">,</span> <span class="mi">210</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">DerivedWriter</span><span class="p">(</span><span class="s2">&quot;file2.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="n">myMetaData</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="aicsimageio.writers.writer.Writer.close">
+<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close file objects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.writer.Writer.save">
+<em class="property">abstract </em><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dims='STCZYX'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write to open file</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-aicsimageio.writers">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio.writers" title="Permalink to this headline">¶</a></h2>

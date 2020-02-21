@@ -118,6 +118,34 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -1059,7 +1087,7 @@ X, Y, Z, exposure time and a relative time delta.</p>
 <p>It looks like a list of plates</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate">
-<code class="sig-name descname">newPlate</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">plate_id='b3b32429-e7aa-4764-b4f7-9a11e2b1db30'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.PlatesDucktype.newPlate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">newPlate</code><span class="sig-paren">(</span><em class="sig-param">name</em>, <em class="sig-param">plate_id='fd72b538-e954-4666-be42-04c3a075d5d7'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.PlatesDucktype.newPlate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.PlatesDucktype.newPlate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -1452,7 +1480,7 @@ things like:
 wellsamples[0:2]</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new">
-<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">wellsample_id='3077f55d-b9ee-4cde-b07a-f24ce206c54b'</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellSampleDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">wellsample_id='2305a34f-7060-4522-8d1a-c5f62fa061d7'</em>, <em class="sig-param">index=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellSampleDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellSampleDucktype.new" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new well sample</p>
 </dd></dl>
 
@@ -1477,7 +1505,7 @@ by ID - e.g. plate.Well[“Well:0:0:0”]</p>
 using an ID.</p>
 <dl class="method">
 <dt id="aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new">
-<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">row</em>, <em class="sig-param">column</em>, <em class="sig-param">well_id='15e670eb-9d52-4dfd-9c74-98eeecfc088c'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellsDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">new</code><span class="sig-paren">(</span><em class="sig-param">row</em>, <em class="sig-param">column</em>, <em class="sig-param">well_id='873bf9a6-5fea-4509-b588-5c58ca5c984d'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/vendor/omexml.html#OMEXML.WellsDucktype.new"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.vendor.omexml.OMEXML.WellsDucktype.new" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new well at the given row and column</p>
 <p>row - index of well’s row
 column - index of well’s column

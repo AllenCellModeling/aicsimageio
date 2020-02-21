@@ -116,6 +116,34 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -186,8 +214,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">tifffile</span>
 
-<span class="kn">from</span> <span class="nn">aicsimageio.vendor</span> <span class="kn">import</span> <span class="n">omexml</span>
 <span class="kn">from</span> <span class="nn">aicsimageio.exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span>
+<span class="kn">from</span> <span class="nn">aicsimageio.vendor</span> <span class="kn">import</span> <span class="n">omexml</span>
 
 <span class="n">BYTE_BOUNDARY</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span>
 
@@ -198,35 +226,38 @@
 
 
 <div class="viewcode-block" id="OmeTiffWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffWriter</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;This class can take arrays of pixel values and do the necessary metadata creation to write them</span>
-<span class="sd">    properly in OME xml format.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
-<span class="sd">        # There needs to be some sort of data inside the image array</span>
-<span class="sd">        writer = ome_tiff_writer.OmeTiffWriter(&quot;file.ome.tif&quot;)</span>
-<span class="sd">        writer.save(image)</span>
-
-<span class="sd">        image2 = numpy.ndarray([5, 486, 210])</span>
-<span class="sd">        # There needs to be some sort of data inside the image2 array</span>
-<span class="sd">        with ome_tiff_writer.OmeTiffWriter(&quot;file2.ome.tif&quot;) as writer2:</span>
-<span class="sd">            writer2.save(image2)</span>
-
-<span class="sd">        # Convert a CZI file into OME Tif.</span>
-<span class="sd">        reader = cziReader.CziReader(&quot;file3.czi&quot;)</span>
-<span class="sd">        writer = ome_tiff_writer.OmeTiffWriter(&quot;file3.ome.tif&quot;)</span>
-<span class="sd">        writer.save(reader.load())</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class initializer</span>
-<span class="sd">        :param file_path: path to image output location</span>
-<span class="sd">        :param overwrite_file: flag to overwrite image or pass over image if it already exists</span>
-<span class="sd">            None : (default) throw IOError if file exists</span>
-<span class="sd">            True : overwrite existing file if file exists</span>
+<span class="sd">        This class can take arrays of pixel values and do the necessary metadata creation to write them</span>
+<span class="sd">        properly in OME xml format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path</span>
+<span class="sd">            Path to image output location</span>
+<span class="sd">        overwrite_file</span>
+<span class="sd">            Flag to overwrite image or pass over image if it already exists.</span>
+<span class="sd">            None: (default) throw IOError if file exists</span>
+<span class="sd">            True: overwrite existing file if file exists</span>
 <span class="sd">            False: silently perform no write actions if file exists</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
+<span class="sd">        ... writer = ome_tiff_writer.OmeTiffWriter(&quot;file.ome.tif&quot;)</span>
+<span class="sd">        ... writer.save(image)</span>
+
+<span class="sd">        Using the context manager to close the write once done.</span>
+
+<span class="sd">        &gt;&gt;&gt; image2 = numpy.ndarray([5, 486, 210])</span>
+<span class="sd">        ... with ome_tiff_writer.OmeTiffWriter(&quot;file2.ome.tif&quot;) as writer2:</span>
+<span class="sd">        ...     writer2.save(image2)</span>
+
+<span class="sd">        Convert a CZI file into OME-Tiff</span>
+
+<span class="sd">        &gt;&gt;&gt; reader = cziReader.CziReader(&quot;file3.czi&quot;)</span>
+<span class="sd">        ... with ome_tiff_writer.OmeTiffWriter(&quot;file3.ome.tif&quot;) as writer3:</span>
+<span class="sd">        ...     writer.save(reader.load())</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">()</span>
@@ -248,24 +279,28 @@
 <div class="viewcode-block" id="OmeTiffWriter.close"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="OmeTiffWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">ome_xml</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span> <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-             <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="OmeTiffWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">ome_xml</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span>
+        <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Save an image with the proper OME xml metadata.</span>
+<span class="sd">        Save an image with the proper OME XML metadata.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        data: An array of 3, 4, or 5 dimensions to be written out to a file.</span>
-<span class="sd">        ome_xml:</span>
+<span class="sd">        ome_xml: A premade omexml.OMEXML object to use for metadata.</span>
 <span class="sd">        channel_names: The names for each channel to be put into the OME metadata</span>
 <span class="sd">        image_name: The name of the image to be put into the OME metadata</span>
 <span class="sd">        pixels_physical_size: The physical size of each pixel in the image</span>
 <span class="sd">        channel_colors: The channel colors to be put into the OME metadata</span>
 <span class="sd">        dimension_order: The dimension ordering in the data array.  Will be assumed STZCYX if not specified</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span><span class="p">:</span>
             <span class="k">return</span>

@@ -118,6 +118,34 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -220,7 +248,7 @@
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.ome_tiff_writer">aicsimageio.writers.ome_tiff_writer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.png_writer">aicsimageio.writers.png_writer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#aicsimageio-writers-writer-module">aicsimageio.writers.writer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.writer">aicsimageio.writers.writer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers">Module contents</a></li>
 </ul>
 </li>
@@ -239,47 +267,8 @@
 <p>AICSImage takes microscopy image data types (files) of varying dimensions (“ZYX”, “TCZYX”, “CYX”) and
 puts them into a consistent 6D “STCZYX” ordered dask array. The data, metadata are lazy loaded and can be
 accessed as needed. Note the dims are assumed to match “STCZYX” from right to left meaning if 4 dimensional
-data is provided then the dimensions are assigned to be “CZYX”, 2 dimensional would be “YX”. This guessed assignment
-is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</p>
-<p>img = AICSImage(“my_file.tiff”)
-data = img.data  # data is a 6D “STCZYX” dask array
-metadata = img.metadata  # metadata from the file, an xml.etree
-zstack_t8 = img.get_image_data(“ZYX”, S=0, T=8, C=0)  # returns a 3D “ZYX” numpy array
-zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 “ZYX” dask array
-zstack_t10_np = zstack_t10.compute()  # read the data from the file and convert from dask array to numpy array</p>
-<dl class="simple">
-<dt>OME-TIFF</dt><dd><p>img = AICSImage(“filename.ome.tiff”)</p>
-</dd>
-<dt>CZI (Zeiss)</dt><dd><p>img = AICSImage(“filename.czi”)</p>
-</dd>
-<dt>TIFF</dt><dd><p>img = AICSImage(“filename.tiff”)</p>
-</dd>
-<dt>PNG / GIF / …</dt><dd><p>img = AICSImage(“filename.png”)
-img = AICSImage(“filename.gif”)</p>
-</dd>
-</dl>
-<p>blank = dask.array.zeros((2, 600, 900))
-img = AICSImage(blank)</p>
-<p>blank = numpy.zeros((2, 600, 900))
-img = AICSImage(blank)</p>
-<p># Create a local dask cluster for the duration of the context manager
-with AICSImage(“filename.ome.tiff”) as img:</p>
-<blockquote>
-<div><p># do your work like normal</p>
-</div></blockquote>
-<p># Specify arguments for the local cluster initialization
-with AICSImage(“filename.ome.tiff”, dask_kwargs={“nworkers”: 4}) as img:</p>
-<blockquote>
-<div><p># do your work like normal</p>
-</div></blockquote>
-<p># Connect to a dask client for the duration of the context manager
-with AICSImage(“filename.ome.tiff”, dask_kwargs={“address”: “<a class="reference external" href="tcp://localhost:12345">tcp://localhost:12345</a>”}) as img:</p>
-<blockquote>
-<div><p># do your work like normal</p>
-</div></blockquote>
-<p>Constructor for AICSImage class intended for providing a unified interface for dealing with
-microscopy images. To extend support to a new reader simply add a new reader child class of
-Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</p>
+data is provided then the dimensions are assigned to be “CZYX”, 2 dimensional would be “YX”. This guessed
+assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -291,40 +280,77 @@ manager, the LocalCluster initialization.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<p>Initialize an image and read the slices specified as a numpy array.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initialize an image, construct a delayed dask array for certain slices, then read the data.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.czi&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">zstack_t8_data</span> <span class="o">=</span> <span class="n">zstack_t8</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Initialize an image with a dask or numpy array.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Initialize an image and pass arguments to the reader using kwargs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.czi&quot;</span><span class="p">,</span> <span class="n">chunk_by_dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Create a local dask cluster for the duration of the context manager.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create a local dask cluster with arguments for the duration of the context manager.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nworkers&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Connect to a specific dask cluster for the duration of the context manager.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp://localhost:1234&quot;</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">```</span>
+</pre></div>
+</div>
+<p class="rubric">Notes</p>
+<p>Constructor for AICSImage class intended for providing a unified interface for dealing with
+microscopy images. To extend support to a new reader simply add a new reader child class of
+Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</p>
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.client">
 <em class="property">property </em><code class="sig-name descname">client</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.client" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>If connected to a Dask cluster, return the connected Client.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.close">
 <code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Always close the Dask Client connection.
-If connected to <em>strictly</em> a LocalCluster, close it down as well.</p>
+<dd><p>Close the connection to the Dask distributed Client.
+If this object created a LocalCluster, close it down as well.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.cluster">
 <em class="property">property </em><code class="sig-name descname">cluster</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.cluster" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>If this object created a local Dask cluster, return it.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.dask_data">
 <em class="property">property </em><code class="sig-name descname">dask_data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.dask_data" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p></p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Returns a dask array with dimension ordering “STCZYX”</p>
-</dd>
-</dl>
+<dd><p>Returns a dask array with dimension ordering “STCZYX”.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.data">
 <em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Return the entire image as a numpy array with dimension ordering “STCZYX”.</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.determine_reader">
@@ -335,16 +361,16 @@ If connected to <em>strictly</em> a LocalCluster, close it down as well.</p>
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.get_channel_names">
 <code class="sig-name descname">get_channel_names</code><span class="sig-paren">(</span><em class="sig-param">scene: int = 0</em><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_channel_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_channel_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the image’s channel names.</p>
+<dd><p>Attempts to use the image’s metadata to get the image’s channel names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>scene</strong> (<em>the index of the scene for which to return channel names</em>)</p>
+<dd class="field-odd"><p><strong>scene</strong> (<em>int</em>) – The index of the scene for which to return channel names.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p><strong>channels_names</strong> – List of strings representing the channel names.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>list of strings representing the channel names</p>
+<dd class="field-odd"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -432,7 +458,15 @@ interface then the base class can be used directly.</p>
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.shape">
 <em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.shape" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>shape</strong> – A tuple with the size of all dimensions.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[int]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.size">
@@ -442,10 +476,10 @@ interface then the base class can be used directly.</p>
 <dd class="field-odd"><p><strong>dims</strong> (<em>str</em>) – A string containing a list of dimensions being requested. The default is to return the six standard dims.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p><strong>size</strong> – A tuple with the requested dimensions filled in.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Returns a tuple with the requested dimensions filled in</p>
+<dd class="field-odd"><p>Tuple[int]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -688,15 +722,13 @@ Default: False (is not RGB)</p></li>
 If not provided an address, create a LocalCluster and Client connection.
 If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</p>
 <p>These objects will only live for the duration of this context manager.</p>
-<p class="rubric">Example</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
-with cluster_and_client() as (cluster, client):</p>
-<blockquote>
-<div><p>img1 = AICSImage(“1.tiff”)
-img2 = AICSImage(“2.czi”)</p>
-<p># other processing</p>
-</div></blockquote>
-<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cluster_and_client</span><span class="p">()</span> <span class="k">as</span> <span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">img1</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;1.tiff&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">img2</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;2.czi&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">other</span> <span class="n">processing</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">

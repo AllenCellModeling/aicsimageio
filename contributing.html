@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Changelog" href="changelog.html" />
     <link rel="prev" title="aicsimageio.writers package" href="aicsimageio.writers.html" /> 
 </head>
 
@@ -117,6 +118,34 @@
 <li class="toctree-l2"><a class="reference internal" href="#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -178,6 +207,8 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
+        <a href="changelog.html" class="btn btn-neutral float-right" title="Changelog" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
       
         <a href="aicsimageio.writers.html" class="btn btn-neutral float-left" title="aicsimageio.writers package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -195,40 +226,39 @@ helps, and credit will always be given.</p>
 <div class="section" id="get-started">
 <h2>Get Started!<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h2>
 <p>Ready to contribute? Here’s how to set up <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> for local development.</p>
-<p>#. Fork the <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> repo on GitHub.
-#.</p>
-<blockquote>
-<div><p>Clone your fork locally:</p>
-<blockquote>
-<div><p>$ git clone <a class="reference external" href="mailto:git&#37;&#52;&#48;github&#46;com">git<span>&#64;</span>github<span>&#46;</span>com</a>:{your_name_here}/aicsimageio.git</p>
-</div></blockquote>
-</div></blockquote>
 <ol class="arabic">
+<li><p>Fork the <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> repo on GitHub.</p></li>
+<li><p>Clone your fork locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:<span class="o">{</span>your_name_here<span class="o">}</span>/aicsimageio.git
+</pre></div>
+</div>
+</li>
 <li><p>Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):</p>
-<blockquote>
-<div><p>$ cd aicsimageio/
-$ pip install -e .[dev]</p>
-</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> aicsimageio/
+pip install -e .<span class="o">[</span>dev<span class="o">]</span>
+</pre></div>
+</div>
 </li>
 <li><p>Create a branch for local development:</p>
-<blockquote>
-<div><p>$ git checkout -b {your_development_type}/short-description</p>
-<p>Ex: feature/read-tiff-files or bugfix/handle-file-not-found</p>
-<p>Now you can make your changes locally.</p>
-</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>   git checkout -b <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
+
+Ex: feature/read-tiff-files or bugfix/handle-file-not-found<span class="se">\ </span>:raw-html-m2r:<span class="sb">`</span>&lt;br&gt;<span class="sb">`</span>
+Now you can make your changes locally.
+</pre></div>
+</div>
 </li>
 <li><p>When you’re done making changes, check that your changes pass linting and
 tests, including testing other Python versions with make:</p>
-<blockquote>
-<div><p>$ make build</p>
-</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make build
+</pre></div>
+</div>
 </li>
 <li><p>Commit your changes and push your branch to GitHub:</p>
-<blockquote>
-<div><p>$ git add .
-$ git commit -m “Resolves gh-###. Your detailed description of your changes.”
-$ git push origin {your_development_type}/short-description</p>
-</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git add .
+git commit -m <span class="s2">&quot;Resolves gh-###. Your detailed description of your changes.&quot;</span>
+git push origin <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
+</pre></div>
+</div>
 </li>
 <li><p>Submit a pull request through the GitHub website.</p></li>
 </ol>
@@ -238,10 +268,15 @@ $ git push origin {your_development_type}/short-description</p>
 <p>A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed.
 Then run:</p>
-<p>$ bumpversion patch # possible: major / minor / patch
-$ git push
-$ git push –tags</p>
-<p>Make and merge a PR to <code class="docutils literal notranslate"><span class="pre">stable</span></code> and GitHub will then deploy to PyPI once merged.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make prepare-release
+git push
+git push --tags
+git branch -D stable
+git checkout -b stable
+git push --set-upstream origin stable -f
+</pre></div>
+</div>
+<p>This will release a new package version on Git + GitHub and publish to PyPI.</p>
 </div>
 </div>
 

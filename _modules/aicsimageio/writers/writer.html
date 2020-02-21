@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>aicsimageio.writers.writer &mdash; aicsimageio 3.0.7 documentation</title>
+  <title>aicsimageio.writers.writer &mdash; aicsimageio 3.1.0 documentation</title>
   
 
   
@@ -21,10 +21,10 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../../../_static/jquery.js"></script>
-        <script type="text/javascript" src="../../../_static/underscore.js"></script>
-        <script type="text/javascript" src="../../../_static/doctools.js"></script>
-        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                3.0.7
+                3.1.0
               </div>
             
           
@@ -102,6 +102,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -113,6 +114,34 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
 </ul>
 </li>
 </ul>
@@ -178,41 +207,44 @@
            <div itemprop="articleBody">
             
   <h1>Source code for aicsimageio.writers.writer</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="k">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">types</span>
 
 
 <div class="viewcode-block" id="Writer"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer">[docs]</a><span class="k">class</span> <span class="nc">Writer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Write STCZYX data arrays to file, with accompanying metadata</span>
-<span class="sd">    Will overwrite existing files of same name.</span>
-
-<span class="sd">    Example:</span>
-<span class="sd">        1) construct and use as object</span>
-<span class="sd">        image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
-<span class="sd">        writer = DerivedWriter(&quot;file.ome.tif&quot;)</span>
-<span class="sd">        writer.save(image)</span>
-<span class="sd">        writer.close()</span>
-
-<span class="sd">        2) use the &quot;with&quot; pattern</span>
-<span class="sd">        image2 = numpy.ndarray([5, 486, 210])</span>
-<span class="sd">        # There needs to be some sort of data inside the image2 array</span>
-<span class="sd">        with DerivedWriter(&quot;file2.ome.tif&quot;) as writer2:</span>
-<span class="sd">            write2.set_metadata(myMetaData)</span>
-<span class="sd">            writer2.save(image2)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Class initializer</span>
-<span class="sd">        :param file_path: path to image output location</span>
+<span class="sd">        Write STCZYX data arrays to file, with accompanying metadata</span>
+<span class="sd">        Will overwrite existing files of same name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path: types.PathLike</span>
+<span class="sd">            Path to image output location</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Construct and use as object</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
+<span class="sd">        ... writer = DerivedWriter(&quot;file.ome.tif&quot;)</span>
+<span class="sd">        ... writer.save(image)</span>
+<span class="sd">        ... writer.close()</span>
+
+<span class="sd">        Construct with a context manager</span>
+
+<span class="sd">        &gt;&gt;&gt; image2 = numpy.ndarray([5, 486, 210])</span>
+<span class="sd">        ... with DerivedWriter(&quot;file2.ome.tif&quot;) as writer2:</span>
+<span class="sd">        ...     writer2.set_metadata(myMetaData)</span>
+<span class="sd">        ...     writer2.save(image2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span>
 
-    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="Writer.close"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer.close">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -221,7 +253,7 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Writer.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer.save">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Write to open file&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 </pre></div>

@@ -117,6 +117,34 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -236,10 +264,10 @@
 </li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.czi_reader">aicsimageio.readers.czi_reader (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.default_reader">aicsimageio.readers.default_reader (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.ome_tiff_reader">aicsimageio.readers.ome_tiff_reader (module)</a>
 </li>
       <li><a href="aicsimageio.readers.html#module-aicsimageio.readers.reader">aicsimageio.readers.reader (module)</a>
@@ -259,6 +287,8 @@
       <li><a href="aicsimageio.writers.html#module-aicsimageio.writers.ome_tiff_writer">aicsimageio.writers.ome_tiff_writer (module)</a>
 </li>
       <li><a href="aicsimageio.writers.html#module-aicsimageio.writers.png_writer">aicsimageio.writers.png_writer (module)</a>
+</li>
+      <li><a href="aicsimageio.writers.html#module-aicsimageio.writers.writer">aicsimageio.writers.writer (module)</a>
 </li>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Pixels.append_channel">append_channel() (aicsimageio.vendor.omexml.OMEXML.Pixels method)</a>
 </li>
@@ -298,6 +328,8 @@
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">(aicsimageio.writers.ome_tiff_writer.OmeTiffWriter method)</a>
 </li>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.png_writer.PngWriter.close">(aicsimageio.writers.png_writer.PngWriter method)</a>
+</li>
+        <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer.close">(aicsimageio.writers.writer.Writer method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -975,6 +1007,8 @@
       <ul>
         <li><a href="aicsimageio.writers.html#aicsimageio.writers.png_writer.PngWriter.save">(aicsimageio.writers.png_writer.PngWriter method)</a>
 </li>
+        <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer.save">(aicsimageio.writers.writer.Writer method)</a>
+</li>
       </ul></li>
       <li><a href="aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice">save_slice() (aicsimageio.writers.ome_tiff_writer.OmeTiffWriter method)</a>
 
@@ -1252,11 +1286,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.Well">Well() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginX">WellOriginX() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="aicsimageio.vendor.html#aicsimageio.vendor.omexml.OMEXML.Plate.WellOriginY">WellOriginY() (aicsimageio.vendor.omexml.OMEXML.Plate property)</a>
+</li>
+      <li><a href="aicsimageio.writers.html#aicsimageio.writers.writer.Writer">Writer (class in aicsimageio.writers.writer)</a>
 </li>
   </ul></td>
 </tr></table>

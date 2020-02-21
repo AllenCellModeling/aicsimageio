@@ -116,6 +116,34 @@
 <li class="toctree-l2"><a class="reference internal" href="../../contributing.html#deploying">Deploying</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id1">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id2">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id3">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -211,59 +239,6 @@
 
 
 <div class="viewcode-block" id="AICSImage"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage">[docs]</a><span class="k">class</span> <span class="nc">AICSImage</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    AICSImage takes microscopy image data types (files) of varying dimensions (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and</span>
-<span class="sd">    puts them into a consistent 6D &quot;STCZYX&quot; ordered dask array. The data, metadata are lazy loaded and can be</span>
-<span class="sd">    accessed as needed. Note the dims are assumed to match &quot;STCZYX&quot; from right to left meaning if 4 dimensional</span>
-<span class="sd">    data is provided then the dimensions are assigned to be &quot;CZYX&quot;, 2 dimensional would be &quot;YX&quot;. This guessed assignment</span>
-<span class="sd">    is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</span>
-
-<span class="sd">    Simple Example</span>
-<span class="sd">    --------------</span>
-<span class="sd">    img = AICSImage(&quot;my_file.tiff&quot;)</span>
-<span class="sd">    data = img.data  # data is a 6D &quot;STCZYX&quot; dask array</span>
-<span class="sd">    metadata = img.metadata  # metadata from the file, an xml.etree</span>
-<span class="sd">    zstack_t8 = img.get_image_data(&quot;ZYX&quot;, S=0, T=8, C=0)  # returns a 3D &quot;ZYX&quot; numpy array</span>
-<span class="sd">    zstack_t10 = data[0, 10, 0, :, :, :]  # access the S=0, T=10, C=0 &quot;ZYX&quot; dask array</span>
-<span class="sd">    zstack_t10_np = zstack_t10.compute()  # read the data from the file and convert from dask array to numpy array</span>
-
-<span class="sd">    File Examples</span>
-<span class="sd">    -------------</span>
-<span class="sd">    OME-TIFF</span>
-<span class="sd">        img = AICSImage(&quot;filename.ome.tiff&quot;)</span>
-<span class="sd">    CZI (Zeiss)</span>
-<span class="sd">        img = AICSImage(&quot;filename.czi&quot;)</span>
-<span class="sd">    TIFF</span>
-<span class="sd">        img = AICSImage(&quot;filename.tiff&quot;)</span>
-<span class="sd">    PNG / GIF / ...</span>
-<span class="sd">        img = AICSImage(&quot;filename.png&quot;)</span>
-<span class="sd">        img = AICSImage(&quot;filename.gif&quot;)</span>
-
-<span class="sd">    dask.array.Array Example</span>
-<span class="sd">    ------------------------</span>
-<span class="sd">    blank = dask.array.zeros((2, 600, 900))</span>
-<span class="sd">    img = AICSImage(blank)</span>
-
-<span class="sd">    numpy.ndarray Example</span>
-<span class="sd">    ---------------------</span>
-<span class="sd">    blank = numpy.zeros((2, 600, 900))</span>
-<span class="sd">    img = AICSImage(blank)</span>
-
-<span class="sd">    Dask Client / Cluster Example</span>
-<span class="sd">    -----------------------------</span>
-<span class="sd">    # Create a local dask cluster for the duration of the context manager</span>
-<span class="sd">    with AICSImage(&quot;filename.ome.tiff&quot;) as img:</span>
-<span class="sd">        # do your work like normal</span>
-
-<span class="sd">    # Specify arguments for the local cluster initialization</span>
-<span class="sd">    with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;nworkers&quot;: 4}) as img:</span>
-<span class="sd">        # do your work like normal</span>
-
-<span class="sd">    # Connect to a dask client for the duration of the context manager</span>
-<span class="sd">    with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;address&quot;: &quot;tcp://localhost:12345&quot;}) as img:</span>
-<span class="sd">        # do your work like normal</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">,</span>
@@ -272,9 +247,11 @@
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor for AICSImage class intended for providing a unified interface for dealing with</span>
-<span class="sd">        microscopy images. To extend support to a new reader simply add a new reader child class of</span>
-<span class="sd">        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</span>
+<span class="sd">        AICSImage takes microscopy image data types (files) of varying dimensions (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and</span>
+<span class="sd">        puts them into a consistent 6D &quot;STCZYX&quot; ordered dask array. The data, metadata are lazy loaded and can be</span>
+<span class="sd">        accessed as needed. Note the dims are assumed to match &quot;STCZYX&quot; from right to left meaning if 4 dimensional</span>
+<span class="sd">        data is provided then the dimensions are assigned to be &quot;CZYX&quot;, 2 dimensional would be &quot;YX&quot;. This guessed</span>
+<span class="sd">        assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -287,6 +264,50 @@
 <span class="sd">        kwargs: Dict[str, Any]</span>
 <span class="sd">            Extra keyword arguments that can be passed down to either the reader subclass or, if using the context</span>
 <span class="sd">            manager, the LocalCluster initialization.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Initialize an image and read the slices specified as a numpy array.</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;my_file.tiff&quot;)</span>
+<span class="sd">        ... zstack_t8 = img.get_image_data(&quot;ZYX&quot;, S=0, T=8, C=0)</span>
+
+<span class="sd">        Initialize an image, construct a delayed dask array for certain slices, then read the data.</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;my_file.czi&quot;)</span>
+<span class="sd">        ... zstack_t8 = img.get_image_dask_data(&quot;ZYX&quot;, S=0, T=8, C=0)</span>
+<span class="sd">        ... zstack_t8_data = zstack_t8.compute()</span>
+
+<span class="sd">        Initialize an image with a dask or numpy array.</span>
+
+<span class="sd">        &gt;&gt;&gt; data = np.random.rand(100, 100)</span>
+<span class="sd">        ... img = AICSImage(data)</span>
+
+<span class="sd">        Initialize an image and pass arguments to the reader using kwargs.</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;my_file.czi&quot;, chunk_by_dims=[&quot;T&quot;, &quot;Y&quot;, &quot;X&quot;])</span>
+
+<span class="sd">        Create a local dask cluster for the duration of the context manager.</span>
+
+<span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;) as img:</span>
+<span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
+
+<span class="sd">        Create a local dask cluster with arguments for the duration of the context manager.</span>
+
+<span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;nworkers&quot;: 4}) as img:</span>
+<span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
+
+<span class="sd">        Connect to a specific dask cluster for the duration of the context manager.</span>
+
+<span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;address&quot;: &quot;tcp://localhost:1234&quot;}) as img:</span>
+<span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
+<span class="sd">        ```</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Constructor for AICSImage class intended for providing a unified interface for dealing with</span>
+<span class="sd">        microscopy images. To extend support to a new reader simply add a new reader child class of</span>
+<span class="sd">        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check known dims</span>
         <span class="k">if</span> <span class="n">known_dims</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -330,9 +351,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        Returns a dask array with dimension ordering &quot;STCZYX&quot;</span>
+<span class="sd">        Returns a dask array with dimension ordering &quot;STCZYX&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Construct dask array if never before constructed</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -349,6 +368,9 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the entire image as a numpy array with dimension ordering &quot;STCZYX&quot;.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
@@ -363,7 +385,8 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        Returns a tuple with the requested dimensions filled in</span>
+<span class="sd">        size: Tuple[int]</span>
+<span class="sd">            A tuple with the requested dimensions filled in.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Ensure dims is an uppercase string</span>
         <span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
@@ -381,6 +404,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        shape: Tuple[int]</span>
+<span class="sd">            A tuple with the size of all dimensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
     <span class="nd">@property</span>
@@ -626,15 +655,17 @@
 
 <div class="viewcode-block" id="AICSImage.get_channel_names"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get the image&#39;s channel names.</span>
+<span class="sd">        Attempts to use the image&#39;s metadata to get the image&#39;s channel names.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        scene: the index of the scene for which to return channel names</span>
+<span class="sd">        scene: int</span>
+<span class="sd">            The index of the scene for which to return channel names.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        list of strings representing the channel names</span>
+<span class="sd">        channels_names: List[str]</span>
+<span class="sd">            List of strings representing the channel names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
@@ -647,16 +678,22 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If this object created a local Dask cluster, return it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        If connected to a Dask cluster, return the connected Client.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span>
 
 <div class="viewcode-block" id="AICSImage.close"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Always close the Dask Client connection.</span>
-<span class="sd">        If connected to *strictly* a LocalCluster, close it down as well.</span>
+<span class="sd">        Close the connection to the Dask distributed Client.</span>
+<span class="sd">        If this object created a LocalCluster, close it down as well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">shutdown_cluster_and_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">)</span></div>
 

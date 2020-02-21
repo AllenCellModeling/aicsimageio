@@ -69,6 +69,11 @@ class AICSImage:
         ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)
         ... zstack_t8_data = zstack_t8.compute()
 
+        Initialize an image with a dask or numpy array.
+
+        >>> data = np.random.rand(100, 100)
+        ... img = AICSImage(data)
+
         Initialize an image and pass arguments to the reader using kwargs.
 
         >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])

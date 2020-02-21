@@ -86,7 +86,7 @@ class OmeTiffWriter:
         Parameters
         ----------
         data: An array of 3, 4, or 5 dimensions to be written out to a file.
-        ome_xml
+        ome_xml: A premade omexml.OMEXML object to use for metadata.
         channel_names: The names for each channel to be put into the OME metadata
         image_name: The name of the image to be put into the OME metadata
         pixels_physical_size: The physical size of each pixel in the image

@@ -3,6 +3,9 @@ Changelog
 
 (unreleased)
 ------------
+- admin/add-back-codecov  (`#81
+  <https://github.com/AllenCellModeling/aicsimageio/pull/81>`_)
+  [JacksonMaxfield]
 - admin/changelog-link-to-prs  (`#77
   <https://github.com/AllenCellModeling/aicsimageio/pull/77>`_)
   [JacksonMaxfield]

@@ -478,10 +478,7 @@ class AICSImage:
         sizes: Tuple[float]
             Tuple of floats representing the pixel sizes for X, Y, Z, in that order.
         """
-        try:
-            return self.reader.get_physical_pixel_size(scene)
-        except AttributeError:
-            return (1.0, 1.0, 1.0)
+        return self.reader.get_physical_pixel_size(scene)
 
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"

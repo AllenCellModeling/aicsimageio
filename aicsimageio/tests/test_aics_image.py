@@ -331,6 +331,35 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
+@pytest.mark.parametrize(
+    "filename, expected_sizes",
+    [
+        (PNG_FILE, (1.0, 1.0, 1.0)),
+        (TIF_FILE, (1.0, 1.0, 1.0)),
+        (CZI_FILE, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
+        (OME_FILE, (1.0833333333333333, 1.0833333333333333, 1.0)),
+    ],
+)
+def test_physical_pixel_size(resources_dir, filename, expected_sizes):
+    # Get filepath
+    f = resources_dir / filename
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
+    # Check basics
+    with Profiler() as prof:
+        img = AICSImage(f)
+        assert img.get_physical_pixel_size() == expected_sizes
+
+        # Check that basic details don't require task computation
+        assert len(prof.results) == 0
+
+    # Check that there are no open file pointers after basics
+    assert str(f) not in [f.path for f in proc.open_files()]
+
+
 @pytest.mark.parametrize("data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels", [
     (
         # C Z Y X

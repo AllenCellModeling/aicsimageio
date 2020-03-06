@@ -23,6 +23,8 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/
+    - name: Upload codecov
+      uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest

@@ -1,6 +1,25 @@
 Changelog
 =========
 
+v3.1.2 (2020-03-06)
+-------------------
+
+New
+~~~
+- feature/get-physical-pixel-size  (`#80
+  <https://github.com/AllenCellModeling/aicsimageio/pull/80>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/add-back-codecov  (`#81
+  <https://github.com/AllenCellModeling/aicsimageio/pull/81>`_)
+  [JacksonMaxfield]
+- admin/changelog-link-to-prs  (`#77
+  <https://github.com/AllenCellModeling/aicsimageio/pull/77>`_)
+  [JacksonMaxfield]
+
+
 v3.1.1 (2020-02-21)
 -------------------
 

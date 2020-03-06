@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+New
+~~~
+- feature/get-physical-pixel-size  (`#80
+  <https://github.com/AllenCellModeling/aicsimageio/pull/80>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
 - admin/add-back-codecov  (`#81
   <https://github.com/AllenCellModeling/aicsimageio/pull/81>`_)
   [JacksonMaxfield]

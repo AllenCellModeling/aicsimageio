@@ -459,10 +459,9 @@ class AICSImage:
             List of strings representing the channel names.
         """
         try:
-            names = self.reader.get_channel_names(scene)
+            return self.reader.get_channel_names(scene)
         except AttributeError:
-            names = [str(i) for i in range(self.size_c)]
-        return names
+            return [str(i) for i in range(self.size_c)]
 
     def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
         """

@@ -1,6 +1,22 @@
 Changelog
 =========
 
+v3.1.3 (2020-03-11)
+-------------------
+
+Fix
+~~~
+- bugfix/delay-import-of-distributed-module  (`#83
+  <https://github.com/AllenCellModeling/aicsimageio/pull/83>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/standardize-flake8-settings  (`#84
+  <https://github.com/AllenCellModeling/aicsimageio/pull/84>`_)
+  [JacksonMaxfield]
+
+
 v3.1.2 (2020-03-06)
 -------------------
 

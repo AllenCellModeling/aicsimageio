@@ -70,6 +70,10 @@ chaining computation. [Here is a good rundown on the trade offs.](https://stacko
 
 
 ### Speed up IO and Processing with Dask Clients and Clusters
+If you have already spun up a `distributed.Client` object in your Python process or your processing is running on a
+distributed worker, great, you will naturally gain IO and processing gains. If you haven't done that or don't know what
+either of those are, there are some utility functions to help construct and manage these for you.
+
 ```python
 from aicsimageio import AICSImage, dask_utils
 
@@ -100,6 +104,9 @@ with dask_utils.cluster_and_client() as (cluster, client):
 
     # Do your image processing work
 ```
+
+_**Note:** The `AICSImage` context manager and the `dask_utils` module require that the processing machine or container
+have networking capabilities enabled to function properly._
 
 ### Metadata Reading
 ```python

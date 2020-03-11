@@ -117,6 +117,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">(unreleased)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
@@ -124,25 +125,25 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id16">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -256,7 +257,7 @@
             <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">IsADirectoryError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Please provide a single file to the `img` parameter. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Received directory: </span><span class="si">{img}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Received directory: </span><span class="si">{</span><span class="n">img</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Check that no other type was provided</span>
@@ -264,7 +265,7 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Please provide a path to a file as a string, or an pathlib.Path, to the &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;`img` parameter. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Received type: {type(img)}&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">img</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">img</span>
@@ -276,7 +277,7 @@
         <span class="c1"># Check type</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_this_type</span><span class="p">(</span><span class="n">file</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Reader does not support file or object: </span><span class="si">{file}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Reader does not support file or object: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Store this filepath</span>
@@ -317,7 +318,7 @@
         <span class="c1"># Raise because none of the above returned</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO, numpy or dask array]. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Received: {type(data)}&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/standardize-flake8-settings  (`#84
+  <https://github.com/AllenCellModeling/aicsimageio/pull/84>`_)
+  [JacksonMaxfield]
+
+
 v3.1.2 (2020-03-06)
 -------------------
 

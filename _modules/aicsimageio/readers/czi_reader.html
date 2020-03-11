@@ -117,6 +117,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">(unreleased)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
@@ -124,25 +125,25 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id16">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -309,7 +310,7 @@
         <span class="n">czi</span> <span class="o">=</span> <span class="n">CziFile</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
         <span class="c1"># Read image</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading dimensions: </span><span class="si">{read_dims}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading dimensions: </span><span class="si">{</span><span class="n">read_dims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="o">**</span><span class="n">read_dims</span><span class="p">)</span>
 
         <span class="c1"># Drop dims that shouldn&#39;t be provided back</span>
@@ -376,12 +377,12 @@
             <span class="c1"># Choose the provided scene</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">S</span><span class="p">]</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, selected scene: </span><span class="si">{S}</span><span class="s2"> for data retrieval.&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, selected scene: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentShapeError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;The CZI image provided has variable dimensions per scene. &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Please provide a valid index to the &#39;S&#39; parameter to create a dask array for the index provided. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{S}</span><span class="s2">. Scene index range: 0-{len(image_dim_indices)}.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2">. Scene index range: 0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If the list is length one that means that all the scenes in the image have the same dimensions</span>

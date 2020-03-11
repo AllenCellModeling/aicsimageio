@@ -117,6 +117,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
@@ -124,25 +125,25 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id17">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id20">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -319,7 +320,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">d</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">known_dims</span><span class="p">]):</span>
                 <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;The provided dimension string to the &#39;known_dims&#39; argument includes dimensions that AICSImage &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;does not support. Received: &#39;</span><span class="si">{known_dims}</span><span class="s2">&#39;. Supported dimensions: </span><span class="si">{Dimensions.DefaultOrderList}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;does not support. Received: &#39;</span><span class="si">{</span><span class="n">known_dims</span><span class="si">}</span><span class="s2">&#39;. Supported dimensions: </span><span class="si">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrderList</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Hold onto known dims until data is requested</span>
@@ -398,11 +399,11 @@
 
         <span class="c1"># Check that dims requested are all a part of the available dims in the package</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{dims}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Check that the dims requested are in the image dims</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{dims}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimensions requested: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Return the shape of the data for the dimensions requested</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">])</span></div>
@@ -596,14 +597,14 @@
 
             <span class="c1"># Create name for window</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">,</span> <span class="n">ArrayLikeReader</span><span class="p">):</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;napari: </span><span class="si">{self.dask_data.shape}</span><span class="s2">&quot;</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;napari: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;napari: </span><span class="si">{self.reader._file.name}</span><span class="s2">&quot;</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;napari: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="c1"># Handle RGB entirely differently</span>
             <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
                 <span class="c1"># Swap channel to last dimension</span>
-                <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;{dims.replace(Dimensions.Channel, &#39;&#39;)}</span><span class="si">{Dimensions.Channel}</span><span class="s2">&quot;</span>
+                <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">transpose_to_dims</span><span class="p">(</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
                     <span class="n">given_dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
@@ -652,8 +653,8 @@
                         <span class="o">**</span><span class="n">kwargs</span>
                     <span class="p">)</span>
 
-        <span class="k">except</span> <span class="n">ModuleNotFoundError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ModuleNotFoundError</span><span class="p">(</span>
+        <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;&#39;napari&#39; has not been installed. To use this function install napari with either: &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;&#39;pip install napari&#39; or &#39;pip install aicsimageio[interactive]&#39;&quot;</span>
             <span class="p">)</span></div>
@@ -695,7 +696,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">get_physical_pixel_size</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;AICSImage [{type(self.reader).__name__}]&gt;&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;AICSImage [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&gt;&quot;</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">]:</span>

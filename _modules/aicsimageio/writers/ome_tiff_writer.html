@@ -117,6 +117,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">(unreleased)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
@@ -124,25 +125,25 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id16">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -317,15 +318,15 @@
 
         <span class="c1"># assert valid characters in dimension_order</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="s2">&quot;STCZYX&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> expected to </span><span class="se">\</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> expected to </span><span class="se">\</span>
 <span class="s2">                be YX.  Please transpose your data.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ndims</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{dimension_order}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
-<span class="s2">                dimensions as data shape </span><span class="si">{shape}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
+<span class="s2">                dimensions as data shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{dimension_order}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="c1"># todo ensure no letter appears more than once?</span>
 
         <span class="c1"># ensure dimension_order is same len as shape</span>

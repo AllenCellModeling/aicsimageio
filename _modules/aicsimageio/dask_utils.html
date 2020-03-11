@@ -117,33 +117,37 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Other</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -237,6 +241,11 @@
 <span class="sd">    If provided an address, create a Dask Client connection.</span>
 <span class="sd">    If not provided an address, create a LocalCluster and Client connection.</span>
 <span class="sd">    If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this function, the processing machine or container must have networking capabilities enabled to</span>
+<span class="sd">    function properly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cluster</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -256,6 +265,11 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Shutdown a cluster and client.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this function, the processing machine or container must have networking capabilities enabled to</span>
+<span class="sd">    function properly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -281,6 +295,11 @@
 <span class="sd">    ...     img1 = AICSImage(&quot;1.tiff&quot;)</span>
 <span class="sd">    ...     img2 = AICSImage(&quot;2.czi&quot;)</span>
 <span class="sd">    ...     other processing</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this context manager, the processing machine or container must have networking capabilities enabled to</span>
+<span class="sd">    function properly.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">cluster</span><span class="p">,</span> <span class="n">client</span> <span class="o">=</span> <span class="n">spawn_cluster_and_client</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>

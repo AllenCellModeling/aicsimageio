@@ -117,33 +117,37 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Other</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -217,13 +221,13 @@
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span>
 
 <span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">LocalCluster</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dask_utils</span><span class="p">,</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">InvalidDimensionOrderingError</span><span class="p">,</span>
                          <span class="n">UnsupportedFileFormatError</span><span class="p">)</span>
@@ -311,6 +315,9 @@
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
+<span class="sd">        When using the AICSImage context manager, the processing machine or container must have networking capabilities</span>
+<span class="sd">        enabled to function properly.</span>
+
 <span class="sd">        Constructor for AICSImage class intended for providing a unified interface for dealing with</span>
 <span class="sd">        microscopy images. To extend support to a new reader simply add a new reader child class of</span>
 <span class="sd">        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</span>
@@ -699,14 +706,14 @@
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;AICSImage [</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">]&gt;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;distributed.LocalCluster&quot;</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If this object created a local Dask cluster, return it.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;distributed.Client&quot;</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If connected to a Dask cluster, return the connected Client.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -717,6 +724,7 @@
 <span class="sd">        Close the connection to the Dask distributed Client.</span>
 <span class="sd">        If this object created a LocalCluster, close it down as well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dask_utils</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">shutdown_cluster_and_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -725,6 +733,15 @@
 <span class="sd">        If not provided an address, create a LocalCluster and Client connection.</span>
 <span class="sd">        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Warn of future changes to API</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;In aicsimageio&gt;=3.2.*, the AICSImage context manager will no longer construct and manage a distributed &quot;</span>
+            <span class="s2">&quot;local dask cluster for you. If this functionality is desired for your work, please switch to explictly &quot;</span>
+            <span class="s2">&quot;calling the `aicsimageio.dask_utils.cluster_and_client` context manager.&quot;</span><span class="p">,</span>
+            <span class="ne">FutureWarning</span>
+        <span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dask_utils</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">spawn_cluster_and_client</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_dask_kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>

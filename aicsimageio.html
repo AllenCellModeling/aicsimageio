@@ -119,33 +119,37 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Other</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id15">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id16">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id21">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id21">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id22">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id25">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -324,6 +328,8 @@ manager, the LocalCluster initialization.</p></li>
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
+<p>When using the AICSImage context manager, the processing machine or container must have networking capabilities
+enabled to function properly.</p>
 <p>Constructor for AICSImage class intended for providing a unified interface for dealing with
 microscopy images. To extend support to a new reader simply add a new reader child class of
 Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</p>
@@ -753,12 +759,18 @@ If not provided an address, other Dask kwargs are accepted and passed down to th
 <span class="gp">... </span>    <span class="n">other</span> <span class="n">processing</span>
 </pre></div>
 </div>
+<p class="rubric">Notes</p>
+<p>When using this context manager, the processing machine or container must have networking capabilities enabled to
+function properly.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="aicsimageio.dask_utils.shutdown_cluster_and_client">
 <code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">shutdown_cluster_and_client</code><span class="sig-paren">(</span><em class="sig-param">cluster: Optional[distributed.deploy.local.LocalCluster], client: Optional[distributed.client.Client]</em><span class="sig-paren">)</span> &#x2192; Tuple[Optional[distributed.deploy.local.LocalCluster], Optional[distributed.client.Client]]<a class="reference internal" href="_modules/aicsimageio/dask_utils.html#shutdown_cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.shutdown_cluster_and_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shutdown a cluster and client.</p>
+<p class="rubric">Notes</p>
+<p>When using this function, the processing machine or container must have networking capabilities enabled to
+function properly.</p>
 </dd></dl>
 
 <dl class="function">
@@ -767,6 +779,9 @@ If not provided an address, other Dask kwargs are accepted and passed down to th
 <dd><p>If provided an address, create a Dask Client connection.
 If not provided an address, create a LocalCluster and Client connection.
 If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</p>
+<p class="rubric">Notes</p>
+<p>When using this function, the processing machine or container must have networking capabilities enabled to
+function properly.</p>
 </dd></dl>
 
 </div>

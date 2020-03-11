@@ -105,6 +105,9 @@ with dask_utils.cluster_and_client() as (cluster, client):
     # Do your image processing work
 ```
 
+_**Note:** The `AICSImage` context manager and the `dask_utils` module require that the processing machine or container
+have networking capabilities enabled to function properly._
+
 ### Metadata Reading
 ```python
 from aicsimageio import AICSImage

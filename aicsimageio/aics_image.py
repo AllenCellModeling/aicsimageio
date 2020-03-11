@@ -95,6 +95,9 @@ class AICSImage:
 
         Notes
         -----
+        When using the AICSImage context manager, the processing machine or container must have networking capabilities
+        enabled to function properly.
+
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of
         Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.

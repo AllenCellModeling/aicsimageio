@@ -22,6 +22,11 @@ def spawn_cluster_and_client(
     If provided an address, create a Dask Client connection.
     If not provided an address, create a LocalCluster and Client connection.
     If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
+
+    Notes
+    -----
+    When using this function, the processing machine or container must have networking capabilities enabled to
+    function properly.
     """
     cluster = None
     if address is not None:
@@ -41,6 +46,11 @@ def shutdown_cluster_and_client(
 ) -> Tuple[Optional[LocalCluster], Optional[Client]]:
     """
     Shutdown a cluster and client.
+
+    Notes
+    -----
+    When using this function, the processing machine or container must have networking capabilities enabled to
+    function properly.
     """
     if cluster is not None:
         cluster.close()
@@ -66,6 +76,11 @@ def cluster_and_client(address: Optional[str] = None, **kwargs):
     ...     img1 = AICSImage("1.tiff")
     ...     img2 = AICSImage("2.czi")
     ...     other processing
+
+    Notes
+    -----
+    When using this context manager, the processing machine or container must have networking capabilities enabled to
+    function properly.
     """
     try:
         cluster, client = spawn_cluster_and_client(address=address, **kwargs)

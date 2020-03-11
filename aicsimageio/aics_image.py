@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Type
 
 import dask.array as da
@@ -513,6 +514,14 @@ class AICSImage:
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
+        # Warn of future changes to API
+        warnings.warn(
+            "In aicsimageio>=3.2.*, the AICSImage context manager will no longer construct and manage a distributed "
+            "local dask cluster for you. If this functionality is desired for your work, please switch to explictly "
+            "calling the `aicsimageio.dask_utils.cluster_and_client` context manager.",
+            FutureWarning
+        )
+
         from . import dask_utils
         self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
 

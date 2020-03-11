@@ -9,9 +9,8 @@ from typing import Any, Dict, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
-from distributed import Client, LocalCluster
 
-from .. import dask_utils, exceptions, types
+from .. import exceptions, types
 from ..constants import Dimensions
 
 ###############################################################################
@@ -150,11 +149,11 @@ class Reader(ABC):
         return (1.0, 1.0, 1.0)
 
     @property
-    def cluster(self) -> Optional[LocalCluster]:
+    def cluster(self) -> Optional["distributed.LocalCluster"]:
         return self._cluster
 
     @property
-    def client(self) -> Optional[Client]:
+    def client(self) -> Optional["distributed.Client"]:
         return self._client
 
     def close(self):
@@ -162,6 +161,7 @@ class Reader(ABC):
         Always close the Dask Client connection.
         If connected to *strictly* a LocalCluster, close it down as well.
         """
+        from ... import dask_utils
         self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
 
     def __enter__(self):
@@ -170,6 +170,7 @@ class Reader(ABC):
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
+        from ... import dask_utils
         self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
 
         return self

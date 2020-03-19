@@ -95,7 +95,12 @@ setup(
         "Python library for reading and writing image data with special handlers for bio-formats "
         "from Allen Institute for Cell Science."
     ),
-    entry_points={},
+    entry_points={
+        "napari.plugin": [
+            "aicsimageio = aicsimageio.plugins.napari.in_memory",
+            # "aicsimageio_delayed = aicsimageio.plugins.napari.delayed",
+        ],
+    },
     install_requires=requirements,
     license="BSD-3-Clause",
     long_description=readme,

@@ -161,7 +161,7 @@ class Reader(ABC):
         -------
         channels_names: Optional[List[str]]
             List of strings representing the channel names.
-            If channel dimension not present in file, return's None.
+            If channel dimension not present in file, return None.
         """
         # Check for channel in dims
         if Dimensions.Channel in self.dims:

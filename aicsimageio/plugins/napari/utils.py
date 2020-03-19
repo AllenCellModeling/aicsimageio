@@ -58,7 +58,7 @@ def _load_image(path: str, ReaderClass: Reader, index: int) -> LoadResult:
     )
 
 
-def reader_function(path: PathLike, compute: bool) -> List[LayerData]:
+def reader_function(path: PathLike, compute: bool, processes: bool) -> List[LayerData]:
     """
     Given a single path return a list of LayerData tuples.
     """
@@ -72,7 +72,7 @@ def reader_function(path: PathLike, compute: bool) -> List[LayerData]:
     ReaderClass = AICSImage.determine_reader(paths[0])
 
     # Spawn dask cluster for parallel read
-    with dask_utils.cluster_and_client() as (cluster, client):
+    with dask_utils.cluster_and_client(processes=processes) as (cluster, client):
         # Map each file read
         futures = client.map(
             _load_image,
@@ -95,9 +95,16 @@ def reader_function(path: PathLike, compute: bool) -> List[LayerData]:
             data = data.compute()
 
         # Construct metadata using any of the returns as there is an assumption it is all the same
+        channel_names = results[0].channel_names
+
+        # Add 1 to offset the new axis from the array stack
+        channel_axis = results[0].channel_axis
+        if channel_axis is not None:
+            channel_axis += 1
+
         meta = {
-            "name": results[0].channel_names,
-            "channel_axis": results[0].channel_axis + 1,  # Add 1 to offset the new axis from the array stack
+            "name": channel_names,
+            "channel_axis": channel_axis,
             "is_pyramid": False,
             "visible": False,
         }
@@ -105,7 +112,7 @@ def reader_function(path: PathLike, compute: bool) -> List[LayerData]:
     return [(data, meta)]
 
 
-def get_reader(path: PathLike, compute: bool) -> Optional[ReaderFunction]:
+def get_reader(path: PathLike, compute: bool, processes=True) -> Optional[ReaderFunction]:
     """
     Given a single path or list of paths, return the appropriate aicsimageio reader.
     """
@@ -121,7 +128,7 @@ def get_reader(path: PathLike, compute: bool) -> Optional[ReaderFunction]:
 
         # The above line didn't error so we know we have a supported reader
         # Return a partial function with compute determined
-        return partial(reader_function, compute=compute)
+        return partial(reader_function, compute=compute, processes=processes)
 
     # No supported reader, return None
     except exceptions.UnsupportedFileFormatError:

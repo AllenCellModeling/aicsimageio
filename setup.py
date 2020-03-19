@@ -98,7 +98,7 @@ setup(
     entry_points={
         "napari.plugin": [
             "aicsimageio = aicsimageio.plugins.napari.in_memory",
-            # "aicsimageio_delayed = aicsimageio.plugins.napari.delayed",
+            "aicsimageio_delayed = aicsimageio.plugins.napari.delayed",
         ],
     },
     install_requires=requirements,

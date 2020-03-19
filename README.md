@@ -121,6 +121,25 @@ img.get_channel_names()  # returns a list of string channel names if found in th
 ### Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional image viewer for python and
 it is pretty useful for imaging data that this package tends to interact with.
+
+#### Installation
+**Stable Release:** `pip install napari`<br>
+**Development Head:** `pip install git+https://github.com/napari/napari.git`
+
+#### CLI
+Launch the GUI then select your the file you want to interact with:
+
+```bash
+napari
+```
+
+You can select between plugins:
+* `aicsimageio` (full in-memory file reading)
+* `aicsimageio_delayed` (large file, on-demand file reading)
+
+#### Python
+In an Python terminal or Jupyter Notebook:
+
 ```python
 from aicsimageio import AICSImage
 

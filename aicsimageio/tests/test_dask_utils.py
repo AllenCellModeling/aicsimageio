@@ -2,61 +2,49 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from unittest import mock
 
 import pytest
+from distributed import get_client
 
 from .test_aics_image import CZI_FILE, OME_FILE, PNG_FILE, TIF_FILE
 
 
-@pytest.mark.parametrize("address, nworkers", [
-    (None, None),
-    (None, 2),
-    ("tcp://some-spawned-cluster", None),
-])
-def test_aicsimage_context_manager(resources_dir, address, nworkers):
+def test_aicsimage_context_manager(resources_dir):
     from aicsimageio import AICSImage
 
-    # Patch the spawn function
-    with mock.patch("aicsimageio.dask_utils.spawn_cluster_and_client") as mocked_spawner:
-        return "a", "b"
+    # Ensure that no dask cluster or client is available before
+    with pytest.raises(ValueError):
+        get_client()
 
-        # Patch the shutdown function
-        with mock.patch("aicsimageio.dask_utils.shutdown_cluster_and_client") as mocked_shutdown:
-            return "a", "b"
+    # Load the image in a context manager that spawn and closes a cluster and client
+    # Processes = False informs dask to use threads instead of processes
+    # We must use threads here to make sure we can properly run codecov
+    with AICSImage(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as image:
+        assert get_client() is not None
+        assert image.data.shape == (3, 1, 3, 5, 325, 475)
 
-            # Load the image in a context manager that spawn and closes a cluster and client
-            with AICSImage(resources_dir / "s_3_t_1_c_3_z_5.czi", address=address, nworkers=nworkers):
-                assert mocked_spawner.call_args[0][0] == address
-                assert mocked_spawner.call_arg[1]["nworkers"] == nworkers
-
-            # Check that the cluster and client were scheduled to shutdown
-            assert mocked_shutdown.called
+    # Ensure that no dask cluster or client is available after
+    with pytest.raises(ValueError):
+        get_client()
 
 
-@pytest.mark.parametrize("address, nworkers", [
-    (None, None),
-    (None, 2),
-    ("tcp://some-spawned-cluster", None),
-])
-def test_reader_context_manager(resources_dir, address, nworkers):
+def test_reader_context_manager(resources_dir):
     from aicsimageio.readers import CziReader
 
-    # Patch the spawn function
-    with mock.patch("aicsimageio.dask_utils.spawn_cluster_and_client") as mocked_spawner:
-        return "a", "b"
+    # Ensure that no dask cluster or client is available before
+    with pytest.raises(ValueError):
+        get_client()
 
-        # Patch the shutdown function
-        with mock.patch("aicsimageio.dask_utils.shutdown_cluster_and_client") as mocked_shutdown:
-            return "a", "b"
+    # Load the image in a context manager that spawn and closes a cluster and client
+    # Processes = False informs dask to use threads instead of processes
+    # We must use threads here to make sure we can properly run codecov
+    with CziReader(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as reader:
+        assert get_client() is not None
+        assert reader.data.shape == (1, 3, 3, 5, 325, 475)
 
-            # Load the image in a context manager that spawn and closes a cluster and client
-            with CziReader(resources_dir / "s_3_t_1_c_3_z_5.czi", address=address, nworkers=nworkers):
-                assert mocked_spawner.call_args[0][0] == address
-                assert mocked_spawner.call_arg[1]["nworkers"] == nworkers
-
-            # Check that the cluster and client were scheduled to shutdown
-            assert mocked_shutdown.called
+    # Ensure that no dask cluster or client is available after
+    with pytest.raises(ValueError):
+        get_client()
 
 
 @pytest.mark.parametrize(

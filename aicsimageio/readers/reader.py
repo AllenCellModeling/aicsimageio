@@ -161,7 +161,7 @@ class Reader(ABC):
         Always close the Dask Client connection.
         If connected to *strictly* a LocalCluster, close it down as well.
         """
-        from ... import dask_utils
+        from .. import dask_utils
         self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
 
     def __enter__(self):
@@ -170,7 +170,7 @@ class Reader(ABC):
         If not provided an address, create a LocalCluster and Client connection.
         If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
         """
-        from ... import dask_utils
+        from .. import dask_utils
         self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
 
         return self

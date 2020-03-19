@@ -33,9 +33,18 @@ class LoadResult(NamedTuple):
 ###############################################################################
 
 
-def _load_image(path: str, ReaderClass: Reader, index: int) -> LoadResult:
+def _load_image(path: str, ReaderClass: Reader, index: int, compute: bool) -> LoadResult:
+    # napari global viewer state can't be adjusted in a plugin and thus `ndisplay`
+    # will default be set to two (2). Because of this, set the chunk dims to be
+    # simply YX planes in the case where we are delayed loading to ensure we aren't
+    # requesting more data than necessary.
+
     # Initialize reader
-    reader = ReaderClass(path)
+    # If in memory, no need to change the default chunk_by_dims
+    if compute:
+        reader = ReaderClass(path)
+    else:
+        reader = ReaderClass(path, chunk_by_dims=[Dimensions.SpatialY, Dimensions.SpatialX])
 
     # Set channel_axis
     if Dimensions.Channel in reader.dims:
@@ -79,6 +88,7 @@ def reader_function(path: PathLike, compute: bool, processes: bool) -> List[Laye
             paths,
             [ReaderClass for i in range(len(paths))],
             [i for i in range(len(paths))],
+            [compute for compute in range(len(paths))],
         )
 
         # Block until done

@@ -305,10 +305,14 @@ def test_large_imread_dask(resources_dir, filename, expected_shape, expected_tas
 @pytest.mark.parametrize(
     "filename, expected_channel_names",
     [
-        (PNG_FILE, ["0", "1", "2", "3"]),
-        (TIF_FILE, ["0"]),
+        (PNG_FILE, ["Red", "Green", "Blue", "Alpha"]),
+        (GIF_FILE, ["Red", "Green", "Blue", "Alpha"]),
+        (JPG_FILE, ["Red", "Green", "Blue"]),
+        (TIF_FILE, None),
+        (MED_TIF_FILE, ["0", "1", "2"]),
         (CZI_FILE, ["Bright"]),
         (OME_FILE, ["Bright"]),
+        (BIG_CZI_FILE, ["EGFP", "TaRFP", "Bright"])
     ],
 )
 def test_channel_names(resources_dir, filename, expected_channel_names):

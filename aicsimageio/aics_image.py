@@ -467,7 +467,7 @@ class AICSImage:
         # Unlike the readers, AICSImage objects always have a channel dimension
         # In the case the base reader returns None, return a list of "0"
         if channel_names is None:
-            [str(i) for i in range(self.size_c)]
+            return [str(i) for i in range(self.size_c)]
 
         # Return the read channel names
         return channel_names

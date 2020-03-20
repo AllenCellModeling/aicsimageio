@@ -163,13 +163,14 @@ class Reader(ABC):
             List of strings representing the channel names.
             If channel dimension not present in file, return None.
         """
-        # Check for channel in dims
-        if Dimensions.Channel in self.dims:
-            channel_index = self.dims.index(Dimensions.Channel)
-            channel_dim_size = self.dask_data.shape[channel_index]
-            return [str(i) for i in range(channel_dim_size)]
+        # Check for channels dimension
+        if Dimensions.Channel not in self.dims:
+            return None
 
-        return None
+        # Channel dimension in reader data, get default channel names
+        channel_index = self.dims.index(Dimensions.Channel)
+        channel_dim_size = self.dask_data.shape[channel_index]
+        return [str(i) for i in range(channel_dim_size)]
 
     @property
     def cluster(self) -> Optional["distributed.LocalCluster"]:

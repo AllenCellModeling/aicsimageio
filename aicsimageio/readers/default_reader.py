@@ -3,7 +3,7 @@
 
 import io
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import dask.array as da
 import imageio
@@ -11,6 +11,7 @@ import numpy as np
 from dask import delayed
 
 from .. import exceptions
+from ..constants import Dimensions
 from .reader import Reader
 
 ###############################################################################
@@ -110,6 +111,22 @@ class DefaultReader(Reader):
                 self._metadata = reader.get_meta_data()
 
         return self._metadata
+
+    def get_channel_names(self, scene: int = 0) -> Optional[List[str]]:
+        # Check for channel in dims
+        if Dimensions.Channel in self.dims:
+            channel_index = self.dims.index(Dimensions.Channel)
+            channel_dim_size = self.dask_data.shape[channel_index]
+
+            # RGB vs RGBA vs other
+            if channel_dim_size == 3:
+                return ["Red", "Green", "Blue"]
+            elif channel_dim_size == 4:
+                return ["Red", "Green", "Blue", "Alpha"]
+            else:
+                return [str(i) for i in range(channel_dim_size)]
+
+        return None
 
     @staticmethod
     def _is_this_type(buffer: io.BytesIO) -> bool:

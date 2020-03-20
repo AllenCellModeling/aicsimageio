@@ -5,7 +5,7 @@ import io
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -147,6 +147,30 @@ class Reader(ABC):
             Tuple of floats representing the pixel sizes for X, Y, Z, in that order.
         """
         return (1.0, 1.0, 1.0)
+
+    def get_channel_names(self, scene: int = 0) -> Optional[List[str]]:
+        """
+        Attempts to use the image's metadata to get the image's channel names.
+
+        Parameters
+        ----------
+        scene: int
+            The index of the scene for which to return channel names.
+
+        Returns
+        -------
+        channels_names: Optional[List[str]]
+            List of strings representing the channel names.
+            If channel dimension not present in file, return None.
+        """
+        # Check for channels dimension
+        if Dimensions.Channel not in self.dims:
+            return None
+
+        # Channel dimension in reader data, get default channel names
+        channel_index = self.dims.index(Dimensions.Channel)
+        channel_dim_size = self.dask_data.shape[channel_index]
+        return [str(i) for i in range(channel_dim_size)]
 
     @property
     def cluster(self) -> Optional["distributed.LocalCluster"]:

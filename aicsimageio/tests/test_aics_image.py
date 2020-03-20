@@ -327,6 +327,7 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
     with Profiler() as prof:
         img = AICSImage(f)
         assert img.get_channel_names() == expected_channel_names
+        assert len(img.get_channel_names()) == img.size_c
 
         # Check that basic details don't require task computation
         assert len(prof.results) == 0

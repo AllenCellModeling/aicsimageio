@@ -1,6 +1,22 @@
 Changelog
 =========
 
+v3.1.4 (2020-03-21)
+-------------------
+
+New
+~~~
+- feature/add-get-channel-names-to-base-reader  (`#88
+  <https://github.com/AllenCellModeling/aicsimageio/pull/88>`_)
+  [JacksonMaxfield]
+
+Fix
+~~~
+- bugfix/reader-context-manager-top-level-import-error  (`#85
+  <https://github.com/AllenCellModeling/aicsimageio/pull/85>`_)
+  [JacksonMaxfield]
+
+
 v3.1.3 (2020-03-11)
 -------------------
 

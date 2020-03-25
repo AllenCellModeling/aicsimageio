@@ -39,8 +39,8 @@ class Args(argparse.Namespace):
         # Arguments
         p.add_argument(
             "--top-hash",
-            # Generated package hash from upload_test_resources --dry-run
-            default="371b91b821292331625e0bc405709feb1b4c1bf94ca5581ff6f7a9d159a79785",
+            # Generated package hash from upload_test_resources
+            default="89b6219c95f10b3a0c55935792e8da84af4d07080d05a73f65e5feb1896c3c29",
             help=("A specific version of the package to retrieve."),
         )
         p.add_argument(

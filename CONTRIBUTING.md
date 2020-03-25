@@ -8,20 +8,20 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
 1. Fork the `aicsimageio` repo on GitHub.
 
-2. Clone your fork locally:
+1. Clone your fork locally:
 
     ```bash
     git clone git@github.com:{your_name_here}/aicsimageio.git
     ```
 
-3. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
+1. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
 
     ```bash
     cd aicsimageio/
     pip install -e .[dev]
     ```
 
-4. Download the test resources:
+1. Download the test resources:
 
     ```bash
     python scripts/download_test_resources.py
@@ -29,7 +29,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
     If you need to upload new resources please let a core maintainer know.
 
-5. Create a branch for local development:
+1. Create a branch for local development:
 
     ```bash
     git checkout -b {your_development_type}/short-description
@@ -38,14 +38,14 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     Ex: feature/read-tiff-files or bugfix/handle-file-not-found<br>
     Now you can make your changes locally.
 
-6. When you're done making changes, check that your changes pass linting and
+1. When you're done making changes, check that your changes pass linting and
    tests, including testing other Python versions with make:
 
     ```bash
     make build
     ```
 
-7. Commit your changes and push your branch to GitHub:
+1. Commit your changes and push your branch to GitHub:
 
     ```bash
     git add .
@@ -53,7 +53,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     git push origin {your_development_type}/short-description
     ```
 
-8. Submit a pull request through the GitHub website.
+1. Submit a pull request through the GitHub website.
 
 ## Deploying
 

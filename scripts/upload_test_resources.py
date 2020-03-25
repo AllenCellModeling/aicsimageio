@@ -49,6 +49,12 @@ class Args(argparse.Namespace):
             ),
         )
         p.add_argument(
+            "-y", "--yes",
+            action="store_true",
+            dest="preappoved",
+            help="Auto-accept upload of files."
+        )
+        p.add_argument(
             "--debug",
             action="store_true",
             help="Show traceback if the script were to fail.",
@@ -99,18 +105,22 @@ def upload_test_resources(args: Args):
 
         # Upload
         else:
-            # Get upload confirmation
-            confirmation = None
-            while confirmation not in ["y", "n"]:
-                # Get user input
-                confirmation = input("Upload [y]/n? ")
+            # Check pre-approved push
+            if args.preapproved:
+                confirmation = "y"
+            else:
+                # Get upload confirmation
+                confirmation = None
+                while confirmation not in ["y", "n"]:
+                    # Get user input
+                    confirmation = input("Upload [y]/n? ")
 
-                # If the user simply pressed enter assume yes
-                if len(confirmation) == 0:
-                    confirmation = "y"
-                # Get first character and lowercase
-                else:
-                    confirmation = confirmation[0].lower()
+                    # If the user simply pressed enter assume yes
+                    if len(confirmation) == 0:
+                        confirmation = "y"
+                    # Get first character and lowercase
+                    else:
+                        confirmation = confirmation[0].lower()
 
             # Check confirmation
             if confirmation == "y":

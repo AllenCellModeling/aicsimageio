@@ -41,7 +41,7 @@ class Args(argparse.Namespace):
             "--top-hash",
             # Generated package hash from upload_test_resources
             default="89b6219c95f10b3a0c55935792e8da84af4d07080d05a73f65e5feb1896c3c29",
-            help=("A specific version of the package to retrieve."),
+            help="A specific version of the package to retrieve.",
         )
         p.add_argument(
             "--debug",

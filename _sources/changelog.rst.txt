@@ -1,6 +1,22 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/set-sphinx-dep-upper-bound  (`#95
+  <https://github.com/AllenCellModeling/aicsimageio/pull/95>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/move-test-resources-to-s3  (`#94
+  <https://github.com/AllenCellModeling/aicsimageio/pull/94>`_)
+  [JacksonMaxfield]
+
+
 v3.1.4 (2020-03-21)
 -------------------
 

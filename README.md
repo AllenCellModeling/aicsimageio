@@ -120,14 +120,9 @@ img.get_channel_names()  # returns a list of string channel names if found in th
 
 ### Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional image viewer for python and
-it is pretty useful for imaging data that this package tends to interact with.
-```python
-from aicsimageio import AICSImage
-
-# Get an AICSImage object
-img = AICSImage("my_file.tiff")
-img.view_napari()  # launches napari GUI and viewer
-```
+it is pretty useful for imaging data that this package tends to interact with. If you would like the distributed reading
+and delayed benefits of `aicsimageio` while using `napari` please install
+[`napari-aicsimageio`](https://github.com/AllenCellModeling/napari-aicsimageio).
 
 ## Notes
 * Image `data` and `dask_data` are always returned as six dimensional in dimension order `STCZYX`
@@ -136,8 +131,6 @@ or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
 * The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X` dimensions from the reader.
 If your file has dimensions outside of those, use the base reader classes `CziReader`, `OmeTiffReader`, `TiffReader`,
 or `DefaultReader`.
-* We make some choices for the user based off the image data during `img.view_napari`.
-If you don't want this behavior, simply pass the `img.dask_data` into `napari.view_image` instead.
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

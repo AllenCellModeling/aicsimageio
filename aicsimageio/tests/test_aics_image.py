@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pickle
-from unittest import mock
 
 import dask.array as da
 import numpy as np
@@ -363,120 +362,6 @@ def test_physical_pixel_size(resources_dir, filename, expected_sizes):
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
-
-
-@pytest.mark.parametrize("data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels", [
-    (
-        # C Z Y X
-        np.ones((3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        da.ones((3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        np.ones((3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        da.ones((3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((1, 1, 3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((1, 1, 3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((1, 1, 3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((1, 1, 3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        3,
-        "STZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        3,
-        "STZYX"
-    ),
-])
-def test_view_napari(data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels):
-    # Init image
-    img = AICSImage(data)
-
-    # Mock napari view
-    with mock.patch("napari.gui_qt"):
-        with mock.patch("napari.view_image") as mocked_napari:
-            img.view_napari(rgb)
-
-            # Check array equal
-            args = mocked_napari.call_args[0]
-            assert args[0].shape == expected_data.shape
-
-            # Check extra call kwargs
-            call_kwargs = mocked_napari.call_args[1]
-            assert not call_kwargs["is_pyramid"]
-            assert call_kwargs["ndisplay"] == expected_ndim
-            assert call_kwargs["axis_labels"] == expected_axis_labels
-            if not rgb:
-                assert call_kwargs["visible"] == expected_visible
 
 
 @pytest.mark.parametrize("filename, expected_shape, expected_metadata_type, expected_task_count", [

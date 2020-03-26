@@ -23,7 +23,6 @@ test_requirements = [
     "codecov",
     "docutils>=0.10,<0.16",
     "flake8",
-    "napari",
     "psutil",
     "pytest",
     "pytest-cov",
@@ -60,7 +59,7 @@ interactive_requirements = [
     "bokeh",
     "jupyterlab",
     "matplotlib",
-    "napari>=0.2.10",
+    "napari",
     "pillow",
 ]
 

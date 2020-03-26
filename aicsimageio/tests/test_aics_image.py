@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import pickle
-from unittest import mock
 
 import dask.array as da
 import numpy as np

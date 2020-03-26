@@ -107,23 +107,29 @@ def upload_test_resources(args: Args):
         else:
             # Check pre-approved push
             if args.preapproved:
-                confirmation = "y"
+                confirmation = True
             else:
                 # Get upload confirmation
                 confirmation = None
-                while confirmation not in ["y", "n"]:
+                while confirmation is None:
                     # Get user input
-                    confirmation = input("Upload [y]/n? ")
+                    user_input = input("Upload [y]/n? ")
 
                     # If the user simply pressed enter assume yes
-                    if len(confirmation) == 0:
-                        confirmation = "y"
+                    if len(user_input) == 0:
+                        user_input = "y"
                     # Get first character and lowercase
                     else:
-                        confirmation = confirmation[0].lower()
+                        user_input = user_input[0].lower()
+
+                        # Set confirmation from None to a value
+                        if user_input == "y":
+                            confirmation = True
+                        elif user_input == "n":
+                            confirmation = False
 
             # Check confirmation
-            if confirmation == "y":
+            if confirmation:
                 pushed = package.push(
                     package_name,
                     "s3://aics-modeling-packages-test-resources",

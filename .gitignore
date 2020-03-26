@@ -110,3 +110,6 @@ ENV/
 
 # Project specific standalone files
 workbench.ipynb
+
+# Ignore test resources directory
+resources/

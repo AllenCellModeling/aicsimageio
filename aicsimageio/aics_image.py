@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import warnings
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, List, Optional, Tuple, Type
 
 import dask.array as da
 import numpy as np
@@ -34,7 +33,6 @@ class AICSImage:
         self,
         data: types.ImageLike,
         known_dims: Optional[str] = None,
-        dask_kwargs: Dict[str, Any] = {},
         **kwargs
     ):
         """
@@ -50,11 +48,8 @@ class AICSImage:
             String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
-        dask_kwargs: Dict[str, Any] = {}
-            A dictionary of arguments to pass to a dask cluster and or client.
         kwargs: Dict[str, Any]
-            Extra keyword arguments that can be passed down to either the reader subclass or, if using the context
-            manager, the LocalCluster initialization.
+            Extra keyword arguments that can be passed down to either the reader subclass
 
         Examples
         --------
@@ -78,27 +73,8 @@ class AICSImage:
 
         >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
 
-        Create a local dask cluster for the duration of the context manager.
-
-        >>> with AICSImage("filename.ome.tiff") as img:
-        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
-
-        Create a local dask cluster with arguments for the duration of the context manager.
-
-        >>> with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
-        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
-
-        Connect to a specific dask cluster for the duration of the context manager.
-
-        >>> with AICSImage("filename.ome.tiff", dask_kwargs={"address": "tcp://localhost:1234"}) as img:
-        ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
-        ```
-
         Notes
         -----
-        When using the AICSImage context manager, the processing machine or container must have networking capabilities
-        enabled to function properly.
-
         Constructor for AICSImage class intended for providing a unified interface for dealing with
         microscopy images. To extend support to a new reader simply add a new reader child class of
         Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.
@@ -124,11 +100,6 @@ class AICSImage:
         # Lazy load data from reader and reformat to standard dimensions
         self._dask_data = None
         self._data = None
-
-        # Store dask client and cluster setup
-        self._dask_kwargs = dask_kwargs
-        self._client = None
-        self._cluster = None
 
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
@@ -397,53 +368,11 @@ class AICSImage:
     def __repr__(self) -> str:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
-    @property
-    def cluster(self) -> Optional["distributed.LocalCluster"]:
-        """
-        If this object created a local Dask cluster, return it.
-        """
-        return self._cluster
-
-    @property
-    def client(self) -> Optional["distributed.Client"]:
-        """
-        If connected to a Dask cluster, return the connected Client.
-        """
-        return self._client
-
-    def close(self):
-        """
-        Close the connection to the Dask distributed Client.
-        If this object created a LocalCluster, close it down as well.
-        """
-        from . import dask_utils
-        self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
-
     def __enter__(self):
-        """
-        If provided an address, create a Dask Client connection.
-        If not provided an address, create a LocalCluster and Client connection.
-        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
-        """
-        # Warn of future changes to API
-        warnings.warn(
-            "In aicsimageio>=3.2.*, the AICSImage context manager will no longer construct and manage a distributed "
-            "local dask cluster for you. If this functionality is desired for your work, please switch to explictly "
-            "calling the `aicsimageio.dask_utils.cluster_and_client` context manager.",
-            FutureWarning
-        )
-
-        from . import dask_utils
-        self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
-
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Always close the Dask Client connection.
-        If connected to *strictly* a LocalCluster, close it down as well.
-        """
-        self.close()
+        pass
 
 
 def imread_dask(data: types.ImageLike, **kwargs) -> da.core.Array:

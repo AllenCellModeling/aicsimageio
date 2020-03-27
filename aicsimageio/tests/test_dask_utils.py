@@ -4,47 +4,8 @@
 import sys
 
 import pytest
-from distributed import get_client
 
 from .test_aics_image import CZI_FILE, OME_FILE, PNG_FILE, TIF_FILE
-
-
-def test_aicsimage_context_manager(resources_dir):
-    from aicsimageio import AICSImage
-
-    # Ensure that no dask cluster or client is available before
-    with pytest.raises(ValueError):
-        get_client()
-
-    # Load the image in a context manager that spawn and closes a cluster and client
-    # Processes = False informs dask to use threads instead of processes
-    # We must use threads here to make sure we can properly run codecov
-    with AICSImage(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as image:
-        assert get_client() is not None
-        assert image.data.shape == (3, 1, 3, 5, 325, 475)
-
-    # Ensure that no dask cluster or client is available after
-    with pytest.raises(ValueError):
-        get_client()
-
-
-def test_reader_context_manager(resources_dir):
-    from aicsimageio.readers import CziReader
-
-    # Ensure that no dask cluster or client is available before
-    with pytest.raises(ValueError):
-        get_client()
-
-    # Load the image in a context manager that spawn and closes a cluster and client
-    # Processes = False informs dask to use threads instead of processes
-    # We must use threads here to make sure we can properly run codecov
-    with CziReader(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as reader:
-        assert get_client() is not None
-        assert reader.data.shape == (1, 3, 3, 5, 325, 475)
-
-    # Ensure that no dask cluster or client is available after
-    with pytest.raises(ValueError):
-        get_client()
 
 
 @pytest.mark.parametrize(

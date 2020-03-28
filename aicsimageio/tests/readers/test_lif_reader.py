@@ -8,7 +8,6 @@ import pytest
 from dask.diagnostics import Profiler
 from psutil import Process
 
-from aicsimageio import exceptions
 from aicsimageio.readers.lif_reader import LifReader
 
 
@@ -187,4 +186,3 @@ def test_lif_image_data_two(resources_dir, filename, scene, expected):
 
     img = LifReader(f)
     assert img._chunk_offsets[0][0, 0, 0] == expected
-

@@ -11,7 +11,7 @@ import numpy as np
 from dask import delayed
 from lxml.etree import _Element
 from readlif import utilities
-from readlif.reader import LifFile, LifImage
+from readlif.reader import LifFile
 
 from .reader import Reader
 from .. import exceptions, types
@@ -106,7 +106,10 @@ class LifReader(Reader):
         return False
 
     @staticmethod
-    def _read_image(img: Path, offsets: List[np.ndarray], r_length: np.ndarray, read_dims: Optional[Dict[str, int]] = None) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
+    def _read_image(img: Path, offsets: List[np.ndarray],
+                    r_length: np.ndarray,
+                    read_dims: Optional[Dict[str, int]] = None
+                    ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
         Read and return the squeezed image data requested along with the dimension info that was read.
 
@@ -157,7 +160,10 @@ class LifReader(Reader):
         return data[tuple(ops)], real_dims
 
     @staticmethod
-    def _imread(img: Path, offsets: List[np.ndarray], r_length: np.ndarray, read_dims: Optional[Dict[str, str]] = None) -> np.ndarray:
+    def _imread(img: Path, offsets: List[np.ndarray],
+                r_length: np.ndarray,
+                read_dims: Optional[Dict[str, str]] = None
+                ) -> np.ndarray:
         """
         This function is a pass through to _read_image above
         the difference is it returns the data without the dims structure.

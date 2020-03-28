@@ -51,10 +51,7 @@ class LifReader(Reader):
     #
     #  Note the lif treats scenes as separate images in the lif file.
     #  Also once a Scene/Image is loaded the image data is retrieved
-    #  2D XY plane by 2D XY plane meaning that if you have a Z stack.
-    #  concretely if you have loaded an image into img and you then
-    #  attempt to retrieve the XY plane with get_frame(c=0, t=0) and the
-    #  image has 20 z slices get_frame will assume z=0 is the slice you want.
+    #  2D YX plane by 2D YX plane meaning that if you have a Z stack.
     #
     ########################################################
 
@@ -682,7 +679,7 @@ class LifReader(Reader):
         Returns
         -------
         Dict[Dimension: range]
-            These ranges can then be used to iterate through the specified XY images
+            These ranges can then be used to iterate through the specified YX images
 
         """
         if read_dims is None:
@@ -709,8 +706,8 @@ class LifReader(Reader):
     @staticmethod
     def _compute_offsets(lif: LifFile) -> Tuple[List[np.ndarray], np.ndarray]:
         """
-        Compute the offsets for each of the XY planes so that the LifFile object doesn't need
-        to be created for each XY image read.
+        Compute the offsets for each of the YX planes so that the LifFile object doesn't need
+        to be created for each YX image read.
 
         Parameters
         ----------

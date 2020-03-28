@@ -4,6 +4,7 @@
 from io import BytesIO
 
 import numpy as np
+from psutil import Process
 import pytest
 from dask.diagnostics import Profiler
 from psutil import Process
@@ -23,7 +24,7 @@ from aicsimageio.readers.lif_reader import LifReader
     [
         # Expected task counts should be each non chunk dimension size multiplied againest each other * 2
         (
-            "s1_t1_c2_z1.lif",
+            "s_1_t_1_c_2_z_1.lif",
             (1, 1, 2, 1, 2048, 2048),
             "STCZYX",
             np.uint16,
@@ -33,7 +34,7 @@ from aicsimageio.readers.lif_reader import LifReader
             4  # 1 * 1 * 2 * 2 = 4
         ),
         (
-            "s1_t4_c2_z1.lif",
+            "s_1_t_4_c_2_z_1.lif",
             (1, 4, 2, 1, 614, 614),
             "STCZYX",
             np.uint16,
@@ -123,18 +124,18 @@ def test_is_this_type(raw_bytes, expected):
 
 
 @pytest.mark.parametrize("filename, scene, expected", [
-    ("s1_t1_c2_z1.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"]),
-    ("s1_t4_c2_z1.lif", 0, ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"]),
+    ("s_1_t_1_c_2_z_1.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"]),
+    ("s_1_t_4_c_2_z_1.lif", 0, ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"]),
     #  ("s14_t1_c2_z52_inconsistent.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"])
-    pytest.param("s1_t1_c2_z1.lif", 2, None, marks=pytest.mark.raises(exception=IndexError))
+    pytest.param("s_1_t_1_c_2_z_1.lif", 2, None, marks=pytest.mark.raises(exception=IndexError))
 ])
 def test_get_channel_names(resources_dir, filename, scene, expected):
     assert LifReader(resources_dir / filename).get_channel_names(scene) == expected
 
 
 @pytest.mark.parametrize("filename, scene, expected", [
-    ("s1_t1_c2_z1.lif", 0, (0.325, 0.325, 1.0)),
-    ("s1_t4_c2_z1.lif", 0, (0.33915, 0.33915, 1.0)),
+    ("s_1_t_1_c_2_z_1.lif", 0, (0.325, 0.325, 1.0)),
+    ("s_1_t_4_c_2_z_1.lif", 0, (0.33915, 0.33915, 1.0)),
     #  ("s14_t1_c2_z52_inconsistent.lif", 0, (0.1625, 0.1625, 1.000715))
 ])
 def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
@@ -142,8 +143,8 @@ def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
 
 
 @pytest.mark.parametrize("filename, s, t, c, z, y, x", [
-    ("s1_t1_c2_z1.lif", 1, 1, 2, 1, 2048, 2048),
-    ("s1_t4_c2_z1.lif", 1, 4, 2, 1, 614, 614)
+    ("s_1_t_1_c_2_z_1.lif", 1, 1, 2, 1, 2048, 2048),
+    ("s_1_t_4_c_2_z_1.lif", 1, 4, 2, 1, 614, 614)
 ])
 def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     # Get file
@@ -151,6 +152,10 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 
     # Init reader
     img = LifReader(f)
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check sizes
     assert img.size_s() == s
@@ -178,11 +183,16 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 
 
 @pytest.mark.parametrize("filename, scene, expected", [
-    ("s1_t4_c2_z1.lif", 0, 51221),
+    ("s_1_t_4_c_2_z_1.lif", 0, 51221),
     #  ("s14_t1_c2_z52_inconsistent.lif", 0, (0.1625, 0.1625, 1.000715))
 ])
 def test_lif_image_data_two(resources_dir, filename, scene, expected):
     f = resources_dir / filename
 
     img = LifReader(f)
+
+    # Check that there are no open file pointers after init
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
     assert img._chunk_offsets[0][0, 0, 0] == expected

@@ -31,38 +31,39 @@ from aicsimageio.readers.lif_reader import LifReader
             0,
             ("Z", "Y", "X"),
             (1, 1, 1, 1, 2048, 2048),
-            2  # 1 * 1 * 2 = 2
+            4  # 1 * 1 * 2 * 2 = 4
         ),
         (
             "s1_t4_c2_z1.lif",
             (1, 4, 2, 1, 614, 614),
-            "SCZYX",
-            np.uint16,
-            0,
-            ("Z", "Y", "X"),
-            (1, 1, 1, 5, 325, 475),
-            18  # 1 * 3 * 3 * 2 = 18
-        ),
-        (
-            "s14_t1_c2_z52_inconsistent.lif",
-            (1, 3, 3, 5, 2048, 2048),
             "STCZYX",
             np.uint16,
             0,
             ("Z", "Y", "X"),
-            (1, 1, 1, 38, 2048, 2048),
-            90  # 1 * 3 * 3 * 5 * 2 = 90
+            (1, 1, 1, 1, 614, 614),
+            16  # 1 * 4 * 2 * 2 = 16
         ),
-        (
-            "s14_t1_c2_z52_inconsistent.lif",
-            (14, 1, 2, 52, 2048, 2048),
-            "STCZYX",
-            np.uint16,
-            1,
-            ("C", "Y", "X"),
-            (1, 1, 3, 1, 2048, 2048),
-            30  # 1 * 3 * 5 * 2 = 30
-        ),
+        #  To be added back in when rebased off jackson's S3 pr
+        # (
+        #     "s14_t1_c2_z52_inconsistent.lif",
+        #     (1, 1, 2, 38, 2048, 2048),
+        #     "STCZYX",
+        #     np.uint16,
+        #     0,
+        #     ("Z", "Y", "X"),
+        #     (1, 1, 1, 38, 2048, 2048),
+        #     4  # 1 * 1 * 2 * 2 = 4
+        # ),
+        # (
+        #     "s14_t1_c2_z52_inconsistent.lif",
+        #     (1, 1, 2, 52, 2048, 2048),
+        #     "STCZYX",
+        #     np.uint16,
+        #     1,
+        #     ("C", "Y", "X"),
+        #     (1, 1, 2, 1, 2048, 2048),
+        #     104  # 1 * 1 * 52 * 2 = 104
+        # ),
     ]
 )
 def test_lif_reader(
@@ -90,7 +91,6 @@ def test_lif_reader(
     with Profiler() as prof:
         assert img.dims == expected_dims
         assert img.metadata
-        shp = img.dask_data.shape
         assert img.dask_data.shape == expected_shape
         assert img.dask_data.chunksize == expected_chunksize
         assert img.dtype() == expected_dtype
@@ -125,9 +125,9 @@ def test_is_this_type(raw_bytes, expected):
 
 @pytest.mark.parametrize("filename, scene, expected", [
     ("s1_t1_c2_z1.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"]),
-    ("temp_example.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"])
-    # Our current get channel names doesn't take scene into account
-    # pytest.param("s_3_t_1_c_3_z_5.czi", 3, None, marks=pytest.mark.raises(exception=IndexError))
+    ("s1_t4_c2_z1.lif", 0, ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"]),
+    #  ("s14_t1_c2_z52_inconsistent.lif", 0, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"])
+    pytest.param("s1_t1_c2_z1.lif", 2, None, marks=pytest.mark.raises(exception=IndexError))
 ])
 def test_get_channel_names(resources_dir, filename, scene, expected):
     assert LifReader(resources_dir / filename).get_channel_names(scene) == expected
@@ -135,15 +135,16 @@ def test_get_channel_names(resources_dir, filename, scene, expected):
 
 @pytest.mark.parametrize("filename, scene, expected", [
     ("s1_t1_c2_z1.lif", 0, (0.325, 0.325, 1.0)),
-    ("temp_example.lif", 0, (0.1625, 0.1625, 1.000715))
+    ("s1_t4_c2_z1.lif", 0, (0.33915, 0.33915, 1.0)),
+    #  ("s14_t1_c2_z52_inconsistent.lif", 0, (0.1625, 0.1625, 1.000715))
 ])
 def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
-    assert pytest.approx(expected, 0.00001) == LifReader(resources_dir / filename).get_physical_pixel_size(scene)
+    assert LifReader(resources_dir / filename).get_physical_pixel_size(scene) == pytest.approx(expected, rel=0.001)
 
 
 @pytest.mark.parametrize("filename, s, t, c, z, y, x", [
-    ("s_1_t_1_c_1_z_1.czi", 1, 1, 1, 1, 325, 475),
-    ("s_3_t_1_c_3_z_5.czi", 3, 1, 3, 5, 325, 475)
+    ("s1_t1_c2_z1.lif", 1, 1, 2, 1, 2048, 2048),
+    ("s1_t4_c2_z1.lif", 1, 4, 2, 1, 614, 614)
 ])
 def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     # Get file
@@ -159,3 +160,31 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     assert img.size_z() == z
     assert img.size_y() == y
     assert img.size_x() == x
+
+
+# This test doesn't work currently => I'm trying to figure out why but no good guesses yet
+
+# @pytest.mark.parametrize("filename, scene, expected", [
+#     ("s1_t4_c2_z1.lif", 0, (25575, 25009, 25239, 25014, 25288, 25912, 25545, 25067, 25322, 25211, 25204)),
+#     #  ("s14_t1_c2_z52_inconsistent.lif", 0, (0.1625, 0.1625, 1.000715))
+# ])
+# def test_lif_image_data_one(resources_dir, filename, scene, expected):
+#     f = resources_dir / filename
+#
+#     img = LifReader(f)
+#     data_y = img.data[0, 0, 0, 0, 0:10, 0]
+#     data_x = img.data[0, 0, 0, 0, 0, 0:10]
+#     assert np.array_equal(data_y, expected)
+#     assert np.array_equal(data_x, expected)
+
+
+@pytest.mark.parametrize("filename, scene, expected", [
+    ("s1_t4_c2_z1.lif", 0, 51221),
+    #  ("s14_t1_c2_z52_inconsistent.lif", 0, (0.1625, 0.1625, 1.000715))
+])
+def test_lif_image_data_two(resources_dir, filename, scene, expected):
+    f = resources_dir / filename
+
+    img = LifReader(f)
+    assert img._chunk_offsets[0][0, 0, 0] == expected
+

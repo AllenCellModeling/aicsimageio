@@ -55,6 +55,68 @@ class LifReader(Reader):
     #
     ########################################################
 
+    @property
+    def dims(self) -> str:
+        """
+        The dimensions for a lif file.
+
+        Returns
+        -------
+        str
+            "STCZYX"
+        """
+        return Dimensions.DefaultOrder  # forcing 6 D
+
+    @staticmethod
+    def _compute_offsets(lif: LifFile) -> Tuple[List[np.ndarray], np.ndarray]:
+        """
+        Compute the offsets for each of the YX planes so that the LifFile object doesn't need
+        to be created for each YX image read.
+
+        Parameters
+        ----------
+        lif : LifFile
+            The LifFile object with an open file pointer to the file.
+
+        Returns
+        -------
+        List[numpy.ndarray]
+            The list of numpy arrays holds the offsets and it should be accessed as [S][T,C,Z].
+        numpy.ndarray
+            The second numpy array holds the image read length per Scene.
+
+        """
+        s_list = []
+        s_img_length_list = []
+        for img in lif.get_iter_image():
+            offsets = np.zeros(shape=(img.nt, img.channels, img.nz), dtype=np.uint64)
+            t_offset = img.channels * img.nz
+            z_offset = img.channels
+            seek_distance = img.channels * img.dims[2] * img.dims[3]
+            # self.offsets[1] is the length of the image
+            if img.offsets[1] == 0:
+                # In the case of a blank image, we can calculate the length from
+                # the metadata in the LIF. When this is read by the parser,
+                # it is set to zero initially.
+                image_len = seek_distance * img.dims[0] * img.dims[1]
+            else:
+                image_len = int(img.offsets[1] / seek_distance)
+
+            for t_index in range(img.nt):
+                t_requested = t_offset * t_index
+                for c_index in range(img.channels):
+                    c_requested = c_index
+                    for z_index in range(img.nz):
+                        z_requested = z_offset * z_index
+                        item_requested = t_requested + z_requested + c_requested
+                        # self.offsets[0] is the offset in the file
+                        offsets[t_index, c_index, z_index] = img.offsets[0] + image_len * item_requested
+
+            s_list.append(offsets)
+            s_img_length_list.append(image_len)
+
+        return s_list, np.asarray(s_img_length_list, dtype=np.uint64)
+
     def __init__(
         self,
         data: types.FileLike,
@@ -101,6 +163,196 @@ class LifReader(Reader):
             if header[6] == LifReader.LIF_MEMORY_BYTE:
                 return True
         return False
+
+    @staticmethod
+    def _dims_shape(lif: LifFile):
+        """
+        Get the dimensions for the opened file from the binary data (not the metadata)
+
+        Parameters
+        ----------
+        lif: LifFile
+
+        Returns
+        -------
+        list[dict]
+            A list of dictionaries containing Dimension / depth. If the shape is consistent across Scenes then
+            the list will have only one Dictionary. If the shape is inconsistent the the list will have a dictionary
+             for each Scene. A consistently shaped file with 3 scenes, 7 time-points
+            and 4 Z slices containing images of (h,w) = (325, 475) would return
+            [
+             {'S': (0, 3), 'T': (0,7), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)}
+            ].
+            The result for a similarly shaped file but with different number of time-points per scene would yield
+            [
+             {'S': (0, 1), 'T': (0,8), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)},
+             {'S': (1, 2), 'T': (0,6), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)},
+             {'S': (2, 3), 'T': (0,7), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)}
+            ]
+
+        """
+        shape_list = [{'T': (0, img.nt),
+                       'C': (0, img.channels),
+                       'Z': (0, img.nz),
+                       'Y': (0, img.dims[1]),
+                       'X': (0, img.dims[0])}
+                      for idx, img in enumerate(lif.get_iter_image())]
+        consistent = all(elem == shape_list[0] for elem in shape_list)
+        if consistent:
+            shape_list[0]['S'] = (0, len(shape_list))
+            shape_list = [shape_list[0]]
+        else:
+            for idx, lst in enumerate(shape_list):
+                lst['S'] = (idx, idx+1)
+        return shape_list
+
+    @staticmethod
+    def _read_dims_to_ranges(lif: LifFile, read_dims: Optional[Dict[str, int]] = None):
+        """
+        Convert the provided read_dims and file structure into ranges to iterate over
+
+        Parameters
+        ----------
+        lif: LifFile
+            The LifFile to get the ranges from
+        read_dims: Dict[str: int]
+            The list of locked dimensions
+
+        Returns
+        -------
+        Dict[Dimension: range]
+            These ranges can then be used to iterate through the specified YX images
+
+        """
+        if read_dims is None:
+            read_dims = {}
+
+        data_shape = LifReader._dims_shape(lif=lif)
+
+        if Dimensions.Scene in read_dims:
+            s_range = range(read_dims[Dimensions.Scene], read_dims[Dimensions.Scene] + 1)
+            s_dict = data_shape[s_range[0]]
+        else:
+            s_range = range(*data_shape[0][Dimensions.Scene])
+            s_dict = data_shape[0]
+
+        ans = {Dimensions.Scene: s_range}
+        for key in [Dimensions.Time, Dimensions.Channel, Dimensions.SpatialZ]:
+            if key in read_dims.keys():
+                ans[key] = range(read_dims[key], read_dims[key]+1)
+            else:
+                ans[key] = range(*s_dict[key])
+
+        return ans
+
+    @staticmethod
+    def get_pixel_type(meta: _Element, scene: int = 0) -> np.dtype:
+        """
+        This function parses the metadata to assign the appropriate numpy.dtype
+
+        Parameters
+        ----------
+        meta: lxml.etree.Element
+            The root Element of the metadata etree
+        scene: int
+            The index of the scene, scenes could have different storage data types.
+
+        Returns
+        -------
+        numpy.dtype
+            The appropriate data type to construct the matrix with.
+
+        """
+        ############################
+        #
+        #  This is super weird to me that resolution=12 and resolution=16 would have different
+        #  byte order meaning given 2 uint8s/chars => AB from the byte array one method combines them
+        #  with ( A << 8 | B ) and the other combines them with ( B << 8 | A ).
+        #  This could be wrong but I haven't found any documentation on the image byte order etc so it's
+        #  currently my best guess.
+        #
+        ############################
+        p_types = {8: np.uint8,
+                   12: np.dtype('>u2'),  # big endian uint16
+                   16: np.dtype('<u2'),  # little endian uint16
+                   32: np.dtype('<u4'),  # little endian uint32 ** untested
+                   64: np.dtype('<u8')   # little endian uint64 ** untested
+                   }
+        img_sets = meta.findall(".//Image")
+
+        img = img_sets[scene]
+        chs = img.findall(".//ChannelDescription")
+        resolution = set([ch.attrib['Resolution'] for ch in chs])
+        if len(resolution) != 1:
+            raise exceptions.InconsistentPixelType(f"Metadata contains two conflicting "
+                                                   f"Resolution attributes: {resolution}")
+
+        return p_types[int(resolution.pop())]
+
+    @staticmethod
+    def _get_item_as_bitmap(im_path: Path, offsets: List[type(np.ndarray)], read_length: np.ndarray,
+                            read_dims: Optional[Dict[str, int]] = None) -> Tuple[List[type(np.ndarray)],
+                                                                                 List[Tuple[str, int]]]:
+        """
+        Gets specified bitmap data from the lif file (private).
+
+        Parameters
+        ----------
+        im_path: Path
+            Path to the LIF file to read.
+        offsets: List[numpy.ndarray]
+            A List of numpy ndarrays offsets, see _compute_offsets for more details.
+        read_length: numpy.ndarray
+            A 1D numpy array of read lengths, the index is the scene index
+        read_dims: Optional[Dict[str, int]]
+            The dimensions to read from the file as a dictionary of string to integer.
+            Default: None (Read all data from the image)
+
+        Returns
+        -------
+        numpy.ndarray
+            a stack of images as a numpy.ndarray
+        List[Tuple[str, int]]
+            The shape of the data being returned
+        """
+        if read_dims is None:
+            read_dims = {}
+
+        lif = LifFile(im_path)
+
+        # data has already been checked for consistency. The dims are either consistent or S is specified
+        selected_ranges = LifReader._read_dims_to_ranges(lif, read_dims)
+        s_index = read_dims[Dimensions.Scene] if Dimensions.Scene in read_dims.keys() else 0
+        lif_img = lif.get_image(img_n=s_index)
+        x_size = lif_img.dims[0]
+        y_size = lif_img.dims[1]
+        lir = LifReader(im_path)
+        pixel_type = lir.get_pixel_type(lir.metadata, s_index)
+
+        ranged_dims = [(dim, len(selected_ranges[dim])) for dim in [Dimensions.Scene,
+                                                                    Dimensions.Time,
+                                                                    Dimensions.Channel,
+                                                                    Dimensions.SpatialZ]
+                       ]
+
+        img_stack = []
+        with open(str(im_path), "rb") as image:
+            for s_index in selected_ranges[Dimensions.Scene]:
+                for t_index in selected_ranges[Dimensions.Time]:
+                    for c_index in selected_ranges[Dimensions.Channel]:
+                        for z_index in selected_ranges[Dimensions.SpatialZ]:
+                            image.seek(offsets[s_index][t_index, c_index, z_index])
+                            byte_array = image.read(read_length[s_index])
+                            typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
+                            typed_array = typed_array.transpose()
+                            img_stack.append(typed_array)
+
+        shape = [len(selected_ranges[dim[0]]) for dim in ranged_dims]
+        shape.append(y_size)
+        shape.append(x_size)
+        ranged_dims.append((Dimensions.SpatialY, y_size))
+        ranged_dims.append((Dimensions.SpatialX, x_size))
+        return np.array(img_stack).reshape(*shape), ranged_dims  # in some subset of STCZYX order
 
     @staticmethod
     def _read_image(img: Path, offsets: List[np.ndarray],
@@ -187,48 +439,6 @@ class LifReader(Reader):
                                            read_dims=read_dims
                                            )
         return data
-
-    @staticmethod
-    def _dims_shape(lif: LifFile):
-        """
-        Get the dimensions for the opened file from the binary data (not the metadata)
-
-        Parameters
-        ----------
-        lif: LifFile
-
-        Returns
-        -------
-        list[dict]
-            A list of dictionaries containing Dimension / depth. If the shape is consistent across Scenes then
-            the list will have only one Dictionary. If the shape is inconsistent the the list will have a dictionary
-             for each Scene. A consistently shaped file with 3 scenes, 7 time-points
-            and 4 Z slices containing images of (h,w) = (325, 475) would return
-            [
-             {'S': (0, 3), 'T': (0,7), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)}
-            ].
-            The result for a similarly shaped file but with different number of time-points per scene would yield
-            [
-             {'S': (0, 1), 'T': (0,8), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)},
-             {'S': (1, 2), 'T': (0,6), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)},
-             {'S': (2, 3), 'T': (0,7), 'X': (0, 475), 'Y': (0, 325), 'Z': (0, 4)}
-            ]
-
-        """
-        shape_list = [{'T': (0, img.nt),
-                       'C': (0, img.channels),
-                       'Z': (0, img.nz),
-                       'Y': (0, img.dims[1]),
-                       'X': (0, img.dims[0])}
-                      for idx, img in enumerate(lif.get_iter_image())]
-        consistent = all(elem == shape_list[0] for elem in shape_list)
-        if consistent:
-            shape_list[0]['S'] = (0, len(shape_list))
-            shape_list = [shape_list[0]]
-        else:
-            for idx, lst in enumerate(shape_list):
-                lst['S'] = (idx, idx+1)
-        return shape_list
 
     @staticmethod
     def _daread(
@@ -420,18 +630,6 @@ class LifReader(Reader):
 
         return self._dask_data
 
-    @property
-    def dims(self) -> str:
-        """
-        The dimensions for a lif file.
-
-        Returns
-        -------
-        str
-            "STCZYX"
-        """
-        return Dimensions.DefaultOrder  # forcing 6 D
-
     def dtype(self) -> np.dtype:
         """
         The data type of the underlying numpy ndarray, ie uint8, uint16, uint32 etc.
@@ -483,49 +681,7 @@ class LifReader(Reader):
     def size_x(self) -> int:
         return self._size_of_dimension(Dimensions.SpatialX)
 
-    @staticmethod
-    def get_pixel_type(meta: _Element, scene: int = 0) -> np.dtype:
-        """
-        This function parses the metadata to assign the appropriate numpy.dtype
 
-        Parameters
-        ----------
-        meta: lxml.etree.Element
-            The root Element of the metadata etree
-        scene: int
-            The index of the scene, scenes could have different storage data types.
-
-        Returns
-        -------
-        numpy.dtype
-            The appropriate data type to construct the matrix with.
-
-        """
-        ############################
-        #
-        #  This is super weird to me that resolution=12 and resolution=16 would have different
-        #  byte order meaning given 2 uint8s/chars => AB from the byte array one method combines them
-        #  with ( A << 8 | B ) and the other combines them with ( B << 8 | A ).
-        #  This could be wrong but I haven't found any documentation on the image byte order etc so it's
-        #  currently my best guess.
-        #
-        ############################
-        p_types = {8: np.uint8,
-                   12: np.dtype('>u2'),  # big endian uint16
-                   16: np.dtype('<u2'),  # little endian uint16
-                   32: np.dtype('<u4'),  # little endian uint32 ** untested
-                   64: np.dtype('<u8')   # little endian uint64 ** untested
-                   }
-        img_sets = meta.findall(".//Image")
-
-        img = img_sets[scene]
-        chs = img.findall(".//ChannelDescription")
-        resolution = set([ch.attrib['Resolution'] for ch in chs])
-        if len(resolution) != 1:
-            raise exceptions.InconsistentPixelType(f"Metadata contains two conflicting "
-                                                   f"Resolution attributes: {resolution}")
-
-        return p_types[int(resolution.pop())]
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """
@@ -599,156 +755,5 @@ class LifReader(Reader):
 
     #  bitmap reader functions
 
-    @staticmethod
-    def _get_item_as_bitmap(im_path: Path, offsets: List[type(np.ndarray)], r_length: np.ndarray,
-                            read_dims: Optional[Dict[str, int]] = None) -> Tuple[List[type(np.ndarray)],
-                                                                                 List[Tuple[str, int]]]:
-        """
-        Gets specified bitmap data from the lif file (private).
 
-        Parameters
-        ----------
-        im_path: Path
-            Path to the LIF file to read.
-        offsets: List[numpy.ndarray]
-            A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        r_length: numpy.ndarray
-            A 1D numpy array of read lengths, the index is the scene index
-        read_dims: Optional[Dict[str, int]]
-            The dimensions to read from the file as a dictionary of string to integer.
-            Default: None (Read all data from the image)
 
-        Returns
-        -------
-        numpy.ndarray
-            a stack of images as a numpy.ndarray
-        List[Tuple[str, int]]
-            The shape of the data being returned
-        """
-        if read_dims is None:
-            read_dims = {}
-
-        lif = LifFile(im_path)
-
-        # data has already been checked for consistency. The dims are either consistent or S is specified
-        selected_ranges = LifReader.read_dims_to_ranges(lif, read_dims)
-        s_index = read_dims[Dimensions.Scene] if Dimensions.Scene in read_dims.keys() else 0
-        lif_img = lif.get_image(img_n=s_index)
-        x_size = lif_img.dims[0]
-        y_size = lif_img.dims[1]
-        lir = LifReader(im_path)
-        pixel_type = lir.get_pixel_type(lir.metadata, s_index)
-
-        ranged_dims = [(dim, len(selected_ranges[dim])) for dim in [Dimensions.Scene,
-                                                                    Dimensions.Time,
-                                                                    Dimensions.Channel,
-                                                                    Dimensions.SpatialZ]
-                       ]
-
-        img_stack = []
-        with open(str(im_path), "rb") as image:
-            for s_index in selected_ranges[Dimensions.Scene]:
-                for t_index in selected_ranges[Dimensions.Time]:
-                    for c_index in selected_ranges[Dimensions.Channel]:
-                        for z_index in selected_ranges[Dimensions.SpatialZ]:
-                            image.seek(offsets[s_index][t_index, c_index, z_index])
-                            byte_array = image.read(r_length[s_index])
-                            typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
-                            typed_array = typed_array.transpose()
-                            img_stack.append(typed_array)
-
-        shape = [len(selected_ranges[dim[0]]) for dim in ranged_dims]
-        shape.append(y_size)
-        shape.append(x_size)
-        ranged_dims.append((Dimensions.SpatialY, y_size))
-        ranged_dims.append((Dimensions.SpatialX, x_size))
-        return np.array(img_stack).reshape(*shape), ranged_dims  # in some subset of STCZYX order
-
-    @staticmethod
-    def read_dims_to_ranges(lif: LifFile, read_dims: Optional[Dict[str, int]] = None):
-        """
-        Convert the provided read_dims and file structure into ranges to iterate over
-
-        Parameters
-        ----------
-        lif: LifFile
-            The LifFile to get the ranges from
-        read_dims: Dict[str: int]
-            The list of locked dimensions
-
-        Returns
-        -------
-        Dict[Dimension: range]
-            These ranges can then be used to iterate through the specified YX images
-
-        """
-        if read_dims is None:
-            read_dims = {}
-
-        data_shape = LifReader._dims_shape(lif=lif)
-
-        if Dimensions.Scene in read_dims:
-            s_range = range(read_dims[Dimensions.Scene], read_dims[Dimensions.Scene] + 1)
-            s_dict = data_shape[s_range[0]]
-        else:
-            s_range = range(*data_shape[0][Dimensions.Scene])
-            s_dict = data_shape[0]
-
-        ans = {Dimensions.Scene: s_range}
-        for key in [Dimensions.Time, Dimensions.Channel, Dimensions.SpatialZ]:
-            if key in read_dims.keys():
-                ans[key] = range(read_dims[key], read_dims[key]+1)
-            else:
-                ans[key] = range(*s_dict[key])
-
-        return ans
-
-    @staticmethod
-    def _compute_offsets(lif: LifFile) -> Tuple[List[np.ndarray], np.ndarray]:
-        """
-        Compute the offsets for each of the YX planes so that the LifFile object doesn't need
-        to be created for each YX image read.
-
-        Parameters
-        ----------
-        lif : LifFile
-            The LifFile object with an open file pointer to the file.
-
-        Returns
-        -------
-        List[numpy.ndarray]
-            The list of numpy arrays holds the offsets and it should be accessed as [S][T,C,Z].
-        numpy.ndarray
-            The second numpy array holds the image read length per Scene.
-
-        """
-        s_list = []
-        s_img_length_list = []
-        for img in lif.get_iter_image():
-            offsets = np.zeros(shape=(img.nt, img.channels, img.nz), dtype=np.uint64)
-            t_offset = img.channels * img.nz
-            z_offset = img.channels
-            seek_distance = img.channels * img.dims[2] * img.dims[3]
-            # self.offsets[1] is the length of the image
-            if img.offsets[1] == 0:
-                # In the case of a blank image, we can calculate the length from
-                # the metadata in the LIF. When this is read by the parser,
-                # it is set to zero initially.
-                image_len = seek_distance * img.dims[0] * img.dims[1]
-            else:
-                image_len = int(img.offsets[1] / seek_distance)
-
-            for t_index in range(img.nt):
-                t_requested = t_offset * t_index
-                for c_index in range(img.channels):
-                    c_requested = c_index
-                    for z_index in range(img.nz):
-                        z_requested = z_offset * z_index
-                        item_requested = t_requested + z_requested + c_requested
-                        # self.offsets[0] is the offset in the file
-                        offsets[t_index, c_index, z_index] = img.offsets[0] + image_len * item_requested
-
-            s_list.append(offsets)
-            s_img_length_list.append(image_len)
-
-        return s_list, np.asarray(s_img_length_list, dtype=np.uint64)

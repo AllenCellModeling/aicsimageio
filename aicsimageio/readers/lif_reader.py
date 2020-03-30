@@ -291,7 +291,7 @@ class LifReader(Reader):
 
     @staticmethod
     def _get_item_as_bitmap(im_path: Path, offsets: List[type(np.ndarray)], read_length: np.ndarray,
-                            read_dims: Optional[Dict[str, int]] = None) -> Tuple[List[type(np.ndarray)],
+                            meta: _Element, read_dims: Optional[Dict[str, int]] = None) -> Tuple[List[type(np.ndarray)],
                                                                                  List[Tuple[str, int]]]:
         """
         Gets specified bitmap data from the lif file (private).
@@ -326,8 +326,7 @@ class LifReader(Reader):
         lif_img = lif.get_image(img_n=s_index)
         x_size = lif_img.dims[0]
         y_size = lif_img.dims[1]
-        lir = LifReader(im_path)
-        pixel_type = lir.get_pixel_type(lir.metadata, s_index)
+        pixel_type = LifReader.get_pixel_type(meta, s_index)
 
         ranged_dims = [(dim, len(selected_ranges[dim])) for dim in [Dimensions.Scene,
                                                                     Dimensions.Time,
@@ -357,6 +356,7 @@ class LifReader(Reader):
     @staticmethod
     def _read_image(img: Path, offsets: List[np.ndarray],
                     r_length: np.ndarray,
+                    meta: _Element,
                     read_dims: Optional[Dict[str, int]] = None
                     ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
@@ -387,7 +387,7 @@ class LifReader(Reader):
 
         # Read image
         log.debug(f"Reading dimensions: {read_dims}")
-        data, dims = LifReader._get_item_as_bitmap(img, offsets, r_length, read_dims)
+        data, dims = LifReader._get_item_as_bitmap(img, offsets, r_length, meta, read_dims)
 
         # Drop dims so that the data dims match the chunk_dims for dask
         ops = []
@@ -411,6 +411,7 @@ class LifReader(Reader):
     @staticmethod
     def _imread(img: Path, offsets: List[np.ndarray],
                 r_length: np.ndarray,
+                meta: _Element,
                 read_dims: Optional[Dict[str, str]] = None
                 ) -> np.ndarray:
         """
@@ -436,6 +437,7 @@ class LifReader(Reader):
         data, dims = LifReader._read_image(img=img,
                                            offsets=offsets,
                                            r_length=r_length,
+                                           meta=meta,
                                            read_dims=read_dims
                                            )
         return data
@@ -516,7 +518,7 @@ class LifReader(Reader):
                 first_chunk_read_dims[dim] = dim_begin_index
 
         # Read first chunk for information used by dask.array.from_delayed
-        sample, sample_dims = LifReader._get_item_as_bitmap(img, offsets, r_length, first_chunk_read_dims)
+        sample, sample_dims = LifReader._get_item_as_bitmap(img, offsets, r_length, lif.xml_root, first_chunk_read_dims)
         # lif.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array
@@ -579,7 +581,7 @@ class LifReader(Reader):
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[i] = da.from_delayed(
-                delayed(LifReader._imread)(img, offsets, r_length, this_chunk_read_dims),
+                delayed(LifReader._imread)(img, offsets, r_length, lif.xml_root, this_chunk_read_dims),
                 shape=sample_chunk_shape,
                 dtype=sample.dtype,
             )

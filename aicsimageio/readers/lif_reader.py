@@ -527,7 +527,11 @@ class LifReader(Reader):
                 first_chunk_read_dims[dim] = dim_begin_index
 
         # Read first chunk for information used by dask.array.from_delayed
-        sample, sample_dims = LifReader._get_item_as_bitmap(img, offsets, read_length, lif.xml_root, first_chunk_read_dims)
+        sample, sample_dims = LifReader._get_item_as_bitmap(im_path=img,
+                                                            offsets=offsets,
+                                                            read_length=read_length,
+                                                            meta=lif.xml_root,
+                                                            read_dims=first_chunk_read_dims)
         # lif.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array

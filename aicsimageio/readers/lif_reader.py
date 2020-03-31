@@ -33,7 +33,7 @@ class LifReader(Reader):
     Parameters
     ----------
     data: types.FileLike
-        A string or path to the CZI file to be read.
+        A string or path to the LIF file to be read.
     chunk_by_dims: List[str]
         The dimensions to use as the for mapping the chunks / blocks.
         Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
@@ -510,7 +510,7 @@ class LifReader(Reader):
         # Uppercase dimensions provided to chunk by dims
         chunk_by_dims = [d.upper() for d in chunk_by_dims]
 
-        # Always add Y and X dims to chunk by dims because that is how CZI files work
+        # Always add Y and X dims to chunk by dims because that is how LIF files work
         if Dimensions.SpatialY not in chunk_by_dims:
             log.info(f"Adding the Spatial Y dimension to chunk by dimensions as it was not found.")
             chunk_by_dims.append(Dimensions.SpatialY)
@@ -618,7 +618,7 @@ class LifReader(Reader):
 
         # Only run if the transpose is actually required
         # The default case is "Z", "Y", "X", which _usually_ doesn't need to be transposed because that is _usually_
-        # The normal dimension order of the CZI file anyway
+        # The normal dimension order of the LIF file anyway
         if transpose_required:
             merged = da.transpose(merged, tuple(transpose_indices))
 
@@ -631,7 +631,7 @@ class LifReader(Reader):
         """
         Returns
         -------
-        Constructed dask array where each chunk is a delayed read from the CZI file.
+        Constructed dask array where each chunk is a delayed read from the LIF file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
         if self._dask_data is None:

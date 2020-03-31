@@ -4,7 +4,6 @@
 from io import BytesIO
 
 import numpy as np
-from psutil import Process
 import pytest
 from dask.diagnostics import Profiler
 from psutil import Process

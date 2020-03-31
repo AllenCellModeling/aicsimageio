@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple
 import dask.array as da
 import numpy as np
 from dask import delayed
-from lxml.etree import _Element
+from lxml.etree import Element
 from readlif import utilities
 from readlif.reader import LifFile
 
@@ -246,7 +246,7 @@ class LifReader(Reader):
         return ans
 
     @staticmethod
-    def get_pixel_type(meta: _Element, scene: int = 0) -> np.dtype:
+    def get_pixel_type(meta: Element, scene: int = 0) -> np.dtype:
         """
         This function parses the metadata to assign the appropriate numpy.dtype
 
@@ -287,9 +287,12 @@ class LifReader(Reader):
         return p_types[int(resolution.pop())]
 
     @staticmethod
-    def _get_item_as_bitmap(im_path: Path, offsets: List[type(np.ndarray)], read_length: np.ndarray,
-                            meta: _Element, read_dims: Optional[Dict[str, int]] = None) -> Tuple[List[type(np.ndarray)],
-                                                                                 List[Tuple[str, int]]]:
+    def _get_item_as_bitmap(im_path: Path,
+                            offsets: List[type(np.ndarray)],
+                            read_length: np.ndarray,
+                            meta: Element,
+                            read_dims: Optional[Dict[str, int]] = None) \
+            -> Tuple[List[type(np.ndarray)], List[Tuple[str, int]]]:
         """
         Gets specified bitmap data from the lif file (private).
 
@@ -318,6 +321,7 @@ class LifReader(Reader):
         lif = LifFile(im_path)
 
         # data has already been checked for consistency. The dims are either consistent or S is specified
+        # selected_ranges get's the ranges for the Dimension for the range unless the dim is explicitly specified
         selected_ranges = LifReader._read_dims_to_ranges(lif, read_dims)
         s_index = read_dims[Dimensions.Scene] if Dimensions.Scene in read_dims.keys() else 0
         lif_img = lif.get_image(img_n=s_index)
@@ -325,6 +329,7 @@ class LifReader(Reader):
         y_size = lif_img.dims[1]
         pixel_type = LifReader.get_pixel_type(meta, s_index)
 
+        # the ranged dims
         ranged_dims = [(dim, len(selected_ranges[dim])) for dim in [Dimensions.Scene,
                                                                     Dimensions.Time,
                                                                     Dimensions.Channel,
@@ -332,15 +337,22 @@ class LifReader(Reader):
                        ]
 
         img_stack = []
+
+        # loop through the dim ranges to return the requested image stack
         with open(str(im_path), "rb") as image:
             for s_index in selected_ranges[Dimensions.Scene]:
                 for t_index in selected_ranges[Dimensions.Time]:
                     for c_index in selected_ranges[Dimensions.Channel]:
                         for z_index in selected_ranges[Dimensions.SpatialZ]:
+                            # use the precalculated offset to jump to the begining of the desired YX plane
                             image.seek(offsets[s_index][t_index, c_index, z_index])
+                            # read the image data as a bytearray
                             byte_array = image.read(read_length[s_index])
+                            # convert the bytearray to a the type pixel_type
                             typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
+                            # lif stores XY planes so transpose them to get YX
                             typed_array = typed_array.transpose()
+                            # append the YX plane to the image stack.
                             img_stack.append(typed_array)
 
         shape = [len(selected_ranges[dim[0]]) for dim in ranged_dims]
@@ -352,8 +364,8 @@ class LifReader(Reader):
 
     @staticmethod
     def _read_image(img: Path, offsets: List[np.ndarray],
-                    r_length: np.ndarray,
-                    meta: _Element,
+                    read_length: np.ndarray,
+                    meta: Element,
                     read_dims: Optional[Dict[str, int]] = None
                     ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
@@ -365,7 +377,7 @@ class LifReader(Reader):
             Path to the LIF file to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        r_length: numpy.ndarray
+        read_length: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -384,7 +396,7 @@ class LifReader(Reader):
 
         # Read image
         log.debug(f"Reading dimensions: {read_dims}")
-        data, dims = LifReader._get_item_as_bitmap(img, offsets, r_length, meta, read_dims)
+        data, dims = LifReader._get_item_as_bitmap(img, offsets, read_length, meta, read_dims)
 
         # Drop dims so that the data dims match the chunk_dims for dask
         ops = []
@@ -407,8 +419,8 @@ class LifReader(Reader):
 
     @staticmethod
     def _imread(img: Path, offsets: List[np.ndarray],
-                r_length: np.ndarray,
-                meta: _Element,
+                read_length: np.ndarray,
+                meta: Element,
                 read_dims: Optional[Dict[str, str]] = None
                 ) -> np.ndarray:
         """
@@ -420,7 +432,7 @@ class LifReader(Reader):
             Path to the LIF file to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        r_length: numpy.ndarray
+        read_length: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -433,7 +445,7 @@ class LifReader(Reader):
         """
         data, dims = LifReader._read_image(img=img,
                                            offsets=offsets,
-                                           r_length=r_length,
+                                           read_length=read_length,
                                            meta=meta,
                                            read_dims=read_dims
                                            )
@@ -443,7 +455,7 @@ class LifReader(Reader):
     def _daread(
         img: Path,
         offsets: List[type(np.ndarray)],
-        r_length: np.ndarray,
+        read_length: np.ndarray,
         chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
         S: int = 0
     ) -> Tuple[da.core.Array, str]:
@@ -456,7 +468,7 @@ class LifReader(Reader):
             The filepath to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        r_length: numpy.ndarray
+        read_length: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         chunk_by_dims: List[str]
             The dimensions to use as the for mapping the chunks / blocks.
@@ -515,7 +527,7 @@ class LifReader(Reader):
                 first_chunk_read_dims[dim] = dim_begin_index
 
         # Read first chunk for information used by dask.array.from_delayed
-        sample, sample_dims = LifReader._get_item_as_bitmap(img, offsets, r_length, lif.xml_root, first_chunk_read_dims)
+        sample, sample_dims = LifReader._get_item_as_bitmap(img, offsets, read_length, lif.xml_root, first_chunk_read_dims)
         # lif.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array
@@ -578,7 +590,7 @@ class LifReader(Reader):
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[i] = da.from_delayed(
-                delayed(LifReader._imread)(img, offsets, r_length, lif.xml_root, this_chunk_read_dims),
+                delayed(LifReader._imread)(img, offsets, read_length, lif.xml_root, this_chunk_read_dims),
                 shape=sample_chunk_shape,
                 dtype=sample.dtype,
             )
@@ -641,7 +653,7 @@ class LifReader(Reader):
         return self.dask_data.dtype
 
     @property
-    def metadata(self) -> _Element:
+    def metadata(self) -> Element:
         """
         Load and return the metadata from the LIF file
 
@@ -679,8 +691,6 @@ class LifReader(Reader):
 
     def size_x(self) -> int:
         return self._size_of_dimension(Dimensions.SpatialX)
-
-
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """
@@ -751,8 +761,3 @@ class LifReader(Reader):
                                         float(dim.attrib['NumberOfElements'])-1.0)
                                      )
         return tuple(scene_pixel_size)
-
-    #  bitmap reader functions
-
-
-

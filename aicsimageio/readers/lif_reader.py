@@ -110,7 +110,7 @@ class LifReader(Reader):
                         z_requested = z_offset * z_index
                         item_requested = t_requested + z_requested + c_requested
                         # self.offsets[0] is the offset in the file
-                        offsets[t_index, c_index, z_index] = img.offsets[0] + image_len * item_requested
+                        offsets[t_index, c_index, z_index] = np.uint64(img.offsets[0] + image_len * item_requested)
 
             s_list.append(offsets)
             s_img_length_list.append(image_len)
@@ -265,15 +265,12 @@ class LifReader(Reader):
         """
         ############################
         #
-        #  This is super weird to me that resolution=12 and resolution=16 would have different
-        #  byte order meaning given 2 uint8s/chars => AB from the byte array one method combines them
-        #  with ( A << 8 | B ) and the other combines them with ( B << 8 | A ).
-        #  This could be wrong but I haven't found any documentation on the image byte order etc so it's
-        #  currently my best guess.
+        #  Due to the 12 bit values being stored in a uint16 the raw data is a little fussy to get the
+        #  contrast correct.
         #
         ############################
         p_types = {8: np.uint8,
-                   12: np.dtype('>u2'),  # big endian uint16
+                   12: np.dtype('<u2'),  # little endian uint16
                    16: np.dtype('<u2'),  # little endian uint16
                    32: np.dtype('<u4'),  # little endian uint32 ** untested
                    64: np.dtype('<u8')   # little endian uint64 ** untested

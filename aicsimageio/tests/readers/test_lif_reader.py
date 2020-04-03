@@ -173,7 +173,6 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     proc = Process()
     assert str(f) not in [f.path for f in proc.open_files()]
 
-
     # Init reader
     img = LifReader(f)
 

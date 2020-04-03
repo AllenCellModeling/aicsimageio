@@ -232,8 +232,8 @@ def run_benchmarks(args: Args):
             worker_spec = cluster.worker_spec[0]["options"]
             distributed_cluster_config = {
                 "workers": len(cluster.workers),
-                "per_worker_thread_allocation": worker_spec["nthreads"],
-                "per_worker_memory_allocation_gb": worker_spec["memory_limit"] / 10e8,
+                "per_worker_core_allocation": worker_spec["cores"],
+                "per_worker_memory_allocation_gb": worker_spec["memory"],
             }
 
             distributed_cluster_results = _run_benchmark_suite(

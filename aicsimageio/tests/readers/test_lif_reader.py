@@ -42,7 +42,7 @@ from aicsimageio.readers.lif_reader import LifReader
             (1, 1, 1, 1, 614, 614),
             16  # 1 * 4 * 2 * 2 = 16
         ),
-        #  To be added back in when rebased off jackson's S3 pr
+        # To be added back in when rebased off jackson's S3 pr
         (
             "s_14_t_1_c_2_variable_dims.lif",
             (1, 1, 2, 38, 2048, 2048),
@@ -78,12 +78,14 @@ def test_lif_reader(
 ):
     # Get file
     f = resources_dir / filename
+    # Check that there are no open file pointers
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
 
     # Read file
     img = LifReader(f, chunk_by_dims=chunk_dims, S=select_scene)
 
     # Check that there are no open file pointers after init
-    proc = Process()
     assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
@@ -129,7 +131,16 @@ def test_is_this_type(raw_bytes, expected):
     pytest.param("s_1_t_1_c_2_z_1.lif", 2, None, marks=pytest.mark.raises(exception=IndexError))
 ])
 def test_get_channel_names(resources_dir, filename, scene, expected):
+    f = resources_dir / filename
+
+    # Check that there are no open file pointers
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
     assert LifReader(resources_dir / filename).get_channel_names(scene) == expected
+
+    # Check that there are no open file pointers
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, scene, expected", [
@@ -138,7 +149,16 @@ def test_get_channel_names(resources_dir, filename, scene, expected):
     ("s_14_t_1_c_2_variable_dims.lif", 0, (0.1625, 0.1625, 1.000715))
 ])
 def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
+    f = resources_dir / filename
+
+    # Check that there are no open file pointers
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
     assert LifReader(resources_dir / filename).get_physical_pixel_size(scene) == pytest.approx(expected, rel=0.001)
+
+    # Check that there are no open file pointers
+    assert str(f) not in [f.path for f in proc.open_files()]
 
 
 @pytest.mark.parametrize("filename, s, t, c, z, y, x", [
@@ -148,6 +168,11 @@ def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
 def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     # Get file
     f = resources_dir / filename
+
+    # Check that there are no open file pointers
+    proc = Process()
+    assert str(f) not in [f.path for f in proc.open_files()]
+
 
     # Init reader
     img = LifReader(f)
@@ -164,6 +189,9 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     assert img.size_y() == y
     assert img.size_x() == x
 
+    # Check that there are no open file pointers
+    assert str(f) not in [f.path for f in proc.open_files()]
+
 
 @pytest.mark.parametrize("filename, scene, expected", [
     ("s_1_t_4_c_2_z_1.lif", 0, 51221),
@@ -171,10 +199,12 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 def test_lif_image_data_two(resources_dir, filename, scene, expected):
     f = resources_dir / filename
 
-    img = LifReader(f)
-
-    # Check that there are no open file pointers after init
+    # Check that there are no open file pointers
     proc = Process()
     assert str(f) not in [f.path for f in proc.open_files()]
+    img = LifReader(f)
 
     assert img._chunk_offsets[0][0, 0, 0] == expected
+
+    # Check that there are no open file pointers
+    assert str(f) not in [f.path for f in proc.open_files()]

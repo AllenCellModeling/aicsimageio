@@ -229,6 +229,7 @@ class LifReader(Reader):
 
         data_shape = LifReader._dims_shape(lif=lif)
 
+        # if S is in read_dims then use the specified value and the specified dims for that scene
         if Dimensions.Scene in read_dims:
             s_range = range(read_dims[Dimensions.Scene], read_dims[Dimensions.Scene] + 1)
             s_dict = data_shape[s_range[0]]
@@ -236,14 +237,15 @@ class LifReader(Reader):
             s_range = range(*data_shape[0][Dimensions.Scene])
             s_dict = data_shape[0]
 
-        ans = {Dimensions.Scene: s_range}
-        for key in [Dimensions.Time, Dimensions.Channel, Dimensions.SpatialZ]:
-            if key in read_dims.keys():
-                ans[key] = range(read_dims[key], read_dims[key]+1)
+        # map the dims over to ranges and if the dim is in read_dims make the range over the single dim
+        integrated_dims = {Dimensions.Scene: s_range}
+        for dim in [Dimensions.Time, Dimensions.Channel, Dimensions.SpatialZ]:
+            if dim in read_dims:
+                integrated_dims[dim] = range(read_dims[dim], read_dims[dim]+1)
             else:
-                ans[key] = range(*s_dict[key])
+                integrated_dims[dim] = range(*s_dict[dim])
 
-        return ans
+        return integrated_dims
 
     @staticmethod
     def get_pixel_type(meta: Element, scene: int = 0) -> np.dtype:
@@ -288,11 +290,11 @@ class LifReader(Reader):
 
     @staticmethod
     def _get_item_as_bitmap(im_path: Path,
-                            offsets: List[type(np.ndarray)],
+                            offsets: List[np.ndarray],
                             read_length: np.ndarray,
                             meta: Element,
                             read_dims: Optional[Dict[str, int]] = None) \
-            -> Tuple[List[type(np.ndarray)], List[Tuple[str, int]]]:
+            -> Tuple[List[np.ndarray], List[Tuple[str, int]]]:
         """
         Gets specified bitmap data from the lif file (private).
 
@@ -323,7 +325,7 @@ class LifReader(Reader):
         # data has already been checked for consistency. The dims are either consistent or S is specified
         # selected_ranges get's the ranges for the Dimension for the range unless the dim is explicitly specified
         selected_ranges = LifReader._read_dims_to_ranges(lif, read_dims)
-        s_index = read_dims[Dimensions.Scene] if Dimensions.Scene in read_dims.keys() else 0
+        s_index = read_dims[Dimensions.Scene] if Dimensions.Scene in read_dims else 0
         lif_img = lif.get_image(img_n=s_index)
         x_size = lif_img.dims[0]
         y_size = lif_img.dims[1]
@@ -454,7 +456,7 @@ class LifReader(Reader):
     @staticmethod
     def _daread(
         img: Path,
-        offsets: List[type(np.ndarray)],
+        offsets: List[np.ndarray],
         read_length: np.ndarray,
         chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
         S: int = 0
@@ -666,11 +668,9 @@ class LifReader(Reader):
         The lxml Element Tree of the metadata
         """
         # We can't serialize lxml element trees so don't save the tree to the object state
-        if self._metadata:
-            return self._metadata
 
-        self._metadata, header = utilities.get_xml(self._file)
-        return self._metadata
+        meta_xml, header = utilities.get_xml(self._file)
+        return meta_xml
 
     def _size_of_dimension(self, dim: str) -> int:
         if dim in self.dims:

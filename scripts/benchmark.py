@@ -79,7 +79,7 @@ def _run_benchmark(
     resources_dir: Path,
     extensions: List[str],
     non_aicsimageio_reader: List[Callable],
-    iterations: int = 10,
+    iterations: int = 5,
 ):
     # Collect files matching the extensions provided
     files = []
@@ -94,7 +94,7 @@ def _run_benchmark(
         for reader in [aicsimageio.imread, non_aicsimageio_reader]:
             reader_path = f"{reader.__module__}.{reader.__name__}"
             read_durations = []
-            for i in tqdm(range(iterations), desc=f"{reader_path}: {file}"):
+            for i in tqdm(range(iterations), desc=f"{reader_path}: {file.name}"):
                 start = datetime.utcnow()
                 reader(str(file))
                 read_durations.append((datetime.utcnow() - start).total_seconds())

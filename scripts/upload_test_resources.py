@@ -51,7 +51,7 @@ class Args(argparse.Namespace):
         p.add_argument(
             "-y", "--yes",
             action="store_true",
-            dest="preappoved",
+            dest="preapproved",
             help="Auto-accept upload of files."
         )
         p.add_argument(

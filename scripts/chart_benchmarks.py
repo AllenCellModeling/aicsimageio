@@ -4,7 +4,6 @@
 import argparse
 import json
 import logging
-import sys
 from pathlib import Path
 
 import altair as alt
@@ -61,12 +60,11 @@ class Args(argparse.Namespace):
 
 
 def _generate_chart(results: pd.DataFrame):
-    return alt.Chart(results).mark_bar().encode(
-        x="reader:N",
-        y=alt.Y("mean(read_duration):Q"),
-        color="file_name:N",
-        row="config:N",
-        column="file_name:N",
+    return alt.Chart(results).mark_circle().encode(
+        x="yx_planes:Q",
+        y="read_duration:Q",
+        color="reader:N",
+        column="config:N",
     )
 
 

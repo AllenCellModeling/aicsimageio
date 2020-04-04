@@ -13,6 +13,7 @@ from typing import Callable, List
 
 import czifile
 import imageio
+import numpy as np
 import psutil
 import tifffile
 from dask_jobqueue import SLURMCluster
@@ -88,6 +89,8 @@ def _run_benchmark(
     # Run reads for each file and store details in results
     per_file_results = []
     for file in files:
+        info_read = aicsimageio.AICSImage(file)
+        yx_planes = np.prod(info_read.size("STCZ"))
         for reader in [aicsimageio.imread, non_aicsimageio_reader]:
             reader_path = f"{reader.__module__}.{reader.__name__}"
             read_durations = []
@@ -101,6 +104,7 @@ def _run_benchmark(
                 "file_name": file.name,
                 "file_size_gb": file.stat().st_size / 10e8,
                 "reader": "aicsimageio" if "aicsimageio" in reader_path else "other",
+                "yx_planes": int(yx_planes),
                 "read_duration": read_duration,
             } for read_duration in read_durations])
 

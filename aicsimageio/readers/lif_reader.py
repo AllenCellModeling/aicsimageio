@@ -267,12 +267,8 @@ class LifReader(Reader):
             The appropriate data type to construct the matrix with.
 
         """
-        ############################
-        #
         #  Due to the 12 bit values being stored in a uint16 the raw data is a little fussy to get the
         #  contrast correct.
-        #
-        ############################
         p_types = {8: np.uint8,
                    12: np.dtype('<u2'),  # little endian uint16
                    16: np.dtype('<u2'),  # little endian uint16

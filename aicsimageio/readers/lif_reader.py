@@ -49,9 +49,9 @@ class LifReader(Reader):
 
     ########################################################
     #
-    #  Note the lif treats scenes as separate images in the lif file.
-    #  Also once a Scene/Image is loaded the image data is retrieved
-    #  2D YX plane by 2D YX plane meaning that if you have a Z stack.
+    #  Note LifFile treats scenes as separate images in the lif file.
+    #  So once a Scene/Image is loaded the image data is retrieved
+    #  2D XY plane by 2D XY plane.
     #
     ########################################################
 
@@ -70,8 +70,8 @@ class LifReader(Reader):
     @staticmethod
     def _compute_offsets(lif: LifFile) -> Tuple[List[np.ndarray], np.ndarray]:
         """
-        Compute the offsets for each of the YX planes so that the LifFile object doesn't need
-        to be created for each YX image read.
+        Compute the offsets for each of the XY planes so that the LifFile object doesn't need
+        to be created for each XY image read.
 
         Parameters
         ----------
@@ -86,36 +86,38 @@ class LifReader(Reader):
             The second numpy array holds the image read length per Scene.
 
         """
-        s_list = []
-        s_img_length_list = []
+        scene_list = []
+        scene_img_length_list = []
         for img in lif.get_iter_image():
-            offsets = np.zeros(shape=(img.nt, img.channels, img.nz), dtype=np.uint64)
-            t_offset = img.channels * img.nz
-            z_offset = img.channels
-            seek_distance = img.channels * img.dims[2] * img.dims[3]
+            (x_size, y_size, z_size, t_size) = img.dims
+            c_size = img.channels
+            offsets = np.zeros(shape=(t_size, c_size, z_size), dtype=np.uint64)
+            t_offset = c_size * z_size
+            z_offset = c_size
+            seek_distance = c_size * z_size * t_size
             # self.offsets[1] is the length of the image
             if img.offsets[1] == 0:
                 # In the case of a blank image, we can calculate the length from
                 # the metadata in the LIF. When this is read by the parser,
                 # it is set to zero initially.
-                image_len = seek_distance * img.dims[0] * img.dims[1]
+                image_len = seek_distance * x_size * y_size
             else:
                 image_len = int(img.offsets[1] / seek_distance)
 
-            for t_index in range(img.nt):
+            for t_index in range(t_size):
                 t_requested = t_offset * t_index
-                for c_index in range(img.channels):
+                for c_index in range(c_size):
                     c_requested = c_index
-                    for z_index in range(img.nz):
+                    for z_index in range(z_size):
                         z_requested = z_offset * z_index
                         item_requested = t_requested + z_requested + c_requested
                         # self.offsets[0] is the offset in the file
                         offsets[t_index, c_index, z_index] = np.uint64(img.offsets[0] + image_len * item_requested)
 
-            s_list.append(offsets)
-            s_img_length_list.append(image_len)
+            scene_list.append(offsets)
+            scene_img_length_list.append(image_len)
 
-        return s_list, np.asarray(s_img_length_list, dtype=np.uint64)
+        return scene_list, np.asarray(scene_img_length_list, dtype=np.uint64)
 
     def __init__(
         self,
@@ -221,7 +223,7 @@ class LifReader(Reader):
         Returns
         -------
         Dict[Dimension: range]
-            These ranges can then be used to iterate through the specified YX images
+            These ranges can then be used to iterate through the specified XY images
 
         """
         if read_dims is None:
@@ -289,12 +291,12 @@ class LifReader(Reader):
         return p_types[int(resolution.pop())]
 
     @staticmethod
-    def _get_item_as_bitmap(im_path: Path,
-                            offsets: List[np.ndarray],
-                            read_length: np.ndarray,
-                            meta: Element,
-                            read_dims: Optional[Dict[str, int]] = None) \
-            -> Tuple[List[np.ndarray], List[Tuple[str, int]]]:
+    def _get_array_from_offset(im_path: Path,
+                               offsets: List[np.ndarray],
+                               read_length: np.ndarray,
+                               meta: Element,
+                               read_dims: Optional[Dict[str, int]] = None) \
+            -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
         Gets specified bitmap data from the lif file (private).
 
@@ -346,15 +348,15 @@ class LifReader(Reader):
                 for t_index in selected_ranges[Dimensions.Time]:
                     for c_index in selected_ranges[Dimensions.Channel]:
                         for z_index in selected_ranges[Dimensions.SpatialZ]:
-                            # use the precalculated offset to jump to the begining of the desired YX plane
+                            # use the precalculated offset to jump to the begining of the desired XY plane
                             image.seek(offsets[s_index][t_index, c_index, z_index])
                             # read the image data as a bytearray
                             byte_array = image.read(read_length[s_index])
                             # convert the bytearray to a the type pixel_type
                             typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
-                            # lif stores XY planes so transpose them to get YX
+                            # lif stores XY planes so transpose them to get XY
                             typed_array = typed_array.transpose()
-                            # append the YX plane to the image stack.
+                            # append the XY plane to the image stack.
                             img_stack.append(typed_array)
 
         shape = [len(selected_ranges[dim[0]]) for dim in ranged_dims]
@@ -398,7 +400,7 @@ class LifReader(Reader):
 
         # Read image
         log.debug(f"Reading dimensions: {read_dims}")
-        data, dims = LifReader._get_item_as_bitmap(img, offsets, read_length, meta, read_dims)
+        data, dims = LifReader._get_array_from_offset(img, offsets, read_length, meta, read_dims)
 
         # Drop dims so that the data dims match the chunk_dims for dask
         ops = []
@@ -529,11 +531,11 @@ class LifReader(Reader):
                 first_chunk_read_dims[dim] = dim_begin_index
 
         # Read first chunk for information used by dask.array.from_delayed
-        sample, sample_dims = LifReader._get_item_as_bitmap(im_path=img,
-                                                            offsets=offsets,
-                                                            read_length=read_length,
-                                                            meta=lif.xml_root,
-                                                            read_dims=first_chunk_read_dims)
+        sample, sample_dims = LifReader._get_array_from_offset(im_path=img,
+                                                               offsets=offsets,
+                                                               read_length=read_length,
+                                                               meta=lif.xml_root,
+                                                               read_dims=first_chunk_read_dims)
         # lif.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array
@@ -668,7 +670,6 @@ class LifReader(Reader):
         The lxml Element Tree of the metadata
         """
         # We can't serialize lxml element trees so don't save the tree to the object state
-
         meta_xml, header = utilities.get_xml(self._file)
         return meta_xml
 

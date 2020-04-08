@@ -88,30 +88,35 @@ class LifReader(Reader):
         """
         scene_list = []
         scene_img_length_list = []
-        for img in lif.get_iter_image():
-            (x_size, y_size, z_size, t_size) = img.dims
-            c_size = img.channels
+
+        for s_index, img in enumerate(lif.get_iter_image()):
+            pixel_type = LifReader.get_pixel_type(lif.xml_root, s_index)
+            x_size, y_size, z_size, t_size = img.dims  # in comments in this block these correspond to X, Y, Z, T
+            c_size = img.channels  # C
+            img_offset, img_block_length = img.offsets
             offsets = np.zeros(shape=(t_size, c_size, z_size), dtype=np.uint64)
             t_offset = c_size * z_size
             z_offset = c_size
             seek_distance = c_size * z_size * t_size
-            # self.offsets[1] is the length of the image
-            if img.offsets[1] == 0:
+            if img_block_length == 0:
                 # In the case of a blank image, we can calculate the length from
                 # the metadata in the LIF. When this is read by the parser,
                 # it is set to zero initially.
-                image_len = seek_distance * x_size * y_size
-            else:
-                image_len = int(img.offsets[1] / seek_distance)
+                log.debug(f"guessing image length: LifFile assumes 1byte per pixel,"
+                          " but I think this is wrong!")
+                image_len = seek_distance * x_size * y_size * pixel_type.itemsize
+            else:                                                  # B = bytes per pixel
+                image_len = int(img_block_length / seek_distance)  # B*X*Y*C*Z*T / C*Z*T = B*X*Y = size of an XY plane
 
             for t_index in range(t_size):
-                t_requested = t_offset * t_index
+                t_requested = t_offset * t_index  # C*Z*t_index
                 for c_index in range(c_size):
                     c_requested = c_index
                     for z_index in range(z_size):
-                        z_requested = z_offset * z_index
-                        item_requested = t_requested + z_requested + c_requested
-                        # self.offsets[0] is the offset in the file
+                        z_requested = z_offset * z_index  # z_index * C
+                        item_requested = t_requested + z_requested + c_requested  # the number of XY frames to jump
+                        # self.offsets[0] is the offset to the beginning of the image block
+                        # here we index into that block to get the offset for any XY frame in this image block
                         offsets[t_index, c_index, z_index] = np.uint64(img.offsets[0] + image_len * item_requested)
 
             scene_list.append(offsets)

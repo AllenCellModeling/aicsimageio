@@ -51,7 +51,7 @@ class LifReader(Reader):
     #
     #  Note LifFile treats scenes as separate images in the lif file.
     #  So once a Scene/Image is loaded the image data is retrieved
-    #  2D XY plane by 2D XY plane.
+    #  2D YX plane by 2D YX plane.
     #
     ########################################################
 
@@ -70,8 +70,8 @@ class LifReader(Reader):
     @staticmethod
     def _compute_offsets(lif: LifFile) -> Tuple[List[np.ndarray], np.ndarray]:
         """
-        Compute the offsets for each of the XY planes so that the LifFile object doesn't need
-        to be created for each XY image read.
+        Compute the offsets for each of the YX planes so that the LifFile object doesn't need
+        to be created for each YX plane read.
 
         Parameters
         ----------
@@ -83,7 +83,7 @@ class LifReader(Reader):
         List[numpy.ndarray]
             The list of numpy arrays holds the offsets and it should be accessed as [S][T,C,Z].
         numpy.ndarray
-            The second numpy array holds the image read length per Scene.
+            The second numpy array holds the plane read length per Scene.
 
         """
         scene_list = []
@@ -106,7 +106,7 @@ class LifReader(Reader):
                           " but I think this is wrong!")
                 image_len = seek_distance * x_size * y_size * pixel_type.itemsize
             else:                                                  # B = bytes per pixel
-                image_len = int(img_block_length / seek_distance)  # B*X*Y*C*Z*T / C*Z*T = B*X*Y = size of an XY plane
+                image_len = int(img_block_length / seek_distance)  # B*X*Y*C*Z*T / C*Z*T = B*X*Y = size of an YX plane
 
             for t_index in range(t_size):
                 t_requested = t_offset * t_index  # C*Z*t_index
@@ -114,9 +114,9 @@ class LifReader(Reader):
                     c_requested = c_index
                     for z_index in range(z_size):
                         z_requested = z_offset * z_index  # z_index * C
-                        item_requested = t_requested + z_requested + c_requested  # the number of XY frames to jump
+                        item_requested = t_requested + z_requested + c_requested  # the number of YX frames to jump
                         # self.offsets[0] is the offset to the beginning of the image block
-                        # here we index into that block to get the offset for any XY frame in this image block
+                        # here we index into that block to get the offset for any YX frame in this image block
                         offsets[t_index, c_index, z_index] = np.uint64(img.offsets[0] + image_len * item_requested)
 
             scene_list.append(offsets)
@@ -228,7 +228,7 @@ class LifReader(Reader):
         Returns
         -------
         Dict[Dimension: range]
-            These ranges can then be used to iterate through the specified XY images
+            These ranges can then be used to iterate through the specified YX images
 
         """
         if read_dims is None:
@@ -349,15 +349,15 @@ class LifReader(Reader):
                 for t_index in selected_ranges[Dimensions.Time]:
                     for c_index in selected_ranges[Dimensions.Channel]:
                         for z_index in selected_ranges[Dimensions.SpatialZ]:
-                            # use the precalculated offset to jump to the begining of the desired XY plane
+                            # use the precalculated offset to jump to the begining of the desired YX plane
                             image.seek(offsets[s_index][t_index, c_index, z_index])
                             # read the image data as a bytearray
                             byte_array = image.read(read_length[s_index])
                             # convert the bytearray to a the type pixel_type
                             typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
-                            # lif stores XY planes so transpose them to get XY
+                            # lif stores YX planes so transpose them to get YX
                             typed_array = typed_array.transpose()
-                            # append the XY plane to the image stack.
+                            # append the YX plane to the image stack.
                             img_stack.append(typed_array)
 
         shape = [len(selected_ranges[dim[0]]) for dim in ranged_dims]

@@ -49,9 +49,9 @@ class LifReader(Reader):
 
     ########################################################
     #
-    #  Note LifFile treats scenes as separate images in the lif file.
-    #  So once a Scene/Image is loaded the image data is retrieved
-    #  2D YX plane by 2D YX plane.
+    #  Note LifFile (the underlying library of this Reader) only allows for
+    #  reading a single YX plane at a time, unlike other underlying libraries
+    #  such as tiffffile or aicspylibczi that allow for reading n-dim chunk reading.
     #
     ########################################################
 

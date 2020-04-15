@@ -294,7 +294,7 @@ class LifReader(Reader):
     @staticmethod
     def _get_array_from_offset(im_path: Path,
                                offsets: List[np.ndarray],
-                               read_length: np.ndarray,
+                               read_lengths: np.ndarray,
                                meta: Element,
                                read_dims: Optional[Dict[str, int]] = None) \
             -> Tuple[np.ndarray, List[Tuple[str, int]]]:
@@ -307,7 +307,7 @@ class LifReader(Reader):
             Path to the LIF file to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        read_length: numpy.ndarray
+        read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -352,7 +352,7 @@ class LifReader(Reader):
                             # use the precalculated offset to jump to the begining of the desired YX plane
                             image.seek(offsets[s_index][t_index, c_index, z_index])
                             # read the image data as a bytearray
-                            byte_array = image.read(read_length[s_index])
+                            byte_array = image.read(read_lengths[s_index])
                             # convert the bytearray to a the type pixel_type
                             typed_array = np.frombuffer(byte_array, dtype=pixel_type).reshape(x_size, y_size)
                             # lif stores YX planes so transpose them to get YX
@@ -369,7 +369,7 @@ class LifReader(Reader):
 
     @staticmethod
     def _read_image(img: Path, offsets: List[np.ndarray],
-                    read_length: np.ndarray,
+                    read_lengths: np.ndarray,
                     meta: Element,
                     read_dims: Optional[Dict[str, int]] = None
                     ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
@@ -382,7 +382,7 @@ class LifReader(Reader):
             Path to the LIF file to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        read_length: numpy.ndarray
+        read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -401,7 +401,7 @@ class LifReader(Reader):
 
         # Read image
         log.debug(f"Reading dimensions: {read_dims}")
-        data, dims = LifReader._get_array_from_offset(img, offsets, read_length, meta, read_dims)
+        data, dims = LifReader._get_array_from_offset(img, offsets, read_lengths, meta, read_dims)
 
         # Drop dims so that the data dims match the chunk_dims for dask
         ops = []
@@ -424,7 +424,7 @@ class LifReader(Reader):
 
     @staticmethod
     def _imread(img: Path, offsets: List[np.ndarray],
-                read_length: np.ndarray,
+                read_lengths: np.ndarray,
                 meta: Element,
                 read_dims: Optional[Dict[str, str]] = None
                 ) -> np.ndarray:
@@ -437,7 +437,7 @@ class LifReader(Reader):
             Path to the LIF file to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        read_length: numpy.ndarray
+        read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -450,7 +450,7 @@ class LifReader(Reader):
         """
         data, dims = LifReader._read_image(img=img,
                                            offsets=offsets,
-                                           read_length=read_length,
+                                           read_lengths=read_lengths,
                                            meta=meta,
                                            read_dims=read_dims
                                            )
@@ -460,7 +460,7 @@ class LifReader(Reader):
     def _daread(
         img: Path,
         offsets: List[np.ndarray],
-        read_length: np.ndarray,
+        read_lengths: np.ndarray,
         chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
         S: int = 0
     ) -> Tuple[da.core.Array, str]:
@@ -473,7 +473,7 @@ class LifReader(Reader):
             The filepath to read.
         offsets: List[numpy.ndarray]
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
-        read_length: numpy.ndarray
+        read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
         chunk_by_dims: List[str]
             The dimensions to use as the for mapping the chunks / blocks.
@@ -534,7 +534,7 @@ class LifReader(Reader):
         # Read first chunk for information used by dask.array.from_delayed
         sample, sample_dims = LifReader._get_array_from_offset(im_path=img,
                                                                offsets=offsets,
-                                                               read_length=read_length,
+                                                               read_lengths=read_lengths,
                                                                meta=lif.xml_root,
                                                                read_dims=first_chunk_read_dims)
         # lif.read_image(**first_chunk_read_dims)
@@ -599,7 +599,7 @@ class LifReader(Reader):
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[i] = da.from_delayed(
-                delayed(LifReader._imread)(img, offsets, read_length, lif.xml_root, this_chunk_read_dims),
+                delayed(LifReader._imread)(img, offsets, read_lengths, lif.xml_root, this_chunk_read_dims),
                 shape=sample_chunk_shape,
                 dtype=sample.dtype,
             )

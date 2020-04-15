@@ -1,49 +1,51 @@
-from abc import ABC, abstractmethod
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-from .. import constants, types
+from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Union
+
+import dask.array as da
+import numpy as np
+
+from ..constants import Dimensions
+
+###############################################################################
 
 
 class Writer(ABC):
-    def __init__(self, file_path: types.PathLike):
+    """
+    A small class to build standardized image writer functions.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def save(
+        self,
+        data: Union[da.Array, np.ndarray],
+        filepath: Union[str, Path],
+        dim_order: str = Dimensions.DefaultOrder,
+        **kwargs
+    ):
         """
-        Write STCZYX data arrays to file, with accompanying metadata
-        Will overwrite existing files of same name.
+        Write a data array to a file.
 
         Parameters
         ----------
-        file_path: types.PathLike
-            Path to image output location
+        data: Union[da.Array, np.ndarray]
+            The array of data to store.
+        filepath: Union[str, Path]
+            The path to save the data at.
+        dim_order: str
+            The dimension order of the data.
 
         Examples
         --------
-        Construct and use as object
+        >>> image = numpy.ndarray([1, 1, 10, 3, 1024, 2048])
+        ... DerivedWriter.save(image, "file.ome.tif", "STCZYX")
 
-        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        ... writer = DerivedWriter("file.ome.tif")
-        ... writer.save(image)
-        ... writer.close()
-
-        Construct with a context manager
-
-        >>> image2 = numpy.ndarray([5, 486, 210])
-        ... with DerivedWriter("file2.ome.tif") as writer2:
-        ...     writer2.set_metadata(myMetaData)
-        ...     writer2.save(image2)
+        >>> image = dask.array.ones((4, 100, 100))
+        ... DerivedWriter.save(image, "file.png", "CYX")
         """
-        self.file_path = file_path
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.close()
-
-    @abstractmethod
-    def close(self) -> None:
-        """Close file objects"""
-        pass
-
-    @abstractmethod
-    def save(self, data, dims=constants.Dimensions.DefaultOrder, **kwargs) -> None:
-        """Write to open file"""
+        # There are no requirements for n-dimensions of data. The data provided can be 2D - ND.
         pass

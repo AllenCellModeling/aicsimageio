@@ -221,7 +221,6 @@ def test_metadata(resources_dir, filename, expected_metadata_type):
     # Check basics
     with Profiler() as prof:
         img = AICSImage(f)
-        print(type(img.metadata))
         assert isinstance(img.metadata, expected_metadata_type)
 
         # Check that basic details don't require task computation

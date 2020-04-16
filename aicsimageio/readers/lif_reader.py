@@ -384,6 +384,8 @@ class LifReader(Reader):
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
         read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
+        meta: lxml.etree.Element
+            The root element of the metadata etree from the file.
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
             Default: None (Read all data from the image)
@@ -439,6 +441,8 @@ class LifReader(Reader):
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
         read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
+        meta: lxml.etree.Element
+            The root element of the metadata etree from the file.
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
             Default: None (Read all data from the image)

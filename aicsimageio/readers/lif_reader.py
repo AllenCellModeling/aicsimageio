@@ -541,7 +541,6 @@ class LifReader(Reader):
                                                                read_lengths=read_lengths,
                                                                meta=lif.xml_root,
                                                                read_dims=first_chunk_read_dims)
-        # lif.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array
         # We also collect the chunk and non chunk dimension ordering so that we can swap the dimensions after we

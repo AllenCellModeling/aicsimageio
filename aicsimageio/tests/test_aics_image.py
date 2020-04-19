@@ -253,7 +253,7 @@ def test_imread(resources_dir, filename, expected_shape, expected_tasks):
         img = imread(f)
         assert img.shape == expected_shape
 
-        # Reshape and transpose are required so there should be two tasks in the graph
+        # Reshape and transpose are required so there should be (2 * chunks) tasks in the graph
         assert len(prof.results) == expected_tasks
 
     # Check that there are no open file pointers after basics

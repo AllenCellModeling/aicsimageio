@@ -731,7 +731,7 @@ class LifReader(Reader):
 
     def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
         """
-        Get the (X, Y, Z) pixel size. If the value is not set it returns the 1.0.
+        Get the (X, Y, Z) pixel size. If the value is not set it returns 1.0.
 
         Parameters
         ----------

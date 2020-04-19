@@ -353,8 +353,8 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
         (TIF_FILE, (1.0, 1.0, 1.0)),
         (CZI_FILE, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
         (OME_FILE, (1.0833333333333333, 1.0833333333333333, 1.0)),
-        (LIF_FILE, (0.325, 0.325, 1.0)),
-        (BIG_LIF_FILE, (0.33914910277324634, 0.33914910277324634, 1.0)),
+        (LIF_FILE, (3.25e-07, 3.25e-07, 1.0)),
+        (BIG_LIF_FILE, (3.3914910277324634e-07, 3.3914910277324634e-07, 1.0)),
     ],
 )
 def test_physical_pixel_size(resources_dir, filename, expected_sizes):

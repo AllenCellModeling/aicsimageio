@@ -144,9 +144,9 @@ def test_get_channel_names(resources_dir, filename, scene, expected):
 
 
 @pytest.mark.parametrize("filename, scene, expected", [
-    ("s_1_t_1_c_2_z_1.lif", 0, (0.325, 0.325, 1.0)),
-    ("s_1_t_4_c_2_z_1.lif", 0, (0.33914910277324634, 0.33914910277324634, 1.0)),
-    ("s_14_t_1_c_2_variable_dims.lif", 0, (0.1625, 0.1625, 1.000715)),
+    ("s_1_t_1_c_2_z_1.lif", 0, (3.25e-07, 3.25e-07, 1.0)),
+    ("s_1_t_4_c_2_z_1.lif", 0, (3.3914910277324634e-07, 3.3914910277324634e-07, 1.0)),
+    ("s_14_t_1_c_2_variable_dims.lif", 0, (1.625e-07, 1.625e-07, 1.000715e-06)),
 ])
 def test_get_physical_pixel_size(resources_dir, filename, scene, expected):
     f = resources_dir / filename

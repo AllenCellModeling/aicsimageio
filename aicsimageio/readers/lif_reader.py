@@ -9,7 +9,7 @@ from typing import Dict, List, Optional, Tuple
 import dask.array as da
 import numpy as np
 from dask import delayed
-from lxml.etree import Element
+from xml.etree.ElementTree import Element
 from readlif import utilities
 from readlif.reader import LifFile
 
@@ -261,7 +261,7 @@ class LifReader(Reader):
 
         Parameters
         ----------
-        meta: lxml.etree.Element
+        meta: xml.etree.ElementTree.Element
             The root Element of the metadata etree
         scene: int
             The index of the scene, scenes could have different storage data types.
@@ -384,7 +384,7 @@ class LifReader(Reader):
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
         read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
-        meta: lxml.etree.Element
+        meta: xml.etree.ElementTree.Element
             The root element of the metadata etree from the file.
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -441,7 +441,7 @@ class LifReader(Reader):
             A List of numpy ndarrays offsets, see _compute_offsets for more details.
         read_lengths: numpy.ndarray
             A 1D numpy array of read lengths, the index is the scene index
-        meta: lxml.etree.Element
+        meta: xml.etree.ElementTree.Element
             The root element of the metadata etree from the file.
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
@@ -672,9 +672,9 @@ class LifReader(Reader):
 
         Returns
         -------
-        The lxml Element Tree of the metadata
+        The xml Element Tree of the metadata
         """
-        # We can't serialize lxml element trees so don't save the tree to the object state
+        # We can't serialize xml element trees so don't save the tree to the object state
         meta_xml, header = utilities.get_xml(self._file)
         return meta_xml
 
@@ -729,16 +729,9 @@ class LifReader(Reader):
                                        f"--{ch_detail.attrib['FluoCubeName']}"))
         return scene_channel_list
 
-    # TODO refactor this utility function into a metadata wrapper class
-    def _getmetadataxmltext(self, findpath, default=None):
-        ref = self.metadata.find(findpath)
-        if ref is None:
-            return default
-        return ref.text
-
     def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
         """
-        Get the (X, Y, Z) pixel size. If the value isn't set it returns the 1.0.
+        Get the (X, Y, Z) pixel size. If the value is not set it returns the 1.0.
 
         Parameters
         ----------
@@ -747,7 +740,7 @@ class LifReader(Reader):
 
         Returns
         -------
-        (X, Y, Z) in µm.
+        (X, Y, Z) in m.
 
         """
         # find all the Image nodes in the xml tree. They correspond to the individual scenes
@@ -767,7 +760,7 @@ class LifReader(Reader):
         for idx, dim in enumerate(dim_list):
             # the formula for the pixel size is
             # pixel_size = Length/(NumberOfElements - 1) from Leica & ImageJ
-            scene_pixel_size[idx] = (abs(1000000.0*float(dim.attrib['Length']))/(
+            scene_pixel_size[idx] = (abs(float(dim.attrib['Length']))/(
                                         float(dim.attrib['NumberOfElements'])-1.0)
                                      )
         return tuple(scene_pixel_size)

@@ -19,22 +19,16 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
     "expected_chunksize, "
     "expected_task_count",
     [
-        # Expected task counts should be each non chunk dimension size multiplied againest each other * 2
-        (
-            "s_1_t_1_c_1_z_1.ome.tiff",
-            (325, 475),
-            "YX",
-            0,
-            (325, 475),
-            2  # 2 = 2
-        ),
+        # Expected task counts should be
+        # each non chunk dimension size multiplied againest each other * 2
+        ("s_1_t_1_c_1_z_1.ome.tiff", (325, 475), "YX", 0, (325, 475), 2),  # 2 = 2
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
             (10, 1736, 1776),
             "CYX",
             0,
             (1, 1736, 1776),
-            20  # 10 * 2 = 2
+            20,  # 10 * 2 = 2
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -42,7 +36,7 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
             "SZCYX",
             0,
             (1, 1, 1, 325, 475),
-            90  # 3 * 5 * 3 * 2 = 90
+            90,  # 3 * 5 * 3 * 2 = 90
         ),
         pytest.param(
             "example.txt",
@@ -51,7 +45,7 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError)
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.tiff",
@@ -60,9 +54,9 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError)
-        )
-    ]
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
+    ],
 )
 def test_ome_tiff_reader(
     resources_dir,
@@ -71,7 +65,7 @@ def test_ome_tiff_reader(
     expected_dims,
     select_scene,
     expected_chunksize,
-    expected_task_count
+    expected_task_count,
 ):
     # Get file
     f = resources_dir / filename
@@ -92,7 +86,7 @@ def test_ome_tiff_reader(
             Dimensions.Channel: img.size_c,
             Dimensions.SpatialZ: img.size_z,
             Dimensions.SpatialY: img.size_y,
-            Dimensions.SpatialX: img.size_x
+            Dimensions.SpatialX: img.size_x,
         }
         for d, getter in dim_size_getters.items():
             if d in expected_dims:
@@ -109,7 +103,8 @@ def test_ome_tiff_reader(
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 
-    # Check computed type is numpy array, computed shape is expected shape, and task count is expected
+    # Check computed type is numpy array,
+    # computed shape is expected shape, and task count is expected
     with Profiler() as prof:
         assert isinstance(img.data, np.ndarray)
         assert img.data.shape == expected_shape
@@ -119,14 +114,22 @@ def test_ome_tiff_reader(
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("filename, scene, expected_channel_names", [
-    ("s_1_t_1_c_1_z_1.ome.tiff", 0, ["Bright"]),
-    ("s_1_t_1_c_10_z_1.ome.tiff", 0, [f"C:{i}" for i in range(10)]),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 0, ["EGFP", "TaRFP", "Bright"]),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 1, ["EGFP", "TaRFP", "Bright"]),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 2, ["EGFP", "TaRFP", "Bright"]),
-    pytest.param("s_1_t_1_c_1_z_1.ome.tiff", 1, None, marks=pytest.mark.raises(exception=IndexError))
-])
+@pytest.mark.parametrize(
+    "filename, scene, expected_channel_names",
+    [
+        ("s_1_t_1_c_1_z_1.ome.tiff", 0, ["Bright"]),
+        ("s_1_t_1_c_10_z_1.ome.tiff", 0, [f"C:{i}" for i in range(10)]),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 0, ["EGFP", "TaRFP", "Bright"]),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 1, ["EGFP", "TaRFP", "Bright"]),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 2, ["EGFP", "TaRFP", "Bright"]),
+        pytest.param(
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            1,
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+    ],
+)
 def test_get_channel_names(resources_dir, filename, scene, expected_channel_names):
     # Get file
     f = resources_dir / filename
@@ -145,14 +148,22 @@ def test_get_channel_names(resources_dir, filename, scene, expected_channel_name
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("filename, scene, expected_pixel_sizes", [
-    ("s_1_t_1_c_1_z_1.ome.tiff", 0, (1.0833333333333333, 1.0833333333333333, 1.0)),
-    ("s_1_t_1_c_10_z_1.ome.tiff", 0, (1.0, 1.0, 1.0)),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 0, (1.0833333333333333, 1.0833333333333333, 1.0)),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 1, (1.0833333333333333, 1.0833333333333333, 1.0)),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 2, (1.0833333333333333, 1.0833333333333333, 1.0)),
-    pytest.param("s_1_t_1_c_1_z_1.ome.tiff", 1, None, marks=pytest.mark.raises(exception=IndexError))
-])
+@pytest.mark.parametrize(
+    "filename, scene, expected_pixel_sizes",
+    [
+        ("s_1_t_1_c_1_z_1.ome.tiff", 0, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        ("s_1_t_1_c_10_z_1.ome.tiff", 0, (1.0, 1.0, 1.0)),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 0, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 1, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 2, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        pytest.param(
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            1,
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+    ],
+)
 def test_get_physical_pixel_size(resources_dir, filename, scene, expected_pixel_sizes):
     # Get file
     f = resources_dir / filename
@@ -171,11 +182,14 @@ def test_get_physical_pixel_size(resources_dir, filename, scene, expected_pixel_
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("filename, s, t, c, z, y, x", [
-    ("s_1_t_1_c_1_z_1.ome.tiff", 1, 1, 1, 1, 325, 475),
-    ("s_1_t_1_c_10_z_1.ome.tiff", 1, 1, 10, 1, 1736, 1776),
-    ("s_3_t_1_c_3_z_5.ome.tiff", 3, 1, 3, 5, 325, 475)
-])
+@pytest.mark.parametrize(
+    "filename, s, t, c, z, y, x",
+    [
+        ("s_1_t_1_c_1_z_1.ome.tiff", 1, 1, 1, 1, 325, 475),
+        ("s_1_t_1_c_10_z_1.ome.tiff", 1, 1, 10, 1, 1736, 1776),
+        ("s_3_t_1_c_3_z_5.ome.tiff", 3, 1, 3, 5, 325, 475),
+    ],
+)
 def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     # Get file
     f = resources_dir / filename

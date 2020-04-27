@@ -47,7 +47,8 @@ def test_overwriteFile(resources_dir):
 
 def test_dontOverwriteFile(resources_dir):
     """
-    Test to check if save() will raise error when user does not want to overwrite a file that exists
+    Test to check if save() will raise error when user does not want to overwrite a
+    file that exists
     """
     with pytest.raises(Exception):
         with OmeTiffWriter(resources_dir / filename) as writer:
@@ -56,7 +57,8 @@ def test_dontOverwriteFile(resources_dir):
 
 def test_noopOverwriteFile(resources_dir):
     """
-    Test to check if save() silently no-ops when user does not want to overwrite exiting file
+    Test to check if save() silently no-ops when user does not want to overwrite
+    exiting file
     """
     with open(resources_dir / filename, "w") as f:
         f.write("test")

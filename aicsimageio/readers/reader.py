@@ -30,7 +30,8 @@ class Reader(ABC):
     def _resolve_image_path(img: Union[str, Path]) -> Path:
         # Convert pathlike to Path
         if isinstance(img, (str, Path)):
-            # Strictly do not fully resolve the path because Mac is bad with mounted drives
+            # Strictly do not fully resolve the path because Mac is bad with mounted
+            # drives
             img = Path(img).expanduser()
 
             # Check the file exists
@@ -47,14 +48,16 @@ class Reader(ABC):
         # Check that no other type was provided
         if not isinstance(img, Path):
             raise TypeError(
-                f"Please provide a path to a file as a string, or an pathlib.Path, to the "
-                f"`img` parameter. "
+                f"Please provide a path to a file as a string, or an pathlib.Path, to "
+                f"the `img` parameter. "
                 f"Received type: {type(img)}"
             )
 
         return img
 
-    def __init__(self, file: types.ImageLike, dask_kwargs: Dict[str, Any] = {}, **kwargs):
+    def __init__(
+        self, file: types.ImageLike, dask_kwargs: Dict[str, Any] = {}, **kwargs
+    ):
         # This will both fully expand and enforce that the filepath exists
         file = self._resolve_image_path(file)
 
@@ -74,7 +77,7 @@ class Reader(ABC):
 
     @staticmethod
     def guess_dim_order(shape: Tuple[int]) -> str:
-        return Dimensions.DefaultOrder[len(Dimensions.DefaultOrder) - len(shape):]
+        return Dimensions.DefaultOrder[len(Dimensions.DefaultOrder) - len(shape) :]
 
     @classmethod
     def is_this_type(cls, data: types.ImageLike) -> bool:
@@ -101,9 +104,10 @@ class Reader(ABC):
 
         # Raise because none of the above returned
         raise TypeError(
-                f"Reader only accepts types: [str, pathlib.Path, bytes, io.BytesIO, numpy or dask array]. "
-                f"Received: {type(data)}"
-            )
+            f"Reader only accepts types: "
+            f"[str, pathlib.Path, bytes, io.BytesIO, numpy or dask array]. "
+            f"Received: {type(data)}"
+        )
 
     @staticmethod
     @abstractmethod
@@ -186,16 +190,23 @@ class Reader(ABC):
         If connected to *strictly* a LocalCluster, close it down as well.
         """
         from .. import dask_utils
-        self._cluster, self._client = dask_utils.shutdown_cluster_and_client(self.cluster, self.client)
+
+        self._cluster, self._client = dask_utils.shutdown_cluster_and_client(
+            self.cluster, self.client
+        )
 
     def __enter__(self):
         """
         If provided an address, create a Dask Client connection.
         If not provided an address, create a LocalCluster and Client connection.
-        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.
+        If not provided an address, other Dask kwargs are accepted and passed down to
+        the LocalCluster object.
         """
         from .. import dask_utils
-        self._cluster, self._client = dask_utils.spawn_cluster_and_client(**self._dask_kwargs)
+
+        self._cluster, self._client = dask_utils.spawn_cluster_and_client(
+            **self._dask_kwargs
+        )
 
         return self
 

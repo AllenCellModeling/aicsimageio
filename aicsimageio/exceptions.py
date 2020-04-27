@@ -42,3 +42,10 @@ class InconsistentShapeError(Exception):
     A general function to use when the shape returned or requested from an array operation is invalid.
     """
     pass
+
+
+class InconsistentPixelType(Exception):
+    """
+    This exception is returned when the metadata has conflicting pixel types.
+    """
+    pass

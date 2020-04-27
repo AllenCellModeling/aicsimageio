@@ -13,6 +13,7 @@ A Python library for reading and writing image data with specific support for ha
     * `CZI`
     * `OME-TIFF`
     * `TIFF`
+    * `LIF`
     * Any additional format supported by [`imageio`](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`

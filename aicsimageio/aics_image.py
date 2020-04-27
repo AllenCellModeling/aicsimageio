@@ -12,8 +12,8 @@ from . import transforms, types
 from .constants import Dimensions
 from .exceptions import (InvalidDimensionOrderingError,
                          UnsupportedFileFormatError)
-from .readers import (ArrayLikeReader, CziReader, DefaultReader, OmeTiffReader,
-                      TiffReader)
+from .readers import (ArrayLikeReader, CziReader, LifReader, DefaultReader,
+                      OmeTiffReader, TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 # The order of the readers in this list is important.
 # Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.
-SUPPORTED_READERS = [ArrayLikeReader, CziReader, OmeTiffReader, TiffReader, DefaultReader]
+SUPPORTED_READERS = [ArrayLikeReader, CziReader, LifReader, OmeTiffReader, TiffReader, DefaultReader]
 
 ###############################################################################
 

@@ -9,6 +9,7 @@ import numpy as np
 import pytest
 from dask.diagnostics import Profiler
 from lxml.etree import _Element
+from xml.etree.ElementTree import Element
 from psutil import Process
 
 from aicsimageio import AICSImage, exceptions, imread, imread_dask, readers
@@ -21,10 +22,12 @@ PNG_FILE = "example.png"
 GIF_FILE = "example.gif"
 TIF_FILE = "s_1_t_1_c_1_z_1.tiff"
 CZI_FILE = "s_1_t_1_c_1_z_1.czi"
+LIF_FILE = "s_1_t_1_c_2_z_1.lif"
 OME_FILE = "s_1_t_1_c_1_z_1.ome.tiff"
 MED_TIF_FILE = "s_1_t_10_c_3_z_1.tiff"
 BIG_OME_FILE = "s_3_t_1_c_3_z_5.ome.tiff"
 BIG_CZI_FILE = "s_3_t_1_c_3_z_5.czi"
+BIG_LIF_FILE = "s_1_t_4_c_2_z_1.lif"
 TXT_FILE = "example.txt"
 
 
@@ -38,6 +41,7 @@ TXT_FILE = "example.txt"
         (TIF_FILE, readers.TiffReader),
         (OME_FILE, readers.OmeTiffReader),
         (CZI_FILE, readers.CziReader),
+        (LIF_FILE, readers.LifReader),
         pytest.param(
             TXT_FILE,
             None,
@@ -203,6 +207,7 @@ def test_force_dims(data_shape, dims, expected):
         (TIF_FILE, str),
         (OME_FILE, omexml.OMEXML),
         (CZI_FILE, _Element),
+        (LIF_FILE, Element),
     ],
 )
 def test_metadata(resources_dir, filename, expected_metadata_type):
@@ -226,15 +231,16 @@ def test_metadata(resources_dir, filename, expected_metadata_type):
 
 
 @pytest.mark.parametrize(
-    "filename, expected_shape",
+    "filename, expected_shape, expected_tasks",
     [
-        (PNG_FILE, (1, 1, 4, 1, 800, 537)),
-        (TIF_FILE, (1, 1, 1, 1, 325, 475)),
-        (OME_FILE, (1, 1, 1, 1, 325, 475)),
-        (CZI_FILE, (1, 1, 1, 1, 325, 475)),
+        (PNG_FILE, (1, 1, 4, 1, 800, 537), 2),
+        (TIF_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (OME_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (CZI_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (LIF_FILE, (1, 1, 2, 1, 2048, 2048), 4),
     ],
 )
-def test_imread(resources_dir, filename, expected_shape):
+def test_imread(resources_dir, filename, expected_shape, expected_tasks):
     # Get filepath
     f = resources_dir / filename
 
@@ -247,8 +253,8 @@ def test_imread(resources_dir, filename, expected_shape):
         img = imread(f)
         assert img.shape == expected_shape
 
-        # Reshape and transpose are required so there should be two tasks in the graph
-        assert len(prof.results) == 2
+        # Reshape and transpose are required so there should be (2 * chunks) tasks in the graph
+        assert len(prof.results) == expected_tasks
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
@@ -258,7 +264,8 @@ def test_imread(resources_dir, filename, expected_shape):
     # Because we are directly requesting the data, the transpose and reshape calls get reduced
     (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 60),
     (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 90),
-    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 18)
+    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 18),
+    (BIG_LIF_FILE, (1, 4, 2, 1, 614, 614), 16),
 ])
 def test_large_imread(resources_dir, filename, expected_shape, expected_task_count):
     # Get filepath
@@ -282,7 +289,8 @@ def test_large_imread(resources_dir, filename, expected_shape, expected_task_cou
     # Because we are directly returning the dask array nothing has been computed
     (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 0),
     (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 0),
-    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 0)
+    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 0),
+    (BIG_LIF_FILE, (1, 4, 2, 1, 614, 614), 0),
 ])
 def test_large_imread_dask(resources_dir, filename, expected_shape, expected_task_count):
     # Get filepath
@@ -311,8 +319,10 @@ def test_large_imread_dask(resources_dir, filename, expected_shape, expected_tas
         (TIF_FILE, ["0"]),
         (MED_TIF_FILE, ["0", "1", "2"]),
         (CZI_FILE, ["Bright"]),
+        (LIF_FILE, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"]),
         (OME_FILE, ["Bright"]),
-        (BIG_CZI_FILE, ["EGFP", "TaRFP", "Bright"])
+        (BIG_CZI_FILE, ["EGFP", "TaRFP", "Bright"]),
+        (BIG_LIF_FILE, ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"]),
     ],
 )
 def test_channel_names(resources_dir, filename, expected_channel_names):
@@ -343,6 +353,8 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
         (TIF_FILE, (1.0, 1.0, 1.0)),
         (CZI_FILE, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
         (OME_FILE, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        (LIF_FILE, (3.25e-07, 3.25e-07, 1.0)),
+        (BIG_LIF_FILE, (3.3914910277324634e-07, 3.3914910277324634e-07, 1.0)),
     ],
 )
 def test_physical_pixel_size(resources_dir, filename, expected_sizes):
@@ -484,6 +496,7 @@ def test_view_napari(data, rgb, expected_data, expected_visible, expected_ndim, 
     (TIF_FILE, (1, 1, 1, 1, 325, 475), str, 2),
     (OME_FILE, (1, 1, 1, 1, 325, 475), omexml.OMEXML, 2),
     (CZI_FILE, (1, 1, 1, 1, 325, 475), _Element, 2),
+    (LIF_FILE, (1, 1, 2, 1, 2048, 2048), Element, 4),  # not entirely sure why this is 4 not 2
     (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), str, 60),
     (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), omexml.OMEXML, 90),
     (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), _Element, 18),

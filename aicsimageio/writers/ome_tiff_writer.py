@@ -291,7 +291,8 @@ class OmeTiffWriter:
         pixels.set_SizeY(dim_or_1("Y"))
         pixels.set_SizeX(dim_or_1("X"))
 
-        # this must be set to the *reverse* of what dimensionality the ome tif file is saved as
+        # this must be set to the *reverse* of what dimensionality
+        # the ome tif file is saved as
         pixels.set_DimensionOrder(dimension_order[::-1])
 
         # convert our numpy dtype to a ome compatible pixeltype

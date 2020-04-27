@@ -222,7 +222,7 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 
 
 @pytest.mark.parametrize(
-    "filename, scene, expected", [("s_1_t_4_c_2_z_1.lif", 0, 51221),]
+    "filename, scene, expected", [("s_1_t_4_c_2_z_1.lif", 0, 51221)]
 )
 def test_lif_image_data_two(resources_dir, filename, scene, expected):
     f = resources_dir / filename

@@ -40,7 +40,7 @@ class OmeTiffReader(TiffReader):
             if buf[0:5] != b"<?xml":
                 return False
             match = re.search(
-                b'<(\\w*)(:?)OME [^>]*xmlns\\2\\1="http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/',
+                b'<(\\w*)(:?)OME [^>]*xmlns\\2\\1="http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/',  # noqa: E501
                 buf,
             )
             if match is None:

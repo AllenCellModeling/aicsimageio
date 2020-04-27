@@ -4,6 +4,12 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- feature/read-leica-lif-files  (`#99
+  <https://github.com/AllenCellModeling/aicsimageio/pull/99>`_) [Jamie
+  Sherman]
+
 Fix
 ~~~
 - bugfix/set-sphinx-dep-upper-bound  (`#95

@@ -41,7 +41,7 @@ class OmeTiffReader(TiffReader):
                 return False
             match = re.search(
                 b'<(\\w*)(:?)OME [^>]*xmlns\\2\\1="http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/',
-                buf
+                buf,
             )
             if match is None:
                 return False
@@ -52,8 +52,14 @@ class OmeTiffReader(TiffReader):
         with TiffFile(self._file) as tiff:
             if self._metadata is None and tiff.is_ome:
                 description = tiff.pages[0].description.strip()
-                if not (description.startswith("<?xml version=") and description.endswith("</OME>")):
-                    raise ValueError(f"Description does not conform to OME specification: {description[:100]}")
+                if not (
+                    description.startswith("<?xml version=")
+                    and description.endswith("</OME>")
+                ):
+                    raise ValueError(
+                        f"Description does not conform to OME specification: "
+                        f"{description[:100]}"
+                    )
                 self._metadata = omexml.OMEXML(description)
         return self._metadata
 

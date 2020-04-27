@@ -50,16 +50,18 @@ class DefaultReader(Reader):
                         # Get a sample image
                         sample = self._get_data(self._file, 0)
 
-                        # Create operating shape for the final dask array by prepending image length to a tuple of
-                        # ones that is the same length as the sample shape
-                        operating_shape = (image_length, ) + ((1, ) * len(sample.shape))
-                        # Create numpy array of empty arrays for delayed get data functions
+                        # Create operating shape for the final dask array by prepending
+                        # image length to a tuple of ones that is the same length as
+                        # the sample shape
+                        operating_shape = (image_length,) + ((1,) * len(sample.shape))
+                        # Create numpy array of empty arrays for delayed get data
+                        # functions
                         lazy_arrays = np.ndarray(operating_shape, dtype=object)
                         for indicies, _ in np.ndenumerate(lazy_arrays):
                             lazy_arrays[indicies] = da.from_delayed(
                                 delayed(self._get_data)(self._file, indicies[0]),
                                 shape=sample.shape,
-                                dtype=sample.dtype
+                                dtype=sample.dtype,
                             )
 
                         # Block them into a single dask array
@@ -98,7 +100,8 @@ class DefaultReader(Reader):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+                f"for image with {len(self.data.shape)} dimensions "
+                f"[shape: {self.data.shape}]."
             )
 
         # Set the dims

@@ -126,41 +126,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -286,19 +286,23 @@
 <dt id="aicsimageio.aics_image.AICSImage">
 <em class="property">class </em><code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">AICSImage</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray, dask.array.core.Array], known_dims: Optional[str] = None, dask_kwargs: Dict[str, Any] = {}, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>AICSImage takes microscopy image data types (files) of varying dimensions (“ZYX”, “TCZYX”, “CYX”) and
-puts them into a consistent 6D “STCZYX” ordered dask array. The data, metadata are lazy loaded and can be
-accessed as needed. Note the dims are assumed to match “STCZYX” from right to left meaning if 4 dimensional
-data is provided then the dimensions are assigned to be “CZYX”, 2 dimensional would be “YX”. This guessed
-assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</p>
+<p>AICSImage takes microscopy image data types (files) of varying dimensions
+(“ZYX”, “TCZYX”, “CYX”) and puts them into a consistent 6D “STCZYX” ordered
+dask array. The data, metadata are lazy loaded and can be accessed as needed.
+Note the dims are assumed to match “STCZYX” from right to left meaning if
+dimensional data is provided then the dimensions are assigned to be “CZYX”, 2
+dimensional would be “YX”. This guessed assignment is only for file types
+without dimension metadata (i.e. not .ome.tiff or .czi).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>types.ImageLike</em>) – String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.</p></li>
-<li><p><strong>known_dims</strong> (<em>Optional[str]</em>) – Optional string with the known dimension order. If None, the reader will attempt to parse dim order.</p></li>
+<li><p><strong>data</strong> (<em>types.ImageLike</em>) – String with path to file, numpy.ndarray, or dask.array.Array with up to six
+dimensions.</p></li>
+<li><p><strong>known_dims</strong> (<em>Optional[str]</em>) – Optional string with the known dimension order. If None, the reader will
+attempt to parse dim order.</p></li>
 <li><p><strong>dask_kwargs</strong> (<em>Dict[str, Any] = {}</em>) – A dictionary of arguments to pass to a dask cluster and or client.</p></li>
-<li><p><strong>kwargs</strong> (<em>Dict[str, Any]</em>) – Extra keyword arguments that can be passed down to either the reader subclass or, if using the context
-manager, the LocalCluster initialization.</p></li>
+<li><p><strong>kwargs</strong> (<em>Dict[str, Any]</em>) – Extra keyword arguments that can be passed down to either the reader
+subclass or, if using the context manager, the LocalCluster initialization.</p></li>
 </ul>
 </dd>
 </dl>
@@ -308,7 +312,8 @@ manager, the LocalCluster initialization.</p></li>
 <span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Initialize an image, construct a delayed dask array for certain slices, then read the data.</p>
+<p>Initialize an image, construct a delayed dask array for certain slices, then
+read the data.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.czi&quot;</span><span class="p">)</span>
 <span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">... </span><span class="n">zstack_t8_data</span> <span class="o">=</span> <span class="n">zstack_t8</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
@@ -328,23 +333,28 @@ manager, the LocalCluster initialization.</p></li>
 <span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Create a local dask cluster with arguments for the duration of the context manager.</p>
+<p>Create a local dask cluster with arguments for the duration of the context
+manager.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nworkers&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Connect to a specific dask cluster for the duration of the context manager.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp://localhost:1234&quot;</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp://localhost:1234&quot;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="go">```</span>
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
-<p>When using the AICSImage context manager, the processing machine or container must have networking capabilities
-enabled to function properly.</p>
-<p>Constructor for AICSImage class intended for providing a unified interface for dealing with
-microscopy images. To extend support to a new reader simply add a new reader child class of
-Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</p>
+<p>When using the AICSImage context manager, the processing machine or container
+must have networking capabilities enabled to function properly.</p>
+<p>Constructor for AICSImage class intended for providing a unified interface for
+dealing with microscopy images. To extend support to a new reader simply add a
+new reader child class of Reader ([readers/reader.py]) and add the class to
+SUPPORTED_READERS variable.</p>
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.client">
 <em class="property">property </em><code class="sig-name descname">client</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.client" title="Permalink to this definition">¶</a></dt>
@@ -379,7 +389,8 @@ If this object created a LocalCluster, close it down as well.</p>
 <dl class="method">
 <dt id="aicsimageio.aics_image.AICSImage.determine_reader">
 <em class="property">static </em><code class="sig-name descname">determine_reader</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray, dask.array.core.Array]</em><span class="sig-paren">)</span> &#x2192; Type[aicsimageio.readers.reader.Reader]<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.determine_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.determine_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cheaply check to see if a given file is a recognized type and return the appropriate reader for the file.</p>
+<dd><p>Cheaply check to see if a given file is a recognized type and return the
+appropriate reader for the file.</p>
 </dd></dl>
 
 <dl class="method">
@@ -410,14 +421,16 @@ If this object created a LocalCluster, close it down as well.</p>
 Default: The current image dimensions. i.e. <cite>self.dims</cite></p></li>
 <li><p><strong>kwargs</strong> – C=1: specifies Channel 1
 T=3: specifies the fourth index in T
-D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</p></li>
+D=n: D is Dimension letter and n is the index desired D should not be
+present in the out_orientation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>data</strong> (<em>dask array</em>) – The read data with the dimension ordering that was specified with out_orientation.</p></li>
-<li><p><strong>Note</strong> (<em>If a requested dimension is not present in the data the dimension is added with</em>)</p></li>
-<li><p><em>a depth of 1.</em></p></li>
+<li><p><strong>data</strong> (<em>dask array</em>) – The read data with the dimension ordering that was specified with
+out_orientation.</p></li>
+<li><p><strong>Note</strong> (<em>If a requested dimension is not present in the data the dimension is</em>)</p></li>
+<li><p><em>added with a depth of 1.</em></p></li>
 </ul>
 </p>
 </dd>
@@ -435,14 +448,16 @@ D=n: D is Dimension letter and n is the index desired D should not be present in
 Default: The current image dimensions. i.e. <cite>self.dims</cite></p></li>
 <li><p><strong>kwargs</strong> – C=1: specifies Channel 1
 T=3: specifies the fourth index in T
-D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</p></li>
+D=n: D is Dimension letter and n is the index desired D should not be
+present in the out_orientation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>data</strong> (<em>np.ndarray</em>) – The read data with the dimension ordering that was specified with out_orientation.</p></li>
-<li><p><strong>Note</strong> (<em>If a requested dimension is not present in the data the dimension is added with</em>)</p></li>
-<li><p><em>a depth of 1.</em></p></li>
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The read data with the dimension ordering that was specified with
+out_orientation.</p></li>
+<li><p><strong>Note</strong> (<em>If a requested dimension is not present in the data the dimension is</em>)</p></li>
+<li><p><em>added with a depth of 1.</em></p></li>
 </ul>
 </p>
 </dd>
@@ -472,8 +487,8 @@ If none available, returns <cite>1.0</cite> for each spatial dimension.</p>
 <em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>metadata</strong> – The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.
-For pure image files an empty string or None is returned.</p>
+<dd class="field-odd"><p><strong>metadata</strong> – The Metadata from the Czi, or Ome.Tiff file, or other base class type with
+metadata. For pure image files an empty string or None is returned.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Any</p>
@@ -515,7 +530,8 @@ interface then the base class can be used directly.</p>
 <code class="sig-name descname">size</code><span class="sig-paren">(</span><em class="sig-param">dims: str = 'STCZYX'</em><span class="sig-paren">)</span> &#x2192; Tuple[int]<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dims</strong> (<em>str</em>) – A string containing a list of dimensions being requested. The default is to return the six standard dims.</p>
+<dd class="field-odd"><p><strong>dims</strong> (<em>str</em>) – A string containing a list of dimensions being requested. The default is to
+return the six standard dims.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>size</strong> – A tuple with the requested dimensions filled in.</p>
@@ -762,7 +778,8 @@ Default: False (is not RGB)</p></li>
 <code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">cluster_and_client</code><span class="sig-paren">(</span><em class="sig-param">address: Optional[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dask_utils.html#cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.cluster_and_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>If provided an address, create a Dask Client connection.
 If not provided an address, create a LocalCluster and Client connection.
-If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</p>
+If not provided an address, other Dask kwargs are accepted and passed down to the
+LocalCluster object.</p>
 <p>These objects will only live for the duration of this context manager.</p>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cluster_and_client</span><span class="p">()</span> <span class="k">as</span> <span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
@@ -772,8 +789,8 @@ If not provided an address, other Dask kwargs are accepted and passed down to th
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
-<p>When using this context manager, the processing machine or container must have networking capabilities enabled to
-function properly.</p>
+<p>When using this context manager, the processing machine or container must have
+networking capabilities enabled to function properly.</p>
 </dd></dl>
 
 <dl class="function">
@@ -781,8 +798,8 @@ function properly.</p>
 <code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">shutdown_cluster_and_client</code><span class="sig-paren">(</span><em class="sig-param">cluster: Optional[distributed.deploy.local.LocalCluster], client: Optional[distributed.client.Client]</em><span class="sig-paren">)</span> &#x2192; Tuple[Optional[distributed.deploy.local.LocalCluster], Optional[distributed.client.Client]]<a class="reference internal" href="_modules/aicsimageio/dask_utils.html#shutdown_cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.shutdown_cluster_and_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shutdown a cluster and client.</p>
 <p class="rubric">Notes</p>
-<p>When using this function, the processing machine or container must have networking capabilities enabled to
-function properly.</p>
+<p>When using this function, the processing machine or container must have networking
+capabilities enabled to function properly.</p>
 </dd></dl>
 
 <dl class="function">
@@ -790,10 +807,11 @@ function properly.</p>
 <code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">spawn_cluster_and_client</code><span class="sig-paren">(</span><em class="sig-param">address: Optional[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Tuple[Optional[distributed.deploy.local.LocalCluster], Optional[distributed.client.Client]]<a class="reference internal" href="_modules/aicsimageio/dask_utils.html#spawn_cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.spawn_cluster_and_client" title="Permalink to this definition">¶</a></dt>
 <dd><p>If provided an address, create a Dask Client connection.
 If not provided an address, create a LocalCluster and Client connection.
-If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</p>
+If not provided an address, other Dask kwargs are accepted and passed down to the
+LocalCluster object.</p>
 <p class="rubric">Notes</p>
-<p>When using this function, the processing machine or container must have networking capabilities enabled to
-function properly.</p>
+<p>When using this function, the processing machine or container must have networking
+capabilities enabled to function properly.</p>
 </dd></dl>
 
 </div>
@@ -817,15 +835,16 @@ function properly.</p>
 <dt id="aicsimageio.exceptions.InconsistentShapeError">
 <em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InconsistentShapeError</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InconsistentShapeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InconsistentShapeError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>A general function to use when the shape returned or requested from an array operation is invalid.</p>
+<p>A general function to use when the shape returned or requested from an array
+operation is invalid.</p>
 </dd></dl>
 
 <dl class="exception">
 <dt id="aicsimageio.exceptions.InvalidDimensionOrderingError">
 <em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InvalidDimensionOrderingError</code><span class="sig-paren">(</span><em class="sig-param">message: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InvalidDimensionOrderingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InvalidDimensionOrderingError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>A general exception that can be thrown when handling dimension ordering or validation. Should be provided a message
-for the user to be given more context.</p>
+<p>A general exception that can be thrown when handling dimension ordering or
+validation. Should be provided a message for the user to be given more context.</p>
 </dd></dl>
 
 <dl class="exception">
@@ -842,20 +861,25 @@ the supported file types and cannot be parsed with AICSImage.</p>
 <dl class="function">
 <dt id="aicsimageio.transforms.reshape_data">
 <code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">reshape_data</code><span class="sig-paren">(</span><em class="sig-param">data: Union[numpy.ndarray, dask.array.core.Array], given_dims: str, return_dims: str, **kwargs</em><span class="sig-paren">)</span> &#x2192; Union[numpy.ndarray, dask.array.core.Array]<a class="reference internal" href="_modules/aicsimageio/transforms.html#reshape_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.reshape_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reshape the data into return_dims, pad missing dimensions, and prune extra dimensions.
-Warns the user to use the base reader if the depth of the Dimension being removed is not 1.</p>
+<dd><p>Reshape the data into return_dims, pad missing dimensions, and prune extra
+dimensions. Warns the user to use the base reader if the depth of the Dimension
+being removed is not 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>types.ArrayLike</em>) – Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</p></li>
+<li><p><strong>data</strong> (<em>types.ArrayLike</em>) – Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions
+specified in given_dims</p></li>
 <li><p><strong>given_dims</strong> (<em>str</em>) – The dimension ordering of data, “CZYX”, “VBTCXZY” etc</p></li>
 <li><p><strong>return_dims</strong> (<em>str</em>) – The dimension ordering of the return data</p></li>
-<li><p><strong>kwargs</strong> – C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1 returns the 2nd slice (0 indexed)
-Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=10 returns the 11th slice</p></li>
+<li><p><strong>kwargs</strong> – C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1
+returns the 2nd slice (0 indexed)
+Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=10
+returns the 11th slice</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order “STCZYX”</p>
+<dd class="field-even"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return
+would have order “STCZYX”</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>types.ArrayLike</p>
@@ -866,10 +890,11 @@ Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=
 <dl class="function">
 <dt id="aicsimageio.transforms.transpose_to_dims">
 <code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">transpose_to_dims</code><span class="sig-paren">(</span><em class="sig-param">data: Union[numpy.ndarray, dask.array.core.Array], given_dims: str, return_dims: str</em><span class="sig-paren">)</span> &#x2192; Union[numpy.ndarray, dask.array.core.Array]<a class="reference internal" href="_modules/aicsimageio/transforms.html#transpose_to_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.transpose_to_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>This shuffles the data dimensions from given_dims to return_dims. Each dimension must be present in
-given_dims must be used in return_dims</p>
+<dd><p>This shuffles the data dimensions from given_dims to return_dims. Each dimension
+must be present in given_dims must be used in return_dims</p>
 <dl class="simple">
-<dt>data: types.ArrayLike</dt><dd><p>Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions specified in given_dims</p>
+<dt>data: types.ArrayLike</dt><dd><p>Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions
+specified in given_dims</p>
 </dd>
 <dt>given_dims: str</dt><dd><p>The dimension ordering of data, “CZYX”, “VBTCXZY” etc</p>
 </dd>
@@ -878,7 +903,8 @@ given_dims must be used in return_dims</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return would have order “STCZYX”</p>
+<dd class="field-odd"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return
+would have order “STCZYX”</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>types.ArrayLike</p>

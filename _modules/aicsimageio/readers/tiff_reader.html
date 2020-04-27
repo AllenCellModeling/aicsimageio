@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -255,16 +255,19 @@
 
 <div class="viewcode-block" id="TiffReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader">[docs]</a><span class="k">class</span> <span class="nc">TiffReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TiffReader wraps tifffile to provide the same reading capabilities but abstracts the specifics of using the</span>
-<span class="sd">    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.</span>
+<span class="sd">    TiffReader wraps tifffile to provide the same reading capabilities but abstracts</span>
+<span class="sd">    the specifics of using the backend library to create a unified interface. This</span>
+<span class="sd">    enables higher level functions to duck type the File Readers.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    data: types.FileLike</span>
 <span class="sd">        A string or path to the TIFF file to be read.</span>
 <span class="sd">    S: int</span>
-<span class="sd">        If the image has different dimensions on any scene from another, the dask array construction will fail.</span>
-<span class="sd">        In that case, use this parameter to specify a specific scene to construct a dask array for.</span>
+<span class="sd">        If the image has different dimensions on any scene from another, the dask array</span>
+<span class="sd">        construction will fail.</span>
+<span class="sd">        In that case, use this parameter to specify a specific scene to construct a</span>
+<span class="sd">        dask array for.</span>
 <span class="sd">        Default: 0 (select the first scene)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -281,9 +284,14 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">with</span> <span class="n">BufferReader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="k">as</span> <span class="n">buffer_reader</span><span class="p">:</span>
-            <span class="c1"># Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),</span>
-            <span class="c1"># &#39;II&#39; is little-endian (Intel format) and &#39;MM&#39; is big-endian (Motorola format)</span>
-            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">buffer_reader</span><span class="o">.</span><span class="n">INTEL_ENDIAN</span><span class="p">,</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">MOTOROLA_ENDIAN</span><span class="p">]:</span>
+            <span class="c1"># Per the TIFF-6 spec</span>
+            <span class="c1"># (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),</span>
+            <span class="c1"># &#39;II&#39; is little-endian (Intel format)</span>
+            <span class="c1"># &#39;MM&#39; is big-endian (Motorola format)</span>
+            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">buffer_reader</span><span class="o">.</span><span class="n">INTEL_ENDIAN</span><span class="p">,</span>
+                <span class="n">buffer_reader</span><span class="o">.</span><span class="n">MOTOROLA_ENDIAN</span><span class="p">,</span>
+            <span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="n">magic</span> <span class="o">=</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_uint16</span><span class="p">()</span>
 
@@ -293,7 +301,8 @@
                 <span class="k">if</span> <span class="n">ifd_offset</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">False</span>
 
-            <span class="c1"># Per BigTIFF (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.</span>
+            <span class="c1"># Per BigTIFF</span>
+            <span class="c1"># (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.</span>
             <span class="k">if</span> <span class="n">magic</span> <span class="o">==</span> <span class="mi">43</span><span class="p">:</span>
                 <span class="c1"># Alex magic here...</span>
                 <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_uint16</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>
@@ -306,11 +315,7 @@
             <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span>
-        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-        <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">page</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">page</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Load Tiff</span>
         <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="n">img</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
             <span class="c1"># Get proper scene</span>
@@ -325,7 +330,8 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read a TIFF image file as a delayed dask array where each chunk of the constructed array is a delayed YX plane.</span>
+<span class="sd">        Read a TIFF image file as a delayed dask array where each chunk of the</span>
+<span class="sd">        constructed array is a delayed YX plane.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -336,7 +342,8 @@
             <span class="c1"># Load Tiff</span>
             <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
                 <span class="c1"># Check each scene has the same shape</span>
-                <span class="c1"># If scene shape checking fails, use the specified scene and update operating shape</span>
+                <span class="c1"># If scene shape checking fails, use the specified scene and update</span>
+                <span class="c1"># operating shape</span>
                 <span class="n">scenes</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span>
                 <span class="n">operating_shape</span> <span class="o">=</span> <span class="n">scenes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
                 <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">:</span>
@@ -345,7 +352,8 @@
                         <span class="n">scenes</span> <span class="o">=</span> <span class="p">[</span><span class="n">scenes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="p">]]</span>
                         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                             <span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, &quot;</span>
-                            <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="si">}</span><span class="s2"> for data &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;retrieval.&quot;</span>
                         <span class="p">)</span>
                         <span class="k">break</span>
 
@@ -359,19 +367,24 @@
 
                 <span class="c1"># Make ndarray for lazy arrays to fill</span>
                 <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">all_page_index</span><span class="p">,</span> <span class="p">(</span><span class="n">np_index</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">)):</span>
+                <span class="k">for</span> <span class="n">all_page_index</span><span class="p">,</span> <span class="p">(</span><span class="n">np_index</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">)</span>
+                <span class="p">):</span>
                     <span class="c1"># Scene index is the first index in np_index</span>
                     <span class="n">scene_index</span> <span class="o">=</span> <span class="n">np_index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
                     <span class="c1"># This page index is current enumeration divided by scene index + 1</span>
-                    <span class="c1"># For example if the image has 10 Z slices and 5 scenes, there would be 50 total pages</span>
+                    <span class="c1"># For example if the image has 10 Z slices and 5 scenes, there</span>
+                    <span class="c1"># would be 50 total pages</span>
                     <span class="n">this_page_index</span> <span class="o">=</span> <span class="n">all_page_index</span> <span class="o">//</span> <span class="p">(</span><span class="n">scene_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
                     <span class="c1"># Fill the numpy array with the delayed arrays</span>
                     <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">np_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
-                        <span class="n">delayed</span><span class="p">(</span><span class="n">TiffReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">scene_index</span><span class="p">,</span> <span class="n">this_page_index</span><span class="p">),</span>
+                        <span class="n">delayed</span><span class="p">(</span><span class="n">TiffReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">scene_index</span><span class="p">,</span> <span class="n">this_page_index</span>
+                        <span class="p">),</span>
                         <span class="n">shape</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-                        <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
                     <span class="p">)</span>
 
                 <span class="c1"># Convert the numpy array of lazy readers into a dask array</span>
@@ -411,7 +424,8 @@
                         <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">single_scene_dims</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="si">}{</span><span class="n">single_scene_dims</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="c1"># Sometimes the dimension info is wrong in certain dimensions, so guess that dimension</span>
+                <span class="c1"># Sometimes the dimension info is wrong in certain dimensions, so guess</span>
+                <span class="c1"># that dimension</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">guess_dim_order</span><span class="p">(</span><span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
                     <span class="n">best_guess</span> <span class="o">=</span> <span class="p">[]</span>
@@ -425,12 +439,14 @@
                                     <span class="n">best_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">guessed_dim</span><span class="p">)</span>
                                     <span class="n">appended_dim</span> <span class="o">=</span> <span class="kc">True</span>
                                     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                                        <span class="sa">f</span><span class="s2">&quot;Unsure how to handle dimension: </span><span class="si">{</span><span class="n">dim_from_meta</span><span class="si">}</span><span class="s2">. &quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot;Unsure how to handle dimension: &quot;</span>
+                                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dim_from_meta</span><span class="si">}</span><span class="s2">. &quot;</span>
                                         <span class="sa">f</span><span class="s2">&quot;Replaced with guess: </span><span class="si">{</span><span class="n">guessed_dim</span><span class="si">}</span><span class="s2">&quot;</span>
                                     <span class="p">)</span>
                                     <span class="k">break</span>
 
-                            <span class="c1"># All of our guess dims were already in the dim list, append the dim read from meta</span>
+                            <span class="c1"># All of our guess dims were already in the dim list,</span>
+                            <span class="c1"># append the dim read from meta</span>
                             <span class="k">if</span> <span class="ow">not</span> <span class="n">appended_dim</span><span class="p">:</span>
                                 <span class="n">best_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_from_meta</span><span class="p">)</span>
 
@@ -451,7 +467,8 @@
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Provided too many dimensions for the associated file. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions [dims: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">] &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;for image with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions [shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">].&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for image with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">].&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Set the dims</span>
@@ -464,9 +481,14 @@
         <span class="n">description_offset</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="k">with</span> <span class="n">BufferReader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="k">as</span> <span class="n">buffer_reader</span><span class="p">:</span>
-            <span class="c1"># Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),</span>
-            <span class="c1"># &#39;II&#39; is little-endian (Intel format) and &#39;MM&#39; is big-endian (Motorola format)</span>
-            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">buffer_reader</span><span class="o">.</span><span class="n">INTEL_ENDIAN</span><span class="p">,</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">MOTOROLA_ENDIAN</span><span class="p">]:</span>
+            <span class="c1"># Per the TIFF-6 spec</span>
+            <span class="c1"># (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),</span>
+            <span class="c1"># &#39;II&#39; is little-endian (Intel format)</span>
+            <span class="c1"># &#39;MM&#39; is big-endian (Motorola format)</span>
+            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">buffer_reader</span><span class="o">.</span><span class="n">INTEL_ENDIAN</span><span class="p">,</span>
+                <span class="n">buffer_reader</span><span class="o">.</span><span class="n">MOTOROLA_ENDIAN</span><span class="p">,</span>
+            <span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">None</span>
             <span class="n">magic</span> <span class="o">=</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_uint16</span><span class="p">()</span>
 
@@ -490,7 +512,8 @@
                             <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
                             <span class="k">break</span>
 
-            <span class="c1"># Per BigTIFF (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.</span>
+            <span class="c1"># Per BigTIFF</span>
+            <span class="c1"># (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.</span>
             <span class="k">if</span> <span class="n">magic</span> <span class="o">==</span> <span class="mi">43</span><span class="p">:</span>
                 <span class="c1"># Alex magic here...</span>
                 <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_uint16</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">8</span><span class="p">:</span>

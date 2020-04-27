@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -280,16 +280,18 @@
                         <span class="c1"># Get a sample image</span>
                         <span class="n">sample</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-                        <span class="c1"># Create operating shape for the final dask array by prepending image length to a tuple of</span>
-                        <span class="c1"># ones that is the same length as the sample shape</span>
-                        <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">image_length</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-                        <span class="c1"># Create numpy array of empty arrays for delayed get data functions</span>
+                        <span class="c1"># Create operating shape for the final dask array by prepending</span>
+                        <span class="c1"># image length to a tuple of ones that is the same length as</span>
+                        <span class="c1"># the sample shape</span>
+                        <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">image_length</span><span class="p">,)</span> <span class="o">+</span> <span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+                        <span class="c1"># Create numpy array of empty arrays for delayed get data</span>
+                        <span class="c1"># functions</span>
                         <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
                         <span class="k">for</span> <span class="n">indicies</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">):</span>
                             <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">indicies</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
                                 <span class="n">delayed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_data</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">indicies</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
                                 <span class="n">shape</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
-                                <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span>
+                                <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
                             <span class="p">)</span>
 
                         <span class="c1"># Block them into a single dask array</span>
@@ -328,7 +330,8 @@
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Provided too many dimensions for the associated file. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Received </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions [dims: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">] &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;for image with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions [shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">].&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for image with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> dimensions &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;[shape: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">].&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Set the dims</span>

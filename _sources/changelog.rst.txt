@@ -18,6 +18,9 @@ Fix
 
 Other
 ~~~~~
+- admin/use-black-formatting  (`#108
+  <https://github.com/AllenCellModeling/aicsimageio/pull/108>`_)
+  [JacksonMaxfield]
 - Update PR Template [Madison Bowden]
 - admin/move-test-resources-to-s3  (`#94
   <https://github.com/AllenCellModeling/aicsimageio/pull/94>`_)

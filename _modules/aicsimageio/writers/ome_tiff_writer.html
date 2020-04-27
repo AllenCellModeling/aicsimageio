@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -241,16 +241,16 @@
 <span class="n">BYTE_BOUNDARY</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span>
 
 <span class="c1"># This is the threshold to use BigTiff, if it&#39;s the 4GB boundary it should be 2**22 but</span>
-<span class="c1"># the libtiff writer was unable to handle a 2GB numpy array. It would be great if we better</span>
-<span class="c1"># understood exactly what this threshold is and how to calculate it but for now this is a</span>
-<span class="c1"># stopgap working value</span>
+<span class="c1"># the libtiff writer was unable to handle a 2GB numpy array.</span>
+<span class="c1"># It would be great if we better understood exactly what this threshold is and how to</span>
+<span class="c1"># calculate it but for now this is a stopgap working value</span>
 
 
 <div class="viewcode-block" id="OmeTiffWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffWriter</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        This class can take arrays of pixel values and do the necessary metadata creation to write them</span>
-<span class="sd">        properly in OME xml format.</span>
+<span class="sd">        This class can take arrays of pixel values and do the necessary metadata</span>
+<span class="sd">        creation to write them properly in OME xml format.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -287,7 +287,11 @@
             <span class="k">if</span> <span class="n">overwrite_file</span><span class="p">:</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> exists but user has chosen not to overwrite it&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                    <span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> exists but user has chosen not to overwrite it&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">elif</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -308,7 +312,7 @@
         <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span>
         <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span>
+        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save an image with the proper OME XML metadata.</span>
@@ -321,7 +325,8 @@
 <span class="sd">        image_name: The name of the image to be put into the OME metadata</span>
 <span class="sd">        pixels_physical_size: The physical size of each pixel in the image</span>
 <span class="sd">        channel_colors: The channel colors to be put into the OME metadata</span>
-<span class="sd">        dimension_order: The dimension ordering in the data array.  Will be assumed STZCYX if not specified</span>
+<span class="sd">        dimension_order: The dimension ordering in the data array. Will be assumed</span>
+<span class="sd">        STZCYX if not specified</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span><span class="p">:</span>
             <span class="k">return</span>
@@ -329,19 +334,29 @@
         <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="p">(</span><span class="n">ndims</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span><span class="p">),</span> <span class="s2">&quot;Expected 3, 4, or 5 dimensions in data array&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">ndims</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="p">),</span> <span class="s2">&quot;Expected 3, 4, or 5 dimensions in data array&quot;</span>
 
         <span class="c1"># assert valid characters in dimension_order</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="s2">&quot;STCZYX&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> expected to </span><span class="se">\</span>
-<span class="s2">                be YX.  Please transpose your data.&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ndims</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
-<span class="s2">                dimensions as data shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> expected to </span><span class="se">\</span>
+<span class="s2">                be YX.  Please transpose your data.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ndims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
+<span class="s2">                dimensions as data shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
         <span class="c1"># todo ensure no letter appears more than once?</span>
 
         <span class="c1"># ensure dimension_order is same len as shape</span>
@@ -353,11 +368,11 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
             <span class="c1"># prepend either TC, TZ or CZ</span>
-            <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;T&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
                 <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;CZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
-            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;C&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
                 <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
-            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Z&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
                 <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TC&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
 
         <span class="c1"># if this is 4d data, then expand to 5D and add appropriate dimensions</span>
@@ -373,22 +388,35 @@
                 <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
 
         <span class="k">if</span> <span class="n">ome_xml</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_make_meta</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span> <span class="n">image_name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span>
-                            <span class="n">pixels_physical_size</span><span class="o">=</span><span class="n">pixels_physical_size</span><span class="p">,</span> <span class="n">channel_colors</span><span class="o">=</span><span class="n">channel_colors</span><span class="p">,</span>
-                            <span class="n">dimension_order</span><span class="o">=</span><span class="n">dimension_order</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_make_meta</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>
+                <span class="n">image_name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span>
+                <span class="n">pixels_physical_size</span><span class="o">=</span><span class="n">pixels_physical_size</span><span class="p">,</span>
+                <span class="n">channel_colors</span><span class="o">=</span><span class="n">channel_colors</span><span class="p">,</span>
+                <span class="n">dimension_order</span><span class="o">=</span><span class="n">dimension_order</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">pixels</span> <span class="o">=</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span>
             <span class="n">pixels</span><span class="o">.</span><span class="n">populate_TiffData</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">ome_xml</span>
         <span class="n">xml</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
 
-        <span class="n">tif</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">bigtiff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">BYTE_BOUNDARY</span><span class="p">)</span>
+        <span class="n">tif</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffWriter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">bigtiff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">BYTE_BOUNDARY</span>
+        <span class="p">)</span>
 
         <span class="c1"># check data shape for TZCYX or ZCYX or ZYX</span>
         <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="c1"># minisblack instructs TiffWriter to not try to infer rgb color within the data array</span>
-            <span class="c1"># metadata param fixes the double image description bug</span>
-            <span class="n">tif</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">xml</span><span class="p">,</span> <span class="n">photometric</span><span class="o">=</span><span class="s1">&#39;minisblack&#39;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="c1"># minisblack instructs TiffWriter to not try to infer rgb color within the</span>
+            <span class="c1"># data array metadata param fixes the double image description bug</span>
+            <span class="n">tif</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">compress</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">xml</span><span class="p">,</span>
+                <span class="n">photometric</span><span class="o">=</span><span class="s2">&quot;minisblack&quot;</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="n">tif</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -396,7 +424,8 @@
         <span class="sd">&quot;&quot;&quot; this doesn&#39;t do the necessary functionality at this point</span>
 
 <span class="sd">        TODO:</span>
-<span class="sd">            * make this insert a YX slice in between two other slices inside a full image</span>
+<span class="sd">            * make this insert a YX slice in between two other slices inside a full</span>
+<span class="sd">              image</span>
 <span class="sd">            * data should be a 5 dim array</span>
 
 <span class="sd">        :param data:</span>
@@ -447,16 +476,25 @@
         <span class="k">return</span> <span class="n">size</span>
 
     <span class="c1"># set up some sensible defaults from provided info</span>
-    <span class="k">def</span> <span class="nf">_make_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span> <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                   <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_make_meta</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span>
+        <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates the necessary metadata for an OME tiff image</span>
 
-<span class="sd">        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a file.</span>
+<span class="sd">        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a</span>
+<span class="sd">        file.</span>
 <span class="sd">        :param channel_names: The names for each channel to be put into the OME metadata</span>
 <span class="sd">        :param image_name: The name of the image to be put into the OME metadata</span>
 <span class="sd">        :param pixels_physical_size: The physical size of each pixel in the image</span>
 <span class="sd">        :param channel_colors: The channel colors to be put into the OME metadata</span>
-<span class="sd">        :param dimension_order: The order of dimensions in the data array, using T,C,Z,Y and X</span>
+<span class="sd">        :param dimension_order: The order of dimensions in the data array, using</span>
+<span class="sd">        T,C,Z,Y and X</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span>
 
@@ -483,7 +521,8 @@
         <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeY</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">))</span>
         <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeX</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">))</span>
 
-        <span class="c1"># this must be set to the *reverse* of what dimensionality the ome tif file is saved as</span>
+        <span class="c1"># this must be set to the *reverse* of what dimensionality</span>
+        <span class="c1"># the ome tif file is saved as</span>
         <span class="n">pixels</span><span class="o">.</span><span class="n">set_DimensionOrder</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="c1"># convert our numpy dtype to a ome compatible pixeltype</span>

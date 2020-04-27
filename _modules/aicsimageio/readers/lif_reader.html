@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -235,18 +235,18 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">Element</span>
 
 <span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">delayed</span>
-<span class="kn">from</span> <span class="nn">xml.etree.ElementTree</span> <span class="kn">import</span> <span class="n">Element</span>
 <span class="kn">from</span> <span class="nn">readlif</span> <span class="kn">import</span> <span class="n">utilities</span>
 <span class="kn">from</span> <span class="nn">readlif.reader</span> <span class="kn">import</span> <span class="n">LifFile</span>
 
-<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">..buffer_reader</span> <span class="kn">import</span> <span class="n">BufferReader</span>
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
 
 <span class="c1">###############################################################################</span>
 
@@ -257,8 +257,9 @@
 
 <div class="viewcode-block" id="LifReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader">[docs]</a><span class="k">class</span> <span class="nc">LifReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    LifReader wraps readlif.reader to provide the same reading capabilities but abstracts the specifics of using the</span>
-<span class="sd">    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.</span>
+<span class="sd">    LifReader wraps readlif.reader to provide the same reading capabilities but</span>
+<span class="sd">    abstracts the specifics of using the backend library to create a unified interface.</span>
+<span class="sd">    This enables higher level functions to duck type the File Readers.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -269,13 +270,15 @@
 <span class="sd">        Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]</span>
 <span class="sd">        Note: SpatialY and SpatialX will always be added to the list if not present.</span>
 <span class="sd">    S: int</span>
-<span class="sd">        If the image has different dimensions on any scene from another, the dask array construction will fail.</span>
-<span class="sd">        In that case, use this parameter to specify a specific scene to construct a dask array for.</span>
+<span class="sd">        If the image has different dimensions on any scene from another, the dask array</span>
+<span class="sd">        construction will fail.</span>
+<span class="sd">        In that case, use this parameter to specify a specific scene to construct a</span>
+<span class="sd">        dask array for.</span>
 <span class="sd">        Default: 0 (select the first scene)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">LIF_MAGIC_BYTE</span> <span class="o">=</span> <span class="mh">0x70</span>
-    <span class="n">LIF_MEMORY_BYTE</span> <span class="o">=</span> <span class="mh">0x2a</span>
+    <span class="n">LIF_MEMORY_BYTE</span> <span class="o">=</span> <span class="mh">0x2A</span>
 
     <span class="c1">########################################################</span>
     <span class="c1">#</span>
@@ -300,8 +303,8 @@
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_compute_offsets</span><span class="p">(</span><span class="n">lif</span><span class="p">:</span> <span class="n">LifFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the offsets for each of the YX planes so that the LifFile object doesn&#39;t need</span>
-<span class="sd">        to be created for each YX plane read.</span>
+<span class="sd">        Compute the offsets for each of the YX planes so that the LifFile object</span>
+<span class="sd">        doesn&#39;t need to be created for each YX plane read.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -311,7 +314,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        List[numpy.ndarray]</span>
-<span class="sd">            The list of numpy arrays holds the offsets and it should be accessed as [S][T,C,Z].</span>
+<span class="sd">            The list of numpy arrays holds the offsets and it should be accessed as</span>
+<span class="sd">            [S][T,C,Z].</span>
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">            The second numpy array holds the plane read length per Scene.</span>
 
@@ -321,7 +325,12 @@
 
         <span class="k">for</span> <span class="n">s_index</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lif</span><span class="o">.</span><span class="n">get_iter_image</span><span class="p">()):</span>
             <span class="n">pixel_type</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">get_pixel_type</span><span class="p">(</span><span class="n">lif</span><span class="o">.</span><span class="n">xml_root</span><span class="p">,</span> <span class="n">s_index</span><span class="p">)</span>
-            <span class="n">x_size</span><span class="p">,</span> <span class="n">y_size</span><span class="p">,</span> <span class="n">z_size</span><span class="p">,</span> <span class="n">t_size</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># in comments in this block these correspond to X, Y, Z, T</span>
+            <span class="p">(</span>
+                <span class="n">x_size</span><span class="p">,</span>
+                <span class="n">y_size</span><span class="p">,</span>
+                <span class="n">z_size</span><span class="p">,</span>
+                <span class="n">t_size</span><span class="p">,</span>
+            <span class="p">)</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># in comments in this block these correspond to X, Y, Z, T</span>
             <span class="n">c_size</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">channels</span>  <span class="c1"># C</span>
             <span class="n">img_offset</span><span class="p">,</span> <span class="n">img_block_length</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">offsets</span>
             <span class="n">offsets</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">t_size</span><span class="p">,</span> <span class="n">c_size</span><span class="p">,</span> <span class="n">z_size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
@@ -332,11 +341,15 @@
                 <span class="c1"># In the case of a blank image, we can calculate the length from</span>
                 <span class="c1"># the metadata in the LIF. When this is read by the parser,</span>
                 <span class="c1"># it is set to zero initially.</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;guessing image length: LifFile assumes 1byte per pixel,&quot;</span>
-                          <span class="s2">&quot; but I think this is wrong!&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;guessing image length: LifFile assumes 1byte per pixel,&quot;</span>
+                    <span class="s2">&quot; but I think this is wrong!&quot;</span>
+                <span class="p">)</span>
                 <span class="n">image_len</span> <span class="o">=</span> <span class="n">seek_distance</span> <span class="o">*</span> <span class="n">x_size</span> <span class="o">*</span> <span class="n">y_size</span> <span class="o">*</span> <span class="n">pixel_type</span><span class="o">.</span><span class="n">itemsize</span>
-            <span class="k">else</span><span class="p">:</span>                                                  <span class="c1"># B = bytes per pixel</span>
-                <span class="n">image_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">img_block_length</span> <span class="o">/</span> <span class="n">seek_distance</span><span class="p">)</span>  <span class="c1"># B*X*Y*C*Z*T / C*Z*T = B*X*Y = size of an YX plane</span>
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># B = bytes per pixel</span>
+                <span class="n">image_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                    <span class="n">img_block_length</span> <span class="o">/</span> <span class="n">seek_distance</span>
+                <span class="p">)</span>  <span class="c1"># B*X*Y*C*Z*T / C*Z*T = B*X*Y = size of an YX plane</span>
 
             <span class="k">for</span> <span class="n">t_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">t_size</span><span class="p">):</span>
                 <span class="n">t_requested</span> <span class="o">=</span> <span class="n">t_offset</span> <span class="o">*</span> <span class="n">t_index</span>  <span class="c1"># C*Z*t_index</span>
@@ -344,10 +357,15 @@
                     <span class="n">c_requested</span> <span class="o">=</span> <span class="n">c_index</span>
                     <span class="k">for</span> <span class="n">z_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">z_size</span><span class="p">):</span>
                         <span class="n">z_requested</span> <span class="o">=</span> <span class="n">z_offset</span> <span class="o">*</span> <span class="n">z_index</span>  <span class="c1"># z_index * C</span>
-                        <span class="n">item_requested</span> <span class="o">=</span> <span class="n">t_requested</span> <span class="o">+</span> <span class="n">z_requested</span> <span class="o">+</span> <span class="n">c_requested</span>  <span class="c1"># the number of YX frames to jump</span>
-                        <span class="c1"># self.offsets[0] is the offset to the beginning of the image block</span>
-                        <span class="c1"># here we index into that block to get the offset for any YX frame in this image block</span>
-                        <span class="n">offsets</span><span class="p">[</span><span class="n">t_index</span><span class="p">,</span> <span class="n">c_index</span><span class="p">,</span> <span class="n">z_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">offsets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">image_len</span> <span class="o">*</span> <span class="n">item_requested</span><span class="p">)</span>
+                        <span class="n">item_requested</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">t_requested</span> <span class="o">+</span> <span class="n">z_requested</span> <span class="o">+</span> <span class="n">c_requested</span>
+                        <span class="p">)</span>  <span class="c1"># the number of YX frames to jump</span>
+                        <span class="c1"># self.offsets[0] is the offset to the beginning of the image</span>
+                        <span class="c1"># block here we index into that block to get the offset for any</span>
+                        <span class="c1"># YX frame in this image block</span>
+                        <span class="n">offsets</span><span class="p">[</span><span class="n">t_index</span><span class="p">,</span> <span class="n">c_index</span><span class="p">,</span> <span class="n">z_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">(</span>
+                            <span class="n">img</span><span class="o">.</span><span class="n">offsets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">image_len</span> <span class="o">*</span> <span class="n">item_requested</span>
+                        <span class="p">)</span>
 
             <span class="n">scene_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">offsets</span><span class="p">)</span>
             <span class="n">scene_img_length_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_len</span><span class="p">)</span>
@@ -357,9 +375,13 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span>
-        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">],</span>
+        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">],</span>
         <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># Run super init to check filepath provided</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -368,13 +390,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">chunk_by_dims</span> <span class="o">=</span> <span class="n">chunk_by_dims</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span> <span class="o">=</span> <span class="n">S</span>
         <span class="n">lif</span> <span class="o">=</span> <span class="n">LifFile</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
-        <span class="c1">#  _chunk_offsets is a list of ndarrays (only way I could deal with inconsistent scene shape)</span>
+        <span class="c1">#  _chunk_offsets is a list of ndarrays</span>
+        <span class="c1"># (only way I could deal with inconsistent scene shape)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_offsets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_lengths</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_compute_offsets</span><span class="p">(</span><span class="n">lif</span><span class="o">=</span><span class="n">lif</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Test the file that was provided to check that the header is consistent with this reader.</span>
+<span class="sd">        Test the file that was provided to check that the header is consistent with</span>
+<span class="sd">        this reader.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -390,13 +414,17 @@
         <span class="k">with</span> <span class="n">BufferReader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="k">as</span> <span class="n">buffer_reader</span><span class="p">:</span>
             <span class="n">header</span> <span class="o">=</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(</span><span class="n">n_bytes</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 
-            <span class="c1"># if the buffer is to short return false</span>
+            <span class="c1"># If the buffer is to short return false</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="c1"># check for the magic byte</span>
-            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">LIF_MAGIC_BYTE</span> <span class="ow">and</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">LIF_MAGIC_BYTE</span><span class="p">:</span>
+            <span class="c1"># Check for the magic byte</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">LIF_MAGIC_BYTE</span>
+                <span class="ow">and</span> <span class="n">header</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">LIF_MAGIC_BYTE</span>
+            <span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="c1"># check for the memory byte, if magic byte and memory byte are present return true</span>
+            <span class="c1"># Check for the memory byte, if magic byte and memory byte are present</span>
+            <span class="c1"># return True</span>
             <span class="k">if</span> <span class="n">header</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">LIF_MEMORY_BYTE</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -413,14 +441,16 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        list[dict]</span>
-<span class="sd">            A list of dictionaries containing Dimension / depth. If the shape is consistent across Scenes then</span>
-<span class="sd">            the list will have only one Dictionary. If the shape is inconsistent the the list will have a dictionary</span>
-<span class="sd">             for each Scene. A consistently shaped file with 3 scenes, 7 time-points</span>
+<span class="sd">            A list of dictionaries containing Dimension / depth. If the shape is</span>
+<span class="sd">            consistent across Scenes then the list will have only one Dictionary. If</span>
+<span class="sd">            the shape is inconsistent the the list will have a dictionary for each</span>
+<span class="sd">            Scene. A consistently shaped file with 3 scenes, 7 time-points</span>
 <span class="sd">            and 4 Z slices containing images of (h,w) = (325, 475) would return</span>
 <span class="sd">            [</span>
 <span class="sd">             {&#39;S&#39;: (0, 3), &#39;T&#39;: (0,7), &#39;X&#39;: (0, 475), &#39;Y&#39;: (0, 325), &#39;Z&#39;: (0, 4)}</span>
 <span class="sd">            ].</span>
-<span class="sd">            The result for a similarly shaped file but with different number of time-points per scene would yield</span>
+<span class="sd">            The result for a similarly shaped file but with different number of time</span>
+<span class="sd">            points per scene would yield</span>
 <span class="sd">            [</span>
 <span class="sd">             {&#39;S&#39;: (0, 1), &#39;T&#39;: (0,8), &#39;X&#39;: (0, 475), &#39;Y&#39;: (0, 325), &#39;Z&#39;: (0, 4)},</span>
 <span class="sd">             {&#39;S&#39;: (1, 2), &#39;T&#39;: (0,6), &#39;X&#39;: (0, 475), &#39;Y&#39;: (0, 325), &#39;Z&#39;: (0, 4)},</span>
@@ -428,19 +458,23 @@
 <span class="sd">            ]</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shape_list</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;T&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">nt</span><span class="p">),</span>
-                       <span class="s1">&#39;C&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">channels</span><span class="p">),</span>
-                       <span class="s1">&#39;Z&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">nz</span><span class="p">),</span>
-                       <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
-                       <span class="s1">&#39;X&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">])}</span>
-                      <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lif</span><span class="o">.</span><span class="n">get_iter_image</span><span class="p">())]</span>
+        <span class="n">shape_list</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">nt</span><span class="p">),</span>
+                <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">channels</span><span class="p">),</span>
+                <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">nz</span><span class="p">),</span>
+                <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lif</span><span class="o">.</span><span class="n">get_iter_image</span><span class="p">())</span>
+        <span class="p">]</span>
         <span class="n">consistent</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">elem</span> <span class="o">==</span> <span class="n">shape_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">shape_list</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">consistent</span><span class="p">:</span>
-            <span class="n">shape_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape_list</span><span class="p">))</span>
+            <span class="n">shape_list</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;S&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape_list</span><span class="p">))</span>
             <span class="n">shape_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">shape_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shape_list</span><span class="p">):</span>
-                <span class="n">lst</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">lst</span><span class="p">[</span><span class="s2">&quot;S&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">shape_list</span>
 
     <span class="nd">@staticmethod</span>
@@ -466,19 +500,23 @@
 
         <span class="n">data_shape</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_dims_shape</span><span class="p">(</span><span class="n">lif</span><span class="o">=</span><span class="n">lif</span><span class="p">)</span>
 
-        <span class="c1"># if S is in read_dims then use the specified value and the specified dims for that scene</span>
+        <span class="c1"># If S is in read_dims then use the specified value and the specified dims for</span>
+        <span class="c1"># that scene</span>
         <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span> <span class="ow">in</span> <span class="n">read_dims</span><span class="p">:</span>
-            <span class="n">s_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">read_dims</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">],</span> <span class="n">read_dims</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">s_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span>
+                <span class="n">read_dims</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">],</span> <span class="n">read_dims</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">)</span>
             <span class="n">s_dict</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="n">s_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">s_range</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">])</span>
             <span class="n">s_dict</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1"># map the dims over to ranges and if the dim is in read_dims make the range over the single dim</span>
+        <span class="c1"># Map the dims over to ranges and if the dim is in read_dims make the range</span>
+        <span class="c1"># over the single dim</span>
         <span class="n">integrated_dims</span> <span class="o">=</span> <span class="p">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">:</span> <span class="n">s_range</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">read_dims</span><span class="p">:</span>
-                <span class="n">integrated_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">],</span> <span class="n">read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">integrated_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">],</span> <span class="n">read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">integrated_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="o">*</span><span class="n">s_dict</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
 
@@ -502,32 +540,36 @@
 <span class="sd">            The appropriate data type to construct the matrix with.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#  Due to the 12 bit values being stored in a uint16 the raw data is a little fussy to get the</span>
-        <span class="c1">#  contrast correct.</span>
-        <span class="n">p_types</span> <span class="o">=</span> <span class="p">{</span><span class="mi">8</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
-                   <span class="mi">12</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;&lt;u2&#39;</span><span class="p">),</span>  <span class="c1"># little endian uint16</span>
-                   <span class="mi">16</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;&lt;u2&#39;</span><span class="p">),</span>  <span class="c1"># little endian uint16</span>
-                   <span class="mi">32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;&lt;u4&#39;</span><span class="p">),</span>  <span class="c1"># little endian uint32 ** untested</span>
-                   <span class="mi">64</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;&lt;u8&#39;</span><span class="p">)</span>   <span class="c1"># little endian uint64 ** untested</span>
-                   <span class="p">}</span>
+        <span class="c1"># Due to the 12 bit values being stored in a uint16 the raw data is a little</span>
+        <span class="c1"># fussy to get the contrast correct.</span>
+        <span class="n">p_types</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">8</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
+            <span class="mi">12</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&lt;u2&quot;</span><span class="p">),</span>  <span class="c1"># little endian uint16</span>
+            <span class="mi">16</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&lt;u2&quot;</span><span class="p">),</span>  <span class="c1"># little endian uint16</span>
+            <span class="mi">32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&lt;u4&quot;</span><span class="p">),</span>  <span class="c1"># little endian uint32 ** untested</span>
+            <span class="mi">64</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&lt;u8&quot;</span><span class="p">),</span>  <span class="c1"># little endian uint64 ** untested</span>
+        <span class="p">}</span>
         <span class="n">img_sets</span> <span class="o">=</span> <span class="n">meta</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//Image&quot;</span><span class="p">)</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">img_sets</span><span class="p">[</span><span class="n">scene</span><span class="p">]</span>
         <span class="n">chs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//ChannelDescription&quot;</span><span class="p">)</span>
-        <span class="n">resolution</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ch</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Resolution&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chs</span><span class="p">])</span>
+        <span class="n">resolution</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ch</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;Resolution&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chs</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentPixelType</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Metadata contains two conflicting &quot;</span>
-                                                   <span class="sa">f</span><span class="s2">&quot;Resolution attributes: </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentPixelType</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Metadata contains two conflicting &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Resolution attributes: </span><span class="si">{</span><span class="n">resolution</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">p_types</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">resolution</span><span class="o">.</span><span class="n">pop</span><span class="p">())]</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_array_from_offset</span><span class="p">(</span><span class="n">im_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-                               <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                               <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                               <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
-                               <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> \
-            <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+    <span class="k">def</span> <span class="nf">_get_array_from_offset</span><span class="p">(</span>
+        <span class="n">im_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
+        <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets specified bitmap data from the lif file (private).</span>
 
@@ -555,8 +597,9 @@
 
         <span class="n">lif</span> <span class="o">=</span> <span class="n">LifFile</span><span class="p">(</span><span class="n">im_path</span><span class="p">)</span>
 
-        <span class="c1"># data has already been checked for consistency. The dims are either consistent or S is specified</span>
-        <span class="c1"># selected_ranges get&#39;s the ranges for the Dimension for the range unless the dim is explicitly specified</span>
+        <span class="c1"># Data has already been checked for consistency. The dims are either consistent</span>
+        <span class="c1"># or S is specified selected_ranges get&#39;s the ranges for the Dimension for the</span>
+        <span class="c1"># range unless the dim is explicitly specified</span>
         <span class="n">selected_ranges</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_read_dims_to_ranges</span><span class="p">(</span><span class="n">lif</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">)</span>
         <span class="n">s_index</span> <span class="o">=</span> <span class="n">read_dims</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">]</span> <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span> <span class="ow">in</span> <span class="n">read_dims</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="n">lif_img</span> <span class="o">=</span> <span class="n">lif</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">img_n</span><span class="o">=</span><span class="n">s_index</span><span class="p">)</span>
@@ -564,30 +607,37 @@
         <span class="n">y_size</span> <span class="o">=</span> <span class="n">lif_img</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="n">pixel_type</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">get_pixel_type</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">s_index</span><span class="p">)</span>
 
-        <span class="c1"># the ranged dims</span>
-        <span class="n">ranged_dims</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_ranges</span><span class="p">[</span><span class="n">dim</span><span class="p">]))</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">,</span>
-                                                                    <span class="n">Dimensions</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span>
-                                                                    <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span>
-                                                                    <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">]</span>
-                       <span class="p">]</span>
+        <span class="c1"># The ranged dims</span>
+        <span class="n">ranged_dims</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_ranges</span><span class="p">[</span><span class="n">dim</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">,</span>
+                <span class="n">Dimensions</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span>
+                <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span>
+                <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
 
         <span class="n">img_stack</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># loop through the dim ranges to return the requested image stack</span>
+        <span class="c1"># Loop through the dim ranges to return the requested image stack</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">im_path</span><span class="p">),</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">image</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">s_index</span> <span class="ow">in</span> <span class="n">selected_ranges</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">]:</span>
                 <span class="k">for</span> <span class="n">t_index</span> <span class="ow">in</span> <span class="n">selected_ranges</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Time</span><span class="p">]:</span>
                     <span class="k">for</span> <span class="n">c_index</span> <span class="ow">in</span> <span class="n">selected_ranges</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">]:</span>
                         <span class="k">for</span> <span class="n">z_index</span> <span class="ow">in</span> <span class="n">selected_ranges</span><span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">]:</span>
-                            <span class="c1"># use the precalculated offset to jump to the begining of the desired YX plane</span>
+                            <span class="c1"># Use the precalculated offset to jump to the begining of</span>
+                            <span class="c1"># the desired YX plane</span>
                             <span class="n">image</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">offsets</span><span class="p">[</span><span class="n">s_index</span><span class="p">][</span><span class="n">t_index</span><span class="p">,</span> <span class="n">c_index</span><span class="p">,</span> <span class="n">z_index</span><span class="p">])</span>
-                            <span class="c1"># read the image data as a bytearray</span>
+                            <span class="c1"># Read the image data as a bytearray</span>
                             <span class="n">byte_array</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">read_lengths</span><span class="p">[</span><span class="n">s_index</span><span class="p">])</span>
-                            <span class="c1"># convert the bytearray to a the type pixel_type</span>
-                            <span class="n">typed_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">byte_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pixel_type</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x_size</span><span class="p">,</span> <span class="n">y_size</span><span class="p">)</span>
-                            <span class="c1"># lif stores YX planes so transpose them to get YX</span>
+                            <span class="c1"># Convert the bytearray to a the type pixel_type</span>
+                            <span class="n">typed_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span>
+                                <span class="n">byte_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pixel_type</span>
+                            <span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x_size</span><span class="p">,</span> <span class="n">y_size</span><span class="p">)</span>
+                            <span class="c1"># LIF stores YX planes so transpose them to get YX</span>
                             <span class="n">typed_array</span> <span class="o">=</span> <span class="n">typed_array</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
-                            <span class="c1"># append the YX plane to the image stack.</span>
+                            <span class="c1"># Append the YX plane to the image stack.</span>
                             <span class="n">img_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">typed_array</span><span class="p">)</span>
 
         <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_ranges</span><span class="p">[</span><span class="n">dim</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">ranged_dims</span><span class="p">]</span>
@@ -595,16 +645,22 @@
         <span class="n">shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_size</span><span class="p">)</span>
         <span class="n">ranged_dims</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span> <span class="n">y_size</span><span class="p">))</span>
         <span class="n">ranged_dims</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span> <span class="n">x_size</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img_stack</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">),</span> <span class="n">ranged_dims</span>  <span class="c1"># in some subset of STCZYX order</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img_stack</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">),</span>
+            <span class="n">ranged_dims</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># in some subset of STCZYX order</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_read_image</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                    <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                    <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
-                    <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+    <span class="k">def</span> <span class="nf">_read_image</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
+        <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read and return the squeezed image data requested along with the dimension info that was read.</span>
+<span class="sd">        Read and return the squeezed image data requested along with the dimension info</span>
+<span class="sd">        that was read.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -633,7 +689,9 @@
 
         <span class="c1"># Read image</span>
         <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading dimensions: </span><span class="si">{</span><span class="n">read_dims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_get_array_from_offset</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">read_lengths</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_get_array_from_offset</span><span class="p">(</span>
+            <span class="n">img</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">read_lengths</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">read_dims</span>
+        <span class="p">)</span>
 
         <span class="c1"># Drop dims so that the data dims match the chunk_dims for dask</span>
         <span class="n">ops</span> <span class="o">=</span> <span class="p">[]</span>
@@ -655,11 +713,13 @@
         <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ops</span><span class="p">)],</span> <span class="n">real_dims</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
-                <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-                <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
-                <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-                <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
+        <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is a pass through to _read_image above</span>
 <span class="sd">        the difference is it returns the data without the dims structure.</span>
@@ -682,12 +742,13 @@
 <span class="sd">        data: np.ndarray</span>
 <span class="sd">            The data read for the dimensions provided.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_read_image</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span>
-                                           <span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">,</span>
-                                           <span class="n">read_lengths</span><span class="o">=</span><span class="n">read_lengths</span><span class="p">,</span>
-                                           <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">,</span>
-                                           <span class="n">read_dims</span><span class="o">=</span><span class="n">read_dims</span>
-                                           <span class="p">)</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_read_image</span><span class="p">(</span>
+            <span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span>
+            <span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">,</span>
+            <span class="n">read_lengths</span><span class="o">=</span><span class="n">read_lengths</span><span class="p">,</span>
+            <span class="n">meta</span><span class="o">=</span><span class="n">meta</span><span class="p">,</span>
+            <span class="n">read_dims</span><span class="o">=</span><span class="n">read_dims</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="nd">@staticmethod</span>
@@ -695,11 +756,16 @@
         <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
         <span class="n">offsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
         <span class="n">read_lengths</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">],</span>
-        <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read a LIF image file as a delayed dask array where certain dimensions act as the chunk size.</span>
+<span class="sd">        Read a LIF image file as a delayed dask array where certain dimensions act as</span>
+<span class="sd">        the chunk size.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -714,8 +780,10 @@
 <span class="sd">            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]</span>
 <span class="sd">            Note: SpatialY and SpatialX will always be added to the list if not present.</span>
 <span class="sd">        S: int</span>
-<span class="sd">            If the image has different dimensions on any scene from another, the dask array construction will fail.</span>
-<span class="sd">            In that case, use this parameter to specify a specific scene to construct a dask array for.</span>
+<span class="sd">            If the image has different dimensions on any scene from another, the dask</span>
+<span class="sd">            array construction will fail.</span>
+<span class="sd">            In that case, use this parameter to specify a specific scene to construct a</span>
+<span class="sd">            dask array for.</span>
 <span class="sd">            Default: 0 (select the first scene)</span>
 
 <span class="sd">        Returns</span>
@@ -734,15 +802,21 @@
             <span class="c1"># Choose the provided scene</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">S</span><span class="p">]</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, selected scene: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentShapeError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;The LIF image provided has variable dimensions per scene. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Please provide a valid index to the &#39;S&#39; parameter to create a dask array for the index provided. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2">. Scene index range: 0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Please provide a valid index to the &#39;S&#39; parameter to create a &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;dask array for the index provided. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2">. Scene index range: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># If the list is length one that means that all the scenes in the image have the same dimensions</span>
+            <span class="c1"># If the list is length one that means that all the scenes in the image</span>
+            <span class="c1"># have the same dimensions</span>
             <span class="c1"># Just select the first dictionary in the list</span>
             <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -751,10 +825,16 @@
 
         <span class="c1"># Always add Y and X dims to chunk by dims because that is how LIF files work</span>
         <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding the Spatial Y dimension to chunk by dimensions as it was not found.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Adding the Spatial Y dimension to chunk by dimensions as it was not &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;found.&quot;</span>
+            <span class="p">)</span>
             <span class="n">chunk_by_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Adding the Spatial X dimension to chunk by dimensions as it was not found.&quot;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Adding the Spatial X dimension to chunk by dimensions as it was not &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;found.&quot;</span>
+            <span class="p">)</span>
             <span class="n">chunk_by_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">)</span>
 
         <span class="c1"># Setup read dimensions for an example chunk</span>
@@ -766,15 +846,17 @@
                 <span class="n">first_chunk_read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_begin_index</span>
 
         <span class="c1"># Read first chunk for information used by dask.array.from_delayed</span>
-        <span class="n">sample</span><span class="p">,</span> <span class="n">sample_dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_get_array_from_offset</span><span class="p">(</span><span class="n">im_path</span><span class="o">=</span><span class="n">img</span><span class="p">,</span>
-                                                               <span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">,</span>
-                                                               <span class="n">read_lengths</span><span class="o">=</span><span class="n">read_lengths</span><span class="p">,</span>
-                                                               <span class="n">meta</span><span class="o">=</span><span class="n">lif</span><span class="o">.</span><span class="n">xml_root</span><span class="p">,</span>
-                                                               <span class="n">read_dims</span><span class="o">=</span><span class="n">first_chunk_read_dims</span><span class="p">)</span>
+        <span class="n">sample</span><span class="p">,</span> <span class="n">sample_dims</span> <span class="o">=</span> <span class="n">LifReader</span><span class="o">.</span><span class="n">_get_array_from_offset</span><span class="p">(</span>
+            <span class="n">im_path</span><span class="o">=</span><span class="n">img</span><span class="p">,</span>
+            <span class="n">offsets</span><span class="o">=</span><span class="n">offsets</span><span class="p">,</span>
+            <span class="n">read_lengths</span><span class="o">=</span><span class="n">read_lengths</span><span class="p">,</span>
+            <span class="n">meta</span><span class="o">=</span><span class="n">lif</span><span class="o">.</span><span class="n">xml_root</span><span class="p">,</span>
+            <span class="n">read_dims</span><span class="o">=</span><span class="n">first_chunk_read_dims</span><span class="p">,</span>
+        <span class="p">)</span>
 
         <span class="c1"># Get the shape for the chunk and operating shape for the dask array</span>
-        <span class="c1"># We also collect the chunk and non chunk dimension ordering so that we can swap the dimensions after we</span>
-        <span class="c1"># block the dask array together.</span>
+        <span class="c1"># We also collect the chunk and non chunk dimension ordering so that we can</span>
+        <span class="c1"># swap the dimensions after we block the dask array together.</span>
         <span class="n">sample_chunk_shape</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">non_chunk_dimension_ordering</span> <span class="o">=</span> <span class="p">[]</span>
@@ -783,47 +865,57 @@
             <span class="c1"># Unpack dim info</span>
             <span class="n">dim</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">dim_info</span>
 
-            <span class="c1"># If the dim is part of the specified chunk dims then append it to the sample, and, append the dimension</span>
-            <span class="c1"># to the chunk dimension ordering</span>
+            <span class="c1"># If the dim is part of the specified chunk dims then append it to the</span>
+            <span class="c1"># sample, and, append the dimension to the chunk dimension ordering</span>
             <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
                 <span class="n">sample_chunk_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
                 <span class="n">chunk_dimension_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
 
-            <span class="c1"># Otherwise, append the dimension to the non chunk dimension ordering, and, append the true size of the</span>
-            <span class="c1"># image at that dimension</span>
+            <span class="c1"># Otherwise, append the dimension to the non chunk dimension ordering, and,</span>
+            <span class="c1"># append the true size of the image at that dimension</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">non_chunk_dimension_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
-                <span class="n">operating_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">operating_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
 
-        <span class="c1"># Convert shapes to tuples and combine the non and chunked dimension orders as that is the order the data will</span>
-        <span class="c1"># actually come out of the read data as</span>
+        <span class="c1"># Convert shapes to tuples and combine the non and chunked dimension orders as</span>
+        <span class="c1"># that is the order the data will actually come out of the read data as</span>
         <span class="n">sample_chunk_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sample_chunk_shape</span><span class="p">)</span>
-        <span class="n">blocked_dimension_order</span> <span class="o">=</span> <span class="n">non_chunk_dimension_ordering</span> <span class="o">+</span> <span class="n">chunk_dimension_ordering</span>
+        <span class="n">blocked_dimension_order</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">non_chunk_dimension_ordering</span> <span class="o">+</span> <span class="n">chunk_dimension_ordering</span>
+        <span class="p">)</span>
 
-        <span class="c1"># Fill out the rest of the operating shape with dimension sizes of 1 to match the length of the sample chunk</span>
-        <span class="c1"># When dask.block happens it fills the dimensions from inner-most to outer-most with the chunks as long as</span>
-        <span class="c1"># the dimension is size 1</span>
-        <span class="c1"># Basically, we are adding empty dimensions to the operating shape that will be filled by the chunks from dask</span>
-        <span class="n">operating_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_chunk_shape</span><span class="p">)</span>
+        <span class="c1"># Fill out the rest of the operating shape with dimension sizes of 1 to match</span>
+        <span class="c1"># the length of the sample chunk. When dask.block happens it fills the</span>
+        <span class="c1"># dimensions from inner-most to outer-most with the chunks as long as the</span>
+        <span class="c1"># dimension is size 1. Basically, we are adding empty dimensions to the</span>
+        <span class="c1"># operating shape that will be filled by the chunks from dask</span>
+        <span class="n">operating_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_chunk_shape</span><span class="p">)</span>
 
-        <span class="c1"># Create empty numpy array with the operating shape so that we can iter through and use the multi_index to</span>
-        <span class="c1"># create the readers.</span>
+        <span class="c1"># Create empty numpy array with the operating shape so that we can iter through</span>
+        <span class="c1"># and use the multi_index to create the readers.</span>
         <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
 
-        <span class="c1"># We can enumerate over the multi-indexed array and construct read_dims dictionaries by simply zipping together</span>
-        <span class="c1"># the ordered dims list and the current multi-index plus the begin index for that plane. We then set the value</span>
-        <span class="c1"># of the array at the same multi-index to the delayed reader using the constructed read_dims dictionary.</span>
+        <span class="c1"># We can enumerate over the multi-indexed array and construct read_dims</span>
+        <span class="c1"># dictionaries by simply zipping together the ordered dims list and the current</span>
+        <span class="c1"># multi-index plus the begin index for that plane. We then set the value of the</span>
+        <span class="c1"># array at the same multi-index to the delayed reader using the constructed</span>
+        <span class="c1"># read_dims dictionary.</span>
         <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">]</span>
         <span class="n">begin_indicies</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">):</span>
-            <span class="c1"># Add the czi file begin index for each dimension to the array dimension index</span>
+            <span class="c1"># Add the czi file begin index for each dimension to the array dimension</span>
+            <span class="c1"># index</span>
             <span class="n">this_chunk_read_indicies</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">current_dim_begin_index</span> <span class="o">+</span> <span class="n">curr_dim_index</span>
                 <span class="k">for</span> <span class="n">current_dim_begin_index</span><span class="p">,</span> <span class="n">curr_dim_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">begin_indicies</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
             <span class="p">)</span>
 
             <span class="c1"># Zip the dims with the read indices</span>
-            <span class="n">this_chunk_read_dims</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">blocked_dimension_order</span><span class="p">,</span> <span class="n">this_chunk_read_indicies</span><span class="p">))</span>
+            <span class="n">this_chunk_read_dims</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">blocked_dimension_order</span><span class="p">,</span> <span class="n">this_chunk_read_indicies</span><span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="c1"># Remove the dimensions that we want to chunk by from the read dims</span>
             <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
@@ -832,18 +924,21 @@
 
             <span class="c1"># Add delayed array to lazy arrays at index</span>
             <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
-                <span class="n">delayed</span><span class="p">(</span><span class="n">LifReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span><span class="n">img</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">read_lengths</span><span class="p">,</span> <span class="n">lif</span><span class="o">.</span><span class="n">xml_root</span><span class="p">,</span> <span class="n">this_chunk_read_dims</span><span class="p">),</span>
+                <span class="n">delayed</span><span class="p">(</span><span class="n">LifReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span>
+                    <span class="n">img</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="n">read_lengths</span><span class="p">,</span> <span class="n">lif</span><span class="o">.</span><span class="n">xml_root</span><span class="p">,</span> <span class="n">this_chunk_read_dims</span>
+                <span class="p">),</span>
                 <span class="n">shape</span><span class="o">=</span><span class="n">sample_chunk_shape</span><span class="p">,</span>
                 <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="c1"># Convert the numpy array of lazy readers into a dask array and fill the inner-most empty dimensions with chunks</span>
+        <span class="c1"># Convert the numpy array of lazy readers into a dask array and fill the inner</span>
+        <span class="c1"># most empty dimensions with chunks</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
         <span class="c1"># Because we have set certain dimensions to be chunked and others not</span>
         <span class="c1"># we will need to transpose back to original dimension ordering</span>
-        <span class="c1"># Example being, if the original dimension ordering was &quot;SZYX&quot; and we want to chunk by &quot;S&quot;, &quot;Y&quot;, and &quot;X&quot;</span>
-        <span class="c1"># We created an array with dimensions ordering &quot;ZSYX&quot;</span>
+        <span class="c1"># Example being, if the original dimension ordering was &quot;SZYX&quot; and we want to</span>
+        <span class="c1"># chunk by &quot;S&quot;, &quot;Y&quot;, and &quot;X&quot; we created an array with dimensions ordering &quot;ZSYX&quot;</span>
         <span class="n">transpose_indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">transpose_required</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">):</span>
@@ -855,7 +950,8 @@
                 <span class="n">transpose_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
         <span class="c1"># Only run if the transpose is actually required</span>
-        <span class="c1"># The default case is &quot;Z&quot;, &quot;Y&quot;, &quot;X&quot;, which _usually_ doesn&#39;t need to be transposed because that is _usually_</span>
+        <span class="c1"># The default case is &quot;Z&quot;, &quot;Y&quot;, &quot;X&quot;, which _usually_ doesn&#39;t need to be</span>
+        <span class="c1"># transposed because that is _usually_</span>
         <span class="c1"># The normal dimension order of the LIF file anyway</span>
         <span class="k">if</span> <span class="n">transpose_required</span><span class="p">:</span>
             <span class="n">merged</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">transpose_indices</span><span class="p">))</span>
@@ -878,7 +974,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_offsets</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_lengths</span><span class="p">,</span>
                 <span class="n">chunk_by_dims</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_by_dims</span><span class="p">,</span>
-                <span class="n">S</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span>
+                <span class="n">S</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dask_data</span>
@@ -890,7 +986,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.dtype</span>
-<span class="sd">            The data format used to store the data in the Leica lif file and the read numpy.ndarray.</span>
+<span class="sd">            The data format used to store the data in the Leica lif file and the read</span>
+<span class="sd">            numpy.ndarray.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">dtype</span></div>
 
@@ -903,7 +1000,8 @@
 <span class="sd">        -------</span>
 <span class="sd">        The xml Element Tree of the metadata</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># We can&#39;t serialize xml element trees so don&#39;t save the tree to the object state</span>
+        <span class="c1"># We can&#39;t serialize xml element trees so don&#39;t save the tree to the object</span>
+        <span class="c1"># state</span>
         <span class="n">meta_xml</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">utilities</span><span class="o">.</span><span class="n">get_xml</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">meta_xml</span>
 
@@ -943,9 +1041,10 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        List[str]</span>
-<span class="sd">            A list of descriptive names of the channels of the form &quot;Gray--TL-BF--EMP_BF&quot; and &quot;Green--FLUO--GFP&quot;</span>
+<span class="sd">            A list of descriptive names of the channels of the form</span>
+<span class="sd">            &quot;Gray--TL-BF--EMP_BF&quot; and &quot;Green--FLUO--GFP&quot;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># for the remove to work the</span>
+        <span class="c1"># For the remove to work the</span>
         <span class="n">img_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//Image&quot;</span><span class="p">)</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">img_sets</span><span class="p">[</span><span class="n">scene</span><span class="p">]</span>
@@ -953,9 +1052,16 @@
         <span class="n">chs</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//ChannelDescription&quot;</span><span class="p">)</span>
         <span class="n">chs_details</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//WideFieldChannelInfo&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chs</span><span class="p">:</span>
-            <span class="n">ch_detail</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">chs_details</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;LUT&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ch</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;LUTName&quot;</span><span class="p">])</span>
-            <span class="n">scene_channel_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;LUT&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">--</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;ContrastingMethodName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-                                       <span class="sa">f</span><span class="s2">&quot;--</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;FluoCubeName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+            <span class="n">ch_detail</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">chs_details</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;LUT&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">ch</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;LUTName&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">scene_channel_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;LUT&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;--</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;ContrastingMethodName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;--</span><span class="si">{</span><span class="n">ch_detail</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;FluoCubeName&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">scene_channel_list</span></div>
 
 <div class="viewcode-block" id="LifReader.get_physical_pixel_size"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
@@ -972,7 +1078,8 @@
 <span class="sd">        (X, Y, Z) in m.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># find all the Image nodes in the xml tree. They correspond to the individual scenes</span>
+        <span class="c1"># Find all the Image nodes in the xml tree. They correspond to the individual</span>
+        <span class="c1"># scenes</span>
         <span class="n">img_sets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s2">&quot;.//Image&quot;</span><span class="p">)</span>
 
         <span class="c1"># select the specified scene</span>
@@ -985,13 +1092,13 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_dim</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">dim_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_dim</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="c1"># calculate and overwrite the pixel size for each X, Y, Z dim if present</span>
+        <span class="c1"># Calculate and overwrite the pixel size for each X, Y, Z dim if present</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dim_list</span><span class="p">):</span>
-            <span class="c1"># the formula for the pixel size is</span>
+            <span class="c1"># The formula for the pixel size is</span>
             <span class="c1"># pixel_size = Length/(NumberOfElements - 1) from Leica &amp; ImageJ</span>
-            <span class="n">scene_pixel_size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;Length&#39;</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span>
-                                        <span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s1">&#39;NumberOfElements&#39;</span><span class="p">])</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
-                                     <span class="p">)</span>
+            <span class="n">scene_pixel_size</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;Length&quot;</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">dim</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;NumberOfElements&quot;</span><span class="p">])</span> <span class="o">-</span> <span class="mf">1.0</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">scene_pixel_size</span><span class="p">)</span></div></div>
 </pre></div>
 

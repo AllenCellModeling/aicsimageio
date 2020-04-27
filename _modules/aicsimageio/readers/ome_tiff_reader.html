@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -270,8 +270,8 @@
             <span class="k">if</span> <span class="n">buf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">!=</span> <span class="sa">b</span><span class="s2">&quot;&lt;?xml&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
-                <span class="sa">b</span><span class="s1">&#39;&lt;(</span><span class="se">\\</span><span class="s1">w*)(:?)OME [^&gt;]*xmlns</span><span class="se">\\</span><span class="s1">2</span><span class="se">\\</span><span class="s1">1=&quot;http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/&#39;</span><span class="p">,</span>
-                <span class="n">buf</span>
+                <span class="sa">b</span><span class="s1">&#39;&lt;(</span><span class="se">\\</span><span class="s1">w*)(:?)OME [^&gt;]*xmlns</span><span class="se">\\</span><span class="s1">2</span><span class="se">\\</span><span class="s1">1=&quot;http://www.openmicroscopy.org/Schemas/[Oo][Mm][Ee]/&#39;</span><span class="p">,</span>  <span class="c1"># noqa: E501</span>
+                <span class="n">buf</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="n">match</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -282,8 +282,14 @@
         <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">tiff</span><span class="o">.</span><span class="n">is_ome</span><span class="p">:</span>
                 <span class="n">description</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">description</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;?xml version=&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">description</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&lt;/OME&gt;&quot;</span><span class="p">)):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Description does not conform to OME specification: </span><span class="si">{</span><span class="n">description</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                    <span class="n">description</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;&lt;?xml version=&quot;</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">description</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;&lt;/OME&gt;&quot;</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Description does not conform to OME specification: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">description</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span>
 

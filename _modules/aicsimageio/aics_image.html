@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id17">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id20">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id23">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id26">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id29">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id30">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id32">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id34">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id36">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -240,10 +240,15 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
-<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="p">(</span><span class="n">InvalidDimensionOrderingError</span><span class="p">,</span>
-                         <span class="n">UnsupportedFileFormatError</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.readers</span> <span class="kn">import</span> <span class="p">(</span><span class="n">ArrayLikeReader</span><span class="p">,</span> <span class="n">CziReader</span><span class="p">,</span> <span class="n">LifReader</span><span class="p">,</span> <span class="n">DefaultReader</span><span class="p">,</span>
-                      <span class="n">OmeTiffReader</span><span class="p">,</span> <span class="n">TiffReader</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">,</span> <span class="n">UnsupportedFileFormatError</span>
+<span class="kn">from</span> <span class="nn">.readers</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ArrayLikeReader</span><span class="p">,</span>
+    <span class="n">CziReader</span><span class="p">,</span>
+    <span class="n">DefaultReader</span><span class="p">,</span>
+    <span class="n">LifReader</span><span class="p">,</span>
+    <span class="n">OmeTiffReader</span><span class="p">,</span>
+    <span class="n">TiffReader</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.readers.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
 
 <span class="c1">###############################################################################</span>
@@ -253,8 +258,17 @@
 <span class="c1">###############################################################################</span>
 
 <span class="c1"># The order of the readers in this list is important.</span>
-<span class="c1"># Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.</span>
-<span class="n">SUPPORTED_READERS</span> <span class="o">=</span> <span class="p">[</span><span class="n">ArrayLikeReader</span><span class="p">,</span> <span class="n">CziReader</span><span class="p">,</span> <span class="n">LifReader</span><span class="p">,</span> <span class="n">OmeTiffReader</span><span class="p">,</span> <span class="n">TiffReader</span><span class="p">,</span> <span class="n">DefaultReader</span><span class="p">]</span>
+<span class="c1"># Example:</span>
+<span class="c1"># if TiffReader was placed before OmeTiffReader,</span>
+<span class="c1"># we would never hit the OmeTiffReader</span>
+<span class="n">SUPPORTED_READERS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">ArrayLikeReader</span><span class="p">,</span>
+    <span class="n">CziReader</span><span class="p">,</span>
+    <span class="n">LifReader</span><span class="p">,</span>
+    <span class="n">OmeTiffReader</span><span class="p">,</span>
+    <span class="n">TiffReader</span><span class="p">,</span>
+    <span class="n">DefaultReader</span><span class="p">,</span>
+<span class="p">]</span>
 
 <span class="c1">###############################################################################</span>
 
@@ -265,26 +279,30 @@
         <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">,</span>
         <span class="n">known_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dask_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
-        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        AICSImage takes microscopy image data types (files) of varying dimensions (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and</span>
-<span class="sd">        puts them into a consistent 6D &quot;STCZYX&quot; ordered dask array. The data, metadata are lazy loaded and can be</span>
-<span class="sd">        accessed as needed. Note the dims are assumed to match &quot;STCZYX&quot; from right to left meaning if 4 dimensional</span>
-<span class="sd">        data is provided then the dimensions are assigned to be &quot;CZYX&quot;, 2 dimensional would be &quot;YX&quot;. This guessed</span>
-<span class="sd">        assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).</span>
+<span class="sd">        AICSImage takes microscopy image data types (files) of varying dimensions</span>
+<span class="sd">        (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and puts them into a consistent 6D &quot;STCZYX&quot; ordered</span>
+<span class="sd">        dask array. The data, metadata are lazy loaded and can be accessed as needed.</span>
+<span class="sd">        Note the dims are assumed to match &quot;STCZYX&quot; from right to left meaning if</span>
+<span class="sd">        dimensional data is provided then the dimensions are assigned to be &quot;CZYX&quot;, 2</span>
+<span class="sd">        dimensional would be &quot;YX&quot;. This guessed assignment is only for file types</span>
+<span class="sd">        without dimension metadata (i.e. not .ome.tiff or .czi).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        data: types.ImageLike</span>
-<span class="sd">            String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.</span>
+<span class="sd">            String with path to file, numpy.ndarray, or dask.array.Array with up to six</span>
+<span class="sd">            dimensions.</span>
 <span class="sd">        known_dims: Optional[str]</span>
-<span class="sd">            Optional string with the known dimension order. If None, the reader will attempt to parse dim order.</span>
+<span class="sd">            Optional string with the known dimension order. If None, the reader will</span>
+<span class="sd">            attempt to parse dim order.</span>
 <span class="sd">        dask_kwargs: Dict[str, Any] = {}</span>
 <span class="sd">            A dictionary of arguments to pass to a dask cluster and or client.</span>
 <span class="sd">        kwargs: Dict[str, Any]</span>
-<span class="sd">            Extra keyword arguments that can be passed down to either the reader subclass or, if using the context</span>
-<span class="sd">            manager, the LocalCluster initialization.</span>
+<span class="sd">            Extra keyword arguments that can be passed down to either the reader</span>
+<span class="sd">            subclass or, if using the context manager, the LocalCluster initialization.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -293,7 +311,8 @@
 <span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;my_file.tiff&quot;)</span>
 <span class="sd">        ... zstack_t8 = img.get_image_data(&quot;ZYX&quot;, S=0, T=8, C=0)</span>
 
-<span class="sd">        Initialize an image, construct a delayed dask array for certain slices, then read the data.</span>
+<span class="sd">        Initialize an image, construct a delayed dask array for certain slices, then</span>
+<span class="sd">        read the data.</span>
 
 <span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;my_file.czi&quot;)</span>
 <span class="sd">        ... zstack_t8 = img.get_image_dask_data(&quot;ZYX&quot;, S=0, T=8, C=0)</span>
@@ -313,32 +332,39 @@
 <span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;) as img:</span>
 <span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
 
-<span class="sd">        Create a local dask cluster with arguments for the duration of the context manager.</span>
+<span class="sd">        Create a local dask cluster with arguments for the duration of the context</span>
+<span class="sd">        manager.</span>
 
 <span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;nworkers&quot;: 4}) as img:</span>
 <span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
 
 <span class="sd">        Connect to a specific dask cluster for the duration of the context manager.</span>
 
-<span class="sd">        &gt;&gt;&gt; with AICSImage(&quot;filename.ome.tiff&quot;, dask_kwargs={&quot;address&quot;: &quot;tcp://localhost:1234&quot;}) as img:</span>
+<span class="sd">        &gt;&gt;&gt; with AICSImage(</span>
+<span class="sd">        ...     &quot;filename.ome.tiff&quot;,</span>
+<span class="sd">        ...     dask_kwargs={&quot;address&quot;: &quot;tcp://localhost:1234&quot;},</span>
+<span class="sd">        ...     ) as img:</span>
 <span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
 <span class="sd">        ```</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
-<span class="sd">        When using the AICSImage context manager, the processing machine or container must have networking capabilities</span>
-<span class="sd">        enabled to function properly.</span>
+<span class="sd">        When using the AICSImage context manager, the processing machine or container</span>
+<span class="sd">        must have networking capabilities enabled to function properly.</span>
 
-<span class="sd">        Constructor for AICSImage class intended for providing a unified interface for dealing with</span>
-<span class="sd">        microscopy images. To extend support to a new reader simply add a new reader child class of</span>
-<span class="sd">        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.</span>
+<span class="sd">        Constructor for AICSImage class intended for providing a unified interface for</span>
+<span class="sd">        dealing with microscopy images. To extend support to a new reader simply add a</span>
+<span class="sd">        new reader child class of Reader ([readers/reader.py]) and add the class to</span>
+<span class="sd">        SUPPORTED_READERS variable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check known dims</span>
         <span class="k">if</span> <span class="n">known_dims</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">([</span><span class="n">d</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">known_dims</span><span class="p">]):</span>
                 <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;The provided dimension string to the &#39;known_dims&#39; argument includes dimensions that AICSImage &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;does not support. Received: &#39;</span><span class="si">{</span><span class="n">known_dims</span><span class="si">}</span><span class="s2">&#39;. Supported dimensions: </span><span class="si">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrderList</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;The provided dimension string to the &#39;known_dims&#39; argument &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;includes dimensions that AICSImage does not support. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Received: &#39;</span><span class="si">{</span><span class="n">known_dims</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Supported dimensions: </span><span class="si">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrderList</span><span class="si">}</span><span class="s2">.&quot;</span>
                 <span class="p">)</span>
 
         <span class="c1"># Hold onto known dims until data is requested</span>
@@ -363,7 +389,8 @@
 <div class="viewcode-block" id="AICSImage.determine_reader"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.determine_reader">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">determine_reader</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Reader</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Cheaply check to see if a given file is a recognized type and return the appropriate reader for the file.</span>
+<span class="sd">        Cheaply check to see if a given file is a recognized type and return the</span>
+<span class="sd">        appropriate reader for the file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Iterate through the ordered supported readers to find the right one</span>
         <span class="k">for</span> <span class="n">reader_class</span> <span class="ow">in</span> <span class="n">SUPPORTED_READERS</span><span class="p">:</span>
@@ -405,7 +432,8 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dims: str</span>
-<span class="sd">            A string containing a list of dimensions being requested. The default is to return the six standard dims.</span>
+<span class="sd">            A string containing a list of dimensions being requested. The default is to</span>
+<span class="sd">            return the six standard dims.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -502,8 +530,8 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        metadata: Any</span>
-<span class="sd">            The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.</span>
-<span class="sd">            For pure image files an empty string or None is returned.</span>
+<span class="sd">            The Metadata from the Czi, or Ome.Tiff file, or other base class type with</span>
+<span class="sd">            metadata. For pure image files an empty string or None is returned.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># The reader can implement read optimization or not.</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reader</span><span class="o">.</span><span class="n">metadata</span>
@@ -522,7 +550,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span>
 
-<div class="viewcode-block" id="AICSImage.get_image_dask_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_dask_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+<div class="viewcode-block" id="AICSImage.get_image_dask_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_dask_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_dask_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get specific dimension image data out of an image as a dask array.</span>
 
@@ -535,15 +565,17 @@
 <span class="sd">        kwargs:</span>
 <span class="sd">            C=1: specifies Channel 1</span>
 <span class="sd">            T=3: specifies the fourth index in T</span>
-<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</span>
+<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be</span>
+<span class="sd">            present in the out_orientation</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        data: dask array</span>
-<span class="sd">            The read data with the dimension ordering that was specified with out_orientation.</span>
+<span class="sd">            The read data with the dimension ordering that was specified with</span>
+<span class="sd">            out_orientation.</span>
 
-<span class="sd">        Note: If a requested dimension is not present in the data the dimension is added with</span>
-<span class="sd">        a depth of 1.</span>
+<span class="sd">        Note: If a requested dimension is not present in the data the dimension is</span>
+<span class="sd">        added with a depth of 1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># If no out orientation, simply return current data as numpy array</span>
         <span class="k">if</span> <span class="n">out_orientation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -557,7 +589,9 @@
             <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AICSImage.get_image_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="AICSImage.get_image_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get specific dimension image data out of an image as a numpy array.</span>
 
@@ -570,17 +604,21 @@
 <span class="sd">        kwargs:</span>
 <span class="sd">            C=1: specifies Channel 1</span>
 <span class="sd">            T=3: specifies the fourth index in T</span>
-<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation</span>
+<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be</span>
+<span class="sd">            present in the out_orientation</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        data: np.ndarray</span>
-<span class="sd">            The read data with the dimension ordering that was specified with out_orientation.</span>
+<span class="sd">            The read data with the dimension ordering that was specified with</span>
+<span class="sd">            out_orientation.</span>
 
-<span class="sd">        Note: If a requested dimension is not present in the data the dimension is added with</span>
-<span class="sd">        a depth of 1.</span>
+<span class="sd">        Note: If a requested dimension is not present in the data the dimension is</span>
+<span class="sd">        added with a depth of 1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="n">out_orientation</span><span class="o">=</span><span class="n">out_orientation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span>
+            <span class="n">out_orientation</span><span class="o">=</span><span class="n">out_orientation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="AICSImage.view_napari"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.view_napari">[docs]</a>    <span class="k">def</span> <span class="nf">view_napari</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -597,7 +635,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">napari</span>
 
-            <span class="c1"># Construct getitem operations tuple to select down the data in the filled dimensions</span>
+            <span class="c1"># Construct getitem operations tuple to select down the data</span>
+            <span class="c1"># in the filled dimensions</span>
             <span class="n">ops</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">selected_dims</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
@@ -624,9 +663,7 @@
                 <span class="c1"># Swap channel to last dimension</span>
                 <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">transpose_to_dims</span><span class="p">(</span>
-                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-                    <span class="n">given_dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
-                    <span class="n">return_dims</span><span class="o">=</span><span class="n">new_dims</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">new_dims</span>
                 <span class="p">)</span>
 
                 <span class="c1"># Run napari</span>
@@ -638,13 +675,17 @@
                         <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
                         <span class="n">axis_labels</span><span class="o">=</span><span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
                         <span class="n">rgb</span><span class="o">=</span><span class="n">rgb</span><span class="p">,</span>
-                        <span class="o">**</span><span class="n">kwargs</span>
+                        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                     <span class="p">)</span>
 
             <span class="c1"># Handle all other images besides RGB not requested</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Channel axis</span>
-                <span class="n">c_axis</span> <span class="o">=</span> <span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">)</span> <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">c_axis</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span>
+                    <span class="k">else</span> <span class="kc">None</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Set visible based on number of channels</span>
                 <span class="k">if</span> <span class="n">c_axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -656,7 +697,11 @@
                     <span class="n">visible</span> <span class="o">=</span> <span class="kc">True</span>
 
                 <span class="c1"># Drop channel from dims string</span>
-                <span class="n">dims</span> <span class="o">=</span> <span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span> <span class="k">else</span> <span class="n">dims</span>
+                <span class="n">dims</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span>
+                    <span class="k">else</span> <span class="n">dims</span>
+                <span class="p">)</span>
 
                 <span class="c1"># Run napari</span>
                 <span class="k">with</span> <span class="n">napari</span><span class="o">.</span><span class="n">gui_qt</span><span class="p">():</span>
@@ -668,13 +713,14 @@
                         <span class="n">axis_labels</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
                         <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
                         <span class="n">visible</span><span class="o">=</span><span class="n">visible</span><span class="p">,</span>
-                        <span class="o">**</span><span class="n">kwargs</span>
+                        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                     <span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;napari&#39; has not been installed. To use this function install napari with either: &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&#39;pip install napari&#39; or &#39;pip install aicsimageio[interactive]&#39;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;napari&#39; has not been installed. To use this function install napari &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;with either: pip install napari&#39; or &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;pip install aicsimageio[interactive]&#39;&quot;</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AICSImage.get_channel_names"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
@@ -742,24 +788,32 @@
 <span class="sd">        If this object created a LocalCluster, close it down as well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dask_utils</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">shutdown_cluster_and_client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">)</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">shutdown_cluster_and_client</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If provided an address, create a Dask Client connection.</span>
 <span class="sd">        If not provided an address, create a LocalCluster and Client connection.</span>
-<span class="sd">        If not provided an address, other Dask kwargs are accepted and passed down to the LocalCluster object.</span>
+<span class="sd">        If not provided an address, other Dask kwargs are accepted and passed down to</span>
+<span class="sd">        the LocalCluster object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Warn of future changes to API</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;In aicsimageio&gt;=3.2.*, the AICSImage context manager will no longer construct and manage a distributed &quot;</span>
-            <span class="s2">&quot;local dask cluster for you. If this functionality is desired for your work, please switch to explictly &quot;</span>
-            <span class="s2">&quot;calling the `aicsimageio.dask_utils.cluster_and_client` context manager.&quot;</span><span class="p">,</span>
-            <span class="ne">FutureWarning</span>
+            <span class="s2">&quot;In aicsimageio&gt;=4.*, the AICSImage context manager will no longer &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;construct and manage a distributed local dask cluster for you. If this &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;functionality is desired for your work, please switch to explictly &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;calling the `aicsimageio.dask_utils.cluster_and_client` context manager.&quot;</span><span class="p">,</span>
+            <span class="ne">FutureWarning</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">dask_utils</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">spawn_cluster_and_client</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_dask_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">dask_utils</span><span class="o">.</span><span class="n">spawn_cluster_and_client</span><span class="p">(</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_dask_kwargs</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 

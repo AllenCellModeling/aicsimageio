@@ -194,7 +194,8 @@ class OmeTiffWriter:
         """ this doesn't do the necessary functionality at this point
 
         TODO:
-            * make this insert a YX slice in between two other slices inside a full image
+            * make this insert a YX slice in between two other slices inside a full
+            image
             * data should be a 5 dim array
 
         :param data:

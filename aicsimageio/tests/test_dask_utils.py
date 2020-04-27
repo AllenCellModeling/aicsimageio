@@ -19,7 +19,9 @@ def test_aicsimage_context_manager(resources_dir):
     # Load the image in a context manager that spawn and closes a cluster and client
     # Processes = False informs dask to use threads instead of processes
     # We must use threads here to make sure we can properly run codecov
-    with AICSImage(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as image:
+    with AICSImage(
+        resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}
+    ) as image:
         assert get_client() is not None
         assert image.data.shape == (3, 1, 3, 5, 325, 475)
 
@@ -38,7 +40,9 @@ def test_reader_context_manager(resources_dir):
     # Load the image in a context manager that spawn and closes a cluster and client
     # Processes = False informs dask to use threads instead of processes
     # We must use threads here to make sure we can properly run codecov
-    with CziReader(resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}) as reader:
+    with CziReader(
+        resources_dir / "s_3_t_1_c_3_z_5.czi", dask_kwargs={"processes": False}
+    ) as reader:
         assert get_client() is not None
         assert reader.data.shape == (1, 3, 3, 5, 325, 475)
 
@@ -58,8 +62,8 @@ def test_reader_context_manager(resources_dir):
 )
 def test_aicsimageio_no_networking(resources_dir, filename, expected_shape):
     # This should test and make sure that distributed isn't imported when aicsimageio is
-    # Importing distributed on a machine (or container) that doesn't have any networking capabilities
-    # results in socket errors, _during the import_
+    # Importing distributed on a machine (or container) that doesn't have any
+    # networking capabilities results in socket errors, _during the import_
     # See: https://github.com/AllenCellModeling/aicsimageio/issues/82
     if "distributed" in sys.modules:
         del sys.modules["distributed"]
@@ -67,7 +71,8 @@ def test_aicsimageio_no_networking(resources_dir, filename, expected_shape):
     # Re import
     import aicsimageio  # noqa: F401
 
-    # Some basic operation to ensure that distributed is not imported anywhere down the line
+    # Some basic operation to ensure that distributed is not imported
+    # anywhere down the line
     img = aicsimageio.AICSImage(resources_dir / filename)
     assert img.data.shape == expected_shape
 

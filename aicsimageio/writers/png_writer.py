@@ -39,7 +39,11 @@ class PngWriter:
             if overwrite_file:
                 os.remove(self.file_path)
             elif overwrite_file is None:
-                raise IOError("File {} exists but user has chosen not to overwrite it".format(self.file_path))
+                raise IOError(
+                    "File {} exists but user has chosen not to overwrite it".format(
+                        self.file_path
+                    )
+                )
             elif overwrite_file is False:
                 self.silent_pass = True
 
@@ -73,7 +77,7 @@ class PngWriter:
             if data.shape[2] == 1:
                 data = np.repeat(data, repeats=3, axis=2)
             elif data.shape[2] == 2:
-                data = np.pad(data, ((0, 0), (0, 0), (0, 1)), 'constant')
+                data = np.pad(data, ((0, 0), (0, 0), (0, 1)), "constant")
         elif len(data.shape) != 2:
             raise ValueError("Data was not of dimensions CYX or YX")
 
@@ -81,7 +85,8 @@ class PngWriter:
 
     def save_slice(self, data, z=0, c=0, t=0):
         """
-        Exactly the same functionality as save() but allows the interface to be the same as OmeTiffWriter.
+        Exactly the same functionality as save() but allows the interface to be the
+        same as OmeTiffWriter.
 
         Parameters
         ----------

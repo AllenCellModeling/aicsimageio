@@ -26,8 +26,9 @@ log = logging.getLogger(__name__)
 
 class CziReader(Reader):
     """
-    CziReader wraps aicspylibczi to provide the same reading capabilities but abstracts the specifics of using the
-    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.
+    CziReader wraps aicspylibczi to provide the same reading capabilities but abstracts
+    the specifics of using the backend library to create a unified interface. This
+    enables higher level functions to duck type the File Readers.
 
     Parameters
     ----------
@@ -38,19 +39,25 @@ class CziReader(Reader):
         Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
         Note: SpatialY and SpatialX will always be added to the list if not present.
     S: int
-        If the image has different dimensions on any scene from another, the dask array construction will fail.
-        In that case, use this parameter to specify a specific scene to construct a dask array for.
+        If the image has different dimensions on any scene from another, the dask array
+        construction will fail. In that case, use this parameter to specify a specific
+        scene to construct a dask array for.
         Default: 0 (select the first scene)
     """
-    ZEISS_2BYTE = b'ZI'             # First two characters of a czi file according to Zeiss docs
-    ZEISS_10BYTE = b'ZISRAWFILE'    # First 10 characters of a well formatted czi file.
+
+    ZEISS_2BYTE = b"ZI"  # First two characters of a czi file according to Zeiss docs
+    ZEISS_10BYTE = b"ZISRAWFILE"  # First 10 characters of a well formatted czi file.
 
     def __init__(
         self,
         data: types.FileLike,
-        chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
+        chunk_by_dims: List[str] = [
+            Dimensions.SpatialZ,
+            Dimensions.SpatialY,
+            Dimensions.SpatialX,
+        ],
         S: int = 0,
-        **kwargs
+        **kwargs,
     ):
         # Run super init to check filepath provided
         super().__init__(data, **kwargs)
@@ -68,9 +75,12 @@ class CziReader(Reader):
             return header == CziReader.ZEISS_10BYTE
 
     @staticmethod
-    def _read_image(img: Path, read_dims: Optional[Dict[str, int]] = None) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
+    def _read_image(
+        img: Path, read_dims: Optional[Dict[str, int]] = None
+    ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
-        Read and return the squeezed image data requested along with the dimension info that was read.
+        Read and return the squeezed image data requested along with the dimension info
+        that was read.
 
         Parameters
         ----------
@@ -126,11 +136,16 @@ class CziReader(Reader):
     def _daread(
         img: Path,
         czi: CziFile,
-        chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
-        S: int = 0
+        chunk_by_dims: List[str] = [
+            Dimensions.SpatialZ,
+            Dimensions.SpatialY,
+            Dimensions.SpatialX,
+        ],
+        S: int = 0,
     ) -> Tuple[da.core.Array, str]:
         """
-        Read a CZI image file as a delayed dask array where certain dimensions act as the chunk size.
+        Read a CZI image file as a delayed dask array where certain dimensions act as
+        the chunk size.
 
         Parameters
         ----------
@@ -143,8 +158,9 @@ class CziReader(Reader):
             Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
             Note: SpatialY and SpatialX will always be added to the list if not present.
         S: int
-            If the image has different dimensions on any scene from another, the dask array construction will fail.
-            In that case, use this parameter to specify a specific scene to construct a dask array for.
+            If the image has different dimensions on any scene from another, the dask
+            array construction will fail. In that case, use this parameter to specify a
+            specific scene to construct a dask array for.
             Default: 0 (select the first scene)
 
         Returns
@@ -162,15 +178,21 @@ class CziReader(Reader):
             # Choose the provided scene
             try:
                 image_dim_indices = image_dim_indices[S]
-                log.info(f"File contains variable dimensions per scene, selected scene: {S} for data retrieval.")
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {S} for data retrieval."
+                )
             except IndexError:
                 raise exceptions.InconsistentShapeError(
                     f"The CZI image provided has variable dimensions per scene. "
-                    f"Please provide a valid index to the 'S' parameter to create a dask array for the index provided. "
-                    f"Provided scene index: {S}. Scene index range: 0-{len(image_dim_indices)}."
+                    f"Please provide a valid index to the 'S' parameter to create a "
+                    f"dask array for the index provided. "
+                    f"Provided scene index: {S}. "
+                    f"Scene index range: 0-{len(image_dim_indices)}."
                 )
         else:
-            # If the list is length one that means that all the scenes in the image have the same dimensions
+            # If the list is length one that means that all the scenes in the image
+            # have the same dimensions
             # Just select the first dictionary in the list
             image_dim_indices = image_dim_indices[0]
 
@@ -179,10 +201,16 @@ class CziReader(Reader):
 
         # Always add Y and X dims to chunk by dims because that is how CZI files work
         if Dimensions.SpatialY not in chunk_by_dims:
-            log.info(f"Adding the Spatial Y dimension to chunk by dimensions as it was not found.")
+            log.info(
+                f"Adding the Spatial Y dimension to chunk by dimensions as it was not "
+                f"found."
+            )
             chunk_by_dims.append(Dimensions.SpatialY)
         if Dimensions.SpatialX not in chunk_by_dims:
-            log.info(f"Adding the Spatial X dimension to chunk by dimensions as it was not found.")
+            log.info(
+                f"Adding the Spatial X dimension to chunk by dimensions as it was not "
+                f"found."
+            )
             chunk_by_dims.append(Dimensions.SpatialX)
 
         # Setup read dimensions for an example chunk
@@ -197,7 +225,8 @@ class CziReader(Reader):
         sample, sample_dims = czi.read_image(**first_chunk_read_dims)
 
         # Get the shape for the chunk and operating shape for the dask array
-        # We also collect the chunk and non chunk dimension ordering so that we can swap the dimensions after we
+        # We also collect the chunk and non chunk dimension ordering so that we can
+        # swap the dimensions after we
         # block the dask array together.
         sample_chunk_shape = []
         operating_shape = []
@@ -207,47 +236,61 @@ class CziReader(Reader):
             # Unpack dim info
             dim, size = dim_info
 
-            # If the dim is part of the specified chunk dims then append it to the sample, and, append the dimension
+            # If the dim is part of the specified chunk dims then append it to the
+            # sample, and, append the dimension
             # to the chunk dimension ordering
             if dim in chunk_by_dims:
                 sample_chunk_shape.append(size)
                 chunk_dimension_ordering.append(dim)
 
-            # Otherwise, append the dimension to the non chunk dimension ordering, and, append the true size of the
+            # Otherwise, append the dimension to the non chunk dimension ordering, and,
+            # append the true size of the
             # image at that dimension
             else:
                 non_chunk_dimension_ordering.append(dim)
-                operating_shape.append(image_dim_indices[dim][1] - image_dim_indices[dim][0])
+                operating_shape.append(
+                    image_dim_indices[dim][1] - image_dim_indices[dim][0]
+                )
 
-        # Convert shapes to tuples and combine the non and chunked dimension orders as that is the order the data will
+        # Convert shapes to tuples and combine the non and chunked dimension orders as
+        # that is the order the data will
         # actually come out of the read data as
         sample_chunk_shape = tuple(sample_chunk_shape)
-        blocked_dimension_order = non_chunk_dimension_ordering + chunk_dimension_ordering
+        blocked_dimension_order = (
+            non_chunk_dimension_ordering + chunk_dimension_ordering
+        )
 
-        # Fill out the rest of the operating shape with dimension sizes of 1 to match the length of the sample chunk
-        # When dask.block happens it fills the dimensions from inner-most to outer-most with the chunks as long as
-        # the dimension is size 1
-        # Basically, we are adding empty dimensions to the operating shape that will be filled by the chunks from dask
-        operating_shape = tuple(operating_shape) + (1, ) * len(sample_chunk_shape)
+        # Fill out the rest of the operating shape with dimension sizes of 1 to match
+        # the length of the sample chunk
+        # When dask.block happens it fills the dimensions from inner-most to outer-most
+        # with the chunks as long as the dimension is size 1
+        # Basically, we are adding empty dimensions to the operating shape that will be
+        # filled by the chunks from dask
+        operating_shape = tuple(operating_shape) + (1,) * len(sample_chunk_shape)
 
-        # Create empty numpy array with the operating shape so that we can iter through and use the multi_index to
-        # create the readers.
+        # Create empty numpy array with the operating shape so that we can iter through
+        # and use the multi_index to create the readers.
         lazy_arrays = np.ndarray(operating_shape, dtype=object)
 
-        # We can enumerate over the multi-indexed array and construct read_dims dictionaries by simply zipping together
-        # the ordered dims list and the current multi-index plus the begin index for that plane. We then set the value
-        # of the array at the same multi-index to the delayed reader using the constructed read_dims dictionary.
+        # We can enumerate over the multi-indexed array and construct read_dims
+        # dictionaries by simply zipping together the ordered dims list and the current
+        # multi-index plus the begin index for that plane. We then set the value of the
+        # array at the same multi-index to the delayed reader using the constructed
+        # read_dims dictionary.
         dims = [d for d in czi.dims]
         begin_indicies = tuple(image_dim_indices[d][0] for d in dims)
         for i, _ in np.ndenumerate(lazy_arrays):
-            # Add the czi file begin index for each dimension to the array dimension index
+            # Add the czi file begin index for each dimension to the array dimension
+            # index
             this_chunk_read_indicies = (
                 current_dim_begin_index + curr_dim_index
                 for current_dim_begin_index, curr_dim_index in zip(begin_indicies, i)
             )
 
             # Zip the dims with the read indices
-            this_chunk_read_dims = dict(zip(blocked_dimension_order, this_chunk_read_indicies))
+            this_chunk_read_dims = dict(
+                zip(blocked_dimension_order, this_chunk_read_indicies)
+            )
 
             # Remove the dimensions that we want to chunk by from the read dims
             for d in chunk_by_dims:
@@ -261,13 +304,14 @@ class CziReader(Reader):
                 dtype=sample.dtype,
             )
 
-        # Convert the numpy array of lazy readers into a dask array and fill the inner-most empty dimensions with chunks
+        # Convert the numpy array of lazy readers into a dask array and fill the inner
+        # most empty dimensions with chunks
         merged = da.block(lazy_arrays.tolist())
 
         # Because we have set certain dimensions to be chunked and others not
         # we will need to transpose back to original dimension ordering
-        # Example being, if the original dimension ordering was "SZYX" and we want to chunk by "S", "Y", and "X"
-        # We created an array with dimensions ordering "ZSYX"
+        # Example being, if the original dimension ordering was "SZYX" and we want to
+        # chunk by "S", "Y", and "X" we created an array with dimensions ordering "ZSYX"
         transpose_indices = []
         transpose_required = False
         for i, d in enumerate(czi.dims):
@@ -279,8 +323,9 @@ class CziReader(Reader):
                 transpose_indices.append(i)
 
         # Only run if the transpose is actually required
-        # The default case is "Z", "Y", "X", which _usually_ doesn't need to be transposed because that is _usually_
-        # The normal dimension order of the CZI file anyway
+        # The default case is "Z", "Y", "X", which _usually_ doesn't need to be
+        # transposed because that is _usually_ the normal dimension order of the CZI
+        # file anyway
         if transpose_required:
             merged = da.transpose(merged, tuple(transpose_indices))
 
@@ -291,11 +336,16 @@ class CziReader(Reader):
     @staticmethod
     def _daread_safe(
         img: Union[str, Path],
-        chunk_by_dims: List[str] = [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX],
-        S: int = 0
+        chunk_by_dims: List[str] = [
+            Dimensions.SpatialZ,
+            Dimensions.SpatialY,
+            Dimensions.SpatialX,
+        ],
+        S: int = 0,
     ) -> Tuple[da.core.Array, str]:
         """
-        Safely read a CZI image file as a delayed dask array where certain dimensions act as the chunk size.
+        Safely read a CZI image file as a delayed dask array where certain dimensions
+        act as the chunk size.
 
         Parameters
         ----------
@@ -306,8 +356,10 @@ class CziReader(Reader):
             Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]
             Note: SpatialY and SpatialX will always be added to the list if not present.
         S: int
-            If the image has different dimensions on any scene from another, the dask array construction will fail.
-            In that case, use this parameter to specify a specific scene to construct a dask array for.
+            If the image has different dimensions on any scene from another, the dask
+            array construction will fail.
+            In that case, use this parameter to specify a specific scene to construct a
+            dask array for.
             Default: 0 (select the first scene)
 
         Returns
@@ -344,9 +396,7 @@ class CziReader(Reader):
         """
         if self._dask_data is None:
             self._dask_data, self._dims = CziReader._daread_safe(
-                self._file,
-                chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_index
+                self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
             )
 
         return self._dask_data
@@ -369,7 +419,8 @@ class CziReader(Reader):
         -------
         The lxml Element Tree of the metadata
         """
-        # We can't serialize lxml element trees so don't save the tree to the object state
+        # We can't serialize lxml element trees so don't save the tree to the object
+        # state
         return CziFile(self._file).meta
 
     def _size_of_dimension(self, dim: str) -> int:
@@ -397,7 +448,9 @@ class CziReader(Reader):
         return self._size_of_dimension(Dimensions.SpatialX)
 
     def get_channel_names(self, scene: int = 0):
-        chelem = self.metadata.findall("./Metadata/Information/Image/Dimensions/Channels/Channel")
+        chelem = self.metadata.findall(
+            "./Metadata/Information/Image/Dimensions/Channels/Channel"
+        )
         return [ch.get("Name") for ch in chelem]
 
     # TODO refactor this utility function into a metadata wrapper class
@@ -408,7 +461,19 @@ class CziReader(Reader):
         return ref.text
 
     def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
-        px = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"))
-        py = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"))
-        pz = float(self._getmetadataxmltext("./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"))
+        px = float(
+            self._getmetadataxmltext(
+                "./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"
+            )
+        )
+        py = float(
+            self._getmetadataxmltext(
+                "./Metadata/Scaling/Items/Distance[@Id='Y']/Value", "1.0"
+            )
+        )
+        pz = float(
+            self._getmetadataxmltext(
+                "./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"
+            )
+        )
         return (px, py, pz)

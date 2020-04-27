@@ -21,18 +21,20 @@ requirements = [
 ]
 
 test_requirements = [
-    "codecov",
+    "black>=19.10b0",
+    "codecov>=2.0.22",
     "docutils>=0.10,<0.16",
-    "flake8",
-    "napari",
-    "psutil",
-    "pytest",
-    "pytest-cov",
-    "pytest-raises",
+    "flake8>=3.7.7",
+    "napari>=0.2.10",
+    "psutil>=5.7.0",
+    "pytest>=4.3.0",
+    "pytest-cov==2.6.1",
+    "pytest-raises>=0.10",
     "quilt3>=3.1.12",
 ]
 
 dev_requirements = [
+    "black>=19.10b0",
     "bumpversion>=0.5.3",
     "coverage>=5.0a4",
     "docutils>=0.10,<0.16",

@@ -11,16 +11,16 @@ from aicsimageio.vendor import omexml
 BYTE_BOUNDARY = 2 ** 21
 
 # This is the threshold to use BigTiff, if it's the 4GB boundary it should be 2**22 but
-# the libtiff writer was unable to handle a 2GB numpy array. It would be great if we better
-# understood exactly what this threshold is and how to calculate it but for now this is a
-# stopgap working value
+# the libtiff writer was unable to handle a 2GB numpy array.
+# It would be great if we better understood exactly what this threshold is and how to
+# calculate it but for now this is a stopgap working value
 
 
 class OmeTiffWriter:
     def __init__(self, file_path, overwrite_file=None):
         """
-        This class can take arrays of pixel values and do the necessary metadata creation to write them
-        properly in OME xml format.
+        This class can take arrays of pixel values and do the necessary metadata
+        creation to write them properly in OME xml format.
 
         Parameters
         ----------
@@ -57,7 +57,11 @@ class OmeTiffWriter:
             if overwrite_file:
                 os.remove(self.file_path)
             elif overwrite_file is None:
-                raise IOError("File {} exists but user has chosen not to overwrite it".format(self.file_path))
+                raise IOError(
+                    "File {} exists but user has chosen not to overwrite it".format(
+                        self.file_path
+                    )
+                )
             elif overwrite_file is False:
                 self.silent_pass = True
 
@@ -78,7 +82,7 @@ class OmeTiffWriter:
         image_name="IMAGE0",
         pixels_physical_size=None,
         channel_colors=None,
-        dimension_order="STZCYX"
+        dimension_order="STZCYX",
     ):
         """
         Save an image with the proper OME XML metadata.
@@ -91,7 +95,8 @@ class OmeTiffWriter:
         image_name: The name of the image to be put into the OME metadata
         pixels_physical_size: The physical size of each pixel in the image
         channel_colors: The channel colors to be put into the OME metadata
-        dimension_order: The dimension ordering in the data array.  Will be assumed STZCYX if not specified
+        dimension_order: The dimension ordering in the data array. Will be assumed
+        STZCYX if not specified
         """
         if self.silent_pass:
             return
@@ -99,19 +104,29 @@ class OmeTiffWriter:
         shape = data.shape
         ndims = len(shape)
 
-        assert (ndims == 5 or ndims == 4 or ndims == 3), "Expected 3, 4, or 5 dimensions in data array"
+        assert (
+            ndims == 5 or ndims == 4 or ndims == 3
+        ), "Expected 3, 4, or 5 dimensions in data array"
 
         # assert valid characters in dimension_order
         if not (all(d in "STCZYX" for d in dimension_order)):
-            raise InvalidDimensionOrderingError(f"Invalid dimension_order {dimension_order}")
-        if (dimension_order[-2:] != "YX"):
-            raise InvalidDimensionOrderingError(f"Last two characters of dimension_order {dimension_order} expected to \
-                be YX.  Please transpose your data.")
-        if (len(dimension_order) < ndims):
-            raise InvalidDimensionOrderingError(f"dimension_order {dimension_order} must have at least as many \
-                dimensions as data shape {shape}")
-        if (dimension_order.find("S") > 0):
-            raise InvalidDimensionOrderingError(f"S must be the leading dim in dimension_order {dimension_order}")
+            raise InvalidDimensionOrderingError(
+                f"Invalid dimension_order {dimension_order}"
+            )
+        if dimension_order[-2:] != "YX":
+            raise InvalidDimensionOrderingError(
+                f"Last two characters of dimension_order {dimension_order} expected to \
+                be YX.  Please transpose your data."
+            )
+        if len(dimension_order) < ndims:
+            raise InvalidDimensionOrderingError(
+                f"dimension_order {dimension_order} must have at least as many \
+                dimensions as data shape {shape}"
+            )
+        if dimension_order.find("S") > 0:
+            raise InvalidDimensionOrderingError(
+                f"S must be the leading dim in dimension_order {dimension_order}"
+            )
         # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape
@@ -123,11 +138,11 @@ class OmeTiffWriter:
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             # prepend either TC, TZ or CZ
-            if dimension_order[0] == 'T':
+            if dimension_order[0] == "T":
                 dimension_order = "CZ" + dimension_order
-            elif dimension_order[0] == 'C':
+            elif dimension_order[0] == "C":
                 dimension_order = "TZ" + dimension_order
-            elif dimension_order[0] == 'Z':
+            elif dimension_order[0] == "Z":
                 dimension_order = "TC" + dimension_order
 
         # if this is 4d data, then expand to 5D and add appropriate dimensions
@@ -143,22 +158,35 @@ class OmeTiffWriter:
                 dimension_order = "T" + dimension_order
 
         if ome_xml is None:
-            self._make_meta(data, channel_names=channel_names, image_name=image_name,
-                            pixels_physical_size=pixels_physical_size, channel_colors=channel_colors,
-                            dimension_order=dimension_order)
+            self._make_meta(
+                data,
+                channel_names=channel_names,
+                image_name=image_name,
+                pixels_physical_size=pixels_physical_size,
+                channel_colors=channel_colors,
+                dimension_order=dimension_order,
+            )
         else:
             pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()
             self.omeMetadata = ome_xml
         xml = self.omeMetadata.to_xml().encode()
 
-        tif = tifffile.TiffWriter(self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY)
+        tif = tifffile.TiffWriter(
+            self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY
+        )
 
         # check data shape for TZCYX or ZCYX or ZYX
         if ndims == 5 or ndims == 4 or ndims == 3:
-            # minisblack instructs TiffWriter to not try to infer rgb color within the data array
-            # metadata param fixes the double image description bug
-            tif.save(data, compress=9, description=xml, photometric='minisblack', metadata=None)
+            # minisblack instructs TiffWriter to not try to infer rgb color within the
+            # data array metadata param fixes the double image description bug
+            tif.save(
+                data,
+                compress=9,
+                description=xml,
+                photometric="minisblack",
+                metadata=None,
+            )
 
         tif.close()
 
@@ -166,7 +194,8 @@ class OmeTiffWriter:
         """ this doesn't do the necessary functionality at this point
 
         TODO:
-            * make this insert a YX slice in between two other slices inside a full image
+            * make this insert a YX slice in between two other slices inside a full
+              image
             * data should be a 5 dim array
 
         :param data:
@@ -217,16 +246,25 @@ class OmeTiffWriter:
         return size
 
     # set up some sensible defaults from provided info
-    def _make_meta(self, data, channel_names=None, image_name="IMAGE0", pixels_physical_size=None, channel_colors=None,
-                   dimension_order="TCZYX"):
+    def _make_meta(
+        self,
+        data,
+        channel_names=None,
+        image_name="IMAGE0",
+        pixels_physical_size=None,
+        channel_colors=None,
+        dimension_order="TCZYX",
+    ):
         """Creates the necessary metadata for an OME tiff image
 
-        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a file.
+        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a
+        file.
         :param channel_names: The names for each channel to be put into the OME metadata
         :param image_name: The name of the image to be put into the OME metadata
         :param pixels_physical_size: The physical size of each pixel in the image
         :param channel_colors: The channel colors to be put into the OME metadata
-        :param dimension_order: The order of dimensions in the data array, using T,C,Z,Y and X
+        :param dimension_order: The order of dimensions in the data array, using
+        T,C,Z,Y and X
         """
         ox = self.omeMetadata
 
@@ -253,7 +291,8 @@ class OmeTiffWriter:
         pixels.set_SizeY(dim_or_1("Y"))
         pixels.set_SizeX(dim_or_1("X"))
 
-        # this must be set to the *reverse* of what dimensionality the ome tif file is saved as
+        # this must be set to the *reverse* of what dimensionality
+        # the ome tif file is saved as
         pixels.set_DimensionOrder(dimension_order[::-1])
 
         # convert our numpy dtype to a ome compatible pixeltype

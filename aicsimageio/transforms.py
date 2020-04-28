@@ -104,8 +104,10 @@ def reshape_data(
                 if isinstance(dim_operator, list):
                     check_selection_max = max(dim_operator)
 
+                # No need to check slices as slices work with array syntax and will
+                # ignore out-of-bounds indicies
                 if isinstance(dim_operator, slice):
-                    check_selection_max = dim_operator.stop
+                    check_selection_max = 0
             else:
                 # Nothing was requested from this dimension
                 dim_operator = slice(None, None, None)

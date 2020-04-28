@@ -36,10 +36,20 @@ def reshape_data(
     return_dims: str
         The dimension ordering of the return data
     kwargs:
-        C=1 => desired specific channel, if C in the input data has depth 3 then C=1
-        returns the 2nd slice (0 indexed)
-        Z=10 => desired specific channel, if Z in the input data has depth 20 then Z=10
-        returns the 11th slice
+        * C=1 => desired specific channel, if C in the input data has depth 3 then C=1
+          returns the 2nd slice (0 indexed)
+        * Z=10 => desired specific channel, if Z in the input data has depth 20 then
+          Z=10 returns the 11th slice
+        * T=[0, 1] => desired specific timepoints, if T in the input data has depth 100
+          then T=[0, 1] returns the 1st and 2nd slice (0 indexed)
+        * T=(0, 1) => desired specific timepoints, if T in the input data has depth 100
+          then T=(0, 1) returns the 1st and 2nd slice (0 indexed)
+        * T=(0, -1) => desired specific timepoints, if T in the input data has depth 100
+          then T=(0, -1) returns the first and last slice
+        * T=range(10) => desired specific timepoints, if T in the input data has depth
+          100 then T=range(10) returns the first ten slices
+        * T=slice(0, -1, 5) => desired specific timepoints, T=slice(0, -1, 5) returns
+          every fifth timepoint
 
     Returns
     -------

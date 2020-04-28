@@ -257,6 +257,94 @@ def test_reshape_data_values(data, given_dims, return_dims, idx_in, idx_out):
     assert type(actual) == type(slice_in)
 
 
+# Arrays used for value checking on kwarg provided reshape_data
+NP_ONES = np.ones((10, 10))
+TEST_NDARRAY = np.stack([NP_ONES * i for i in range(7)])
+DA_ONES = da.ones((10, 10))
+TEST_DARRAY = da.stack([DA_ONES * i for i in range(7)])
+
+
+@pytest.mark.parametrize(
+    "data, given_dims, return_dims, other_args, expected",
+    [
+        # Just dimension selection
+        (TEST_NDARRAY, "ZYX", "YX", {}, TEST_NDARRAY[0,],),
+        (TEST_DARRAY, "ZYX", "YX", {}, TEST_DARRAY[0,],),
+        (TEST_NDARRAY, "ZYX", "YX", {"Z": 1}, TEST_NDARRAY[1,],),
+        (TEST_DARRAY, "ZYX", "YX", {"Z": 1}, TEST_DARRAY[1,],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": [0, 1]}, TEST_NDARRAY[[0, 1],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": [0, 1]}, TEST_DARRAY[[0, 1],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": (0, 1)}, TEST_NDARRAY[[0, 1],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": (0, 1)}, TEST_DARRAY[[0, 1],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": [0, -1]}, TEST_NDARRAY[[0, -1],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": [0, -1]}, TEST_DARRAY[[0, -1],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": (0, -1)}, TEST_NDARRAY[[0, -1],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": (0, -1)}, TEST_DARRAY[[0, -1],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": range(2)}, TEST_NDARRAY[[0, 1],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": range(2)}, TEST_DARRAY[[0, 1],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": range(0, 6, 2)}, TEST_NDARRAY[[0, 2, 4],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": range(0, 6, 2)}, TEST_DARRAY[[0, 2, 4],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": slice(0, 6, 2)}, TEST_NDARRAY[[0, 2, 4],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(0, 6, 2)}, TEST_DARRAY[[0, 2, 4],],),
+        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": slice(6, 3, -1)}, TEST_NDARRAY[[6, 5, 4],],),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(6, 3, -1)}, TEST_DARRAY[[6, 5, 4],],),
+        (
+            TEST_NDARRAY,
+            "ZYX",
+            "ZYX",
+            {"Z": slice(-1, 3, -1)},
+            TEST_NDARRAY[[6, 5, 4],],
+        ),
+        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(-1, 3, -1)}, TEST_DARRAY[[6, 5, 4],],),
+        # Dimension selection and order swap
+        (
+            TEST_NDARRAY,
+            "ZYX",
+            "YXZ",
+            {"Z": (0, -1)},
+            np.transpose(TEST_NDARRAY[[0, -1],], (1, 2, 0)),
+        ),
+        (
+            TEST_DARRAY,
+            "ZYX",
+            "YXZ",
+            {"Z": (0, -1)},
+            da.transpose(TEST_DARRAY[[0, -1],], (1, 2, 0)),
+        ),
+        (
+            TEST_NDARRAY,
+            "ZYX",
+            "YXZ",
+            {"Z": range(0, 6, 2)},
+            np.transpose(TEST_NDARRAY[[0, 2, 4],], (1, 2, 0)),
+        ),
+        (
+            TEST_DARRAY,
+            "ZYX",
+            "YXZ",
+            {"Z": range(0, 6, 2)},
+            da.transpose(TEST_DARRAY[[0, 2, 4],], (1, 2, 0)),
+        ),
+    ],
+)
+def test_reshape_data_kwargs_values(
+    data, given_dims, return_dims, other_args, expected,
+):
+    actual = reshape_data(
+        data=data, given_dims=given_dims, return_dims=return_dims, **other_args,
+    )
+
+    # Check that the output data is the same type as the input
+    assert type(actual) == type(expected)
+
+    if isinstance(data, da.core.Array):
+        actual = actual.compute()
+        expected = expected.compute()
+
+    # Check actual data
+    np.testing.assert_array_equal(actual, expected)
+
+
 @pytest.mark.parametrize(
     "data, given_dims, return_dims, expected_shape",
     [

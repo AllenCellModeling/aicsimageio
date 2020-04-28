@@ -48,12 +48,6 @@ def reshape_data(
         would have order "STCZYX"
 
     """
-    # Get operator
-    if isinstance(data, da.core.Array):
-        operator = da
-    else:
-        operator = np
-
     # Check for parameter conflicts
     for dim in Dimensions.DefaultOrderList:
         # return_dims='TCZYX' and fixed dimensions 'C=1'
@@ -84,35 +78,17 @@ def reshape_data(
                 f"Check usage."
             )
 
-    # Add each dimension not included in original data
+    # Process each dimension available
     new_dims = given_dims
-    excluded_dims = "".join(set(return_dims) - set(given_dims))
-    for dim in excluded_dims:
-        # Dask doesn't have an explicit expand dims so
-        # we simply reshape with an extra dim
-        data = operator.reshape(data, (1, *data.shape))
-        new_dims = dim + new_dims  # add the missing Dimension to the front
-
-    # If given dims contains a Dimension not in return dims and its depth is 1 remove it
-    # If it's larger than 1 give a warning and
-    # suggest interfacing with the Reader object
-    extra_dims = "".join(set(given_dims) - set(return_dims))
-
-    # Construct operational dims by checking and adding dimensions that exist in the
-    # return dims and in kwargs
-    operational_dims = extra_dims
-    for dim in return_dims:
-        if isinstance(kwargs.get(dim), (list, tuple, range, slice)):
-            operational_dims += dim
-
-    # Process each dimension requested
     getitem_ops = []
-    for dim in operational_dims:
+    for dim in given_dims:
         # Store index of the dim as it is in given data
         dim_index = given_dims.index(dim)
 
-        # Handle dim in return dims which means that it is an iterable selection
+        # Handle dim in return dims which means that it is
+        # an iterable or None selection
         if dim in return_dims:
+            # Specific iterable requested
             if dim in kwargs:
                 # Actual dim operator
                 dim_operator = kwargs.get(dim)
@@ -140,7 +116,7 @@ def reshape_data(
                 # No op means that it doesn't matter how much data is in this dimension
                 check_selection_max = 0
 
-        # Not in return dims means that it is a fixed integer selection
+        # Not in given dims means that it is a fixed integer selection
         else:
             if dim in kwargs:
                 # Integer requested
@@ -174,6 +150,14 @@ def reshape_data(
 
     # Run getitems
     data = data[tuple(getitem_ops)]
+
+    # Add empty dims where dimensions were requested but data doesn't exist
+    # Add dimensions to new dims where empty dims are added
+    for i, dim in enumerate(return_dims):
+        # This dimension wasn't processed
+        if dim not in given_dims:
+            new_dims = f"{new_dims[:i]}{dim}{new_dims[i:]}"
+            data = data.reshape(*data.shape[:i], 1, *data.shape[i:])
 
     # Any extra dimensions have been removed, only a problem if the depth is > 1
     return transpose_to_dims(
@@ -216,6 +200,5 @@ def transpose_to_dims(
     transposer = []
     for dim in return_dims:
         transposer.append(match_map[dim])
-    print(transposer)
     data = data.transpose(transposer)
     return data

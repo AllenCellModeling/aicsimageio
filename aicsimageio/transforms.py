@@ -54,10 +54,7 @@ def reshape_data(
         # Dimension is in kwargs
         # Dimension is an integer
         # Dimension is in return dimensions
-        if (
-            isinstance(kwargs.get(dim), int)
-            and dim in return_dims
-        ):
+        if isinstance(kwargs.get(dim), int) and dim in return_dims:
             raise ConflictingArgumentsError(
                 f"Argument return_dims={return_dims} and "
                 f"argument {dim}={kwargs.get(dim)} conflict. "

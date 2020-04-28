@@ -141,6 +141,22 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
         pytest.param(
             np.zeros((6, 200, 400)),
             "ZYX",
+            "TYXCX",
+            {"Z": [0, 1, 4]},
+            None,
+            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+        ),
+        pytest.param(
+            da.zeros((6, 200, 400)),
+            "ZYX",
+            "TYXCX",
+            {"Z": [0, 1, 4]},
+            None,
+            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+        ),
+        pytest.param(
+            np.zeros((6, 200, 400)),
+            "ZYX",
             "TYXCZX",
             {"Z": [0, 1, 7]},
             None,

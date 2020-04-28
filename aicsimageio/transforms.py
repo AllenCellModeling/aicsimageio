@@ -4,9 +4,6 @@
 import logging
 from collections import Counter
 
-import dask.array as da
-import numpy as np
-
 from . import types
 from .constants import Dimensions
 from .exceptions import ConflictingArgumentsError

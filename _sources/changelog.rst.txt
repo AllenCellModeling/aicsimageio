@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/allow-sequence-in-get-data  (`#109
+  <https://github.com/AllenCellModeling/aicsimageio/pull/109>`_)
+  [JacksonMaxfield]
 - feature/read-leica-lif-files  (`#99
   <https://github.com/AllenCellModeling/aicsimageio/pull/99>`_) [Jamie
   Sherman]

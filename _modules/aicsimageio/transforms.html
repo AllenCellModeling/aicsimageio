@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id14">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id19">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id27">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id30">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id32">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id31">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id33">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id36">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id37">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -234,10 +234,8 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 
-<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ConflictingArgumentsError</span>
 
 <span class="c1">###############################################################################</span>
@@ -245,64 +243,6 @@
 <span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="c1">###############################################################################</span>
-
-
-<span class="k">def</span> <span class="nf">_array_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A reimplementation of array split that doesn&#39;t cast to numpy and returns a list of</span>
-<span class="sd">    whichever object type it is currently operating on.</span>
-
-<span class="sd">    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L723</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">Ntotal</span> <span class="o">=</span> <span class="n">ary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-        <span class="n">Ntotal</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ary</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># handle array case.</span>
-        <span class="n">Nsections</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="n">div_points</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="n">Ntotal</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-        <span class="c1"># indices_or_sections is a scalar, not an array.</span>
-        <span class="n">Nsections</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">Nsections</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;number sections must be larger than 0.&quot;</span><span class="p">)</span>
-        <span class="n">Neach_section</span><span class="p">,</span> <span class="n">extras</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">Ntotal</span><span class="p">,</span> <span class="n">Nsections</span><span class="p">)</span>
-        <span class="n">section_sizes</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">extras</span> <span class="o">*</span> <span class="p">[</span><span class="n">Neach_section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">Nsections</span> <span class="o">-</span> <span class="n">extras</span><span class="p">)</span> <span class="o">*</span> <span class="p">[</span><span class="n">Neach_section</span><span class="p">]</span>
-        <span class="p">)</span>
-        <span class="n">div_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">section_sizes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ary</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-    <span class="n">sub_arys</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">sary</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">ary</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Nsections</span><span class="p">):</span>
-        <span class="n">st</span> <span class="o">=</span> <span class="n">div_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="n">div_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1"># Make sure start and end are integers</span>
-        <span class="n">st</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
-        <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
-
-        <span class="n">sub_arys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="n">sary</span><span class="p">[</span><span class="n">st</span><span class="p">:</span><span class="n">end</span><span class="p">],</span> <span class="n">axis</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">sub_arys</span>
-
-
-<span class="k">def</span> <span class="nf">_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A reimplementation of split that doesn&#39;t cast to numpy and returns a list of</span>
-<span class="sd">    whichever object type it is currently operating on.</span>
-
-<span class="sd">    https://github.com/numpy/numpy/blob/v1.17.0/numpy/lib/shape_base.py#L782</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="nb">len</span><span class="p">(</span><span class="n">indices_or_sections</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-        <span class="n">sections</span> <span class="o">=</span> <span class="n">indices_or_sections</span>
-        <span class="n">N</span> <span class="o">=</span> <span class="n">ary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">N</span> <span class="o">%</span> <span class="n">sections</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;array split does not result in an equal division&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_array_split</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">ary</span><span class="p">,</span> <span class="n">indices_or_sections</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="reshape_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.reshape_data">[docs]</a><span class="k">def</span> <span class="nf">reshape_data</span><span class="p">(</span>
@@ -323,10 +263,20 @@
 <span class="sd">    return_dims: str</span>
 <span class="sd">        The dimension ordering of the return data</span>
 <span class="sd">    kwargs:</span>
-<span class="sd">        C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1</span>
-<span class="sd">        returns the 2nd slice (0 indexed)</span>
-<span class="sd">        Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then Z=10</span>
-<span class="sd">        returns the 11th slice</span>
+<span class="sd">        * C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1</span>
+<span class="sd">          returns the 2nd slice (0 indexed)</span>
+<span class="sd">        * Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then</span>
+<span class="sd">          Z=10 returns the 11th slice</span>
+<span class="sd">        * T=[0, 1] =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=[0, 1] returns the 1st and 2nd slice (0 indexed)</span>
+<span class="sd">        * T=(0, 1) =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=(0, 1) returns the 1st and 2nd slice (0 indexed)</span>
+<span class="sd">        * T=(0, -1) =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=(0, -1) returns the first and last slice</span>
+<span class="sd">        * T=range(10) =&gt; desired specific timepoints, if T in the input data has depth</span>
+<span class="sd">          100 then T=range(10) returns the first ten slices</span>
+<span class="sd">        * T=slice(0, -1, 5) =&gt; desired specific timepoints, T=slice(0, -1, 5) returns</span>
+<span class="sd">          every fifth timepoint</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -334,60 +284,159 @@
 <span class="sd">        An array in return_dims order, if return_dims=DEFAULT_DIMS then the return</span>
 <span class="sd">        would have order &quot;STCZYX&quot;</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Get operator</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
-        <span class="n">operator</span> <span class="o">=</span> <span class="n">da</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">operator</span> <span class="o">=</span> <span class="n">np</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Specific index selection</span>
 
-    <span class="c1"># Check for conflicts like return_dims=&#39;TCZYX&#39; and fixed channels &#39;C=1&#39;</span>
-    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... z1 = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=1)</span>
+
+<span class="sd">    List of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_and_second = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=[0, 1])</span>
+
+<span class="sd">    Tuple of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_and_last = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=(0, -1))</span>
+
+<span class="sd">    Range of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_three = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=range(3))</span>
+
+<span class="sd">    Slice selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... every_other = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=slice(0, -1, 2))</span>
+
+<span class="sd">    Empty dimension expansion</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... with_time = reshape_data(data, &quot;ZYX&quot;, &quot;TZYX&quot;)</span>
+
+<span class="sd">    Dimension order shuffle</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... as_zx_base = reshape_data(data, &quot;ZYX&quot;, &quot;YZX&quot;)</span>
+
+<span class="sd">    Selections, empty dimension expansions, and dimension order shuffle</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... example = reshape_data(data, &quot;CYX&quot;, &quot;BSTCZYX&quot;, C=slice(0, -1, 3))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check for parameter conflicts</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrderList</span><span class="p">:</span>
+        <span class="c1"># return_dims=&#39;TCZYX&#39; and fixed dimensions &#39;C=1&#39;</span>
+        <span class="c1"># Dimension is in kwargs</span>
+        <span class="c1"># Dimension is an integer</span>
+        <span class="c1"># Dimension is in return dimensions</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Argument return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2"> and &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;argument </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="si">}</span><span class="s2"> conflict. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Check usage.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;When selecting a single dimension index, the specified dimension can &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;not be provided in return_dims. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2">, dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-    <span class="c1"># Add each dimension not included in original data</span>
-    <span class="n">new_dims</span> <span class="o">=</span> <span class="n">given_dims</span>
-    <span class="n">excluded_dims</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">return_dims</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">given_dims</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">excluded_dims</span><span class="p">:</span>
-        <span class="c1"># Dask doesn&#39;t have an explicit expand dims so</span>
-        <span class="c1"># we simply reshape with an extra dim</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="n">new_dims</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">+</span> <span class="n">new_dims</span>  <span class="c1"># add the missing Dimension to the front</span>
+        <span class="c1"># return_dims=&#39;CZYX&#39; and iterable dimensions &#39;T=range(10)&#39;</span>
+        <span class="c1"># Dimension is in kwargs</span>
+        <span class="c1"># Dimension is an iterable</span>
+        <span class="c1"># Dimension is not in return dimensions</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">slice</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">return_dims</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;When selecting a multiple dimension indicies, the specified &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dimension must be provided in return_dims. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2">, dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
 
-    <span class="c1"># If given dims contains a Dimension not in return dims and its depth is 1 remove it</span>
-    <span class="c1"># If it&#39;s larger than 1 give a warning and</span>
-    <span class="c1"># suggest interfacing with the Reader object</span>
-    <span class="n">extra_dims</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">return_dims</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">extra_dims</span><span class="p">:</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="n">new_dims</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">index_depth</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">index_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Process each dimension available</span>
+    <span class="n">new_dims</span> <span class="o">=</span> <span class="n">given_dims</span>
+    <span class="n">dim_specs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">:</span>
+        <span class="c1"># Store index of the dim as it is in given data</span>
+        <span class="n">dim_index</span> <span class="o">=</span> <span class="n">given_dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Handle dim in return dims which means that it is</span>
+        <span class="c1"># an iterable or None selection</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
+            <span class="c1"># Specific iterable requested</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="c1"># Actual dim specification</span>
+                <span class="c1"># The specification provided for this dimension in the kwargs</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># Convert operator to standard list or slice</span>
+                <span class="c1"># dask.Array and numpy.ndarray both natively support</span>
+                <span class="c1"># List[int] and slices being passed to getitem so no need to cast them</span>
+                <span class="c1"># to anything different</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+                    <span class="n">dim_spec</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)</span>
+
+                <span class="c1"># Get the largest absolute value index in the list using min and max</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">check_selection_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)])</span>
+
+                <span class="c1"># Get the largest absolute value index from start and stop of slice</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                    <span class="n">check_selection_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">dim_spec</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dim_spec</span><span class="o">.</span><span class="n">start</span><span class="p">)])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Nothing was requested from this dimension</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># No op means that it doesn&#39;t matter how much data is in this dimension</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Not in given dims means that it is a fixed integer selection</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="c1"># Integer requested</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># Check that integer</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="n">dim_spec</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Dimension wasn&#39;t included in kwargs, default to zero</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Data has dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> with depth </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Data has dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> with depth </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;assuming </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=0 is the desired value, &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;if not the case specify </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=x where &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;x is an integer in [0, </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">).&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;x is an integer, list, tuple, range, or slice.&quot;</span>
                 <span class="p">)</span>
-                <span class="n">index_depth</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="n">index_depth</span> <span class="o">&gt;=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Dimension specified with </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">index_depth</span><span class="si">}</span><span class="s2"> &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;but Dimension shape is </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
-                <span class="p">)</span>
-            <span class="n">planes</span> <span class="o">=</span> <span class="n">_split</span><span class="p">(</span>
-                <span class="n">operator</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span>
-            <span class="p">)</span>  <span class="c1"># split dim into list of arrays</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">planes</span><span class="p">[</span><span class="n">index_depth</span><span class="p">]</span>  <span class="c1"># take the specified value of the dim</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># remove the dim from ndarray</span>
-        <span class="n">new_dims</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">new_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">index</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_dims</span><span class="p">[</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
-        <span class="p">)</span>  <span class="c1"># clip out the Dimension from new_dims</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Remove dim from new dims as it is fixed size</span>
+            <span class="n">new_dims</span> <span class="o">=</span> <span class="n">new_dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check that fixed integer request isn&#39;t outside of request</span>
+        <span class="k">if</span> <span class="n">check_selection_max</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension specified with </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">display_dim_spec</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but Dimension shape is </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># All checks and operations passed, append dim operation to getitem ops</span>
+        <span class="n">dim_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)</span>
+
+    <span class="c1"># Run getitems</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dim_specs</span><span class="p">)]</span>
+
+    <span class="c1"># Add empty dims where dimensions were requested but data doesn&#39;t exist</span>
+    <span class="c1"># Add dimensions to new dims where empty dims are added</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">return_dims</span><span class="p">):</span>
+        <span class="c1"># This dimension wasn&#39;t processed</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">:</span>
+            <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_dims</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="si">}{</span><span class="n">dim</span><span class="si">}{</span><span class="n">new_dims</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span>
+
     <span class="c1"># Any extra dimensions have been removed, only a problem if the depth is &gt; 1</span>
     <span class="k">return</span> <span class="n">transpose_to_dims</span><span class="p">(</span>
         <span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">new_dims</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">return_dims</span>

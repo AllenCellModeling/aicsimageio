@@ -124,41 +124,41 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id14">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id19">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id27">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id30">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id32">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id31">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id33">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id36">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id37">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -345,7 +345,6 @@
 <span class="sd">        ...     dask_kwargs={&quot;address&quot;: &quot;tcp://localhost:1234&quot;},</span>
 <span class="sd">        ...     ) as img:</span>
 <span class="sd">        ...     data = img.get_image_data(&quot;ZYX&quot;, S=0, T=0, C=0)</span>
-<span class="sd">        ```</span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----</span>
@@ -563,10 +562,18 @@
 <span class="sd">            Default: The current image dimensions. i.e. `self.dims`</span>
 
 <span class="sd">        kwargs:</span>
-<span class="sd">            C=1: specifies Channel 1</span>
-<span class="sd">            T=3: specifies the fourth index in T</span>
-<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be</span>
-<span class="sd">            present in the out_orientation</span>
+<span class="sd">            * C=1: specifies Channel 1</span>
+<span class="sd">            * T=3: specifies the fourth index in T</span>
+<span class="sd">            * D=n: D is Dimension letter and n is the index desired. D should not be</span>
+<span class="sd">              present in the out_orientation.</span>
+<span class="sd">            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies</span>
+<span class="sd">              desired. D should be present in the out_orientation.</span>
+<span class="sd">            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies</span>
+<span class="sd">              desired. D should be present in the out_orientation.</span>
+<span class="sd">            * D=range(...): D is Dimension letter and range is the standard Python</span>
+<span class="sd">              range function. D should be present in the out_orientation.</span>
+<span class="sd">            * D=slice(...): D is Dimension letter and slice is the standard Python</span>
+<span class="sd">              slice function. D should be present in the out_orientation.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -574,10 +581,41 @@
 <span class="sd">            The read data with the dimension ordering that was specified with</span>
 <span class="sd">            out_orientation.</span>
 
-<span class="sd">        Note: If a requested dimension is not present in the data the dimension is</span>
-<span class="sd">        added with a depth of 1.</span>
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Specific index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... c1 = img.get_image_dask_data(&quot;ZYX&quot;, C=1)</span>
+
+<span class="sd">        List of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_and_second = img.get_image_dask_data(&quot;CZYX&quot;, C=[0, 1])</span>
+
+<span class="sd">        Tuple of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_and_last = img.get_image_dask_data(&quot;CZYX&quot;, C=(0, -1))</span>
+
+<span class="sd">        Range of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_three = img.get_image_dask_data(&quot;CZYX&quot;, C=range(3))</span>
+
+<span class="sd">        Slice selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... every_other = img.get_image_dask_data(&quot;CZYX&quot;, C=slice(0, -1, 2))</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        * If a requested dimension is not present in the data the dimension is</span>
+<span class="sd">          added with a depth of 1.</span>
+
+<span class="sd">        See `aicsimageio.transforms.reshape_data` for more details.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># If no out orientation, simply return current data as numpy array</span>
+        <span class="c1"># If no out orientation, simply return current data as dask array</span>
         <span class="k">if</span> <span class="n">out_orientation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span>
 
@@ -602,10 +640,45 @@
 <span class="sd">            Default: The current image dimensions. i.e. `self.dims`</span>
 
 <span class="sd">        kwargs:</span>
-<span class="sd">            C=1: specifies Channel 1</span>
-<span class="sd">            T=3: specifies the fourth index in T</span>
-<span class="sd">            D=n: D is Dimension letter and n is the index desired D should not be</span>
-<span class="sd">            present in the out_orientation</span>
+<span class="sd">            * C=1: specifies Channel 1</span>
+<span class="sd">            * T=3: specifies the fourth index in T</span>
+<span class="sd">            * D=n: D is Dimension letter and n is the index desired. D should not be</span>
+<span class="sd">              present in the out_orientation.</span>
+<span class="sd">            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies</span>
+<span class="sd">              desired. D should be present in the out_orientation.</span>
+<span class="sd">            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies</span>
+<span class="sd">              desired. D should be present in the out_orientation.</span>
+<span class="sd">            * D=range(...): D is Dimension letter and range is the standard Python</span>
+<span class="sd">              range function. D should be present in the out_orientation.</span>
+<span class="sd">            * D=slice(...): D is Dimension letter and slice is the standard Python</span>
+<span class="sd">              slice function. D should be present in the out_orientation.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Specific index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... c1 = img.get_image_data(&quot;ZYX&quot;, C=1)</span>
+
+<span class="sd">        List of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_and_second = img.get_image_data(&quot;CZYX&quot;, C=[0, 1])</span>
+
+<span class="sd">        Tuple of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_and_last = img.get_image_data(&quot;CZYX&quot;, C=(0, -1))</span>
+
+<span class="sd">        Range of index selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... first_three = img.get_image_data(&quot;CZYX&quot;, C=range(3))</span>
+
+<span class="sd">        Slice selection</span>
+
+<span class="sd">        &gt;&gt;&gt; img = AICSImage(&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;)</span>
+<span class="sd">        ... every_other = img.get_image_data(&quot;CZYX&quot;, C=slice(0, -1, 2))</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -613,8 +686,12 @@
 <span class="sd">            The read data with the dimension ordering that was specified with</span>
 <span class="sd">            out_orientation.</span>
 
-<span class="sd">        Note: If a requested dimension is not present in the data the dimension is</span>
-<span class="sd">        added with a depth of 1.</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        * If a requested dimension is not present in the data the dimension is</span>
+<span class="sd">          added with a depth of 1.</span>
+
+<span class="sd">        See `aicsimageio.transforms.reshape_data` for more details.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span>
             <span class="n">out_orientation</span><span class="o">=</span><span class="n">out_orientation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>

@@ -11,17 +11,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, List
 
-import czifile
+import dask.config
 import imageio
 import numpy as np
 import psutil
 import tifffile
-from dask_jobqueue import SLURMCluster
 from distributed import Client
 from tqdm import tqdm
 
 import aicsimageio
+import czifile
 from aicsimageio import dask_utils
+from dask_jobqueue import SLURMCluster
 
 ###############################################################################
 
@@ -32,6 +33,57 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 ###############################################################################
+
+CLUSTER_CONFIGS = [
+    {
+        name: "small-local-cluster-replica",
+        per_worker_cores: 4,
+        workers: 1,
+    },
+    {
+        name: "large-local-cluster-replica",
+        per_worker_cores: 32,
+        workers: 1,
+    },
+    {
+        name: "small-worker-distributed-cluster",
+        per_worker_cores: 1,
+        workers: 32,
+    },
+    {
+        name: "standard-worker-distributed-cluster",
+        per_worker_cores: 8,
+        workers: 4,
+    },
+    {
+        name: "standard-worker-distributed-cluster",
+        per_worker_cores: 8,
+        workers: 4,
+    },
+    {
+        name: "large-worker-distributed-cluster",
+        per_worker_cores: 32,
+        workers: 4,
+    },
+    {
+        name: "many-small-worker-distributed-cluster",
+        per_worker_cores: 1,
+        workers: 128,
+    },
+    {
+        name: "many-standard-worker-distributed-cluster",
+        per_worker_cores: 8,
+        workers: 16,
+    },
+    {
+        name: "many-large-worker-distributed-cluster",
+        per_worker_cores: 32,
+        workers: 4,
+    },
+]
+
+###############################################################################
+
 # Args
 
 
@@ -57,11 +109,6 @@ class Args(argparse.Namespace):
             default="benchmark/results.json",
             type=Path,
             help="Path to save the generated benchmark JSON file.",
-        )
-        p.add_argument(
-            "--distributed",
-            action="store_true",
-            help="Run distributed cluster benchmarks.",
         )
         p.add_argument(
             "--debug",
@@ -153,6 +200,9 @@ def _run_benchmark_suite(resources_dir: Path):
 
 
 def run_benchmarks(args: Args):
+    # Results are stored as they are returned
+    all_results = {}
+
     # Try running the benchmarks
     try:
         # Get benchmark resources dir
@@ -185,87 +235,56 @@ def run_benchmarks(args: Args):
         log.info(f"Running tests (no cluster)...")
         log.info(f"=" * 80)
 
-        no_cluster_results = _run_benchmark_suite(resources_dir=resources_dir)
+        all_results["no-cluster"] = _run_benchmark_suite(resources_dir=resources_dir)
 
         #######################################################################
 
-        log.info(f"Running tests (local cluster)...")
-        log.info(f"=" * 80)
-
-        with dask_utils.cluster_and_client() as (cluster, client):
-            # Store cluster configuration
-            worker_spec = cluster.worker_spec[0]["options"]
-            local_cluster_config = {
-                "workers": len(cluster.workers),
-                "per_worker_thread_allocation": worker_spec["nthreads"],
-                "per_worker_memory_allocation_gb": worker_spec["memory_limit"] / 10e8,
-            }
-
-            local_cluster_results = _run_benchmark_suite(resources_dir=resources_dir)
-
-        #######################################################################
-
-        if args.distributed:
-            log.info(f"Running tests (distributed cluster)...")
+        for cluster_config in CLUSTER_CONFIGS:
+            log.info(f"Running tests ({cluster_config['name']}) ...")
             log.info(f"=" * 80)
 
             # Create or get log dir
             # Do not include ms
             log_dir_name = datetime.now().isoformat().split(".")[0]
-            log_dir = Path(f"~/.dask_logs/aicsimageio/{log_dir_name}").expanduser()
-            # Log dir get or create
+            log_dir = Path(f".dask_logs/{log_dir_name}").expanduser()
+            # Log dir settings
             log_dir.mkdir(parents=True, exist_ok=True)
 
-            # Create SLURM Cluster
-            cluster = SLURMCluster(
-                        cores=1,
-                        memory="2GB",
-                        queue="aics_cpu_general",
-                        walltime="1:00:00",
-                        local_directory=str(log_dir),
-                        log_directory=str(log_dir),
-                    )
+            # Configure dask config
+            dask.config.set({"scheduler.work-stealing": False})
 
-            # Scale workers
-            cluster.scale(64)
+            # Calc per_worker_memory
+            per_worker_memory = cluster_config["per_worker_cores"] * 4
+            per_worker_memory = f"{per_worker_memory}GB"
+
+            # Create cluster
+            cluster = SLURMCluster(
+                cores=cluster_config["per_worker_cores"],
+                memory=per_worker_memory,
+                queue="aics_cpu_general",
+                walltime="10:00:00",
+                local_directory=str(log_dir),
+                log_directory=str(log_dir),
+            )
+
+            # Scale cluster
+            cluster.scale(cluster_config["workers"])
 
             # Create client connection
             client = Client(cluster)
 
-            # Store cluster configuration
-            worker_spec = cluster.worker_spec[0]["options"]
-            distributed_cluster_config = {
-                "workers": len(cluster.workers),
-                "per_worker_core_allocation": worker_spec["cores"],
-                "per_worker_memory_allocation_gb": worker_spec["memory"],
-            }
-
-            distributed_cluster_results = _run_benchmark_suite(
+            # Run benchmark
+            all_results[cluster_config["name"]] = _run_benchmark_suite(
                 resources_dir=resources_dir
             )
 
             client.shutdown()
             cluster.close()
 
-        else:
-            distributed_cluster_config = None
-            distributed_cluster_results = []
-
         #######################################################################
 
         log.info(f"Completed all tests")
         log.info(f"=" * 80)
-
-        # Store results in a single JSON
-        all_results = {
-            "machine_config": machine_config,
-            "python_config": python_config,
-            "local_cluster_config": local_cluster_config,
-            "distributed_cluster_config": distributed_cluster_config,
-            "no_cluster_results": no_cluster_results,
-            "local_cluster_results": local_cluster_results,
-            "distributed_cluster_results": distributed_cluster_results,
-        }
 
         # Ensure save dir exists and save results
         args.save_path.parent.mkdir(parents=True, exist_ok=True)

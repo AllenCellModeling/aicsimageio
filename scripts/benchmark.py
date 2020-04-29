@@ -37,7 +37,7 @@ log = logging.getLogger(__name__)
 CLUSTER_CONFIGS = [
     {
         "name": "small-local-cluster-replica",
-        "per_worker_cores": 4,
+        "per_worker_cores": 8,
         "workers": 1,
     },
     {
@@ -230,7 +230,7 @@ def run_benchmarks(args: Args):
         log.info(f"Running tests (no cluster)...")
         log.info(f"=" * 80)
 
-        all_results["no-cluster"] = _run_benchmark_suite(resources_dir=resources_dir)
+        # all_results["no-cluster"] = _run_benchmark_suite(resources_dir=resources_dir)
 
         #######################################################################
 

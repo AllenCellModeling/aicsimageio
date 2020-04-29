@@ -63,9 +63,9 @@ def reshape_data(
         # Dimension is in return dimensions
         if isinstance(kwargs.get(dim), int) and dim in return_dims:
             raise ConflictingArgumentsError(
-                f"Argument return_dims={return_dims} and "
-                f"argument {dim}={kwargs.get(dim)} conflict. "
-                f"Check usage."
+                f"When selecting a single dimension index, the specified dimension can "
+                f"not be provided in return_dims. "
+                f"return_dims={return_dims}, dimension {dim} = {kwargs.get(dim)}"
             )
 
         # return_dims='CZYX' and iterable dimensions 'T=range(10)'
@@ -77,14 +77,14 @@ def reshape_data(
             and dim not in return_dims
         ):
             raise ConflictingArgumentsError(
-                f"Argument return_dims={return_dims} and "
-                f"argument {dim}={kwargs.get(dim)} conflict. "
-                f"Check usage."
+                f"When selecting a multiple dimension indicies, the specified "
+                f"dimension must be provided in return_dims. "
+                f"return_dims={return_dims}, dimension {dim} = {kwargs.get(dim)}"
             )
 
     # Process each dimension available
     new_dims = given_dims
-    getitem_ops = []
+    dim_specs = []
     for dim in given_dims:
         # Store index of the dim as it is in given data
         dim_index = given_dims.index(dim)
@@ -94,30 +94,33 @@ def reshape_data(
         if dim in return_dims:
             # Specific iterable requested
             if dim in kwargs:
-                # Actual dim operator
-                dim_operator = kwargs.get(dim)
+                # Actual dim specification
+                # The specification provided for this dimension in the kwargs
+                dim_spec = kwargs.get(dim)
+                display_dim_spec = dim_spec
 
                 # Convert operator to standard list or slice
                 # dask.Array and numpy.ndarray both natively support
                 # List[int] and slices being passed to getitem so no need to cast them
                 # to anything different
-                if isinstance(dim_operator, (tuple, range)):
-                    dim_operator = list(dim_operator)
+                if isinstance(dim_spec, (tuple, range)):
+                    dim_spec = list(dim_spec)
 
                 # Check max of iterables isn't out of range of index
                 # "min" of iterables can be below zero and in array index terms that is
                 # just "from the reverse order". Useful in cases where you may want the
                 # first and last slices of an image [0, -1]
-                if isinstance(dim_operator, list):
-                    check_selection_max = max(dim_operator)
+                if isinstance(dim_spec, list):
+                    check_selection_max = max(dim_spec)
 
                 # No need to check slices as slices work with array syntax and will
                 # ignore out-of-bounds indicies
-                if isinstance(dim_operator, slice):
+                if isinstance(dim_spec, slice):
                     check_selection_max = 0
             else:
                 # Nothing was requested from this dimension
-                dim_operator = slice(None, None, None)
+                dim_spec = slice(None, None, None)
+                display_dim_spec = dim_spec
 
                 # No op means that it doesn't matter how much data is in this dimension
                 check_selection_max = 0
@@ -126,19 +129,21 @@ def reshape_data(
         else:
             if dim in kwargs:
                 # Integer requested
-                dim_operator = kwargs.get(dim)
+                dim_spec = kwargs.get(dim)
+                display_dim_spec = dim_spec
 
                 # Check that integer
-                check_selection_max = dim_operator
+                check_selection_max = dim_spec
             else:
                 # Dimension wasn't included in kwargs, default to zero
                 log.warning(
                     f"Data has dimension {dim} with depth {data.shape[dim_index]}, "
                     f"assuming {dim}=0 is the desired value, "
                     f"if not the case specify {dim}=x where "
-                    f"x is an integer in [0, {data.shape[dim_index]}])."
+                    f"x is an integer, list, tuple, range, or slice."
                 )
-                dim_operator = 0
+                dim_spec = 0
+                display_dim_spec = dim_spec
                 check_selection_max = 0
 
             # Remove dim from new dims as it is fixed size
@@ -147,15 +152,15 @@ def reshape_data(
         # Check that fixed integer request isn't outside of request
         if check_selection_max > data.shape[dim_index]:
             raise IndexError(
-                f"Dimension specified with {dim}={dim_operator} "
+                f"Dimension specified with {dim}={display_dim_spec} "
                 f"but Dimension shape is {data.shape[dim_index]}."
             )
 
         # All checks and operations passed, append dim operation to getitem ops
-        getitem_ops.append(dim_operator)
+        dim_specs.append(dim_spec)
 
     # Run getitems
-    data = data[tuple(getitem_ops)]
+    data = data[tuple(dim_specs)]
 
     # Add empty dims where dimensions were requested but data doesn't exist
     # Add dimensions to new dims where empty dims are added

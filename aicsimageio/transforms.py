@@ -54,6 +54,47 @@ def reshape_data(
         An array in return_dims order, if return_dims=DEFAULT_DIMS then the return
         would have order "STCZYX"
 
+    Examples
+    --------
+    Specific index selection
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... z1 = reshape_data(data, "ZYX", "YX", Z=1)
+
+    List of index selection
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... first_and_second = reshape_data(data, "ZYX", "YX", Z=[0, 1])
+
+    Tuple of index selection
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... first_and_last = reshape_data(data, "ZYX", "YX", Z=(0, -1))
+
+    Range of index selection
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... first_three = reshape_data(data, "ZYX", "YX", Z=range(3))
+
+    Slice selection
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... every_other = reshape_data(data, "ZYX", "YX", Z=slice(0, -1, 2))
+
+    Empty dimension expansion
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... with_time = reshape_data(data, "ZYX", "TZYX")
+
+    Dimension order shuffle
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... as_zx_base = reshape_data(data, "ZYX", "YZX")
+
+    Selections, empty dimension expansions, and dimension order shuffle
+
+    >>> data = np.random.rand((10, 100, 100))
+    ... example = reshape_data(data, "CYX", "BSTCZYX", C=slice(0, -1, 3))
     """
     # Check for parameter conflicts
     for dim in Dimensions.DefaultOrderList:

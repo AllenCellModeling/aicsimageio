@@ -36,44 +36,44 @@ log = logging.getLogger(__name__)
 
 CLUSTER_CONFIGS = [
     {
-        name: "small-local-cluster-replica",
-        per_worker_cores: 4,
-        workers: 1,
+        "name": "small-local-cluster-replica",
+        "per_worker_cores": 4,
+        "workers": 1,
     },
     {
-        name: "large-local-cluster-replica",
-        per_worker_cores: 32,
-        workers: 1,
+        "name": "large-local-cluster-replica",
+        "per_worker_cores": 32,
+        "workers": 1,
     },
     {
-        name: "small-worker-distributed-cluster",
-        per_worker_cores: 1,
-        workers: 32,
+        "name": "small-worker-distributed-cluster",
+        "per_worker_cores": 1,
+        "workers": 32,
     },
     {
-        name: "standard-worker-distributed-cluster",
-        per_worker_cores: 8,
-        workers: 4,
+        "name": "standard-worker-distributed-cluster",
+        "per_worker_cores": 8,
+        "workers": 4,
     },
     {
-        name: "large-worker-distributed-cluster",
-        per_worker_cores: 32,
-        workers: 4,
+        "name": "large-worker-distributed-cluster",
+        "per_worker_cores": 32,
+        "workers": 4,
     },
     {
-        name: "many-small-worker-distributed-cluster",
-        per_worker_cores: 1,
-        workers: 128,
+        "name": "many-small-worker-distributed-cluster",
+        "per_worker_cores": 1,
+        "workers": 128,
     },
     {
-        name: "many-standard-worker-distributed-cluster",
-        per_worker_cores: 8,
-        workers: 16,
+        "name": "many-standard-worker-distributed-cluster",
+        "per_worker_cores": 8,
+        "workers": 16,
     },
     {
-        name: "many-large-worker-distributed-cluster",
-        per_worker_cores: 32,
-        workers: 4,
+        "name": "many-large-worker-distributed-cluster",
+        "per_worker_cores": 32,
+        "workers": 4,
     },
 ]
 

@@ -70,6 +70,7 @@ benchmark_requirements = [
     "czifile==2019.7.2",
     "dask_jobqueue==0.7.0",
     "imageio==2.8.0",
+    "quilt3>=3.1.12",
     "tifffile==2020.2.16",
     "tqdm",
 ]

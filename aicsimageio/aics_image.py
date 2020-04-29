@@ -115,7 +115,6 @@ class AICSImage:
         ...     dask_kwargs={"address": "tcp://localhost:1234"},
         ...     ) as img:
         ...     data = img.get_image_data("ZYX", S=0, T=0, C=0)
-        ```
 
         Notes
         -----
@@ -333,10 +332,18 @@ class AICSImage:
             Default: The current image dimensions. i.e. `self.dims`
 
         kwargs:
-            C=1: specifies Channel 1
-            T=3: specifies the fourth index in T
-            D=n: D is Dimension letter and n is the index desired D should not be
-            present in the out_orientation
+            * C=1: specifies Channel 1
+            * T=3: specifies the fourth index in T
+            * D=n: D is Dimension letter and n is the index desired. D should not be
+              present in the out_orientation.
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+              desired. D should be present in the out_orientation.
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+              desired. D should be present in the out_orientation.
+            * D=range(...): D is Dimension letter and range is the standard Python
+              range function. D should be present in the out_orientation.
+            * D=slice(...): D is Dimension letter and slice is the standard Python
+              slice function. D should be present in the out_orientation.
 
         Returns
         -------
@@ -344,10 +351,41 @@ class AICSImage:
             The read data with the dimension ordering that was specified with
             out_orientation.
 
-        Note: If a requested dimension is not present in the data the dimension is
-        added with a depth of 1.
+        Examples
+        --------
+        Specific index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... c1 = img.get_image_dask_data("ZYX", C=1)
+
+        List of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_second = img.get_image_dask_data("CZYX", C=[0, 1])
+
+        Tuple of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_last = img.get_image_dask_data("CZYX", C=(0, -1))
+
+        Range of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_three = img.get_image_dask_data("CZYX", C=range(3))
+
+        Slice selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... every_other = img.get_image_dask_data("CZYX", C=slice(0, -1, 2))
+
+        Notes
+        -----
+        * If a requested dimension is not present in the data the dimension is
+          added with a depth of 1.
+
+        See `aicsimageio.transforms.reshape_data` for more details.
         """
-        # If no out orientation, simply return current data as numpy array
+        # If no out orientation, simply return current data as dask array
         if out_orientation is None:
             return self.dask_data
 
@@ -372,10 +410,45 @@ class AICSImage:
             Default: The current image dimensions. i.e. `self.dims`
 
         kwargs:
-            C=1: specifies Channel 1
-            T=3: specifies the fourth index in T
-            D=n: D is Dimension letter and n is the index desired D should not be
-            present in the out_orientation
+            * C=1: specifies Channel 1
+            * T=3: specifies the fourth index in T
+            * D=n: D is Dimension letter and n is the index desired. D should not be
+              present in the out_orientation.
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+              desired. D should be present in the out_orientation.
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+              desired. D should be present in the out_orientation.
+            * D=range(...): D is Dimension letter and range is the standard Python
+              range function. D should be present in the out_orientation.
+            * D=slice(...): D is Dimension letter and slice is the standard Python
+              slice function. D should be present in the out_orientation.
+
+        Examples
+        --------
+        Specific index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... c1 = img.get_image_data("ZYX", C=1)
+
+        List of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_second = img.get_image_data("CZYX", C=[0, 1])
+
+        Tuple of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_last = img.get_image_data("CZYX", C=(0, -1))
+
+        Range of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_three = img.get_image_data("CZYX", C=range(3))
+
+        Slice selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... every_other = img.get_image_data("CZYX", C=slice(0, -1, 2))
 
         Returns
         -------
@@ -383,8 +456,12 @@ class AICSImage:
             The read data with the dimension ordering that was specified with
             out_orientation.
 
-        Note: If a requested dimension is not present in the data the dimension is
-        added with a depth of 1.
+        Notes
+        -----
+        * If a requested dimension is not present in the data the dimension is
+          added with a depth of 1.
+
+        See `aicsimageio.transforms.reshape_data` for more details.
         """
         return self.get_image_dask_data(
             out_orientation=out_orientation, **kwargs

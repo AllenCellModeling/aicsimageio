@@ -147,16 +147,13 @@ def reshape_data(
                 if isinstance(dim_spec, (tuple, range)):
                     dim_spec = list(dim_spec)
 
-                # Check max of iterables isn't out of range of index
-                # "min" of iterables can be below zero and in array index terms that is
-                # just "from the reverse order". Useful in cases where you may want the
-                # first and last slices of an image [0, -1]
+                # Get the largest absolute value index in the list using min and max
                 if isinstance(dim_spec, list):
-                    check_selection_max = max(dim_spec)
+                    check_selection_max = max([abs(min(dim_spec)), max(dim_spec)])
 
-                # Check max of slice by simply checking the stop index
+                # Get the largest absolute value index from start and stop of slice
                 if isinstance(dim_spec, slice):
-                    check_selection_max = dim_spec.stop
+                    check_selection_max = max([abs(dim_spec.stop), abs(dim_spec.start)])
             else:
                 # Nothing was requested from this dimension
                 dim_spec = slice(None, None, None)

@@ -121,7 +121,7 @@ def _run_benchmark(
     resources_dir: Path,
     extensions: List[str],
     non_aicsimageio_reader: List[Callable],
-    iterations: int = 5,
+    iterations: int = 3,
 ):
     # Collect files matching the extensions provided
     files = []

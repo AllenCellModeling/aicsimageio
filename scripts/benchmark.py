@@ -56,11 +56,6 @@ CLUSTER_CONFIGS = [
         workers: 4,
     },
     {
-        name: "standard-worker-distributed-cluster",
-        per_worker_cores: 8,
-        workers: 4,
-    },
-    {
         name: "large-worker-distributed-cluster",
         per_worker_cores: 32,
         workers: 4,

@@ -202,6 +202,22 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             None,
             marks=pytest.mark.raises(exception=IndexError),
         ),
+        pytest.param(
+            np.zeros((6, 200, 400)),
+            "ZYX",
+            "TYXCZX",
+            {"Z": slice(0, 7, 2)},
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+        pytest.param(
+            da.zeros((6, 200, 400)),
+            "ZYX",
+            "TYXCZX",
+            {"Z": slice(0, 7, 2)},
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
     ],
 )
 def test_reshape_data_shape(data, given_dims, return_dims, other_args, expected_shape):

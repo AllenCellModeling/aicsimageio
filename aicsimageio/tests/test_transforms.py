@@ -9,89 +9,27 @@ from aicsimageio.exceptions import ConflictingArgumentsError
 from aicsimageio.transforms import reshape_data, transpose_to_dims
 
 
+@pytest.mark.parametrize("array_maker", [np.zeros, da.zeros])
 @pytest.mark.parametrize(
-    "data, given_dims, return_dims, other_args, expected_shape",
+    "data_shape, given_dims, return_dims, other_args, expected_shape",
     [
+        ((10, 1, 5, 6, 200, 400), "STCZYX", "CSZYX", {}, (5, 10, 6, 200, 400),),
+        ((6, 200, 400), "ZYX", "STCZYX", {}, (1, 1, 1, 6, 200, 400)),
+        ((6, 200, 400), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
+        ((6, 200, 400), "ZYX", "CYSXT", {"Z": 2}, (1, 200, 1, 400, 1)),
+        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": [0, 1]}, (2, 1, 200, 1, 400, 1),),
+        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": (0, 1)}, (2, 1, 200, 1, 400, 1),),
+        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": range(2)}, (2, 1, 200, 1, 400, 1),),
         (
-            np.zeros((10, 1, 5, 6, 200, 400)),
-            "STCZYX",
-            "CSZYX",
-            {},
-            (5, 10, 6, 200, 400),
-        ),
-        (
-            da.zeros((10, 1, 5, 6, 200, 400)),
-            "STCZYX",
-            "CSZYX",
-            {},
-            (5, 10, 6, 200, 400),
-        ),
-        (np.zeros((6, 200, 400)), "ZYX", "STCZYX", {}, (1, 1, 1, 6, 200, 400)),
-        (da.zeros((6, 200, 400)), "ZYX", "STCZYX", {}, (1, 1, 1, 6, 200, 400)),
-        (np.zeros((6, 200, 400)), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
-        (da.zeros((6, 200, 400)), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
-        (np.zeros((6, 200, 400)), "ZYX", "CYSXT", {"Z": 2}, (1, 200, 1, 400, 1)),
-        (da.zeros((6, 200, 400)), "ZYX", "CYSXT", {"Z": 2}, (1, 200, 1, 400, 1)),
-        (
-            np.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": [0, 1]},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": [0, 1]},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            np.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": (0, 1)},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": (0, 1)},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            np.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": range(2)},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": range(2)},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "ZCYSXT",
             {"Z": slice(0, 2, 1)},
             (2, 1, 200, 1, 400, 1),
         ),
-        (
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "ZCYSXT",
-            {"Z": slice(0, 2, 1)},
-            (2, 1, 200, 1, 400, 1),
-        ),
-        (np.zeros((2, 2, 2)), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
-        (da.zeros((2, 2, 2)), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
+        ((2, 2, 2), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
         pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXC",
             {"Z": 7},
@@ -99,15 +37,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXC",
-            {"Z": 7},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZ",
             {"Z": 7},
@@ -115,15 +45,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=ConflictingArgumentsError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZ",
-            {"Z": 7},
-            None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": 7},
@@ -131,15 +53,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=ConflictingArgumentsError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": 7},
-            None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCX",
             {"Z": [0, 1, 4]},
@@ -147,15 +61,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=ConflictingArgumentsError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCX",
-            {"Z": [0, 1, 4]},
-            None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": [0, 1, 7]},
@@ -163,15 +69,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": [0, 1, 7]},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": (0, 1, 7)},
@@ -179,15 +77,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": (0, 1, 7)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": range(7)},
@@ -195,15 +85,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": range(7)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": slice(0, 7, 2)},
@@ -211,15 +93,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": slice(0, 7, 2)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": [0, 1, -7]},
@@ -227,15 +101,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": [0, 1, -7]},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": (0, 1, -7)},
@@ -243,15 +109,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": (0, 1, -7)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": range(0, -8, -1)},
@@ -259,23 +117,7 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
-            da.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": range(0, -8, -1)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            np.zeros((6, 200, 400)),
-            "ZYX",
-            "TYXCZX",
-            {"Z": slice(-7, 0, 2)},
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            da.zeros((6, 200, 400)),
+            (6, 200, 400),
             "ZYX",
             "TYXCZX",
             {"Z": slice(-7, 0, 2)},
@@ -284,7 +126,11 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
         ),
     ],
 )
-def test_reshape_data_shape(data, given_dims, return_dims, other_args, expected_shape):
+def test_reshape_data_shape(
+    array_maker, data_shape, given_dims, return_dims, other_args, expected_shape,
+):
+    data = array_maker(data_shape)
+
     actual = reshape_data(
         data=data, given_dims=given_dims, return_dims=return_dims, **other_args
     )
@@ -360,69 +206,41 @@ DA_ONES = da.ones((10, 10))
 TEST_DARRAY = da.stack([DA_ONES * i for i in range(7)])
 
 
+@pytest.mark.parametrize("data", [TEST_NDARRAY, TEST_DARRAY])
 @pytest.mark.parametrize(
-    "data, given_dims, return_dims, other_args, expected",
+    "given_dims, return_dims, other_args, getitem_ops_for_expected, transposer",
     [
         # Just dimension selection
-        (TEST_NDARRAY, "ZYX", "YX", {}, TEST_NDARRAY[0]),
-        (TEST_DARRAY, "ZYX", "YX", {}, TEST_DARRAY[0]),
-        (TEST_NDARRAY, "ZYX", "YX", {"Z": 1}, TEST_NDARRAY[1]),
-        (TEST_DARRAY, "ZYX", "YX", {"Z": 1}, TEST_DARRAY[1]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": [0, 1]}, TEST_NDARRAY[[0, 1]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": [0, 1]}, TEST_DARRAY[[0, 1]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": (0, 1)}, TEST_NDARRAY[[0, 1]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": (0, 1)}, TEST_DARRAY[[0, 1]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": [0, -1]}, TEST_NDARRAY[[0, -1]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": [0, -1]}, TEST_DARRAY[[0, -1]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": (0, -1)}, TEST_NDARRAY[[0, -1]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": (0, -1)}, TEST_DARRAY[[0, -1]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": range(2)}, TEST_NDARRAY[[0, 1]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": range(2)}, TEST_DARRAY[[0, 1]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": range(0, 6, 2)}, TEST_NDARRAY[[0, 2, 4]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": range(0, 6, 2)}, TEST_DARRAY[[0, 2, 4]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": slice(0, 6, 2)}, TEST_NDARRAY[[0, 2, 4]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(0, 6, 2)}, TEST_DARRAY[[0, 2, 4]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": slice(6, 3, -1)}, TEST_NDARRAY[[6, 5, 4]]),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(6, 3, -1)}, TEST_DARRAY[[6, 5, 4]]),
-        (TEST_NDARRAY, "ZYX", "ZYX", {"Z": slice(-1, 3, -1)}, TEST_NDARRAY[[6, 5, 4]],),
-        (TEST_DARRAY, "ZYX", "ZYX", {"Z": slice(-1, 3, -1)}, TEST_DARRAY[[6, 5, 4]]),
+        ("ZYX", "YX", {}, 0, None),
+        ("ZYX", "YX", {"Z": 1}, 1, None),
+        ("ZYX", "ZYX", {"Z": [0, 1]}, [0, 1], None),
+        ("ZYX", "ZYX", {"Z": (0, 1)}, [0, 1], None),
+        ("ZYX", "ZYX", {"Z": [0, -1]}, [0, -1], None),
+        ("ZYX", "ZYX", {"Z": (0, -1)}, [0, -1], None),
+        ("ZYX", "ZYX", {"Z": range(2)}, [0, 1], None),
+        ("ZYX", "ZYX", {"Z": range(0, 6, 2)}, [0, 2, 4], None),
+        ("ZYX", "ZYX", {"Z": slice(0, 6, 2)}, [0, 2, 4], None),
+        ("ZYX", "ZYX", {"Z": slice(6, 3, -1)}, [6, 5, 4], None),
+        ("ZYX", "ZYX", {"Z": slice(-1, 3, -1)}, [6, 5, 4], None),
         # Dimension selection and order swap
-        (
-            TEST_NDARRAY,
-            "ZYX",
-            "YXZ",
-            {"Z": (0, -1)},
-            np.transpose(TEST_NDARRAY[[0, -1]], (1, 2, 0)),
-        ),
-        (
-            TEST_DARRAY,
-            "ZYX",
-            "YXZ",
-            {"Z": (0, -1)},
-            da.transpose(TEST_DARRAY[[0, -1]], (1, 2, 0)),
-        ),
-        (
-            TEST_NDARRAY,
-            "ZYX",
-            "YXZ",
-            {"Z": range(0, 6, 2)},
-            np.transpose(TEST_NDARRAY[[0, 2, 4]], (1, 2, 0)),
-        ),
-        (
-            TEST_DARRAY,
-            "ZYX",
-            "YXZ",
-            {"Z": range(0, 6, 2)},
-            da.transpose(TEST_DARRAY[[0, 2, 4]], (1, 2, 0)),
-        ),
+        ("ZYX", "YXZ", {"Z": (0, -1)}, [0, -1], (1, 2, 0),),
+        ("ZYX", "YXZ", {"Z": range(0, 6, 2)}, [0, 2, 4], (1, 2, 0),),
     ],
 )
 def test_reshape_data_kwargs_values(
-    data, given_dims, return_dims, other_args, expected,
+    data, given_dims, return_dims, other_args, getitem_ops_for_expected, transposer,
 ):
     actual = reshape_data(
         data=data, given_dims=given_dims, return_dims=return_dims, **other_args,
     )
+
+    expected = data[getitem_ops_for_expected]
+
+    if transposer is not None:
+        if isinstance(data, np.ndarray):
+            expected = np.transpose(expected, transposer)
+        else:
+            expected = da.transpose(expected, transposer)
 
     # Check that the output data is the same type as the input
     assert type(actual) == type(expected)

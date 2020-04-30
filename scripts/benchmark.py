@@ -11,7 +11,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, List
 
-import dask.config
 import imageio
 import numpy as np
 import psutil
@@ -244,9 +243,6 @@ def run_benchmarks(args: Args):
             log_dir = Path(f".dask_logs/{log_dir_name}").expanduser()
             # Log dir settings
             log_dir.mkdir(parents=True, exist_ok=True)
-
-            # Configure dask config
-            dask.config.set({"scheduler.work-stealing": False})
 
             # Calc per_worker_memory
             per_worker_memory = cluster_config["per_worker_cores"] * 4

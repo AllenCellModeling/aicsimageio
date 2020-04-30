@@ -8,6 +8,7 @@ from pathlib import Path
 
 import altair as alt
 import pandas as pd
+from quilt3 import Package
 
 ###############################################################################
 
@@ -37,9 +38,11 @@ class Args(argparse.Namespace):
         # Arguments
         p.add_argument(
             "--benchmark_file",
-            default="benchmark/results.json",
-            type=Path,
-            help="Path to a previously generated benchmark JSON file.",
+            default=None,
+            help=(
+                "Path to a previously generated benchmark JSON file. "
+                "Default: retrieve latest file from Quilt."
+            ),
         )
         p.add_argument(
             "--save_dir",
@@ -72,43 +75,34 @@ def chart_benchmarks(args: Args):
     # Check save dir exists or create
     args.save_dir.mkdir(parents=True, exist_ok=True)
 
+    # Get file
+    if args.benchmark_file is None:
+        benchmark_filepath = Path("benchmark_results.json")
+        p = Package.browse(
+            "aicsimageio/benchmarks",
+            "s3://aics-modeling-packages-test-resources"
+        )
+        p["results.json"].fetch(benchmark_filepath)
+    else:
+        benchmark_filepath = args.benchmark_file
+
     # Read results file
-    with open(args.benchmark_file, "r") as read_in:
+    with open(benchmark_filepath, "r") as read_in:
         all_results = json.load(read_in)
 
-    # Load all datasets
-    no_cluster_results = pd.DataFrame(all_results["no_cluster_results"])
-    no_cluster_results["config"] = "No Cluster"
+    # Generate charts for each config
+    per_cluster_results = []
+    for config_name, results in all_results.items():
+        results = pd.DataFrame(results)
+        results["config"] = config_name
+        per_cluster_results.append(results)
+        chart = _generate_chart(results)
+        chart.save(str(args.save_dir / f"{config_name}.png"))
 
-    local_cluster_results = pd.DataFrame(all_results["local_cluster_results"])
-    local_cluster_results["config"] = "Local Cluster"
-
-    distributed_cluster_results = pd.DataFrame(
-        all_results["distributed_cluster_results"]
-    )
-    if len(distributed_cluster_results) > 0:
-        distributed_cluster_results["config"] = "Distributed Cluster"
-
-    # Generate charts
-    no_cluster_chart = _generate_chart(no_cluster_results)
-    no_cluster_chart.configure_header
-    no_cluster_chart.save(str(args.save_dir / "no_cluster.png"))
-    local_cluster_chart = _generate_chart(local_cluster_results)
-    local_cluster_chart.save(str(args.save_dir / "local_cluster.png"))
-
-    # Only generate distributed if it was ran
-    if len(distributed_cluster_results) > 0:
-        distributed_cluster_chart = _generate_chart(
-            distributed_cluster_results
-        )
-        distributed_cluster_chart.save(str(args.save_dir / "distributed_cluster.png"))
-
-    # Save version of chart with all combined
-    all_results = pd.concat([
-        no_cluster_results, local_cluster_results, distributed_cluster_results,
-    ])
-    all_results_chart = _generate_chart(all_results)
-    all_results_chart.save(str(args.save_dir / "all.png"))
+    # Generate unified chart
+    all_results = pd.concat(per_cluster_results)
+    unified_chart = _generate_chart(all_results)
+    unified_chart.save(str(args.save_dir / "all.png"))
 
 
 ###############################################################################

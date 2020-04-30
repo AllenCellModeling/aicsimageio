@@ -36,13 +36,13 @@ log = logging.getLogger(__name__)
 CLUSTER_CONFIGS = [
     {
         "name": "small-local-cluster-replica",
-        "per_worker_cores": 8,
-        "workers": 1,
+        "per_worker_cores": 2,
+        "workers": 4,
     },
     {
         "name": "large-local-cluster-replica",
-        "per_worker_cores": 32,
-        "workers": 1,
+        "per_worker_cores": 4,
+        "workers": 8,
     },
     {
         "name": "small-worker-distributed-cluster",
@@ -52,11 +52,6 @@ CLUSTER_CONFIGS = [
     {
         "name": "standard-worker-distributed-cluster",
         "per_worker_cores": 8,
-        "workers": 4,
-    },
-    {
-        "name": "large-worker-distributed-cluster",
-        "per_worker_cores": 32,
         "workers": 4,
     },
     {
@@ -226,7 +221,7 @@ def run_benchmarks(args: Args):
         # Run tests
         #######################################################################
 
-        log.info(f"Running tests (no cluster)...")
+        log.info(f"Running tests: no cluster...")
         log.info(f"=" * 80)
 
         # all_results["no-cluster"] = _run_benchmark_suite(resources_dir=resources_dir)
@@ -234,7 +229,11 @@ def run_benchmarks(args: Args):
         #######################################################################
 
         for cluster_config in CLUSTER_CONFIGS:
-            log.info(f"Running tests ({cluster_config['name']}) ...")
+            total_cores = cluster_config["per_worker_cores"] * cluster_config["workers"]
+            log.info(
+                f"Running tests: {cluster_config['name']} "
+                f"(Total cores: {total_cores}) ..."
+            )
             log.info(f"=" * 80)
 
             # Create or get log dir
@@ -264,6 +263,9 @@ def run_benchmarks(args: Args):
             # Create client connection
             client = Client(cluster)
 
+            # Wait for a minute for the cluster to fully spin up
+            time.sleep(60)
+
             # Run benchmark
             all_results[cluster_config["name"]] = _run_benchmark_suite(
                 resources_dir=resources_dir
@@ -271,6 +273,9 @@ def run_benchmarks(args: Args):
 
             client.shutdown()
             cluster.close()
+
+            # Wait for a minute for the cluster to fully shutdown
+            time.sleep(60)
 
         #######################################################################
 

@@ -6,6 +6,7 @@ import json
 import logging
 import platform
 import sys
+import time
 import traceback
 from datetime import datetime
 from pathlib import Path
@@ -115,7 +116,7 @@ def _run_benchmark(
     resources_dir: Path,
     extensions: List[str],
     non_aicsimageio_reader: List[Callable],
-    iterations: int = 1,
+    iterations: int = 3,
 ):
     # Collect files matching the extensions provided
     files = []

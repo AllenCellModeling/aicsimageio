@@ -23,6 +23,7 @@ import aicsimageio
 import czifile
 from aicsimageio import dask_utils
 from dask_jobqueue import SLURMCluster
+from quilt import Package
 
 ###############################################################################
 
@@ -287,6 +288,11 @@ def run_benchmarks(args: Args):
         args.save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(args.save_path, "w") as write_out:
             json.dump(all_results, write_out)
+
+        # Construct and push package
+        p = Package()
+        p.set("results.json", args.save_path)
+        p.push("aicsimageio/benchmarks", "s3://aics-modeling-packages-test-resources")
 
     # Catch any exception
     except Exception as e:

@@ -92,6 +92,11 @@ class Args(argparse.Namespace):
             help="Path to save the generated benchmark JSON file.",
         )
         p.add_argument(
+            "--upload",
+            action="store_true",
+            help="Should the results be uploaded to Quilt."
+        )
+        p.add_argument(
             "--debug",
             action="store_true",
             help="Show traceback if the script were to fail.",
@@ -280,9 +285,14 @@ def run_benchmarks(args: Args):
             json.dump(all_results, write_out)
 
         # Construct and push package
-        p = Package()
-        p.set("results.json", args.save_path)
-        p.push("aicsimageio/benchmarks", "s3://aics-modeling-packages-test-resources")
+        if args.upload:
+            p = Package()
+            p.set("results.json", args.save_path)
+            p.push(
+                "aicsimageio/benchmarks",
+                "s3://aics-modeling-packages-test-resources",
+                message=f"aicsimageio version: {aicsimageio.__version__}"
+            )
 
     # Catch any exception
     except Exception as e:

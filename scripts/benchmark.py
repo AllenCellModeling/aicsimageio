@@ -12,18 +12,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import Callable, List
 
+import czifile
 import imageio
 import numpy as np
 import psutil
 import tifffile
+from dask_jobqueue import SLURMCluster
 from distributed import Client
 from quilt3 import Package
 from tqdm import tqdm
 
 import aicsimageio
-import czifile
 from aicsimageio import dask_utils
-from dask_jobqueue import SLURMCluster
 
 ###############################################################################
 
@@ -43,18 +43,13 @@ CLUSTER_CONFIGS = [
     },
     {
         "name": "large-local-cluster-replica",
-        "per_worker_cores": 4,
-        "workers": 8,
+        "per_worker_cores": 2,
+        "workers": 16,
     },
     {
         "name": "small-worker-distributed-cluster",
         "per_worker_cores": 1,
         "workers": 32,
-    },
-    {
-        "name": "standard-worker-distributed-cluster",
-        "per_worker_cores": 8,
-        "workers": 4,
     },
     {
         "name": "many-small-worker-distributed-cluster",
@@ -63,13 +58,8 @@ CLUSTER_CONFIGS = [
     },
     {
         "name": "many-standard-worker-distributed-cluster",
-        "per_worker_cores": 8,
-        "workers": 16,
-    },
-    {
-        "name": "many-large-worker-distributed-cluster",
-        "per_worker_cores": 32,
-        "workers": 4,
+        "per_worker_cores": 4,
+        "workers": 32,
     },
 ]
 
@@ -246,7 +236,7 @@ def run_benchmarks(args: Args):
             log_dir.mkdir(parents=True, exist_ok=True)
 
             # Calc per_worker_memory
-            per_worker_memory = cluster_config["per_worker_cores"] * 4
+            per_worker_memory = cluster_config["per_worker_cores"] * 2
             per_worker_memory = f"{per_worker_memory}GB"
 
             # Create cluster

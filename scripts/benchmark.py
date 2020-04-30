@@ -17,13 +17,13 @@ import numpy as np
 import psutil
 import tifffile
 from distributed import Client
+from quilt3 import Package
 from tqdm import tqdm
 
 import aicsimageio
 import czifile
 from aicsimageio import dask_utils
 from dask_jobqueue import SLURMCluster
-from quilt import Package
 
 ###############################################################################
 

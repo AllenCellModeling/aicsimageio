@@ -14,8 +14,8 @@ than the other common microscopy image reading libraries:
 ![aicsimageio read times](_static/benchmarks/3.1.4-primary.png)
 _Full image read time (seconds) against number of YX planes in the image._
 _(Lower is better)_
-_aicsimageio.imread times in blue and_
-_imageio.imread, czifile.imread, or tifffile.imread in orange_
+_aicsimageio.imread read times in blue and_
+_imageio.imread, czifile.imread, or tifffile.imread read times in orange_
 
 ### Configs
 * `no-cluster`: single-threaded, no `distributed.Client` connection available

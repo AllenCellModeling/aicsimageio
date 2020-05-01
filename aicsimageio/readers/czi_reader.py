@@ -399,7 +399,37 @@ class CziReader(Reader):
         return dask_array
 
     def _read_in_memory_data(self) -> da.core.Array:
-        return CziReader._imread(self._file)
+        # Init temp czi
+        czi = CziFile(self._file)
+
+        # Safely construct the numpy array or catch any exception
+        try:
+            # Get image dims indicies
+            image_dim_indices = czi.dims_shape()
+
+            # Catch inconsistent scene dimension sizes
+            if len(image_dim_indices) > 1:
+                # Choose the provided scene
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {S} for data retrieval."
+                )
+                data = CziReader._imread(self._file, {"S": self.specific_s_index})
+            else:
+                # If the list is length one that means that all the scenes in the image
+                # have the same dimensions
+                # Just select the first dictionary in the list
+                data = CziReader._imread(self._file)
+
+        except Exception as e:
+            # A really bad way to close any connection to the CZI object
+            czi._bytes = None
+            czi.reader = None
+
+            raise e
+
+
+        return data
 
     @property
     def dims(self) -> str:

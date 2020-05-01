@@ -5,7 +5,6 @@ from io import BytesIO
 
 import numpy as np
 import pytest
-from dask.diagnostics import Profiler
 from psutil import Process
 
 from aicsimageio.readers.lif_reader import LifReader
@@ -17,12 +16,8 @@ from aicsimageio.readers.lif_reader import LifReader
     "expected_dims, "
     "expected_dtype, "
     "select_scene, "
-    "chunk_dims, "
-    "expected_chunksize, "
-    "expected_task_count",
+    "chunk_dims",
     [
-        # Expected task counts should be each
-        # non chunk dimension size multiplied againest each other * 2
         (
             "s_1_t_1_c_2_z_1.lif",
             (1, 1, 2, 1, 2048, 2048),
@@ -30,8 +25,6 @@ from aicsimageio.readers.lif_reader import LifReader
             np.uint16,
             0,
             ["Z", "Y", "X"],
-            (1, 1, 1, 1, 2048, 2048),
-            4,  # 1 * 1 * 2 * 2 = 4
         ),
         (
             "s_1_t_4_c_2_z_1.lif",
@@ -40,8 +33,6 @@ from aicsimageio.readers.lif_reader import LifReader
             np.uint16,
             0,
             ["Z", "Y", "X"],
-            (1, 1, 1, 1, 614, 614),
-            16,  # 1 * 4 * 2 * 2 = 16
         ),
         # To be added back in when rebased off jackson's S3 pr
         (
@@ -51,8 +42,6 @@ from aicsimageio.readers.lif_reader import LifReader
             np.uint16,
             0,
             ["Z", "Y", "X"],
-            (1, 1, 1, 38, 2048, 2048),
-            4,  # 1 * 1 * 2 * 2 = 4
         ),
         (
             "s_14_t_1_c_2_variable_dims.lif",
@@ -61,8 +50,6 @@ from aicsimageio.readers.lif_reader import LifReader
             np.uint16,
             1,
             ["C", "Y", "X"],
-            (1, 1, 2, 1, 2048, 2048),
-            104,  # 1 * 1 * 52 * 2 = 104
         ),
     ],
 )
@@ -74,8 +61,6 @@ def test_lif_reader(
     expected_dtype,
     select_scene,
     chunk_dims,
-    expected_chunksize,
-    expected_task_count,
 ):
     # Get file
     f = resources_dir / filename
@@ -90,24 +75,17 @@ def test_lif_reader(
     assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check basics
-    with Profiler() as prof:
-        assert img.dims == expected_dims
-        assert img.metadata
-        assert img.dask_data.shape == expected_shape
-        assert img.dask_data.chunksize == expected_chunksize
-        assert img.dtype() == expected_dtype
-        # Check that basic details don't require task computation
-        assert len(prof.results) == 0
+    assert img.dims == expected_dims
+    assert img.metadata
+    assert img.dask_data.shape == expected_shape
+    assert img.dtype() == expected_dtype
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 
-    # Check computed type is numpy array,
-    # computed shape is expected shape, and task count is expected
-    with Profiler() as prof:
-        assert isinstance(img.data, np.ndarray)
-        assert img.data.shape == expected_shape
-        assert len(prof.results) == expected_task_count
+    # Check array
+    assert isinstance(img.data, np.ndarray)
+    assert img.data.shape == expected_shape
 
     # Check that there are no open file pointers after retrieval
     assert str(f) not in [f.path for f in proc.open_files()]

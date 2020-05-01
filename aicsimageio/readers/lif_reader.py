@@ -730,24 +730,56 @@ class LifReader(Reader):
         # we also return the dimension order string.
         return merged, "".join(dims)
 
-    @property
-    def dask_data(self) -> da.core.Array:
+    def _build_delayed_dask_data(self) -> da.core.Array:
         """
         Returns
         -------
         Constructed dask array where each chunk is a delayed read from the LIF file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
-        if self._dask_data is None:
-            self._dask_data, self._dims = LifReader._daread(
+        dask_array, _ = LifReader._daread(
+            self._file,
+            self._chunk_offsets,
+            self._chunk_lengths,
+            chunk_by_dims=self.chunk_by_dims,
+            S=self.specific_s_index,
+        )
+        return dask_array
+
+    def _read_in_memory_data(self) -> np.ndarray:
+        # Get image dims indicies
+        lif = LifFile(filename=self._file)
+        image_dim_indices = LifReader._dims_shape(lif=lif)
+
+
+        # Catch inconsistent scene dimension sizes
+        if len(image_dim_indices) > 1:
+            # Choose the provided scene
+            log.info(
+                f"File contains variable dimensions per scene, "
+                f"selected scene: {self.specific_s_index} for data retrieval."
+            )
+            data, _ = LifReader._get_array_from_offset(
                 self._file,
                 self._chunk_offsets,
                 self._chunk_lengths,
-                chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_index,
+                self.metadata,
+                {Dimensions.Scene: self.specific_s_index},
             )
 
-        return self._dask_data
+        else:
+            # If the list is length one that means that all the scenes in the image
+            # have the same dimensions
+            # Read all data in the image
+            data, _ = LifReader._get_array_from_offset(
+                self._file,
+                self._chunk_offsets,
+                self._chunk_lengths,
+                self.metadata,
+            )
+
+        return data
+
 
     def dtype(self) -> np.dtype:
         """

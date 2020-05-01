@@ -98,14 +98,14 @@ class TiffReader(Reader):
             return page.asarray()
 
     @staticmethod
-    def _scene_shape_is_consistent(tiff: TiffFile) -> bool:
+    def _scene_shape_is_consistent(tiff: TiffFile, S: int) -> bool:
         scenes = tiff.series
         operating_shape = scenes[0].shape
         for scene in scenes:
             if scene.shape != operating_shape:
                 log.info(
                     f"File contains variable dimensions per scene, "
-                    f"selected scene: {self.specific_s_index} for data "
+                    f"selected scene: {S} for data "
                     f"retrieval."
                 )
                 return False
@@ -120,7 +120,7 @@ class TiffReader(Reader):
             # operating shape
             scenes = tiff.series
             operating_shape = scenes[0].shape
-            if not self._scene_shape_is_consistent(tiff):
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
                 operating_shape = scenes[self.specific_s_index].shape
                 scenes = [scenes[self.specific_s_index]]
 
@@ -174,7 +174,7 @@ class TiffReader(Reader):
             # If scene shape checking fails, use the specified scene and update
             # operating shape
             scenes = tiff.series
-            if not self._scene_shape_is_consistent(tiff):
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
                 scenes = [scenes[self.specific_s_index]]
 
             # Read each scene

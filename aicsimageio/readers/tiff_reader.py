@@ -9,7 +9,7 @@ from typing import Optional
 import dask.array as da
 import numpy as np
 from dask import delayed
-from tifffile import TiffFile, imread
+from tifffile import TiffFile
 
 from .. import exceptions, types
 from ..buffer_reader import BufferReader

@@ -393,9 +393,10 @@ class CziReader(Reader):
         Constructed dask array where each chunk is a delayed read from the CZI file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
-        return CziReader._daread_safe(
+        dask_array, _ = CziReader._daread_safe(
             self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
         )
+        return dask_array
 
     def _read_in_memory_data(self) -> da.core.Array:
         return CziReader._imread(self._file)

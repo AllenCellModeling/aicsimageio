@@ -29,6 +29,7 @@ class ArrayLikeReader(Reader):
     def __init__(self, data: types.ArrayLike, **kwargs):
         # Store data as dask array
         if isinstance(data, np.ndarray):
+            self._data = data
             self._dask_data = da.from_array(data)
         elif isinstance(data, da.core.Array):
             self._dask_data = data
@@ -38,9 +39,11 @@ class ArrayLikeReader(Reader):
         # Guess dims
         self._dims = self.guess_dim_order(self.dask_data.shape)
 
-    @property
-    def dask_data(self) -> da.core.Array:
+    def _build_delayed_dask_data(self):
         return self._dask_data
+
+    def _read_in_memory_data(self):
+        return self._dask_data.compute()
 
     @property
     def dims(self) -> str:

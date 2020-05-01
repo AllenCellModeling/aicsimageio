@@ -21,6 +21,9 @@ Fix
 
 Other
 ~~~~~
+- admin/benchmarks  (`#112
+  <https://github.com/AllenCellModeling/aicsimageio/pull/112>`_)
+  [JacksonMaxfield]
 - admin/use-black-formatting  (`#108
   <https://github.com/AllenCellModeling/aicsimageio/pull/108>`_)
   [JacksonMaxfield]

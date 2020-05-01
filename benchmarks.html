@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; aicsimageio 3.1.4 documentation</title>
+  <title>Benchmarks &mdash; aicsimageio 3.1.4 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="aicsimageio" href="modules.html" />
-    <link rel="prev" title="Welcome to aicsimageio’s documentation!" href="index.html" /> 
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="aicsimageio.writers package" href="aicsimageio.writers.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -87,9 +87,9 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#stable-release">Stable release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#from-sources">From sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Package modules</a><ul>
@@ -113,14 +113,14 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#results">Results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarks.html#configs">Configs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configs">Configs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#discussion">Discussion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#running-the-tests">Running the Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-tests">Running the Tests</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
@@ -222,13 +222,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Installation</li>
+      <li>Benchmarks</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/benchmarks.md.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -238,10 +238,10 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="aicsimageio" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to aicsimageio’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="aicsimageio.writers.html" class="btn btn-neutral float-left" title="aicsimageio.writers package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
   </div>
   
@@ -250,31 +250,86 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="stable-release">
-<h2>Stable release<a class="headerlink" href="#stable-release" title="Permalink to this headline">¶</a></h2>
-<p>To install aicsimageio, run this command in your terminal:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install aicsimageio
+  <div class="section" id="benchmarks">
+<h1>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h1>
+<p>The development team behind AICSImageIO care deeply about read time. We personally
+understand that it is a pretty common experience of simply trying to load a file into
+memory and that read resulting in minutes of waiting if the file is large enough.</p>
+<p>These benchmarks are our attempt at ensuring we have comparable or better read times
+than the other common microscopy image reading libraries:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/imageio/imageio">imageio</a></p></li>
+<li><p><a class="reference external" href="https://github.com/cgohlke/tifffile">tifffile</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/czifile/">czifile</a></p></li>
+</ul>
+<div class="section" id="results">
+<h2>Results<a class="headerlink" href="#results" title="Permalink to this headline">¶</a></h2>
+<a class="reference external image-reference" href="_static/benchmarks/3.1.4-primary.png"><img alt="aicsimageio read times" src="_images/3.1.4-primary.png" /></a>
+<p><em>Full image read time (seconds) against number of YX planes in the image.</em>
+<em>(Lower is better)</em>
+<em>aicsimageio.imread read times in blue and</em>
+<em>imageio.imread, czifile.imread, or tifffile.imread read times in orange</em></p>
+<div class="section" id="configs">
+<h3>Configs<a class="headerlink" href="#configs" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">no-cluster</span></code>: single-threaded, no <code class="docutils literal notranslate"><span class="pre">distributed.Client</span></code> connection available</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">small-local-cluster-replica</span></code>: simulates a <code class="docutils literal notranslate"><span class="pre">distributed.LocalCluster</span></code> on common
+workstations at AICS. Eight (8) cores available to the Dask workers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">many-small-worker-distributed-cluster</span></code>: simulates the normal cluster setup that is
+preferred for large workloads. 128 Dask workers, each with one (1) core available.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="discussion">
+<h2>Discussion<a class="headerlink" href="#discussion" title="Permalink to this headline">¶</a></h2>
+<p>Currently, single threaded full image reads are incredibly slow in comparison to the
+other tested libraries. We assume this is due to how each plane read reopens, and
+re-indexes the file prior to returning the data. However, even on a standard workstation
+(8 cores available), <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code>, is comparable or outperforms the other libraries in
+raw read time. And following this trend, the more workers you provide to the cluster,
+the better it gets. With 128 workers reading ~500 YX plane files (~400MB) in about 10
+seconds.</p>
+<p>We are actively working on addressing single-threaded performance but want to emphasize
+that spawning a <code class="docutils literal notranslate"><span class="pre">LocalCluster</span></code> to speed up file reads is as easy as:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>from aicsimageio import imread, dask_utils
+
+with dask_utils.cluster_and_client() as (cluster, client):
+   img = imread(&quot;my_file.tiff&quot;)
 </pre></div>
 </div>
-<p>This is the preferred method to install aicsimageio, as it will always install the most recent stable release.</p>
-<p>If you don’t have <a class="reference external" href="https://pip.pypa.io">pip</a> installed, this <a class="reference external" href="http://docs.python-guide.org/en/latest/starting/installation/">Python installation guide</a> can guide
-you through the process.</p>
 </div>
-<div class="section" id="from-sources">
-<h2>From sources<a class="headerlink" href="#from-sources" title="Permalink to this headline">¶</a></h2>
-<p>The sources for aicsimageio can be downloaded from the <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio">Github repo</a>.</p>
-<p>You can either clone the public repository:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone git://github.com/AllenCellModeling/aicsimageio
-</pre></div>
+<div class="section" id="historical-benchmarks">
+<h2>Historical Benchmarks<a class="headerlink" href="#historical-benchmarks" title="Permalink to this headline">¶</a></h2>
+<p>Benchmarks will be ran and published at least every “minor” release.</p>
+<ul class="simple">
+<li><p>To view or download the charted benchmark results, please see:
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimagio/docs/_static/benchmarks">benchmarks</a></p></li>
+<li><p>To view or download the raw benchmark result data, please see:
+<a class="reference external" href="https://open.quiltdata.com/b/aics-modeling-packages-test-resources/packages/aicsimageio/benchmarks/revisions">quilt resources</a></p></li>
+</ul>
 </div>
-<p>Or download the <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/tarball/master">tarball</a>:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> curl  -OL https://github.com/AllenCellModeling/aicsimageio/tarball/master
-</pre></div>
-</div>
-<p>Once you have a copy of the source, you can install it with:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> python setup.py install
+<div class="section" id="running-the-tests">
+<h2>Running the Tests<a class="headerlink" href="#running-the-tests" title="Permalink to this headline">¶</a></h2>
+<p>If you are interested in how we run our benchmarks please see the
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/scripts/benchmark.py">benchmark.py</a>
+and <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/scripts/chart_benchmarks.py">chart_benchmarks.py</a>
+files.</p>
+<p>Unfortunately, these scripts utilize a
+<a class="reference external" href="https://slurm.schedmd.com/overview.html">SLURM cluster</a> to construct the various Dask
+cluster configurations. If you have a different HPC cluster at your organization or
+prefer using a cloud deployment and wish to run these tests yourself, please see
+<a class="reference external" href="https://jobqueue.dask.org/en/latest/">dask_jobqueue</a> and
+<a class="reference external" href="https://cloudprovider.dask.org/en/latest/">dask_cloudprovider</a> and swap out the
+<code class="docutils literal notranslate"><span class="pre">SLURMCluster</span></code> object for whichever object works best for you. Regardless of underlying
+compute, we feel it safe to say the results should be fairly similar to what is
+presented in this document.</p>
+<p>Full commands to run benchmarks in a fresh environment:</p>
+<div class="highlight-guess notranslate"><div class="highlight"><pre><span></span>conda create --name aicsimageio-benchmark python=3.7 -y
+conda activate aicsimageio-benchmark
+git clone https://github.com/AllenCellModeling/aicsimageio.git
+cd aicsimageio
+pip install --no-cache-dir -e .[benchmark]
+python scripts/benchmark.py
 </pre></div>
 </div>
 </div>

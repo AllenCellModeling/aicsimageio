@@ -132,7 +132,7 @@ def test_czi_reader(
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 
-    # Check computed type is numpy array,
+    # Check array
     assert isinstance(img.data, np.ndarray)
     assert img.data.shape == expected_shape
 

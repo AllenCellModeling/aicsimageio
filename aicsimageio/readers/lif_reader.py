@@ -230,21 +230,21 @@ class LifReader(Reader):
         """
         shape_list = [
             {
-                "T": (0, img.nt),
-                "C": (0, img.channels),
-                "Z": (0, img.nz),
-                "Y": (0, img.dims[1]),
-                "X": (0, img.dims[0]),
+                Dimensions.Time: (0, img.nt),
+                Dimensions.Channel: (0, img.channels),
+                Dimensions.SpatialZ: (0, img.nz),
+                Dimensions.SpatialY: (0, img.dims[1]),
+                Dimensions.SpatialX: (0, img.dims[0]),
             }
             for idx, img in enumerate(lif.get_iter_image())
         ]
         consistent = all(elem == shape_list[0] for elem in shape_list)
         if consistent:
-            shape_list[0]["S"] = (0, len(shape_list))
+            shape_list[0][Dimensions.Scene] = (0, len(shape_list))
             shape_list = [shape_list[0]]
         else:
             for idx, lst in enumerate(shape_list):
-                lst["S"] = (idx, idx + 1)
+                lst[Dimensions.Scene] = (idx, idx + 1)
         return shape_list
 
     @staticmethod

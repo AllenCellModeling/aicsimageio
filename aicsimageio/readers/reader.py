@@ -127,7 +127,6 @@ class Reader(ABC):
     def dask_data(self) -> da.core.Array:
         if self._dask_data is None:
             try:
-                print("attempting distributed connection")
                 # This line both checks if distributed has been imported
                 # and if a client connection has been created
                 # If distributed hasn't been imported it will KeyError
@@ -135,13 +134,11 @@ class Reader(ABC):
                 # We can't import distributed due to it requiring network utilities:
                 # https://github.com/AllenCellModeling/aicsimageio/issues/82
                 sys.modules["distributed"].Client.current()
-                print("using delayed readers")
 
                 # No error means there is a cluster and client available
                 # Use delayed dask reader
                 self._dask_data = self._build_delayed_dask_data()
             except (KeyError, ValueError):
-                print("using base imread")
                 self._data = self._read_in_memory_data()
                 self._dask_data = da.from_array(self._data)
 

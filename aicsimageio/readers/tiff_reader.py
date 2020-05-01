@@ -173,18 +173,14 @@ class TiffReader(Reader):
             # operating shape
             scenes = tiff.series
             if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
-                scenes = [scenes[self.specific_s_index]]
+                return scenes[self.specific_s_index].asarray()
 
-            # Read each scene
-            for s in scenes:
-                read_scenes.append(s.asarray())
+            # Read each scene and stack if single scene
+            if len(scenes) > 1:
+                return np.stack([s.asarray() for s in scenes])
 
-        # If multiple scenes, return scene dim
-        if len(read_scenes) > 1:
-            return np.stack(read_scenes)
-
-        # Else, return single scene
-        return read_scenes[0]
+            # Else, return single scene
+            return tiff.asarray()
 
     def load_slice(self, slice_index: int = 0) -> np.ndarray:
         with TiffFile(self._file) as tiff:

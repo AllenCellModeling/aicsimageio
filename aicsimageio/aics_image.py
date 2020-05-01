@@ -10,15 +10,10 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import (
-    ArrayLikeReader,
-    CziReader,
-    DefaultReader,
-    LifReader,
-    OmeTiffReader,
-    TiffReader,
-)
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (ArrayLikeReader, CziReader, DefaultReader, LifReader,
+                      OmeTiffReader, TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -191,8 +186,14 @@ class AICSImage:
         """
         Return the entire image as a numpy array with dimension ordering "STCZYX".
         """
-        if self._data is None:
+        if self._data is None and self.reader._data is None:
             self._data = self.dask_data.compute()
+        else:
+            self._data = transforms.reshape_data(
+                data=self.reader.data,
+                given_dims=self._known_dims or self.reader.dims,
+                return_dims=self.dims,
+            )
 
         return self._data
 

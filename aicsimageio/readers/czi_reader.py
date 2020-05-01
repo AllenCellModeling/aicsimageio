@@ -386,20 +386,19 @@ class CziReader(Reader):
 
             raise e
 
-    @property
-    def dask_data(self) -> da.core.Array:
+    def _build_delayed_dask_data(self) -> da.core.Array:
         """
         Returns
         -------
         Constructed dask array where each chunk is a delayed read from the CZI file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
-        if self._dask_data is None:
-            self._dask_data, self._dims = CziReader._daread_safe(
-                self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
-            )
+        return CziReader._daread_safe(
+            self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
+        )
 
-        return self._dask_data
+    def _read_in_memory_data(self) -> da.core.Array:
+        return CziReader._imread(self._file)
 
     @property
     def dims(self) -> str:

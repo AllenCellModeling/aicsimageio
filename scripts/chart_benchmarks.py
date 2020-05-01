@@ -61,13 +61,24 @@ class Args(argparse.Namespace):
 
 ###############################################################################
 
+SELECTED_CLUSTERS_TO_VISUALIZE = [
+    "no-cluster",
+    "small-local-cluster-replica",
+    "many-small-worker-distributed-cluster",
+]
 
-def _generate_chart(results: pd.DataFrame):
+
+def _generate_chart(results: pd.DataFrame, sorted: bool = False):
+    if sorted:
+        column = alt.Column("config:O", sort=SELECTED_CLUSTERS_TO_VISUALIZE)
+    else:
+        column = "config:O"
+
     return alt.Chart(results).mark_circle().encode(
         x="yx_planes:Q",
         y="read_duration:Q",
         color="reader:N",
-        column="config:N",
+        column=column,
     )
 
 
@@ -92,10 +103,18 @@ def chart_benchmarks(args: Args):
 
     # Generate charts for each config
     per_cluster_results = []
+    selected_cluster_results = []
     for config_name, results in all_results.items():
         results = pd.DataFrame(results)
         results["config"] = config_name
+
+        # Add to all
         per_cluster_results.append(results)
+
+        # Add to primary viz
+        if config_name in SELECTED_CLUSTERS_TO_VISUALIZE:
+            selected_cluster_results.append(results)
+
         chart = _generate_chart(results)
         chart.save(str(args.save_dir / f"{config_name}.png"))
 
@@ -104,6 +123,13 @@ def chart_benchmarks(args: Args):
     unified_chart = _generate_chart(all_results)
     unified_chart.save(str(args.save_dir / "all.png"))
 
+    # Generate unified primary chart
+    primary_results = pd.concat(selected_cluster_results)
+    unified_chart = _generate_chart(primary_results, sorted=True)
+    unified_chart.configure_header(
+        labelBaseline="top"
+    )
+    unified_chart.save(str(args.save_dir / "primary.png"))
 
 ###############################################################################
 # Runner

@@ -40,7 +40,7 @@ class DefaultReader(Reader):
 
                 # Handle single image formats like png, jpeg, etc
                 if image_length == 1:
-                    return da.from_array(self._get_data(self._file, 0))
+                    return da.from_array(reader.get_data(0))
 
                 # Handle many image formats like gif, mp4, etc
                 elif image_length > 1:

@@ -418,7 +418,7 @@ class CziReader(Reader):
             else:
                 # If the list is length one that means that all the scenes in the image
                 # have the same dimensions
-                # Just select the first dictionary in the list
+                # Read all data in the image
                 data = CziReader._imread(self._file)
 
         except Exception as e:

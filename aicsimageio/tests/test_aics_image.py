@@ -3,6 +3,7 @@
 
 import pickle
 from unittest import mock
+from xml.etree.ElementTree import Element
 
 import dask.array as da
 import numpy as np
@@ -21,10 +22,12 @@ PNG_FILE = "example.png"
 GIF_FILE = "example.gif"
 TIF_FILE = "s_1_t_1_c_1_z_1.tiff"
 CZI_FILE = "s_1_t_1_c_1_z_1.czi"
+LIF_FILE = "s_1_t_1_c_2_z_1.lif"
 OME_FILE = "s_1_t_1_c_1_z_1.ome.tiff"
 MED_TIF_FILE = "s_1_t_10_c_3_z_1.tiff"
 BIG_OME_FILE = "s_3_t_1_c_3_z_5.ome.tiff"
 BIG_CZI_FILE = "s_3_t_1_c_3_z_5.czi"
+BIG_LIF_FILE = "s_1_t_4_c_2_z_1.lif"
 TXT_FILE = "example.txt"
 
 
@@ -38,6 +41,7 @@ TXT_FILE = "example.txt"
         (TIF_FILE, readers.TiffReader),
         (OME_FILE, readers.OmeTiffReader),
         (CZI_FILE, readers.CziReader),
+        (LIF_FILE, readers.LifReader),
         pytest.param(
             TXT_FILE,
             None,
@@ -88,14 +92,17 @@ def test_file_passed_was_directory(resources_dir):
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("arr", [
-    np.zeros((2, 2, 2)),
-    np.ones((2, 2, 2)),
-    np.random.rand(2, 2, 2),
-    da.zeros((2, 2, 2)),
-    da.ones((2, 2, 2)),
-    da.random.random((2, 2, 2))
-])
+@pytest.mark.parametrize(
+    "arr",
+    [
+        np.zeros((2, 2, 2)),
+        np.ones((2, 2, 2)),
+        np.random.rand(2, 2, 2),
+        da.zeros((2, 2, 2)),
+        da.ones((2, 2, 2)),
+        da.random.random((2, 2, 2)),
+    ],
+)
 def test_support_for_ndarray(arr):
     # Check basics
     with Profiler() as prof:
@@ -136,7 +143,9 @@ def test_default_shape_expansion(data, expected):
             np.zeros((2, 2, 2)),
             "ABI",
             None,
-            marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError),
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
         ),
         (da.zeros((5, 4, 3)), "SYX", (5, 1, 1, 1, 4, 3)),
         (da.zeros((1, 2, 3, 4, 5)), "STCYX", (1, 2, 3, 1, 4, 5)),
@@ -145,7 +154,9 @@ def test_default_shape_expansion(data, expected):
             da.zeros((2, 2, 2)),
             "ABI",
             None,
-            marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError),
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
         ),
     ],
 )
@@ -203,6 +214,7 @@ def test_force_dims(data_shape, dims, expected):
         (TIF_FILE, str),
         (OME_FILE, omexml.OMEXML),
         (CZI_FILE, _Element),
+        (LIF_FILE, Element),
     ],
 )
 def test_metadata(resources_dir, filename, expected_metadata_type):
@@ -226,15 +238,16 @@ def test_metadata(resources_dir, filename, expected_metadata_type):
 
 
 @pytest.mark.parametrize(
-    "filename, expected_shape",
+    "filename, expected_shape, expected_tasks",
     [
-        (PNG_FILE, (1, 1, 4, 1, 800, 537)),
-        (TIF_FILE, (1, 1, 1, 1, 325, 475)),
-        (OME_FILE, (1, 1, 1, 1, 325, 475)),
-        (CZI_FILE, (1, 1, 1, 1, 325, 475)),
+        (PNG_FILE, (1, 1, 4, 1, 800, 537), 2),
+        (TIF_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (OME_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (CZI_FILE, (1, 1, 1, 1, 325, 475), 2),
+        (LIF_FILE, (1, 1, 2, 1, 2048, 2048), 4),
     ],
 )
-def test_imread(resources_dir, filename, expected_shape):
+def test_imread(resources_dir, filename, expected_shape, expected_tasks):
     # Get filepath
     f = resources_dir / filename
 
@@ -247,19 +260,25 @@ def test_imread(resources_dir, filename, expected_shape):
         img = imread(f)
         assert img.shape == expected_shape
 
-        # Reshape and transpose are required so there should be two tasks in the graph
-        assert len(prof.results) == 2
+        # Reshape and transpose are required so there should be
+        # (2 * chunks) tasks in the graph
+        assert len(prof.results) == expected_tasks
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("filename, expected_shape, expected_task_count", [
-    # Because we are directly requesting the data, the transpose and reshape calls get reduced
-    (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 60),
-    (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 90),
-    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 18)
-])
+@pytest.mark.parametrize(
+    "filename, expected_shape, expected_task_count",
+    [
+        # Because we are directly requesting the data, the transpose and reshape calls
+        # get reduced
+        (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 60),
+        (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 90),
+        (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 18),
+        (BIG_LIF_FILE, (1, 4, 2, 1, 614, 614), 16),
+    ],
+)
 def test_large_imread(resources_dir, filename, expected_shape, expected_task_count):
     # Get filepath
     f = resources_dir / filename
@@ -278,13 +297,19 @@ def test_large_imread(resources_dir, filename, expected_shape, expected_task_cou
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("filename, expected_shape, expected_task_count", [
-    # Because we are directly returning the dask array nothing has been computed
-    (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 0),
-    (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 0),
-    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 0)
-])
-def test_large_imread_dask(resources_dir, filename, expected_shape, expected_task_count):
+@pytest.mark.parametrize(
+    "filename, expected_shape, expected_task_count",
+    [
+        # Because we are directly returning the dask array nothing has been computed
+        (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), 0),
+        (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), 0),
+        (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), 0),
+        (BIG_LIF_FILE, (1, 4, 2, 1, 614, 614), 0),
+    ],
+)
+def test_large_imread_dask(
+    resources_dir, filename, expected_shape, expected_task_count
+):
     # Get filepath
     f = resources_dir / filename
 
@@ -311,8 +336,10 @@ def test_large_imread_dask(resources_dir, filename, expected_shape, expected_tas
         (TIF_FILE, ["0"]),
         (MED_TIF_FILE, ["0", "1", "2"]),
         (CZI_FILE, ["Bright"]),
+        (LIF_FILE, ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"]),
         (OME_FILE, ["Bright"]),
-        (BIG_CZI_FILE, ["EGFP", "TaRFP", "Bright"])
+        (BIG_CZI_FILE, ["EGFP", "TaRFP", "Bright"]),
+        (BIG_LIF_FILE, ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"]),
     ],
 )
 def test_channel_names(resources_dir, filename, expected_channel_names):
@@ -343,6 +370,8 @@ def test_channel_names(resources_dir, filename, expected_channel_names):
         (TIF_FILE, (1.0, 1.0, 1.0)),
         (CZI_FILE, (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
         (OME_FILE, (1.0833333333333333, 1.0833333333333333, 1.0)),
+        (LIF_FILE, (3.25e-07, 3.25e-07, 1.0)),
+        (BIG_LIF_FILE, (3.3914910277324634e-07, 3.3914910277324634e-07, 1.0)),
     ],
 )
 def test_physical_pixel_size(resources_dir, filename, expected_sizes):
@@ -365,99 +394,104 @@ def test_physical_pixel_size(resources_dir, filename, expected_sizes):
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels", [
-    (
-        # C Z Y X
-        np.ones((3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        da.ones((3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        np.ones((3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # C Z Y X
-        da.ones((3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((1, 1, 3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((1, 1, 3, 2, 2, 2)),
-        False,
-        da.ones((3, 2, 2, 2)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((1, 1, 3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((1, 1, 3, 2, 2, 2)),
-        True,
-        da.ones((2, 2, 2, 3)),
-        True,
-        3,
-        "ZYX"
-    ),
-    (
-        # S T C Z Y X
-        np.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        3,
-        "STZYX"
-    ),
-    (
-        # S T C Z Y X
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        da.ones((3, 20, 5, 2, 2, 2)),
-        False,
-        3,
-        "STZYX"
-    ),
-])
-def test_view_napari(data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels):
+@pytest.mark.parametrize(
+    "data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels",
+    [
+        (
+            # C Z Y X
+            np.ones((3, 2, 2, 2)),
+            False,
+            da.ones((3, 2, 2, 2)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # C Z Y X
+            da.ones((3, 2, 2, 2)),
+            False,
+            da.ones((3, 2, 2, 2)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # C Z Y X
+            np.ones((3, 2, 2, 2)),
+            True,
+            da.ones((2, 2, 2, 3)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # C Z Y X
+            da.ones((3, 2, 2, 2)),
+            True,
+            da.ones((2, 2, 2, 3)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # S T C Z Y X
+            np.ones((1, 1, 3, 2, 2, 2)),
+            False,
+            da.ones((3, 2, 2, 2)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # S T C Z Y X
+            da.ones((1, 1, 3, 2, 2, 2)),
+            False,
+            da.ones((3, 2, 2, 2)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # S T C Z Y X
+            np.ones((1, 1, 3, 2, 2, 2)),
+            True,
+            da.ones((2, 2, 2, 3)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # S T C Z Y X
+            da.ones((1, 1, 3, 2, 2, 2)),
+            True,
+            da.ones((2, 2, 2, 3)),
+            True,
+            3,
+            "ZYX",
+        ),
+        (
+            # S T C Z Y X
+            np.ones((3, 20, 5, 2, 2, 2)),
+            False,
+            da.ones((3, 20, 5, 2, 2, 2)),
+            False,
+            3,
+            "STZYX",
+        ),
+        (
+            # S T C Z Y X
+            da.ones((3, 20, 5, 2, 2, 2)),
+            False,
+            da.ones((3, 20, 5, 2, 2, 2)),
+            False,
+            3,
+            "STZYX",
+        ),
+    ],
+)
+def test_view_napari(
+    data, rgb, expected_data, expected_visible, expected_ndim, expected_axis_labels
+):
     # Init image
     img = AICSImage(data)
 
@@ -479,15 +513,24 @@ def test_view_napari(data, rgb, expected_data, expected_visible, expected_ndim, 
                 assert call_kwargs["visible"] == expected_visible
 
 
-@pytest.mark.parametrize("filename, expected_shape, expected_metadata_type, expected_task_count", [
-    (PNG_FILE, (1, 1, 4, 1, 800, 537), dict, 2),
-    (TIF_FILE, (1, 1, 1, 1, 325, 475), str, 2),
-    (OME_FILE, (1, 1, 1, 1, 325, 475), omexml.OMEXML, 2),
-    (CZI_FILE, (1, 1, 1, 1, 325, 475), _Element, 2),
-    (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), str, 60),
-    (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), omexml.OMEXML, 90),
-    (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), _Element, 18),
-])
+@pytest.mark.parametrize(
+    "filename, expected_shape, expected_metadata_type, expected_task_count",
+    [
+        (PNG_FILE, (1, 1, 4, 1, 800, 537), dict, 2),
+        (TIF_FILE, (1, 1, 1, 1, 325, 475), str, 2),
+        (OME_FILE, (1, 1, 1, 1, 325, 475), omexml.OMEXML, 2),
+        (CZI_FILE, (1, 1, 1, 1, 325, 475), _Element, 2),
+        (
+            LIF_FILE,
+            (1, 1, 2, 1, 2048, 2048),
+            Element,
+            4,
+        ),  # not entirely sure why this is 4 not 2
+        (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), str, 60),
+        (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), omexml.OMEXML, 90),
+        (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), _Element, 18),
+    ],
+)
 def test_aicsimage_serialize(
     resources_dir,
     tmpdir,
@@ -497,7 +540,8 @@ def test_aicsimage_serialize(
     expected_task_count,
 ):
     """
-    Test that the entire AICSImage object can be serialized - a requirement to distribute on dask clusters.
+    Test that the entire AICSImage object can be serialized - a requirement to
+    distribute on dask clusters.
 
     https://distributed.dask.org/en/latest/serialization.html
     """
@@ -528,7 +572,8 @@ def test_aicsimage_serialize(
     # Reload
     img = pickle.loads(serialized)
 
-    # Check computed type is numpy array, computed shape is expected shape, and task count is expected
+    # Check computed type is numpy array,
+    # computed shape is expected shape, and task count is expected
     with Profiler() as prof:
         assert isinstance(img.data, np.ndarray)
         assert img.shape == expected_shape

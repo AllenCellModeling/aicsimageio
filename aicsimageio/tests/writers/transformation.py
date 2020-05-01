@@ -3,8 +3,9 @@
 # authors: Dan Toloudis     danielt@alleninstitute.org
 #          Zach Crabtree    zacharyc@alleninstitute.org
 
-import numpy as np
 import math as m
+
+import numpy as np
 
 
 def transform(image):
@@ -20,9 +21,12 @@ def transform(image):
     # the png writer cannot handle slices with just a single channel.
     # this gives three channels that are identical, and stacks them on top of each other
     if image.shape[1] < rgb_channels:
-        # if there is only one channel available, the channels are repeated three times (to c = 3) R -> RRR
-        # if there are two channels available, the channels are repeated twice (to c = 4) RG -> RRGG
-        # we eliminate the first R to have the RGG channels read in as RGB channels (red and cyan colors)
+        # if there is only one channel available, the channels are repeated three times
+        # (to c = 3) R -> RRR
+        # if there are two channels available, the channels are repeated twice
+        # (to c = 4) RG -> RRGG
+        # we eliminate the first R to have the RGG channels read in as RGB channels
+        # (red and cyan colors)
         image = np.repeat(image, repeats=rgb_channels + 1 - image.shape[1], axis=1)
         if image.shape[1] == 4:
             image = np.delete(image, 0, 1)

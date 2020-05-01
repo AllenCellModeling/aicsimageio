@@ -19,7 +19,8 @@ from aicsimageio.readers.tiff_reader import TiffReader
     "expected_chunksize, "
     "expected_task_count",
     [
-        # Expected task counts should be each non chunk dimension size multiplied againest each other * 2
+        # Expected task counts should be
+        # each non chunk dimension size multiplied againest each other * 2
         (
             "s_1_t_1_c_1_z_1.ome.tiff",
             (325, 475),
@@ -27,7 +28,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             np.uint16,
             0,
             (325, 475),
-            2  # 2 = 2
+            2,  # 2 = 2
         ),
         (
             "s_1_t_1_c_1_z_1.tiff",
@@ -36,7 +37,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             np.uint16,
             0,
             (325, 475),
-            2  # 2 = 2
+            2,  # 2 = 2
         ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
@@ -45,7 +46,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             np.uint16,
             0,
             (1, 1736, 1776),
-            20  # 2 = 2
+            20,  # 2 = 2
         ),
         (
             "s_1_t_10_c_3_z_1.tiff",
@@ -54,7 +55,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             np.uint16,
             0,
             (1, 1, 325, 475),
-            60  # 10 * 3 * 2 = 60
+            60,  # 10 * 3 * 2 = 60
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -63,7 +64,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             np.uint16,
             0,
             (1, 1, 1, 325, 475),
-            90  # 3 * 5 * 3 * 2 = 90
+            90,  # 3 * 5 * 3 * 2 = 90
         ),
         pytest.param(
             "example.txt",
@@ -73,9 +74,9 @@ from aicsimageio.readers.tiff_reader import TiffReader
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError)
-        )
-    ]
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
+    ],
 )
 def test_tiff_reader(
     resources_dir,
@@ -85,7 +86,7 @@ def test_tiff_reader(
     expected_dtype,
     select_scene,
     expected_chunksize,
-    expected_task_count
+    expected_task_count,
 ):
     # Get file
     f = resources_dir / filename
@@ -110,7 +111,8 @@ def test_tiff_reader(
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 
-    # Check computed type is numpy array, computed shape is expected shape, and task count is expected
+    # Check computed type is numpy array,
+    # computed shape is expected shape, and task count is expected
     with Profiler() as prof:
         assert isinstance(img.data, np.ndarray)
         assert img.data.shape == expected_shape
@@ -120,11 +122,23 @@ def test_tiff_reader(
     assert str(f) not in [f.path for f in proc.open_files()]
 
 
-@pytest.mark.parametrize("expected_starting_dims, set_dims, expected_ending_dims", [
-    ("YX", "XY", "XY"),
-    pytest.param("YX", "ABCDE", None, marks=pytest.mark.raises(exception=exceptions.InvalidDimensionOrderingError))
-])
-def test_dims_setting(resources_dir, expected_starting_dims, set_dims, expected_ending_dims):
+@pytest.mark.parametrize(
+    "expected_starting_dims, set_dims, expected_ending_dims",
+    [
+        ("YX", "XY", "XY"),
+        pytest.param(
+            "YX",
+            "ABCDE",
+            None,
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
+        ),
+    ],
+)
+def test_dims_setting(
+    resources_dir, expected_starting_dims, set_dims, expected_ending_dims
+):
     # Get file
     f = resources_dir / "s_1_t_1_c_1_z_1.tiff"
 

@@ -21,8 +21,9 @@ class ArrayLikeReader(Reader):
 
     Notes
     -----
-    Because this is simply a wrapper around numpy ndarray, no metadata is returned. However, dimension order is
-    returned with dimensions assumed in order but with extra dimensions removed depending on image shape.
+    Because this is simply a wrapper around numpy ndarray, no metadata is returned.
+    However, dimension order is returned with dimensions assumed in order but with
+    extra dimensions removed depending on image shape.
     """
 
     def __init__(self, data: types.ArrayLike, **kwargs):
@@ -52,7 +53,8 @@ class ArrayLikeReader(Reader):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+                f"for image with {len(self.data.shape)} dimensions "
+                f"[shape: {self.data.shape}]."
             )
 
         # Set the dims

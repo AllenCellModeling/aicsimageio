@@ -751,7 +751,6 @@ class LifReader(Reader):
         lif = LifFile(filename=self._file)
         image_dim_indices = LifReader._dims_shape(lif=lif)
 
-
         # Catch inconsistent scene dimension sizes
         if len(image_dim_indices) > 1:
             # Choose the provided scene
@@ -772,14 +771,10 @@ class LifReader(Reader):
             # have the same dimensions
             # Read all data in the image
             data, _ = LifReader._get_array_from_offset(
-                self._file,
-                self._chunk_offsets,
-                self._chunk_lengths,
-                self.metadata,
+                self._file, self._chunk_offsets, self._chunk_lengths, self.metadata,
             )
 
         return data
-
 
     def dtype(self) -> np.dtype:
         """

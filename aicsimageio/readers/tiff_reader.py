@@ -134,9 +134,7 @@ class TiffReader(Reader):
 
             # Make ndarray for lazy arrays to fill
             lazy_arrays = np.ndarray(operating_shape, dtype=object)
-            for all_page_index, (np_index, _) in enumerate(
-                np.ndenumerate(lazy_arrays)
-            ):
+            for all_page_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
                 # Scene index is the first index in np_index
                 scene_index = np_index[0]
 

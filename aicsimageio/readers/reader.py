@@ -144,7 +144,6 @@ class Reader(ABC):
 
         return self._dask_data
 
-
     @property
     def data(self) -> np.ndarray:
         if self._data is None:

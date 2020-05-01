@@ -40,12 +40,12 @@ class DefaultReader(Reader):
 
                 # Handle single image formats like png, jpeg, etc
                 if image_length == 1:
-                    return da.from_array(reader.get_data(0))
+                    return da.from_array(self._get_data(self._file, 0))
 
                 # Handle many image formats like gif, mp4, etc
                 elif image_length > 1:
                     # Get a sample image
-                    sample = reader.get_data(0)
+                    sample = self._get_data(self._file, 0)
 
                     # Create operating shape for the final dask array by prepending
                     # image length to a tuple of ones that is the same length as

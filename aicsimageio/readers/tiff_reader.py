@@ -171,13 +171,13 @@ class TiffReader(Reader):
             # Check each scene has the same shape
             # If scene shape checking fails, use the specified scene and update
             # operating shape
-            scenes = tiff.series
-            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
-                return scenes[self.specific_s_index].asarray()
-
-            # Read each scene and stack if single scene
-            if len(scenes) > 1:
-                return np.stack([s.asarray() for s in scenes])
+            # scenes = tiff.series
+            # if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+            #     return scenes[self.specific_s_index].asarray()
+            #
+            # # Read each scene and stack if single scene
+            # if len(scenes) > 1:
+            #     return np.stack([s.asarray() for s in scenes])
 
             # Else, return single scene
             return tiff.asarray()

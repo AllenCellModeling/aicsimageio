@@ -127,13 +127,17 @@ class Reader(ABC):
     def dask_data(self) -> da.core.Array:
         if self._dask_data is None:
             try:
-                # This line both checks if distributed has been imported
+                # These lines both check if distributed has been imported
                 # and if a client connection has been created
+                # Or (more likely) this process is running on a worker
                 # If distributed hasn't been imported it will KeyError
                 # If no client has been created it will ValueError
                 # We can't import distributed due to it requiring network utilities:
                 # https://github.com/AllenCellModeling/aicsimageio/issues/82
-                sys.modules["distributed"].Client.current()
+                try:
+                    sys.modules["distributed"].Client.current()
+                except (KeyError, ValueError):
+                    sys.modules["distributed"].worker_client()
 
                 # No error means there is a cluster and client available
                 # Use delayed dask reader

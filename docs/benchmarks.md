@@ -22,7 +22,7 @@ _imageio.imread, czifile.imread, or tifffile.imread in orange_
 * `small-local-cluster-replica`: simulates a `distributed.LocalCluster` on common
   workstations at AICS. Eight (8) cores available to the Dask workers.
 * `many-small-worker-distributed-cluster`: simulates the normal cluster setup that is
-  preferred for large workloads. 128 Dask workers, each with (1) core available.
+  preferred for large workloads. 128 Dask workers, each with one (1) core available.
 
 ## Discussion
 Currently, single threaded full image reads are incredibly slow in comparison to the

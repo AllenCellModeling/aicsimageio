@@ -412,14 +412,28 @@ class CziReader(Reader):
                 # Choose the provided scene
                 log.info(
                     f"File contains variable dimensions per scene, "
-                    f"selected scene: {S} for data retrieval."
+                    f"selected scene: {self.specific_s_index} for data retrieval."
                 )
-                data = CziReader._imread(self._file, {"S": self.specific_s_index})
+
+                # Get the specific scene
+                if self.specific_s_index < len(image_dim_indices):
+                    data, _ = czi.read_image(
+                        **{Dimensions.Scene: self.specific_s_index}
+                    )
+                else:
+                    raise exceptions.InconsistentShapeError(
+                        f"The CZI image provided has variable dimensions per scene. "
+                        f"Please provide a valid index to the 'S' parameter to create "
+                        f"a dask array for the index provided. "
+                        f"Provided scene index: {self.specific_s_index}. "
+                        f"Scene index range: 0-{len(image_dim_indices)}."
+                    )
+
             else:
                 # If the list is length one that means that all the scenes in the image
                 # have the same dimensions
                 # Read all data in the image
-                data = CziReader._imread(self._file)
+                data, _ = czi.read_image()
 
         except Exception as e:
             # A really bad way to close any connection to the CZI object

@@ -67,11 +67,23 @@ interactive_requirements = [
     "pillow",
 ]
 
+benchmark_requirements = [
+    "altair",
+    "altair_saver",
+    "czifile==2019.7.2",
+    "dask_jobqueue==0.7.0",
+    "imageio==2.8.0",
+    "quilt3>=3.1.12",
+    "tifffile==2020.2.16",
+    "tqdm",
+]
+
 extra_requirements = {
     "test": test_requirements,
     "dev": dev_requirements,
     "setup": setup_requirements,
     "interactive": interactive_requirements,
+    "benchmark": benchmark_requirements,
     "all": [
         *requirements,
         *test_requirements,

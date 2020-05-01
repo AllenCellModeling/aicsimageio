@@ -97,6 +97,21 @@ class TiffReader(Reader):
             # Return numpy
             return page.asarray()
 
+    @staticmethod
+    def _scene_shape_is_consistent(tiff: TiffFile) -> bool:
+        scenes = tiff.series
+        operating_shape = scenes[0].shape
+        for scene in scenes:
+            if scene.shape != operating_shape:
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {self.specific_s_index} for data "
+                    f"retrieval."
+                )
+                return False
+
+        return True
+
     def _build_delayed_dask_data(self) -> da.core.Array:
         # Load Tiff
         with TiffFile(self._file) as tiff:
@@ -105,16 +120,9 @@ class TiffReader(Reader):
             # operating shape
             scenes = tiff.series
             operating_shape = scenes[0].shape
-            for scene in scenes:
-                if scene.shape != operating_shape:
-                    operating_shape = scenes[self.specific_s_index].shape
-                    scenes = [scenes[self.specific_s_index]]
-                    log.info(
-                        f"File contains variable dimensions per scene, "
-                        f"selected scene: {self.specific_s_index} for data "
-                        f"retrieval."
-                    )
-                    break
+            if not self._scene_shape_is_consistent(tiff):
+                operating_shape = scenes[self.specific_s_index].shape
+                scenes = [scenes[self.specific_s_index]]
 
             # Get sample yx plane
             sample = scenes[0].pages[0].asarray()
@@ -166,17 +174,8 @@ class TiffReader(Reader):
             # If scene shape checking fails, use the specified scene and update
             # operating shape
             scenes = tiff.series
-            operating_shape = scenes[0].shape
-            for scene in scenes:
-                if scene.shape != operating_shape:
-                    operating_shape = scenes[self.specific_s_index].shape
-                    scenes = [scenes[self.specific_s_index]]
-                    log.info(
-                        f"File contains variable dimensions per scene, "
-                        f"selected scene: {self.specific_s_index} for data "
-                        f"retrieval."
-                    )
-                    break
+            if not self._scene_shape_is_consistent(tiff):
+                scenes = [scenes[self.specific_s_index]]
 
             # Read each scene
             for s in scenes:

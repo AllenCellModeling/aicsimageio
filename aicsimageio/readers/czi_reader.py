@@ -435,13 +435,16 @@ class CziReader(Reader):
                 # Read all data in the image
                 data, _ = czi.read_image()
 
+                # A really bad way to close any connection to the CZI object
+                czi._bytes = None
+                czi.reader = None
+
         except Exception as e:
             # A really bad way to close any connection to the CZI object
             czi._bytes = None
             czi.reader = None
 
             raise e
-
 
         return data
 

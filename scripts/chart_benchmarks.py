@@ -32,7 +32,7 @@ class Args(argparse.Namespace):
             prog="generate_benchmark_charts",
             description=(
                 "Generate charts from benchmark result data. See benchmark.py"
-            )
+            ),
         )
 
         # Arguments
@@ -59,6 +59,7 @@ class Args(argparse.Namespace):
         # Parse
         p.parse_args(namespace=self)
 
+
 ###############################################################################
 
 SELECTED_CLUSTERS_TO_VISUALIZE = [
@@ -74,11 +75,10 @@ def _generate_chart(results: pd.DataFrame, sorted: bool = False):
     else:
         column = "config:O"
 
-    return alt.Chart(results).mark_circle().encode(
-        x="yx_planes:Q",
-        y="read_duration:Q",
-        color="reader:N",
-        column=column,
+    return (
+        alt.Chart(results)
+        .mark_circle()
+        .encode(x="yx_planes:Q", y="read_duration:Q", color="reader:N", column=column,)
     )
 
 
@@ -90,8 +90,7 @@ def chart_benchmarks(args: Args):
     if args.benchmark_file is None:
         benchmark_filepath = Path("benchmark_results.json")
         p = Package.browse(
-            "aicsimageio/benchmarks",
-            "s3://aics-modeling-packages-test-resources"
+            "aicsimageio/benchmarks", "s3://aics-modeling-packages-test-resources"
         )
         p["results.json"].fetch(benchmark_filepath)
     else:
@@ -126,10 +125,8 @@ def chart_benchmarks(args: Args):
     # Generate unified primary chart
     primary_results = pd.concat(selected_cluster_results)
     unified_chart = _generate_chart(primary_results, sorted=True)
-    unified_chart.configure_header(
-        labelBaseline="top"
-    )
     unified_chart.save(str(args.save_dir / "primary.png"))
+
 
 ###############################################################################
 # Runner

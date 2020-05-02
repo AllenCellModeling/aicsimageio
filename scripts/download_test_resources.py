@@ -31,8 +31,8 @@ class Args(argparse.Namespace):
             prog="download_test_resources",
             description=(
                 "Download files used for testing this project. This will download "
-                "all the required test resources and place them in the `tests/resources` "
-                "directory."
+                "all the required test resources and place them in the "
+                "`tests/resources` directory."
             ),
         )
 
@@ -70,7 +70,7 @@ def download_test_resources(args: Args):
         package = Package.browse(
             "aicsimageio/test_resources",
             "s3://aics-modeling-packages-test-resources",
-            top_hash=args.top_hash
+            top_hash=args.top_hash,
         )
 
         # Download

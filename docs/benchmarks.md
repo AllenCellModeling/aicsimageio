@@ -11,7 +11,7 @@ than the other common microscopy image reading libraries:
 * [czifile](https://pypi.org/project/czifile/)
 
 ## Results
-![aicsimageio read times](_static/benchmarks/3.1.4-primary.png)
+![aicsimageio read times](_static/benchmarks/3.1.4-feature.optimize_readers-primary.png)
 _Full image read time (seconds) against number of YX planes in the image._
 _(Lower is better)_
 _aicsimageio.imread read times in blue and_
@@ -20,21 +20,20 @@ _imageio.imread, czifile.imread, or tifffile.imread read times in orange_
 ### Configs
 * `no-cluster`: single-threaded, no `distributed.Client` connection available
 * `small-local-cluster-replica`: simulates a `distributed.LocalCluster` on common
-  workstations at AICS. Eight (8) cores available to the Dask workers.
+  workstations at AICS. Four (4) Dask workers, each with two (2) cores available.
 * `many-small-worker-distributed-cluster`: simulates the normal cluster setup that is
   preferred for large workloads. 128 Dask workers, each with one (1) core available.
 
 ## Discussion
-Currently, single threaded full image reads are incredibly slow in comparison to the
-other tested libraries. We assume this is due to how each plane read reopens, and
-re-indexes the file prior to returning the data. However, even on a standard workstation
-(8 cores available), `aicsimageio`, is comparable or outperforms the other libraries in
-raw read time. And following this trend, the more workers you provide to the cluster,
-the better it gets. With 128 workers reading ~500 YX plane files (~400MB) in about 10
-seconds.
+In single-threaded full-image read performance `aicsimageio` is at least comparable to
+similar libraries. There is slight overhead from the metadata and dimension management,
+but that overhead is very minor in our opinion. From there, on a standard workstation
+at AICS (8 cores available), `aicsimageio` is comparable or outperforms the other
+libraries in raw read time. And following this trend, the more workers you provide to
+the cluster, the better it gets. With 128 workers reading ~500 YX plane files (~400MB)
+in about 10 seconds.
 
-We are actively working on addressing single-threaded performance but want to emphasize
-that spawning a `LocalCluster` to speed up file reads is as easy as:
+To gain concurrent read benefits from `aicsimageio` is as easy as:
 ```
 from aicsimageio import imread, dask_utils
 

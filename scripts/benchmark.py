@@ -128,7 +128,7 @@ def _run_benchmark(
             for i in tqdm(range(iterations), desc=f"{reader_path}: {file.name}"):
                 start = time.perf_counter()
                 reader(str(file))
-                per_file_results.append({
+                results.append({
                     "file_name": file.name,
                     "file_size_gb": file.stat().st_size / 10e8,
                     "reader": (
@@ -138,10 +138,6 @@ def _run_benchmark(
                     "read_duration": time.perf_counter() - start,
                 })
 
-    # Unpack per file results
-    results = []
-    for per_file_result in per_file_results:
-        results += per_file_result
     return results
 
 

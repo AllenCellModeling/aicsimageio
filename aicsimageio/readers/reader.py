@@ -5,6 +5,7 @@ import io
 import logging
 import sys
 from abc import ABC, abstractmethod
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -137,14 +138,17 @@ class Reader(ABC):
                 try:
                     sys.modules["distributed"].Client.current()
                 except (KeyError, ValueError):
-                    sys.modules["distributed"].worker_client()
-
-                # No error means there is a cluster and client available
-                # Use delayed dask reader
-                self._dask_data = self._build_delayed_dask_data()
+                    with sys.modules["distributed"].worker_client() as client:
+                        # No error means there is a cluster and client available
+                        # Use delayed dask reader
+                        self._dask_data = self._build_delayed_dask_data()
             except (KeyError, ValueError):
+                start = datetime.now()
                 self._data = self._read_in_memory_data()
+                middle = datetime.now()
+                print(f"read in memory time: {(middle - start).total_seconds()}")
                 self._dask_data = da.from_array(self._data)
+                print(f"converted to da time: {(datetime.now() - middle).total_seconds()}")
 
         return self._dask_data
 

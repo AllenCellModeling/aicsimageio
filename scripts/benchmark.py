@@ -119,7 +119,7 @@ def _run_benchmark(
         files += list(resources_dir.glob(ext))
 
     # Run reads for each file and store details in results
-    per_file_results = []
+    results = []
     for file in files:
         info_read = aicsimageio.AICSImage(file)
         yx_planes = np.prod(info_read.size("STCZ"))

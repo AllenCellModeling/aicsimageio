@@ -162,10 +162,6 @@ class TiffReader(Reader):
             return data
 
     def _read_in_memory_data(self) -> np.ndarray:
-        # tifffile.imread only returns first scene
-        # need to open the tiff, get all scenes (if possible, then stack)
-        read_scenes = []
-
         # Load Tiff
         with TiffFile(self._file) as tiff:
             # Check each scene has the same shape

@@ -3,7 +3,6 @@
 
 import io
 import logging
-import os
 import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -145,6 +144,7 @@ class Reader(ABC):
                 self._dask_data = da.from_array(self._data)
 
         return self._dask_data
+
     @property
     def data(self) -> np.ndarray:
         if self._data is None:

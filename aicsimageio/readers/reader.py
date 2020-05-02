@@ -140,12 +140,9 @@ class Reader(ABC):
                 # available on this worker process
                 # Use delayed dask reader
                 self._dask_data = self._build_delayed_dask_data()
-                print("fully ran delayed construction in worker")
             except (KeyError, ValueError):
                 self._data = self._read_in_memory_data()
                 self._dask_data = da.from_array(self._data)
-                print("ran fast read")
-
 
         return self._dask_data
     @property

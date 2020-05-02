@@ -67,7 +67,7 @@ class Args(argparse.Namespace):
                 "Run read time benchmarks for aicsimageio against other common image "
                 "readers. The benchmark dataset can be downloaded using the "
                 "download_test_resources script with the specific hash: "
-                "06489d5501d1003e41046a3cb8a57887f04e75b30e23416ff60da8b87b80beb6"
+                "5e665ed66c1b373a84002227044c7a12a2ecc506b84a730442a5ed798428e26a"
             ),
         )
 

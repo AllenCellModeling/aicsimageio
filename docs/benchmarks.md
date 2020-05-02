@@ -72,5 +72,6 @@ conda activate aicsimageio-benchmark
 git clone https://github.com/AllenCellModeling/aicsimageio.git
 cd aicsimageio
 pip install --no-cache-dir -e .[benchmark]
+python scripts/download_test_resources.py --top-hash 5e665ed66c1b373a84002227044c7a12a2ecc506b84a730442a5ed798428e26a
 python scripts/benchmark.py
 ```

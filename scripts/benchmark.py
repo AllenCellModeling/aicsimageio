@@ -8,7 +8,6 @@ import platform
 import sys
 import time
 import traceback
-from datetime import datetime
 from pathlib import Path
 from typing import Callable, List
 
@@ -126,20 +125,18 @@ def _run_benchmark(
         yx_planes = np.prod(info_read.size("STCZ"))
         for reader in [aicsimageio.imread, non_aicsimageio_reader]:
             reader_path = f"{reader.__module__}.{reader.__name__}"
-            read_durations = []
             for i in tqdm(range(iterations), desc=f"{reader_path}: {file.name}"):
-                start = datetime.utcnow()
+                start = time.perf_counter()
                 reader(str(file))
-                read_durations.append((datetime.utcnow() - start).total_seconds())
-
-            # Append average read time and other info
-            per_file_results.append([{
-                "file_name": file.name,
-                "file_size_gb": file.stat().st_size / 10e8,
-                "reader": "aicsimageio" if "aicsimageio" in reader_path else "other",
-                "yx_planes": int(yx_planes),
-                "read_duration": read_duration,
-            } for read_duration in read_durations])
+                per_file_results.append({
+                    "file_name": file.name,
+                    "file_size_gb": file.stat().st_size / 10e8,
+                    "reader": (
+                        "aicsimageio" if "aicsimageio" in reader_path else "other"
+                    ),
+                    "yx_planes": int(yx_planes),
+                    "read_duration": time.perf_counter() - start,
+                })
 
     # Unpack per file results
     results = []

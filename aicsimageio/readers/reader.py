@@ -143,12 +143,8 @@ class Reader(ABC):
                         # Use delayed dask reader
                         self._dask_data = self._build_delayed_dask_data()
             except (KeyError, ValueError):
-                start = datetime.now()
                 self._data = self._read_in_memory_data()
-                middle = datetime.now()
-                print(f"read in memory time: {(middle - start).total_seconds()}")
                 self._dask_data = da.from_array(self._data)
-                print(f"converted to da time: {(datetime.now() - middle).total_seconds()}")
 
         return self._dask_data
 

@@ -3,6 +3,7 @@
 
 import io
 import logging
+import os
 import sys
 from abc import ABC, abstractmethod
 from datetime import datetime
@@ -135,19 +136,19 @@ class Reader(ABC):
                 # If no client has been created it will ValueError
                 # We can't import distributed due to it requiring network utilities:
                 # https://github.com/AllenCellModeling/aicsimageio/issues/82
-                try:
-                    sys.modules["distributed"].Client.current()
-                except (KeyError, ValueError):
-                    with sys.modules["distributed"].worker_client() as client:
-                        # No error means there is a cluster and client available
-                        # Use delayed dask reader
-                        self._dask_data = self._build_delayed_dask_data()
+                sys.modules["distributed"].Client.current()
+
+                # No error means there is a cluster and client available
+                # Use delayed dask reader
+                self._dask_data = self._build_delayed_dask_data()
+                print("fully ran delayed construction")
             except (KeyError, ValueError):
                 self._data = self._read_in_memory_data()
                 self._dask_data = da.from_array(self._data)
+                print("ran fast read")
+
 
         return self._dask_data
-
     @property
     def data(self) -> np.ndarray:
         if self._data is None:

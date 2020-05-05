@@ -25,13 +25,13 @@ _imageio.imread, czifile.imread, or tifffile.imread read times in orange_
   preferred for large workloads. 128 Dask workers, each with one (1) core available.
 
 ## Discussion
-In single-threaded full-image read performance `aicsimageio` is at least comparable to
-similar libraries. There is slight overhead from the metadata and dimension management,
-but that overhead is very minor in our opinion. From there, on a standard workstation
-at AICS (8 cores available), `aicsimageio` is comparable or outperforms the other
-libraries in raw read time. And following this trend, the more workers you provide to
-the cluster, the better it gets. With 128 workers reading ~500 YX plane files (~400MB)
-in about 10 seconds.
+In single-threaded full-image read performance aicsimageio is at least comparable to
+the underlying core libraries. There is overhead from the metadata and dimension
+management, but that overhead is typically negligible compared to the raw data read
+times. By parallelizing with an underlying Dask implementation we are able to achieve
+gains that clearly increase performance in the distributed case. The more workers you
+provide to the cluster, the better it gets. With 128 workers reading ~500 YX plane
+files (~400MB) we see read times of about 10 seconds.
 
 To gain concurrent read benefits from `aicsimageio` is as easy as:
 ```

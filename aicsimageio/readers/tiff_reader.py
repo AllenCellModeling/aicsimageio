@@ -112,7 +112,7 @@ class TiffReader(Reader):
 
         return True
 
-    def _build_delayed_dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         # Load Tiff
         with TiffFile(self._file) as tiff:
             # Check each scene has the same shape
@@ -161,7 +161,7 @@ class TiffReader(Reader):
 
             return data
 
-    def _read_in_memory_data(self) -> np.ndarray:
+    def _read_immediate(self) -> np.ndarray:
         # Load Tiff
         with TiffFile(self._file) as tiff:
             # Check each scene has the same shape

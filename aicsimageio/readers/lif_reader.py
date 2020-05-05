@@ -730,7 +730,7 @@ class LifReader(Reader):
         # we also return the dimension order string.
         return merged, "".join(dims)
 
-    def _build_delayed_dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         """
         Returns
         -------
@@ -746,7 +746,7 @@ class LifReader(Reader):
         )
         return dask_array
 
-    def _read_in_memory_data(self) -> np.ndarray:
+    def _read_immediate(self) -> np.ndarray:
         # Get image dims indicies
         lif = LifFile(filename=self._file)
         image_dim_indices = LifReader._dims_shape(lif=lif)

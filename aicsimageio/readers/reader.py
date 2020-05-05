@@ -116,11 +116,11 @@ class Reader(ABC):
         pass
 
     @abstractmethod
-    def _build_delayed_dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         pass
 
     @abstractmethod
-    def _read_in_memory_data(self) -> np.ndarray:
+    def _read_immediate(self) -> np.ndarray:
         pass
 
     @property
@@ -138,9 +138,9 @@ class Reader(ABC):
                 # No error means there is a cluster and client
                 # available on this worker process
                 # Use delayed dask reader
-                self._dask_data = self._build_delayed_dask_data()
+                self._dask_data = self._read_delayed()
             except (KeyError, ValueError):
-                self._data = self._read_in_memory_data()
+                self._data = self._read_immediate()
                 self._dask_data = da.from_array(self._data)
 
         return self._dask_data

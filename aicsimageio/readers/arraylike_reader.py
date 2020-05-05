@@ -39,10 +39,10 @@ class ArrayLikeReader(Reader):
         # Guess dims
         self._dims = self.guess_dim_order(self.dask_data.shape)
 
-    def _build_delayed_dask_data(self):
+    def _read_delayed(self):
         return self._dask_data
 
-    def _read_in_memory_data(self):
+    def _read_immediate(self):
         return self._dask_data.compute()
 
     @property

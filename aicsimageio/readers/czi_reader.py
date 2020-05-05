@@ -386,7 +386,7 @@ class CziReader(Reader):
 
             raise e
 
-    def _build_delayed_dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         """
         Returns
         -------
@@ -398,7 +398,7 @@ class CziReader(Reader):
         )
         return dask_array
 
-    def _read_in_memory_data(self) -> da.core.Array:
+    def _read_immediate(self) -> da.core.Array:
         # Init temp czi
         czi = CziFile(self._file)
 

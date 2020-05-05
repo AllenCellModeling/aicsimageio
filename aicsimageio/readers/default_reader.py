@@ -32,7 +32,7 @@ class DefaultReader(Reader):
         with imageio.get_reader(file) as reader:
             return np.asarray(reader.get_data(index))
 
-    def _build_delayed_dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         with imageio.get_reader(self._file) as reader:
             # Store length as it is used a bunch
             image_length = reader.get_length()
@@ -68,7 +68,7 @@ class DefaultReader(Reader):
             else:
                 raise exceptions.UnsupportedFileFormatError(self._file)
 
-    def _read_in_memory_data(self) -> np.ndarray:
+    def _read_immediate(self) -> np.ndarray:
         try:
             with imageio.get_reader(self._file) as reader:
                 # Store length as it is used a bunch

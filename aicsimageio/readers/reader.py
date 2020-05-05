@@ -126,6 +126,13 @@ class Reader(ABC):
     @property
     def dask_data(self) -> da.core.Array:
         if self._dask_data is None:
+            self._dask_data = self._read_delayed()
+
+        return self._dask_data
+
+    @property
+    def data(self) -> np.ndarray:
+        if self._data is None:
             try:
                 # These lines both check if distributed has been imported
                 # and if a client connection has been created
@@ -139,16 +146,11 @@ class Reader(ABC):
                 # available on this worker process
                 # Use delayed dask reader
                 self._dask_data = self._read_delayed()
+                self._data = self._dask_data.compute()
             except (KeyError, ValueError):
                 self._data = self._read_immediate()
                 self._dask_data = da.from_array(self._data)
 
-        return self._dask_data
-
-    @property
-    def data(self) -> np.ndarray:
-        if self._data is None:
-            self._data = self.dask_data.compute()
         return self._data
 
     @property

@@ -1,0 +1,3 @@
+[submodule "aicsimageio/metadata/czi_to_ome"]
+	path = aicsimageio/metadata/czi_to_ome
+	url = https://github.com/AllenCellModeling/czi-to-ome-xslt.git

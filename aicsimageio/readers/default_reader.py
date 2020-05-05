@@ -33,45 +33,40 @@ class DefaultReader(Reader):
             return np.asarray(reader.get_data(index))
 
     def _build_delayed_dask_data(self) -> da.core.Array:
-        try:
-            with imageio.get_reader(self._file) as reader:
-                # Store length as it is used a bunch
-                image_length = reader.get_length()
+        with imageio.get_reader(self._file) as reader:
+            # Store length as it is used a bunch
+            image_length = reader.get_length()
 
-                # Handle single image formats like png, jpeg, etc
-                if image_length == 1:
-                    return da.from_array(self._get_data(self._file, 0))
+            # Handle single image formats like png, jpeg, etc
+            if image_length == 1:
+                return da.from_array(self._get_data(self._file, 0))
 
-                # Handle many image formats like gif, mp4, etc
-                elif image_length > 1:
-                    # Get a sample image
-                    sample = self._get_data(self._file, 0)
+            # Handle many image formats like gif, mp4, etc
+            elif image_length > 1:
+                # Get a sample image
+                sample = self._get_data(self._file, 0)
 
-                    # Create operating shape for the final dask array by prepending
-                    # image length to a tuple of ones that is the same length as
-                    # the sample shape
-                    operating_shape = (image_length,) + ((1,) * len(sample.shape))
-                    # Create numpy array of empty arrays for delayed get data
-                    # functions
-                    lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                    for indicies, _ in np.ndenumerate(lazy_arrays):
-                        lazy_arrays[indicies] = da.from_delayed(
-                            delayed(self._get_data)(self._file, indicies[0]),
-                            shape=sample.shape,
-                            dtype=sample.dtype,
-                        )
+                # Create operating shape for the final dask array by prepending
+                # image length to a tuple of ones that is the same length as
+                # the sample shape
+                operating_shape = (image_length,) + ((1,) * len(sample.shape))
+                # Create numpy array of empty arrays for delayed get data
+                # functions
+                lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                for indicies, _ in np.ndenumerate(lazy_arrays):
+                    lazy_arrays[indicies] = da.from_delayed(
+                        delayed(self._get_data)(self._file, indicies[0]),
+                        shape=sample.shape,
+                        dtype=sample.dtype,
+                    )
 
-                    # Block them into a single dask array
-                    return da.block(lazy_arrays.tolist())
+                # Block them into a single dask array
+                return da.block(lazy_arrays.tolist())
 
-                # Catch all other image types as unsupported
-                # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
-                else:
-                    raise exceptions.UnsupportedFileFormatError(self._file)
-
-        # Reraise unsupported file format
-        except exceptions.UnsupportedFileFormatError:
-            raise exceptions.UnsupportedFileFormatError(self._file)
+            # Catch all other image types as unsupported
+            # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
+            else:
+                raise exceptions.UnsupportedFileFormatError(self._file)
 
     def _read_in_memory_data(self) -> np.ndarray:
         try:

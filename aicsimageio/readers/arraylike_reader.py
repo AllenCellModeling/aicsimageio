@@ -29,6 +29,9 @@ class ArrayLikeReader(Reader):
     def __init__(self, data: types.ArrayLike, **kwargs):
         # Store data as dask array
         if isinstance(data, np.ndarray):
+            # Unlike every other reader where no data has been read in,
+            # since this reader could be passed an already in memory array, no point to
+            # not store it ready and available for the user
             self._data = data
             self._dask_data = da.from_array(data)
         elif isinstance(data, da.core.Array):

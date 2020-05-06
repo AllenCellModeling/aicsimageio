@@ -65,10 +65,6 @@ lazy_s0t0 = lazy_data[0, 0, :]
 s0t0 = lazy_s0t0.compute()
 ```
 
-When using the `dask_data` array, it is important to know when to `compute` or
-`persist` data and when to keep chaining computation.
-[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
-
 
 ### Speed up IO and Processing with Dask Clients and Clusters
 If you have already spun up a `distributed.Client` object in your Python process or
@@ -143,6 +139,24 @@ We have also released
 [napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
 that allows use of all the functionality described here, but in the `napari` default
 viewer itself.
+
+
+## Performance Considerations
+* There are two different ways for `aicsimageio` to load imaging data from a file,
+either delayed or immediately in memory. Internally, `aicsimageio` determines how to
+load the image data based off of which function you ran and if there is a
+`distributed.Client` available in the current Python process. The only situation in
+which imaging data will be read in a non-delayed fashion is when using `AICSImage.data`
+or `Reader.data` while also not having a `distributed.Client` available in the current
+Python process. This means that for all other situations and functions,
+(`AICSImage.dask_dask`, `AICSImage.get_image_data`, `AICSImage.get_image_dask_data`,
+etc.), the imaging data is retrieved in a delayed fashion. We do this to optimize read
+performance for the majority of situations we encounter as well as additionally
+supporting file reading of any size imaging file. The benefits of this strategy can be
+seen in our [benchmarks](https://allencellmodeling.github.io/aicsimageio/benchmarks.html).
+* When using the `dask_data` array, it is important to know when to `compute` or
+`persist` data and when to keep chaining computation.
+[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
 
 
 ## Notes

@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/optimize-readers  (`#113
+  <https://github.com/AllenCellModeling/aicsimageio/pull/113>`_)
+  [JacksonMaxfield]
 - feature/allow-sequence-in-get-data  (`#109
   <https://github.com/AllenCellModeling/aicsimageio/pull/109>`_)
   [JacksonMaxfield]

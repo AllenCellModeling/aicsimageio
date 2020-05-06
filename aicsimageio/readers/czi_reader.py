@@ -386,20 +386,67 @@ class CziReader(Reader):
 
             raise e
 
-    @property
-    def dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         """
         Returns
         -------
         Constructed dask array where each chunk is a delayed read from the CZI file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
-        if self._dask_data is None:
-            self._dask_data, self._dims = CziReader._daread_safe(
-                self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
-            )
+        dask_array, _ = CziReader._daread_safe(
+            self._file, chunk_by_dims=self.chunk_by_dims, S=self.specific_s_index
+        )
+        return dask_array
 
-        return self._dask_data
+    def _read_immediate(self) -> da.core.Array:
+        # Init temp czi
+        czi = CziFile(self._file)
+
+        # Safely construct the numpy array or catch any exception
+        try:
+            # Get image dims indicies
+            image_dim_indices = czi.dims_shape()
+
+            # Catch inconsistent scene dimension sizes
+            if len(image_dim_indices) > 1:
+                # Choose the provided scene
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {self.specific_s_index} for data retrieval."
+                )
+
+                # Get the specific scene
+                if self.specific_s_index < len(image_dim_indices):
+                    data, _ = czi.read_image(
+                        **{Dimensions.Scene: self.specific_s_index}
+                    )
+                else:
+                    raise exceptions.InconsistentShapeError(
+                        f"The CZI image provided has variable dimensions per scene. "
+                        f"Please provide a valid index to the 'S' parameter to create "
+                        f"a dask array for the index provided. "
+                        f"Provided scene index: {self.specific_s_index}. "
+                        f"Scene index range: 0-{len(image_dim_indices)}."
+                    )
+
+            else:
+                # If the list is length one that means that all the scenes in the image
+                # have the same dimensions
+                # Read all data in the image
+                data, _ = czi.read_image()
+
+                # A really bad way to close any connection to the CZI object
+                czi._bytes = None
+                czi.reader = None
+
+        except Exception as e:
+            # A really bad way to close any connection to the CZI object
+            czi._bytes = None
+            czi.reader = None
+
+            raise e
+
+        return data
 
     @property
     def dims(self) -> str:

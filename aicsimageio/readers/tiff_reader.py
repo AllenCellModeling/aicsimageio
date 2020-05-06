@@ -97,77 +97,86 @@ class TiffReader(Reader):
             # Return numpy
             return page.asarray()
 
-    @property
-    def dask_data(self) -> da.core.Array:
-        """
-        Read a TIFF image file as a delayed dask array where each chunk of the
-        constructed array is a delayed YX plane.
+    @staticmethod
+    def _scene_shape_is_consistent(tiff: TiffFile, S: int) -> bool:
+        scenes = tiff.series
+        operating_shape = scenes[0].shape
+        for scene in scenes:
+            if scene.shape != operating_shape:
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {S} for data "
+                    f"retrieval."
+                )
+                return False
 
-        Returns
-        -------
-        img: dask.array.core.Array
-            The constructed delayed YX plane dask array.
-        """
-        if self._dask_data is None:
-            # Load Tiff
-            with TiffFile(self._file) as tiff:
-                # Check each scene has the same shape
-                # If scene shape checking fails, use the specified scene and update
-                # operating shape
-                scenes = tiff.series
-                operating_shape = scenes[0].shape
-                for scene in scenes:
-                    if scene.shape != operating_shape:
-                        operating_shape = scenes[self.specific_s_index].shape
-                        scenes = [scenes[self.specific_s_index]]
-                        log.info(
-                            f"File contains variable dimensions per scene, "
-                            f"selected scene: {self.specific_s_index} for data "
-                            f"retrieval."
-                        )
-                        break
+        return True
 
-                # Get sample yx plane
-                sample = scenes[0].pages[0].asarray()
+    def _read_delayed(self) -> da.core.Array:
+        # Load Tiff
+        with TiffFile(self._file) as tiff:
+            # Check each scene has the same shape
+            # If scene shape checking fails, use the specified scene and update
+            # operating shape
+            scenes = tiff.series
+            operating_shape = scenes[0].shape
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+                operating_shape = scenes[self.specific_s_index].shape
+                scenes = [scenes[self.specific_s_index]]
 
-                # Combine length of scenes and operating shape
-                # Replace YX dims with empty dimensions
-                operating_shape = (len(scenes), *operating_shape)
-                operating_shape = operating_shape[:-2] + (1, 1)
+            # Get sample yx plane
+            sample = scenes[0].pages[0].asarray()
 
-                # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                for all_page_index, (np_index, _) in enumerate(
-                    np.ndenumerate(lazy_arrays)
-                ):
-                    # Scene index is the first index in np_index
-                    scene_index = np_index[0]
+            # Combine length of scenes and operating shape
+            # Replace YX dims with empty dimensions
+            operating_shape = (len(scenes), *operating_shape)
+            operating_shape = operating_shape[:-2] + (1, 1)
 
-                    # This page index is current enumeration divided by scene index + 1
-                    # For example if the image has 10 Z slices and 5 scenes, there
-                    # would be 50 total pages
-                    this_page_index = all_page_index // (scene_index + 1)
+            # Make ndarray for lazy arrays to fill
+            lazy_arrays = np.ndarray(operating_shape, dtype=object)
+            for all_page_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
+                # Scene index is the first index in np_index
+                scene_index = np_index[0]
 
-                    # Fill the numpy array with the delayed arrays
-                    lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._imread)(
-                            self._file, scene_index, this_page_index
-                        ),
-                        shape=sample.shape,
-                        dtype=sample.dtype,
-                    )
+                # This page index is current enumeration divided by scene index + 1
+                # For example if the image has 10 Z slices and 5 scenes, there
+                # would be 50 total pages
+                this_page_index = all_page_index // (scene_index + 1)
 
-                # Convert the numpy array of lazy readers into a dask array
-                data = da.block(lazy_arrays.tolist())
+                # Fill the numpy array with the delayed arrays
+                lazy_arrays[np_index] = da.from_delayed(
+                    delayed(TiffReader._imread)(
+                        self._file, scene_index, this_page_index
+                    ),
+                    shape=sample.shape,
+                    dtype=sample.dtype,
+                )
 
-                # Only return the scene dimension if multiple scenes are present
-                if len(scenes) == 1:
-                    data = data[0, :]
+            # Convert the numpy array of lazy readers into a dask array
+            data = da.block(lazy_arrays.tolist())
 
-                # Set _dask_data
-                self._dask_data = data
+            # Only return the scene dimension if multiple scenes are present
+            if len(scenes) == 1:
+                data = data[0, :]
 
-        return self._dask_data
+            return data
+
+    def _read_immediate(self) -> np.ndarray:
+        # Load Tiff
+        with TiffFile(self._file) as tiff:
+            # Check each scene has the same shape
+            # If scene shape checking fails, use the specified scene and update
+            # operating shape
+            scenes = tiff.series
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+                return scenes[self.specific_s_index].asarray()
+
+            # Read each scene and stack if single scene
+            if len(scenes) > 1:
+                return np.stack([s.asarray() for s in scenes])
+
+            # Else, return single scene
+            return tiff.asarray()
 
     def load_slice(self, slice_index: int = 0) -> np.ndarray:
         with TiffFile(self._file) as tiff:

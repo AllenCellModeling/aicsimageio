@@ -230,21 +230,21 @@ class LifReader(Reader):
         """
         shape_list = [
             {
-                "T": (0, img.nt),
-                "C": (0, img.channels),
-                "Z": (0, img.nz),
-                "Y": (0, img.dims[1]),
-                "X": (0, img.dims[0]),
+                Dimensions.Time: (0, img.nt),
+                Dimensions.Channel: (0, img.channels),
+                Dimensions.SpatialZ: (0, img.nz),
+                Dimensions.SpatialY: (0, img.dims[1]),
+                Dimensions.SpatialX: (0, img.dims[0]),
             }
             for idx, img in enumerate(lif.get_iter_image())
         ]
         consistent = all(elem == shape_list[0] for elem in shape_list)
         if consistent:
-            shape_list[0]["S"] = (0, len(shape_list))
+            shape_list[0][Dimensions.Scene] = (0, len(shape_list))
             shape_list = [shape_list[0]]
         else:
             for idx, lst in enumerate(shape_list):
-                lst["S"] = (idx, idx + 1)
+                lst[Dimensions.Scene] = (idx, idx + 1)
         return shape_list
 
     @staticmethod
@@ -730,24 +730,51 @@ class LifReader(Reader):
         # we also return the dimension order string.
         return merged, "".join(dims)
 
-    @property
-    def dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         """
         Returns
         -------
         Constructed dask array where each chunk is a delayed read from the LIF file.
         Places dimensions in the native order (i.e. "TZCYX")
         """
-        if self._dask_data is None:
-            self._dask_data, self._dims = LifReader._daread(
+        dask_array, _ = LifReader._daread(
+            self._file,
+            self._chunk_offsets,
+            self._chunk_lengths,
+            chunk_by_dims=self.chunk_by_dims,
+            S=self.specific_s_index,
+        )
+        return dask_array
+
+    def _read_immediate(self) -> np.ndarray:
+        # Get image dims indicies
+        lif = LifFile(filename=self._file)
+        image_dim_indices = LifReader._dims_shape(lif=lif)
+
+        # Catch inconsistent scene dimension sizes
+        if len(image_dim_indices) > 1:
+            # Choose the provided scene
+            log.info(
+                f"File contains variable dimensions per scene, "
+                f"selected scene: {self.specific_s_index} for data retrieval."
+            )
+            data, _ = LifReader._get_array_from_offset(
                 self._file,
                 self._chunk_offsets,
                 self._chunk_lengths,
-                chunk_by_dims=self.chunk_by_dims,
-                S=self.specific_s_index,
+                self.metadata,
+                {Dimensions.Scene: self.specific_s_index},
             )
 
-        return self._dask_data
+        else:
+            # If the list is length one that means that all the scenes in the image
+            # have the same dimensions
+            # Read all data in the image
+            data, _ = LifReader._get_array_from_offset(
+                self._file, self._chunk_offsets, self._chunk_lengths, self.metadata,
+            )
+
+        return data
 
     def dtype(self) -> np.dtype:
         """

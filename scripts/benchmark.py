@@ -23,7 +23,6 @@ from quilt3 import Package
 from tqdm import tqdm
 
 import aicsimageio
-from aicsimageio import dask_utils
 
 ###############################################################################
 
@@ -36,21 +35,9 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 CLUSTER_CONFIGS = [
-    {
-        "name": "small-local-cluster-replica",
-        "per_worker_cores": 2,
-        "workers": 4,
-    },
-    {
-        "name": "large-local-cluster-replica",
-        "per_worker_cores": 2,
-        "workers": 16,
-    },
-    {
-        "name": "small-worker-distributed-cluster",
-        "per_worker_cores": 1,
-        "workers": 32,
-    },
+    {"name": "small-local-cluster-replica", "per_worker_cores": 2, "workers": 4},
+    {"name": "large-local-cluster-replica", "per_worker_cores": 2, "workers": 16},
+    {"name": "small-worker-distributed-cluster", "per_worker_cores": 1, "workers": 32},
     {
         "name": "many-small-worker-distributed-cluster",
         "per_worker_cores": 1,
@@ -80,8 +67,8 @@ class Args(argparse.Namespace):
                 "Run read time benchmarks for aicsimageio against other common image "
                 "readers. The benchmark dataset can be downloaded using the "
                 "download_test_resources script with the specific hash: "
-                "06489d5501d1003e41046a3cb8a57887f04e75b30e23416ff60da8b87b80beb6"
-            )
+                "5e665ed66c1b373a84002227044c7a12a2ecc506b84a730442a5ed798428e26a"
+            ),
         )
 
         # Arguments
@@ -94,7 +81,7 @@ class Args(argparse.Namespace):
         p.add_argument(
             "--upload",
             action="store_true",
-            help="Should the results be uploaded to Quilt."
+            help="Should the results be uploaded to Quilt.",
         )
         p.add_argument(
             "--debug",
@@ -108,6 +95,7 @@ class Args(argparse.Namespace):
 
 ###############################################################################
 
+
 def _run_benchmark(
     resources_dir: Path,
     extensions: List[str],
@@ -120,31 +108,27 @@ def _run_benchmark(
         files += list(resources_dir.glob(ext))
 
     # Run reads for each file and store details in results
-    per_file_results = []
+    results = []
     for file in files:
         info_read = aicsimageio.AICSImage(file)
         yx_planes = np.prod(info_read.size("STCZ"))
         for reader in [aicsimageio.imread, non_aicsimageio_reader]:
             reader_path = f"{reader.__module__}.{reader.__name__}"
-            read_durations = []
             for i in tqdm(range(iterations), desc=f"{reader_path}: {file.name}"):
-                start = datetime.utcnow()
+                start = time.perf_counter()
                 reader(str(file))
-                read_durations.append((datetime.utcnow() - start).total_seconds())
+                results.append(
+                    {
+                        "file_name": file.name,
+                        "file_size_gb": file.stat().st_size / 10e8,
+                        "reader": (
+                            "aicsimageio" if "aicsimageio" in reader_path else "other"
+                        ),
+                        "yx_planes": int(yx_planes),
+                        "read_duration": time.perf_counter() - start,
+                    }
+                )
 
-            # Append average read time and other info
-            per_file_results.append([{
-                "file_name": file.name,
-                "file_size_gb": file.stat().st_size / 10e8,
-                "reader": "aicsimageio" if "aicsimageio" in reader_path else "other",
-                "yx_planes": int(yx_planes),
-                "read_duration": read_duration,
-            } for read_duration in read_durations])
-
-    # Unpack per file results
-    results = []
-    for per_file_result in per_file_results:
-        results += per_file_result
     return results
 
 
@@ -195,7 +179,7 @@ def run_benchmarks(args: Args):
         resources_dir = Path().parent.parent / "aicsimageio" / "tests" / "resources"
 
         # Store machine config
-        machine_config = {
+        _ = {
             "platform": platform.system(),
             "platform_version": platform.version(),
             "architecture": platform.machine(),
@@ -207,7 +191,7 @@ def run_benchmarks(args: Args):
 
         # Store python config
         pyversion = sys.version_info
-        python_config = {
+        _ = {
             "python_version": f"{pyversion.major}.{pyversion.minor}.{pyversion.micro}",
             "aicsimageio": aicsimageio.__version__,
             "czifile": czifile.__version__,
@@ -291,7 +275,7 @@ def run_benchmarks(args: Args):
             p.push(
                 "aicsimageio/benchmarks",
                 "s3://aics-modeling-packages-test-resources",
-                message=f"aicsimageio version: {aicsimageio.__version__}"
+                message=f"aicsimageio version: {aicsimageio.__version__}",
             )
 
     # Catch any exception
@@ -303,6 +287,7 @@ def run_benchmarks(args: Args):
         log.error("\n\n" + str(e) + "\n")
         log.error("=============================================")
         sys.exit(1)
+
 
 ###############################################################################
 # Runner

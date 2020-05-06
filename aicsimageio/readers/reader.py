@@ -3,6 +3,7 @@
 
 import io
 import logging
+import sys
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -114,15 +115,42 @@ class Reader(ABC):
     def _is_this_type(buffer: io.BytesIO) -> bool:
         pass
 
-    @property
     @abstractmethod
-    def dask_data(self) -> da.core.Array:
+    def _read_delayed(self) -> da.core.Array:
         pass
+
+    @abstractmethod
+    def _read_immediate(self) -> np.ndarray:
+        pass
+
+    @property
+    def dask_data(self) -> da.core.Array:
+        if self._dask_data is None:
+            self._dask_data = self._read_delayed()
+
+        return self._dask_data
 
     @property
     def data(self) -> np.ndarray:
         if self._data is None:
-            self._data = self.dask_data.compute()
+            try:
+                # These lines both check if distributed has been imported
+                # and if a client connection has been created
+                # If distributed hasn't been imported it will KeyError
+                # If no client has been created it will ValueError
+                # We can't import distributed due to it requiring network utilities:
+                # https://github.com/AllenCellModeling/aicsimageio/issues/82
+                sys.modules["distributed"].get_client()
+
+                # No error means there is a cluster and client
+                # available on this worker process
+                # Use delayed dask reader
+                self._dask_data = self._read_delayed()
+                self._data = self._dask_data.compute()
+            except (KeyError, ValueError):
+                self._data = self._read_immediate()
+                self._dask_data = da.from_array(self._data)
+
         return self._data
 
     @property

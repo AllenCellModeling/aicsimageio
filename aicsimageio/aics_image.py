@@ -192,7 +192,11 @@ class AICSImage:
         Return the entire image as a numpy array with dimension ordering "STCZYX".
         """
         if self._data is None:
-            self._data = self.dask_data.compute()
+            self._data = transforms.reshape_data(
+                data=self.reader.data,
+                given_dims=self._known_dims or self.reader.dims,
+                return_dims=self.dims,
+            )
 
         return self._data
 

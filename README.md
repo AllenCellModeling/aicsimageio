@@ -108,9 +108,9 @@ with dask_utils.cluster_and_client() as (cluster, client):
     # Do your image processing work
 ```
 
-_**Note:** The `AICSImage` context manager and the `dask_utils` module require that the
+**Note:** The `AICSImage` context manager and the `dask_utils` module require that the
 processing machine or container have networking capabilities enabled to function
-properly._
+properly.
 
 
 ### Metadata Reading
@@ -175,4 +175,4 @@ If you don't want this behavior, simply pass the `img.dask_data` into
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
-***Free software: BSD-3-Clause***
+_Free software: BSD-3-Clause_

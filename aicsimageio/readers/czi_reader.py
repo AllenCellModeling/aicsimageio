@@ -10,7 +10,7 @@ import dask.array as da
 import numpy as np
 from aicspylibczi import CziFile
 from dask import delayed
-from lxml.etree import _Element
+import lxml.etree as ET
 
 from .. import exceptions, types
 from ..buffer_reader import BufferReader
@@ -458,7 +458,7 @@ class CziReader(Reader):
         return self.dask_data.dtype
 
     @property
-    def metadata(self) -> _Element:
+    def metadata(self) -> ET.Element:
         """
         Load and return the metadata from the CZI file
 
@@ -469,6 +469,34 @@ class CziReader(Reader):
         # We can't serialize lxml element trees so don't save the tree to the object
         # state
         return CziFile(self._file).meta
+
+    @property
+    def get_metadata_as_ome(self) -> ET.Element:
+        xslt = Path(__file__).parent.parent / "metadata" / "czi_to_ome" / "xslt"
+        ome_metadata = None
+
+        czixml = self.metadata
+        czisubblock_metadata = CziFile(self._file).read_subblock_metadata(unified_xml=True)
+
+        czixml.append(czisubblock_metadata)
+
+        template = str((xslt / "czi-to-ome.xsl").resolve(strict=True))
+        template = ET.parse(template)
+        transform = ET.XSLT(template)
+
+        try:
+            ome_metadata = transform(czixml)
+
+        # Catch any exception
+        except Exception as e:
+            print(f"Error: {e}")
+            print("-" * 80)
+            print("Full Log:")
+            for entry in transform.error_log:
+                print((f"{entry.filename}: {entry.line}, "
+                       f"{entry.column}> {entry.message}>"))
+
+        return ome_metadata
 
     def _size_of_dimension(self, dim: str) -> int:
         if dim in self.dims:

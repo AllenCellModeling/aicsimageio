@@ -310,6 +310,16 @@ class AICSImage:
         return self.reader.metadata
 
     @property
+    def get_metadata_as_ome(self):
+        """
+
+        Returns
+        -------
+
+        """
+        return self.reader.get_metadata_as_ome
+
+    @property
     def reader(self) -> Reader:
         """
         This property returns the class created to read the image file type.

@@ -205,6 +205,10 @@ class Reader(ABC):
         return [str(i) for i in range(channel_dim_size)]
 
     @property
+    def get_metadata_as_ome(self):
+        return None
+
+    @property
     def cluster(self) -> Optional["distributed.LocalCluster"]:
         return self._cluster
 

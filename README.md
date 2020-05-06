@@ -142,19 +142,17 @@ viewer itself.
 
 
 ## Performance Considerations
-* There are two different ways for `aicsimageio` to load imaging data from a file,
-either delayed or immediately in memory. Internally, `aicsimageio` determines how to
-load the image data based off of which function you ran and if there is a
-`distributed.Client` available in the current Python process. The only situation in
-which imaging data will be read in a non-delayed fashion is when using `AICSImage.data`
-or `Reader.data` while also not having a `distributed.Client` available in the current
-Python process. This means that for all other situations and functions,
-(`AICSImage.dask_dask`, `AICSImage.get_image_data`, `AICSImage.get_image_dask_data`,
-etc.), the imaging data is retrieved in a delayed fashion. We do this to optimize read
-performance for the majority of situations we encounter as well as additionally
-supporting file reading of any size imaging file. The benefits of this strategy can be
-seen in our [benchmarks](https://allencellmodeling.github.io/aicsimageio/benchmarks.html).
-* When using the `dask_data` array, it is important to know when to `compute` or
+* **If your image fits into memory and you are not using a distributed cluster:** use
+`AICSImage.data` or `Reader.data` which are generally optimal.
+* **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
+get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
+specific chunk of data from the image.
+* **If your image is too large to fit into memory and you are not using a distributed
+cluster:** you will experience slower than optimal performance with
+`AICSImage.get_image_data`.
+* **If you are using a distributed cluster:** all functions and properties in the
+library are generally optimal.
+* When using a `dask` array, it is important to know when to `compute` or
 `persist` data and when to keep chaining computation.
 [Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
 

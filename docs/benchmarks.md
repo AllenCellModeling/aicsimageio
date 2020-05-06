@@ -41,6 +41,19 @@ with dask_utils.cluster_and_client() as (cluster, client):
    img = imread("my_file.tiff")
 ```
 
+**Note:** There are two different ways for `aicsimageio` to load imaging data from a
+file, either delayed or immediately in memory. Internally, `aicsimageio` determines how
+to load the image data based off of which function you ran and if there is a
+`distributed.Client` available in the current Python process. The only situation in
+which imaging data will be read in a non-delayed fashion is when using `AICSImage.data`
+or `Reader.data` while also not having a `distributed.Client` available in the current
+Python process. This means that for all other situations and functions,
+(`AICSImage.dask_data`, `AICSImage.get_image_data`, `AICSImage.get_image_dask_data`,
+etc.), the imaging data is retrieved in a delayed fashion. We do this to optimize read
+performance for the majority of situations we encounter as well as additionally
+supporting file reading of any size imaging file. The benefits of this strategy can be
+seen by our benchmark results above.
+
 ## Historical Benchmarks
 Benchmarks will be ran and published at least every "minor" release.
 * To view or download the charted benchmark results, please see:

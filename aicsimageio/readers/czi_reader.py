@@ -470,10 +470,8 @@ class CziReader(Reader):
         # state
         return CziFile(self._file).meta
 
-    @property
     def get_metadata_as_ome(self) -> ET.Element:
         xslt = Path(__file__).parent.parent / "metadata" / "czi_to_ome" / "xslt"
-        ome_metadata = None
 
         czixml = self.metadata
         czisubblock_metadata = CziFile(self._file).read_subblock_metadata(unified_xml=True)
@@ -487,14 +485,15 @@ class CziReader(Reader):
         try:
             ome_metadata = transform(czixml)
 
-        # Catch any exception
+        # Catch any exception and re-raise
         except Exception as e:
-            print(f"Error: {e}")
-            print("-" * 80)
-            print("Full Log:")
+            log.info(f"Error: {e}")
+            log.info("-" * 80)
+            log.info("Full Log:")
             for entry in transform.error_log:
-                print((f"{entry.filename}: {entry.line}, "
-                       f"{entry.column}> {entry.message}>"))
+                log.info((f"{entry.filename}: {entry.line}, "
+                          f"{entry.column}> {entry.message}>"))
+            raise exceptions.MetadataTransformException()
 
         return ome_metadata
 
@@ -535,7 +534,7 @@ class CziReader(Reader):
             return default
         return ref.text
 
-    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
+    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float, float, float]:
         px = float(
             self._getmetadataxmltext(
                 "./Metadata/Scaling/Items/Distance[@Id='X']/Value", "1.0"
@@ -551,4 +550,4 @@ class CziReader(Reader):
                 "./Metadata/Scaling/Items/Distance[@Id='Z']/Value", "1.0"
             )
         )
-        return (px, py, pz)
+        return px, py, pz

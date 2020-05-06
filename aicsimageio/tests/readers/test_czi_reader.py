@@ -202,3 +202,21 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     assert img.size_z() == z
     assert img.size_y() == y
     assert img.size_x() == x
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "s_1_t_1_c_1_z_1.czi",
+        "s_3_t_1_c_3_z_5.czi",
+    ],
+)
+def test_to_ome(resources_dir, filename):
+    f = resources_dir / filename
+
+    img = CziReader(f)
+
+    ome_meta = img.get_metadata_as_ome()
+    planes = ome_meta.find("//Plane")
+    n_of_subblocks = img.size_s() * img.size_t() * img.size_c() * img.size_z()
+    assert len(planes) == n_of_subblocks

@@ -53,3 +53,11 @@ class InconsistentPixelType(Exception):
     """
 
     pass
+
+
+class MetadataTransformException(Exception):
+    """
+    This exception is returned when the conversion to 4DN OME metadata fails.
+    """
+
+    pass

@@ -309,7 +309,6 @@ class AICSImage:
         # The reader can implement read optimization or not.
         return self.reader.metadata
 
-    @property
     def get_metadata_as_ome(self):
         """
 
@@ -317,7 +316,7 @@ class AICSImage:
         -------
 
         """
-        return self.reader.get_metadata_as_ome
+        return self.reader.get_metadata_as_ome()
 
     @property
     def reader(self) -> Reader:

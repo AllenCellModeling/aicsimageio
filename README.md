@@ -4,8 +4,7 @@
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
 
-A Python library for reading and writing image data with specific support for handling
-bio-formats.
+Delayed Parallel Image Reading for Microscopy Images in Python
 
 ---
 

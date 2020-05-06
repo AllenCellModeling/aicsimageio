@@ -147,9 +147,6 @@ viewer itself.
 * **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
 get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
 specific chunk of data from the image.
-* **If your image is too large to fit into memory and you are not using a distributed
-cluster:** you will experience slower than optimal performance with
-`AICSImage.get_image_data`.
 * **If you are using a distributed cluster:** all functions and properties in the
 library are generally optimal.
 * When using a `dask` array, it is important to know when to `compute` or

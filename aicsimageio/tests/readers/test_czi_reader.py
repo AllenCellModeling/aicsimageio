@@ -205,18 +205,17 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 
 
 @pytest.mark.parametrize(
-    "filename",
+    "filename, expected",
     [
-        "s_1_t_1_c_1_z_1.czi",
-        "s_3_t_1_c_3_z_5.czi",
+        ("s_3_t_1_c_3_z_5.czi", 45),
+        ("variable_per_scene_dims.czi", 6)
     ],
 )
-def test_to_ome(resources_dir, filename):
+def test_to_ome(resources_dir, filename, expected):
     f = resources_dir / filename
 
     img = CziReader(f)
 
     ome_meta = img.get_metadata_as_ome()
-    planes = ome_meta.find("//Plane")
-    n_of_subblocks = img.size_s() * img.size_t() * img.size_c() * img.size_z()
-    assert len(planes) == n_of_subblocks
+    planes = ome_meta.findall("//Plane")
+    assert len(planes) == expected

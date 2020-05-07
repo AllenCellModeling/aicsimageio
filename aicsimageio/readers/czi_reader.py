@@ -474,7 +474,9 @@ class CziReader(Reader):
         xslt = Path(__file__).parent.parent / "metadata" / "czi_to_ome" / "xslt"
 
         czixml = self.metadata
-        czisubblock_metadata = CziFile(self._file).read_subblock_metadata(unified_xml=True)
+        czisubblock_metadata = CziFile(self._file).read_subblock_metadata(
+            unified_xml=True
+        )
 
         czixml.append(czisubblock_metadata)
 

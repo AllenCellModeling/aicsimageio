@@ -306,7 +306,8 @@ class AICSImage:
 
     def get_ome_metadata(self):
         """
-        Get the OME transformed metadata by applying the XSLT to the native metadata format.
+        Get the OME transformed metadata by applying the XSLT to the native
+        metadata format.
 
         Returns
         -------

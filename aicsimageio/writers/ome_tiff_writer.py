@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import tifffile
+import lxml.etree as ET
 
 from aicsimageio.exceptions import InvalidDimensionOrderingError
 from aicsimageio.vendor import omexml
@@ -166,6 +167,9 @@ class OmeTiffWriter:
                 channel_colors=channel_colors,
                 dimension_order=dimension_order,
             )
+        # if it is data from CZI->OME via XSLT then
+        elif type(ome_xml) is ET.Element:
+            self.omeMetadata = ome_xml
         else:
             pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()

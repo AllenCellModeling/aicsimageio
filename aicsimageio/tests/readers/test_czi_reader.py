@@ -20,62 +20,62 @@ from aicsimageio.readers.czi_reader import CziReader
     "chunk_dims",
     [
         (
-                "s_1_t_1_c_1_z_1.czi",  # noqa: E126
-                (1, 1, 325, 475),
-                "BCYX",
-                np.uint16,
-                0,
-                ("Z", "Y", "X"),
+            "s_1_t_1_c_1_z_1.czi",  # noqa: E126
+            (1, 1, 325, 475),
+            "BCYX",
+            np.uint16,
+            0,
+            ("Z", "Y", "X"),
         ),
         (
-                "s_3_t_1_c_3_z_5.czi",  # noqa: E126
-                (1, 3, 3, 5, 325, 475),
-                "BSCZYX",
-                np.uint16,
-                0,
-                ("Z", "Y", "X"),
+            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            np.uint16,
+            0,
+            ("Z", "Y", "X"),
         ),
         (
-                "s_3_t_1_c_3_z_5.czi",  # noqa: E126
-                (1, 3, 3, 5, 325, 475),
-                "BSCZYX",
-                np.uint16,
-                0,
-                ("Y", "X"),
+            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            np.uint16,
+            0,
+            ("Y", "X"),
         ),
         (
-                "s_3_t_1_c_3_z_5.czi",  # noqa: E126
-                (1, 3, 3, 5, 325, 475),
-                "BSCZYX",
-                np.uint16,
-                0,
-                ("C", "Y", "X"),
+            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            np.uint16,
+            0,
+            ("C", "Y", "X"),
         ),
         (
-                "s_3_t_1_c_3_z_5.czi",  # noqa: E126
-                (1, 3, 3, 5, 325, 475),
-                "BSCZYX",
-                np.uint16,
-                0,
-                ("S", "Y", "X"),
+            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            np.uint16,
+            0,
+            ("S", "Y", "X"),
         ),
         # Check that Spatial Y and Spatial X dims are always added to chunk dims
         ("s_3_t_1_c_3_z_5.czi", (1, 3, 3, 5, 325, 475), "BSCZYX", np.uint16, 0, ("S"),),
         (
-                "variable_per_scene_dims.czi",  # noqa: E126
-                (1, 1, 2, 1, 2, 1248, 1848),
-                "BSTCZYX",
-                np.uint16,
-                0,
-                ("Z", "Y", "X"),
+            "variable_per_scene_dims.czi",  # noqa: E126
+            (1, 1, 2, 1, 2, 1248, 1848),
+            "BSTCZYX",
+            np.uint16,
+            0,
+            ("Z", "Y", "X"),
         ),
         (
-                "variable_per_scene_dims.czi",  # noqa: E126
-                (1, 1, 1, 1, 2, 1248, 1848),
-                "BSTCZYX",
-                np.uint16,
-                1,
-                ("Z", "Y", "X"),
+            "variable_per_scene_dims.czi",  # noqa: E126
+            (1, 1, 1, 1, 2, 1248, 1848),
+            "BSTCZYX",
+            np.uint16,
+            1,
+            ("Z", "Y", "X"),
         ),
         pytest.param(
             "variable_per_scene_dims.czi",
@@ -98,13 +98,13 @@ from aicsimageio.readers.czi_reader import CziReader
     ],
 )
 def test_czi_reader(
-        resources_dir,
-        filename,
-        expected_shape,
-        expected_dims,
-        expected_dtype,
-        select_scene,
-        chunk_dims,
+    resources_dir,
+    filename,
+    expected_shape,
+    expected_dims,
+    expected_dtype,
+    select_scene,
+    chunk_dims,
 ):
     # Get file
     f = resources_dir / filename
@@ -171,8 +171,10 @@ def test_get_channel_names(resources_dir, filename, scene, expected):
     "filename, expected",
     [
         ("s_1_t_1_c_1_z_1.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1.0)),
-        ("s_3_t_1_c_3_z_5.czi", (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06)
-         ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1.0833333333333333e-06, 1.0833333333333333e-06, 1e-06),
+        ),
     ],
 )
 def test_get_physical_pixel_size(resources_dir, filename, expected):
@@ -204,10 +206,7 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
 
 @pytest.mark.parametrize(
     "filename, expected",
-    [
-        ("s_3_t_1_c_3_z_5.czi", 45),
-        ("variable_per_scene_dims.czi", 6)
-    ],
+    [("s_3_t_1_c_3_z_5.czi", 45), ("variable_per_scene_dims.czi", 6)],
 )
 def test_to_ome(resources_dir, filename, expected):
     f = resources_dir / filename

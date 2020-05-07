@@ -490,11 +490,11 @@ class CziReader(Reader):
 
         # Catch any exception and re-raise
         except Exception as e:
-            log.info(f"Error: {e}")
-            log.info("-" * 80)
-            log.info("Full Log:")
+            log.error(f"Error: {e}")
+            log.error("-" * 80)
+            log.error("Full Log:")
             for entry in transform.error_log:
-                log.info(
+                log.error(
                     (
                         f"{entry.filename}: {entry.line}, "
                         f"{entry.column}> {entry.message}>"

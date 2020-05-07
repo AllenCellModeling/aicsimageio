@@ -7,19 +7,20 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
 import dask.array as da
+import lxml.etree as ET
 import numpy as np
 from aicspylibczi import CziFile
 from dask import delayed
-import lxml.etree as ET
 
+from .reader import Reader
 from .. import exceptions, types
 from ..buffer_reader import BufferReader
 from ..constants import Dimensions
-from .reader import Reader
 
 ###############################################################################
 
 log = logging.getLogger(__name__)
+
 
 ###############################################################################
 
@@ -49,15 +50,15 @@ class CziReader(Reader):
     ZEISS_10BYTE = b"ZISRAWFILE"  # First 10 characters of a well formatted czi file.
 
     def __init__(
-        self,
-        data: types.FileLike,
-        chunk_by_dims: List[str] = [
-            Dimensions.SpatialZ,
-            Dimensions.SpatialY,
-            Dimensions.SpatialX,
-        ],
-        S: int = 0,
-        **kwargs,
+            self,
+            data: types.FileLike,
+            chunk_by_dims: List[str] = [
+                Dimensions.SpatialZ,
+                Dimensions.SpatialY,
+                Dimensions.SpatialX,
+            ],
+            S: int = 0,
+            **kwargs,
     ):
         # Run super init to check filepath provided
         super().__init__(data, **kwargs)
@@ -76,7 +77,7 @@ class CziReader(Reader):
 
     @staticmethod
     def _read_image(
-        img: Path, read_dims: Optional[Dict[str, int]] = None
+            img: Path, read_dims: Optional[Dict[str, int]] = None
     ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
         Read and return the squeezed image data requested along with the dimension info
@@ -134,14 +135,14 @@ class CziReader(Reader):
 
     @staticmethod
     def _daread(
-        img: Path,
-        czi: CziFile,
-        chunk_by_dims: List[str] = [
-            Dimensions.SpatialZ,
-            Dimensions.SpatialY,
-            Dimensions.SpatialX,
-        ],
-        S: int = 0,
+            img: Path,
+            czi: CziFile,
+            chunk_by_dims: List[str] = [
+                Dimensions.SpatialZ,
+                Dimensions.SpatialY,
+                Dimensions.SpatialX,
+            ],
+            S: int = 0,
     ) -> Tuple[da.core.Array, str]:
         """
         Read a CZI image file as a delayed dask array where certain dimensions act as
@@ -257,7 +258,7 @@ class CziReader(Reader):
         # actually come out of the read data as
         sample_chunk_shape = tuple(sample_chunk_shape)
         blocked_dimension_order = (
-            non_chunk_dimension_ordering + chunk_dimension_ordering
+                non_chunk_dimension_ordering + chunk_dimension_ordering
         )
 
         # Fill out the rest of the operating shape with dimension sizes of 1 to match
@@ -335,13 +336,13 @@ class CziReader(Reader):
 
     @staticmethod
     def _daread_safe(
-        img: Union[str, Path],
-        chunk_by_dims: List[str] = [
-            Dimensions.SpatialZ,
-            Dimensions.SpatialY,
-            Dimensions.SpatialX,
-        ],
-        S: int = 0,
+            img: Union[str, Path],
+            chunk_by_dims: List[str] = [
+                Dimensions.SpatialZ,
+                Dimensions.SpatialY,
+                Dimensions.SpatialX,
+            ],
+            S: int = 0,
     ) -> Tuple[da.core.Array, str]:
         """
         Safely read a CZI image file as a delayed dask array where certain dimensions

@@ -204,9 +204,8 @@ class Reader(ABC):
         channel_dim_size = self.dask_data.shape[channel_index]
         return [str(i) for i in range(channel_dim_size)]
 
-    @property
-    def get_metadata_as_ome(self):
-        return None
+    def get_ome_metadata(self):
+        return NotImplementedError()
 
     @property
     def cluster(self) -> Optional["distributed.LocalCluster"]:

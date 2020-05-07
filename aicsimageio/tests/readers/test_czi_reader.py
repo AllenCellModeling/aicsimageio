@@ -216,6 +216,6 @@ def test_to_ome(resources_dir, filename, expected):
 
     img = CziReader(f)
 
-    ome_meta = img.get_metadata_as_ome()
+    ome_meta = img.get_ome_metadata()
     planes = ome_meta.findall("//Plane")
     assert len(planes) == expected

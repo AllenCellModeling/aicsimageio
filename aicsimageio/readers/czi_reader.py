@@ -470,7 +470,7 @@ class CziReader(Reader):
         # state
         return CziFile(self._file).meta
 
-    def get_metadata_as_ome(self) -> ET.Element:
+    def get_ome_metadata(self) -> ET.Element:
         xslt = Path(__file__).parent.parent / "metadata" / "czi_to_ome" / "xslt"
 
         czixml = self.metadata

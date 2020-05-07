@@ -10,15 +10,10 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import (
-    ArrayLikeReader,
-    CziReader,
-    DefaultReader,
-    LifReader,
-    OmeTiffReader,
-    TiffReader,
-)
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (ArrayLikeReader, CziReader, DefaultReader, LifReader,
+                      OmeTiffReader, TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -309,14 +304,16 @@ class AICSImage:
         # The reader can implement read optimization or not.
         return self.reader.metadata
 
-    def get_metadata_as_ome(self):
+    def get_ome_metadata(self):
         """
+        Get the OME transformed metadata by applying the XSLT to the native metadata format.
 
         Returns
         -------
-
+        lxml.etree.Element
+            The metadata converted into OME format using the XSLT sheets.
         """
-        return self.reader.get_metadata_as_ome()
+        return self.reader.get_ome_metadata()
 
     @property
     def reader(self) -> Reader:

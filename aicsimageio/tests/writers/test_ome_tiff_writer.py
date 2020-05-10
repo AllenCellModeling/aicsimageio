@@ -150,6 +150,9 @@ def test_dimensionOrder(
      ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1_4DN.ome.tif")],
 )
 def test_ome_etree(resources_dir, czi_file, ome_tif_file):
+    """
+    test to check serialization of ome generated metadata
+    """
     f = resources_dir / czi_file
     img = AICSImage(f)
     ome_xml = img.get_ome_metadata()

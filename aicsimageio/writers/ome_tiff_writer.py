@@ -158,6 +158,7 @@ class OmeTiffWriter:
             elif first2 == "CZ" or first2 == "ZC":
                 dimension_order = "T" + dimension_order
 
+        xml_str = None
         if ome_xml is None:
             self._make_meta(
                 data,
@@ -167,14 +168,16 @@ class OmeTiffWriter:
                 channel_colors=channel_colors,
                 dimension_order=dimension_order,
             )
+            xml_str = self.omeMetadata.to_xml().encode()
         # if it is data from CZI->OME via XSLT then
-        elif isinstance(ome_xml, ET.Element):
+        elif isinstance(ome_xml, ET._XSLTResultTree):
             self.omeMetadata = ome_xml
+            xml_str = ET.tostring(self.omeMetadata, encoding="utf-8")
         else:
             pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()
             self.omeMetadata = ome_xml
-        xml = self.omeMetadata.to_xml().encode()
+            xml_str = self.omeMetadata.to_xml().encode()
 
         tif = tifffile.TiffWriter(
             self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY
@@ -187,7 +190,7 @@ class OmeTiffWriter:
             tif.save(
                 data,
                 compress=9,
-                description=xml,
+                description=xml_str,
                 photometric="minisblack",
                 metadata=None,
             )

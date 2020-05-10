@@ -3,7 +3,6 @@
 
 import os
 
-import lxml.etree as ET
 import numpy as np
 import pytest
 
@@ -146,17 +145,17 @@ def test_dimensionOrder(
 
 
 @pytest.mark.parametrize(
-    "czi_file, ometiff_file",
-    [("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5.ome.tif"),
-     ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1.ome.tif")],
+    "czi_file, ome_tif_file",
+    [("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5_4DN.ome.tif"),
+     ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1_4DN.ome.tif")],
 )
-def test_ome_etree(resources_dir, czi_file, ometiff_file):
+def test_ome_etree(resources_dir, czi_file, ome_tif_file):
     f = resources_dir / czi_file
     img = AICSImage(f)
-    expected_ome_tiff = blah.ome.tiff
-    inserted_czi = blah.czi
-    read_czi = AICSImage(inserted_czi)
-    # write the ometiff with writer and new metadata
-    # load expected ome tiff
-    # do a string compare on the expected vs the produced metadata
-    meta = ET.f
+    ome_xml = img.get_ome_metadata()
+    with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
+        writer.save(
+            img.get_image_data("TCZYX", S=0),
+            ome_xml,
+            dimension_order="TCZYX"
+        )

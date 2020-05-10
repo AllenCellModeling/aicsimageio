@@ -20,7 +20,7 @@ from aicsimageio.readers.czi_reader import CziReader
     "chunk_dims",
     [
         (
-            "s_1_t_1_c_1_z_1.czi",  # noqa: E126
+            "s_1_t_1_c_1_z_1.czi",
             (1, 1, 325, 475),
             "BCYX",
             np.uint16,
@@ -28,7 +28,7 @@ from aicsimageio.readers.czi_reader import CziReader
             ("Z", "Y", "X"),
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
             np.uint16,
@@ -36,7 +36,7 @@ from aicsimageio.readers.czi_reader import CziReader
             ("Z", "Y", "X"),
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
             np.uint16,
@@ -44,7 +44,7 @@ from aicsimageio.readers.czi_reader import CziReader
             ("Y", "X"),
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
             np.uint16,
@@ -52,7 +52,7 @@ from aicsimageio.readers.czi_reader import CziReader
             ("C", "Y", "X"),
         ),
         (
-            "s_3_t_1_c_3_z_5.czi",  # noqa: E126
+            "s_3_t_1_c_3_z_5.czi",
             (1, 3, 3, 5, 325, 475),
             "BSCZYX",
             np.uint16,
@@ -62,7 +62,7 @@ from aicsimageio.readers.czi_reader import CziReader
         # Check that Spatial Y and Spatial X dims are always added to chunk dims
         ("s_3_t_1_c_3_z_5.czi", (1, 3, 3, 5, 325, 475), "BSCZYX", np.uint16, 0, ("S"),),
         (
-            "variable_per_scene_dims.czi",  # noqa: E126
+            "variable_per_scene_dims.czi",
             (1, 1, 2, 1, 2, 1248, 1848),
             "BSTCZYX",
             np.uint16,
@@ -70,7 +70,7 @@ from aicsimageio.readers.czi_reader import CziReader
             ("Z", "Y", "X"),
         ),
         (
-            "variable_per_scene_dims.czi",  # noqa: E126
+            "variable_per_scene_dims.czi",
             (1, 1, 1, 1, 2, 1248, 1848),
             "BSTCZYX",
             np.uint16,

@@ -3,12 +3,14 @@
 
 import os
 
+import lxml.etree as ET
 import numpy as np
 import pytest
 
 from aicsimageio.exceptions import InvalidDimensionOrderingError
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
+from aicsimageio import AICSImage
 
 filename = "ometif_test_output.ome.tif"
 
@@ -141,3 +143,20 @@ def test_dimensionOrder(
     assert z == expected_z
     assert c == expected_c
     assert t == expected_t
+
+
+@pytest.mark.parametrize(
+    "czi_file, ometiff_file",
+    [("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5.ome.tif"),
+     ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1.ome.tif")],
+)
+def test_ome_etree(resources_dir, czi_file, ometiff_file):
+    f = resources_dir / czi_file
+    img = AICSImage(f)
+    expected_ome_tiff = blah.ome.tiff
+    inserted_czi = blah.czi
+    read_czi = AICSImage(inserted_czi)
+    # write the ometiff with writer and new metadata
+    # load expected ome tiff
+    # do a string compare on the expected vs the produced metadata
+    meta = ET.f

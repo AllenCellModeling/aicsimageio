@@ -258,7 +258,7 @@ class CziReader(Reader):
         # actually come out of the read data as
         sample_chunk_shape = tuple(sample_chunk_shape)
         blocked_dimension_order = (
-            non_chunk_dimension_ordering + chunk_dimension_ordering  # noqa: E126
+            non_chunk_dimension_ordering + chunk_dimension_ordering
         )
 
         # Fill out the rest of the operating shape with dimension sizes of 1 to match

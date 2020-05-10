@@ -168,7 +168,7 @@ class OmeTiffWriter:
                 dimension_order=dimension_order,
             )
         # if it is data from CZI->OME via XSLT then
-        elif type(ome_xml) is ET.Element:
+        elif isinstance(ome_xml, ET.Element):
             self.omeMetadata = ome_xml
         else:
             pixels = ome_xml.image().Pixels

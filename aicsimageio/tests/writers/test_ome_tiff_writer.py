@@ -146,8 +146,10 @@ def test_dimensionOrder(
 
 @pytest.mark.parametrize(
     "czi_file, ome_tif_file",
-    [("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5_4DN.ome.tif"),
-     ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1_4DN.ome.tif")],
+    [
+        ("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5_4DN.ome.tif"),
+        ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1_4DN.ome.tif"),
+    ],
 )
 def test_ome_etree(resources_dir, czi_file, ome_tif_file):
     """
@@ -157,8 +159,4 @@ def test_ome_etree(resources_dir, czi_file, ome_tif_file):
     img = AICSImage(f)
     ome_xml = img.get_ome_metadata()
     with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
-        writer.save(
-            img.get_image_data("TCZYX", S=0),
-            ome_xml,
-            dimension_order="TCZYX"
-        )
+        writer.save(img.get_image_data("TCZYX", S=0), ome_xml, dimension_order="TCZYX")

@@ -164,7 +164,7 @@ def test_ome_etree(resources_dir, czi_file, ome_tif_file):
 
 @pytest.mark.parametrize(
     "czi_file, scene_index, ome_tif_file",
-    [("s_3_t_1_c_3_z_5.czi", 1, "s_3_t_1_c_3_z_5_4DN.ome.tif"),],
+    [("s_3_t_1_c_3_z_5.czi", 1, "s_3_t_1_c_3_z_5_4DN.ome.tif")],
 )
 def test_one_scene_ome_etree(resources_dir, czi_file, scene_index, ome_tif_file):
     """

@@ -160,3 +160,22 @@ def test_ome_etree(resources_dir, czi_file, ome_tif_file):
     ome_xml = img.get_ome_metadata()
     with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
         writer.save(img.get_image_data("TCZYX", S=0), ome_xml, dimension_order="TCZYX")
+
+
+@pytest.mark.parametrize(
+    "czi_file, scene_index, ome_tif_file",
+    [
+        ("s_3_t_1_c_3_z_5.czi", 1, "s_3_t_1_c_3_z_5_4DN.ome.tif"),
+    ],
+)
+def test_one_scene_ome_etree(resources_dir, czi_file, scene_index, ome_tif_file):
+    """
+    test to check serialization of ome generated metadata
+    """
+    f = resources_dir / czi_file
+    img = AICSImage(f)
+    ome_xml = img.get_single_scene_ome_metadata(scene_index=scene_index)
+    with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
+        writer.save(img.get_image_data("TCZYX", S=scene_index),
+                    ome_xml,
+                    dimension_order="TCZYX")

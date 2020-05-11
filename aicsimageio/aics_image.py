@@ -321,6 +321,26 @@ class AICSImage:
         """
         return self.reader.get_ome_metadata()
 
+    def get_single_scene_ome_metadata(self, scene_index: int = 0):
+        """
+        This is a short term solution to enable 6D files to be split into 5D tiff files
+        until the tif writer can be updated to support 6D data.
+
+        Parameters
+        ----------
+        scene_index
+            The scene_index of the desired scene
+
+        Returns
+        -------
+        lxml.etree._XSLTResultTree
+            Containing just the scene specific Image metadata.
+        """
+        ome_xml = self.get_ome_metadata()
+        for skip_image in ome_xml.xpath(f"//Image[@Id!=\'Image:{scene_index}\']"):
+            skip_image.getparent().remove(skip_image)
+        return ome_xml
+
     @property
     def reader(self) -> Reader:
         """

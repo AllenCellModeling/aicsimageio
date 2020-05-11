@@ -337,7 +337,7 @@ class AICSImage:
             Containing just the scene specific Image metadata.
         """
         ome_xml = self.get_ome_metadata()
-        for skip_image in ome_xml.xpath(f"//Image[@Id!=\'Image:{scene_index}\']"):
+        for skip_image in ome_xml.xpath(f"//Image[@Id!='Image:{scene_index}']"):
             skip_image.getparent().remove(skip_image)
         return ome_xml
 

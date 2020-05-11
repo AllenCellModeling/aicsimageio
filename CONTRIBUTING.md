@@ -11,7 +11,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 1. Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/aicsimageio.git
+    git clone --recurse-submodules git@github.com:{your_name_here}/aicsimageio.git
     ```
 
 1. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):

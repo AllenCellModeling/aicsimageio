@@ -123,6 +123,18 @@ img.metadata  # returns the metadata object for this image type
 img.get_channel_names()  # returns a list of string channel names found in the metadata
 ```
 
+### OME Metadata Retrieval (⍺ release status)
+We generate [OME](https://www.openmicroscopy.org/) using XSLT to transform the native format into the open standard. 
+It is our hope that people will contribute to the submodule that contains the XSLT documents.
+```python
+from aicsimageio import AICSImage
+
+# Get an AICSImage object
+img = AICSImage("my_file.tiff")
+ome_xml = img.get_ome_metadata()
+``` 
+
+
 ### Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package

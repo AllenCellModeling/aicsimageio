@@ -123,7 +123,7 @@ img.metadata  # returns the metadata object for this image type
 img.get_channel_names()  # returns a list of string channel names found in the metadata
 ```
 
-### OME Metadata Retrieval (⍺ release status)
+### OME Metadata Retrieval (alpha release status)
 We generate [OME](https://www.openmicroscopy.org/) using XSLT to transform the native format into the open standard. 
 It is our hope that people will contribute to the submodule that contains the XSLT documents.
 ```python

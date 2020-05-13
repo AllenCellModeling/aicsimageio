@@ -18,6 +18,9 @@ New
 
 Fix
 ~~~
+- bugfix/update-ome-spec  (`#116
+  <https://github.com/AllenCellModeling/aicsimageio/pull/116>`_)
+  [JacksonMaxfield]
 - bugfix/set-sphinx-dep-upper-bound  (`#95
   <https://github.com/AllenCellModeling/aicsimageio/pull/95>`_)
   [JacksonMaxfield]

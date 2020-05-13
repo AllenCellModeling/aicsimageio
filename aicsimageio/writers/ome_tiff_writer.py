@@ -232,8 +232,7 @@ class OmeTiffWriter:
 
         # Save tiff
         with tifffile.TiffWriter(
-            self.file_path,
-            bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY,
+            self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY,
         ) as writer:
             writer.save(
                 data,
@@ -377,8 +376,7 @@ class OmeTiffWriter:
 
 
 def convert_to_ome_tiff(
-    original_file: Union[str, Path, AICSImage],
-    save_path: Union[str, Path],
+    original_file: Union[str, Path, AICSImage], save_path: Union[str, Path],
 ) -> Path:
     """
     Given a filepath or AICSImage object, convert and save as an OME-TIFF.

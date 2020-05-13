@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pytest
 
-from aicsimageio import AICSImage, transforms
+from aicsimageio import AICSImage
 from aicsimageio.exceptions import InvalidDimensionOrderingError
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter, convert_to_ome_tiff

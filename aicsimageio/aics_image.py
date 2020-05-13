@@ -569,9 +569,9 @@ class AICSImage:
 
         except ModuleNotFoundError:
             raise ModuleNotFoundError(
-                f"'napari' has not been installed. To use this function install napari "
-                f"with either: pip install napari' or "
-                f"'pip install aicsimageio[interactive]'"
+                "'napari' has not been installed. To use this function install napari "
+                "with either: pip install napari' or "
+                "'pip install aicsimageio[interactive]'"
             )
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
@@ -620,14 +620,14 @@ class AICSImage:
         return f"<AICSImage [{type(self.reader).__name__}]>"
 
     @property
-    def cluster(self) -> Optional["distributed.LocalCluster"]:
+    def cluster(self) -> Optional["distributed.LocalCluster"]:  # noqa: F821
         """
         If this object created a local Dask cluster, return it.
         """
         return self._cluster
 
     @property
-    def client(self) -> Optional["distributed.Client"]:
+    def client(self) -> Optional["distributed.Client"]:  # noqa: F821
         """
         If connected to a Dask cluster, return the connected Client.
         """
@@ -654,9 +654,9 @@ class AICSImage:
         # Warn of future changes to API
         warnings.warn(
             "In aicsimageio>=4.*, the AICSImage context manager will no longer "
-            f"construct and manage a distributed local dask cluster for you. If this "
-            f"functionality is desired for your work, please switch to explictly "
-            f"calling the `aicsimageio.dask_utils.cluster_and_client` context manager.",
+            "construct and manage a distributed local dask cluster for you. If this "
+            "functionality is desired for your work, please switch to explictly "
+            "calling the `aicsimageio.dask_utils.cluster_and_client` context manager.",
             FutureWarning,
         )
 

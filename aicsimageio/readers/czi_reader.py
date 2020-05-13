@@ -202,14 +202,14 @@ class CziReader(Reader):
         # Always add Y and X dims to chunk by dims because that is how CZI files work
         if Dimensions.SpatialY not in chunk_by_dims:
             log.info(
-                f"Adding the Spatial Y dimension to chunk by dimensions as it was not "
-                f"found."
+                "Adding the Spatial Y dimension to chunk by dimensions as it was not "
+                "found."
             )
             chunk_by_dims.append(Dimensions.SpatialY)
         if Dimensions.SpatialX not in chunk_by_dims:
             log.info(
-                f"Adding the Spatial X dimension to chunk by dimensions as it was not "
-                f"found."
+                "Adding the Spatial X dimension to chunk by dimensions as it was not "
+                "found."
             )
             chunk_by_dims.append(Dimensions.SpatialX)
 

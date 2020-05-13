@@ -205,11 +205,11 @@ class Reader(ABC):
         return [str(i) for i in range(channel_dim_size)]
 
     @property
-    def cluster(self) -> Optional["distributed.LocalCluster"]:
+    def cluster(self) -> Optional["distributed.LocalCluster"]:  # noqa: F821
         return self._cluster
 
     @property
-    def client(self) -> Optional["distributed.Client"]:
+    def client(self) -> Optional["distributed.Client"]:  # noqa: F821
         return self._client
 
     def close(self):

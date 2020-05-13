@@ -112,7 +112,7 @@ class LifReader(Reader):
                 # the metadata in the LIF. When this is read by the parser,
                 # it is set to zero initially.
                 log.debug(
-                    f"guessing image length: LifFile assumes 1byte per pixel,"
+                    "guessing image length: LifFile assumes 1byte per pixel,"
                     " but I think this is wrong!"
                 )
                 image_len = seek_distance * x_size * y_size * pixel_type.itemsize
@@ -596,14 +596,14 @@ class LifReader(Reader):
         # Always add Y and X dims to chunk by dims because that is how LIF files work
         if Dimensions.SpatialY not in chunk_by_dims:
             log.info(
-                f"Adding the Spatial Y dimension to chunk by dimensions as it was not "
-                f"found."
+                "Adding the Spatial Y dimension to chunk by dimensions as it was not "
+                "found."
             )
             chunk_by_dims.append(Dimensions.SpatialY)
         if Dimensions.SpatialX not in chunk_by_dims:
             log.info(
-                f"Adding the Spatial X dimension to chunk by dimensions as it was not "
-                f"found."
+                "Adding the Spatial X dimension to chunk by dimensions as it was not "
+                "found."
             )
             chunk_by_dims.append(Dimensions.SpatialX)
 

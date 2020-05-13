@@ -1,13 +1,16 @@
 from __future__ import print_function
 
 import os
+from pathlib import Path
+from typing import Union
 
+import lxml.etree as ET
 import numpy as np
 import tifffile
-import lxml.etree as ET
 
-from aicsimageio.exceptions import InvalidDimensionOrderingError
-from aicsimageio.vendor import omexml
+from ..aics_image import AICSImage
+from ..exceptions import InvalidDimensionOrderingError
+from ..vendor import omexml
 
 BYTE_BOUNDARY = 2 ** 21
 
@@ -75,33 +78,22 @@ class OmeTiffWriter:
     def close(self):
         pass
 
-    def save(
+    def _build_ome(
         self,
         data,
-        ome_xml=None,
-        channel_names=None,
-        image_name="IMAGE0",
-        pixels_physical_size=None,
-        channel_colors=None,
-        dimension_order="STZCYX",
-    ):
+        channel_names,
+        image_name,
+        pixels_physical_size,
+        channel_colors,
+        dimension_order,
+    ) -> str:
         """
-        Save an image with the proper OME XML metadata.
+        When no `ome_xml` object is passed to the main `save` function,
+        this function runs. It builds the OME metadata using the provided parameters
+        using the `vendor.omexml.OMEXML` object.
 
-        Parameters
-        ----------
-        data: An array of 3, 4, or 5 dimensions to be written out to a file.
-        ome_xml: A premade omexml.OMEXML object to use for metadata.
-        channel_names: The names for each channel to be put into the OME metadata
-        image_name: The name of the image to be put into the OME metadata
-        pixels_physical_size: The physical size of each pixel in the image
-        channel_colors: The channel colors to be put into the OME metadata
-        dimension_order: The dimension ordering in the data array. Will be assumed
-        STZCYX if not specified
+        Because of this, this OME generator only supports up to 5D data.
         """
-        if self.silent_pass:
-            return
-
         shape = data.shape
         ndims = len(shape)
 
@@ -158,44 +150,98 @@ class OmeTiffWriter:
             elif first2 == "CZ" or first2 == "ZC":
                 dimension_order = "T" + dimension_order
 
-        xml_str = None
-        if ome_xml is None:
-            self._make_meta(
-                data,
-                channel_names=channel_names,
-                image_name=image_name,
-                pixels_physical_size=pixels_physical_size,
-                channel_colors=channel_colors,
-                dimension_order=dimension_order,
-            )
-            xml_str = self.omeMetadata.to_xml().encode()
-        # if it is data from CZI->OME via XSLT then
-        elif isinstance(ome_xml, ET._XSLTResultTree):
-            self.omeMetadata = ome_xml
-            xml_str = ET.tostring(self.omeMetadata, encoding="utf-8")
-        else:
-            pixels = ome_xml.image().Pixels
-            pixels.populate_TiffData()
-            self.omeMetadata = ome_xml
-            xml_str = self.omeMetadata.to_xml().encode()
-
-        tif = tifffile.TiffWriter(
-            self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY
+        # Make the OME metadata
+        self._make_meta(
+            data,
+            channel_names=channel_names,
+            image_name=image_name,
+            pixels_physical_size=pixels_physical_size,
+            channel_colors=channel_colors,
+            dimension_order=dimension_order,
         )
+        xml_str = self.omeMetadata.to_xml().encode()
 
-        # check data shape for TZCYX or ZCYX or ZYX
-        if ndims == 5 or ndims == 4 or ndims == 3:
-            # minisblack instructs TiffWriter to not try to infer rgb color within the
-            # data array metadata param fixes the double image description bug
-            tif.save(
+        return xml_str
+
+    def save(
+        self,
+        data,
+        ome_xml=None,
+        channel_names=None,
+        image_name="IMAGE0",
+        pixels_physical_size=None,
+        channel_colors=None,
+        dimension_order="STZCYX",
+    ):
+        """
+        Save an image with the proper OME XML metadata.
+
+        Parameters
+        ----------
+        data: An array of 3, 4, 5, or 6 dimensions to be written out to a file.
+
+        ome_xml: A premade omexml.OMEXML object to use for metadata or the result of a
+        metadata transform. If this object is provided, all other parameters are
+        ignored.
+
+        channel_names: The names for each channel to be put into the OME metadata
+
+        image_name: The name of the image to be put into the OME metadata
+
+        pixels_physical_size: The physical size of each pixel in the image
+
+        channel_colors: The channel colors to be put into the OME metadata
+
+        dimension_order: The dimension ordering in the data array. Will be assumed
+        STZCYX if not specified
+        """
+        if self.silent_pass:
+            return
+
+        # If ome_xml is None, construct the OME from the provided parameters
+        # As this function uses the `vendor.omexml.OMEXML` object we do some
+        # data validation during the `_build_ome` function to ensure that the
+        # data is at most 5 dimensions.
+        if ome_xml is None:
+            xml_str = self._build_ome(
+                data,
+                channel_names,
+                image_name,
+                pixels_physical_size,
+                channel_colors,
+                dimension_order,
+            )
+
+        # Otherwise a prebuilt xml tree or OMEXML object were provided. Trust them.
+        else:
+            # XML produced from a transform
+            if isinstance(ome_xml, ET._XSLTResultTree):
+                self.omeMetadata = ome_xml
+                xml_str = str(self.omeMetadata).encode("utf-8")
+            # OMEXML object provided
+            elif isinstance(ome_xml, omexml.OMEXML):
+                pixels = ome_xml.image().Pixels
+                pixels.populate_TiffData()
+                self.omeMetadata = ome_xml
+                xml_str = self.omeMetadata.to_xml().encode()
+            else:
+                raise TypeError(
+                    f"'ome_xml' parameter must be of type: "
+                    f"`omexml.OMEXML` or `lxml.etree._XSLTResultTree`"
+                )
+
+        # Save tiff
+        with tifffile.TiffWriter(
+            self.file_path,
+            bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY,
+        ) as writer:
+            writer.save(
                 data,
                 compress=9,
                 description=xml_str,
                 photometric="minisblack",
                 metadata=None,
             )
-
-        tif.close()
 
     def save_slice(self, data, z=0, c=0, t=0):
         """ this doesn't do the necessary functionality at this point
@@ -328,3 +374,49 @@ class OmeTiffWriter:
         pixels.populate_TiffData()
 
         return ox
+
+
+def convert_to_ome_tiff(
+    original_file: Union[str, Path, AICSImage],
+    save_path: Union[str, Path],
+) -> Path:
+    """
+    Given a filepath or AICSImage object, convert and save as an OME-TIFF.
+
+    Parameters
+    ----------
+    original_file: Union[str, Path, AICSImage]
+        The original file as a path or already initialized AICSImage
+
+    save_path: Union[str, Path]
+        The target path to save the produced OME-TIFF to.
+
+    Returns
+    -------
+    save_path: Path
+        The location to the saved OME-TIFF.
+    """
+    # Read as AICSImage
+    if not isinstance(original_file, AICSImage):
+        original_file = AICSImage(original_file)
+
+    # Fully resolve save_path
+    save_path = Path(save_path).resolve()
+
+    # Get metadata
+    ome_metadata = original_file.get_ome_metadata()
+
+    # Get per-scene dimension order
+    scene_dim_order = ome_metadata.find("Image").get("DimensionOrder")
+
+    # Get image data reshaped to metadata dimension order
+    # OME metadata stores dimension order in reverse of the order it is saved in
+    # This requests the image data in "S" + the reverse of the per-scene dimension order
+    # 🤷 image formats 🤷
+    ome_image_data = original_file.get_image_data(f"S{scene_dim_order[::-1]}")
+
+    # Write OME-TIFF
+    with OmeTiffWriter(save_path) as writer:
+        writer.save(ome_image_data, ome_xml=ome_metadata)
+
+    return save_path

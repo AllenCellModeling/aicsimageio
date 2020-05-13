@@ -1,6 +1,44 @@
 Changelog
 =========
 
+v3.2.0 (2020-05-13)
+-------------------
+
+New
+~~~
+- feature/optimize-readers  (`#113
+  <https://github.com/AllenCellModeling/aicsimageio/pull/113>`_)
+  [JacksonMaxfield]
+- feature/allow-sequence-in-get-data  (`#109
+  <https://github.com/AllenCellModeling/aicsimageio/pull/109>`_)
+  [JacksonMaxfield]
+- feature/read-leica-lif-files  (`#99
+  <https://github.com/AllenCellModeling/aicsimageio/pull/99>`_) [Jamie
+  Sherman]
+
+Fix
+~~~
+- bugfix/update-ome-spec  (`#116
+  <https://github.com/AllenCellModeling/aicsimageio/pull/116>`_)
+  [JacksonMaxfield]
+- bugfix/set-sphinx-dep-upper-bound  (`#95
+  <https://github.com/AllenCellModeling/aicsimageio/pull/95>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/benchmarks  (`#112
+  <https://github.com/AllenCellModeling/aicsimageio/pull/112>`_)
+  [JacksonMaxfield]
+- admin/use-black-formatting  (`#108
+  <https://github.com/AllenCellModeling/aicsimageio/pull/108>`_)
+  [JacksonMaxfield]
+- Update PR Template [Madison Bowden]
+- admin/move-test-resources-to-s3  (`#94
+  <https://github.com/AllenCellModeling/aicsimageio/pull/94>`_)
+  [JacksonMaxfield]
+
+
 v3.1.4 (2020-03-21)
 -------------------
 

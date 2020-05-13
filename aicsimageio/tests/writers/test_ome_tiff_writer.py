@@ -6,10 +6,10 @@ import os
 import numpy as np
 import pytest
 
+from aicsimageio import AICSImage, transforms
 from aicsimageio.exceptions import InvalidDimensionOrderingError
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
-from aicsimageio.writers import OmeTiffWriter
-from aicsimageio import AICSImage
+from aicsimageio.writers import OmeTiffWriter, convert_to_ome_tiff
 
 filename = "ometif_test_output.ome.tif"
 
@@ -145,35 +145,33 @@ def test_dimensionOrder(
 
 
 @pytest.mark.parametrize(
-    "czi_file, ome_tif_file",
+    "czi_file, ome_tiff_file",
     [
         ("s_3_t_1_c_3_z_5.czi", "s_3_t_1_c_3_z_5_4DN.ome.tif"),
         ("s_1_t_1_c_1_z_1.czi", "s_1_t_1_c_1_z_1_4DN.ome.tif"),
     ],
 )
-def test_ome_etree(resources_dir, czi_file, ome_tif_file):
+def test_ome_conversion(resources_dir, czi_file, ome_tiff_file):
     """
-    test to check serialization of ome generated metadata
+    Test to check serialization of OME generated metadata
     """
-    f = resources_dir / czi_file
-    img = AICSImage(f)
-    ome_xml = img.get_ome_metadata()
-    with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
-        writer.save(img.get_image_data("TCZYX", S=0), ome_xml, dimension_order="TCZYX")
+    czi_file = resources_dir / czi_file
+    ome_tiff_file = resources_dir / ome_tiff_file
 
+    # Convert
+    convert_to_ome_tiff(original_file=czi_file, save_path=ome_tiff_file)
 
-@pytest.mark.parametrize(
-    "czi_file, scene_index, ome_tif_file",
-    [("s_3_t_1_c_3_z_5.czi", 1, "s_3_t_1_c_3_z_5_4DN.ome.tif")],
-)
-def test_one_scene_ome_etree(resources_dir, czi_file, scene_index, ome_tif_file):
-    """
-    test to check serialization of ome generated metadata
-    """
-    f = resources_dir / czi_file
-    img = AICSImage(f)
-    ome_xml = img.get_single_scene_ome_metadata(scene_index=scene_index)
-    with OmeTiffWriter(resources_dir / ome_tif_file, overwrite_file=True) as writer:
-        writer.save(
-            img.get_image_data("TCZYX", S=scene_index), ome_xml, dimension_order="TCZYX"
-        )
+    # Check metadata values
+    czi_file = AICSImage(czi_file)
+    ome_tiff_file = AICSImage(ome_tiff_file)
+
+    assert czi_file.get_channel_names() == ome_tiff_file.get_channel_names()
+    assert czi_file.get_physical_pixel_size() == ome_tiff_file.get_physical_pixel_size()
+    assert czi_file.reader.size_s() == ome_tiff_file.reader.size_s()
+    assert czi_file.reader.size_t() == ome_tiff_file.reader.size_t()
+    assert czi_file.reader.size_c() == ome_tiff_file.reader.size_c()
+    assert czi_file.reader.size_z() == ome_tiff_file.reader.size_z()
+    assert czi_file.reader.size_y() == ome_tiff_file.reader.size_y()
+    assert czi_file.reader.size_x() == ome_tiff_file.reader.size_x()
+
+    os.remove(resources_dir / ome_tiff_file)

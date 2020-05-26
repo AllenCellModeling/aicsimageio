@@ -158,6 +158,31 @@ class Reader(ABC):
     def dims(self) -> str:
         pass
 
+    def size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
+        """
+        Parameters
+        ----------
+        dims: str
+            A string containing a list of dimensions being requested. The default is to
+            return the six standard dims.
+
+        Returns
+        -------
+        size: Tuple[int]
+            A tuple with the requested dimensions filled in.
+        """
+        # Ensure dims is an uppercase string
+        dims = dims.upper()
+
+        # Check that the dims requested are in the image dims
+        if not (all(d in self.dims for d in dims)):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Invalid dimensions requested: {dims}"
+            )
+
+        # Return the shape of the data for the dimensions requested
+        return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
+
     @property
     @abstractmethod
     def metadata(self) -> Any:

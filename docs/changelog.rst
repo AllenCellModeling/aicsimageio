@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v3.2.1 (2020-05-26)
+-------------------
+
+Fix
+~~~
+- bugfix/add-imagecodecs-dep  (`#120
+  <https://github.com/AllenCellModeling/aicsimageio/pull/120>`_)
+  [JacksonMaxfield]
+
+
 v3.2.0 (2020-05-13)
 -------------------
 

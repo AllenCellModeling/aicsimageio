@@ -26,7 +26,7 @@ test_requirements = [
     "codecov>=2.0.22",
     "docutils>=0.10,<0.16",
     "flake8>=3.7.7",
-    "napari>=0.2.10",
+    "napari[pyqt5]>=0.2.10",
     "psutil>=5.7.0",
     "pytest>=4.3.0",
     "pytest-cov==2.6.1",
@@ -64,7 +64,7 @@ interactive_requirements = [
     "bokeh",
     "jupyterlab",
     "matplotlib",
-    "napari>=0.2.10",
+    "napari[pyqt5]>=0.2.10",
     "pillow",
 ]
 
@@ -112,8 +112,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Python library for reading and writing image data with special handlers for bio-formats "
-        "from Allen Institute for Cell Science."
+        "Delayed parallel image reading, metadata parsing, and image writing for "
+        "microscopy formats in pure Python from the Allen Institute for Cell Science."
     ),
     entry_points={},
     install_requires=requirements,

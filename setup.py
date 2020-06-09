@@ -112,8 +112,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Python library for reading and writing image data with special handlers for bio-formats "
-        "from Allen Institute for Cell Science."
+        "Delayed parallel image reading, metadata parsing, and image writing for "
+        "microscopy formats in pure Python from the Allen Institute for Cell Science."
     ),
     entry_points={},
     install_requires=requirements,

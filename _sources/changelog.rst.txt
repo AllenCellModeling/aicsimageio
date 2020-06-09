@@ -3,6 +3,9 @@ Changelog
 
 (unreleased)
 ------------
+- admin/update-build-tooling  (`#123
+  <https://github.com/AllenCellModeling/aicsimageio/pull/123>`_)
+  [JacksonMaxfield]
 - admin/switch-log-warning-to-warnings-warn  (`#122
   <https://github.com/AllenCellModeling/aicsimageio/pull/122>`_)
   [JacksonMaxfield]

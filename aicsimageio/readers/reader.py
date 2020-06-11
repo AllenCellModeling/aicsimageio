@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 # training and application of a model
 USE_DASK = True
 
+
 def enable_dask():
     """
     Enable Dask for image reading. This results in image reads being distributed to a
@@ -34,6 +35,7 @@ def enable_dask():
     """
     global USE_DASK
     USE_DASK = True
+
 
 def disable_dask():
     """

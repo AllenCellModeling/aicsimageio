@@ -159,7 +159,6 @@ class Reader(ABC):
 
     @property
     def data(self) -> np.ndarray:
-        global USE_DASK
         if self._data is None:
             try:
                 # Fast re-route to _read_immediate

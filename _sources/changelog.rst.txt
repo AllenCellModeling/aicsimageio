@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+New
+~~~
+- feature/enable-disable-dask  (`#124
+  <https://github.com/AllenCellModeling/aicsimageio/pull/124>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
 - admin/update-build-tooling  (`#123
   <https://github.com/AllenCellModeling/aicsimageio/pull/123>`_)
   [JacksonMaxfield]

@@ -1,6 +1,25 @@
 Changelog
 =========
 
+v3.2.2 (2020-06-11)
+-------------------
+
+New
+~~~
+- feature/enable-disable-dask  (`#124
+  <https://github.com/AllenCellModeling/aicsimageio/pull/124>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/update-build-tooling  (`#123
+  <https://github.com/AllenCellModeling/aicsimageio/pull/123>`_)
+  [JacksonMaxfield]
+- admin/switch-log-warning-to-warnings-warn  (`#122
+  <https://github.com/AllenCellModeling/aicsimageio/pull/122>`_)
+  [JacksonMaxfield]
+
+
 v3.2.1 (2020-05-26)
 -------------------
 

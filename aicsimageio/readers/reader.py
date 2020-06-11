@@ -28,22 +28,21 @@ log = logging.getLogger(__name__)
 USE_DASK = True
 
 
-def enable_dask():
+def use_dask(setting: bool):
     """
-    Enable Dask for image reading. This results in image reads being distributed to a
-    distributed cluster.
-    """
-    global USE_DASK
-    USE_DASK = True
-
-
-def disable_dask():
-    """
-    Disable Dask for image reading. This results in image reads occuring instantly and
-    from the running process.
+    Enable or disable Dask for image reading.
+    When True, image reads are first attempted to be handled by a distributed cluster.
+    When False, image reads are never routed to a distributed cluster and are instead
+    read immediately in the running process.
     """
     global USE_DASK
-    USE_DASK = False
+
+    # Check parameter
+    if not isinstance(setting, bool):
+        raise TypeError("The setting parameter provided to use_dask must be a boolean.")
+
+    # Assign to global state
+    USE_DASK = setting
 
 
 ###############################################################################

@@ -6,7 +6,7 @@ from dask import optimize
 from distributed import get_client
 from psutil import Process
 
-from aicsimageio import AICSImage, dask_utils, disable_dask, imread_dask
+from aicsimageio import AICSImage, dask_utils, imread_dask, use_dask
 
 # Example files
 BMP_FILE = "example.bmp"
@@ -73,7 +73,7 @@ def test_imread_use_dask_false(resources_dir):
         get_client()
 
         # Don't use dask for reads
-        disable_dask()
+        use_dask(False)
 
         # Read image without dask
         img = AICSImage(f)

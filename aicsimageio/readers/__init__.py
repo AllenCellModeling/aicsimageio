@@ -6,5 +6,5 @@ from .czi_reader import CziReader  # noqa: F401
 from .default_reader import DefaultReader  # noqa: F401
 from .lif_reader import LifReader  # noqa: F401
 from .ome_tiff_reader import OmeTiffReader  # noqa: F401
-from .reader import USE_DASK, disable_dask, enable_dask  # noqa: F401
+from .reader import use_dask  # noqa: F401
 from .tiff_reader import TiffReader  # noqa: F401

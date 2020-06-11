@@ -162,7 +162,6 @@ class Reader(ABC):
         global USE_DASK
         if self._data is None:
             try:
-                print(USE_DASK)
                 # Fast re-route to _read_immediate
                 if not USE_DASK:
                     raise ValueError("USE_DASK marked False. Rerouting.")

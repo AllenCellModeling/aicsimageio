@@ -63,6 +63,7 @@ def test_ome_tiff_reader(
     assert img.is_ome()
     assert img.metadata
     assert img.dask_data.shape == expected_shape
+    assert img.size(expected_dims) == expected_shape
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]

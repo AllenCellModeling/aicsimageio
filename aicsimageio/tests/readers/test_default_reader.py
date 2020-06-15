@@ -41,6 +41,7 @@ def test_default_reader(
     assert img.dims == expected_dims
     assert img.metadata
     assert img.dask_data.shape == expected_shape
+    assert img.size(expected_dims) == expected_shape
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]

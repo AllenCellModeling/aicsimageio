@@ -120,6 +120,7 @@ def test_czi_reader(
     assert img.dims == expected_dims
     assert img.metadata is not None
     assert img.dask_data.shape == expected_shape
+    assert img.size(expected_dims) == expected_shape
     assert img.dtype() == expected_dtype
 
     # Check that there are no open file pointers after basics

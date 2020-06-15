@@ -123,6 +123,10 @@ def test_czi_reader(
     assert img.size(expected_dims) == expected_shape
     assert img.dtype() == expected_dtype
 
+    # Will error because those dimensions don't exist in the file
+    with pytest.raises(exceptions.InvalidDimensionOrderingError):
+        assert img.size("ABCDEFG") == expected_shape
+
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]
 

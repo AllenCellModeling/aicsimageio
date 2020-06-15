@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from psutil import Process
 
+from aicsimageio import exceptions
 from aicsimageio.readers.lif_reader import LifReader
 
 

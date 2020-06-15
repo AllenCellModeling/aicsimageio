@@ -149,6 +149,9 @@ get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for
 specific chunk of data from the image.
 * **If you are using a distributed cluster:** all functions and properties in the
 library are generally optimal.
+* **If you are using a distributed cluster with less than ~6 workers:** use
+`aicsimageio.use_dask(False)`. From our testing, 6 workers is the bare minimum for
+read time reduction compared to no cluster usage.
 * When using a `dask` array, it is important to know when to `compute` or
 `persist` data and when to keep chaining computation.
 [Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)

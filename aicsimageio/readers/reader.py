@@ -20,6 +20,33 @@ log = logging.getLogger(__name__)
 
 ###############################################################################
 
+# Global variable to inform reader to use _read_delayed or _read_immediate
+# Useful in sitations where you may be on a cluster with very few workers
+# but still using Dask for other operations.
+# I.E. GPU clusters where you don't care about the IO of the file so much as the
+# training and application of a model
+USE_DASK = True
+
+
+def use_dask(setting: bool):
+    """
+    Enable or disable Dask for image reading.
+    When True, image reads are first attempted to be handled by a distributed cluster.
+    When False, image reads are never routed to a distributed cluster and are instead
+    read immediately in the running process.
+    """
+    global USE_DASK
+
+    # Check parameter
+    if not isinstance(setting, bool):
+        raise TypeError("The setting parameter provided to use_dask must be a boolean.")
+
+    # Assign to global state
+    USE_DASK = setting
+
+
+###############################################################################
+
 
 class Reader(ABC):
     _dask_data = None
@@ -134,6 +161,13 @@ class Reader(ABC):
     def data(self) -> np.ndarray:
         if self._data is None:
             try:
+                # Fast re-route to _read_immediate
+                if not USE_DASK:
+                    raise ValueError("USE_DASK marked False. Rerouting.")
+
+                # Otherwise, assume the user want's to use their Dask cluster
+                # if the following `get_client` call succeeds
+
                 # These lines both check if distributed has been imported
                 # and if a client connection has been created
                 # If distributed hasn't been imported it will KeyError

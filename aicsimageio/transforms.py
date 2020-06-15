@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import warnings
 from collections import Counter
 
 from . import types
@@ -173,7 +174,7 @@ def reshape_data(
                 check_selection_max = dim_spec
             else:
                 # Dimension wasn't included in kwargs, default to zero
-                log.warning(
+                warnings.warn(
                     f"Data has dimension {dim} with depth {data.shape[dim_index]}, "
                     f"assuming {dim}=0 is the desired value, "
                     f"if not the case specify {dim}=x where "

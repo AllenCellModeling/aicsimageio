@@ -49,6 +49,7 @@ def test_tiff_reader(
     assert img.dims == expected_dims
     assert img.dtype() == expected_dtype
     assert img.metadata
+    assert reader.shape == expected_shape
     assert img.size(expected_dims) == expected_shape
 
     # Will error because those dimensions don't exist in the file

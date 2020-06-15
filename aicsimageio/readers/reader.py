@@ -365,6 +365,10 @@ class Reader(ABC):
         # Return the shape of the data for the dimensions requested
         return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
 
+    @abstractmethod
+    def shape(self):
+        return self.dask_data.shape
+
     @property
     @abstractmethod
     def metadata(self) -> Any:

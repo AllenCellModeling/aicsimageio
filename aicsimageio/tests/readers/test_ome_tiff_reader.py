@@ -62,7 +62,7 @@ def test_ome_tiff_reader(
     assert img.dims == expected_dims
     assert img.is_ome()
     assert img.metadata
-    assert reader.shape == expected_shape
+    assert img.shape == expected_shape
     assert img.dask_data.shape == expected_shape
     assert img.size(expected_dims) == expected_shape
 

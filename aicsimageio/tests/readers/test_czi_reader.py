@@ -119,7 +119,7 @@ def test_czi_reader(
     # Check basics
     assert img.dims == expected_dims
     assert img.metadata is not None
-    assert reader.shape == expected_shape
+    assert img.shape == expected_shape
     assert img.dask_data.shape == expected_shape
     assert img.size(expected_dims) == expected_shape
     assert img.dtype() == expected_dtype

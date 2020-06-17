@@ -366,7 +366,13 @@ class Reader(ABC):
         return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
 
     @property
-    def shape(self):
+    def shape(self) -> Tuple[int]:
+        """
+        Returns
+        -------
+        shape: Tuple[int]
+            A tuple with the size of all dimensions.
+        """
         return self.dask_data.shape
 
     @property

@@ -62,7 +62,13 @@ def test_ome_tiff_reader(
     assert img.dims == expected_dims
     assert img.is_ome()
     assert img.metadata
+    assert img.shape == expected_shape
     assert img.dask_data.shape == expected_shape
+    assert img.size(expected_dims) == expected_shape
+
+    # Will error because those dimensions don't exist in the file
+    with pytest.raises(exceptions.InvalidDimensionOrderingError):
+        assert img.size("ABCDEFG") == expected_shape
 
     # Check that there are no open file pointers after basics
     assert str(f) not in [f.path for f in proc.open_files()]

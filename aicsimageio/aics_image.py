@@ -9,10 +9,15 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import (InvalidDimensionOrderingError,
-                         UnsupportedFileFormatError)
-from .readers import (ArrayLikeReader, CziReader, DefaultReader, OmeTiffReader,
-                      TiffReader)
+from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
+from .readers import (
+    ArrayLikeReader,
+    CziReader,
+    DefaultReader,
+    LifReader,
+    OmeTiffReader,
+    TiffReader,
+)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -22,34 +27,45 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 # The order of the readers in this list is important.
-# Example: if TiffReader was placed before OmeTiffReader, we would never hit the OmeTiffReader.
-SUPPORTED_READERS = [ArrayLikeReader, CziReader, OmeTiffReader, TiffReader, DefaultReader]
+# Example:
+# if TiffReader was placed before OmeTiffReader,
+# we would never hit the OmeTiffReader
+SUPPORTED_READERS = [
+    ArrayLikeReader,
+    CziReader,
+    LifReader,
+    OmeTiffReader,
+    TiffReader,
+    DefaultReader,
+]
 
 ###############################################################################
 
 
 class AICSImage:
     def __init__(
-        self,
-        data: types.ImageLike,
-        known_dims: Optional[str] = None,
-        **kwargs
+        self, data: types.ImageLike, known_dims: Optional[str] = None, **kwargs
     ):
         """
-        AICSImage takes microscopy image data types (files) of varying dimensions ("ZYX", "TCZYX", "CYX") and
-        puts them into a consistent 6D "STCZYX" ordered dask array. The data, metadata are lazy loaded and can be
-        accessed as needed. Note the dims are assumed to match "STCZYX" from right to left meaning if 4 dimensional
-        data is provided then the dimensions are assigned to be "CZYX", 2 dimensional would be "YX". This guessed
-        assignment is only for file types without dimension metadata (i.e. not .ome.tiff or .czi).
+        AICSImage takes microscopy image data types (files) of varying dimensions
+        ("ZYX", "TCZYX", "CYX") and puts them into a consistent 6D "STCZYX" ordered
+        dask array. The data, metadata are lazy loaded and can be accessed as needed.
+        Note the dims are assumed to match "STCZYX" from right to left meaning if
+        dimensional data is provided then the dimensions are assigned to be "CZYX", 2
+        dimensional would be "YX". This guessed assignment is only for file types
+        without dimension metadata (i.e. not .ome.tiff or .czi).
 
         Parameters
         ----------
         data: types.ImageLike
-            String with path to file, numpy.ndarray, or dask.array.Array with up to six dimensions.
+            String with path to file, numpy.ndarray, or dask.array.Array with up to six
+            dimensions.
         known_dims: Optional[str]
-            Optional string with the known dimension order. If None, the reader will attempt to parse dim order.
+            Optional string with the known dimension order. If None, the reader will
+            attempt to parse dim order.
         kwargs: Dict[str, Any]
-            Extra keyword arguments that can be passed down to either the reader subclass
+            Extra keyword arguments that can be passed down to either the reader
+            subclass
 
         Examples
         --------
@@ -58,7 +74,8 @@ class AICSImage:
         >>> img = AICSImage("my_file.tiff")
         ... zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)
 
-        Initialize an image, construct a delayed dask array for certain slices, then read the data.
+        Initialize an image, construct a delayed dask array for certain slices, then
+        read the data.
 
         >>> img = AICSImage("my_file.czi")
         ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)
@@ -75,16 +92,19 @@ class AICSImage:
 
         Notes
         -----
-        Constructor for AICSImage class intended for providing a unified interface for dealing with
-        microscopy images. To extend support to a new reader simply add a new reader child class of
-        Reader ([readers/reader.py]) and add the class to SUPPORTED_READERS variable.
+        Constructor for AICSImage class intended for providing a unified interface for
+        dealing with microscopy images. To extend support to a new reader simply add a
+        new reader child class of Reader ([readers/reader.py]) and add the class to
+        SUPPORTED_READERS variable.
         """
         # Check known dims
         if known_dims is not None:
             if not all([d in Dimensions.DefaultOrder for d in known_dims]):
                 raise InvalidDimensionOrderingError(
-                    f"The provided dimension string to the 'known_dims' argument includes dimensions that AICSImage "
-                    f"does not support. Received: '{known_dims}'. Supported dimensions: {Dimensions.DefaultOrderList}."
+                    f"The provided dimension string to the 'known_dims' argument "
+                    f"includes dimensions that AICSImage does not support. "
+                    f"Received: '{known_dims}'. "
+                    f"Supported dimensions: {Dimensions.DefaultOrderList}."
                 )
 
         # Hold onto known dims until data is requested
@@ -104,7 +124,8 @@ class AICSImage:
     @staticmethod
     def determine_reader(data: types.ImageLike) -> Type[Reader]:
         """
-        Cheaply check to see if a given file is a recognized type and return the appropriate reader for the file.
+        Cheaply check to see if a given file is a recognized type and return the
+        appropriate reader for the file.
         """
         # Iterate through the ordered supported readers to find the right one
         for reader_class in SUPPORTED_READERS:
@@ -137,7 +158,11 @@ class AICSImage:
         Return the entire image as a numpy array with dimension ordering "STCZYX".
         """
         if self._data is None:
-            self._data = self.dask_data.compute()
+            self._data = transforms.reshape_data(
+                data=self.reader.data,
+                given_dims=self._known_dims or self.reader.dims,
+                return_dims=self.dims,
+            )
 
         return self._data
 
@@ -146,7 +171,8 @@ class AICSImage:
         Parameters
         ----------
         dims: str
-            A string containing a list of dimensions being requested. The default is to return the six standard dims.
+            A string containing a list of dimensions being requested. The default is to
+            return the six standard dims.
 
         Returns
         -------
@@ -243,8 +269,8 @@ class AICSImage:
         Returns
         -------
         metadata: Any
-            The Metadata from the Czi, or Ome.Tiff file, or other base class type with metadata.
-            For pure image files an empty string or None is returned.
+            The Metadata from the Czi, or Ome.Tiff file, or other base class type with
+            metadata. For pure image files an empty string or None is returned.
         """
         # The reader can implement read optimization or not.
         return self.reader.metadata
@@ -263,7 +289,9 @@ class AICSImage:
         """
         return self._reader
 
-    def get_image_dask_data(self, out_orientation: Optional[str] = None, **kwargs) -> da.core.Array:
+    def get_image_dask_data(
+        self, out_orientation: Optional[str] = None, **kwargs
+    ) -> da.core.Array:
         """
         Get specific dimension image data out of an image as a dask array.
 
@@ -274,19 +302,60 @@ class AICSImage:
             Default: The current image dimensions. i.e. `self.dims`
 
         kwargs:
-            C=1: specifies Channel 1
-            T=3: specifies the fourth index in T
-            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation
+            * C=1: specifies Channel 1
+            * T=3: specifies the fourth index in T
+            * D=n: D is Dimension letter and n is the index desired. D should not be
+              present in the out_orientation.
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+              desired. D should be present in the out_orientation.
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+              desired. D should be present in the out_orientation.
+            * D=range(...): D is Dimension letter and range is the standard Python
+              range function. D should be present in the out_orientation.
+            * D=slice(...): D is Dimension letter and slice is the standard Python
+              slice function. D should be present in the out_orientation.
 
         Returns
         -------
         data: dask array
-            The read data with the dimension ordering that was specified with out_orientation.
+            The read data with the dimension ordering that was specified with
+            out_orientation.
 
-        Note: If a requested dimension is not present in the data the dimension is added with
-        a depth of 1.
+        Examples
+        --------
+        Specific index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... c1 = img.get_image_dask_data("ZYX", C=1)
+
+        List of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_second = img.get_image_dask_data("CZYX", C=[0, 1])
+
+        Tuple of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_last = img.get_image_dask_data("CZYX", C=(0, -1))
+
+        Range of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_three = img.get_image_dask_data("CZYX", C=range(3))
+
+        Slice selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... every_other = img.get_image_dask_data("CZYX", C=slice(0, -1, 2))
+
+        Notes
+        -----
+        * If a requested dimension is not present in the data the dimension is
+          added with a depth of 1.
+
+        See `aicsimageio.transforms.reshape_data` for more details.
         """
-        # If no out orientation, simply return current data as numpy array
+        # If no out orientation, simply return current data as dask array
         if out_orientation is None:
             return self.dask_data
 
@@ -298,7 +367,9 @@ class AICSImage:
             **kwargs,
         )
 
-    def get_image_data(self, out_orientation: Optional[str] = None, **kwargs) -> np.ndarray:
+    def get_image_data(
+        self, out_orientation: Optional[str] = None, **kwargs
+    ) -> np.ndarray:
         """
         Get specific dimension image data out of an image as a numpy array.
 
@@ -309,19 +380,62 @@ class AICSImage:
             Default: The current image dimensions. i.e. `self.dims`
 
         kwargs:
-            C=1: specifies Channel 1
-            T=3: specifies the fourth index in T
-            D=n: D is Dimension letter and n is the index desired D should not be present in the out_orientation
+            * C=1: specifies Channel 1
+            * T=3: specifies the fourth index in T
+            * D=n: D is Dimension letter and n is the index desired. D should not be
+              present in the out_orientation.
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+              desired. D should be present in the out_orientation.
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+              desired. D should be present in the out_orientation.
+            * D=range(...): D is Dimension letter and range is the standard Python
+              range function. D should be present in the out_orientation.
+            * D=slice(...): D is Dimension letter and slice is the standard Python
+              slice function. D should be present in the out_orientation.
+
+        Examples
+        --------
+        Specific index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... c1 = img.get_image_data("ZYX", C=1)
+
+        List of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_second = img.get_image_data("CZYX", C=[0, 1])
+
+        Tuple of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_and_last = img.get_image_data("CZYX", C=(0, -1))
+
+        Range of index selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... first_three = img.get_image_data("CZYX", C=range(3))
+
+        Slice selection
+
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
+        ... every_other = img.get_image_data("CZYX", C=slice(0, -1, 2))
 
         Returns
         -------
         data: np.ndarray
-            The read data with the dimension ordering that was specified with out_orientation.
+            The read data with the dimension ordering that was specified with
+            out_orientation.
 
-        Note: If a requested dimension is not present in the data the dimension is added with
-        a depth of 1.
+        Notes
+        -----
+        * If a requested dimension is not present in the data the dimension is
+          added with a depth of 1.
+
+        See `aicsimageio.transforms.reshape_data` for more details.
         """
-        return self.get_image_dask_data(out_orientation=out_orientation, **kwargs).compute()
+        return self.get_image_dask_data(
+            out_orientation=out_orientation, **kwargs
+        ).compute()
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """

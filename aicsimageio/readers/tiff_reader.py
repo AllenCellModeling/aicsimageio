@@ -25,16 +25,19 @@ log = logging.getLogger(__name__)
 
 class TiffReader(Reader):
     """
-    TiffReader wraps tifffile to provide the same reading capabilities but abstracts the specifics of using the
-    backend library to create a unified interface. This enables higher level functions to duck type the File Readers.
+    TiffReader wraps tifffile to provide the same reading capabilities but abstracts
+    the specifics of using the backend library to create a unified interface. This
+    enables higher level functions to duck type the File Readers.
 
     Parameters
     ----------
     data: types.FileLike
         A string or path to the TIFF file to be read.
     S: int
-        If the image has different dimensions on any scene from another, the dask array construction will fail.
-        In that case, use this parameter to specify a specific scene to construct a dask array for.
+        If the image has different dimensions on any scene from another, the dask array
+        construction will fail.
+        In that case, use this parameter to specify a specific scene to construct a
+        dask array for.
         Default: 0 (select the first scene)
     """
 
@@ -51,9 +54,14 @@ class TiffReader(Reader):
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
         with BufferReader(buffer) as buffer_reader:
-            # Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
-            # 'II' is little-endian (Intel format) and 'MM' is big-endian (Motorola format)
-            if buffer_reader.endianness not in [buffer_reader.INTEL_ENDIAN, buffer_reader.MOTOROLA_ENDIAN]:
+            # Per the TIFF-6 spec
+            # (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
+            # 'II' is little-endian (Intel format)
+            # 'MM' is big-endian (Motorola format)
+            if buffer_reader.endianness not in [
+                buffer_reader.INTEL_ENDIAN,
+                buffer_reader.MOTOROLA_ENDIAN,
+            ]:
                 return False
             magic = buffer_reader.read_uint16()
 
@@ -63,7 +71,8 @@ class TiffReader(Reader):
                 if ifd_offset == 0:
                     return False
 
-            # Per BigTIFF (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.
+            # Per BigTIFF
+            # (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.
             if magic == 43:
                 # Alex magic here...
                 if buffer_reader.read_uint16() != 8:
@@ -76,11 +85,7 @@ class TiffReader(Reader):
             return True
 
     @staticmethod
-    def _imread(
-        img: Path,
-        scene: int,
-        page: int
-    ) -> np.ndarray:
+    def _imread(img: Path, scene: int, page: int) -> np.ndarray:
         # Load Tiff
         with TiffFile(img) as tiff:
             # Get proper scene
@@ -92,69 +97,86 @@ class TiffReader(Reader):
             # Return numpy
             return page.asarray()
 
-    @property
-    def dask_data(self) -> da.core.Array:
-        """
-        Read a TIFF image file as a delayed dask array where each chunk of the constructed array is a delayed YX plane.
+    @staticmethod
+    def _scene_shape_is_consistent(tiff: TiffFile, S: int) -> bool:
+        scenes = tiff.series
+        operating_shape = scenes[0].shape
+        for scene in scenes:
+            if scene.shape != operating_shape:
+                log.info(
+                    f"File contains variable dimensions per scene, "
+                    f"selected scene: {S} for data "
+                    f"retrieval."
+                )
+                return False
 
-        Returns
-        -------
-        img: dask.array.core.Array
-            The constructed delayed YX plane dask array.
-        """
-        if self._dask_data is None:
-            # Load Tiff
-            with TiffFile(self._file) as tiff:
-                # Check each scene has the same shape
-                # If scene shape checking fails, use the specified scene and update operating shape
-                scenes = tiff.series
-                operating_shape = scenes[0].shape
-                for scene in scenes:
-                    if scene.shape != operating_shape:
-                        operating_shape = scenes[self.specific_s_index].shape
-                        scenes = [scenes[self.specific_s_index]]
-                        log.info(
-                            f"File contains variable dimensions per scene, "
-                            f"selected scene: {self.specific_s_index} for data retrieval."
-                        )
-                        break
+        return True
 
-                # Get sample yx plane
-                sample = scenes[0].pages[0].asarray()
+    def _read_delayed(self) -> da.core.Array:
+        # Load Tiff
+        with TiffFile(self._file) as tiff:
+            # Check each scene has the same shape
+            # If scene shape checking fails, use the specified scene and update
+            # operating shape
+            scenes = tiff.series
+            operating_shape = scenes[0].shape
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+                operating_shape = scenes[self.specific_s_index].shape
+                scenes = [scenes[self.specific_s_index]]
 
-                # Combine length of scenes and operating shape
-                # Replace YX dims with empty dimensions
-                operating_shape = (len(scenes), *operating_shape)
-                operating_shape = operating_shape[:-2] + (1, 1)
+            # Get sample yx plane
+            sample = scenes[0].pages[0].asarray()
 
-                # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                for all_page_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
-                    # Scene index is the first index in np_index
-                    scene_index = np_index[0]
+            # Combine length of scenes and operating shape
+            # Replace YX dims with empty dimensions
+            operating_shape = (len(scenes), *operating_shape)
+            operating_shape = operating_shape[:-2] + (1, 1)
 
-                    # This page index is current enumeration divided by scene index + 1
-                    # For example if the image has 10 Z slices and 5 scenes, there would be 50 total pages
-                    this_page_index = all_page_index // (scene_index + 1)
+            # Make ndarray for lazy arrays to fill
+            lazy_arrays = np.ndarray(operating_shape, dtype=object)
+            for all_page_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
+                # Scene index is the first index in np_index
+                scene_index = np_index[0]
 
-                    # Fill the numpy array with the delayed arrays
-                    lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._imread)(self._file, scene_index, this_page_index),
-                        shape=sample.shape,
-                        dtype=sample.dtype
-                    )
+                # This page index is current enumeration divided by scene index + 1
+                # For example if the image has 10 Z slices and 5 scenes, there
+                # would be 50 total pages
+                this_page_index = all_page_index // (scene_index + 1)
 
-                # Convert the numpy array of lazy readers into a dask array
-                data = da.block(lazy_arrays.tolist())
+                # Fill the numpy array with the delayed arrays
+                lazy_arrays[np_index] = da.from_delayed(
+                    delayed(TiffReader._imread)(
+                        self._file, scene_index, this_page_index
+                    ),
+                    shape=sample.shape,
+                    dtype=sample.dtype,
+                )
 
-                # Only return the scene dimension if multiple scenes are present
-                if len(scenes) == 1:
-                    data = data[0, :]
+            # Convert the numpy array of lazy readers into a dask array
+            data = da.block(lazy_arrays.tolist())
 
-                # Set _dask_data
-                self._dask_data = data
+            # Only return the scene dimension if multiple scenes are present
+            if len(scenes) == 1:
+                data = data[0, :]
 
-        return self._dask_data
+            return data
+
+    def _read_immediate(self) -> np.ndarray:
+        # Load Tiff
+        with TiffFile(self._file) as tiff:
+            # Check each scene has the same shape
+            # If scene shape checking fails, use the specified scene and update
+            # operating shape
+            scenes = tiff.series
+            if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+                return scenes[self.specific_s_index].asarray()
+
+            # Read each scene and stack if single scene
+            if len(scenes) > 1:
+                return np.stack([s.asarray() for s in scenes])
+
+            # Else, return single scene
+            return tiff.asarray()
 
     def load_slice(self, slice_index: int = 0) -> np.ndarray:
         with TiffFile(self._file) as tiff:
@@ -181,7 +203,8 @@ class TiffReader(Reader):
                         self._dims = single_scene_dims
                     else:
                         self._dims = f"{Dimensions.Scene}{single_scene_dims}"
-                # Sometimes the dimension info is wrong in certain dimensions, so guess that dimension
+                # Sometimes the dimension info is wrong in certain dimensions, so guess
+                # that dimension
                 else:
                     guess = self.guess_dim_order(tiff.series[0].pages.shape)
                     best_guess = []
@@ -195,12 +218,14 @@ class TiffReader(Reader):
                                     best_guess.append(guessed_dim)
                                     appended_dim = True
                                     log.info(
-                                        f"Unsure how to handle dimension: {dim_from_meta}. "
+                                        f"Unsure how to handle dimension: "
+                                        f"{dim_from_meta}. "
                                         f"Replaced with guess: {guessed_dim}"
                                     )
                                     break
 
-                            # All of our guess dims were already in the dim list, append the dim read from meta
+                            # All of our guess dims were already in the dim list,
+                            # append the dim read from meta
                             if not appended_dim:
                                 best_guess.append(dim_from_meta)
 
@@ -221,7 +246,8 @@ class TiffReader(Reader):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions [shape: {self.data.shape}]."
+                f"for image with {len(self.data.shape)} dimensions "
+                f"[shape: {self.data.shape}]."
             )
 
         # Set the dims
@@ -234,9 +260,14 @@ class TiffReader(Reader):
         description_offset = 0
 
         with BufferReader(buffer) as buffer_reader:
-            # Per the TIFF-6 spec (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
-            # 'II' is little-endian (Intel format) and 'MM' is big-endian (Motorola format)
-            if buffer_reader.endianness not in [buffer_reader.INTEL_ENDIAN, buffer_reader.MOTOROLA_ENDIAN]:
+            # Per the TIFF-6 spec
+            # (https://www.itu.int/itudoc/itu-t/com16/tiff-fx/docs/tiff6.pdf),
+            # 'II' is little-endian (Intel format)
+            # 'MM' is big-endian (Motorola format)
+            if buffer_reader.endianness not in [
+                buffer_reader.INTEL_ENDIAN,
+                buffer_reader.MOTOROLA_ENDIAN,
+            ]:
                 return None
             magic = buffer_reader.read_uint16()
 
@@ -260,7 +291,8 @@ class TiffReader(Reader):
                             found = True
                             break
 
-            # Per BigTIFF (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.
+            # Per BigTIFF
+            # (https://www.awaresystems.be/imaging/tiff/bigtiff.html), magic is 43.
             if magic == 43:
                 # Alex magic here...
                 if buffer_reader.read_uint16() != 8:

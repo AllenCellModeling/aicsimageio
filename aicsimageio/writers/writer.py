@@ -47,5 +47,6 @@ class Writer(ABC):
         >>> image = dask.array.ones((4, 100, 100))
         ... DerivedWriter.save(image, "file.png", "CYX")
         """
-        # There are no requirements for n-dimensions of data. The data provided can be 2D - ND.
+        # There are no requirements for n-dimensions of data.
+        # The data provided can be 2D - ND.
         pass

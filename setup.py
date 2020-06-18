@@ -13,24 +13,28 @@ requirements = [
     "dask>=2.9.0",
     "distributed>=2.9.3",
     "numpy>=1.16",
+    "imagecodecs>=2020.2.18",
     "imageio>=2.3.0",
+    "readlif>=0.2.1",
     "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
     "toolz>=0.10.0",
 ]
 
 test_requirements = [
-    "codecov",
+    "black>=19.10b0",
+    "codecov>=2.0.22",
     "docutils>=0.10,<0.16",
-    "flake8",
-    "psutil",
-    "pytest",
-    "pytest-cov",
-    "pytest-raises",
+    "flake8>=3.7.7",
+    "psutil>=5.7.0",
+    "pytest>=4.3.0",
+    "pytest-cov==2.6.1",
+    "pytest-raises>=0.10",
     "quilt3>=3.1.12",
 ]
 
 dev_requirements = [
+    "black>=19.10b0",
     "bumpversion>=0.5.3",
     "coverage>=5.0a4",
     "docutils>=0.10,<0.16",
@@ -59,8 +63,19 @@ interactive_requirements = [
     "bokeh",
     "jupyterlab",
     "matplotlib",
-    "napari",
+    "napari[pyqt5]>=0.2.10",
     "pillow",
+]
+
+benchmark_requirements = [
+    "altair",
+    "altair_saver",
+    "czifile==2019.7.2",
+    "dask_jobqueue==0.7.0",
+    "imageio==2.8.0",
+    "quilt3>=3.1.12",
+    "tifffile==2020.2.16",
+    "tqdm",
 ]
 
 extra_requirements = {
@@ -68,6 +83,7 @@ extra_requirements = {
     "dev": dev_requirements,
     "setup": setup_requirements,
     "interactive": interactive_requirements,
+    "benchmark": benchmark_requirements,
     "all": [
         *requirements,
         *test_requirements,
@@ -95,8 +111,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Python library for reading and writing image data with special handlers for bio-formats "
-        "from Allen Institute for Cell Science."
+        "Delayed parallel image reading, metadata parsing, and image writing for "
+        "microscopy formats in pure Python from the Allen Institute for Cell Science."
     ),
     entry_points={},
     install_requires=requirements,
@@ -115,6 +131,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.1.4",
+    version="3.2.2",
     zip_safe=False,
 )

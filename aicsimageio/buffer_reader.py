@@ -3,8 +3,8 @@ from . import types
 
 class BufferReader:
 
-    INTEL_ENDIAN = b'II'
-    MOTOROLA_ENDIAN = b'MM'
+    INTEL_ENDIAN = b"II"
+    MOTOROLA_ENDIAN = b"MM"
 
     def __init__(self, buffer: types.FileLike):
         self.buffer = buffer
@@ -24,11 +24,16 @@ class BufferReader:
     def reset(self):
         self.buffer.seek(self.previous_position)
 
-    # All of these read_uint* routines obey the endianness, with 'II' being little-endian
-    # and 'MM' being big-endian (per TIFF-6)
+    # All of these read_uint* routines obey the endianness
+    # 'II' being little-endian
+    # 'MM' being big-endian (per TIFF-6)
     def read_uint16(self):
         value = bytearray(self.buffer.read(2))
-        return (value[0] + (value[1] << 8)) if self.endianness == self.INTEL_ENDIAN else (value[1] + (value[0] << 8))
+        return (
+            (value[0] + (value[1] << 8))
+            if self.endianness == self.INTEL_ENDIAN
+            else (value[1] + (value[0] << 8))
+        )
 
     def read_uint32(self):
         value = bytearray(self.buffer.read(4))

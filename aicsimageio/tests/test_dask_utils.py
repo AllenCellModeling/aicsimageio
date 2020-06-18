@@ -19,8 +19,8 @@ from .test_aics_image import CZI_FILE, OME_FILE, PNG_FILE, TIF_FILE
 )
 def test_aicsimageio_no_networking(resources_dir, filename, expected_shape):
     # This should test and make sure that distributed isn't imported when aicsimageio is
-    # Importing distributed on a machine (or container) that doesn't have any networking capabilities
-    # results in socket errors, _during the import_
+    # Importing distributed on a machine (or container) that doesn't have any
+    # networking capabilities results in socket errors, _during the import_
     # See: https://github.com/AllenCellModeling/aicsimageio/issues/82
     if "distributed" in sys.modules:
         del sys.modules["distributed"]
@@ -28,7 +28,8 @@ def test_aicsimageio_no_networking(resources_dir, filename, expected_shape):
     # Re import
     import aicsimageio  # noqa: F401
 
-    # Some basic operation to ensure that distributed is not imported anywhere down the line
+    # Some basic operation to ensure that distributed is not imported
+    # anywhere down the line
     img = aicsimageio.AICSImage(resources_dir / filename)
     assert img.data.shape == expected_shape
 

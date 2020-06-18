@@ -11,16 +11,15 @@ omexml.py read and write OME xml
 
 from __future__ import absolute_import, unicode_literals
 
-import sys
-import xml.etree.ElementTree as ElementTree
-
-from io import BytesIO
-
 import datetime
 import logging
-from functools import reduce
 import re
+import sys
 import uuid
+import xml.etree.ElementTree as ElementTree
+from functools import reduce
+from io import BytesIO
+
 import numpy as np  # for ometypedict
 
 logger = logging.getLogger(__file__)
@@ -35,16 +34,16 @@ DEFAULT_NOW = xsd_now()
 #
 # The namespaces
 #
-NS_BINARY_FILE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2013-06"
+NS_BINARY_FILE = "http://www.openmicroscopy.org/Schemas/BinaryFile/2016-06"
 NS_ORIGINAL_METADATA = "openmicroscopy.org/OriginalMetadata"
-NS_DEFAULT = "http://www.openmicroscopy.org/Schemas/{ns_key}/2013-06"
+NS_DEFAULT = "http://www.openmicroscopy.org/Schemas/{ns_key}/2016-06"
 NS_RE = r"http://www.openmicroscopy.org/Schemas/(?P<ns_key>.*)/[0-9/-]"
 
 default_xml = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Warning: this comment is an OME-XML metadata block, which contains crucial dimensional parameters and other important metadata. Please edit cautiously (if at all), and back up the original data before doing so. For more information, see the OME-TIFF web site: http://ome-xml.org/wiki/OmeTiff. -->
 <OME xmlns="{ns_ome_default}"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2013-06 http://www.openmicroscopy.org/Schemas/OME/2012-03/ome.xsd">
+     xsi:schemaLocation="http://www.openmicroscopy.org/Schemas/OME/2016-06 http://www.openmicroscopy.org/Schemas/OME/2016-06/ome.xsd">
   <Image ID="Image:0" Name="default.png">
     <AcquisitionDate>{timestamp}</AcquisitionDate>
     <Pixels DimensionOrder="XYCTZ"
@@ -60,7 +59,7 @@ default_xml = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
       </Channel>
     </Pixels>
   </Image>
-</OME>""".format(ns_ome_default=NS_DEFAULT.format(ns_key='ome'), timestamp=xsd_now())
+</OME>""".format(ns_ome_default=NS_DEFAULT.format(ns_key='OME'), timestamp=xsd_now())
 
 #
 # These are the OME-XML pixel types - not all supported by subimager
@@ -385,7 +384,7 @@ class OMEXML(object):
                                                       encoding='utf-8',
                                                       method="xml",
                                                       xml_declaration=True
-                                                      # default_namespace = 'http://www.openmicroscopy.org/Schemas/ome/2013-06'
+                                                      # default_namespace = 'http://www.openmicroscopy.org/Schemas/ome/2016-06'
                                                       )
         return result.getvalue().decode()
 

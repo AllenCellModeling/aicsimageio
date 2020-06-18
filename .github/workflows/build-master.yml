@@ -52,3 +52,4 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8 aicsimageio --count --verbose --show-source --statistics
+        black --check --exclude vendor aicsimageio

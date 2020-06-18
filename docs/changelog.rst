@@ -1,6 +1,73 @@
 Changelog
 =========
 
+v3.2.2 (2020-06-11)
+-------------------
+
+New
+~~~
+- feature/enable-disable-dask  (`#124
+  <https://github.com/AllenCellModeling/aicsimageio/pull/124>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/update-build-tooling  (`#123
+  <https://github.com/AllenCellModeling/aicsimageio/pull/123>`_)
+  [JacksonMaxfield]
+- admin/switch-log-warning-to-warnings-warn  (`#122
+  <https://github.com/AllenCellModeling/aicsimageio/pull/122>`_)
+  [JacksonMaxfield]
+
+
+v3.2.1 (2020-05-26)
+-------------------
+
+Fix
+~~~
+- bugfix/add-imagecodecs-dep  (`#120
+  <https://github.com/AllenCellModeling/aicsimageio/pull/120>`_)
+  [JacksonMaxfield]
+
+
+v3.2.0 (2020-05-13)
+-------------------
+
+New
+~~~
+- feature/optimize-readers  (`#113
+  <https://github.com/AllenCellModeling/aicsimageio/pull/113>`_)
+  [JacksonMaxfield]
+- feature/allow-sequence-in-get-data  (`#109
+  <https://github.com/AllenCellModeling/aicsimageio/pull/109>`_)
+  [JacksonMaxfield]
+- feature/read-leica-lif-files  (`#99
+  <https://github.com/AllenCellModeling/aicsimageio/pull/99>`_) [Jamie
+  Sherman]
+
+Fix
+~~~
+- bugfix/update-ome-spec  (`#116
+  <https://github.com/AllenCellModeling/aicsimageio/pull/116>`_)
+  [JacksonMaxfield]
+- bugfix/set-sphinx-dep-upper-bound  (`#95
+  <https://github.com/AllenCellModeling/aicsimageio/pull/95>`_)
+  [JacksonMaxfield]
+
+Other
+~~~~~
+- admin/benchmarks  (`#112
+  <https://github.com/AllenCellModeling/aicsimageio/pull/112>`_)
+  [JacksonMaxfield]
+- admin/use-black-formatting  (`#108
+  <https://github.com/AllenCellModeling/aicsimageio/pull/108>`_)
+  [JacksonMaxfield]
+- Update PR Template [Madison Bowden]
+- admin/move-test-resources-to-s3  (`#94
+  <https://github.com/AllenCellModeling/aicsimageio/pull/94>`_)
+  [JacksonMaxfield]
+
+
 v3.1.4 (2020-03-21)
 -------------------
 

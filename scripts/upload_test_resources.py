@@ -49,10 +49,11 @@ class Args(argparse.Namespace):
             ),
         )
         p.add_argument(
-            "-y", "--yes",
+            "-y",
+            "--yes",
             action="store_true",
-            dest="preappoved",
-            help="Auto-accept upload of files."
+            dest="preapproved",
+            help="Auto-accept upload of files.",
         )
         p.add_argument(
             "--debug",
@@ -133,7 +134,7 @@ def upload_test_resources(args: Args):
                 pushed = package.push(
                     package_name,
                     "s3://aics-modeling-packages-test-resources",
-                    message=f"Test resources for `aicsimageio` version: {__version__}."
+                    message=f"Test resources for `aicsimageio` version: {__version__}.",
                 )
 
                 log.info(f"Completed package push. Result hash: {pushed.top_hash}")

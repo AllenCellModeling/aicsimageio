@@ -14,6 +14,11 @@ from .writer import Writer
 
 ###############################################################################
 
+GREYSCALE_ORDER = "YX"
+RGB_ORDER = "YXC"
+
+###############################################################################
+
 
 class RGBWriter(Writer):
     """
@@ -75,9 +80,9 @@ class RGBWriter(Writer):
         # Assume dim order if not provided
         if dim_order is None:
             if len(data.shape) == 2:
-                dim_order = "YX"
+                dim_order = GREYSCALE_ORDER
             if len(data.shape) == 3:
-                dim_order = "YXC"
+                dim_order = RGB_ORDER
 
         # Uppercase dim order
         dim_order = dim_order.upper()
@@ -90,10 +95,10 @@ class RGBWriter(Writer):
             )
 
         # Transpose dimensions if dim_order not ready for imageio
-        if len(data.shape) == 2 and dim_order != "YX":
-            data = reshape_data(data, given_dims=dim_order, return_dims="YX")
-        if len(data.shape) == 3 and dim_order != "YXC":
-            data = reshape_data(data, given_dims=dim_order, return_dims="YXC")
+        if len(data.shape) == 2 and dim_order != GREYSCALE_ORDER:
+            data = reshape_data(data, given_dims=dim_order, return_dims=GREYSCALE_ORDER)
+        if len(data.shape) == 3 and dim_order != RGB_ORDER:
+            data = reshape_data(data, given_dims=dim_order, return_dims=RGB_ORDER)
 
         # Save image
         imwrite(filepath, data)

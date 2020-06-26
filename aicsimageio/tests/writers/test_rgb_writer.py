@@ -11,11 +11,12 @@ from aicsimageio import exceptions
 from aicsimageio.writers import RGBWriter
 
 
-@pytest.mark.parametrize("array_creator", [
-    lambda shape: np.random.rand(*shape), da.random.random
-])
 @pytest.mark.parametrize(
-    "shape, dim_order", [
+    "array_creator", [lambda shape: np.random.rand(*shape), da.random.random]
+)
+@pytest.mark.parametrize(
+    "shape, dim_order",
+    [
         ((100, 100, 3), None),
         ((100, 100), None),
         ((100, 100), "XY"),
@@ -33,7 +34,7 @@ from aicsimageio.writers import RGBWriter
                 exception=exceptions.InvalidDimensionOrderingError
             ),
         ),
-    ]
+    ],
 )
 @pytest.mark.parametrize("filename", ["a.png", "b.jpg", "c.jpeg", "d.bmp"])
 def test_rgb_writer(tmpdir, array_creator, shape, dim_order, filename):

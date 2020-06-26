@@ -8,9 +8,7 @@ import dask.array as da
 import numpy as np
 from imageio import imwrite
 
-from ..constants import Dimensions
 from ..exceptions import InconsistentShapeError, InvalidDimensionOrderingError
-from ..readers import DefaultReader
 from ..transforms import reshape_data
 from .writer import Writer
 
@@ -30,7 +28,7 @@ class RGBWriter(Writer):
         data: Union[da.Array, np.ndarray],
         filepath: Union[str, Path],
         dim_order: str = None,
-        **kwargs
+        **kwargs,
     ):
         """
         Write a data array to a file.

@@ -8,6 +8,8 @@ from psutil import Process
 from aicsimageio import exceptions
 from aicsimageio.readers.default_reader import DefaultReader
 
+from .utils import run_image_read_checks
+
 
 @pytest.mark.parametrize(
     "filename, expected_shape, expected_dims",
@@ -27,36 +29,16 @@ from aicsimageio.readers.default_reader import DefaultReader
 def test_default_reader(
     resources_dir, filename, expected_shape, expected_dims,
 ):
-    # Get file
-    f = resources_dir / filename
-
-    # Read file
-    img = DefaultReader(f)
-
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check basics
-    assert img.dims == expected_dims
-    assert img.metadata
-    assert img.shape == expected_shape
-    assert img.dask_data.shape == expected_shape
-    assert img.size(expected_dims) == expected_shape
-
-    # Will error because those dimensions don't exist in the file
-    with pytest.raises(exceptions.InvalidDimensionOrderingError):
-        assert img.size("ABCDEFG") == expected_shape
-
-    # Check that there are no open file pointers after basics
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check array
-    assert isinstance(img.data, np.ndarray)
-    assert img.data.shape == expected_shape
-
-    # Check that there are no open file pointers after retrieval
-    assert str(f) not in [f.path for f in proc.open_files()]
+    run_image_read_checks(
+        ReaderClass=DefaultReader,
+        resources_dir=resources_dir,
+        filename=filename,
+        chunk_dims=None,
+        select_scene=None,
+        expected_shape=expected_shape,
+        expected_dims=expected_dims,
+        expected_dtype=np.uint8,
+    )
 
 
 @pytest.mark.parametrize(

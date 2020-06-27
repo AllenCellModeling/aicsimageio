@@ -368,6 +368,15 @@ class Reader(ABC):
         """
         return self.dask_data.shape
 
+    def dtype(self) -> np.dtype:
+        """
+        Returns
+        -------
+        dtype: np.dtype
+            The pixel numpy data type.
+        """
+        return self.dask_data.dtype
+
     @property
     @abstractmethod
     def metadata(self) -> Any:

@@ -8,6 +8,8 @@ from psutil import Process
 from aicsimageio import exceptions
 from aicsimageio.readers.tiff_reader import TiffReader
 
+from .utils import run_image_read_checks
+
 
 @pytest.mark.parametrize(
     "filename, " "expected_shape, " "expected_dims, " "expected_dtype, " "select_scene",
@@ -35,36 +37,16 @@ def test_tiff_reader(
     expected_dtype,
     select_scene,
 ):
-    # Get file
-    f = resources_dir / filename
-
-    # Read file
-    img = TiffReader(f, S=select_scene)
-
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check basics
-    assert img.dims == expected_dims
-    assert img.dtype() == expected_dtype
-    assert img.metadata
-    assert img.shape == expected_shape
-    assert img.size(expected_dims) == expected_shape
-
-    # Will error because those dimensions don't exist in the file
-    with pytest.raises(exceptions.InvalidDimensionOrderingError):
-        assert img.size("ABCDEFG") == expected_shape
-
-    # Check that there are no open file pointers after basics
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check arrays
-    assert isinstance(img.data, np.ndarray)
-    assert img.data.shape == expected_shape
-
-    # Check that there are no open file pointers after retrieval
-    assert str(f) not in [f.path for f in proc.open_files()]
+    run_image_read_checks(
+        ReaderClass=TiffReader,
+        resources_dir=resources_dir,
+        filename=filename,
+        chunk_dims=None,
+        select_scene=select_scene,
+        expected_shape=expected_shape,
+        expected_dims=expected_dims,
+        expected_dtype=expected_dtype,
+    )
 
 
 @pytest.mark.parametrize(

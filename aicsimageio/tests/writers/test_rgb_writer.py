@@ -28,6 +28,16 @@ from aicsimageio.writers import RGBWriter
             marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError),
         ),
         pytest.param(
+            (1, 1, 1, 1, 1),
+            None,
+            marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError),
+        ),
+        pytest.param(
+            (1, 1, 1, 1, 1, 1),
+            "STCZYX",
+            marks=pytest.mark.raises(exception=exceptions.InconsistentShapeError),
+        ),
+        pytest.param(
             (1, 1),
             "AB",
             marks=pytest.mark.raises(

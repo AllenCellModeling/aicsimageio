@@ -21,7 +21,6 @@ class Writer(ABC):
     @staticmethod
     @abstractmethod
     def save(
-        self,
         data: Union[da.Array, np.ndarray],
         filepath: Union[str, Path],
         dim_order: str = Dimensions.DefaultOrder,

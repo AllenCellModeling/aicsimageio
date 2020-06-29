@@ -21,7 +21,7 @@ jobs:
     - name: Generate Docs
       run: |
         gitchangelog
-        make docs
+        make gen-docs
         touch docs/_build/html/.nojekyll
     - name: Publish Docs
       uses: JamesIves/github-pages-deploy-action@releases/v3

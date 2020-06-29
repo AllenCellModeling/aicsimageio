@@ -14,11 +14,6 @@ from .writer import Writer
 
 ###############################################################################
 
-GREYSCALE_ORDER = "YX"
-RGB_ORDER = "YXC"
-
-###############################################################################
-
 
 class RGBWriter(Writer):
     """
@@ -27,6 +22,11 @@ class RGBWriter(Writer):
 
     This is primarily a passthrough to imageio.imwrite.
     """
+
+    DIM_ORDERS = {
+        2: "YX",  # Greyscale
+        3: "YXC",  # RGB
+    }
 
     @staticmethod
     def save(
@@ -70,19 +70,19 @@ class RGBWriter(Writer):
         if isinstance(data, da.core.Array):
             data = data.compute()
 
+        # Shorthand num dimensions
+        n_dims = len(data.shape)
+
         # Check num dimensions
-        if len(data.shape) not in [2, 3]:
+        if n_dims not in RGBWriter.DIM_ORDERS:
             raise InconsistentShapeError(
                 f"RGBWriter requires that data must have either 2 or 3 dimensions. "
-                f"Provided data with {len(data.shape)} dimensions. ({data.shape})"
+                f"Provided data with {n_dims} dimensions. ({data.shape})"
             )
 
         # Assume dim order if not provided
         if dim_order is None:
-            if len(data.shape) == 2:
-                dim_order = GREYSCALE_ORDER
-            if len(data.shape) == 3:
-                dim_order = RGB_ORDER
+            dim_order = RGBWriter.DIM_ORDERS[n_dims]
 
         # Uppercase dim order
         dim_order = dim_order.upper()
@@ -95,10 +95,10 @@ class RGBWriter(Writer):
             )
 
         # Transpose dimensions if dim_order not ready for imageio
-        if len(data.shape) == 2 and dim_order != GREYSCALE_ORDER:
-            data = reshape_data(data, given_dims=dim_order, return_dims=GREYSCALE_ORDER)
-        if len(data.shape) == 3 and dim_order != RGB_ORDER:
-            data = reshape_data(data, given_dims=dim_order, return_dims=RGB_ORDER)
+        if dim_order != RGBWriter.DIM_ORDERS[n_dims]:
+            data = reshape_data(
+                data, given_dims=dim_order, return_dims=RGBWriter.DIM_ORDERS[n_dims]
+            )
 
         # Save image
         imwrite(filepath, data)

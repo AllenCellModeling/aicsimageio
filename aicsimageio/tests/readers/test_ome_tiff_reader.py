@@ -9,6 +9,8 @@ from aicsimageio import exceptions
 from aicsimageio.constants import Dimensions
 from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 
+from .utils import run_image_read_checks
+
 
 @pytest.mark.parametrize(
     "filename, " "expected_shape, " "expected_dims, " "select_scene",
@@ -35,50 +37,31 @@ from aicsimageio.readers.ome_tiff_reader import OmeTiffReader
 def test_ome_tiff_reader(
     resources_dir, filename, expected_shape, expected_dims, select_scene,
 ):
-    # Get file
-    f = resources_dir / filename
+    reader = run_image_read_checks(
+        ReaderClass=OmeTiffReader,
+        resources_dir=resources_dir,
+        filename=filename,
+        chunk_dims=None,
+        select_scene=select_scene,
+        expected_shape=expected_shape,
+        expected_dims=expected_dims,
+        expected_dtype=np.uint16,
+    )
 
-    # Read file
-    img = OmeTiffReader(f, S=select_scene)
-
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check basics
     # Check that OME Metadata matches the dask data array shape and dims order
     dim_size_getters = {
-        Dimensions.Scene: img.size_s,
-        Dimensions.Time: img.size_t,
-        Dimensions.Channel: img.size_c,
-        Dimensions.SpatialZ: img.size_z,
-        Dimensions.SpatialY: img.size_y,
-        Dimensions.SpatialX: img.size_x,
+        Dimensions.Scene: reader.size_s,
+        Dimensions.Time: reader.size_t,
+        Dimensions.Channel: reader.size_c,
+        Dimensions.SpatialZ: reader.size_z,
+        Dimensions.SpatialY: reader.size_y,
+        Dimensions.SpatialX: reader.size_x,
     }
     for d, getter in dim_size_getters.items():
         if d in expected_dims:
-            assert getter() == img.dask_data.shape[img.dims.index(d)]
+            assert getter() == reader.dask_data.shape[reader.dims.index(d)]
 
-    assert img.dims == expected_dims
-    assert img.is_ome()
-    assert img.metadata
-    assert img.shape == expected_shape
-    assert img.dask_data.shape == expected_shape
-    assert img.size(expected_dims) == expected_shape
-
-    # Will error because those dimensions don't exist in the file
-    with pytest.raises(exceptions.InvalidDimensionOrderingError):
-        assert img.size("ABCDEFG") == expected_shape
-
-    # Check that there are no open file pointers after basics
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check array
-    assert isinstance(img.data, np.ndarray)
-    assert img.data.shape == expected_shape
-
-    # Check that there are no open file pointers after retrieval
-    assert str(f) not in [f.path for f in proc.open_files()]
+    assert reader.is_ome()
 
 
 @pytest.mark.parametrize(

@@ -21,10 +21,11 @@
 import os
 import sys
 
-import aicsimageio
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath(".."))
+import aicsimageio
+
+sys.path.insert(0, os.path.abspath("../.."))
 
 
 # -- General configuration ---------------------------------------------

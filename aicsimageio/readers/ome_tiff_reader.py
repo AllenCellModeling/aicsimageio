@@ -73,21 +73,27 @@ class OmeTiffReader(TiffReader):
 
         return self._metadata
 
+    @property
     def size_s(self) -> int:
         return self.metadata.image_count
 
+    @property
     def size_t(self) -> int:
         return self.metadata.image().Pixels.SizeT
 
+    @property
     def size_c(self) -> int:
         return self.metadata.image().Pixels.SizeC
 
+    @property
     def size_z(self) -> int:
         return self.metadata.image().Pixels.SizeZ
 
+    @property
     def size_y(self) -> int:
         return self.metadata.image().Pixels.SizeY
 
+    @property
     def size_x(self) -> int:
         return self.metadata.image().Pixels.SizeX
 

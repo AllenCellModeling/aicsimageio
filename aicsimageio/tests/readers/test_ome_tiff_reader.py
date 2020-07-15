@@ -49,7 +49,7 @@ def test_ome_tiff_reader(
     )
 
     # Check that OME Metadata matches the dask data array shape and dims order
-    dim_size_getters = {
+    dim_sizes = {
         Dimensions.Scene: reader.size_s,
         Dimensions.Time: reader.size_t,
         Dimensions.Channel: reader.size_c,
@@ -57,9 +57,9 @@ def test_ome_tiff_reader(
         Dimensions.SpatialY: reader.size_y,
         Dimensions.SpatialX: reader.size_x,
     }
-    for d, getter in dim_size_getters.items():
+    for d, val in dim_sizes.items():
         if d in expected_dims:
-            assert getter() == reader.dask_data.shape[reader.dims.index(d)]
+            assert val == reader.dask_data.shape[reader.dims.index(d)]
 
     assert reader.is_ome()
 
@@ -148,9 +148,9 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     img = OmeTiffReader(f)
 
     # Check sizes
-    assert img.size_s() == s
-    assert img.size_t() == t
-    assert img.size_c() == c
-    assert img.size_z() == z
-    assert img.size_y() == y
-    assert img.size_x() == x
+    assert img.size_s == s
+    assert img.size_t == t
+    assert img.size_c == c
+    assert img.size_z == z
+    assert img.size_y == y
+    assert img.size_x == x

@@ -331,9 +331,38 @@ class Reader(ABC):
     @property
     @abstractmethod
     def dims(self) -> str:
+        # When implementing a new reader you must use
+        # @Reader.dims.getter instead of simply @property
+        # See: https://stackoverflow.com/questions/15785982/python-overriding-getter-without-setter/15786149#15786149
         pass
 
-    def size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
+    @dims.setter
+    def dims(self, dims: str):
+        """
+        Parameters
+        ----------
+        dims: str
+            The dimensions of the image.
+
+        Raises
+        ------
+        exceptions.InvalidDimensionOrderingError:
+            If too many or too few dimensions were provided in comparison to the
+            available image data.
+        """
+        # Check amount of provided dims against data shape
+        if len(dims) != len(self.dask_data.shape):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Provided too many dimensions for the associated file. "
+                f"Received {len(dims)} dimensions [dims: {dims}] "
+                f"for image with {len(self.data.shape)} dimensions "
+                f"[shape: {self.data.shape}]."
+            )
+
+        # Set the dims
+        self._dims = dims
+
+    def get_size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
         """
         Parameters
         ----------
@@ -358,6 +387,24 @@ class Reader(ABC):
         # Return the shape of the data for the dimensions requested
         return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
 
+    def get_size_of_dimension(self, dim: str) -> int:
+        """
+        Parameters
+        ----------
+        dim: str
+            A single dimension to get the size of.
+
+        Returns
+        -------
+        size: int
+            The size of the requested dimension or 1 for empty dimension.
+        """
+        dim = dim.upper()
+        if dim in self.dims:
+            return self.dask_data.shape[self.dims.index(dim)]
+
+        return 1
+
     @property
     def shape(self) -> Tuple[int]:
         """
@@ -368,6 +415,7 @@ class Reader(ABC):
         """
         return self.dask_data.shape
 
+    @property
     def dtype(self) -> np.dtype:
         """
         Returns

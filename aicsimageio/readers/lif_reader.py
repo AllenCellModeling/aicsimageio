@@ -58,15 +58,15 @@ class LifReader(Reader):
     #
     ########################################################
 
-    @property
+    @Reader.dims.getter
     def dims(self) -> str:
         """
         The dimensions for a lif file.
 
         Returns
         -------
-        str
-            "STCZYX"
+        dims: str
+            Always returns: "STCZYX"
         """
         return Dimensions.DefaultOrder  # forcing 6 D
 
@@ -776,18 +776,6 @@ class LifReader(Reader):
 
         return data
 
-    def dtype(self) -> np.dtype:
-        """
-        The data type of the underlying numpy ndarray, ie uint8, uint16, uint32 etc.
-
-        Returns
-        -------
-        numpy.dtype
-            The data format used to store the data in the Leica lif file and the read
-            numpy.ndarray.
-        """
-        return self.dask_data.dtype
-
     @property
     def metadata(self) -> Element:
         """
@@ -802,29 +790,29 @@ class LifReader(Reader):
         meta_xml, header = utilities.get_xml(self._file)
         return meta_xml
 
-    def _size_of_dimension(self, dim: str) -> int:
-        if dim in self.dims:
-            return self.dask_data.shape[self.dims.index(dim)]
-
-        return 1
-
+    @property
     def size_s(self) -> int:
-        return self._size_of_dimension(Dimensions.Scene)
+        return self.get_size_of_dimension(Dimensions.Scene)
 
+    @property
     def size_t(self) -> int:
-        return self._size_of_dimension(Dimensions.Time)
+        return self.get_size_of_dimension(Dimensions.Time)
 
+    @property
     def size_c(self) -> int:
-        return self._size_of_dimension(Dimensions.Channel)
+        return self.get_size_of_dimension(Dimensions.Channel)
 
+    @property
     def size_z(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialZ)
+        return self.get_size_of_dimension(Dimensions.SpatialZ)
 
+    @property
     def size_y(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialY)
+        return self.get_size_of_dimension(Dimensions.SpatialY)
 
+    @property
     def size_x(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialX)
+        return self.get_size_of_dimension(Dimensions.SpatialX)
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """

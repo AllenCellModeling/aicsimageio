@@ -173,12 +173,12 @@ def test_size_functions(resources_dir, filename, s, t, c, z, y, x):
     assert str(f) not in [f.path for f in proc.open_files()]
 
     # Check sizes
-    assert img.size_s() == s
-    assert img.size_t() == t
-    assert img.size_c() == c
-    assert img.size_z() == z
-    assert img.size_y() == y
-    assert img.size_x() == x
+    assert img.size_s == s
+    assert img.size_t == t
+    assert img.size_c == c
+    assert img.size_z == z
+    assert img.size_y == y
+    assert img.size_x == x
 
     # Check that there are no open file pointers
     assert str(f) not in [f.path for f in proc.open_files()]

@@ -448,14 +448,11 @@ class CziReader(Reader):
 
         return data
 
-    @property
+    @Reader.dims.getter
     def dims(self) -> str:
         if self._dims is None:
             self._dims = CziFile(self._file).dims
         return self._dims
-
-    def dtype(self) -> np.dtype:
-        return self.dask_data.dtype
 
     @property
     def metadata(self) -> _Element:
@@ -470,29 +467,29 @@ class CziReader(Reader):
         # state
         return CziFile(self._file).meta
 
-    def _size_of_dimension(self, dim: str) -> int:
-        if dim in self.dims:
-            return self.dask_data.shape[self.dims.index(dim)]
-
-        return 1
-
+    @property
     def size_s(self) -> int:
-        return self._size_of_dimension(Dimensions.Scene)
+        return self.get_size_of_dimension(Dimensions.Scene)
 
+    @property
     def size_t(self) -> int:
-        return self._size_of_dimension(Dimensions.Time)
+        return self.get_size_of_dimension(Dimensions.Time)
 
+    @property
     def size_c(self) -> int:
-        return self._size_of_dimension(Dimensions.Channel)
+        return self.get_size_of_dimension(Dimensions.Channel)
 
+    @property
     def size_z(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialZ)
+        return self.get_size_of_dimension(Dimensions.SpatialZ)
 
+    @property
     def size_y(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialY)
+        return self.get_size_of_dimension(Dimensions.SpatialY)
 
+    @property
     def size_x(self) -> int:
-        return self._size_of_dimension(Dimensions.SpatialX)
+        return self.get_size_of_dimension(Dimensions.SpatialX)
 
     def get_channel_names(self, scene: int = 0):
         chelem = self.metadata.findall(

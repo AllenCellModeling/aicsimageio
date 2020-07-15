@@ -32,11 +32,11 @@ def test_arraylike_reader(arr, expected_shape, expected_dims):
     assert reader.metadata is None
     assert reader.shape == expected_shape
     assert reader.dask_data.shape == expected_shape
-    assert reader.size(expected_dims) == expected_shape
+    assert reader.get_size(expected_dims) == expected_shape
 
     # Will error because those dimensions don't exist in the file
     with pytest.raises(exceptions.InvalidDimensionOrderingError):
-        assert reader.size("ABCDEFG") == expected_shape
+        assert reader.get_size("ABCDEFG") == expected_shape
 
     # Check array
     assert isinstance(reader.data, np.ndarray)

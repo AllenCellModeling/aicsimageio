@@ -178,10 +178,7 @@ class TiffReader(Reader):
             # Else, return single scene
             return tiff.asarray()
 
-    def load_slice(self, slice_index: int = 0) -> np.ndarray:
-        with TiffFile(self._file) as tiff:
-            return tiff.asarray(key=slice_index)
-
+    @property
     def dtype(self):
         if self._dtype is None:
             with TiffFile(self._file) as tiff:
@@ -189,7 +186,7 @@ class TiffReader(Reader):
 
         return self._dtype
 
-    @property
+    @Reader.dims.getter
     def dims(self) -> str:
         if self._dims is None:
             # Get a single scenes dimensions in order
@@ -238,20 +235,6 @@ class TiffReader(Reader):
                         self._dims = f"{Dimensions.Scene}{best_guess}"
 
         return self._dims
-
-    @dims.setter
-    def dims(self, dims: str):
-        # Check amount of provided dims against data shape
-        if len(dims) != len(self.dask_data.shape):
-            raise exceptions.InvalidDimensionOrderingError(
-                f"Provided too many dimensions for the associated file. "
-                f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions "
-                f"[shape: {self.data.shape}]."
-            )
-
-        # Set the dims
-        self._dims = dims
 
     @staticmethod
     def get_image_description(buffer: io.BufferedIOBase) -> Optional[bytearray]:

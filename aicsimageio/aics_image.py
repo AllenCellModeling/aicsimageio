@@ -9,15 +9,10 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import (
-    ArrayLikeReader,
-    CziReader,
-    DefaultReader,
-    LifReader,
-    OmeTiffReader,
-    TiffReader,
-)
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (ArrayLikeReader, CziReader, DefaultReader, LifReader,
+                      OmeTiffReader, TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -166,7 +161,7 @@ class AICSImage:
 
         return self._data
 
-    def size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
+    def get_size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
         """
         Parameters
         ----------
@@ -201,7 +196,7 @@ class AICSImage:
         shape: Tuple[int]
             A tuple with the size of all dimensions.
         """
-        return self.size()
+        return self.get_size()
 
     @property
     def size_x(self) -> int:
@@ -211,7 +206,7 @@ class AICSImage:
         size: int
             The size of the Spatial X dimension.
         """
-        return self.size(Dimensions.SpatialX)[0]
+        return self.get_size(Dimensions.SpatialX)[0]
 
     @property
     def size_y(self) -> int:
@@ -221,7 +216,7 @@ class AICSImage:
         size: int
             The size of the Spatial Y dimension.
         """
-        return self.size(Dimensions.SpatialY)[0]
+        return self.get_size(Dimensions.SpatialY)[0]
 
     @property
     def size_z(self) -> int:
@@ -231,7 +226,7 @@ class AICSImage:
         size: int
             The size of the Spatial Z dimension.
         """
-        return self.size(Dimensions.SpatialZ)[0]
+        return self.get_size(Dimensions.SpatialZ)[0]
 
     @property
     def size_c(self) -> int:
@@ -241,7 +236,7 @@ class AICSImage:
         size: int
             The size of the Channel dimension.
         """
-        return self.size(Dimensions.Channel)[0]
+        return self.get_size(Dimensions.Channel)[0]
 
     @property
     def size_t(self) -> int:
@@ -251,7 +246,7 @@ class AICSImage:
         size: int
             The size of the Time dimension.
         """
-        return self.size(Dimensions.Time)[0]
+        return self.get_size(Dimensions.Time)[0]
 
     @property
     def size_s(self) -> int:
@@ -261,7 +256,7 @@ class AICSImage:
         size: int
             The size of the Scene dimension.
         """
-        return self.size(Dimensions.Scene)[0]
+        return self.get_size(Dimensions.Scene)[0]
 
     @property
     def metadata(self) -> Any:

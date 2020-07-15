@@ -155,7 +155,7 @@ def test_known_dims(data, dims, expected_shape):
     assert img.size_c == expected_shape[2]
     assert img.size_t == expected_shape[1]
     assert img.size_s == expected_shape[0]
-    assert img.size(dims) == data.shape
+    assert img.get_size(dims) == data.shape
 
 
 @pytest.mark.parametrize(
@@ -178,7 +178,7 @@ def test_force_dims(data_shape, dims, expected):
     assert img.size_c == expected[2]
     assert img.size_t == expected[1]
     assert img.size_s == expected[0]
-    assert img.size(dims) == data_shape
+    assert img.get_size(dims) == data_shape
 
 
 @pytest.mark.parametrize(

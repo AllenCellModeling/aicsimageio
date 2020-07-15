@@ -127,11 +127,11 @@ def test_dimensionOrder(
 
     reader = OmeTiffReader(resources_dir / filename)
     output = reader.data
-    t = reader.size_t()
-    c = reader.size_c()
-    z = reader.size_z()
-    y = reader.size_y()
-    x = reader.size_x()
+    t = reader.size_t
+    c = reader.size_c
+    z = reader.size_z
+    y = reader.size_y
+    x = reader.size_x
 
     os.remove(resources_dir / filename)
 

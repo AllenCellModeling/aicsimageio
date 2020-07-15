@@ -28,6 +28,15 @@ class DefaultReader(Reader):
     """
 
     @staticmethod
+    def _is_this_type(buffer: io.BytesIO) -> bool:
+        # Use imageio to check if they have a reader for this file
+        try:
+            with imageio.get_reader(buffer):
+                return True
+        except ValueError:
+            return False
+
+    @staticmethod
     def _get_data(file: Path, index: int) -> np.ndarray:
         with imageio.get_reader(file) as reader:
             return np.asarray(reader.get_data(index))
@@ -95,7 +104,7 @@ class DefaultReader(Reader):
         except exceptions.UnsupportedFileFormatError:
             raise exceptions.UnsupportedFileFormatError(self._file)
 
-    @property
+    @Reader.dims.getter
     def dims(self) -> str:
         # Set dims if not set
         if self._dims is None:
@@ -109,20 +118,6 @@ class DefaultReader(Reader):
                 self._dims = self.guess_dim_order(self.dask_data.shape)
 
         return self._dims
-
-    @dims.setter
-    def dims(self, dims: str):
-        # Check amount of provided dims against data shape
-        if len(dims) != len(self.dask_data.shape):
-            raise exceptions.InvalidDimensionOrderingError(
-                f"Provided too many dimensions for the associated file. "
-                f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions "
-                f"[shape: {self.data.shape}]."
-            )
-
-        # Set the dims
-        self._dims = dims
 
     @property
     def metadata(self) -> Dict[str, Any]:
@@ -147,12 +142,3 @@ class DefaultReader(Reader):
                 return [str(i) for i in range(channel_dim_size)]
 
         return None
-
-    @staticmethod
-    def _is_this_type(buffer: io.BytesIO) -> bool:
-        # Use imageio to check if they have a reader for this file
-        try:
-            with imageio.get_reader(buffer):
-                return True
-        except ValueError:
-            return False

@@ -9,10 +9,15 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import (InvalidDimensionOrderingError,
-                         UnsupportedFileFormatError)
-from .readers import (ArrayLikeReader, CziReader, DefaultReader, LifReader,
-                      OmeTiffReader, TiffReader)
+from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
+from .readers import (
+    ArrayLikeReader,
+    CziReader,
+    DefaultReader,
+    LifReader,
+    OmeTiffReader,
+    TiffReader,
+)
 from .readers.reader import Reader
 
 ###############################################################################

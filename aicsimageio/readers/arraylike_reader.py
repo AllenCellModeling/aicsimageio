@@ -4,7 +4,7 @@
 import dask.array as da
 import numpy as np
 
-from .. import exceptions, types
+from .. import types
 from .reader import Reader
 
 ###############################################################################

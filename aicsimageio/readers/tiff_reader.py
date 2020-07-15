@@ -11,7 +11,7 @@ import numpy as np
 from dask import delayed
 from tifffile import TiffFile
 
-from .. import exceptions, types
+from .. import types
 from ..buffer_reader import BufferReader
 from ..constants import Dimensions
 from .reader import Reader

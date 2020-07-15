@@ -333,7 +333,8 @@ class Reader(ABC):
     def dims(self) -> str:
         # When implementing a new reader you must use
         # @Reader.dims.getter instead of simply @property
-        # See: https://stackoverflow.com/questions/15785982/python-overriding-getter-without-setter/15786149#15786149
+        # See:
+        # https://stackoverflow.com/questions/15785982/python-overriding-getter-without-setter/15786149#15786149
         pass
 
     @dims.setter

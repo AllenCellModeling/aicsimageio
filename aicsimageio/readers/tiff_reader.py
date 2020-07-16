@@ -22,6 +22,7 @@ log = logging.getLogger(__name__)
 
 ###############################################################################
 
+
 class TiffProperties(NamedTuple):
     dims: str
     shape: Tuple[int]
@@ -185,8 +186,8 @@ class TiffReader(Reader):
             return tiff.asarray()
 
     @staticmethod
-    def _guess_tiff_dims(tiff: TiffFile, S: int) -> str:
-        guess = self.guess_dim_order(tiff.series[S].pages.shape)
+    def _guess_tiff_dims(single_scene_dims: str) -> str:
+        guess = TiffReader.guess_dim_order(single_scene_dims)
         best_guess = []
         for dim_from_meta in single_scene_dims:
             if dim_from_meta in Dimensions.DefaultOrder:
@@ -222,9 +223,8 @@ class TiffReader(Reader):
             # We can sometimes trust the dimension info in the image
             if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):
                 # Add scene dimension only if there are multiple scenes
-                if (
-                    len(tiff.series) > 1
-                    and TiffReader._scene_shape_is_consistent(tiff, S)
+                if len(tiff.series) > 1 and TiffReader._scene_shape_is_consistent(
+                    tiff, S
                 ):
                     dims = f"{Dimensions.Scene}{single_scene_dims}"
                     shape = (len(tiff.series), *single_scene_shape)
@@ -235,13 +235,12 @@ class TiffReader(Reader):
             # Sometimes the dimension info is wrong in certain dimensions, so guess
             # that dimension
             else:
-                dims_best_guess = TiffReader._guess_tiff_dims(tiff, S)
+                dims_best_guess = TiffReader._guess_tiff_dims(single_scene_dims)
 
                 # Add scene dimension only if there are multiple scenes
                 # and only when scene dimensions are consistent shape
-                if (
-                    len(tiff.series) > 1
-                    and TiffReader._scene_shape_is_consistent(tiff, S)
+                if len(tiff.series) > 1 and TiffReader._scene_shape_is_consistent(
+                    tiff, S
                 ):
                     dims = f"{Dimensions.Scene}{dims_best_guess}"
                     shape = (len(tiff.series), *single_scene_shape)

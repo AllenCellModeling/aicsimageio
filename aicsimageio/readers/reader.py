@@ -352,12 +352,12 @@ class Reader(ABC):
             available image data.
         """
         # Check amount of provided dims against data shape
-        if len(dims) != len(self.dask_data.shape):
+        if len(dims) != len(self.shape):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Provided too many dimensions for the associated file. "
                 f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.data.shape)} dimensions "
-                f"[shape: {self.data.shape}]."
+                f"for image with {len(self.shape)} dimensions "
+                f"[shape: {self.shape}]."
             )
 
         # Set the dims
@@ -386,7 +386,7 @@ class Reader(ABC):
             )
 
         # Return the shape of the data for the dimensions requested
-        return tuple([self.dask_data.shape[self.dims.index(dim)] for dim in dims])
+        return tuple([self.shape[self.dims.index(dim)] for dim in dims])
 
     def get_size_of_dimension(self, dim: str) -> int:
         """
@@ -402,7 +402,7 @@ class Reader(ABC):
         """
         dim = dim.upper()
         if dim in self.dims:
-            return self.dask_data.shape[self.dims.index(dim)]
+            return self.get_size(dim)[0]
 
         return 1
 
@@ -469,7 +469,7 @@ class Reader(ABC):
 
         # Channel dimension in reader data, get default channel names
         channel_index = self.dims.index(Dimensions.Channel)
-        channel_dim_size = self.dask_data.shape[channel_index]
+        channel_dim_size = self.shape[channel_index]
         return [str(i) for i in range(channel_dim_size)]
 
     def __enter__(self):

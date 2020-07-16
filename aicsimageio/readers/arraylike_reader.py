@@ -40,7 +40,7 @@ class ArrayLikeReader(Reader):
             raise TypeError(data)
 
         # Guess dims
-        self._dims = self.guess_dim_order(self.dask_data.shape)
+        self._dims = self.guess_dim_order(self.shape)
 
     def _read_delayed(self):
         return self._dask_data

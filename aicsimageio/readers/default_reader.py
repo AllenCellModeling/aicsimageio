@@ -108,14 +108,14 @@ class DefaultReader(Reader):
     def dims(self) -> str:
         # Set dims if not set
         if self._dims is None:
-            if len(self.dask_data.shape) == 2:
+            if len(self.shape) == 2:
                 self._dims = "YX"
-            elif len(self.dask_data.shape) == 3:
+            elif len(self.shape) == 3:
                 self._dims = "YXC"
-            elif len(self.dask_data.shape) == 4:
+            elif len(self.shape) == 4:
                 self._dims = "TYXC"
             else:
-                self._dims = self.guess_dim_order(self.dask_data.shape)
+                self._dims = self.guess_dim_order(self.shape)
 
         return self._dims
 
@@ -131,7 +131,7 @@ class DefaultReader(Reader):
         # Check for channel in dims
         if Dimensions.Channel in self.dims:
             channel_index = self.dims.index(Dimensions.Channel)
-            channel_dim_size = self.dask_data.shape[channel_index]
+            channel_dim_size = self.shape[channel_index]
 
             # RGB vs RGBA vs other
             if channel_dim_size == 3:

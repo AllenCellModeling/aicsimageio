@@ -4,7 +4,7 @@
 import io
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import NamedTuple, Optional, Tuple
 
 import dask.array as da
 import numpy as np
@@ -21,6 +21,11 @@ from .reader import Reader
 log = logging.getLogger(__name__)
 
 ###############################################################################
+
+class TiffProperties(NamedTuple):
+    dims: str
+    shape: Tuple[int]
+    dtype: np.dtype
 
 
 class TiffReader(Reader):
@@ -48,8 +53,9 @@ class TiffReader(Reader):
         # Store parameters needed for dask read
         self.specific_s_index = S
 
-        # Lazy load and hold on to dtype
+        # Lazy load and hold on to dtype and shape
         self._dtype = None
+        self._shape = None
 
     @staticmethod
     def _is_this_type(buffer: io.BufferedIOBase) -> bool:
@@ -178,63 +184,102 @@ class TiffReader(Reader):
             # Else, return single scene
             return tiff.asarray()
 
-    @property
-    def dtype(self):
-        if self._dtype is None:
-            with TiffFile(self._file) as tiff:
-                self._dtype = tiff.pages[0].dtype
+    @staticmethod
+    def _guess_tiff_dims(tiff: TiffFile, S: int) -> str:
+        guess = self.guess_dim_order(tiff.series[S].pages.shape)
+        best_guess = []
+        for dim_from_meta in single_scene_dims:
+            if dim_from_meta in Dimensions.DefaultOrder:
+                best_guess.append(dim_from_meta)
+            else:
+                appended_dim = False
+                for guessed_dim in guess:
+                    if guessed_dim not in best_guess:
+                        best_guess.append(guessed_dim)
+                        appended_dim = True
+                        log.info(
+                            f"Unsure how to handle dimension: "
+                            f"{dim_from_meta}. "
+                            f"Replaced with guess: {guessed_dim}"
+                        )
+                        break
 
-        return self._dtype
+                # All of our guess dims were already in the dim list,
+                # append the dim read from meta
+                if not appended_dim:
+                    best_guess.append(dim_from_meta)
+
+        return "".join(best_guess)
+
+    @staticmethod
+    def _get_tiff_properties(f: types.FileLike, S: int) -> TiffProperties:
+        # Get a single scenes dimensions in order
+        with TiffFile(f) as tiff:
+            single_scene_dims = tiff.series[S].pages.axes
+            single_scene_shape = tiff.series[S].pages.shape
+            dtype = tiff.pages[0].dtype
+
+            # We can sometimes trust the dimension info in the image
+            if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):
+                # Add scene dimension only if there are multiple scenes
+                if (
+                    len(tiff.series) > 1
+                    and TiffReader._scene_shape_is_consistent(tiff, S)
+                ):
+                    dims = f"{Dimensions.Scene}{single_scene_dims}"
+                    shape = (len(tiff.series), *single_scene_shape)
+                else:
+                    dims = single_scene_dims
+                    shape = single_scene_shape
+
+            # Sometimes the dimension info is wrong in certain dimensions, so guess
+            # that dimension
+            else:
+                dims_best_guess = TiffReader._guess_tiff_dims(tiff, S)
+
+                # Add scene dimension only if there are multiple scenes
+                # and only when scene dimensions are consistent shape
+                if (
+                    len(tiff.series) > 1
+                    and TiffReader._scene_shape_is_consistent(tiff, S)
+                ):
+                    dims = f"{Dimensions.Scene}{dims_best_guess}"
+                    shape = (len(tiff.series), *single_scene_shape)
+                else:
+                    dims = dims_best_guess
+                    shape = single_scene_shape
+
+        return TiffProperties(dims, shape, dtype)
 
     @Reader.dims.getter
     def dims(self) -> str:
         if self._dims is None:
-            # Get a single scenes dimensions in order
-            with TiffFile(self._file) as tiff:
-                single_scene_dims = tiff.series[0].pages.axes
-
-                # We can sometimes trust the dimension info in the image
-                if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):
-                    # Add scene dimension only if there are multiple scenes
-                    if len(tiff.series) == 1:
-                        self._dims = single_scene_dims
-                    else:
-                        self._dims = f"{Dimensions.Scene}{single_scene_dims}"
-                # Sometimes the dimension info is wrong in certain dimensions, so guess
-                # that dimension
-                else:
-                    guess = self.guess_dim_order(tiff.series[0].pages.shape)
-                    best_guess = []
-                    for dim_from_meta in single_scene_dims:
-                        if dim_from_meta in Dimensions.DefaultOrder:
-                            best_guess.append(dim_from_meta)
-                        else:
-                            appended_dim = False
-                            for guessed_dim in guess:
-                                if guessed_dim not in best_guess:
-                                    best_guess.append(guessed_dim)
-                                    appended_dim = True
-                                    log.info(
-                                        f"Unsure how to handle dimension: "
-                                        f"{dim_from_meta}. "
-                                        f"Replaced with guess: {guessed_dim}"
-                                    )
-                                    break
-
-                            # All of our guess dims were already in the dim list,
-                            # append the dim read from meta
-                            if not appended_dim:
-                                best_guess.append(dim_from_meta)
-
-                    best_guess = "".join(best_guess)
-
-                    # Add scene dimension only if there are multiple scenes
-                    if len(tiff.series) == 1:
-                        self._dims = best_guess
-                    else:
-                        self._dims = f"{Dimensions.Scene}{best_guess}"
+            props = self._get_tiff_properties(self._file, self.specific_s_index)
+            self._dims = props.dims
+            self._shape = props.shape
+            self._dtype = props.dtype
 
         return self._dims
+
+    @property
+    def shape(self) -> Tuple[int]:
+        if self._shape is None:
+            props = self._get_tiff_properties(self._file, self.specific_s_index)
+            self._dims = props.dims
+            self._shape = props.shape
+            self._dtype = props.dtype
+
+        return self._shape
+
+    @property
+    def dtype(self):
+        if self._dtype is None:
+            props = self._get_tiff_properties(self._file, self.specific_s_index)
+            self._dims = props.dims
+            self._shape = props.shape
+            self._dtype = props.dtype
+
+        return self._dtype
 
     @staticmethod
     def get_image_description(buffer: io.BufferedIOBase) -> Optional[bytearray]:

@@ -58,7 +58,7 @@ class LifReader(Reader):
     #
     ########################################################
 
-    @Reader.dims.getter
+    @property
     def dims(self) -> str:
         """
         The dimensions for a lif file.

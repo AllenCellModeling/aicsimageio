@@ -41,33 +41,3 @@ def test_arraylike_reader(arr, expected_shape, expected_dims):
     # Check array
     assert isinstance(reader.data, np.ndarray)
     assert reader.data.shape == expected_shape
-
-
-@pytest.mark.parametrize(
-    "expected_starting_dims, set_dims, expected_ending_dims",
-    [
-        ("ZYX", "YXC", "YXC"),
-        ("ZYX", "TYX", "TYX"),
-        ("ZYX", "ABC", "ABC"),
-        pytest.param(
-            "ZYX",
-            "ABCDE",
-            None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
-        ),
-    ],
-)
-def test_dims_setting(expected_starting_dims, set_dims, expected_ending_dims):
-    # Read file
-    img = ArrayLikeReader(da.ones((2, 2, 2)))
-
-    # Check basics
-    assert img.dims == expected_starting_dims
-
-    # Set dims
-    img.dims = set_dims
-
-    # Check dims after update
-    assert img.dims == expected_ending_dims

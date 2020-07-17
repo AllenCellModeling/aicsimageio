@@ -448,7 +448,7 @@ class CziReader(Reader):
 
         return data
 
-    @Reader.dims.getter
+    @property
     def dims(self) -> str:
         if self._dims is None:
             self._dims = CziFile(self._file).dims

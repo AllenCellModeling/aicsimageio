@@ -104,7 +104,7 @@ class DefaultReader(Reader):
         except exceptions.UnsupportedFileFormatError:
             raise exceptions.UnsupportedFileFormatError(self._file)
 
-    @Reader.dims.getter
+    @property
     def dims(self) -> str:
         # Set dims if not set
         if self._dims is None:

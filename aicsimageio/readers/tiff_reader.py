@@ -250,7 +250,7 @@ class TiffReader(Reader):
 
         return TiffProperties(dims, shape, dtype)
 
-    @Reader.dims.getter
+    @property
     def dims(self) -> str:
         if self._dims is None:
             props = self._get_tiff_properties(self._file, self.specific_s_index)

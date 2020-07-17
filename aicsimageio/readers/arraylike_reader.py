@@ -48,7 +48,7 @@ class ArrayLikeReader(Reader):
     def _read_immediate(self):
         return self._dask_data.compute()
 
-    @Reader.dims.getter
+    @property
     def dims(self) -> str:
         return self._dims
 

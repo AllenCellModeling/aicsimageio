@@ -22,12 +22,7 @@ class InvalidDimensionOrderingError(Exception):
     validation. Should be provided a message for the user to be given more context.
     """
 
-    def __init__(self, message: str, **kwargs):
-        super().__init__(**kwargs)
-        self.message = message
-
-    def __str__(self):
-        return self.message
+    pass
 
 
 class ConflictingArgumentsError(Exception):

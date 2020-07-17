@@ -337,32 +337,6 @@ class Reader(ABC):
         # https://stackoverflow.com/questions/15785982/python-overriding-getter-without-setter/15786149#15786149
         pass
 
-    @dims.setter
-    def dims(self, dims: str):
-        """
-        Parameters
-        ----------
-        dims: str
-            The dimensions of the image.
-
-        Raises
-        ------
-        exceptions.InvalidDimensionOrderingError:
-            If too many or too few dimensions were provided in comparison to the
-            available image data.
-        """
-        # Check amount of provided dims against data shape
-        if len(dims) != len(self.shape):
-            raise exceptions.InvalidDimensionOrderingError(
-                f"Provided too many dimensions for the associated file. "
-                f"Received {len(dims)} dimensions [dims: {dims}] "
-                f"for image with {len(self.shape)} dimensions "
-                f"[shape: {self.shape}]."
-            )
-
-        # Set the dims
-        self._dims = dims
-
     def get_size(self, dims: str = Dimensions.DefaultOrder) -> Tuple[int]:
         """
         Parameters

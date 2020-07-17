@@ -3,7 +3,6 @@
 
 import numpy as np
 import pytest
-from psutil import Process
 
 from aicsimageio import exceptions
 from aicsimageio.readers.default_reader import DefaultReader
@@ -39,51 +38,3 @@ def test_default_reader(
         expected_dims=expected_dims,
         expected_dtype=np.uint8,
     )
-
-
-@pytest.mark.parametrize(
-    "expected_starting_dims, set_dims, expected_ending_dims",
-    [
-        ("YXC", "ZXC", "ZXC"),
-        ("YXC", "YXZ", "YXZ"),
-        ("YXC", "ABC", "ABC"),
-        pytest.param(
-            "YXC",
-            "ABCDE",
-            None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
-        ),
-    ],
-)
-def test_dims_setting(
-    resources_dir, expected_starting_dims, set_dims, expected_ending_dims
-):
-    # Get file
-    f = resources_dir / "example.png"
-
-    # Read file
-    img = DefaultReader(f)
-
-    # Check that there are no open file pointers after init
-    proc = Process()
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check basics
-    assert img.dims == expected_starting_dims
-
-    # Check that there are no open file pointers after basics
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Update dims
-    img.dims = set_dims
-
-    # Check that there are no open file pointers after basics
-    assert str(f) not in [f.path for f in proc.open_files()]
-
-    # Check expected
-    assert img.dims == expected_ending_dims
-
-    # Check that there are no open file pointers after retrieval
-    assert str(f) not in [f.path for f in proc.open_files()]

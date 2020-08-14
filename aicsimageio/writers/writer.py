@@ -8,7 +8,7 @@ from typing import Union
 import dask.array as da
 import numpy as np
 
-from ..constants import Dimensions
+from ..dimensions import DEFAULT_DIMENSION_ORDER
 
 ###############################################################################
 
@@ -23,7 +23,7 @@ class Writer(ABC):
     def save(
         data: Union[da.Array, np.ndarray],
         filepath: Union[str, Path],
-        dim_order: str = Dimensions.DefaultOrder,
+        dim_order: str = DEFAULT_DIMENSION_ORDER,
         **kwargs
     ):
         """

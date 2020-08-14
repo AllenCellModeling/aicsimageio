@@ -7,7 +7,7 @@ import dask.array as da
 import numpy as np
 
 from . import types
-from .dimensions import Dimensions
+from .dimensions import DEFAULT_DIMENSION_ORDER, Dimensions
 from .readers.reader import Reader
 
 ###############################################################################
@@ -325,7 +325,7 @@ class AICSImage:
     def save(
         self,
         filepath: types.PathLike,
-        save_dims: str = Dimensions.DEFAULT_ORDER,
+        save_dims: str = DEFAULT_DIMENSION_ORDER,
         **kwargs,
     ):
         """

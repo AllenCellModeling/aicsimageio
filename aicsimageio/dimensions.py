@@ -23,24 +23,25 @@ class Dimensions:
         >>> dims = Dimensions("STCZYX", (1, 1, 4, 75, 624, 924))
         ... dims.X
         """
-        # THIS WORKS FOR SIMPLE CASES BUT NEEDS BUG TESTING
         self._order = dims
-        self._sizes = shape
+        self._shape = shape
         self._dims_shape = dict(zip(dims, shape))
         for dim, size in self._dims_shape.items():
             setattr(self, dim, size)
 
+    @property
     def order(self) -> str:
         """
         Return the natural order of the dimensions as a single string.
         """
         return self._order
 
-    def sizes(self) -> Tuple[int]:
+    @property
+    def shape(self) -> Tuple[int]:
         """
         Return the dimension sizes in their natural order.
         """
-        return self._sizes
+        return self._shape
 
     def __str__(self):
         dims_string = ", ".join([

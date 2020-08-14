@@ -101,11 +101,6 @@ class AICSImage:
         This property returns the object created to read the image file type.
         The intent is that if the AICSImage class doesn't provide a raw enough
         interface then the base class can be used directly.
-
-        Returns
-        -------
-        reader: Reader
-            The underlying image reader for the provided data.
         """
         pass
 
@@ -281,12 +276,9 @@ class AICSImage:
     @property
     def metadata(self) -> Any:
         """
-        Returns
-        -------
-        metadata: Any
-            Passthrough to the base image reader metadata property.
-            For more information, see the specific image format reader you are using
-            for details on it's metadata property.
+        Passthrough to the base image reader metadata property.
+        For more information, see the specific image format reader you are using
+        for details on it's metadata property.
         """
         pass
 

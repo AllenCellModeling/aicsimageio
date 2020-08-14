@@ -29,7 +29,7 @@ class AICSImage:
     # ]
 
     def __init__(
-        self, data: types.ImageLike, known_dims: Optional[str] = None, **kwargs
+        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs
     ):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
@@ -42,7 +42,7 @@ class AICSImage:
 
         Parameters
         ----------
-        data: types.ImageLike
+        image: types.ImageLike
             A string, Path, fsspec based file, or, numpy or dask array, to read.
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will
@@ -86,9 +86,10 @@ class AICSImage:
         new reader child class of Reader ([readers/reader.py]) and add the class to
         SUPPORTED_READERS variable.
         """
+        pass
 
     @staticmethod
-    def determine_reader(data: types.ImageLike) -> Reader:
+    def determine_reader(image: types.ImageLike) -> Reader:
         """
         Cheaply check to see if a given file is a recognized type and return the
         appropriate reader for the file.
@@ -351,13 +352,13 @@ class AICSImage:
         return str(self)
 
 
-def imread_dask(data: types.ImageLike, **kwargs) -> da.Array:
+def imread_dask(image: types.ImageLike, **kwargs) -> da.Array:
     """
     Read image as a dask array.
 
     Parameters
     ----------
-    data: types.ImageLike
+    image: types.ImageLike
         A filepath, in memory numpy array, or preconfigured dask array.
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
@@ -370,13 +371,13 @@ def imread_dask(data: types.ImageLike, **kwargs) -> da.Array:
     return AICSImage(data, **kwargs).dask_data
 
 
-def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
+def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
     """
     Read image as a numpy array.
 
     Parameters
     ----------
-    data: types.ImageLike
+    image: types.ImageLike
         A filepath, in memory numpy array, or preconfigured dask array.
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.

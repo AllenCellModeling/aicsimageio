@@ -368,7 +368,7 @@ def imread_dask(image: types.ImageLike, **kwargs) -> da.Array:
     data: da.core.Array
         The image read and configured as a dask array.
     """
-    return AICSImage(data, **kwargs).dask_data
+    return AICSImage(image, **kwargs).dask_data
 
 
 def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
@@ -387,7 +387,7 @@ def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
     data: np.ndarray
         The image read and configured as a numpy ndarray.
     """
-    return AICSImage(data, **kwargs).data
+    return AICSImage(image, **kwargs).data
 
 
 def imwrite(

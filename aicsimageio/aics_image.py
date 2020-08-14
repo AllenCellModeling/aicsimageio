@@ -6,7 +6,7 @@ from typing import Optional, Tuple
 import dask.array as da
 import numpy as np
 
-from .dimensions import Dimensions
+from .dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from .readers.reader import Reader
 from .types import ImageLike
 
@@ -277,3 +277,83 @@ class AICSImage:
         See `aicsimageio.transforms.reshape_data` for more details.
         """
         pass
+
+    @property
+    def metadata(self) -> Any:
+        """
+        Returns
+        -------
+        metadata: Any
+            Passthrough to the base image reader metadata property.
+            For more information, see the specific image format reader you are using
+            for details on it's metadata property.
+        """
+        pass
+
+    def get_channel_names(self, scene: int = 0) -> List[str]:
+        """
+        Attempts to use the available metadata for the image to return the channel
+        names for the image.
+
+        If no channel metadata is available, returns a list of string indicies for each
+        channel in the image.
+
+        Parameters
+        ----------
+        scene: int
+            The scene index to return channel names for.
+
+        Returns
+        -------
+        channel_names: List[str]
+            List of strings representing channel names.
+        """
+        pass
+
+    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
+        """
+        Attempts to use the available metadata for the image to return the physical
+        pixel sizes for the image.
+
+        If no pixel metadata is available, returns `1.0` for each spatial dimension.
+
+        Paramaters
+        ----------
+        scene: int
+            The scene index to return physical pixel sizes for.
+
+        Returns
+        -------
+        sizes: Tuple[float]
+            Tuple of floats representing physical pixel sizes for dimensions X, Y, Z
+            (in that order).
+        """
+        pass
+
+    def save(
+        self,
+        filepath: types.PathLike,
+        save_dims: str = Dimensions.DEFAULT_ORDER,
+        **kwargs,
+    ):
+        """
+        Save the image to a file.
+
+        Parameters
+        ----------
+        filepath: types.FileLike
+            The path to save the image and metadata to.
+            The image writer is determined based off of the file extension included in
+            this path.
+        save_dims: str
+            The selected dimensions to save out.
+        kwargs:
+            Extra keywords arguments to passdown to the selected writer.
+        """
+        pass
+
+    def __str__(self) -> str:
+        return f"<AICSImage [{type(self.reader).__name__} -- {self.shape}]>"
+
+    def __repr__(self) -> str:
+        return str(self)

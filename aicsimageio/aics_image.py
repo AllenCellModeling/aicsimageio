@@ -47,8 +47,8 @@ class AICSImage:
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will
             attempt to parse dim order.
-        kwargs: Dict[str, Any]
-            Extra keyword arguments that will be passed down to the reader subclass
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the reader subclass.
 
         Examples
         --------
@@ -156,7 +156,7 @@ class AICSImage:
             A string containing the dimension ordering desired for the returned ndarray.
             Default: The current image dimensions. i.e. `self.dims.order`
 
-        kwargs:
+        kwargs: Any
             * C=1: specifies Channel 1
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
@@ -223,7 +223,7 @@ class AICSImage:
             A string containing the dimension ordering desired for the returned ndarray.
             Default: The current image dimensions. i.e. `self.dims.order`
 
-        kwargs:
+        kwargs: Any
             * C=1: specifies Channel 1
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
@@ -347,8 +347,8 @@ class AICSImage:
             this path.
         save_dims: str
             The selected dimensions to save out.
-        kwargs:
-            Extra keywords arguments to passdown to the selected writer.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the writer subclass.
         """
         pass
 
@@ -357,3 +357,70 @@ class AICSImage:
 
     def __repr__(self) -> str:
         return str(self)
+
+def imread_dask(data: types.ImageLike, **kwargs) -> da.Array:
+    """
+    Read image as a dask array.
+
+    Parameters
+    ----------
+    data: types.ImageLike
+        A filepath, in memory numpy array, or preconfigured dask array.
+    kwargs: Any
+        Extra keyword arguments that will be passed down to the reader subclass.
+
+    Returns
+    -------
+    data: da.core.Array
+        The image read and configured as a dask array.
+    """
+    return AICSImage(data, **kwargs).dask_data
+
+
+def imread(data: types.ImageLike, **kwargs) -> np.ndarray:
+    """
+    Read image as a numpy array.
+
+    Parameters
+    ----------
+    data: types.ImageLike
+        A filepath, in memory numpy array, or preconfigured dask array.
+    kwargs: Any
+        Extra keyword arguments that will be passed down to the reader subclass.
+
+    Returns
+    -------
+    data: np.ndarray
+        The image read and configured as a numpy ndarray.
+    """
+    return AICSImage(data, **kwargs).data
+
+
+def imwrite(
+    data: types.ArrayLike,
+    filepath: types.PathLike,
+    dims: Optional[str] = None,
+    **kwargs,
+):
+    """
+    Save an array to an image file.
+
+    Parameters
+    ----------
+    data: types.ArrayLike
+        The numpy or dask array to save to a file.
+    filepath: types.FileLike
+        The path to save the image and metadata to.
+        The image writer is determined based off of the file extension included in
+        this path.
+    dims: str
+        Optional string with the dimension order.
+        If None, we will guess the order based off the selected image writer.
+    kwargs: Any
+        Extra keyword arguments that will be passed down to the writer subclass.
+    """
+    return AICSImage(data, known_dims=dims).save(
+        filepath=filepath,
+        save_dims=dims,
+        **kwargs
+    )

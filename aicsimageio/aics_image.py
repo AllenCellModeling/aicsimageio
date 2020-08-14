@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
 
-from .dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
+from . import types
+from .dimensions import Dimensions
 from .readers.reader import Reader
-from .types import ImageLike
 
 ###############################################################################
 
@@ -19,14 +19,14 @@ class AICSImage:
     # Example:
     # if TiffReader was placed before OmeTiffReader,
     # we would never hit the OmeTiffReader
-    SUPPORTED_READERS = [
-        ArrayLikeReader,
-        CziReader,
-        LifReader,
-        OmeTiffReader,
-        TiffReader,
-        DefaultReader,
-    ]
+    # SUPPORTED_READERS = [
+    #     ArrayLikeReader,
+    #     CziReader,
+    #     LifReader,
+    #     OmeTiffReader,
+    #     TiffReader,
+    #     DefaultReader,
+    # ]
 
     def __init__(
         self, data: types.ImageLike, known_dims: Optional[str] = None, **kwargs
@@ -350,6 +350,7 @@ class AICSImage:
     def __repr__(self) -> str:
         return str(self)
 
+
 def imread_dask(data: types.ImageLike, **kwargs) -> da.Array:
     """
     Read image as a dask array.
@@ -412,7 +413,5 @@ def imwrite(
         Extra keyword arguments that will be passed down to the writer subclass.
     """
     return AICSImage(data, known_dims=dims).save(
-        filepath=filepath,
-        save_dims=dims,
-        **kwargs
+        filepath=filepath, save_dims=dims, **kwargs
     )

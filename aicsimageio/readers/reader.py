@@ -1,17 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import io
-import logging
-import sys
 from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
 
-from ..dimensions import DimensionNames, Dimensions
+from .. import types
+from ..dimensions import Dimensions
 
 ###############################################################################
 
@@ -40,7 +37,9 @@ def use_dask(setting: bool):
     # Assign to global state
     USE_DASK = setting
 
+
 ###############################################################################
+
 
 class Reader(ABC):
     _dask_data = None
@@ -48,7 +47,7 @@ class Reader(ABC):
     _dims = None
     _metadata = None
 
-    def __init__(self: image: types.ImageLike, **kwargs):
+    def __init__(self, image: types.ImageLike, **kwargs):
         """
         A small class to build standardized image reader objects that deal with the raw
         image and metadata.

@@ -5,6 +5,7 @@ from typing import Tuple
 
 ###############################################################################
 
+
 class DimensionNames:
     Scene = "S"
     Time = "T"
@@ -12,6 +13,7 @@ class DimensionNames:
     SpatialZ = "Z"
     SpatialY = "Y"
     SpatialX = "X"
+
 
 DEFAULT_DIMENSION_ORDER = (
     f"{DimensionNames.Scene}{DimensionNames.Time}{DimensionNames.Channel}"
@@ -40,8 +42,8 @@ DEFAULT_DIMENSION_ORDER = (
 
 ###############################################################################
 
-class Dimensions:
 
+class Dimensions:
     def __init__(self, dims: str, shape: Tuple[int]):
         """
         A general object for managing the pairing of dimension name and dimension size.
@@ -79,9 +81,9 @@ class Dimensions:
         return self._shape
 
     def __str__(self):
-        dims_string = ", ".join([
-            f"{dim}: {size}" for dim, size in self._dims_shape.items()
-        ])
+        dims_string = ", ".join(
+            [f"{dim}: {size}" for dim, size in self._dims_shape.items()]
+        )
         return f"<Dimensions [{dims_string}]>"
 
     def __repr__(self):

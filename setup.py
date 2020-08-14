@@ -12,6 +12,7 @@ requirements = [
     "aicspylibczi>=2.5.0",
     "dask>=2.9.0",
     "distributed>=2.9.3",
+    "fsspec>=0.7.4",
     "numpy>=1.16",
     "imagecodecs>=2020.2.18",
     "imageio[ffmpeg]>=2.3.0",

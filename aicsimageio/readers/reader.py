@@ -158,28 +158,40 @@ class Reader(ABC):
     @property
     def dask_data(self) -> da.Array:
         """
-        Returns the image as a dask array with the native dimension ordering.
+        Returns
+        -------
+        dask_data: da.Array
+            The image as a dask array with the native dimension ordering.
         """
         pass
 
     @property
     def data(self) -> np.ndarray:
         """
-        Return the image as a numpy array with native dimension ordering.
+        Returns
+        -------
+        data: np.ndarray
+            The image as a numpy array with native dimension ordering.
         """
         pass
 
     @property
     def dtype(self) -> np.dtype:
         """
-        Data-type of the image array's elements.
+        Returns
+        -------
+        dtype: np.dtype
+            Data-type of the image array's elements.
         """
         pass
 
     @property
     def shape(self) -> Tuple[int]:
         """
-        Tuple of the image array's dimensions.
+        Returns
+        -------
+        shape: Tuple[int]
+            Tuple of the image array's dimensions.
         """
         pass
 
@@ -187,7 +199,10 @@ class Reader(ABC):
     @abstractmethod
     def dims(self) -> Dimensions:
         """
-        Object with the paired dimension names and their sizes.
+        Returns
+        -------
+        dims: Dimensions
+            Object with the paired dimension names and their sizes.
         """
         pass
 
@@ -329,7 +344,10 @@ class Reader(ABC):
     @abstractmethod
     def metadata(self) -> Any:
         """
-        Returns the metadata for the formats supported by the inhereting Reader.
+        Returns
+        -------
+        metadata: Any
+            The metadata for the formats supported by the inhereting Reader.
         """
         pass
 

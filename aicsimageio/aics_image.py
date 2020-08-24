@@ -96,44 +96,62 @@ class AICSImage:
     @property
     def reader(self) -> Reader:
         """
-        This property returns the object created to read the image file type.
-        The intent is that if the AICSImage class doesn't provide a raw enough
-        interface then the base class can be used directly.
+        Returns
+        -------
+        reader: Reader
+            Returns the object created to read the image file type.
+            The intent is that if the AICSImage class doesn't provide a raw enough
+            interface then the base class can be used directly.
         """
         pass
 
     @property
     def dask_data(self) -> da.Array:
         """
-        Returns the image as a dask array with dimension ordering "STCZYX".
+        Returns
+        -------
+        dask_data: da.Array
+            The image as a dask array with dimension ordering "STCZYX".
         """
         pass
 
     @property
     def data(self) -> np.ndarray:
         """
-        Return the image as a numpy array with dimension ordering "STCZYX".
+        Returns
+        -------
+        data: np.ndarray
+            The image as a numpy array with dimension ordering "STCZYX".
         """
         pass
 
     @property
     def dtype(self) -> np.dtype:
         """
-        Data-type of the image array's elements.
+        Returns
+        -------
+        dtype: np.ndtype
+            Data-type of the image array's elements.
         """
         pass
 
     @property
     def shape(self) -> Tuple[int]:
         """
-        Tuple of the image array's dimensions.
+        Returns
+        -------
+        shape: Tuple[int]
+            Tuple of the image array's dimensions.
         """
         pass
 
     @property
     def dims(self) -> Dimensions:
         """
-        Object with the paired dimension names and their sizes.
+        Returns
+        -------
+        dims: Dimensions
+            Object with the paired dimension names and their sizes.
         """
         pass
 
@@ -274,9 +292,12 @@ class AICSImage:
     @property
     def metadata(self) -> Any:
         """
-        Passthrough to the base image reader metadata property.
-        For more information, see the specific image format reader you are using
-        for details on it's metadata property.
+        Returns
+        -------
+        metadata: Any
+            Passthrough to the base image reader metadata property.
+            For more information, see the specific image format reader you are using
+            for details on it's metadata property.
         """
         pass
 

@@ -34,11 +34,8 @@ class AICSImage:
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
         dimensions ("ZYX", "TCZYX", "CYX") and puts them into a consistent 6D "STCZYX"
-        ordered array. The data and metadata are lazy loaded and can be accessed as
-        needed. Note the dims are assumed to match "STCZYX" from right to left meaning
-        if dimensional data is provided then the dimensions are assigned to be "CZYX", 2
-        dimensional would be "YX". This guessed assignment is only for file types
-        without dimension metadata (i.e. not .ome.tiff or .czi).
+        ("Scene-Time-Channel-Z-Y-X") ordered array. The data and metadata are lazy
+        loaded and can be accessed as needed.
 
         Parameters
         ----------

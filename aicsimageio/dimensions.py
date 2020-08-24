@@ -69,14 +69,20 @@ class Dimensions:
     @property
     def order(self) -> str:
         """
-        Return the natural order of the dimensions as a single string.
+        Returns
+        -------
+        order: str
+            The natural order of the dimensions as a single string.
         """
         return self._order
 
     @property
     def shape(self) -> Tuple[int]:
         """
-        Return the dimension sizes in their natural order.
+        Returns
+        -------
+        shape: Tuple[int]
+            The dimension sizes in their natural order.
         """
         return self._shape
 

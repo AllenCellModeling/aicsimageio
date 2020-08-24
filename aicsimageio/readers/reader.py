@@ -223,9 +223,9 @@ class Reader(ABC):
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
               present in the out_orientation.
-            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
               desired. D should be present in the out_orientation.
-            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
               desired. D should be present in the out_orientation.
             * D=range(...): D is Dimension letter and range is the standard Python
               range function. D should be present in the out_orientation.
@@ -290,9 +290,9 @@ class Reader(ABC):
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
               present in the out_orientation.
-            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
               desired. D should be present in the out_orientation.
-            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
               desired. D should be present in the out_orientation.
             * D=range(...): D is Dimension letter and range is the standard Python
               range function. D should be present in the out_orientation.
@@ -356,7 +356,7 @@ class Reader(ABC):
         Attempts to use the available metadata for the image to return the channel
         names for the image.
 
-        If no channel metadata is available, returns a list of string indicies for each
+        If no channel metadata is available, returns a list of string indices for each
         channel in the image.
 
         Parameters

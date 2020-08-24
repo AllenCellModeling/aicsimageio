@@ -172,9 +172,9 @@ class AICSImage:
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
               present in the out_orientation.
-            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
               desired. D should be present in the out_orientation.
-            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
               desired. D should be present in the out_orientation.
             * D=range(...): D is Dimension letter and range is the standard Python
               range function. D should be present in the out_orientation.
@@ -239,9 +239,9 @@ class AICSImage:
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
               present in the out_orientation.
-            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
+            * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
               desired. D should be present in the out_orientation.
-            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
+            * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
               desired. D should be present in the out_orientation.
             * D=range(...): D is Dimension letter and range is the standard Python
               range function. D should be present in the out_orientation.
@@ -297,7 +297,7 @@ class AICSImage:
         metadata: Any
             Passthrough to the base image reader metadata property.
             For more information, see the specific image format reader you are using
-            for details on it's metadata property.
+            for details on its metadata property.
         """
         pass
 
@@ -306,7 +306,7 @@ class AICSImage:
         Attempts to use the available metadata for the image to return the channel
         names for the image.
 
-        If no channel metadata is available, returns a list of string indicies for each
+        If no channel metadata is available, returns a list of string indices for each
         channel in the image.
 
         Parameters

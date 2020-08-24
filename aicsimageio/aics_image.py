@@ -165,7 +165,7 @@ class AICSImage:
         ----------
         out_orientation: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The current image dimensions. i.e. `self.dims.order`
+            Default: "STCZYX"
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -232,7 +232,7 @@ class AICSImage:
         ----------
         out_orientation: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The current image dimensions. i.e. `self.dims.order`
+            Default: "STCZYX"
 
         kwargs: Any
             * C=1: specifies Channel 1

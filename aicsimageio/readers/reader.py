@@ -216,7 +216,7 @@ class Reader(ABC):
         ----------
         out_orientation: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The current image dimensions. i.e. `self.dims.order`
+            Default: The natural image dimension order.
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -283,7 +283,7 @@ class Reader(ABC):
         ----------
         out_orientation: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The current image dimensions. i.e. `self.dims.order`
+            Default: The natural image dimension order.
 
         kwargs: Any
             * C=1: specifies Channel 1

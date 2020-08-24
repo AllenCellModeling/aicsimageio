@@ -7,25 +7,15 @@ I am currently thinking:
 ```
 aicsimageio/
     metadata/
-        ome/
-            omexml.py  # our remade and updated omexml object generated from source XSD
-            transform.py  # the transform functions to convert to ome
-            xslt/
-                czi.xslt  # from czi to ome
-                3i.xslt  # from 3i to ome
-                ...
-        {some_other_format}/
-            some_other_format.py  # our python equivalent object of their metadata model
-            transform.py  # the transform functions to convert to their model
-            xslt/
-                ome.xslt  # from ome to some format
-                czi.xslt  # from czi to some format
+        omexml.py  # our remade and updated omexml object generated from source XSD
+        transform.py  # the transform functions to convert to ome
+        xslt/
+            czi.xslt  # from czi to ome
+            3i.xslt  # from 3i to ome
+            ...
 ```
 
 This results in:
 ```python
-from aicsimageio.metadata.ome import OMEXML, transform_czi_to_ome
-from aicsimageio.metadata.czi import CZIXML, transform_ome_to_czi
+from aicsimageio.metadata import OMEXML, transform_czi_to_ome
 ```
-
-and etc.

@@ -71,18 +71,12 @@ extra_requirements = {
     "test": test_requirements,
     "dev": dev_requirements,
     "benchmark": benchmark_requirements,
-    "all": [
-        *requirements,
-        *dev_requirements,
-    ]
+    "all": [*requirements, *dev_requirements,],
 }
 
 setup(
     author="Allen Institute for Cell Science",
-    author_email=(
-        "jacksonb@alleninstitute.org, "
-        "bowdenm@spu.edu"
-    ),
+    author_email=("jacksonb@alleninstitute.org, " "bowdenm@spu.edu"),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",

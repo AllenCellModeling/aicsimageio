@@ -9,6 +9,7 @@ import numpy as np
 from . import types
 from .dimensions import DEFAULT_DIMENSION_ORDER, Dimensions
 from .readers.reader import Reader
+from .types import PhysicalPixelSizes
 
 ###############################################################################
 
@@ -33,8 +34,8 @@ class AICSImage:
     ):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
-        dimensions ("ZYX", "TCZYX", "CYX") and puts them into a consistent 6D "STCZYX"
-        ("Scene-Time-Channel-Z-Y-X") ordered array. The data and metadata are lazy
+        dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
+        ("Time-Channel-Z-Y-X") ordered array(s). The data and metadata are lazy
         loaded and can be accessed as needed.
 
         Parameters
@@ -52,13 +53,13 @@ class AICSImage:
         Initialize an image and read the slices specified as a numpy array.
 
         >>> img = AICSImage("my_file.tiff")
-        ... zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)
+        ... zstack_t8 = img.get_image_data("ZYX", T=8, C=0)
 
         Initialize an image, construct a delayed dask array for certain slices, then
         read the data.
 
         >>> img = AICSImage("my_file.czi")
-        ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)
+        ... zstack_t8 = img.get_image_dask_data("ZYX", T=8, C=0)
         ... zstack_t8_data = zstack_t8.compute()
 
         Initialize an image with a dask or numpy array.
@@ -76,6 +77,12 @@ class AICSImage:
 
         >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
 
+        Initialize an image, change scene, read data to numpy.
+
+        >>> img = AICSImage("my_many_scene.czi")
+        ... img.set_scene(3)
+        ... img.data
+
         Notes
         -----
         Constructor for AICSImage class intended for providing a unified interface for
@@ -88,8 +95,15 @@ class AICSImage:
     @staticmethod
     def determine_reader(image: types.ImageLike) -> Reader:
         """
-        Cheaply check to see if a given file is a recognized type and return the
-        appropriate reader for the file.
+        Returns
+        -------
+        reader: Reader
+            Cheaply check to see if a given file is a recognized type and return the
+            appropriate reader for the file.
+
+        Raises
+        ------
+        TypeError: Unsupported file format.
         """
         pass
 
@@ -99,9 +113,40 @@ class AICSImage:
         Returns
         -------
         reader: Reader
-            Returns the object created to read the image file type.
+            The object created to read the image file type.
             The intent is that if the AICSImage class doesn't provide a raw enough
             interface then the base class can be used directly.
+        """
+        pass
+
+    @property
+    def scenes(self) -> List[int]:
+        """
+        Returns
+        -------
+        scenes: List[int]
+            A list of valid scene indicies in the file.
+        """
+        pass
+
+    @property
+    def current_scene(self) -> int:
+        """
+        Returns
+        -------
+        scene: int
+            The current operating scene.
+        """
+        pass
+
+    def set_scene(self, index: int):
+        """
+        Set the operating scene.
+
+        Parameters
+        ----------
+        index: int
+            The scene index to set as the operating scene.
         """
         pass
 
@@ -111,7 +156,7 @@ class AICSImage:
         Returns
         -------
         dask_data: da.Array
-            The image as a dask array with dimension ordering "STCZYX".
+            The image as a dask array with dimension ordering "TCZYX".
         """
         pass
 
@@ -121,7 +166,7 @@ class AICSImage:
         Returns
         -------
         data: np.ndarray
-            The image as a numpy array with dimension ordering "STCZYX".
+            The image as a numpy array with dimension ordering "TCZYX".
         """
         pass
 
@@ -165,7 +210,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: "STCZYX"
+            Default: "TCZYX"
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -232,7 +277,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: "STCZYX"
+            Default: "TCZYX"
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -301,65 +346,24 @@ class AICSImage:
         """
         pass
 
-    def get_channel_names(self, scene: int = 0) -> List[str]:
+    @property
+    def channel_names(self) -> List[str]:
         """
-        Attempts to use the available metadata for the image to return the channel
-        names for the image.
-
-        If no channel metadata is available, returns a list of string indices for each
-        channel in the image.
-
-        Parameters
-        ----------
-        scene: int
-            The scene index to return channel names for.
-
         Returns
         -------
         channel_names: List[str]
-            List of strings representing channel names.
+            Using available metadata, the list of strings representing channel names.
         """
         pass
 
-    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
+    @property
+    def physical_pixel_size(self) -> PhysicalPixelSizes:
         """
-        Attempts to use the available metadata for the image to return the physical
-        pixel sizes for the image.
-
-        If no pixel metadata is available, returns `1.0` for each spatial dimension.
-
-        Paramaters
-        ----------
-        scene: int
-            The scene index to return physical pixel sizes for.
-
         Returns
         -------
-        sizes: Tuple[float]
-            Tuple of floats representing physical pixel sizes for dimensions X, Y, Z
-            (in that order).
-        """
-        pass
-
-    def save(
-        self,
-        filepath: types.PathLike,
-        save_dims: str = DEFAULT_DIMENSION_ORDER,
-        **kwargs,
-    ):
-        """
-        Save the image to a file.
-
-        Parameters
-        ----------
-        filepath: types.FileLike
-            The path to save the image and metadata to.
-            The image writer is determined based off of the file extension included in
-            this path.
-        save_dims: str
-            The selected dimensions to save out.
-        kwargs: Any
-            Extra keyword arguments that will be passed down to the writer subclass.
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
         """
         pass
 

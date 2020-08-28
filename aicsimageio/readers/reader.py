@@ -107,6 +107,38 @@ class Reader(ABC):
         """
         pass
 
+    @property
+    @abstractmethod
+    def scenes(self) -> List[int]:
+        """
+        Returns
+        -------
+        scenes: List[int]
+            A list of valid scene indicies in the file.
+        """
+        pass
+
+    @property
+    def current_scene(self) -> int:
+        """
+        Returns
+        -------
+        scene: int
+            The current operating scene.
+        """
+        pass
+
+    def set_scene(self, index: int):
+        """
+        Set the operating scene.
+
+        Parameters
+        ----------
+        index: int
+            The scene index to set as the operating scene.
+        """
+        pass
+
     @staticmethod
     @abstractmethod
     def _assert_reader_supports_image(image: types.ImageLike) -> bool:
@@ -351,43 +383,24 @@ class Reader(ABC):
         """
         pass
 
-    def get_channel_names(self, scene: int = 0) -> Optional[List[str]]:
+    @property
+    def channel_names(self) -> Optional[List[str]]:
         """
-        Attempts to use the available metadata for the image to return the channel
-        names for the image.
-
-        If no channel metadata is available, returns a list of string indices for each
-        channel in the image.
-
-        Parameters
-        ----------
-        scene: int
-            The scene index to return channel names for.
-
         Returns
         -------
-        channel_names: Optional[List[str]]
-            List of strings representing channel names.
-            If no channel dimension is present in the image, returns None.
+        channel_names: List[str]
+            Using available metadata, the list of strings representing channel names.
+            If no channel dimension present in the data, returns None.
         """
         pass
 
-    def get_physical_pixel_size(self, scene: int = 0) -> Tuple[float]:
+    @property
+    def physical_pixel_size(self) -> PhysicalPixelSizes:
         """
-        Attempts to use the available metadata for the image to return the physical
-        pixel sizes for the image.
-
-        If no pixel metadata is available, returns `1.0` for each spatial dimension.
-
-        Paramaters
-        ----------
-        scene: int
-            The scene index to return physical pixel sizes for.
-
         Returns
         -------
-        sizes: Tuple[float]
-            Tuple of floats representing physical pixel sizes for dimensions X, Y, Z
-            (in that order).
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
         """
         pass

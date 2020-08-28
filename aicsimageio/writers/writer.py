@@ -40,8 +40,8 @@ class Writer(ABC):
 
         Examples
         --------
-        >>> image = numpy.ndarray([1, 1, 10, 3, 1024, 2048])
-        ... DerivedWriter.save(image, "file.ome.tif", "STCZYX")
+        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
+        ... DerivedWriter.save(image, "file.ome.tif", "TCZYX")
 
         >>> image = dask.array.ones((4, 100, 100))
         ... DerivedWriter.save(image, "file.png", "CYX")

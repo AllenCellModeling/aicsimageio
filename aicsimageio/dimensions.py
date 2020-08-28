@@ -7,7 +7,6 @@ from typing import Tuple
 
 
 class DimensionNames:
-    Scene = "S"
     Time = "T"
     Channel = "C"
     SpatialZ = "Z"
@@ -16,7 +15,7 @@ class DimensionNames:
 
 
 DEFAULT_DIMENSION_ORDER = (
-    f"{DimensionNames.Scene}{DimensionNames.Time}{DimensionNames.Channel}"
+    f"{DimensionNames.Time}{DimensionNames.Channel}"
     f"{DimensionNames.SpatialZ}{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
 )
 
@@ -37,7 +36,7 @@ class Dimensions:
 
         Examples
         --------
-        >>> dims = Dimensions("STCZYX", (1, 1, 4, 75, 624, 924))
+        >>> dims = Dimensions("TCZYX", (1, 4, 75, 624, 924))
         ... dims.X
         """
         self._order = dims

@@ -9,6 +9,7 @@ import numpy as np
 
 from .. import types
 from ..dimensions import Dimensions
+from ..types import PhysicalPixelSizes
 
 ###############################################################################
 

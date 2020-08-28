@@ -207,14 +207,14 @@ class Reader(ABC):
         pass
 
     def get_image_dask_data(
-        self, out_orientation: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs
     ) -> da.Array:
         """
         Get specific dimension image data out of an image as a dask array.
 
         Parameters
         ----------
-        out_orientation: Optional[str]
+        dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
             Default: The natural image dimension order.
 
@@ -222,15 +222,15 @@ class Reader(ABC):
             * C=1: specifies Channel 1
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
-              present in the out_orientation.
+              present in the dimension_order_out.
             * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
-              desired. D should be present in the out_orientation.
+              desired. D should be present in the dimension_order_out.
             * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
-              desired. D should be present in the out_orientation.
+              desired. D should be present in the dimension_order_out.
             * D=range(...): D is Dimension letter and range is the standard Python
-              range function. D should be present in the out_orientation.
+              range function. D should be present in the dimension_order_out.
             * D=slice(...): D is Dimension letter and slice is the standard Python
-              slice function. D should be present in the out_orientation.
+              slice function. D should be present in the dimension_order_out.
 
         Returns
         -------
@@ -274,14 +274,14 @@ class Reader(ABC):
         pass
 
     def get_image_data(
-        self, out_orientation: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs
     ) -> da.Array:
         """
         Get specific dimension image data out of an image as a numpy array.
 
         Parameters
         ----------
-        out_orientation: Optional[str]
+        dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
             Default: The natural image dimension order.
 
@@ -289,15 +289,15 @@ class Reader(ABC):
             * C=1: specifies Channel 1
             * T=3: specifies the fourth index in T
             * D=n: D is Dimension letter and n is the index desired. D should not be
-              present in the out_orientation.
+              present in the dimension_order_out.
             * D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
-              desired. D should be present in the out_orientation.
+              desired. D should be present in the dimension_order_out.
             * D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
-              desired. D should be present in the out_orientation.
+              desired. D should be present in the dimension_order_out.
             * D=range(...): D is Dimension letter and range is the standard Python
-              range function. D should be present in the out_orientation.
+              range function. D should be present in the dimension_order_out.
             * D=slice(...): D is Dimension letter and slice is the standard Python
-              slice function. D should be present in the out_orientation.
+              slice function. D should be present in the dimension_order_out.
 
         Returns
         -------

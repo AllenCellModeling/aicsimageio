@@ -7,7 +7,7 @@ import dask.array as da
 import numpy as np
 
 from . import types
-from .dimensions import DEFAULT_DIMENSION_ORDER, Dimensions
+from .dimensions import Dimensions
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
 

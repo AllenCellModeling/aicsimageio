@@ -86,42 +86,6 @@ lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```
 
-### Speed up IO and Processing with Dask Clients and Clusters
-If you have already spun up a `distributed.Client` object in your Python process or
-your processing is running on a distributed worker, great, you will naturally gain IO
-and processing gains. If you haven't done that or don't know what either of those are,
-there are some utility functions to help construct and manage these for you.
-
-```python
-from aicsimageio import AICSImage, dask_utils
-
-# Spawn a local cluster
-# These objects will be connected and useable for the lifespan of the context manager.
-with dask_utils.cluster_and_client() as (cluster, client):
-
-    img1 = AICSImage("1.tiff")
-    img2 = AICSImage("2.tiff")
-    img3 = AICSImage("3.tiff")
-
-    # Do your image processing work
-
-# Connect to a remote cluster
-# If you pass an address in, it will create and shutdown the client and no cluster will
-# be created. These objects will be connected and usable for the lifespan of the
-# context manager.
-with dask_utils.cluster_and_client(address="tcp://localhost:1234") as (cluster, client):
-
-    img1 = AICSImage("1.tiff")
-    img2 = AICSImage("2.tiff")
-    img3 = AICSImage("3.tiff")
-
-    # Do your image processing work
-```
-
-**Note:** The `dask_utils` module require that the processing machine or container have
-networking capabilities enabled to function properly.
-
-
 ### Metadata Reading
 ```python
 from aicsimageio import AICSImage

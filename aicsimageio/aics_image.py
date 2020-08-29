@@ -125,7 +125,7 @@ class AICSImage:
         Returns
         -------
         scenes: List[int]
-            A list of valid scene indicies in the file.
+            A list of valid scene ids in the file.
         """
         pass
 
@@ -139,14 +139,14 @@ class AICSImage:
         """
         pass
 
-    def set_scene(self, index: int):
+    def set_scene(self, id: int):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        index: int
-            The scene index to set as the operating scene.
+        id: int
+            The scene id to set as the operating scene.
         """
         pass
 

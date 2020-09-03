@@ -21,8 +21,9 @@
 import os
 import sys
 
-import aicsimageio
 import sphinx_rtd_theme
+
+import aicsimageio
 
 sys.path.insert(0, os.path.abspath(".."))
 
@@ -69,7 +70,7 @@ master_doc = "index"
 
 # General information about the project.
 project = u"aicsimageio"
-copyright = u"2019, Allen Institute for Cell Science"
+copyright = u"2020, Allen Institute for Cell Science"
 author = u"Allen Institute for Cell Science"
 
 # The version info for the project you"re documenting, acts as replacement

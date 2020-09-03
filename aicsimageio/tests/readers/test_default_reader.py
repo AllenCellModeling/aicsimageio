@@ -25,7 +25,10 @@ from aicsimageio.readers.default_reader import DefaultReader
     ],
 )
 def test_default_reader(
-    resources_dir, filename, expected_shape, expected_dims,
+    resources_dir,
+    filename,
+    expected_shape,
+    expected_dims,
 ):
     # Get file
     f = resources_dir / filename

@@ -191,7 +191,7 @@ class OmeTiffWriter:
         tif.close()
 
     def save_slice(self, data, z=0, c=0, t=0):
-        """ this doesn't do the necessary functionality at this point
+        """this doesn't do the necessary functionality at this point
 
         TODO:
             * make this insert a YX slice in between two other slices inside a full

@@ -423,14 +423,22 @@ def test_view_napari(
         (TIF_FILE, (1, 1, 1, 1, 325, 475), str),
         (OME_FILE, (1, 1, 1, 1, 325, 475), omexml.OMEXML),
         (CZI_FILE, (1, 1, 1, 1, 325, 475), _Element),
-        (LIF_FILE, (1, 1, 2, 1, 2048, 2048), Element,),
+        (
+            LIF_FILE,
+            (1, 1, 2, 1, 2048, 2048),
+            Element,
+        ),
         (MED_TIF_FILE, (1, 10, 3, 1, 325, 475), str),
         (BIG_OME_FILE, (3, 1, 3, 5, 325, 475), omexml.OMEXML),
         (BIG_CZI_FILE, (3, 1, 3, 5, 325, 475), _Element),
     ],
 )
 def test_aicsimage_serialize(
-    resources_dir, tmpdir, filename, expected_shape, expected_metadata_type,
+    resources_dir,
+    tmpdir,
+    filename,
+    expected_shape,
+    expected_metadata_type,
 ):
     """
     Test that the entire AICSImage object can be serialized - a requirement to

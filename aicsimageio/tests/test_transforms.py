@@ -13,13 +13,37 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
 @pytest.mark.parametrize(
     "data_shape, given_dims, return_dims, other_args, expected_shape",
     [
-        ((10, 1, 5, 6, 200, 400), "STCZYX", "CSZYX", {}, (5, 10, 6, 200, 400),),
+        (
+            (10, 1, 5, 6, 200, 400),
+            "STCZYX",
+            "CSZYX",
+            {},
+            (5, 10, 6, 200, 400),
+        ),
         ((6, 200, 400), "ZYX", "STCZYX", {}, (1, 1, 1, 6, 200, 400)),
         ((6, 200, 400), "ZYX", "ZCYSXT", {}, (6, 1, 200, 1, 400, 1)),
         ((6, 200, 400), "ZYX", "CYSXT", {"Z": 2}, (1, 200, 1, 400, 1)),
-        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": [0, 1]}, (2, 1, 200, 1, 400, 1),),
-        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": (0, 1)}, (2, 1, 200, 1, 400, 1),),
-        ((6, 200, 400), "ZYX", "ZCYSXT", {"Z": range(2)}, (2, 1, 200, 1, 400, 1),),
+        (
+            (6, 200, 400),
+            "ZYX",
+            "ZCYSXT",
+            {"Z": [0, 1]},
+            (2, 1, 200, 1, 400, 1),
+        ),
+        (
+            (6, 200, 400),
+            "ZYX",
+            "ZCYSXT",
+            {"Z": (0, 1)},
+            (2, 1, 200, 1, 400, 1),
+        ),
+        (
+            (6, 200, 400),
+            "ZYX",
+            "ZCYSXT",
+            {"Z": range(2)},
+            (2, 1, 200, 1, 400, 1),
+        ),
         (
             (6, 200, 400),
             "ZYX",
@@ -127,7 +151,12 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
     ],
 )
 def test_reshape_data_shape(
-    array_maker, data_shape, given_dims, return_dims, other_args, expected_shape,
+    array_maker,
+    data_shape,
+    given_dims,
+    return_dims,
+    other_args,
+    expected_shape,
 ):
     data = array_maker(data_shape)
 
@@ -223,15 +252,35 @@ TEST_DARRAY = da.stack([DA_ONES * i for i in range(7)])
         ("ZYX", "ZYX", {"Z": slice(6, 3, -1)}, [6, 5, 4], None),
         ("ZYX", "ZYX", {"Z": slice(-1, 3, -1)}, [6, 5, 4], None),
         # Dimension selection and order swap
-        ("ZYX", "YXZ", {"Z": (0, -1)}, [0, -1], (1, 2, 0),),
-        ("ZYX", "YXZ", {"Z": range(0, 6, 2)}, [0, 2, 4], (1, 2, 0),),
+        (
+            "ZYX",
+            "YXZ",
+            {"Z": (0, -1)},
+            [0, -1],
+            (1, 2, 0),
+        ),
+        (
+            "ZYX",
+            "YXZ",
+            {"Z": range(0, 6, 2)},
+            [0, 2, 4],
+            (1, 2, 0),
+        ),
     ],
 )
 def test_reshape_data_kwargs_values(
-    data, given_dims, return_dims, other_args, getitem_ops_for_expected, transposer,
+    data,
+    given_dims,
+    return_dims,
+    other_args,
+    getitem_ops_for_expected,
+    transposer,
 ):
     actual = reshape_data(
-        data=data, given_dims=given_dims, return_dims=return_dims, **other_args,
+        data=data,
+        given_dims=given_dims,
+        return_dims=return_dims,
+        **other_args,
     )
 
     expected = data[getitem_ops_for_expected]

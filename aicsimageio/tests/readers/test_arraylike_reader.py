@@ -19,7 +19,10 @@ from aicsimageio.readers import ArrayLikeReader
         (da.ones((1, 1, 1)), (1, 1, 1), "ZYX"),
         (da.ones((1, 1, 1, 1)), (1, 1, 1, 1), "CZYX"),
         pytest.param(
-            "hello_word", None, None, marks=pytest.mark.raises(exceptions=TypeError),
+            "hello_word",
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=TypeError),
         ),
     ],
 )

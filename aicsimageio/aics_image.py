@@ -10,15 +10,10 @@ import numpy as np
 
 from . import transforms, types
 from .constants import Dimensions
-from .exceptions import InvalidDimensionOrderingError, UnsupportedFileFormatError
-from .readers import (
-    ArrayLikeReader,
-    CziReader,
-    DefaultReader,
-    LifReader,
-    OmeTiffReader,
-    TiffReader,
-)
+from .exceptions import (InvalidDimensionOrderingError,
+                         UnsupportedFileFormatError)
+from .readers import (ArrayLikeReader, CziReader, DefaultReader, LifReader,
+                      OmeTiffReader, TiffReader)
 from .readers.reader import Reader
 
 ###############################################################################
@@ -83,7 +78,7 @@ class AICSImage:
         ... zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)
 
         Initialize an image, construct a delayed dask array for certain slices, then
-        read just that data.
+        read only that data.
 
         >>> img = AICSImage("my_file.czi")
         ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)

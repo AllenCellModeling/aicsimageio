@@ -26,7 +26,7 @@ Delayed Parallel Image Reading for Microscopy Images in Python
 For full package documentation please visit
 [allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
-## Quick Start
+## Quickstart
 
 ### Full Image Reading
 ```python
@@ -98,7 +98,7 @@ lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```
 
-#### Quick Start Notes
+#### Quickstart Notes
 In short, if the word "dask" appears in the function or property name, the function
 utilizes delayed reading, if not, the underlying operation is backed by the image fully
 read into memory. I.E. `AICSImage.data` and `AICSImage.get_image_data` load the entire

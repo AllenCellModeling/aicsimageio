@@ -150,22 +150,6 @@ that allows use of all the functionality described here, but in the `napari` def
 viewer itself.
 
 
-## Performance Considerations
-* **If your image fits into memory and you are not using a distributed cluster:** use
-`AICSImage.data` or `Reader.data` which are generally optimal.
-* **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
-get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
-specific chunk of data from the image.
-* **If you are using a distributed cluster:** all functions and properties in the
-library are generally optimal.
-* **If you are using a distributed cluster with less than ~6 workers:** use
-`aicsimageio.use_dask(False)`. From our testing, 6 workers is the bare minimum for
-read time reduction compared to no cluster usage.
-* When using a `dask` array, it is important to know when to `compute` or
-`persist` data and when to keep chaining computation.
-[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
-
-
 ## Notes
 * Image `data` and `dask_data` are always returned as six dimensional in dimension
 order `STCZYX` or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.

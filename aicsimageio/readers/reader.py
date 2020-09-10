@@ -310,7 +310,7 @@ class Reader(ABC):
         self, dimension_order_out: Optional[str] = None, **kwargs
     ) -> da.Array:
         """
-        Get specific dimension image data out of an image as a numpy array.
+        Read the image as a numpy array then return specific dimension image data.
 
         Parameters
         ----------
@@ -368,6 +368,7 @@ class Reader(ABC):
         -----
         * If a requested dimension is not present in the data the dimension is
           added with a depth of 1.
+        * This will preload the entire image before returning the requested data.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """

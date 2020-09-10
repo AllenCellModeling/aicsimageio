@@ -78,7 +78,12 @@ def _generate_chart(results: pd.DataFrame, sorted: bool = False):
     return (
         alt.Chart(results)
         .mark_circle()
-        .encode(x="yx_planes:Q", y="read_duration:Q", color="reader:N", column=column,)
+        .encode(
+            x="yx_planes:Q",
+            y="read_duration:Q",
+            color="reader:N",
+            column=column,
+        )
     )
 
 

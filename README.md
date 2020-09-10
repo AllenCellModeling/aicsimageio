@@ -38,6 +38,7 @@ img.data  # returns 5D TCZYX numpy array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
 # Change scene
 img.set_scene(1)
@@ -47,12 +48,13 @@ img.data  # returns 5D TCZYX numpy array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
 # Get 5D TCZYX numpy array
 data = imread("my_file.tiff")
 ```
 
-### Delayed Image Slice Reading
+### Delayed Image Reading
 ```python
 from aicsimageio import AICSImage, imread_dask
 
@@ -62,7 +64,6 @@ img.dask_data  # returns 5D TCZYX dask array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
-img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 
 # Change scene
@@ -73,7 +74,6 @@ img.dask_data  # returns 5D TCZYX dask array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
-img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 
 # Read specified portion of dask array
@@ -85,6 +85,15 @@ lazy_data = imread_dask("my_file.tiff")
 lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```
+
+#### Quick Start Notes
+In short, if the word "dask" appears in the function or property name, the function
+utilizes delayed reading, if not, the underlying operation is backed by the image fully
+read into memory. I.E. `AICSImage.data` and `AICSImage.get_image_data` load the entire
+image into memory before performing their operation, and `AICSImage.dask_data` and
+`AICSImage.get_image_dask_data` do not load any image data until the user calls
+`compute` on the `dask.Array` object and only the requested chunk will be loaded into
+memory instead of the entire image.
 
 ### Metadata Reading
 ```python

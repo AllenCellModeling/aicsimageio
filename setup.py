@@ -71,7 +71,7 @@ extra_requirements = {
     "test": test_requirements,
     "dev": dev_requirements,
     "benchmark": benchmark_requirements,
-    "all": [*requirements, *dev_requirements,],
+    "all": [*requirements, *dev_requirements],
 }
 
 setup(
@@ -109,6 +109,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.2.2",
+    version="3.3.0",
     zip_safe=False,
 )

@@ -13,34 +13,6 @@ from ..types import PhysicalPixelSizes
 
 ###############################################################################
 
-# Global variable to inform Reader to use _read_delayed or _read_immediate
-# If you have the many dask workers available or can rapidly scale up,
-# turning use_dask(True) can result in much faster read times.
-# The primary use case for dask in aicsimageio is to handle the
-# delayed reading of large image files while maintaining the same API
-# -- not to boost read times.
-USE_DASK = False
-
-
-def use_dask(setting: bool):
-    """
-    Enable or disable Dask for image reading.
-    When True, image reads are first attempted to be handled by a distributed cluster.
-    When False, image reads are never routed to a distributed cluster and are instead
-    read immediately in the running process.
-    """
-    global USE_DASK
-
-    # Check parameter
-    if not isinstance(setting, bool):
-        raise TypeError("The setting parameter provided to use_dask must be a boolean.")
-
-    # Assign to global state
-    USE_DASK = setting
-
-
-###############################################################################
-
 
 class Reader(ABC):
     _dask_data = None

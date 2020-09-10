@@ -67,12 +67,13 @@ s0t0 = lazy_s0t0.compute()
 
 #### Quick Start Notes
 In short, if the word "dask" appears in the function or property name, the function
-utilizes delayed reading, if not, the underlying operation is backed by the image fully
-read into memory. I.E. `AICSImage.data` and `AICSImage.get_image_data` load the entire
-image into memory before performing their operation, and `AICSImage.dask_data` and
-`AICSImage.get_image_dask_data` do not load any image data until the user calls
-`compute` on the `dask.Array` object and only the requested chunk will be loaded into
-memory instead of the entire image.
+utilizes delayed reading. If not, the requested image will be loaded immediately and
+the internal implementation may result in loading the entire image even if only a small
+chunk was requested. Currently, `AICSImage.data` and `AICSImage.get_image_data` load
+and cache the entire image in memory before performing their operation.
+`AICSImage.dask_data` and `AICSImage.get_image_dask_data` do not load any image data
+until the user calls `compute` on the `dask.Array` object and only the requested chunk
+will be loaded into memory instead of the entire image.
 
 ### Speed up IO and Processing with Dask Clients and Clusters
 If you have already spun up a `distributed.Client` object in your Python process or

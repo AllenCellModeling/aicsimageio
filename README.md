@@ -33,12 +33,18 @@ For full package documentation please visit
 from aicsimageio import AICSImage, imread
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
+img = AICSImage("my_file.tiff")  # loads the first scene found
 img.data  # returns 5D TCZYX numpy array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
+
+# Get current operating scene
+img.current_scene
+
+# Get valid scene ids from the file
+img.scenes
 
 # Change scene
 img.set_scene(1)
@@ -59,12 +65,18 @@ data = imread("my_file.tiff")
 from aicsimageio import AICSImage, imread_dask
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
+img = AICSImage("my_file.tiff")  # loads the first scene found
 img.dask_data  # returns 5D TCZYX dask array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
+
+# Get current operating scene
+img.current_scene
+
+# Get valid scene ids from the file
+img.scenes
 
 # Change scene
 img.set_scene(1)

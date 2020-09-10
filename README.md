@@ -136,18 +136,11 @@ img.get_channel_names()  # returns a list of string channel names found in the m
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
 tends to interact with.
-```python
-from aicsimageio import AICSImage
-
-# Get an AICSImage object
-img = AICSImage("my_file.tiff")
-img.view_napari()  # launches napari GUI and viewer
-```
 
 We have also released
 [napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
-that allows use of all the functionality described here, but in the `napari` default
-viewer itself.
+that allows use of all the functionality described in this library, but in the `napari`
+default viewer itself.
 
 
 ## Notes

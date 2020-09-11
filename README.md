@@ -142,7 +142,7 @@ img.physical_pixel_size.X  # returns the X dimension pixel size as found in the 
 image viewer for python and it is pretty useful for imaging data that this package
 tends to interact with. If you would like the distributed reading and delayed benefits
 of `aicsimageio` while using `napari` please install
-[`napari-aicsimageio`](https://github.com/AllenCellModeling/napari-aicsimageio).
+[napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio).
 
 
 ## Performance Considerations

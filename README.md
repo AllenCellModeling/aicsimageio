@@ -132,7 +132,13 @@ img.metadata  # returns the metadata object for this image type
 img.get_channel_names()  # returns a list of string channel names found in the metadata
 ```
 
-### Napari Interactive Viewer
+## Performance Considerations
+* **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
+or `Reader` equivalents.
+* **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+`AICSImage.get_image_dask_data`, or `Reader` equivalents.
+
+## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
 tends to interact with.

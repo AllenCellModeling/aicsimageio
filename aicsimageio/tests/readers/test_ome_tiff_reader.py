@@ -16,8 +16,18 @@ from .utils import run_image_read_checks
     "filename, " "expected_shape, " "expected_dims, " "select_scene",
     [
         ("s_1_t_1_c_1_z_1.ome.tiff", (325, 475), "YX", 0),
-        ("s_1_t_1_c_10_z_1.ome.tiff", (10, 1736, 1776), "CYX", 0,),
-        ("s_3_t_1_c_3_z_5.ome.tiff", (3, 5, 3, 325, 475), "SZCYX", 0,),
+        (
+            "s_1_t_1_c_10_z_1.ome.tiff",
+            (10, 1736, 1776),
+            "CYX",
+            0,
+        ),
+        (
+            "s_3_t_1_c_3_z_5.ome.tiff",
+            (3, 5, 3, 325, 475),
+            "SZCYX",
+            0,
+        ),
         pytest.param(
             "example.txt",
             None,
@@ -35,7 +45,11 @@ from .utils import run_image_read_checks
     ],
 )
 def test_ome_tiff_reader(
-    resources_dir, filename, expected_shape, expected_dims, select_scene,
+    resources_dir,
+    filename,
+    expected_shape,
+    expected_dims,
+    select_scene,
 ):
     reader = run_image_read_checks(
         ReaderClass=OmeTiffReader,

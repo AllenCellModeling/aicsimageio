@@ -78,10 +78,7 @@ extra_requirements = {
 
 setup(
     author="Allen Institute for Cell Science",
-    author_email=(
-        "jacksonb@alleninstitute.org, "
-        "bowdenm@spu.edu"
-    ),
+    author_email=("jacksonb@alleninstitute.org, " "bowdenm@spu.edu"),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
@@ -114,6 +111,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.2.2",
+    version="3.3.0",
     zip_safe=False,
 )

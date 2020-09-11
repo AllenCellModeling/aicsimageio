@@ -262,7 +262,7 @@ class Reader(ABC):
         self, out_orientation: Optional[str] = None, **kwargs
     ) -> np.ndarray:
         """
-        Get specific dimension image data out of an image as a numpy array.
+        Read the image as a numpy array then return specific dimension image data.
 
         Parameters
         ----------
@@ -321,12 +321,21 @@ class Reader(ABC):
         -----
         * If a requested dimension is not present in the data the dimension is
           added with a depth of 1.
+        * This will preload the entire image before returning the requested data.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        return self.get_image_dask_data(
-            out_orientation=out_orientation, **kwargs
-        ).compute()
+        # If no out orientation, simply return current data as dask array
+        if out_orientation is None:
+            return self.data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims,
+            return_dims=out_orientation,
+            **kwargs,
+        )
 
     @property
     @abstractmethod

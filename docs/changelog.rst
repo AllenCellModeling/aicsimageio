@@ -1,6 +1,26 @@
 Changelog
 =========
 
+v3.3.0 (2020-09-09)
+-------------------
+
+New
+~~~
+- feature/use-in-memory-data-for-non-dask-calls  (`#148
+  <https://github.com/AllenCellModeling/aicsimageio/pull/148>`_)
+  [Jackson Maxfield Brown]
+
+
+v3.2.3 (2020-06-23)
+-------------------
+
+New
+~~~
+- feature/reader-additions  (`#126
+  <https://github.com/AllenCellModeling/aicsimageio/pull/126>`_)
+  [JacksonMaxfield]
+
+
 v3.2.2 (2020-06-11)
 -------------------
 

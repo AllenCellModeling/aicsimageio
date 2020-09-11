@@ -69,13 +69,14 @@ class AICSImage:
 
         Examples
         --------
-        Initialize an image and read the slices specified as a numpy array.
+        Initialize an image then read the file and return specified slices as a numpy
+        array.
 
         >>> img = AICSImage("my_file.tiff")
         ... zstack_t8 = img.get_image_data("ZYX", S=0, T=8, C=0)
 
         Initialize an image, construct a delayed dask array for certain slices, then
-        read the data.
+        read only that data.
 
         >>> img = AICSImage("my_file.czi")
         ... zstack_t8 = img.get_image_dask_data("ZYX", S=0, T=8, C=0)
@@ -371,7 +372,7 @@ class AICSImage:
         self, out_orientation: Optional[str] = None, **kwargs
     ) -> np.ndarray:
         """
-        Get specific dimension image data out of an image as a numpy array.
+        Read the image as a numpy array then return specific dimension image data.
 
         Parameters
         ----------
@@ -430,12 +431,21 @@ class AICSImage:
         -----
         * If a requested dimension is not present in the data the dimension is
           added with a depth of 1.
+        * This will preload the entire image before returning the requested data.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        return self.get_image_dask_data(
-            out_orientation=out_orientation, **kwargs
-        ).compute()
+        # If no out orientation, simply return current data as dask array
+        if out_orientation is None:
+            return self.data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims,
+            return_dims=out_orientation,
+            **kwargs,
+        )
 
     def get_channel_names(self, scene: int = 0) -> List[str]:
         """

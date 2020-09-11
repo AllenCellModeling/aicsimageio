@@ -27,7 +27,10 @@ from .utils import run_image_read_checks
     ],
 )
 def test_default_reader(
-    resources_dir, filename, expected_shape, expected_dims,
+    resources_dir,
+    filename,
+    expected_shape,
+    expected_dims,
 ):
     run_image_read_checks(
         ReaderClass=DefaultReader,

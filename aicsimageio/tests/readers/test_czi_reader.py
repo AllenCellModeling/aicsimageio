@@ -61,7 +61,14 @@ from .utils import run_image_read_checks
             ("S", "Y", "X"),
         ),
         # Check that Spatial Y and Spatial X dims are always added to chunk dims
-        ("s_3_t_1_c_3_z_5.czi", (1, 3, 3, 5, 325, 475), "BSCZYX", np.uint16, 0, ("S"),),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            (1, 3, 3, 5, 325, 475),
+            "BSCZYX",
+            np.uint16,
+            0,
+            ("S"),
+        ),
         (
             "variable_per_scene_dims.czi",
             (1, 1, 2, 1, 2, 1248, 1848),

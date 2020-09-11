@@ -33,17 +33,17 @@ For full package documentation please visit
 from aicsimageio import AICSImage, imread
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")  # loads the first scene found
+img = AICSImage("my_file.tiff")  # selects the first scene found
 img.data  # returns 5D TCZYX numpy array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
-# Get current operating scene
+# Get the id of the current operating scene
 img.current_scene
 
-# Get valid scene ids from the file
+# Get a list valid scene ids
 img.scenes
 
 # Change scene
@@ -57,7 +57,7 @@ img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
 # Get 5D TCZYX numpy array
-data = imread("my_file.tiff")
+data = imread("my_file.tiff")  # selects the first scene found
 ```
 
 ### Delayed Image Reading
@@ -65,17 +65,17 @@ data = imread("my_file.tiff")
 from aicsimageio import AICSImage, imread_dask
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")  # loads the first scene found
+img = AICSImage("my_file.tiff")  # selects the first scene found
 img.dask_data  # returns 5D TCZYX dask array
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 
-# Get current operating scene
+# Get the id of the current operating scene
 img.current_scene
 
-# Get valid scene ids from the file
+# Get a list valid scene ids
 img.scenes
 
 # Change scene
@@ -88,12 +88,12 @@ img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 
-# Read specified portion of dask array
+# Read a specified portion of dask array
 lazy_t0 = img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 t0 = lazy_t0.compute()  # returns 4D CZYX numpy array
 
 # Get a 5D TCZYX dask array
-lazy_data = imread_dask("my_file.tiff")
+lazy_data = imread_dask("my_file.tiff")  # selects the first scene found
 lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```
@@ -112,7 +112,7 @@ memory instead of the entire image.
 from aicsimageio import AICSImage
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
+img = AICSImage("my_file.tiff")  # selects the first scene found
 img.metadata  # returns the metadata object for this image type
 img.channel_names  # returns a list of string channel names found in the metadata
 img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata

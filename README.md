@@ -35,6 +35,7 @@ from aicsimageio import AICSImage, imread
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
 img.data  # returns 5D TCZYX numpy array
+img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
@@ -51,13 +52,14 @@ img.set_scene(1)
 
 # Same operations on a different scene
 img.data  # returns 5D TCZYX numpy array
+img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
 img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
 # Get 5D TCZYX numpy array
-data = imread("my_file.tiff")  # selects the first scene found
+data = imread("my_file.tiff")  # optionally provide a scene id, default first
 ```
 
 ### Delayed Image Reading
@@ -67,6 +69,7 @@ from aicsimageio import AICSImage, imread_dask
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
 img.dask_data  # returns 5D TCZYX dask array
+img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
@@ -83,6 +86,7 @@ img.set_scene(1)
 
 # Same operations on a different scene
 img.dask_data  # returns 5D TCZYX dask array
+img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
@@ -93,7 +97,7 @@ lazy_t0 = img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 t0 = lazy_t0.compute()  # returns 4D CZYX numpy array
 
 # Get a 5D TCZYX dask array
-lazy_data = imread_dask("my_file.tiff")  # selects the first scene found
+lazy_data = imread_dask("my_file.tiff")  # optionally provide a scene id, default first
 lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```

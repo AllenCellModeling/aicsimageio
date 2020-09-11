@@ -2,12 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from pathlib import Path
-from typing import Union
 
-import dask.array as da
-import numpy as np
-
+from .. import types
 from ..dimensions import DEFAULT_DIMENSION_ORDER
 
 ###############################################################################
@@ -21,8 +17,8 @@ class Writer(ABC):
     @staticmethod
     @abstractmethod
     def save(
-        data: Union[da.Array, np.ndarray],
-        filepath: Union[str, Path],
+        data: types.ArrayLike,
+        uri: types.PathLike,
         dim_order: str = DEFAULT_DIMENSION_ORDER,
         **kwargs
     ):
@@ -31,10 +27,10 @@ class Writer(ABC):
 
         Parameters
         ----------
-        data: Union[da.Array, np.ndarray]
+        data: types.ArrayLike
             The array of data to store.
-        filepath: Union[str, Path]
-            The path to save the data at.
+        uri: types.PathLike
+            The URI to save the data at.
         dim_order: str
             The dimension order of the data.
 

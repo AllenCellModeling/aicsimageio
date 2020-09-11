@@ -101,7 +101,6 @@ We have also released
 that allows use of all the functionality described in this library, but in the `napari`
 default viewer itself.
 
-
 ## Notes
 * Image `data` and `dask_data` are always returned as six dimensional in dimension
 order `STCZYX` or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.

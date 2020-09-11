@@ -376,7 +376,11 @@ class AICSImage:
         return str(self)
 
 
-def imread_dask(image: types.ImageLike, **kwargs) -> da.Array:
+def imread_dask(
+    image: types.ImageLike,
+    scene: Optional[int] = None,
+    **kwargs,
+) -> da.Array:
     """
     Read image as a dask array.
 
@@ -384,6 +388,9 @@ def imread_dask(image: types.ImageLike, **kwargs) -> da.Array:
     ----------
     image: types.ImageLike
         A filepath, in memory numpy array, or preconfigured dask array.
+    scene: Optional[int]
+        A scene id to create a dask array for.
+        Default: first
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -392,10 +399,20 @@ def imread_dask(image: types.ImageLike, **kwargs) -> da.Array:
     data: da.core.Array
         The image read and configured as a dask array.
     """
-    return AICSImage(image, **kwargs).dask_data
+    img = AICSImage(image, **kwargs)
+
+    # Select scene
+    if scene is not None:
+        img.set_scene(scene)
+
+    return img.dask_data
 
 
-def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
+def imread(
+    image: types.ImageLike,
+    scene: Optional[int] = None,
+    **kwargs,
+) -> np.ndarray:
     """
     Read image as a numpy array.
 
@@ -403,6 +420,9 @@ def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
     ----------
     image: types.ImageLike
         A filepath, in memory numpy array, or preconfigured dask array.
+    scene: Optional[int]
+        A scene id to read the image data for.
+        Default: first
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -411,7 +431,13 @@ def imread(image: types.ImageLike, **kwargs) -> np.ndarray:
     data: np.ndarray
         The image read and configured as a numpy ndarray.
     """
-    return AICSImage(image, **kwargs).data
+    img = AICSImage(image, **kwargs)
+
+    # Select scene
+    if scene is not None:
+        img.set_scene(scene)
+
+    return img.data
 
 
 def imwrite(

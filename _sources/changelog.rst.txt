@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/cleanup-readme  (`#149
+  <https://github.com/AllenCellModeling/aicsimageio/pull/149>`_)
+  [Jackson Maxfield Brown]
+
+
 v3.3.0 (2020-09-09)
 -------------------
 

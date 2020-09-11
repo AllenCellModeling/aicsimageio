@@ -4,7 +4,8 @@
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
 
-Delayed Parallel Image Reading for Microscopy Images in Python
+Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in
+Pure Python
 
 ---
 
@@ -100,6 +101,18 @@ t0 = lazy_t0.compute()  # returns 4D CZYX numpy array
 lazy_data = imread_dask("my_file.tiff")  # optionally provide a scene id, default first
 lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
+```
+
+### Remote Image Reading
+```python
+from aicsimageio import AICSImage
+
+# Get an AICSImage object
+img = AICSImage("s3://my-bucket/my_file.tiff")
+img = AICSImage("gcs://my-bucket/my_file.tiff")
+img = AICSImage("http://my-website.com/my_file.tiff")
+
+# All other normal operations work just fine
 ```
 
 #### Quickstart Notes

@@ -70,9 +70,7 @@ class AICSImage:
 
         Initialize an image from S3 with s3fs.
 
-        >>> fs = s3fs.S3FileSystem("s3://my_bucket")
-        ... f = fs.open("s3://my_bucket/my_file.tiff")
-        ... img = AICSImage(f)
+        >>> img = AICSImage("s3://my_bucket/my_file.tiff")
 
         Initialize an image and pass arguments to the reader using kwargs.
 

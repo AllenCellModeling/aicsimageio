@@ -133,13 +133,6 @@ class Reader(ABC):
 
             It is additionally recommended to closely monitor how dask array chunks are
             managed.
-
-        Notes
-        -----
-        This function will only be routed to under specific situations:
-            * use_dask(True) has been set OR
-            * the user has so far only used "dask_data" API calls
-            (get_image_dask_data / dask_data)
         """
         pass
 
@@ -152,11 +145,6 @@ class Reader(ABC):
         -------
         data: np.ndarray
             The fully read numpy array.
-
-        Notes
-        -----
-        The implementer should assume that this function is the primary route for their
-        image reading. See `_read_delayed` for more details.
         """
         pass
 

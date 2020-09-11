@@ -14,7 +14,7 @@ Delayed Parallel Image Reading for Microscopy Images in Python
     * `OME-TIFF`
     * `TIFF`
     * `LIF`
-    * Any additional format supported by [`imageio`](https://github.com/imageio/imageio)
+    * Any additional format supported by [imageio](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
 
@@ -67,59 +67,13 @@ s0t0 = lazy_s0t0.compute()
 
 #### Quick Start Notes
 In short, if the word "dask" appears in the function or property name, the function
-utilizes delayed reading, if not, the underlying operation is backed by the image fully
-read into memory. I.E. `AICSImage.data` and `AICSImage.get_image_data` load the entire
-image into memory before performing their operation, and `AICSImage.dask_data` and
-`AICSImage.get_image_dask_data` do not load any image data until the user calls
-`compute` on the `dask.Array` object and only the requested chunk will be loaded into
-memory instead of the entire image.
-
-### Speed up IO and Processing with Dask Clients and Clusters
-If you have already spun up a `distributed.Client` object in your Python process or
-your processing is running on a distributed worker, great, you will naturally gain IO
-and processing gains. If you haven't done that or don't know what either of those are,
-there are some utility functions to help construct and manage these for you.
-
-```python
-from aicsimageio import AICSImage, dask_utils
-
-# Create a local dask cluster and client for the duration of the context manager
-with AICSImage("filename.ome.tiff") as img:
-    # do your work like normal
-    print(img.dask_data.shape)
-
-# Specify arguments for the local cluster initialization
-with AICSImage("filename.ome.tiff", dask_kwargs={"nworkers": 4}) as img:
-    # do your work like normal
-    print(img.dask_data.shape)
-
-# Connect to a dask client for the duration of the context manager
-with AICSImage(
-    "filename.ome.tiff",
-    dask_kwargs={"address": "tcp://localhost:12345"}
-) as img:
-    # do your work like normal
-    print(img.dask_data.shape)
-
-# Or spawn a local cluster and / or connect to a client outside of a context manager
-# This uses the same "address" and dask kwargs as above
-# If you pass an address in, it will create and shutdown the client
-# and no cluster will be created.
-# Similar to AICSImage, these objects will be connected and useable
-# for the lifespan of the context manager.
-with dask_utils.cluster_and_client() as (cluster, client):
-
-    img1 = AICSImage("1.tiff")
-    img2 = AICSImage("2.tiff")
-    img3 = AICSImage("3.tiff")
-
-    # Do your image processing work
-```
-
-**Note:** The `AICSImage` context manager and the `dask_utils` module require that the
-processing machine or container have networking capabilities enabled to function
-properly.
-
+utilizes delayed reading. If not, the requested image will be loaded immediately and
+the internal implementation may result in loading the entire image even if only a small
+chunk was requested. Currently, `AICSImage.data` and `AICSImage.get_image_data` load
+and cache the entire image in memory before performing their operation.
+`AICSImage.dask_data` and `AICSImage.get_image_dask_data` do not load any image data
+until the user calls `compute` on the `dask.Array` object and only the requested chunk
+will be loaded into memory instead of the entire image.
 
 ### Metadata Reading
 ```python
@@ -131,39 +85,21 @@ img.metadata  # returns the metadata object for this image type
 img.get_channel_names()  # returns a list of string channel names found in the metadata
 ```
 
-### Napari Interactive Viewer
+## Performance Considerations
+* **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
+or `Reader` equivalents.
+* **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+`AICSImage.get_image_dask_data`, or `Reader` equivalents.
+
+## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
 tends to interact with.
-```python
-from aicsimageio import AICSImage
-
-# Get an AICSImage object
-img = AICSImage("my_file.tiff")
-img.view_napari()  # launches napari GUI and viewer
-```
 
 We have also released
 [napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
-that allows use of all the functionality described here, but in the `napari` default
-viewer itself.
-
-
-## Performance Considerations
-* **If your image fits into memory and you are not using a distributed cluster:** use
-`AICSImage.data` or `Reader.data` which are generally optimal.
-* **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
-get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
-specific chunk of data from the image.
-* **If you are using a distributed cluster:** all functions and properties in the
-library are generally optimal.
-* **If you are using a distributed cluster with less than ~6 workers:** use
-`aicsimageio.use_dask(False)`. From our testing, 6 workers is the bare minimum for
-read time reduction compared to no cluster usage.
-* When using a `dask` array, it is important to know when to `compute` or
-`persist` data and when to keep chaining computation.
-[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
-
+that allows use of all the functionality described in this library, but in the `napari`
+default viewer itself.
 
 ## Notes
 * Image `data` and `dask_data` are always returned as six dimensional in dimension

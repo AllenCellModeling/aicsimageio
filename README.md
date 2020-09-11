@@ -15,7 +15,7 @@ Pure Python
     * `OME-TIFF`
     * `TIFF`
     * `LIF`
-    * Any additional format supported by [`imageio`](https://github.com/imageio/imageio)
+    * Any additional format supported by [imageio](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
 
@@ -117,12 +117,13 @@ img = AICSImage("http://my-website.com/my_file.tiff")
 
 #### Quickstart Notes
 In short, if the word "dask" appears in the function or property name, the function
-utilizes delayed reading, if not, the underlying operation is backed by the image fully
-read into memory. I.E. `AICSImage.data` and `AICSImage.get_image_data` load the entire
-image into memory before performing their operation, and `AICSImage.dask_data` and
-`AICSImage.get_image_dask_data` do not load any image data until the user calls
-`compute` on the `dask.Array` object and only the requested chunk will be loaded into
-memory instead of the entire image.
+utilizes delayed reading. If not, the requested image will be loaded immediately and
+the internal implementation may result in loading the entire image even if only a small
+chunk was requested. Currently, `AICSImage.data` and `AICSImage.get_image_data` load
+and cache the entire image in memory before performing their operation.
+`AICSImage.dask_data` and `AICSImage.get_image_dask_data` do not load any image data
+until the user calls `compute` on the `dask.Array` object and only the requested chunk
+will be loaded into memory instead of the entire image.
 
 ### Metadata Reading
 ```python
@@ -137,30 +138,21 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
-### Napari Interactive Viewer
+## Performance Considerations
+* **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
+or `Reader` equivalents.
+* **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+`AICSImage.get_image_dask_data`, or `Reader` equivalents.
+
+## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
-tends to interact with. If you would like the distributed reading and delayed benefits
-of `aicsimageio` while using `napari` please install
-[napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio).
+tends to interact with.
 
-
-## Performance Considerations
-* **If your image fits into memory and you are not using a distributed cluster:** use
-`AICSImage.data` or `Reader.data` which are generally optimal. You can also use this to
-preload the data before using `get_image_data`.
-* **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
-get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
-specific chunk of data from the image.
-* **If you are using a distributed cluster with more than ~6 workers:** all functions
-and properties in the library are generally optimal.
-* **If you are using a distributed cluster with less than ~6 workers:** use
-`aicsimageio.use_dask(False)`. From our testing, 6 workers is the bare minimum for
-read time reduction compared to no cluster usage.
-* When using a `dask` array, it is important to know when to `compute` or
-`persist` data and when to keep chaining computation.
-[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
-
+We have also released
+[napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
+that allows use of all the functionality described in this library, but in the `napari`
+default viewer itself.
 
 ## Notes
 * Image `data` and `dask_data` are always returned as five dimensional in dimension

@@ -5,7 +5,7 @@ in terms of whether to accept new functionality, changes to existing functionali
 changes to package administrative tasks, etc. It serves as a reference for core
 developers in guiding their work, and, as an introduction for newcomers who want to
 learn where the project is headed and what the team's values are. You can also learn
-how the project is managed by looking at our [governance model](./governance.html).
+how the project is managed by looking at our [governance model](./GOVERNANCE.html).
 
 ## Mission
 
@@ -40,7 +40,7 @@ proprietary file formats and metadata selection are in need of support.
 ## Values
 * We are **inclusive**. We welcome and mentor newcomers who are making their first
 contribution and strive to grow our most dedicated contributors into core developers. We
-have a [Code of Conduct](./code_of_conduct.html) to ensure that the AICSImageIO remains
+have a [Code of Conduct](./CODE_OF_CONDUCT.html) to ensure that the AICSImageIO remains
 a welcoming place for all.
 * We are **community-driven**. We respond to feature requests and proposals on our
 [issue tracker](https://github.com/AllenCellModeling/aicsimageio/issues) and make

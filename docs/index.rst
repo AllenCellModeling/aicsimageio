@@ -7,10 +7,10 @@ Welcome to aicsimageio's documentation!
    :caption: Contents:
 
    Overview <self>
-   Installation <installation>
+   Installation <INSTALLATION>
    Package modules <modules>
    Developer Resources <developer_resources>
-   Changelog <changelog>
+   Changelog <CHANGELOG>
 
 .. mdinclude:: ../README.md
 

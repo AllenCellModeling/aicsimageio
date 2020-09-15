@@ -125,6 +125,18 @@ class AICSImage:
         -------
         scenes: List[int]
             A list of valid scene ids in the file.
+
+        Notes
+        -----
+        Scene IDs are not a range of integers.
+
+        When iterating over scenes please use:
+
+        >>> for id in image.scenes
+
+        and not:
+
+        >>> for i in range(len(image.scenes))
         """
         pass
 

@@ -7,7 +7,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.7, 3.8]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -31,7 +31,6 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python
@@ -46,3 +45,20 @@ jobs:
       run: |
         flake8 aicsimageio --count --verbose --show-source --statistics
         black --check --exclude vendor aicsimageio
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install .[all]
+    - name: Generate Docs
+      run: |
+        gitchangelog
+        make gen-docs

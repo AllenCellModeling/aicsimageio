@@ -12,6 +12,7 @@ requirements = [
     "aicspylibczi>=2.5.0",
     "dask>=2.9.0",
     "distributed>=2.9.3",
+    "fsspec>=0.7.4",
     "numpy>=1.16",
     "imagecodecs>=2020.2.18",
     "imageio[ffmpeg]>=2.3.0",
@@ -70,18 +71,12 @@ extra_requirements = {
     "test": test_requirements,
     "dev": dev_requirements,
     "benchmark": benchmark_requirements,
-    "all": [
-        *requirements,
-        *dev_requirements,
-    ]
+    "all": [*requirements, *dev_requirements],
 }
 
 setup(
     author="Allen Institute for Cell Science",
-    author_email=(
-        "jacksonb@alleninstitute.org, "
-        "bowdenm@spu.edu"
-    ),
+    author_email=("jacksonb@alleninstitute.org, " "bowdenm@spu.edu"),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
@@ -89,7 +84,6 @@ setup(
         "Intended Audience :: Education",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
@@ -106,7 +100,7 @@ setup(
     keywords="aicsimageio, allen cell, imaging, computational biology",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,
@@ -114,6 +108,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.2.2",
+    version="3.3.0",
     zip_safe=False,
 )

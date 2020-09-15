@@ -4,7 +4,8 @@
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
 
-Delayed Parallel Image Reading for Microscopy Images in Python
+Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in
+Pure Python
 
 ---
 
@@ -14,7 +15,7 @@ Delayed Parallel Image Reading for Microscopy Images in Python
     * `OME-TIFF`
     * `TIFF`
     * `LIF`
-    * Any additional format supported by [`imageio`](https://github.com/imageio/imageio)
+    * Any additional format supported by [imageio](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
 
@@ -26,124 +27,141 @@ Delayed Parallel Image Reading for Microscopy Images in Python
 For full package documentation please visit
 [allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
-## Quick Start
+## Quickstart
 
 ### Full Image Reading
 ```python
 from aicsimageio import AICSImage, imread
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
-img.data  # returns 6D STCZYX numpy array
-img.dims  # returns string "STCZYX"
-img.shape  # returns tuple of dimension sizes in STCZYX order
+img = AICSImage("my_file.tiff")  # selects the first scene found
+img.data  # returns 5D TCZYX numpy array
+img.dims  # returns a Dimensions object
+img.dims.order  # returns string "TCZYX"
+img.dims.X  # returns size of X dimension
+img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 
-# Get 6D STCZYX numpy array
-data = imread("my_file.tiff")
+# Get the id of the current operating scene
+img.current_scene
+
+# Get a list valid scene ids
+img.scenes
+
+# Change scene
+img.set_scene(1)
+
+# Same operations on a different scene
+img.data  # returns 5D TCZYX numpy array
+img.dims  # returns a Dimensions object
+img.dims.order  # returns string "TCZYX"
+img.dims.X  # returns size of X dimension
+img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
+
+# Get 5D TCZYX numpy array
+data = imread("my_file.tiff")  # optionally provide a scene id, default first
 ```
 
-### Delayed Image Slice Reading
+### Delayed Image Reading
 ```python
 from aicsimageio import AICSImage, imread_dask
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
-img.dask_data  # returns 6D STCZYX dask array
-img.dims  # returns string "STCZYX"
-img.shape  # returns tuple of dimension sizes in STCZYX order
-img.size("STC")  # returns tuple of dimensions sizes for just STC
-img.get_image_data("CZYX", S=0, T=0)  # returns 4D CZYX numpy array
-img.get_image_dask_data("CZYX", S=0, T=0)  # returns 4D CZYX dask array
+img = AICSImage("my_file.tiff")  # selects the first scene found
+img.dask_data  # returns 5D TCZYX dask array
+img.dims  # returns a Dimensions object
+img.dims.order  # returns string "TCZYX"
+img.dims.X  # returns size of X dimension
+img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
 
-# Read specified portion of dask array
-lazy_s0t0 = img.get_image_dask_data("CZYX", S=0, T=0)  # returns 4D CZYX dask array
-s0t0 = lazy_s0t0.compute()  # returns 4D CZYX numpy array
+# Get the id of the current operating scene
+img.current_scene
 
-# Or use normal numpy array slicing
-lazy_data = imread_dask("my_file.tiff")
-lazy_s0t0 = lazy_data[0, 0, :]
-s0t0 = lazy_s0t0.compute()
+# Get a list valid scene ids
+img.scenes
+
+# Change scene
+img.set_scene(1)
+
+# Same operations on a different scene
+img.dask_data  # returns 5D TCZYX dask array
+img.dims  # returns a Dimensions object
+img.dims.order  # returns string "TCZYX"
+img.dims.X  # returns size of X dimension
+img.shape  # returns tuple of dimension sizes in TCZYX order
+img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
+
+# Read a specified portion of dask array
+lazy_t0 = img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
+t0 = lazy_t0.compute()  # returns 4D CZYX numpy array
+
+# Get a 5D TCZYX dask array
+lazy_data = imread_dask("my_file.tiff")  # optionally provide a scene id, default first
+lazy_t0 = lazy_data[0, :]
+t0 = lazy_t0.compute()
 ```
 
-
-### Speed up IO and Processing with Dask Clients and Clusters
-If you have already spun up a `distributed.Client` object in your Python process or
-your processing is running on a distributed worker, great, you will naturally gain IO
-and processing gains. If you haven't done that or don't know what either of those are,
-there are some utility functions to help construct and manage these for you.
-
+### Remote Image Reading
 ```python
-from aicsimageio import AICSImage, dask_utils
+from aicsimageio import AICSImage
 
-# Spawn a local cluster
-# These objects will be connected and useable for the lifespan of the context manager.
-with dask_utils.cluster_and_client() as (cluster, client):
+# Get an AICSImage object
+img = AICSImage("s3://my-bucket/my_file.tiff")
+img = AICSImage("gcs://my-bucket/my_file.tiff")
+img = AICSImage("http://my-website.com/my_file.tiff")
 
-    img1 = AICSImage("1.tiff")
-    img2 = AICSImage("2.tiff")
-    img3 = AICSImage("3.tiff")
-
-    # Do your image processing work
-
-# Connect to a remote cluster
-# If you pass an address in, it will create and shutdown the client and no cluster will
-# be created. These objects will be connected and useable for the lifespan of the
-# context manager.
-with dask_utils.cluster_and_client(address="tcp://localhost:1234") as (cluster, client):
-
-    img1 = AICSImage("1.tiff")
-    img2 = AICSImage("2.tiff")
-    img3 = AICSImage("3.tiff")
-
-    # Do your image processing work
+# All other normal operations work just fine
 ```
 
-**Note:** The `dask_utils` module require that the processing machine or container have
-networking capabilities enabled to function properly.
-
+#### Quickstart Notes
+In short, if the word "dask" appears in the function or property name, the function
+utilizes delayed reading. If not, the requested image will be loaded immediately and
+the internal implementation may result in loading the entire image even if only a small
+chunk was requested. Currently, `AICSImage.data` and `AICSImage.get_image_data` load
+and cache the entire image in memory before performing their operation.
+`AICSImage.dask_data` and `AICSImage.get_image_dask_data` do not load any image data
+until the user calls `compute` on the `dask.Array` object and only the requested chunk
+will be loaded into memory instead of the entire image.
 
 ### Metadata Reading
 ```python
 from aicsimageio import AICSImage
 
 # Get an AICSImage object
-img = AICSImage("my_file.tiff")
+img = AICSImage("my_file.tiff")  # selects the first scene found
 img.metadata  # returns the metadata object for this image type
-img.get_channel_names()  # returns a list of string channel names found in the metadata
+img.channel_names  # returns a list of string channel names found in the metadata
+img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata
+img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
+img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
-### Napari Interactive Viewer
+## Performance Considerations
+* **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
+or `Reader` equivalents.
+* **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+`AICSImage.get_image_dask_data`, or `Reader` equivalents.
+
+## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
-tends to interact with. If you would like the distributed reading and delayed benefits
-of `aicsimageio` while using `napari` please install
-[`napari-aicsimageio`](https://github.com/AllenCellModeling/napari-aicsimageio).
+tends to interact with.
 
-
-## Performance Considerations
-* **If your image fits into memory and you are not using a distributed cluster:** use
-`AICSImage.data` or `Reader.data` which are generally optimal.
-* **If your image is too large to fit into memory:** use `AICSImage.get_image_data` to
-get a `numpy` array or `AICSImage.get_image_dask_data` to get a `dask` array for a
-specific chunk of data from the image.
-* **If you are using a distributed cluster:** all functions and properties in the
-library are generally optimal.
-* **If you are using a distributed cluster with less than ~6 workers:** use
-`aicsimageio.use_dask(False)`. From our testing, 6 workers is the bare minimum for
-read time reduction compared to no cluster usage.
-* When using a `dask` array, it is important to know when to `compute` or
-`persist` data and when to keep chaining computation.
-[Here is a good rundown on the trade offs.](https://stackoverflow.com/questions/41806850/dask-difference-between-client-persist-and-client-compute#answer-41807160)
-
+We have also released
+[napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
+that allows use of all the functionality described in this library, but in the `napari`
+default viewer itself.
 
 ## Notes
-* Image `data` and `dask_data` are always returned as six dimensional in dimension
-order `STCZYX` or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
+* Image `data` and `dask_data` are always returned as five dimensional in dimension
+order `TCZYX` or, `Time`, `Channel`, `Z`, `Y`, and `X`.
 * Each file format may use a different metadata parser it is dependent on the reader's
 implementation.
 * The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
 dimensions from the reader. If your file has dimensions outside of those, use the base
-reader classes `CziReader`, `OmeTiffReader`, `TiffReader`, or `DefaultReader`.
+reader classes.
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

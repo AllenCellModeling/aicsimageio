@@ -68,6 +68,7 @@ Additionally, much of the work produced for this library is built on the shoulde
 giants. Notably:
 * [Christoph Gohlke](https://www.lfd.uci.edu/~gohlke/) -- maintainer of `tifffile`,
 `czifile`, and the `imagecodecs` libraries
+* [Paul Watkins](https://github.com/elhuhdron) -- original creator of `pylibczi`
 * [OME and Bio-Formats Team](https://github.com/ome/bioformats) -- proprietary
 microscopy file format conversion and standards development
 * [Python-Bio-Formats Team](https://github.com/CellProfiler/python-bioformats) --

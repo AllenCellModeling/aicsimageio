@@ -7,10 +7,9 @@ from typing import NamedTuple, Union
 
 import dask.array as da
 import numpy as np
-from fsspec.spec import AbstractBufferedFile
 
 # IO Types
-PathLike = Union[str, Path, AbstractBufferedFile]
+PathLike = Union[str, Path]
 BytesLike = Union[bytes, BufferedIOBase]
 FileLike = Union[PathLike, BytesLike]
 ArrayLike = Union[np.ndarray, da.Array]

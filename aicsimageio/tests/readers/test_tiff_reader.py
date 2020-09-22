@@ -27,7 +27,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
             0,
         ),
         (
-            "s_3_t_1_c_1_z_1_RGB.tiff",
+            "s_1_t_1_c_3_z_1_RGB.tiff",
             (7548, 7548, 3),
             "YXC",
             np.uint16,

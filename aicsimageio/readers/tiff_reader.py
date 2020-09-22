@@ -130,7 +130,10 @@ class TiffReader(Reader):
             # Combine length of scenes and operating shape
             # Replace YX dims with empty dimensions
             operating_shape = (len(scenes), *operating_shape)
-            operating_shape = operating_shape[:-2] + (1, 1)
+            if scenes[0].keyframe.samplesperpixel != 1:  # if it's a multichannel (RGB)
+                operating_shape = operating_shape[:-3] + (1, 1, 1)
+            else:
+                operating_shape = operating_shape[:-2] + (1, 1)
 
             # Make ndarray for lazy arrays to fill
             lazy_arrays = np.ndarray(operating_shape, dtype=object)

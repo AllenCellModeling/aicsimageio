@@ -27,6 +27,13 @@ from aicsimageio.readers.tiff_reader import TiffReader
             0,
         ),
         (
+                "s_3_t_1_c_1_z_1_RGB.tiff",
+                (3, 1, 1, 1, 7548, 7548),
+                "STCZYX",
+                np.uint16,
+                0,
+        ),
+        (
             "s_1_t_1_c_10_z_1.ome.tiff",
             (10, 1736, 1776),
             "CYX",

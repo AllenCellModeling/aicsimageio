@@ -28,14 +28,6 @@ from aicsimageio.readers.lif_reader import LifReader
             ["Z", "Y", "X"],
         ),
         (
-                "s_3_t_1_c_1_z_1_RGB.lif",
-                (3, 1, 1, 1, 7548, 7548),
-                "STCZYX",
-                np.uint16,
-                0,
-                ["Z", "Y", "X"],
-        ),
-        (
             "s_1_t_4_c_2_z_1.lif",
             (1, 4, 2, 1, 614, 614),
             "STCZYX",

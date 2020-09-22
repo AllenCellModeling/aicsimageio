@@ -205,7 +205,7 @@ class TiffReader(Reader):
                 single_scene_dims = scenes[0].pages.axes
                 if scenes[0].keyframe.samplesperpixel != 1:
                     # if it's an RGB pixeltype then map Samples (S) to Channels (C)
-                    single_scene_dims = single_scene_dims.replace('S', 'C')
+                    single_scene_dims = single_scene_dims.replace("S", "C")
 
                 # We can sometimes trust the dimension info in the image
                 if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):

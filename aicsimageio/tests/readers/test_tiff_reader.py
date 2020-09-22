@@ -28,7 +28,7 @@ from aicsimageio.readers.tiff_reader import TiffReader
         ),
         (
                 "s_3_t_1_c_1_z_1_RGB.tiff",
-                (3, 1, 1, 1, 7548, 7548),
+                (7548, 7548, 3),
                 "YXS",
                 np.uint16,
                 0,

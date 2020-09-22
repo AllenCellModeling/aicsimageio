@@ -130,9 +130,10 @@ class TiffReader(Reader):
             # Combine length of scenes and operating shape
             # Replace YX dims with empty dimensions
             operating_shape = (len(scenes), *operating_shape)
-            if scenes[0].keyframe.samplesperpixel != 1:  # if it's a multichannel (RGB)
+            if scenes[self.specific_s_index].keyframe.samplesperpixel != 1:
+                # if it's a multichannel (RGB) we need to pull in the channels as well
                 operating_shape = operating_shape[:-3] + (1, 1, 1)
-            else:
+            else:  # the data is a 2D (Y, X) so read 2D planes
                 operating_shape = operating_shape[:-2] + (1, 1)
 
             # Make ndarray for lazy arrays to fill
@@ -198,6 +199,9 @@ class TiffReader(Reader):
             # Get a single scenes dimensions in order
             with TiffFile(self._file) as tiff:
                 single_scene_dims = tiff.series[0].pages.axes
+                if tiff.series[0].keyframe.samplesperpixel != 1:
+                    # if it's an RGB pixeltype then map Samples (S) to Channels (C)
+                    single_scene_dims = single_scene_dims.replace('S', 'C')
 
                 # We can sometimes trust the dimension info in the image
                 if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):

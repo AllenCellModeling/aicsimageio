@@ -130,7 +130,11 @@ class TiffReader(Reader):
             # Combine length of scenes and operating shape
             # Replace YX dims with empty dimensions
             operating_shape = (len(scenes), *operating_shape)
-            operating_shape = operating_shape[:-2] + (1, 1)
+            if scenes[0].keyframe.samplesperpixel != 1:
+                # if it's a multichannel (RGB) we need to pull in the channels as well
+                operating_shape = operating_shape[:-3] + (1, 1, 1)
+            else:  # the data is a 2D (Y, X) so read 2D planes
+                operating_shape = operating_shape[:-2] + (1, 1)
 
             # Make ndarray for lazy arrays to fill
             lazy_arrays = np.ndarray(operating_shape, dtype=object)
@@ -194,7 +198,18 @@ class TiffReader(Reader):
         if self._dims is None:
             # Get a single scenes dimensions in order
             with TiffFile(self._file) as tiff:
-                single_scene_dims = tiff.series[0].pages.axes
+                scenes = tiff.series
+                if not self._scene_shape_is_consistent(tiff, S=self.specific_s_index):
+                    scenes = [scenes[self.specific_s_index]]
+
+                single_scene_dims = scenes[0].pages.axes
+                if scenes[0].keyframe.samplesperpixel != 1:
+                    # if it's an RGB pixeltype then map Samples (S) to Channels (C)
+                    if "C" in single_scene_dims:
+                        msg = "MultiChannel RGB tif images are not currently supported."
+                        raise exceptions.UnsupportedFileFormatError(msg)
+                    else:
+                        single_scene_dims = single_scene_dims.replace("S", "C")
 
                 # We can sometimes trust the dimension info in the image
                 if all([d in Dimensions.DefaultOrder for d in single_scene_dims]):

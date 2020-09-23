@@ -27,6 +27,13 @@ from aicsimageio.readers.tiff_reader import TiffReader
             0,
         ),
         (
+            "s_1_t_1_c_3_z_1_RGB.tiff",
+            (7548, 7548, 3),
+            "YXC",
+            np.uint16,
+            0,
+        ),
+        (
             "s_1_t_1_c_10_z_1.ome.tiff",
             (10, 1736, 1776),
             "CYX",
@@ -46,6 +53,14 @@ from aicsimageio.readers.tiff_reader import TiffReader
             "SZCYX",
             np.uint16,
             0,
+        ),
+        pytest.param(
+            "s_1_t_1_c_6_z_1_RGB.tiff",
+            (2, 32, 32, 3),
+            "CYXC",
+            np.uint8,
+            0,
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "example.txt",

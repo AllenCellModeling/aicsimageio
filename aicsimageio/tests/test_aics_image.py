@@ -477,3 +477,31 @@ def test_aicsimage_serialize(
 
     # Check that there are no open file pointers after retrieval
     assert str(f) not in [f.path for f in proc.open_files()]
+
+
+@pytest.mark.parametrize(
+    "filename, expected_dims, expected_shape",
+    [
+        ("s_1_t_1_c_3_z_1_RGB.tiff", "STCZYX", (1, 1, 3, 1, 7548, 7548)),
+        pytest.param(
+            "s_1_t_1_c_6_z_1_RGB.tiff",
+            "STCZYX",
+            None,
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
+    ],
+)
+def test_rgb_images(
+    resources_dir,
+    filename,
+    expected_dims,
+    expected_shape,
+):
+    # Get file
+    f = resources_dir / filename
+
+    # Read file
+    img = AICSImage(f)
+
+    assert img.dims == expected_dims
+    assert img.shape == expected_shape

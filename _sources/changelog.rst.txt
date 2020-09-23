@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+Fix
+~~~
+- bugfix/tiff-rgb  (`#153
+  <https://github.com/AllenCellModeling/aicsimageio/pull/153>`_) [Jamie
+  Sherman]
+
+Other
+~~~~~
 - admin/cleanup-readme  (`#149
   <https://github.com/AllenCellModeling/aicsimageio/pull/149>`_)
   [Jackson Maxfield Brown]

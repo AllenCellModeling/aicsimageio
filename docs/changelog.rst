@@ -1,6 +1,22 @@
 Changelog
 =========
 
+v3.3.1 (2020-09-23)
+-------------------
+
+Fix
+~~~
+- bugfix/tiff-rgb  (`#153
+  <https://github.com/AllenCellModeling/aicsimageio/pull/153>`_) [Jamie
+  Sherman]
+
+Other
+~~~~~
+- admin/cleanup-readme  (`#149
+  <https://github.com/AllenCellModeling/aicsimageio/pull/149>`_)
+  [Jackson Maxfield Brown]
+
+
 v3.3.0 (2020-09-09)
 -------------------
 

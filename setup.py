@@ -91,8 +91,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Delayed parallel image reading, metadata parsing, and image writing for "
-        "microscopy formats in pure Python from the Allen Institute for Cell Science."
+        "Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy "
+        "Images in Pure Python"
     ),
     entry_points={},
     install_requires=requirements,

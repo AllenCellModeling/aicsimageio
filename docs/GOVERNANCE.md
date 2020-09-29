@@ -39,7 +39,7 @@ among other possibilities. Any community member can become a contributor, and
 all are encouraged to do so. By contributing to the project, community members
 can directly help to shape its future.
 
-Contributors are encouraged to read the [contributing guide](./CONTRIBUTING.html).
+Contributors are encouraged to read the [contributing guide](./CONTRIBUTING.md).
 
 ### Core developers
 
@@ -74,7 +74,7 @@ steering council currently consisting of:
 
 New members are added by nomination by a core developer. Nominees should have
 demonstrated long-term, continued commitment to the project and its
-[mission and values](./MISSION_AND_VALUES.html).
+[mission and values](./MISSION_AND_VALUES.md).
 
 ## Decision Making Process
 
@@ -84,7 +84,7 @@ place on the [issue tracker](https://github.com/AllenCellModeling/aicsimageio/is
 Occasionally, sensitive discussion may occur through a private core developer channel.
 
 Decisions should be made in accordance with the
-[mission and values](./MISSION_AND_VALUES.html) of the aicsimageio project.
+[mission and values](./MISSION_AND_VALUES.md) of the aicsimageio project.
 
 aicsimageio uses a “consensus seeking” process for making decisions. The group
 tries to find a resolution that has no open objections among core developers.

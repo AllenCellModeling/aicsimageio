@@ -33,7 +33,7 @@ reading are the crux of the issue (i.e. TIFF, CZI, LIF, etc.). Adding remote rea
 great for an initial 4.0 addition but _optimizing_ chunked remote reading wherever
 possible in future work of the 4.* series is a high priority.
 
-Our [benchmarks](./BENCHMARKS.html) will be incredibly useful in tracking and
+Our [benchmarks](./BENCHMARKS.md) will be incredibly useful in tracking and
 maintaining our performance.
 
 ## Make Writing n-dimensional Images with Partial or Complete Metadata Simple

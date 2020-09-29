@@ -5,7 +5,7 @@ in terms of whether to accept new functionality, changes to existing functionali
 changes to package administrative tasks, etc. It serves as a reference for core
 developers in guiding their work, and, as an introduction for newcomers who want to
 learn where the project is headed and what the team's values are. You can also learn
-how the project is managed by looking at our [governance model](./GOVERNANCE.html).
+how the project is managed by looking at our [governance model](./GOVERNANCE.md).
 
 ## Mission
 

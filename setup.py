@@ -17,7 +17,7 @@ requirements = [
     "imageio>=2.3.0",
     "readlif>=0.2.1",
     "lxml>=4.4.2",
-    "tifffile>=2019.7.26.2",
+    "tifffile>=2020.9.22",
     "toolz>=0.10.0",
 ]
 

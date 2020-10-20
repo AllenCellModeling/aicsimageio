@@ -1,22 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import time
 from typing import Dict, Set
 
 import dask.array as da
-import fsspec
 import imageio
 import numpy as np
 import xarray as xr
 from dask import delayed
 
 from .. import exceptions, types
-from ..dimensions import Dimensions
 from ..utils import io_utils
 from .reader import Reader
 
 ###############################################################################
+
 
 class DefaultReader(Reader):
     """
@@ -63,7 +61,6 @@ class DefaultReader(Reader):
         except ValueError:
             return False
 
-
     @property
     def scenes(self) -> Set[int]:
         return [0]
@@ -91,12 +88,13 @@ class DefaultReader(Reader):
 
     @staticmethod
     def _get_image_metadata(
-        abstract_file: types.FSSpecBased, mode: str, format: str,
+        abstract_file: types.FSSpecBased,
+        mode: str,
+        format: str,
     ) -> Dict:
         with abstract_file.fs.open(abstract_file.path) as open_resource:
             with imageio.get_reader(open_resource, format=format, mode=mode) as reader:
                 return reader.get_meta_data()
-
 
     def _read_delayed(self) -> xr.DataArray:
         # Read image
@@ -112,19 +110,21 @@ class DefaultReader(Reader):
                 else:
                     image_length = reader.get_length()
             except ValueError:
-                raise exception.IOHandlingError(
+                raise exceptions.IOHandlingError(
                     "This reader cannot read the provided buffer. "
                     "Please download the file locally before continuing your work."
                 )
 
             # Handle single image formats like png, jpeg, etc
             if image_length == 1:
-                image_data = da.from_array(self._get_image_data(
-                    abstract_file=self.abstract_file,
-                    mode=self.imageio_read_mode,
-                    format=self.extension,
-                    index=0
-                ))
+                image_data = da.from_array(
+                    self._get_image_data(
+                        abstract_file=self.abstract_file,
+                        mode=self.imageio_read_mode,
+                        format=self.extension,
+                        index=0,
+                    )
+                )
 
             # Handle many image formats like gif, mp4, etc
             elif image_length > 1:
@@ -133,7 +133,7 @@ class DefaultReader(Reader):
                     abstract_file=self.abstract_file,
                     mode=self.imageio_read_mode,
                     format=self.extension,
-                    index=0
+                    index=0,
                 )
 
                 # Create operating shape for the final dask array by prepending
@@ -168,14 +168,13 @@ class DefaultReader(Reader):
                 dims=[c for c in self.guess_dim_order(image_data.shape)],
                 # TODO:
                 # Solve this dask bug w/ delayed
-                # 
+                #
                 # attrs=delayed(self._get_image_metadata)(
                 #     abstract_file=self.abstract_file,
                 #     mode=self.imageio_read_mode,
                 #     format=self.extension,
                 # ),
             )
-
 
     def _read_immediate(self) -> xr.DataArray:
         # Read image
@@ -215,13 +214,12 @@ class DefaultReader(Reader):
                 attrs=reader.get_meta_data(),
             )
 
-            raise TypeError(path)
-
     def dims(self):
         pass
 
     def metadata(self):
         pass
+
 
 # BIG BUCK BUNNY 15 SECONDS:
 # "https://archive.org/embed/archive-video-files/test.mp4"

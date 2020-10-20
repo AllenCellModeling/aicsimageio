@@ -6,11 +6,12 @@ from typing import Union
 
 from fsspec.core import url_to_fs
 from fsspec.implementations.local import LocalFileOpener
-from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
+from fsspec.spec import AbstractBufferedFile
 
 from ..types import PathLike
 
 ###############################################################################
+
 
 def pathlike_to_fs(
     uri: PathLike,

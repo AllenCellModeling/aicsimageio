@@ -2,13 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Set, Tuple
 
 import dask.array as da
 import numpy as np
+import xarray as xr
 
 from .. import types
-from ..dimensions import Dimensions
+from ..dimensions import DEFAULT_DIMENSION_ORDER, Dimensions
 from ..types import PhysicalPixelSizes
 
 ###############################################################################
@@ -56,6 +57,22 @@ class Reader(ABC):
         dim_order: str
             The guessed dimension order.
         """
+        return DEFAULT_DIMENSION_ORDER[len(DEFAULT_DIMENSION_ORDER) - len(shape) :]
+
+    @staticmethod
+    @abstractmethod
+    def _assert_reader_supports_image(image: types.FSSpecBased) -> bool:
+        """
+        The per-Reader implementation of validating that an image is supported or not by
+        the Reader itself.
+
+        Notes
+        -----
+        Receives an fsspec implementation.
+        We cannot use `fsspec.spec.AbstractBufferedFile` as the input type because
+        local files return `LocalFileOpener` which does not inherit from
+        `AbstractBufferedFile`.
+        """
         pass
 
     @classmethod
@@ -82,12 +99,12 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def scenes(self) -> List[int]:
+    def scenes(self) -> Set[int]:
         """
         Returns
         -------
-        scenes: List[int]
-            A list of valid scene ids in the file.
+        scenes: Set[int]
+            A set of valid scene ids in the file.
 
         Notes
         -----
@@ -121,27 +138,22 @@ class Reader(ABC):
         ----------
         id: int
             The scene id to set as the operating scene.
-        """
-        pass
 
-    @staticmethod
-    @abstractmethod
-    def _assert_reader_supports_image(image: types.ImageLike) -> bool:
-        """
-        The per-Reader implementation of validating that an image is supported or not by
-        the Reader itself.
+        Raises
+        ------
+        IndexError: the provided scene id is not found in the available scene id list
         """
         pass
 
     @abstractmethod
-    def _read_delayed(self) -> da.Array:
+    def _read_delayed(self) -> xr.DataArray:
         """
-        The delayed dask array constructor for the image.
+        The delayed data array constructor for the image.
 
         Returns
         -------
-        dask_data: da.Array
-            The fully constructed delayed dask array.
+        data: xr.DataArray
+            The fully constructed delayed DataArray.
 
             It is additionally recommended to closely monitor how dask array chunks are
             managed.
@@ -149,14 +161,34 @@ class Reader(ABC):
         pass
 
     @abstractmethod
-    def _read_immediate(self) -> np.ndarray:
+    def _read_immediate(self) -> xr.DataArray:
         """
-        The immediate numpy array constructor for the image.
+        The immediate data array constructor for the image.
 
         Returns
         -------
-        data: np.ndarray
-            The fully read numpy array.
+        data: xr.DataArray
+            The fully read data array.
+        """
+        pass
+
+    @property
+    def xarray_dask_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_dask_data: xr.DataArray
+            The delayed image and metadata as an annotated data array.
+        """
+        pass
+
+    @property
+    def xarray_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_data: xr.DataArray
+            The fully read image and metadata as an annotated data array.
         """
         pass
 

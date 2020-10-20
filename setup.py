@@ -12,7 +12,7 @@ requirements = [
     "aicspylibczi>=2.5.0",
     "dask>=2.9.0",
     "distributed>=2.9.3",
-    "fsspec>=0.7.4",
+    "fsspec>=0.8.4",
     "numpy>=1.16",
     "imagecodecs>=2020.2.18",
     "imageio[ffmpeg]>=2.3.0",
@@ -20,6 +20,7 @@ requirements = [
     "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
     "toolz>=0.10.0",
+    "xarray>=0.16.0",
 ]
 
 setup_requirements = [

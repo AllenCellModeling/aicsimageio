@@ -16,8 +16,8 @@ from ..types import PhysicalPixelSizes
 
 
 class Reader(ABC):
-    _dask_data = None
-    _data = None
+    _dask_xarray = None
+    _xarray = None
     _dims = None
     _metadata = None
 

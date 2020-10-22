@@ -376,11 +376,16 @@ class DefaultReader(Reader):
                 attrs=metadata,
             )
 
+    @property
     def dims(self):
         pass
 
+    @property
     def metadata(self):
-        pass
+        if self._metadata is None:
+            self._metadata = self.xarray_dask_data.attrs
+
+        return self._metadata
 
 
 # BIG BUCK BUNNY 15 SECONDS:

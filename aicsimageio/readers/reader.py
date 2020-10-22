@@ -9,15 +9,15 @@ import numpy as np
 import xarray as xr
 
 from .. import types
-from ..dimensions import DEFAULT_DIMENSION_ORDER, Dimensions
+from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
 
 ###############################################################################
 
 
 class Reader(ABC):
-    _dask_xarray = None
-    _xarray = None
+    _xarray_dask_data = None
+    _xarray_data = None
     _dims = None
     _metadata = None
 
@@ -180,7 +180,10 @@ class Reader(ABC):
         xarray_dask_data: xr.DataArray
             The delayed image and metadata as an annotated data array.
         """
-        pass
+        if self._xarray_dask_data is None:
+            self._xarray_dask_data = self._read_delayed()
+
+        return self._xarray_dask_data
 
     @property
     def xarray_data(self) -> xr.DataArray:
@@ -190,7 +193,18 @@ class Reader(ABC):
         xarray_data: xr.DataArray
             The fully read image and metadata as an annotated data array.
         """
-        pass
+        if self._xarray_data is None:
+            self._xarray_data = self._read_immediate()
+
+            # Store dask data as rechunked dask array from the already in-mem
+            self._xarray_dask_data = xr.DataArray(
+                da.from_array(self._xarray_data.data),
+                dims=self._xarray_data.dims,
+                coords=self._xarray_data.coords,
+                attrs=self._xarray_data.attrs,
+            )
+
+        return self._xarray_data
 
     @property
     def dask_data(self) -> da.Array:
@@ -200,7 +214,7 @@ class Reader(ABC):
         dask_data: da.Array
             The image as a dask array with the native dimension ordering.
         """
-        pass
+        return self.xarray_dask_data.data
 
     @property
     def data(self) -> np.ndarray:
@@ -210,7 +224,7 @@ class Reader(ABC):
         data: np.ndarray
             The image as a numpy array with native dimension ordering.
         """
-        pass
+        return self.xarray_data.data
 
     @property
     def dtype(self) -> np.dtype:
@@ -220,7 +234,7 @@ class Reader(ABC):
         dtype: np.dtype
             Data-type of the image array's elements.
         """
-        pass
+        return self.xarray_dask_data.dtype
 
     @property
     def shape(self) -> Tuple[int]:
@@ -230,7 +244,7 @@ class Reader(ABC):
         shape: Tuple[int]
             Tuple of the image array's dimensions.
         """
-        pass
+        return self.xarray_dask_data.shape
 
     @property
     @abstractmethod
@@ -398,7 +412,7 @@ class Reader(ABC):
             Using available metadata, the list of strings representing channel names.
             If no channel dimension present in the data, returns None.
         """
-        pass
+        return list(self.xarray_dask_data[DimensionNames.Channel].values)
 
     @property
     def physical_pixel_size(self) -> PhysicalPixelSizes:

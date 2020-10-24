@@ -16,6 +16,13 @@ from .reader import Reader
 
 ###############################################################################
 
+REMOTE_READ_FAIL_MESSAGE = (
+    "Cannot read the provided file ({abstract_file_path}) remotely. "
+    "Please download the file locally before continuing your work."
+)
+
+###############################################################################
+
 
 class DefaultReader(Reader):
     """
@@ -171,8 +178,7 @@ class DefaultReader(Reader):
 
         Raises
         ------
-        exceptions.IOHandlingError: The provided file cannot be read from a remote
-            source.
+        IOError: The provided file cannot be read from a remote source.
         """
         try:
             with abstract_file.fs.open(abstract_file.path) as open_resource:
@@ -187,9 +193,8 @@ class DefaultReader(Reader):
                     return reader.get_length()
 
         except ValueError:
-            raise exceptions.IOHandlingError(
-                f"Cannot read the provided file ({abstract_file.path}) remotely. "
-                f"Please download the file locally before continuing your work."
+            raise IOError(
+                REMOTE_READ_FAIL_MESSAGE.format(abstract_file_path=abstract_file.path)
             )
 
     @staticmethod
@@ -252,77 +257,99 @@ class DefaultReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.abstract_file.fs.open(self.abstract_file.path) as open_resource:
-            with imageio.get_reader(
-                open_resource, format=self.extension, mode=self.imageio_read_mode
-            ) as reader:
-                # Store image length
-                image_length = self._get_image_length(
-                    self.abstract_file,
-                    format=self.extension,
-                    mode=self.imageio_read_mode,
-                )
+        self._warn_remote_chunked_read(self.abstract_file)
 
-                # Handle single image formats like png, jpeg, etc
-                if image_length == 1:
-                    image_data = da.from_array(
-                        self._get_image_data(
+        try:
+            with self.abstract_file.fs.open(self.abstract_file.path) as open_resource:
+                with imageio.get_reader(
+                    open_resource, format=self.extension, mode=self.imageio_read_mode
+                ) as reader:
+                    # Store image length
+                    image_length = self._get_image_length(
+                        self.abstract_file,
+                        format=self.extension,
+                        mode=self.imageio_read_mode,
+                    )
+
+                    # Handle single image formats like png, jpeg, etc
+                    if image_length == 1:
+                        image_data = da.from_array(
+                            self._get_image_data(
+                                abstract_file=self.abstract_file,
+                                format=self.extension,
+                                mode=self.imageio_read_mode,
+                                index=0,
+                            )
+                        )
+
+                    # Handle many image formats like gif, mp4, etc
+                    elif image_length > 1:
+                        # Get a sample image
+                        sample = self._get_image_data(
                             abstract_file=self.abstract_file,
                             format=self.extension,
                             mode=self.imageio_read_mode,
                             index=0,
                         )
+
+                        # Create operating shape for the final dask array by prepending
+                        # image length to a tuple of ones that is the same length as
+                        # the sample shape
+                        operating_shape = (image_length,) + ((1,) * len(sample.shape))
+                        # Create numpy array of empty arrays for delayed get data
+                        # functions
+                        lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                        for indicies, _ in np.ndenumerate(lazy_arrays):
+                            lazy_arrays[indicies] = da.from_delayed(
+                                delayed(self._get_image_data)(
+                                    abstract_file=self.abstract_file,
+                                    format=self.extension,
+                                    mode=self.imageio_read_mode,
+                                    index=indicies[0],
+                                ),
+                                shape=sample.shape,
+                                dtype=sample.dtype,
+                            )
+
+                        # Block them into a single dask array
+                        image_data = da.block(lazy_arrays.tolist())
+
+                    # Catch all other image types as unsupported
+                    # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
+                    else:
+                        raise exceptions.UnsupportedFileFormatError(self.extension)
+
+                    # Get basic metadata
+                    metadata = reader.get_meta_data()
+
+                    # Create extra metadata from assumptions based off image data
+                    dims, coords = self._unpack_dims_and_coords(image_data, metadata)
+
+                    return xr.DataArray(
+                        image_data,
+                        dims=dims,
+                        coords=coords,
+                        attrs=metadata,
                     )
 
-                # Handle many image formats like gif, mp4, etc
-                elif image_length > 1:
-                    # Get a sample image
-                    sample = self._get_image_data(
-                        abstract_file=self.abstract_file,
-                        format=self.extension,
-                        mode=self.imageio_read_mode,
-                        index=0,
-                    )
-
-                    # Create operating shape for the final dask array by prepending
-                    # image length to a tuple of ones that is the same length as
-                    # the sample shape
-                    operating_shape = (image_length,) + ((1,) * len(sample.shape))
-                    # Create numpy array of empty arrays for delayed get data
-                    # functions
-                    lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                    for indicies, _ in np.ndenumerate(lazy_arrays):
-                        lazy_arrays[indicies] = da.from_delayed(
-                            delayed(self._get_image_data)(
-                                abstract_file=self.abstract_file,
-                                format=self.extension,
-                                mode=self.imageio_read_mode,
-                                index=indicies[0],
-                            ),
-                            shape=sample.shape,
-                            dtype=sample.dtype,
-                        )
-
-                    # Block them into a single dask array
-                    image_data = da.block(lazy_arrays.tolist())
-
-                # Catch all other image types as unsupported
-                # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
-                else:
-                    raise exceptions.UnsupportedFileFormatError(self.extension)
-
-                # Get basic metadata
-                metadata = reader.get_meta_data()
-
-                # Create extra metadata from assumptions based off image data
-                dims, coords = self._unpack_dims_and_coords(image_data, metadata)
-
-                return xr.DataArray(
-                    image_data,
-                    dims=dims,
-                    coords=coords,
-                    attrs=metadata,
+        # Some FFMPEG formats and reading just suck
+        # If they can't get metadata remotely they throw an OSError because ffmpeg is
+        # ran through subprocess (I believe)
+        # If we let the stack trace go, user would receive:
+        #
+        # OSError: Could not load meta information
+        # === stderr ===
+        #
+        # ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
+        # Copyright (c) # 2000-2019 the FFmpeg developers
+        # ...
+        # /tmp/imageio_cbof2u37: Invalid data found when processing input
+        except OSError:
+            raise IOError(
+                REMOTE_READ_FAIL_MESSAGE.format(
+                    abstract_file_path=self.abstract_file.path
                 )
+            )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -339,46 +366,63 @@ class DefaultReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        # Read image
-        with self.abstract_file.fs.open(self.abstract_file.path) as open_resource:
-            reader = imageio.get_reader(
-                open_resource, format=self.extension, mode=self.imageio_read_mode
+        try:
+            # Read image
+            with self.abstract_file.fs.open(self.abstract_file.path) as open_resource:
+                reader = imageio.get_reader(
+                    open_resource, format=self.extension, mode=self.imageio_read_mode
+                )
+
+                # Store image length
+                image_length = self._get_image_length(
+                    self.abstract_file, format=self.extension, mode=self.imageio_read_mode
+                )
+
+                # Handle single-image formats like png, jpeg, etc
+                if image_length == 1:
+                    image_data = reader.get_data(0)
+
+                # Handle many image formats like gif, mp4, etc
+                elif image_length > 1:
+                    # Read and stack all frames
+                    frames = []
+                    for i, frame in enumerate(reader.iter_data()):
+                        frames.append(frame)
+
+                    image_data = np.stack(frames)
+
+                # Get basic metadata
+                metadata = reader.get_meta_data()
+
+                # Create extra metadata from assumptions based off image data
+                dims, coords = self._unpack_dims_and_coords(image_data, metadata)
+
+                return xr.DataArray(
+                    image_data,
+                    dims=dims,
+                    coords=coords,
+                    attrs=metadata,
+                )
+
+        # Some FFMPEG formats and reading just suck
+        # If they can't get metadata remotely they throw an OSError because ffmpeg is
+        # ran through subprocess (I believe)
+        # If we let the stack trace go, user would receive:
+        #
+        # OSError: Could not load meta information
+        # === stderr ===
+        #
+        # ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
+        # Copyright (c) # 2000-2019 the FFmpeg developers
+        # ...
+        # /tmp/imageio_cbof2u37: Invalid data found when processing input
+        except OSError:
+            raise IOError(
+                REMOTE_READ_FAIL_MESSAGE.format(
+                    abstract_file_path=self.abstract_file.path
+                )
             )
 
-            # Store image length
-            image_length = self._get_image_length(
-                self.abstract_file, format=self.extension, mode=self.imageio_read_mode
-            )
-
-            # Handle single-image formats like png, jpeg, etc
-            if image_length == 1:
-                image_data = reader.get_data(0)
-
-            # Handle many image formats like gif, mp4, etc
-            elif image_length > 1:
-                # Read and stack all frames
-                frames = []
-                for i, frame in enumerate(reader.iter_data()):
-                    frames.append(frame)
-
-                image_data = np.stack(frames)
-
-            # Get basic metadata
-            metadata = reader.get_meta_data()
-
-            # Create extra metadata from assumptions based off image data
-            dims, coords = self._unpack_dims_and_coords(image_data, metadata)
-
-            return xr.DataArray(
-                image_data,
-                dims=dims,
-                coords=coords,
-                attrs=metadata,
-            )
-
-    @property
-    def dims(self):
-        pass
 
     @property
     def metadata(self):

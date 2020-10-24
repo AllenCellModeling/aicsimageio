@@ -3,7 +3,7 @@
 
 from io import BufferedIOBase
 from pathlib import Path
-from typing import NamedTuple, Union
+from typing import NamedTuple, Optional, Union
 
 import dask.array as da
 import numpy as np
@@ -22,6 +22,6 @@ ImageLike = Union[FileLike, ArrayLike]
 
 # Image Utility Types
 class PhysicalPixelSizes(NamedTuple):
-    Z: float
-    Y: float
-    X: float
+    Z: Optional[float]
+    Y: Optional[float]
+    X: Optional[float]

@@ -63,7 +63,7 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _assert_reader_supports_image(image: types.FSSpecBased) -> bool:
+    def _reader_supports_image(image: types.FSSpecBased) -> bool:
         """
         The per-Reader implementation of validating that an image is supported or not by
         the Reader itself.
@@ -78,7 +78,7 @@ class Reader(ABC):
         pass
 
     @classmethod
-    def assert_reader_supports_image(cls, image: types.ImageLike) -> bool:
+    def reader_supports_image(cls, image: types.ImageLike) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 
@@ -455,7 +455,7 @@ class Reader(ABC):
         return list(self.xarray_dask_data[DimensionNames.Channel].values)
 
     @property
-    def physical_pixel_size(self) -> PhysicalPixelSizes:
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
         """
         Returns
         -------

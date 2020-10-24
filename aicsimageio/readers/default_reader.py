@@ -11,6 +11,7 @@ from dask import delayed
 
 from .. import exceptions, types
 from ..dimensions import DimensionNames
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
 
@@ -74,6 +75,10 @@ class DefaultReader(Reader):
             self.abstract_file
         )
 
+        # Enforce valid image
+        if not self._reader_supports_image(self.abstract_file):
+            raise exceptions.UnsupportedFileFormatError(self.extension)
+
     @staticmethod
     def guess_dim_order(shape: Tuple[int]) -> str:
         if len(shape) == 2:
@@ -92,7 +97,7 @@ class DefaultReader(Reader):
         return Reader.guess_dim_order(shape)
 
     @staticmethod
-    def _assert_reader_supports_image(image: types.FSSpecBased) -> bool:
+    def _reader_supports_image(image: types.FSSpecBased) -> bool:
         # Get extension and mode for reading the file
         extension, mode = DefaultReader._get_extension_and_mode(image)
 
@@ -102,7 +107,7 @@ class DefaultReader(Reader):
                 with imageio.get_reader(open_resource, format=extension, mode=mode):
                     return True
 
-        except ValueError:
+        except (ValueError, IndexError):
             return False
 
     @property
@@ -375,7 +380,9 @@ class DefaultReader(Reader):
 
                 # Store image length
                 image_length = self._get_image_length(
-                    self.abstract_file, format=self.extension, mode=self.imageio_read_mode
+                    self.abstract_file,
+                    format=self.extension,
+                    mode=self.imageio_read_mode,
                 )
 
                 # Handle single-image formats like png, jpeg, etc
@@ -423,13 +430,16 @@ class DefaultReader(Reader):
                 )
             )
 
-
     @property
     def metadata(self):
         if self._metadata is None:
             self._metadata = self.xarray_dask_data.attrs
 
         return self._metadata
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        return PhysicalPixelSizes(None, 1.0, 1.0)
 
 
 # BIG BUCK BUNNY 15 SECONDS:

@@ -37,7 +37,8 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "quilt3>=3.1.12",
+    "quilt3>=3.1.12",  # downloading test resources locally
+    "s3fs>=0.5.1",  # remote reading
 ]
 
 dev_requirements = [

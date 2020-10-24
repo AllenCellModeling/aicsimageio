@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 from abc import ABC, abstractmethod
 from typing import Any, List, Optional, Set, Tuple
 
 import dask.array as da
 import numpy as np
 import xarray as xr
+from fsspec.spec import AbstractBufferedFile
 
 from .. import types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
@@ -144,6 +146,22 @@ class Reader(ABC):
         IndexError: the provided scene id is not found in the available scene id list
         """
         pass
+
+    @staticmethod
+    def _warn_remote_chunked_read(abstract_file: types.FSSpecBased):
+        """
+        Checks if the file is remote and if so warns of chunked reading failure.
+
+        Parameters
+        ----------
+        abstract_file: types.FSSpecBased
+            The file to check.
+        """
+        if isinstance(abstract_file, AbstractBufferedFile):
+            warnings.warn(
+                "Remote chunked reading (using the *_dask_* properties) will result in "
+                "failures for this file type."
+            )
 
     @abstractmethod
     def _read_delayed(self) -> xr.DataArray:

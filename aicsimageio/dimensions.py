@@ -14,10 +14,15 @@ class DimensionNames:
     SpatialX = "X"
 
 
-DEFAULT_DIMENSION_ORDER = (
-    f"{DimensionNames.Time}{DimensionNames.Channel}"
-    f"{DimensionNames.SpatialZ}{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
-)
+DEFAULT_DIMENSION_ORDER_LIST = [
+    DimensionNames.Time,
+    DimensionNames.Channel,
+    DimensionNames.SpatialZ,
+    DimensionNames.SpatialY,
+    DimensionNames.SpatialX,
+]
+
+DEFAULT_DIMENSION_ORDER = "".join(DEFAULT_DIMENSION_ORDER_LIST)
 
 ###############################################################################
 

@@ -10,7 +10,7 @@ import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractBufferedFile
 
-from .. import types
+from .. import transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
 
@@ -342,7 +342,17 @@ class Reader(ABC):
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        pass
+        # If no out orientation, simply return current data as dask array
+        if dimension_order_out is None:
+            return self.dask_data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.dask_data,
+            given_dims=self.dims.order,
+            return_dims=dimension_order_out,
+            **kwargs,
+        )
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs
@@ -410,7 +420,17 @@ class Reader(ABC):
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        pass
+        # If no out orientation, simply return current data as dask array
+        if dimension_order_out is None:
+            return self.data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims.order,
+            return_dims=dimension_order_out,
+            **kwargs,
+        )
 
     @property
     @abstractmethod

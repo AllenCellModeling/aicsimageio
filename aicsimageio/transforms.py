@@ -4,7 +4,7 @@
 from collections import Counter
 
 from . import types
-from .constants import Dimensions
+from .dimensions import DEFAULT_DIMENSION_ORDER_LIST
 from .exceptions import ConflictingArgumentsError
 
 ###############################################################################
@@ -141,7 +141,7 @@ def reshape_data(
     ... example = reshape_data(data, "CYX", "BSTCZYX", C=slice(0, -1, 3))
     """
     # Check for parameter conflicts
-    for dim in Dimensions.DefaultOrderList:
+    for dim in DEFAULT_DIMENSION_ORDER_LIST:
         # return_dims='TCZYX' and fixed dimensions 'C=1'
         # Dimension is in kwargs
         # Dimension is an integer

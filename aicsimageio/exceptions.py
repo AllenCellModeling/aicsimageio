@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 
 
-class IOHandlingError(Exception):
+class ConflictingArgumentsError(Exception):
+    """
+    This exception is returned when 2 arguments to the same function are in conflict.
+    """
+
     pass
 
 

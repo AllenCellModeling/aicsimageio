@@ -8,9 +8,11 @@ from typing import NamedTuple, Union
 import dask.array as da
 import numpy as np
 import xarray as xr
+from fsspec.implementations.local import LocalFileOpener
+from fsspec.spec import AbstractBufferedFile
 
 # IO Types
-FSSpecBased = "fsspec-based"
+FSSpecBased = Union[AbstractBufferedFile, LocalFileOpener]
 PathLike = Union[str, Path]
 BytesLike = Union[bytes, BufferedIOBase]
 FileLike = Union[PathLike, BytesLike]

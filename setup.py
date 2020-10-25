@@ -32,6 +32,7 @@ setup_requirements = [
 test_requirements = [
     "black>=19.10b0",
     "codecov>=2.1.4",
+    "distributed>=2.9.0",
     "docutils>=0.10,<0.16",
     "flake8>=3.8.3",
     "flake8-debugger>=3.2.1",

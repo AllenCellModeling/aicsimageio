@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pickle
 from typing import List, Optional, Set, Tuple
 
 import numpy as np
+from distributed.protocol import deserialize, serialize
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from psutil import Process
@@ -25,8 +25,8 @@ def check_local_file_not_open(fs: AbstractFileSystem, path: str):
 
 def check_can_serialize_reader(reader: Reader):
     # Dump and reconstruct
-    _bytes = pickle.dumps(reader)
-    reconstructed = pickle.loads(_bytes)
+    header, frames = serialize(reader)
+    reconstructed = deserialize(header, frames)
 
     # Assert primary attrs are equal
     if reader._xarray_data is None:

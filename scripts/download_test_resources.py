@@ -40,7 +40,7 @@ class Args(argparse.Namespace):
         p.add_argument(
             "--top-hash",
             # Generated package hash from upload_test_resources
-            default="fb3aa3dccf08aab89031b63d84fc466e4a7c25a54ef80da21797302360ab3c6c",
+            default="be58d5297245eb07ab1d8c5a180b6e2fcc150cf2bb6b506dd02943874354dfbc",
             help="A specific version of the package to retrieve.",
         )
         p.add_argument(

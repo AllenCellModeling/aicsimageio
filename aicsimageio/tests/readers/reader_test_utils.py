@@ -8,6 +8,7 @@ from distributed.protocol import deserialize, serialize
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from psutil import Process
+from xarray.testing import assert_equal
 
 from aicsimageio import types
 from aicsimageio.readers.reader import Reader
@@ -24,7 +25,18 @@ def check_local_file_not_open(fs: AbstractFileSystem, path: str):
 
 def check_can_serialize_reader(reader: Reader):
     # Dump and reconstruct
-    deserialize(*serialize(reader))
+    reconstructed = deserialize(*serialize(reader))
+
+    # Assert primary attrs are equal
+    if reader._xarray_data is None:
+        assert reconstructed._xarray_data is None
+    else:
+        assert_equal(reader._xarray_data, reconstructed._xarray_data)
+
+    if reader._xarray_dask_data is None:
+        assert reconstructed._xarray_dask_data is None
+    else:
+        assert_equal(reader._xarray_dask_data, reconstructed._xarray_dask_data)
 
 
 def run_image_read_checks(

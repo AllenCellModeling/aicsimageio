@@ -5,6 +5,7 @@ import pickle
 from typing import List, Optional, Set, Tuple
 
 import numpy as np
+from distributed import Client
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from psutil import Process
@@ -92,6 +93,17 @@ def run_image_read_checks(
     # Check that the shape and dtype are expected after reading in full
     assert reader.data.shape == expected_shape
     assert reader.data.dtype == expected_dtype
+
+    check_local_file_not_open(reader.fs, reader.path)
+    check_can_serialize_reader(reader)
+
+    # Check that the dask array can be read with in parallel
+    # This is not checking speed / benchmark
+    # Just checking that all objects can be serialized and parallelized
+    client = Client()
+
+    # Read the full image using dask compute
+    np.testing.assert_array_equal(reader.dask_data.compute(), reader.data)
 
     check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)

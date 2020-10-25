@@ -65,9 +65,6 @@ def run_image_read_checks(
     assert reader.scenes == expected_scenes
     assert reader.current_scene == expected_current_scene
 
-    check_local_file_not_open(reader.fs, reader.path)
-    check_can_serialize_reader(reader)
-
     # Check basics
     assert reader.shape == expected_shape
     assert reader.dtype == expected_dtype
@@ -77,17 +74,11 @@ def run_image_read_checks(
     assert reader.channel_names == expected_channel_names
     assert reader.physical_pixel_sizes == expected_physical_pixel_sizes
 
-    check_local_file_not_open(reader.fs, reader.path)
-    check_can_serialize_reader(reader)
-
     # Read only a chunk, then read a chunk from the in-memory, compare
     np.testing.assert_array_equal(
         reader.get_image_dask_data("YX").compute(),
         reader.get_image_data("YX"),
     )
-
-    check_local_file_not_open(reader.fs, reader.path)
-    check_can_serialize_reader(reader)
 
     # Check that the shape and dtype are expected after reading in full
     assert reader.data.shape == expected_shape

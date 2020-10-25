@@ -35,7 +35,7 @@ class Dimensions:
         Parameters
         ----------
         dims: Union[str, Iterable]
-            An ordered string of the dimensions to pair with their sizes.
+            An ordered string or iterable of the dimensions to pair with their sizes.
         shape: Tuple[int]
             An ordered tuple of the dimensions sizes to pair with their names.
 

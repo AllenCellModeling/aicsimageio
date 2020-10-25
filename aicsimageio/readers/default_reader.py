@@ -61,6 +61,36 @@ class DefaultReader(Reader):
 
         return extension, mode
 
+    @staticmethod
+    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
+        # Get extension and mode for reading the file
+        extension, mode = DefaultReader._get_extension_and_mode(path)
+
+        # Use imageio to check if they have a reader for this file
+        try:
+            with fs.open(path) as open_resource:
+                with imageio.get_reader(open_resource, format=extension, mode=mode):
+                    return True
+
+        # Exceptions that are raised by imageio for unsupported file types
+        except (ValueError, IndexError):
+            return False
+
+        # Some FFMPEG formats and reading just suck
+        # If they can't get metadata remotely they throw an OSError because ffmpeg is
+        # ran through subprocess (I believe)
+        # If we let the stack trace go, user would receive:
+        #
+        # OSError: Could not load meta information
+        # === stderr ===
+        #
+        # ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
+        # Copyright (c) # 2000-2019 the FFmpeg developers
+        # ...
+        # /tmp/imageio_cbof2u37: Invalid data found when processing input
+        except OSError:
+            raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
+
     def __init__(self, image: types.PathLike):
         """
         A catch all for image file reading that defaults to using imageio
@@ -95,36 +125,6 @@ class DefaultReader(Reader):
             )
 
         return Reader.guess_dim_order(shape)
-
-    @staticmethod
-    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
-        # Get extension and mode for reading the file
-        extension, mode = DefaultReader._get_extension_and_mode(path)
-
-        # Use imageio to check if they have a reader for this file
-        try:
-            with fs.open(path) as open_resource:
-                with imageio.get_reader(open_resource, format=extension, mode=mode):
-                    return True
-
-        # Exceptions that are raised by imageio for unsupported file types by them
-        except (ValueError, IndexError):
-            return False
-
-        # Some FFMPEG formats and reading just suck
-        # If they can't get metadata remotely they throw an OSError because ffmpeg is
-        # ran through subprocess (I believe)
-        # If we let the stack trace go, user would receive:
-        #
-        # OSError: Could not load meta information
-        # === stderr ===
-        #
-        # ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
-        # Copyright (c) # 2000-2019 the FFmpeg developers
-        # ...
-        # /tmp/imageio_cbof2u37: Invalid data found when processing input
-        except OSError:
-            raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
     @property
     def scenes(self) -> Tuple[int]:
@@ -183,6 +183,9 @@ class DefaultReader(Reader):
         mode: str,
     ) -> int:
         """
+        Open a file for reading, using the format, determine the image length
+        (the number of planes).
+
         Parameters
         ----------
         fs: AbstractFileSystem
@@ -202,9 +205,6 @@ class DefaultReader(Reader):
         length: int
             The length of the image (number of planes).
 
-        Raises
-        ------
-        IOError: The provided file cannot be read from a remote source.
         """
         with fs.open(path) as open_resource:
             with imageio.get_reader(open_resource, format=format, mode=mode) as reader:
@@ -267,8 +267,8 @@ class DefaultReader(Reader):
         Returns
         -------
         image: xr.DataArray
-            The fully constructed and fully delayed image as a DataArray object.
-            Metadata is both attached in some cases as coords, dims, and attrs.
+            The fully constructed and fully delayed image as a DataArray  object.
+            Metadata is attached in some cases as coords, dims, and attrs.
 
         Raises
         ------
@@ -359,7 +359,7 @@ class DefaultReader(Reader):
         -------
         image: xr.DataArray
             The fully constructed and fully read into memory image as a DataArray
-            object. Metadata is both attached in some cases as coords, dims, and attrs.
+            object. Metadata is attached in some cases as coords, dims, and attrs.
 
         Raises
         ------

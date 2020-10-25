@@ -24,7 +24,7 @@ Python
     * HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
     * [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
     * [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
-    * See the [list of known implementation](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
+    * See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 
 ## Installation
 **Stable Release:** `pip install aicsimageio`<br>
@@ -155,9 +155,9 @@ memory instead of the entire image.
 or `Reader` equivalents.
 * **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
 `AICSImage.get_image_dask_data`, or `Reader` equivalents.
-* **If your image is not chunk reading native:** it may not be best to read chunks from
-a remote source. While possible, the format of the image matters a lot for chunked
-read performance.
+* **If your image does not support native chunk reading:** it may not be best to read
+chunks from a remote source. While possible, the format of the image matters a lot for
+chunked read performance.
 
 ## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
@@ -170,13 +170,11 @@ that allows use of all the functionality described in this library, but in the `
 default viewer itself.
 
 ## Notes
-* Image `data`, `xarray_data`, `dask_data`, and `xarray_dask_data` are always returned
-as five dimensional in dimension order `TCZYX` or, `Time`, `Channel`, `Z`, `Y`, and `X`.
 * Each file format may use a different metadata parser as it is dependent on the
 format's reader class implementation.
 * The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
 dimensions from the reader. If your file has dimensions outside of those, use the base
-reader classes.
+`Reader` classes.
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

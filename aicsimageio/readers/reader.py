@@ -22,6 +22,49 @@ class Reader(ABC):
     _dims = None
     _metadata = None
 
+    @staticmethod
+    @abstractmethod
+    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
+        """
+        The per-Reader implementation used to validate that an image is supported or not
+        by the Reader itself.
+
+        Parameters
+        ----------
+        fs: AbstractFileSystem
+            The file system to used for reading.
+        path: str
+            The path to the file to read.
+
+        Returns
+        -------
+        supported: bool
+            Boolean value indicating if the file is supported by the reader.
+        """
+        pass
+
+    @classmethod
+    def reader_supports_image(cls, image: types.ImageLike) -> bool:
+        """
+        Asserts that the provided image like object is supported by the current Reader.
+
+        Parameters
+        ----------
+        image: types.ImageLike
+            The filepath or array to validate as a supported type.
+
+        Returns
+        -------
+        supported: bool
+            Boolean indicated if the provided data is or is not supported by the
+            current Reader.
+
+        Raises
+        ------
+        TypeError: Invalid type provided to image parameter.
+        """
+        pass
+
     def __init__(self, image: types.ImageLike, **kwargs):
         """
         A small class to build standardized image reader objects that deal with the raw
@@ -59,49 +102,6 @@ class Reader(ABC):
             The guessed dimension order.
         """
         return DEFAULT_DIMENSION_ORDER[len(DEFAULT_DIMENSION_ORDER) - len(shape) :]
-
-    @staticmethod
-    @abstractmethod
-    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
-        """
-        The per-Reader implementation of validating that an image is supported or not by
-        the Reader itself.
-
-        Parameters
-        ----------
-        fs: AbstractFileSystem
-            The file system to used for reading.
-        path: str
-            The path to the file to read.
-
-        Returns
-        -------
-        supported: bool
-            Boolean value indicating if the file is supported by the reader.
-        """
-        pass
-
-    @classmethod
-    def reader_supports_image(cls, image: types.ImageLike) -> bool:
-        """
-        Asserts that the provided image like object is supported by the current Reader.
-
-        Parameters
-        ----------
-        image: types.ImageLike
-            The filepath or array to validate as a supported type.
-
-        Returns
-        -------
-        supported: bool
-            Boolean indicated if the provided data is or is not supported by the
-            current Reader.
-
-        Raises
-        ------
-        TypeError: Invalid type provided to image parameter.
-        """
-        pass
 
     @property
     @abstractmethod

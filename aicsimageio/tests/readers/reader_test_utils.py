@@ -25,19 +25,7 @@ def check_local_file_not_open(fs: AbstractFileSystem, path: str):
 
 def check_can_serialize_reader(reader: Reader):
     # Dump and reconstruct
-    header, frames = serialize(reader)
-    reconstructed = deserialize(header, frames)
-
-    # Assert primary attrs are equal
-    if reader._xarray_data is None:
-        assert reconstructed._xarray_data is None
-    else:
-        assert_equal(reader._xarray_data, reconstructed._xarray_data)
-
-    if reader._xarray_dask_data is None:
-        assert reconstructed._xarray_dask_data is None
-    else:
-        assert_equal(reader._xarray_dask_data, reconstructed._xarray_dask_data)
+    deserialize(serialize(reader))
 
 
 def run_image_read_checks(

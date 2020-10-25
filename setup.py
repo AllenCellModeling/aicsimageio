@@ -78,7 +78,11 @@ extra_requirements = {
 
 setup(
     author="Allen Institute for Cell Science",
-    author_email=("jacksonb@alleninstitute.org, " "bowdenm@spu.edu"),
+    author_email=(
+        "jmaxfieldbrown@gmail.com, "
+        "jamies@alleninstitute.org, "
+        "bowdenm@spu.edu"
+    ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
@@ -90,8 +94,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Delayed parallel image reading, metadata parsing, and image writing for "
-        "microscopy formats in pure Python from the Allen Institute for Cell Science."
+        "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
+        "in Pure Python"
     ),
     entry_points={},
     install_requires=requirements,
@@ -99,7 +103,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    keywords="aicsimageio, allen cell, imaging, computational biology",
+    keywords="imageio, image reading, image writing, metadata, aicsimageio, allen cell",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
     python_requires=">=3.7",

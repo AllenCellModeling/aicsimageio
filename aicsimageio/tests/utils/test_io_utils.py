@@ -8,22 +8,21 @@ from aicsimageio.utils.io_utils import pathlike_to_fs
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
 
 
+@pytest.mark.parametrize("host", [LOCAL, REMOTE])
 @pytest.mark.parametrize(
-    "filename, host, enforce_exists",
+    "filename, enforce_exists",
     [
-        ("example.txt", LOCAL, False),
-        ("example.txt", REMOTE, False),
-        ("does-not-exist.good", LOCAL, False),
-        ("does-not-exist.good", REMOTE, False),
+        ("example.txt", False),
+        ("example.txt", False),
+        ("does-not-exist.good", False),
+        ("does-not-exist.good", False),
         pytest.param(
             "does-not-exist.bad",
-            LOCAL,
             True,
             marks=pytest.mark.raises(exception=FileNotFoundError),
         ),
         pytest.param(
             "does-not-exist.bad",
-            REMOTE,
             True,
             marks=pytest.mark.raises(exception=FileNotFoundError),
         ),

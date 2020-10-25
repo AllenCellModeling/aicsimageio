@@ -10,7 +10,7 @@ with open("README.md") as readme_file:
 
 requirements = [
     "aicspylibczi>=2.5.0",
-    "dask>=2.9.0",
+    "dask[array]>=2.9.0",
     "fsspec>=0.8.4",
     "numpy>=1.16",
     "imagecodecs>=2020.2.18",
@@ -64,7 +64,6 @@ benchmark_requirements = [
     "imageio==2.8.0",
     "quilt3>=3.1.12",
     "tifffile==2020.2.16",
-    "toolz>=0.10.0",
     "tqdm",
 ]
 
@@ -79,9 +78,7 @@ extra_requirements = {
 setup(
     author="Allen Institute for Cell Science",
     author_email=(
-        "jmaxfieldbrown@gmail.com, "
-        "jamies@alleninstitute.org, "
-        "bowdenm@spu.edu"
+        "jmaxfieldbrown@gmail.com, " "jamies@alleninstitute.org, " "bowdenm@spu.edu"
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",

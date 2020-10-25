@@ -27,14 +27,6 @@ REMOTE_READ_FAIL_MESSAGE = (
 
 
 class DefaultReader(Reader):
-    """
-    A catch all for image file reading that defaults to using imageio implementations.
-
-    Parameters
-    ----------
-    image: types.PathLike
-        Path to image file to construct Reader for.
-    """
 
     FFMPEG_FORMATS = ["mov", "avi", "mpg", "mpeg", "mp4", "mkv", "wmv", "ogg"]
 
@@ -70,6 +62,14 @@ class DefaultReader(Reader):
         return extension, mode
 
     def __init__(self, image: types.PathLike):
+        """
+        A catch all for image file reading that defaults to using imageio implementations.
+
+        Parameters
+        ----------
+        image: types.PathLike
+            Path to image file to construct Reader for.
+        """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension, self.imageio_read_mode = self._get_extension_and_mode(self.path)

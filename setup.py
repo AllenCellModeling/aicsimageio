@@ -11,7 +11,6 @@ with open("README.md") as readme_file:
 requirements = [
     "aicspylibczi>=2.5.0",
     "dask>=2.9.0",
-    "distributed>=2.9.3",
     "fsspec>=0.8.4",
     "numpy>=1.16",
     "imagecodecs>=2020.2.18",
@@ -19,7 +18,6 @@ requirements = [
     "readlif>=0.2.1",
     "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
-    "toolz>=0.10.0",
     "xarray>=0.16.0",
 ]
 
@@ -62,9 +60,11 @@ benchmark_requirements = [
     "altair_saver",
     "czifile==2019.7.2",
     "dask_jobqueue==0.7.0",
+    "distributed>=2.9.3",
     "imageio==2.8.0",
     "quilt3>=3.1.12",
     "tifffile==2020.2.16",
+    "toolz>=0.10.0",
     "tqdm",
 ]
 

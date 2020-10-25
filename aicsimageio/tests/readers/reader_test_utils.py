@@ -80,17 +80,16 @@ def run_image_read_checks(
     check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
-    # Try reading remote chunks
-    assert reader.get_image_dask_data("YX").compute() is not None
-    assert reader.get_image_data("YX") is not None
+    # Read only a chunk, then read a chunk from the in-memory, compare
+    np.testing.assert_array_equal(
+        reader.get_image_dask_data("YX").compute(),
+        reader.get_image_data("YX"),
+    )
 
     check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
-    # Read the image in full
-    # All readers should be able to do this unless there is some weird format
-    # We can try our best but some implementations just don't exist for reading buffers
-    # I am looking at you FFMPEG formats
+    # Check that the shape and dtype are expected after reading in full
     assert reader.data.shape == expected_shape
     assert reader.data.dtype == expected_dtype
 

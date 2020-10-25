@@ -40,7 +40,8 @@ jobs:
     - name: Test with pytest
       run: |
         pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/
-        codecov -t ${{ secrets.CODECOV_TOKEN }}
+    - name: Upload codecov
+      uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest

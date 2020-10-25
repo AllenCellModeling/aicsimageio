@@ -63,7 +63,8 @@ class DefaultReader(Reader):
 
     def __init__(self, image: types.PathLike):
         """
-        A catch all for image file reading that defaults to using imageio implementations.
+        A catch all for image file reading that defaults to using imageio
+        implementations.
 
         Parameters
         ----------

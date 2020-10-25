@@ -22,7 +22,7 @@ requirements = [
     "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
     "toolz>=0.10.0",
-    "xarray>=0.16"
+    "xarray>=0.16",
 ]
 
 setup_requirements = [
@@ -82,9 +82,7 @@ extra_requirements = {
 setup(
     author="Allen Institute for Cell Science",
     author_email=(
-        "jmaxfieldbrown@gmail.com, "
-        "jamies@alleninstitute.org, "
-        "bowdenm@spu.edu"
+        "jmaxfieldbrown@gmail.com, jamies@alleninstitute.org, bowdenm@spu.edu"
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",

@@ -10,6 +10,9 @@ with open("README.md") as readme_file:
 
 requirements = [
     "aicspylibczi>=2.5.0",
+    # Cannot move to 3.7.* due to:
+    # https://github.com/aio-libs/aiohttp/issues/5128
+    "aiohttp==3.6.3",
     "dask[array]>=2.9.0",
     "fsspec>=0.8.4",
     "numpy>=1.16",
@@ -37,7 +40,7 @@ test_requirements = [
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
     "quilt3>=3.1",
-    "s3fs"
+    "s3fs>=0.5",
 ]
 
 dev_requirements = [

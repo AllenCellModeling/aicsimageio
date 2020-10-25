@@ -19,27 +19,11 @@ from .reader import Reader
 ###############################################################################
 
 REMOTE_READ_FAIL_MESSAGE = (
-    "Cannot read the provided file ({abstract_file_path}) remotely. "
+    "Cannot read the provided file ({path}) remotely. "
     "Please download the file locally before continuing your work."
 )
 
 ###############################################################################
-
-
-# Some FFMPEG formats and reading just suck
-# If they can't get metadata remotely they throw an OSError because ffmpeg is
-# ran through subprocess (I believe)
-# If we let the stack trace go, user would receive:
-#
-# OSError: Could not load meta information
-# === stderr ===
-#
-# ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
-# Copyright (c) # 2000-2019 the FFmpeg developers
-# ...
-# /tmp/imageio_cbof2u37: Invalid data found when processing input
-# except OSError:
-#     raise IOError(REMOTE_READ_FAIL_MESSAGE.format(abstract_file_path=self.path))
 
 
 class DefaultReader(Reader):
@@ -122,8 +106,24 @@ class DefaultReader(Reader):
                 with imageio.get_reader(open_resource, format=extension, mode=mode):
                     return True
 
+        # Exceptions that are raised by imageio for unsupported file types by them
         except (ValueError, IndexError):
             return False
+
+        # Some FFMPEG formats and reading just suck
+        # If they can't get metadata remotely they throw an OSError because ffmpeg is
+        # ran through subprocess (I believe)
+        # If we let the stack trace go, user would receive:
+        #
+        # OSError: Could not load meta information
+        # === stderr ===
+        #
+        # ffmpeg version 4.2.2-static https://johnvansickle.com/ffmpeg/
+        # Copyright (c) # 2000-2019 the FFmpeg developers
+        # ...
+        # /tmp/imageio_cbof2u37: Invalid data found when processing input
+        except OSError:
+            raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
     @property
     def scenes(self) -> Tuple[int]:
@@ -415,13 +415,3 @@ class DefaultReader(Reader):
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
         return PhysicalPixelSizes(None, 1.0, 1.0)
-
-
-# BIG BUCK BUNNY 15 SECONDS:
-# "https://archive.org/embed/archive-video-files/test.mp4"
-
-# AICS TEST RESOURCES
-# s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources/example.png
-# s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources/example.jpg
-# s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources/example.gif
-# s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources/s_1_t_1_c_1_z_1.tiff

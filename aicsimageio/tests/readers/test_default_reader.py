@@ -149,3 +149,9 @@ def test_default_reader(
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(None, 1.0, 1.0),
     )
+
+
+def test_ffmpeg_header_fail():
+    with pytest.raises(IOError):
+        # Big Buck Bunny
+        DefaultReader("https://archive.org/embed/archive-video-files/test.mp4")

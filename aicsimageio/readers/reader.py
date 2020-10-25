@@ -440,7 +440,10 @@ class Reader(ABC):
             Using available metadata, the list of strings representing channel names.
             If no channel dimension present in the data, returns None.
         """
-        return list(self.xarray_dask_data[DimensionNames.Channel].values)
+        if DimensionNames.Channel in self.xarray_dask_data.dims:
+            return list(self.xarray_dask_data[DimensionNames.Channel].values)
+
+        return None
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
@@ -452,3 +455,11 @@ class Reader(ABC):
             dimensions Z, Y, and X.
         """
         pass
+
+    def __str__(self):
+        return (
+            f"<{self.__class__.__name__} [In-Memory: {self._xarray_data is not None}]>"
+        )
+
+    def __repr__(self):
+        return str(self)

@@ -18,7 +18,8 @@ requirements = [
     "readlif>=0.2.1",
     "lxml>=4.4.2",
     "tifffile>=2019.7.26.2",
-    "xarray>=0.16.0",
+    "toolz>=0.10.0",
+    "xarray>=0.16"
 ]
 
 setup_requirements = [
@@ -35,8 +36,8 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "quilt3>=3.1.12",  # downloading test resources locally
-    "s3fs>=0.5.1",  # remote reading
+    "quilt3>=3.1",
+    "s3fs"
 ]
 
 dev_requirements = [
@@ -60,7 +61,6 @@ benchmark_requirements = [
     "altair_saver",
     "czifile==2019.7.2",
     "dask_jobqueue==0.7.0",
-    "distributed>=2.9.3",
     "imageio==2.8.0",
     "quilt3>=3.1.12",
     "tifffile==2020.2.16",
@@ -78,7 +78,9 @@ extra_requirements = {
 setup(
     author="Allen Institute for Cell Science",
     author_email=(
-        "jmaxfieldbrown@gmail.com, " "jamies@alleninstitute.org, " "bowdenm@spu.edu"
+        "jmaxfieldbrown@gmail.com, "
+        "jamies@alleninstitute.org, "
+        "bowdenm@spu.edu"
     ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -100,7 +102,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    keywords="imageio, image reading, image writing, metadata, aicsimageio, allen cell",
+    keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
     python_requires=">=3.7",

@@ -7,14 +7,15 @@ import pytest
 from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 
+from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from .reader_test_utils import run_image_read_checks
 
 
 @pytest.mark.parametrize(
     (
         "filename, "
-        "from_local, "
-        "can_read_chunks, "
+        "host, "
+        "set_scene, "
         "expected_shape, "
         "expected_dims_order, "
         "expected_channel_names, "
@@ -22,73 +23,73 @@ from .reader_test_utils import run_image_read_checks
     [
         (
             "example.bmp",
-            True,
-            True,
+            LOCAL,
+            0,
             (480, 640, 4),
             "YXC",
             ["R", "G", "B", "A"],
         ),
         (
             "example.bmp",
-            False,
-            True,
+            REMOTE,
+            0,
             (480, 640, 4),
             "YXC",
             ["R", "G", "B", "A"],
         ),
         (
             "example.png",
-            True,
-            True,
+            LOCAL,
+            0,
             (800, 537, 4),
             "YXC",
             ["R", "G", "B", "A"],
         ),
         (
             "example.png",
-            False,
-            True,
+            REMOTE,
+            0,
             (800, 537, 4),
             "YXC",
             ["R", "G", "B", "A"],
         ),
-        ("example.jpg", True, True, (452, 400, 3), "YXC", ["R", "G", "B"]),
-        ("example.jpg", False, True, (452, 400, 3), "YXC", ["R", "G", "B"]),
+        ("example.jpg", LOCAL, 0, (452, 400, 3), "YXC", ["R", "G", "B"]),
+        ("example.jpg", REMOTE, 0, (452, 400, 3), "YXC", ["R", "G", "B"]),
         (
             "example.gif",
-            True,
-            True,
+            LOCAL,
+            0,
             (72, 268, 268, 4),
             "TYXC",
             ["R", "G", "B", "A"],
         ),
         (
             "example.gif",
-            False,
-            False,
+            REMOTE,
+            0,
             (72, 268, 268, 4),
             "TYXC",
             ["R", "G", "B", "A"],
         ),
         (
             "example.mp4",
-            True,
-            True,
+            LOCAL,
+            0,
             (183, 1080, 1920, 3),
             "TYXC",
             ["R", "G", "B"],
         ),
         (
             "example.mp4",
-            False,
-            False,
+            REMOTE,
+            0,
             (183, 1080, 1920, 3),
             "TYXC",
             ["R", "G", "B"],
         ),
         pytest.param(
             "example.txt",
-            True,
+            LOCAL,
             None,
             None,
             None,
@@ -97,36 +98,51 @@ from .reader_test_utils import run_image_read_checks
         ),
         pytest.param(
             "example.txt",
-            False,
+            REMOTE,
             None,
             None,
             None,
             None,
             marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
+        pytest.param(
+            "example.png",
+            LOCAL,
+            1,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+        pytest.param(
+            "example.png",
+            REMOTE,
+            1,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
         ),
     ],
 )
 def test_default_reader(
-    local_resources_dir,
-    remote_resources_dir,
     filename,
-    from_local,
-    can_read_chunks,
+    host,
+    set_scene,
     expected_shape,
     expected_dims_order,
     expected_channel_names,
 ):
     # Construct full filepath
-    if from_local:
-        uri = local_resources_dir / filename
-    else:
-        uri = f"{remote_resources_dir}/{filename}"
+    uri = get_resource_full_path(filename, host)
 
     # Run checks
     run_image_read_checks(
         ReaderClass=DefaultReader,
         uri=uri,
-        can_read_chunks=can_read_chunks,
+        set_scene=set_scene,
+        expected_scenes=(0,),
+        expected_current_scene=0,
         expected_shape=expected_shape,
         expected_dtype=np.uint8,
         expected_dims_order=expected_dims_order,

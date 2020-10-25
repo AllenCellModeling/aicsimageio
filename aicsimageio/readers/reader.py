@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 from abc import ABC, abstractmethod
-from typing import Any, List, Optional, Set, Tuple
+from typing import Any, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
 import xarray as xr
-from fsspec.spec import AbstractBufferedFile
+from fsspec.spec import AbstractFileSystem
 
 from .. import transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
@@ -63,17 +62,22 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _reader_supports_image(image: types.FSSpecBased) -> bool:
+    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
         """
         The per-Reader implementation of validating that an image is supported or not by
         the Reader itself.
 
-        Notes
-        -----
-        Receives an fsspec implementation.
-        We cannot use `fsspec.spec.AbstractBufferedFile` as the input type because
-        local files return `LocalFileOpener` which does not inherit from
-        `AbstractBufferedFile`.
+        Parameters
+        ----------
+        fs: AbstractFileSystem
+            The file system to used for reading.
+        path: str
+            The path to the file to read.
+
+        Returns
+        -------
+        supported: bool
+            Boolean value indicating if the file is supported by the reader.
         """
         pass
 
@@ -101,12 +105,12 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def scenes(self) -> Set[int]:
+    def scenes(self) -> Tuple[int]:
         """
         Returns
         -------
-        scenes: Set[int]
-            A set of valid scene ids in the file.
+        scenes: Tuple[int]
+            A tuple of valid scene ids in the file.
 
         Notes
         -----
@@ -146,22 +150,6 @@ class Reader(ABC):
         IndexError: the provided scene id is not found in the available scene id list
         """
         pass
-
-    @staticmethod
-    def _warn_remote_chunked_read(abstract_file: types.FSSpecBased):
-        """
-        Checks if the file is remote and if so warns of chunked reading failure.
-
-        Parameters
-        ----------
-        abstract_file: types.FSSpecBased
-            The file to check.
-        """
-        if isinstance(abstract_file, AbstractBufferedFile):
-            warnings.warn(
-                "Remote chunked reading (using the *_dask_* properties) will result in "
-                "failures for this file type."
-            )
 
     @abstractmethod
     def _read_delayed(self) -> xr.DataArray:

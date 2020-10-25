@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import pickle
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 import numpy as np
-import pytest
-from fsspec.implementations.local import LocalFileOpener
+from fsspec.implementations.local import LocalFileSystem
+from fsspec.spec import AbstractFileSystem
 from psutil import Process
 from xarray.testing import assert_equal
 
@@ -16,11 +16,11 @@ from aicsimageio.readers.reader import Reader
 ###############################################################################
 
 
-def check_local_file_not_open(abstract_file: types.FSSpecBased):
+def check_local_file_not_open(fs: AbstractFileSystem, path: str):
     # Check that there are no open file pointers
-    if isinstance(abstract_file, LocalFileOpener):
+    if isinstance(fs, LocalFileSystem):
         proc = Process()
-        assert str(abstract_file.path) not in [f.path for f in proc.open_files()]
+        assert str(path) not in [f.path for f in proc.open_files()]
 
 
 def check_can_serialize_reader(reader: Reader):
@@ -43,7 +43,9 @@ def check_can_serialize_reader(reader: Reader):
 def run_image_read_checks(
     ReaderClass: Reader,
     uri: types.PathLike,
-    can_read_chunks: bool,
+    set_scene: int,
+    expected_scenes: Set[int],
+    expected_current_scene: int,
     expected_shape: Tuple[int],
     expected_dtype: np.dtype,
     expected_dims_order: str,
@@ -53,37 +55,36 @@ def run_image_read_checks(
     # Read file
     reader = ReaderClass(uri)
 
-    # check_local_file_not_open(reader.abstract_file)
+    check_local_file_not_open(reader.fs, reader.path)
+    check_can_serialize_reader(reader)
+
+    # Set scene
+    reader.set_scene(set_scene)
+
+    # Check scene info
+    assert reader.scenes == expected_scenes
+    assert reader.current_scene == expected_current_scene
+
+    check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
     # Check basics
-    # Due to how data is routed through the _xarray_dask_data prop,
-    # any call to metadata will be initially routed through it
-    # thus the first call and test needs additional warnings check handling
-    if can_read_chunks:
-        assert reader.dims.order == expected_dims_order
-    else:
-        with pytest.warns(UserWarning):
-            assert reader.dims.order == expected_dims_order
-
-    # Finish checking basics
-    assert reader.metadata
     assert reader.shape == expected_shape
     assert reader.dtype == expected_dtype
+    assert reader.dims.order == expected_dims_order
+    assert reader.dims.shape == expected_shape
+    assert reader.metadata
     assert reader.channel_names == expected_channel_names
     assert reader.physical_pixel_sizes == expected_physical_pixel_sizes
 
-    # check_local_file_not_open(reader.abstract_file)
+    check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
     # Try reading remote chunks
-    if can_read_chunks:
-        assert reader.get_image_dask_data("YX").compute() is not None
-    else:
-        with pytest.raises(AttributeError):
-            assert reader.get_image_dask_data("YX").compute() is not None
+    assert reader.get_image_dask_data("YX").compute() is not None
+    assert reader.get_image_data("YX") is not None
 
-    # check_local_file_not_open(reader.abstract_file)
+    check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
     # Read the image in full
@@ -93,7 +94,7 @@ def run_image_read_checks(
     assert reader.data.shape == expected_shape
     assert reader.data.dtype == expected_dtype
 
-    # check_local_file_not_open(reader.abstract_file)
+    check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)
 
     return reader

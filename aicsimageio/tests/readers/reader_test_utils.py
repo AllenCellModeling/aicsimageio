@@ -25,7 +25,7 @@ def check_local_file_not_open(fs: AbstractFileSystem, path: str):
 
 def check_can_serialize_reader(reader: Reader):
     # Dump and reconstruct
-    deserialize(serialize(reader))
+    deserialize(*serialize(reader))
 
 
 def run_image_read_checks(

@@ -19,7 +19,20 @@ from .reader_test_utils import run_image_read_checks
         ("example.png", 0, (800, 537, 4), "YXC", ["R", "G", "B", "A"]),
         ("example.jpg", 0, (452, 400, 3), "YXC", ["R", "G", "B"]),
         ("example.gif", 0, (72, 268, 268, 4), "TYXC", ["R", "G", "B", "A"]),
-        ("example.mp4", 0, (62, 1080, 1920, 3), "TYXC", ["R", "G", "B"]),
+        (
+            "example_invalid_frame_count.mp4",
+            0,
+            (55, 1080, 1920, 3),
+            "TYXC",
+            ["R", "G", "B"],
+        ),
+        (
+            "example_valid_frame_count.mp4",
+            0,
+            (72, 272, 272, 3),
+            "TYXC",
+            ["R", "G", "B"],
+        ),
         pytest.param(
             "example.txt",
             None,

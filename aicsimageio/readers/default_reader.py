@@ -205,12 +205,32 @@ class DefaultReader(Reader):
         length: int
             The length of the image (number of planes).
 
+        Notes
+        -----
+        In the case this file is an FFMPEG format, this function will attempt to seek
+        and retrieve the last frame of data as reported by traditional imageio methods
+        to verify that the frame count is correct.
+
+        This is to check for FFMPEG off-by-one errors in frame indexing.
+        See here for more details: https://github.com/imageio/imageio/issues/168
         """
         with fs.open(path) as open_resource:
             with imageio.get_reader(open_resource, format=format, mode=mode) as reader:
                 # Handle FFMPEG formats
                 if format in DefaultReader.FFMPEG_FORMATS:
-                    return reader.count_frames()
+                    # A reminder, this is the _total_ frame count, not the last index
+                    reported_frames = reader.count_frames()
+
+                    # As a safety measure against FFMPEG off-by-one
+                    # try and get the last frame (by index)
+                    try:
+                        reader.get_data(reported_frames - 1)
+                        return reported_frames
+
+                    # Couldn't get the last frame by index, FFMPEG must have off-by-oned
+                    # So return the _total_ frame count minus the one frame correction
+                    except IndexError:
+                        return reported_frames - 1
 
                 # Default get_length call for all others
                 return reader.get_length()
@@ -388,7 +408,7 @@ class DefaultReader(Reader):
             elif image_length > 1:
                 # Read and stack all frames
                 frames = []
-                for i, frame in enumerate(reader.iter_data()):
+                for frame in reader:
                     frames.append(frame)
 
                 image_data = np.stack(frames)

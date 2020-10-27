@@ -49,7 +49,7 @@ def run_image_read_checks(
     expected_dtype: np.dtype,
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
-    expected_physical_pixel_sizes: Tuple[Optional[float]],
+    expected_physical_pixel_sizes: Tuple[float],
 ) -> Reader:
     # Read file
     reader = ReaderClass(uri)

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import NamedTuple, Optional, Union
+from typing import NamedTuple, Union
 
 import dask.array as da
 import numpy as np
@@ -17,6 +17,6 @@ ImageLike = Union[PathLike, ArrayLike]
 
 # Image Utility Types
 class PhysicalPixelSizes(NamedTuple):
-    Z: Optional[float]
-    Y: Optional[float]
-    X: Optional[float]
+    Z: float
+    Y: float
+    X: float

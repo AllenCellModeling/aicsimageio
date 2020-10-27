@@ -151,6 +151,9 @@ their operation. `AICSImage.dask_data`, `AICSImage.xarray_dask_data`, and
 memory instead of the entire image.
 
 ## Performance Considerations
+* **The quickest read operation will always be `.data` on a local file.** All other
+operations come with _some_ minor overhead. We try to minimize this overhead wherever
+possible.
 * **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
 or `Reader` equivalents.
 * **If your image is too large to fit in memory:** use `AICSImage.dask_data`,

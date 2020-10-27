@@ -109,9 +109,6 @@ class DefaultReader(Reader):
         if not self._reader_supports_image(self.fs, self.path):
             raise exceptions.UnsupportedFileFormatError(self.extension)
 
-        # Lazy load
-        self._physical_pixel_sizes = None
-
     @staticmethod
     def guess_dim_order(shape: Tuple[int]) -> str:
         if len(shape) == 2:
@@ -438,23 +435,4 @@ class DefaultReader(Reader):
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
-        # See EXIF example
-        # https://en.wikipedia.org/wiki/Exif#Example
-        if self._physical_pixel_sizes is None:
-            if "Y resolution" in self.metadata:
-                y_pixel_size = 1 / self.metadata["Y resolution"]
-            else:
-                y_pixel_size = 1.0
-
-            if "X resolution" in self.metadata:
-                x_pixel_size = 1 / self.metadata["X resolution"]
-            else:
-                x_pixel_size = 1.0
-
-            self._physical_pixel_sizes = PhysicalPixelSizes(
-                1.0,
-                y_pixel_size,
-                x_pixel_size,
-            )
-
-        return self._physical_pixel_sizes
+        return PhysicalPixelSizes(1.0, 1.0, 1.0)

@@ -19,7 +19,7 @@ from .reader_test_utils import run_image_read_checks
         ("example.png", 0, (800, 537, 4), "YXC", ["R", "G", "B", "A"]),
         ("example.jpg", 0, (452, 400, 3), "YXC", ["R", "G", "B"]),
         ("example.gif", 0, (72, 268, 268, 4), "TYXC", ["R", "G", "B", "A"]),
-        ("example.mp4", 0, (183, 1080, 1920, 3), "TYXC", ["R", "G", "B"]),
+        ("example.mp4", 0, (62, 1080, 1920, 3), "TYXC", ["R", "G", "B"]),
         pytest.param(
             "example.txt",
             None,

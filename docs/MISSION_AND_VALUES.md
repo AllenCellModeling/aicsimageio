@@ -78,3 +78,5 @@ representation
 platform image reading
 * [Dask Team](https://dask.org/) -- delayed and out-of-memory parallel array
 manipulation
+* [xarray Team](https://github.com/pydata/xarray) -- coordinate and metadata attached
+array handling and manipulation

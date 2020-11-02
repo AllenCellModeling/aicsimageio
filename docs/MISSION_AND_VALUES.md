@@ -14,13 +14,13 @@ image pixel data and metadata** for the many existing proprietary microscopy fil
 formats, and, an **easy-to-use API for converting from proprietary file formats to an
 open, common, standard** -- all using either language agnostic or pure Python tooling.
 
-Looking to the existing microscopy community that have centralized around the
-[Open Microscopy Environment](https://www.openmicroscopy.org/) (OME) standard -- we also
-describe our mission as:
+In short:
+> AICSImageIO provides a method to fully read and convert from an existing proprietary
+> microscopy file format to, or _emulate_, a Python representation of the community
+> standard metadata model regardless of image size, format, or location.
 
-> AICSImageIO provides a method to fully convert from an existing proprietary microscopy
-> file format to, or _emulate_, a Python representation of the OME model regardless of
-> image size, format, or location.
+(The current community standard for microscopy images is the
+[Open Microscopy Environment](https://www.openmicroscopy.org/))
 
 We hope to accomplish this by:
 * being **easy to use and install**. We will take extra care to ensure that this library

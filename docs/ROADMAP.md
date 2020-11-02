@@ -7,10 +7,9 @@ contributors, and to provide insight to external developers who are interested i
 `aicsimageio` in their work.
 
 The [mission](./MISSION_AND_VALUES.HTML) of `aicsimageio` is to provide a method to
-fully convert from an existing proprietary microscopy file format to, or _emulate_, a
-Python representation of the OME model regardless of image size, format, or location. To
-work towards this mission, we have set a few high-level priorities over the upcoming
-months:
+fully read and convert from an existing proprietary microscopy file format to, or
+_emulate_, a Python representation of the community standard metadata model regardless
+of image size, format, or location.
 
 * Enable **reading and writing to remote sources** quick and easy
 * Make **writing n-dimensional images** with partial or complete metadata **simple**

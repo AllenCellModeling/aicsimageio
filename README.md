@@ -111,6 +111,8 @@ dimensions from the reader. If your file has dimensions outside of those, use th
 reader classes `CziReader`, `OmeTiffReader`, `TiffReader`, or `DefaultReader`.
 
 ## Development
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
+See our
+[developer resources](https://allencellmodeling.github.io/aicsimageio/developer_resources)
+for information related to developing the code.
 
 _Free software: BSD-3-Clause_

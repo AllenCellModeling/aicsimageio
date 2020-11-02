@@ -52,7 +52,9 @@ gen-docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/aicsimageio*.rst
 	rm -f docs/modules.rst
 	sphinx-apidoc -o docs/ aicsimageio **/tests/
+	python docs/_fix_internal_links.py --current-suffix .md --target-suffix .html
 	$(MAKE) -C docs html
+	python docs/_fix_internal_links.py --current-suffix .html --target-suffix .md
 
 docs: ## generate Sphinx HTML documentation, including API docs, and serve to browser
 	make gen-docs

@@ -21,9 +21,8 @@
 import os
 import sys
 
-import sphinx_rtd_theme
-
 import aicsimageio
+import sphinx_rtd_theme
 
 sys.path.insert(0, os.path.abspath("../.."))
 
@@ -179,7 +178,8 @@ texinfo_documents = [
         u"aicsimageio Documentation",
         author,
         "aicsimageio",
-        "A Python library for reading and writing image data with specific support for handling bio-formats.",
+        "Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy "
+        "Images in Pure Python",
         "Image Processing, Computational Biology",
     ),
 ]

@@ -6,7 +6,7 @@ and should serve as a guide for core developers, to encourage contribution for n
 contributors, and to provide insight to external developers who are interested in using
 `aicsimageio` in their work.
 
-The [mission](./MISSION_AND_VALUES.HTML) of `aicsimageio` is to provide a method to
+The [mission](./MISSION_AND_VALUES.md) of `aicsimageio` is to provide a method to
 fully read and convert from an existing proprietary microscopy file format to, or
 _emulate_, a Python representation of the community standard metadata model regardless
 of image size, format, or location. To work towards this mission, we have set a few

@@ -468,6 +468,11 @@ class Reader(ABC):
         sizes: PhysicalPixelSizes
             Using available metadata, the floats representing physical pixel sizes for
             dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
         """
         pass
 

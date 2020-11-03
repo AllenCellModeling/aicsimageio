@@ -128,6 +128,10 @@ class DefaultReader(Reader):
 
     @property
     def scenes(self) -> Tuple[int]:
+        # There is currently an assumption that DefaultReader will not encounter
+        # files with multiple scenes. But, if we do encounter a file that DefaultReader
+        # hits and a user wants scene management from that file type, we can update
+        # this property then.
         return (0,)
 
     @property
@@ -203,7 +207,7 @@ class DefaultReader(Reader):
         Returns
         -------
         length: int
-            The length of the image (number of planes).
+            The length of the image (number of YX planes).
 
         Notes
         -----

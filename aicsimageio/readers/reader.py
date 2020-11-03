@@ -163,6 +163,13 @@ class Reader(ABC):
 
             It is additionally recommended to closely monitor how dask array chunks are
             managed.
+
+        Notes
+        -----
+        Requirements for the returned xr.DataArray:
+        * Must have the `dims` populated.
+        * If a channel dimension is present, please populate the channel dimensions
+        coordinate array the respective channel coordinate values.
         """
         pass
 
@@ -175,6 +182,13 @@ class Reader(ABC):
         -------
         data: xr.DataArray
             The fully read data array.
+
+        Notes
+        -----
+        Requirements for the returned xr.DataArray:
+        * Must have the `dims` populated.
+        * If a channel dimension is present, please populate the channel dimensions
+        coordinate array the respective channel coordinate values.
         """
         pass
 
@@ -202,7 +216,8 @@ class Reader(ABC):
         if self._xarray_data is None:
             self._xarray_data = self._read_immediate()
 
-            # Store dask data as rechunked dask array from the already in-mem
+            # Remake the delayed xarray dataarray object using a rechunked dask array
+            # from the just retrieved in-memory xarray dataarray
             self._xarray_dask_data = xr.DataArray(
                 da.from_array(self._xarray_data.data),
                 dims=self._xarray_data.dims,

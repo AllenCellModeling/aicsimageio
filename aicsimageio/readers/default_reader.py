@@ -237,14 +237,14 @@ class DefaultReader(Reader):
 
     @staticmethod
     def _unpack_dims_and_coords(
-        image_data: types.ImageLike, metadata: Dict
+        image_data: types.ArrayLike, metadata: Dict
     ) -> Tuple[List[str], Dict]:
         """
         Unpack image data into assumed dims and coords.
 
         Parameters
         ----------
-        image_data: types.ImageLike
+        image_data: types.ArrayLike
             The image data to unpack dims and coords for.
         metadata: Dict
             The EXIF, XMP, etc metadata dictionary.

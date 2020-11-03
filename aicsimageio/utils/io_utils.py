@@ -51,4 +51,7 @@ def pathlike_to_fs(
             raise FileNotFoundError(f"{fs.protocol}://{path}")
 
     # Get and store details
+    # We do not return an AbstractBufferedFile (i.e. fs.open) as we do not want to have
+    # any open file buffers _after_ any API call. API calls must themselves call
+    # fs.open and complete their function during the context of the opened buffer.
     return fs, path

@@ -10,8 +10,8 @@ with open("README.md") as readme_file:
 
 requirements = [
     "aicspylibczi>=2.6.0",
-    "dask>=2.9.0",
-    "fsspec>=0.8.3",
+    "dask[array]>=2.9.0",
+    "fsspec>=0.8.4",
     "numpy>=1.16",
     "imagecodecs>=2020.5.30",
     "imageio[ffmpeg]>=2.9.0",
@@ -29,6 +29,7 @@ setup_requirements = [
 test_requirements = [
     "black>=19.10b0",
     "codecov>=2.1.4",
+    "distributed>=2.9.0",
     "docutils>=0.10,<0.16",
     "flake8>=3.8.3",
     "flake8-debugger>=3.2.1",
@@ -37,6 +38,7 @@ test_requirements = [
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
     "quilt3>=3.1.12",
+    "s3fs>=0.5",
 ]
 
 dev_requirements = [
@@ -76,7 +78,9 @@ extra_requirements = {
 
 setup(
     author="Allen Institute for Cell Science",
-    author_email=("jacksonb@alleninstitute.org, " "bowdenm@spu.edu"),
+    author_email=(
+        "jmaxfieldbrown@gmail.com, jamies@alleninstitute.org, bowdenm@spu.edu"
+    ),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
@@ -88,8 +92,8 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     description=(
-        "Delayed parallel image reading, metadata parsing, and image writing for "
-        "microscopy formats in pure Python from the Allen Institute for Cell Science."
+        "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
+        "in Pure Python"
     ),
     entry_points={},
     install_requires=requirements,
@@ -97,7 +101,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     include_package_data=True,
-    keywords="aicsimageio, allen cell, imaging, computational biology",
+    keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
     python_requires=">=3.7",
@@ -108,6 +112,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="3.3.1",
+    version="3.3.0",
     zip_safe=False,
 )

@@ -2,20 +2,20 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Union
+from typing import Tuple
 
 from fsspec.core import url_to_fs
-from fsspec.implementations.local import LocalFileOpener
-from fsspec.spec import AbstractBufferedFile, AbstractFileSystem
+from fsspec.spec import AbstractFileSystem
 
 from ..types import PathLike
 
 ###############################################################################
 
+
 def pathlike_to_fs(
     uri: PathLike,
     enforce_exists: bool = False,
-) -> Union[AbstractBufferedFile, LocalFileOpener]:
+) -> Tuple[AbstractFileSystem, str]:
     """
     Find and return the appropriate filesystem and path from a path-like object.
 
@@ -28,8 +28,10 @@ def pathlike_to_fs(
 
     Returns
     -------
-    abstract_file: Union[AbstractBufferedFile, LocalFileOpener]
-        A file like object to operate on.
+    fs: AbstractFileSystem
+        The filesystem to operate on.
+    path: str
+        The full path to the target resource.
 
     Raises
     ------
@@ -49,4 +51,7 @@ def pathlike_to_fs(
             raise FileNotFoundError(f"{fs.protocol}://{path}")
 
     # Get and store details
-    return fs.open(path)
+    # We do not return an AbstractBufferedFile (i.e. fs.open) as we do not want to have
+    # any open file buffers _after_ any API call. API calls must themselves call
+    # fs.open and complete their function during the context of the opened buffer.
+    return fs, path

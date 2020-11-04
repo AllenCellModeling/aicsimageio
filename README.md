@@ -4,8 +4,8 @@
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
 
-Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in
-Pure Python
+Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure
+Python
 
 ---
 
@@ -18,6 +18,13 @@ Pure Python
     * Any additional format supported by [imageio](https://github.com/imageio/imageio)
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
+* Supports reading from and writing to any
+[fsspec](https://github.com/intake/filesystem_spec) supported file system:
+    * Local paths (i.e. `my-file.png`)
+    * HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
+    * [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
+    * [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
+    * See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 
 ## Installation
 **Stable Release:** `pip install aicsimageio`<br>
@@ -36,6 +43,7 @@ from aicsimageio import AICSImage, imread
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
 img.data  # returns 5D TCZYX numpy array
+img.xarray_data  # returns 5D TCZYX xarray data array backed by numpy
 img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
@@ -53,6 +61,7 @@ img.set_scene(1)
 
 # Same operations on a different scene
 img.data  # returns 5D TCZYX numpy array
+img.xarray_data  # returns 5D TCZYX xarray data array backed by numpy
 img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
@@ -70,6 +79,7 @@ from aicsimageio import AICSImage, imread_dask
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
 img.dask_data  # returns 5D TCZYX dask array
+img.xarray_dask_data  # returns 5D TCZYX xarray data array backed by dask array
 img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
@@ -87,6 +97,7 @@ img.set_scene(1)
 
 # Same operations on a different scene
 img.dask_data  # returns 5D TCZYX dask array
+img.xarray_dask_data  # returns 5D TCZYX xarray data array backed by dask array
 img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
@@ -108,22 +119,12 @@ t0 = lazy_t0.compute()
 from aicsimageio import AICSImage
 
 # Get an AICSImage object
+img = AICSImage("http://my-website.com/my_file.tiff")
 img = AICSImage("s3://my-bucket/my_file.tiff")
 img = AICSImage("gcs://my-bucket/my_file.tiff")
-img = AICSImage("http://my-website.com/my_file.tiff")
 
 # All other normal operations work just fine
 ```
-
-#### Quickstart Notes
-In short, if the word "dask" appears in the function or property name, the function
-utilizes delayed reading. If not, the requested image will be loaded immediately and
-the internal implementation may result in loading the entire image even if only a small
-chunk was requested. Currently, `AICSImage.data` and `AICSImage.get_image_data` load
-and cache the entire image in memory before performing their operation.
-`AICSImage.dask_data` and `AICSImage.get_image_dask_data` do not load any image data
-until the user calls `compute` on the `dask.Array` object and only the requested chunk
-will be loaded into memory instead of the entire image.
 
 ### Metadata Reading
 ```python
@@ -138,11 +139,28 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
+#### Quickstart Notes
+In short, if the word "dask" appears in the function or property name, the function
+utilizes delayed reading. If not, the requested image will be loaded immediately and
+the internal implementation may result in loading the entire image even if only a small
+chunk was requested. Currently, `AICSImage.data`, `AICSImage.xarray_data`, and
+`AICSImage.get_image_data` load and cache the entire image in memory before performing
+their operation. `AICSImage.dask_data`, `AICSImage.xarray_dask_data`, and
+`AICSImage.get_image_dask_data` do not load any image data until the user calls
+`compute` on the `dask.Array` object and only the requested chunk will be loaded into
+memory instead of the entire image.
+
 ## Performance Considerations
+* **The quickest read operation will always be `.data` on a local file.** All other
+operations come with _some_ minor overhead. We try to minimize this overhead wherever
+possible.
 * **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
 or `Reader` equivalents.
 * **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
 `AICSImage.get_image_dask_data`, or `Reader` equivalents.
+* **If your image does not support native chunk reading:** it may not be best to read
+chunks from a remote source. While possible, the format of the image matters a lot for
+chunked read performance.
 
 ## Napari Interactive Viewer
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
@@ -155,13 +173,11 @@ that allows use of all the functionality described in this library, but in the `
 default viewer itself.
 
 ## Notes
-* Image `data` and `dask_data` are always returned as five dimensional in dimension
-order `TCZYX` or, `Time`, `Channel`, `Z`, `Y`, and `X`.
-* Each file format may use a different metadata parser it is dependent on the reader's
-implementation.
+* Each file format may use a different metadata parser as it is dependent on the
+format's reader class implementation.
 * The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
 dimensions from the reader. If your file has dimensions outside of those, use the base
-reader classes.
+`Reader` classes.
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

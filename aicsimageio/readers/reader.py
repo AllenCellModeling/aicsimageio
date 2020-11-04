@@ -24,7 +24,7 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _reader_supports_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
         """
         The per-Reader implementation used to validate that an image is supported or not
         by the Reader itself.
@@ -44,7 +44,7 @@ class Reader(ABC):
         pass
 
     @classmethod
-    def reader_supports_image(cls, image: types.ImageLike) -> bool:
+    def is_supported_image(cls, image: types.ImageLike) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 

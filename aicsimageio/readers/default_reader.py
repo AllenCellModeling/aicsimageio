@@ -12,7 +12,6 @@ from fsspec.spec import AbstractFileSystem
 
 from .. import exceptions, types
 from ..dimensions import DimensionNames
-from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
 
@@ -110,7 +109,7 @@ class DefaultReader(Reader):
             raise exceptions.UnsupportedFileFormatError(self.extension)
 
     @staticmethod
-    def guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int]) -> str:
         if len(shape) == 2:
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:
@@ -124,7 +123,7 @@ class DefaultReader(Reader):
                 f"{DimensionNames.SpatialX}{DimensionNames.Channel}"
             )
 
-        return Reader.guess_dim_order(shape)
+        return Reader._guess_dim_order(shape)
 
     @property
     def scenes(self) -> Tuple[int]:
@@ -137,15 +136,6 @@ class DefaultReader(Reader):
     @property
     def current_scene(self) -> int:
         return self.scenes[0]
-
-    def set_scene(self, id: int):
-        # We don't need to do any value setting here, we simply need to keep to the
-        # Reader spec and enforce that the scene id provided is valid
-        if id not in self.scenes:
-            raise IndexError(
-                f"Scene id: {id} "
-                f"is not present in available image scenes: {self.scenes}"
-            )
 
     @staticmethod
     def _get_image_data(
@@ -261,7 +251,7 @@ class DefaultReader(Reader):
             If possible, the coordinates for dimensions in the image data.
         """
         # Guess dims
-        dims = [c for c in DefaultReader.guess_dim_order(image_data.shape)]
+        dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
 
         # Use dims for coord determination
         coords = {}
@@ -436,7 +426,3 @@ class DefaultReader(Reader):
             self._metadata = self.xarray_dask_data.attrs
 
         return self._metadata
-
-    @property
-    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
-        return PhysicalPixelSizes(1.0, 1.0, 1.0)

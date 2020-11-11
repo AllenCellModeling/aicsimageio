@@ -8,7 +8,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import run_image_read_checks
+from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
 
 
 @pytest.mark.parametrize("host", [LOCAL, REMOTE])
@@ -117,6 +117,54 @@ def test_tiff_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+    )
+
+
+@pytest.mark.parametrize("host", [LOCAL, REMOTE])
+@pytest.mark.parametrize(
+    "filename, "
+    "first_scene_id, "
+    "first_scene_shape, "
+    "second_scene_id, "
+    "second_scene_shape",
+    [
+        (
+            "s_3_t_1_c_3_z_5.ome.tiff",
+            0,
+            (5, 3, 325, 475),
+            1,
+            (5, 3, 325, 475),
+        ),
+        (
+            "s_3_t_1_c_3_z_5.ome.tiff",
+            1,
+            (5, 3, 325, 475),
+            2,
+            (5, 3, 325, 475),
+        ),
+    ],
+)
+def test_multi_scene_tiff_reader(
+    filename,
+    host,
+    first_scene_id,
+    first_scene_shape,
+    second_scene_id,
+    second_scene_shape,
+):
+    # Construct full filepath
+    uri = get_resource_full_path(filename, host)
+
+    # Run checks
+    run_multi_scene_image_read_checks(
+        ReaderClass=TiffReader,
+        uri=uri,
+        first_scene_id=first_scene_id,
+        first_scene_shape=first_scene_shape,
+        first_scene_dtype=np.uint16,
+        second_scene_id=second_scene_id,
+        second_scene_shape=second_scene_shape,
+        second_scene_dtype=np.uint16,
     )
 
 

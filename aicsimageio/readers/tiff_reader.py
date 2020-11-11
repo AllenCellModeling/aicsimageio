@@ -11,9 +11,15 @@ from fsspec.spec import AbstractFileSystem
 from tifffile import TiffFile, TiffFileError
 
 from .. import exceptions, types
-from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames
+from ..dimensions import DimensionNames
 from ..utils import io_utils
 from .reader import Reader
+
+###############################################################################
+
+# "Q" is used by Gohlke to say "unknown dimension"
+# https://github.com/cgohlke/tifffile/blob/master/tifffile/tifffile.py#L10840
+UNKNOWN_DIM_CHAR = "Q"
 
 ###############################################################################
 
@@ -107,7 +113,7 @@ class TiffReader(Reader):
         best_guess = []
         for dim_from_meta in dims_from_meta:
             # Dim from meta is recognized, add it
-            if dim_from_meta in DEFAULT_DIMENSION_ORDER:
+            if dim_from_meta != UNKNOWN_DIM_CHAR:
                 best_guess.append(dim_from_meta)
 
             # Dim from meta isn't recognized
@@ -136,12 +142,11 @@ class TiffReader(Reader):
                 scene = tiff.series[self.current_scene]
                 dims_from_meta = scene.pages.axes
 
-                # We can sometimes trust the dimension info in the image
-                if all([d in DEFAULT_DIMENSION_ORDER for d in dims_from_meta]):
+                # If all dims are known, simply return as list
+                if UNKNOWN_DIM_CHAR not in dims_from_meta:
                     return [d for d in dims_from_meta]
 
-                # Sometimes the dimension info is wrong in certain dimensions,
-                # so guess that dimension
+                # Otherwise guess the dimensions and return merge
                 else:
                     # Get basic guess from shape size
                     guessed_dims = Reader._guess_dim_order(scene.shape)

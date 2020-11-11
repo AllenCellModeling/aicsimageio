@@ -118,3 +118,17 @@ def test_tiff_reader(
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
     )
+
+
+@pytest.mark.parametrize(
+    "dims_from_meta, guessed_dims, expected",
+    [
+        ("QZYX", "CZYX", "CZYX"),
+        ("ZQYX", "CZYX", "ZCYX"),
+        ("ZYXC", "CZYX", "ZYXC"),
+        ("TQQYX", "TCZYX", "TCZYX"),
+        ("QTQYX", "TCZYX", "CTZYX"),
+    ],
+)
+def test_merge_dim_guesses(dims_from_meta, guessed_dims, expected):
+    assert TiffReader._merge_dim_guesses(dims_from_meta, guessed_dims) == expected

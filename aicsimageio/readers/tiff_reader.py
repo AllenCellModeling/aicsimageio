@@ -111,11 +111,14 @@ class TiffReader(Reader):
                 best_guess.append(dim_from_meta)
 
             # Dim from meta isn't recognized
-            # Find next dim that isn't already in best guess
+            # Find next dim that isn't already in best guess or dims from meta
             else:
                 appended_dim = False
                 for guessed_dim in guessed_dims:
-                    if guessed_dim not in best_guess:
+                    if (
+                        guessed_dim not in best_guess
+                        and guessed_dim not in dims_from_meta
+                    ):
                         best_guess.append(guessed_dim)
                         appended_dim = True
                         break

@@ -53,7 +53,7 @@ class TiffReader(Reader):
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indicies
-                    self._scenes = tuple(range(tiff.scenes))
+                    self._scenes = tuple(range(len(tiff.series)))
 
         return self._scenes
 
@@ -99,7 +99,7 @@ class TiffReader(Reader):
     ) -> Dict:
         with fs.open(path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                return tiff.scenes[scene].pages[0].tags
+                return tiff.series[scene].pages[0].tags
 
     @staticmethod
     def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str):
@@ -135,14 +135,16 @@ class TiffReader(Reader):
 
                 # We can sometimes trust the dimension info in the image
                 if all([d in DEFAULT_DIMENSION_ORDER for d in dims_from_meta]):
-                    return dims_from_meta
+                    return [d for d in dims_from_meta]
 
                 # Sometimes the dimension info is wrong in certain dimensions,
                 # so guess that dimension
                 else:
                     # Get basic guess from shape size
                     guessed_dims = Reader._guess_dim_order(scene.shape)
-                    return self._merge_dim_guesses(dims_from_meta, guessed_dims)
+                    return [
+                        d for d in self._merge_dim_guesses(dims_from_meta, guessed_dims)
+                    ]
 
     @staticmethod
     def _get_coords(dims: str, shape: Tuple[int]):
@@ -151,9 +153,9 @@ class TiffReader(Reader):
 
         # Use range for channel indices
         if DimensionNames.Channel in dims:
-            coords[DimensionNames.Channel] = list(
-                range(shape[dims.index(DimensionNames.Channel)])
-            )
+            coords[DimensionNames.Channel] = [
+                str(i) for i in range(shape[dims.index(DimensionNames.Channel)])
+            ]
 
         return coords
 
@@ -184,8 +186,15 @@ class TiffReader(Reader):
 
                 # Get shape of current scene
                 # Replace YX dims with empty dimensions
-                operating_shape = tiff.scenes[self.current_scene].shape
-                operating_shape = operating_shape[:-2] + (1, 1)
+                operating_shape = tiff.series[self.current_scene].shape
+
+                # If the data is RGB we need to pull in the channels as well
+                if tiff.series[self.current_scene].keyframe.samplesperpixel != 1:
+                    operating_shape = operating_shape[:-3] + (1, 1, 1)
+
+                # Otherwise the data is in 2D planes (Y, X)
+                else:
+                    operating_shape = operating_shape[:-2] + (1, 1)
 
                 # Make ndarray for lazy arrays to fill
                 lazy_arrays = np.ndarray(operating_shape, dtype=object)
@@ -194,7 +203,7 @@ class TiffReader(Reader):
                 ):
                     # Fill the numpy array with the delayed arrays
                     lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._imread)(
+                        delayed(TiffReader._get_image_data)(
                             fs=self.fs,
                             path=self.path,
                             scene=self.current_scene,
@@ -242,7 +251,7 @@ class TiffReader(Reader):
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                image_data = tiff.scenes[self.current_scene].asarray()
+                image_data = tiff.series[self.current_scene].asarray()
 
                 # Get metadata from tags
                 metadata = self._get_metadata(

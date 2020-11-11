@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 from distributed.protocol import deserialize, serialize
@@ -43,7 +43,7 @@ def run_image_read_checks(
     ReaderClass: Reader,
     uri: types.PathLike,
     set_scene: int,
-    expected_scenes: Set[int],
+    expected_scenes: Tuple[int],
     expected_current_scene: int,
     expected_shape: Tuple[int],
     expected_dtype: np.dtype,

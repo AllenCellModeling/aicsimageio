@@ -8,8 +8,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import (run_image_read_checks,
-                                run_multi_scene_image_read_checks)
+from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
 
 
 @pytest.mark.parametrize("host", [LOCAL, REMOTE])
@@ -56,11 +55,6 @@ from .reader_test_utils import (run_image_read_checks,
             "ZCYX",
             ["0", "1", "2"],
         ),
-        (
-            "s_1_t_1_c_3_z_1_RGB_1.tiff",
-            (0),
-            (0,),
-        )
         pytest.param(
             "example.txt",
             None,

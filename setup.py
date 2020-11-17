@@ -9,7 +9,7 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    "aicspylibczi>=2.5.0",
+    "aicspylibczi >=2.7.5, <3.0",
     "dask>=2.9.0",
     "distributed>=2.9.3",
     "numpy>=1.16",

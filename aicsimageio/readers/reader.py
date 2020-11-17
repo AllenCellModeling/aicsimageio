@@ -138,13 +138,13 @@ class Reader(ABC):
         """
         pass
 
-    def set_scene(self, id: int):
+    def set_scene(self, scene_id: int):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        id: int
+        scene_id: int
             The scene id to set as the operating scene.
 
         Raises
@@ -152,17 +152,17 @@ class Reader(ABC):
         IndexError: the provided scene id is not found in the available scene id list
         """
         # Only need to run when the scene id is different from current scene
-        if id != self.current_scene:
+        if scene_id != self.current_scene:
 
             # Validate scene id
-            if id not in self.scenes:
+            if scene_id not in self.scenes:
                 raise IndexError(
-                    f"Scene id: {id} "
+                    f"Scene id: {scene_id} "
                     f"is not present in available image scenes: {self.scenes}"
                 )
 
             # Update current scene
-            self._current_scene = id
+            self._current_scene = scene_id
 
             # Reset the data stored in the Reader object
             self._xarray_dask_data = None

@@ -9,17 +9,18 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    "aicspylibczi>=2.6.0",
-    "dask[array]>=2.9.0",
-    "fsspec>=0.8.4",
-    "numpy>=1.16",
-    "imagecodecs>=2020.5.30",
-    "imageio[ffmpeg]>=2.9.0",
-    "readlif>=0.2.1",
-    "lxml>=4.5.2",
+    "aicspylibczi~=2.7.5",
+    "dask[array]~=2.9.0",
+    "fsspec~=0.8.4",
+    "imagecodecs~=2020.5.30",
+    "imageio[ffmpeg]~=2.9.0",
+    "lxml~=4.5.2",
+    "numpy~=1.16",
+    "ome-types~=0.2.0",
+    "readlif~=0.2.1",
     "tifffile>=2020.9.22",
-    "toolz>=0.10.1",
-    "xarray>=0.16.1",
+    "toolz~=0.11.0",
+    "xarray~=0.16.1",
 ]
 
 setup_requirements = [

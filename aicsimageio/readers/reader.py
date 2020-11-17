@@ -21,6 +21,8 @@ class Reader(ABC):
     _xarray_data = None
     _dims = None
     _metadata = None
+    _scenes = None
+    _current_scene = None
 
     @staticmethod
     @abstractmethod
@@ -84,7 +86,7 @@ class Reader(ABC):
         pass
 
     @staticmethod
-    def guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int]) -> str:
         """
         Given an image shape attempts to guess the dimension order.
 
@@ -136,20 +138,37 @@ class Reader(ABC):
         """
         pass
 
-    def set_scene(self, id: int):
+    def set_scene(self, scene_id: int):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        id: int
+        scene_id: int
             The scene id to set as the operating scene.
 
         Raises
         ------
         IndexError: the provided scene id is not found in the available scene id list
         """
-        pass
+        # Only need to run when the scene id is different from current scene
+        if scene_id != self.current_scene:
+
+            # Validate scene id
+            if scene_id not in self.scenes:
+                raise IndexError(
+                    f"Scene id: {scene_id} "
+                    f"is not present in available image scenes: {self.scenes}"
+                )
+
+            # Update current scene
+            self._current_scene = scene_id
+
+            # Reset the data stored in the Reader object
+            self._xarray_dask_data = None
+            self._xarray_data = None
+            self._dims = None
+            self._metadata = None
 
     @abstractmethod
     def _read_delayed(self) -> xr.DataArray:
@@ -474,7 +493,7 @@ class Reader(ABC):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        pass
+        return PhysicalPixelSizes(1.0, 1.0, 1.0)
 
     def __str__(self):
         return (

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Optional, Set, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 from distributed.protocol import deserialize, serialize
@@ -43,7 +43,7 @@ def run_image_read_checks(
     ReaderClass: Reader,
     uri: types.PathLike,
     set_scene: int,
-    expected_scenes: Set[int],
+    expected_scenes: Tuple[int],
     expected_current_scene: int,
     expected_shape: Tuple[int],
     expected_dtype: np.dtype,
@@ -51,6 +51,9 @@ def run_image_read_checks(
     expected_channel_names: Optional[List[str]],
     expected_physical_pixel_sizes: Tuple[float],
 ) -> Reader:
+    """
+    A general suite of tests to run against every Reader.
+    """
     # Read file
     reader = ReaderClass(uri)
 
@@ -82,6 +85,62 @@ def run_image_read_checks(
     # Check that the shape and dtype are expected after reading in full
     assert reader.data.shape == expected_shape
     assert reader.data.dtype == expected_dtype
+
+    check_local_file_not_open(reader.fs, reader.path)
+    check_can_serialize_reader(reader)
+
+    return reader
+
+
+def run_multi_scene_image_read_checks(
+    ReaderClass: Reader,
+    uri: types.PathLike,
+    first_scene_id: int,
+    first_scene_shape: Tuple[int],
+    first_scene_dtype: np.dtype,
+    second_scene_id: int,
+    second_scene_shape: Tuple[int],
+    second_scene_dtype: np.dtype,
+) -> Reader:
+    """
+    A suite of tests to ensure that data is reset when switching scenes.
+    """
+    # Read file
+    reader = ReaderClass(uri)
+
+    check_local_file_not_open(reader.fs, reader.path)
+    check_can_serialize_reader(reader)
+
+    # Set scene
+    reader.set_scene(first_scene_id)
+
+    # Check basics
+    assert reader.shape == first_scene_shape
+    assert reader.dtype == first_scene_dtype
+
+    # Check that the shape and dtype are expected after reading in full
+    assert reader.data.shape == first_scene_shape
+    assert reader.data.dtype == first_scene_dtype
+
+    check_local_file_not_open(reader.fs, reader.path)
+    check_can_serialize_reader(reader)
+
+    # Change scene
+    reader.set_scene(second_scene_id)
+
+    # Check data was reset
+    assert reader._xarray_dask_data is None
+    assert reader._xarray_data is None
+    assert reader._dims is None
+    assert reader._metadata is None
+
+    # Check basics
+    assert reader.shape == second_scene_shape
+    assert reader.dtype == second_scene_dtype
+
+    # Check that the shape and dtype are expected after reading in full
+    assert reader.data.shape == first_scene_shape
+    assert reader.data.dtype == first_scene_dtype
 
     check_local_file_not_open(reader.fs, reader.path)
     check_can_serialize_reader(reader)

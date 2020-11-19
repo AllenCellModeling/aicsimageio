@@ -256,6 +256,13 @@ class DefaultReader(Reader):
         # Use dims for coord determination
         coords = {}
 
+        # Handle typical RGB and RGBA from Samples
+        if DimensionNames.Samples in dims:
+            if image_data.shape[dims.index(DimensionNames.Samples)] == 3:
+                coords[DimensionNames.Samples] = ["R", "G", "B"]
+            elif image_data.shape[dims.index(DimensionNames.Samples)] == 4:
+                coords[DimensionNames.Samples] = ["R", "G", "B", "A"]
+
         # Handle time when duration is present in metadata
         if DimensionNames.Time in dims:
             if "duration" in metadata:

@@ -12,6 +12,7 @@ class DimensionNames:
     SpatialZ = "Z"
     SpatialY = "Y"
     SpatialX = "X"
+    Samples = "S"
 
 
 DEFAULT_DIMENSION_ORDER_LIST = [

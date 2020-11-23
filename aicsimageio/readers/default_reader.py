@@ -115,12 +115,12 @@ class DefaultReader(Reader):
         elif len(shape) == 3:
             return (
                 f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
-                f"{DimensionNames.Channel}"
+                f"{DimensionNames.Samples}"
             )
         elif len(shape) == 4:
             return (
                 f"{DimensionNames.Time}{DimensionNames.SpatialY}"
-                f"{DimensionNames.SpatialX}{DimensionNames.Channel}"
+                f"{DimensionNames.SpatialX}{DimensionNames.Samples}"
             )
 
         return Reader._guess_dim_order(shape)
@@ -256,12 +256,12 @@ class DefaultReader(Reader):
         # Use dims for coord determination
         coords = {}
 
-        # Handle typical RGB and RGBA from channels
-        if DimensionNames.Channel in dims:
-            if image_data.shape[dims.index(DimensionNames.Channel)] == 3:
-                coords[DimensionNames.Channel] = ["R", "G", "B"]
-            elif image_data.shape[dims.index(DimensionNames.Channel)] == 4:
-                coords[DimensionNames.Channel] = ["R", "G", "B", "A"]
+        # Handle typical RGB and RGBA from Samples
+        if DimensionNames.Samples in dims:
+            if image_data.shape[dims.index(DimensionNames.Samples)] == 3:
+                coords[DimensionNames.Samples] = ["R", "G", "B"]
+            elif image_data.shape[dims.index(DimensionNames.Samples)] == 4:
+                coords[DimensionNames.Samples] = ["R", "G", "B", "A"]
 
         # Handle time when duration is present in metadata
         if DimensionNames.Time in dims:

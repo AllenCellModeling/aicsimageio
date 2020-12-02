@@ -18,6 +18,10 @@ requirements = [
     "numpy~=1.16",
     "ome-types~=0.2.0",
     "readlif~=0.2.1",
+    # We need this for ome-types HTTPError
+    # TODO
+    # Make a PR to create a metadata validation failed error
+    "requests",
     "tifffile>=2020.9.22",
     "toolz~=0.11.0",
     "xarray~=0.16.1",

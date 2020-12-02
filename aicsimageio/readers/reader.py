@@ -9,7 +9,7 @@ import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
 
-from .. import transforms, types
+from .. import constants, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
 
@@ -468,15 +468,30 @@ class Reader(ABC):
         )
 
     @property
-    @abstractmethod
     def metadata(self) -> Any:
         """
         Returns
         -------
         metadata: Any
             The metadata for the formats supported by the inhereting Reader.
+
+            If the inhereting Reader supports processing the metadata into a more useful
+            format / Python object, this will return the result.
+
+            For both the unprocessed and processed metadata from the file, use
+            `xarray_dask_data.attrs`
         """
-        pass
+        if self._metadata is None:
+            if constants.METADATA_PROCESSED in self.xarray_dask_data.attrs:
+                self._metadata = self.xarray_dask_data.attrs[
+                    constants.METADATA_PROCESSED
+                ]
+            else:
+                self._metadata = self.xarray_dask_data.attrs[
+                    constants.METADATA_UNPROCESSED
+                ]
+
+        return self._metadata
 
     @property
     def channel_names(self) -> Optional[List[str]]:

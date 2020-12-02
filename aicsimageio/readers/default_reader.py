@@ -10,7 +10,7 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
 from ..utils import io_utils
 from .reader import Reader

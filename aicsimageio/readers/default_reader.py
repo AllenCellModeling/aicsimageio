@@ -358,7 +358,7 @@ class DefaultReader(Reader):
                     image_data,
                     dims=dims,
                     coords=coords,
-                    attrs=metadata,
+                    attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -413,12 +413,5 @@ class DefaultReader(Reader):
                 image_data,
                 dims=dims,
                 coords=coords,
-                attrs=metadata,
+                attrs={constants.METADATA_UNPROCESSED: metadata},
             )
-
-    @property
-    def metadata(self):
-        if self._metadata is None:
-            self._metadata = self.xarray_dask_data.attrs
-
-        return self._metadata

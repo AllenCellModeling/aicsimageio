@@ -54,21 +54,16 @@ class TiffReader(Reader):
             raise exceptions.UnsupportedFileFormatError(self.extension)
 
     @property
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indicies
-                    self._scenes = tuple(range(len(tiff.series)))
+                    self._scenes = tuple(
+                        [f"Image:{i}" for i in range(len(tiff.series))]
+                    )
 
         return self._scenes
-
-    @property
-    def current_scene(self) -> int:
-        if self._current_scene is None:
-            self._current_scene = self.scenes[0]
-
-        return self._current_scene
 
     @staticmethod
     def _get_image_data(
@@ -139,7 +134,7 @@ class TiffReader(Reader):
     def _guess_dim_order(self):
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                scene = tiff.series[self.current_scene]
+                scene = tiff.series[self.current_scene_index]
                 dims_from_meta = scene.pages.axes
 
                 # If all dims are known, simply return as list
@@ -188,16 +183,16 @@ class TiffReader(Reader):
                 sample = self._get_image_data(
                     fs=self.fs,
                     path=self.path,
-                    scene=self.current_scene,
+                    scene=self.current_scene_index,
                     index=0,
                 )
 
                 # Get shape of current scene
                 # Replace YX dims with empty dimensions
-                operating_shape = tiff.series[self.current_scene].shape
+                operating_shape = tiff.series[self.current_scene_index].shape
 
                 # If the data is RGB we need to pull in the channels as well
-                if tiff.series[self.current_scene].keyframe.samplesperpixel != 1:
+                if tiff.series[self.current_scene_index].keyframe.samplesperpixel != 1:
                     operating_shape = operating_shape[:-3] + (1, 1, 1)
 
                 # Otherwise the data is in 2D planes (Y, X)
@@ -214,7 +209,7 @@ class TiffReader(Reader):
                         delayed(TiffReader._get_image_data)(
                             fs=self.fs,
                             path=self.path,
-                            scene=self.current_scene,
+                            scene=self.current_scene_index,
                             index=plane_index,
                         ),
                         shape=sample.shape,
@@ -228,7 +223,7 @@ class TiffReader(Reader):
                 metadata = self._get_metadata(
                     fs=self.fs,
                     path=self.path,
-                    scene=self.current_scene,
+                    scene=self.current_scene_index,
                 )
 
                 # Create dims and coords
@@ -259,13 +254,13 @@ class TiffReader(Reader):
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                image_data = tiff.series[self.current_scene].asarray()
+                image_data = tiff.series[self.current_scene_index].asarray()
 
                 # Get metadata from tags
                 metadata = self._get_metadata(
                     fs=self.fs,
                     path=self.path,
-                    scene=self.current_scene,
+                    scene=self.current_scene_index,
                 )
 
                 # Create dims and coords

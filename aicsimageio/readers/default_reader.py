@@ -126,16 +126,12 @@ class DefaultReader(Reader):
         return Reader._guess_dim_order(shape)
 
     @property
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         # There is currently an assumption that DefaultReader will not encounter
         # files with multiple scenes. But, if we do encounter a file that DefaultReader
         # hits and a user wants scene management from that file type, we can update
         # this property then.
-        return (0,)
-
-    @property
-    def current_scene(self) -> int:
-        return self.scenes[0]
+        return ("Image:0",)
 
     @staticmethod
     def _get_image_data(

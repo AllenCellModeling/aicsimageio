@@ -107,16 +107,16 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         """
         Returns
         -------
-        scenes: Tuple[int]
+        scenes: Tuple[str]
             A tuple of valid scene ids in the file.
 
         Notes
         -----
-        Scene IDs are not a range of integers.
+        Scene IDs are strings - not a range of integers.
 
         When iterating over scenes please use:
 
@@ -129,22 +129,35 @@ class Reader(ABC):
         pass
 
     @property
-    def current_scene(self) -> int:
+    def current_scene(self) -> str:
         """
         Returns
         -------
-        scene: int
+        scene: str
             The current operating scene.
         """
-        pass
+        if self._current_scene is None:
+            self._current_scene = self.scenes[0]
 
-    def set_scene(self, scene_id: int):
+        return self._current_scene
+
+    @property
+    def current_scene_index(self) -> int:
+        """
+        Returns
+        -------
+        scene_index: int
+            The current operating scene index in the file.
+        """
+        return self.scenes.index(self.current_scene)
+
+    def set_scene(self, scene_id: str):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        scene_id: int
+        scene_id: str
             The scene id to set as the operating scene.
 
         Raises

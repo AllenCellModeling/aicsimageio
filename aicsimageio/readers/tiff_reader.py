@@ -91,15 +91,10 @@ class TiffReader(Reader):
             with TiffFile(open_resource) as tiff:
                 return tiff.series[scene].pages[index].asarray()
 
-    @staticmethod
-    def _get_tiff_tags(
-        fs: AbstractFileSystem,
-        path: str,
-        scene: int,
-    ) -> TiffTags:
-        with fs.open(path) as open_resource:
+    def _get_tiff_tags(self) -> TiffTags:
+        with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                return tiff.series[scene].pages[0].tags
+                return tiff.series[self.current_scene_index].pages[0].tags
 
     @staticmethod
     def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str) -> str:
@@ -236,11 +231,7 @@ class TiffReader(Reader):
         image_data = self._create_dask_array()
 
         # Get unprocessed metadata from tags
-        tiff_tags = self._get_tiff_tags(
-            fs=self.fs,
-            path=self.path,
-            scene=self.current_scene_index,
-        )
+        tiff_tags = self._get_tiff_tags()
 
         # Create dims and coords
         dims = self._guess_dim_order()
@@ -274,11 +265,7 @@ class TiffReader(Reader):
                 image_data = tiff.series[self.current_scene_index].asarray()
 
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene_index,
-                )
+                tiff_tags = self._get_tiff_tags()
 
                 # Create dims and coords
                 dims = self._guess_dim_order()

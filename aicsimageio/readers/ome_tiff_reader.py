@@ -30,9 +30,10 @@ from .tiff_reader import TiffReader
 # Don't know how this wasn't ever caught before that PR but to ensure that we don't
 # error in reading the OME in aicsimageio>=4.0.0, we manually find and replace this
 # line in OME xml prior to creating the OME object.
-KNOWN_INVALID_OME_XSD_REFERENCE = (
-    'www.openmicroscopy.org/Schemas/ome/2013-06'
-)
+KNOWN_INVALID_OME_XSD_REFERENCES = [
+    "www.openmicroscopy.org/Schemas/ome/2013-06",
+    "www.openmicroscopy.org/Schemas/OME/2012-03",
+]
 REPLACEMENT_OME_XSD_REFERENCE = (
     'www.openmicroscopy.org/Schemas/OME/2016-06'
 )
@@ -42,36 +43,97 @@ REPLACEMENT_OME_XSD_REFERENCE = (
 
 class OmeTiffReader(TiffReader):
     @staticmethod
-    def _create_ome_from_tiff(tiff: TiffFile) -> OME:
-        # Read tiff description
-        ome_xml = tiff.pages[0].description
-
+    def _clean_ome_xml_for_known_issues(xml: str) -> str:
         # Fix old aicsimageio / vendor code mistakes
         # Fix xsd reference
-        ome_xml = ome_xml.replace(
-            KNOWN_INVALID_OME_XSD_REFERENCE,
-            REPLACEMENT_OME_XSD_REFERENCE,
-        )
+        for known_invalid_ref in KNOWN_INVALID_OME_XSD_REFERENCES:
+            xml = xml.replace(
+                known_invalid_ref,
+                REPLACEMENT_OME_XSD_REFERENCE,
+            )
 
-        # Fix invalid image id references
-        ome_xml = re.sub(
-            # Find all "Image" tags and replace their bad IDs (i.e. just "0")
-            r'(<Image )(.*)(ID=\"(\d+)\")(.*>)',
-            # Replace with "Image:0" using the found digit
-            r'\1\2ID="Image:\4"\5',
-            ome_xml,
-        )
+        # Read in XML
+        root = ET.fromstring(xml)
 
-        # Fix invaild pixel id references
-        ome_xml = re.sub(
-            # Find all "Pixels" tags and replace their bad IDs (i.e. just "0")
-            r'(<Pixels )(.*)(ID=\"(\d+)\")(.*>)',
-            # Replace with "Pixels:0" using the found digit
-            r'\1\2ID="Pixels:\4"\5',
-            ome_xml,
-        )
+        # Get the namespace
+        # In XML etree this looks like
+        # "{http://www.openmicroscopy.org/Schemas/OME/2016-06}"
+        # and must prepend any etree finds
+        namespace_matches = re.match(r"\{.*\}", root.tag)
+        if namespace_matches is not None:
+            namespace = namespace_matches.group(0)
+        else:
+            raise ValueError(f"XML does not contain a namespace")
 
-        return from_xml(ome_xml)
+        # Find all Image elements and fix IDs
+        for image in root.findall(f"{namespace}Image"):
+            image_id = image.attrib["ID"]
+            if not image_id.startswith("Image"):
+                image.set("ID", f"Image:{image_id}")
+
+            # Find all Pixels elements and fix IDs
+            for pixels in image.findall(f"{namespace}Pixels"):
+                pixels_id = pixels.attrib["ID"]
+                if not pixels_id.startswith("Pixels"):
+                    pixels.set("ID", f"Pixels:{pixels}")
+
+        ET.register_namespace("OME", REPLACEMENT_OME_XSD_REFERENCE)
+        ET.register_namespace("", REPLACEMENT_OME_XSD_REFERENCE)
+        print(ET.tostring(
+            root,
+            encoding="utf-8",
+            method="xml",
+            default_namepace=REPLACEMENT_OME_XSD_REFERENCE,
+        )[:100])
+
+        return ""
+
+    @staticmethod
+    def _get_cleaned_ome_xml(ome_xml: str) -> OME:
+        # Clean for known issues
+        cleaned_ome_xml = OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml)
+
+        #
+        # # Fix invalid image id references
+        # ome_xml = re.sub(
+        #     # Find all "Image" elements and replace their bad IDs (i.e. just "0")
+        #     r'(<Image )'
+        #     r'(.*)(ID=\"(\d+)\")'
+        #     r'(.*>)',
+        #     # Replace with "Image:0" using the found digit
+        #     r'\1\2ID="Image:\4"\5',
+        #     ome_xml,
+        # )
+        #
+        # # Fix invaild pixel id references
+        # ome_xml = re.sub(
+        #     # Find all "Pixels" elements and replace their bad IDs (i.e. just "0")
+        #     r'(<Pixels )'
+        #     r'(.*)(ID=\"(\d+)\")'
+        #     r'(.*>)',
+        #     # Replace with "Pixels:0" using the found digit
+        #     r'\1\2ID="Pixels:\4"\5',
+        #     ome_xml,
+        # )
+        #
+        # with open("new-cfe-ome.xml", "w") as open_w:
+        #     open_w.write(ome_xml)
+        #
+        # # Fix invalid Pixel elements
+        # ome_xml = re.sub(
+        #     # Find any Pixels element that doesn't have a choice of
+        #     # BinData, TiffData, or MetadataOnly
+        #     # Prior to any Plane elements
+        #     r"(\<Pixels.*?)(?!(BinData|TiffData|MetadataOnly))(\<Plane.*?)",
+        #     # If matched add empty `<TiffData\>` before open of Plane element
+        #     r"\1<TiffData />\3",
+        #     ome_xml,
+        # )
+        #
+        # with open("new-cfe-ome-post-fix.xml", "w") as open_w:
+        #     open_w.write(ome_xml)
+
+        return from_xml(cleaned_ome_xml)
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
@@ -80,7 +142,8 @@ class OmeTiffReader(TiffReader):
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     # Assert that it is a valid OME object
-                    return isinstance(OmeTiffReader._create_ome_from_tiff(tiff), OME)
+                    cleaned_ome_xml = OmeTiffReader._get_cleaned_ome_xml()
+                    return isinstance(from_xml(tiff.pages[0].description), OME)
 
         # tifffile exception, tifffile exception, ome-types / etree exception
         except (TiffFileError, TypeError, ET.ParseError):

@@ -106,6 +106,7 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     description=(
         "Delayed parallel image reading, metadata parsing, and image writing for "
@@ -120,7 +121,7 @@ setup(
     keywords="aicsimageio, allen cell, imaging, computational biology",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,

@@ -16,29 +16,29 @@ jobs:
           python-version: 3.9
       - name: Install Image Codecs Dependencies
         run: |
-          sudo apt-get install
-          python3-blosc
-          python3-brotli
-          python3-snappy
-          python3-lz4
-          libz-dev
-          libblosc-dev
-          liblzma-dev
-          liblz4-dev
-          libzstd-dev
-          libpng-dev
-          libwebp-dev
-          libbz2-dev
-          libopenjp2-7-dev
-          libjpeg-dev
-          libjxr-dev
-          liblcms2-dev
-          libcharls-dev
-          libaec-dev
-          libbrotli-dev
-          libsnappy-dev
-          libzopfli-dev
-          libgif-dev
+          sudo apt-get install \
+          python3-blosc \
+          python3-brotli \
+          python3-snappy \
+          python3-lz4 \
+          libz-dev \
+          libblosc-dev \
+          liblzma-dev \
+          liblz4-dev \
+          libzstd-dev \
+          libpng-dev \
+          libwebp-dev \
+          libbz2-dev \
+          libopenjp2-7-dev \
+          libjpeg-dev \
+          libjxr-dev \
+          liblcms2-dev \
+          libcharls-dev \
+          libaec-dev \
+          libbrotli-dev \
+          libsnappy-dev \
+          libzopfli-dev \
+          libgif-dev \
           libtiff-dev
       - name: Install Python Dependencies
         run: |

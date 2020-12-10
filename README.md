@@ -18,14 +18,6 @@ Delayed Parallel Image Reading for Microscopy Images in Python
 * Supports writing metadata and imaging data for:
     * `OME-TIFF`
 
-## Installation
-**Stable Release:** `pip install aicsimageio`<br>
-**Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
-
-## Documentation
-For full package documentation please visit
-[allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
-
 ## Quick Start
 
 ### Full Image Reading
@@ -113,6 +105,25 @@ If your file has dimensions outside of those, use the base reader classes `CziRe
 * We make some choices for the user based off the image data during `img.view_napari`.
 If you don't want this behavior, simply pass the `img.dask_data` into
 `napari.view_image` instead.
+
+## Installation
+**Stable Release:** `pip install aicsimageio`<br>
+**Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
+
+### Linux Based Python 3.9 Installation
+If you are using a Linux based OS and Python 3.9 you will likely need to install
+`imagecodecs` dependencies. To so do please run:
+
+```bash
+sudo apt-get install python3-blosc python3-brotli python3-snappy python3-lz4 libz-dev
+libblosc-dev liblzma-dev liblz4-dev libzstd-dev libpng-dev libwebp-dev libbz2-dev
+libopenjp2-7-dev libjpeg-dev libjxr-dev liblcms2-dev libcharls-dev libaec-dev
+libbrotli-dev libsnappy-dev libzopfli-dev libgif-dev libtiff-dev
+```
+
+## Documentation
+For full package documentation please visit
+[allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
 ## Development
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.

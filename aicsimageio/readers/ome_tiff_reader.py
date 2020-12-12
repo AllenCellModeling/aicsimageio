@@ -3,6 +3,7 @@
 
 from typing import Dict, List, Tuple, Union
 import re
+import warnings
 import xml.etree.ElementTree as ET
 
 from fsspec.spec import AbstractFileSystem
@@ -34,9 +35,7 @@ KNOWN_INVALID_OME_XSD_REFERENCES = [
     "www.openmicroscopy.org/Schemas/ome/2013-06",
     "www.openmicroscopy.org/Schemas/OME/2012-03",
 ]
-REPLACEMENT_OME_XSD_REFERENCE = (
-    'www.openmicroscopy.org/Schemas/OME/2016-06'
-)
+REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2013-06"
 
 ###############################################################################
 
@@ -44,13 +43,22 @@ REPLACEMENT_OME_XSD_REFERENCE = (
 class OmeTiffReader(TiffReader):
     @staticmethod
     def _clean_ome_xml_for_known_issues(xml: str) -> str:
+        with open("pre-fix.xml", "w", encoding="utf-8") as open_resource:
+            open_resource.write(xml)
+
+        # Store bool to ultimately alert user that we changed the metadata
+        # with known common errors
+        metadata_was_changed = False
+
         # Fix old aicsimageio / vendor code mistakes
         # Fix xsd reference
         for known_invalid_ref in KNOWN_INVALID_OME_XSD_REFERENCES:
-            xml = xml.replace(
-                known_invalid_ref,
-                REPLACEMENT_OME_XSD_REFERENCE,
-            )
+            if known_invalid_ref in xml:
+                xml = xml.replace(
+                    known_invalid_ref,
+                    REPLACEMENT_OME_XSD_REFERENCE,
+                )
+                metadata_was_changed = True
 
         # Read in XML
         root = ET.fromstring(xml)
@@ -63,76 +71,52 @@ class OmeTiffReader(TiffReader):
         if namespace_matches is not None:
             namespace = namespace_matches.group(0)
         else:
-            raise ValueError(f"XML does not contain a namespace")
+            raise ValueError("XML does not contain a namespace")
 
         # Find all Image elements and fix IDs
         for image in root.findall(f"{namespace}Image"):
             image_id = image.attrib["ID"]
             if not image_id.startswith("Image"):
                 image.set("ID", f"Image:{image_id}")
+                metadata_was_changed = True
 
             # Find all Pixels elements and fix IDs
             for pixels in image.findall(f"{namespace}Pixels"):
                 pixels_id = pixels.attrib["ID"]
                 if not pixels_id.startswith("Pixels"):
                     pixels.set("ID", f"Pixels:{pixels}")
+                    metadata_was_changed = True
 
-        ET.register_namespace("OME", REPLACEMENT_OME_XSD_REFERENCE)
-        ET.register_namespace("", REPLACEMENT_OME_XSD_REFERENCE)
-        print(ET.tostring(
-            root,
-            encoding="utf-8",
-            method="xml",
-            default_namepace=REPLACEMENT_OME_XSD_REFERENCE,
-        )[:100])
+        # If any piece of metadata was changed alert and rewrite
+        if metadata_was_changed:
+            print("we updated the metadata")
+            warnings.warn(
+                "OME Metadata was cleaned and fixed for known AICSImageIO OMEXML "
+                "errors. Recommended to rewrite image data with 4.x OmeTiffWriter."
+            )
 
-        return ""
+            # Register namespace
+            ET.register_namespace("", f"http://{REPLACEMENT_OME_XSD_REFERENCE}")
+
+            # Write out cleaned XML to string
+            xml = ET.tostring(
+                root,
+                encoding="unicode",
+                method="xml",
+                xml_declaration=True,
+            )
+
+            with open("post-fix.xml", "w", encoding="utf-8") as open_resource:
+                open_resource.write(xml)
+
+        return xml
 
     @staticmethod
-    def _get_cleaned_ome_xml(ome_xml: str) -> OME:
+    def _get_ome(ome_xml: str) -> OME:
         # Clean for known issues
         cleaned_ome_xml = OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml)
 
-        #
-        # # Fix invalid image id references
-        # ome_xml = re.sub(
-        #     # Find all "Image" elements and replace their bad IDs (i.e. just "0")
-        #     r'(<Image )'
-        #     r'(.*)(ID=\"(\d+)\")'
-        #     r'(.*>)',
-        #     # Replace with "Image:0" using the found digit
-        #     r'\1\2ID="Image:\4"\5',
-        #     ome_xml,
-        # )
-        #
-        # # Fix invaild pixel id references
-        # ome_xml = re.sub(
-        #     # Find all "Pixels" elements and replace their bad IDs (i.e. just "0")
-        #     r'(<Pixels )'
-        #     r'(.*)(ID=\"(\d+)\")'
-        #     r'(.*>)',
-        #     # Replace with "Pixels:0" using the found digit
-        #     r'\1\2ID="Pixels:\4"\5',
-        #     ome_xml,
-        # )
-        #
-        # with open("new-cfe-ome.xml", "w") as open_w:
-        #     open_w.write(ome_xml)
-        #
-        # # Fix invalid Pixel elements
-        # ome_xml = re.sub(
-        #     # Find any Pixels element that doesn't have a choice of
-        #     # BinData, TiffData, or MetadataOnly
-        #     # Prior to any Plane elements
-        #     r"(\<Pixels.*?)(?!(BinData|TiffData|MetadataOnly))(\<Plane.*?)",
-        #     # If matched add empty `<TiffData\>` before open of Plane element
-        #     r"\1<TiffData />\3",
-        #     ome_xml,
-        # )
-        #
-        # with open("new-cfe-ome-post-fix.xml", "w") as open_w:
-        #     open_w.write(ome_xml)
-
+        # Return as ome-types
         return from_xml(cleaned_ome_xml)
 
     @staticmethod
@@ -142,8 +126,8 @@ class OmeTiffReader(TiffReader):
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     # Assert that it is a valid OME object
-                    cleaned_ome_xml = OmeTiffReader._get_cleaned_ome_xml()
-                    return isinstance(from_xml(tiff.pages[0].description), OME)
+                    ome = OmeTiffReader._get_ome(tiff.pages[0].description)
+                    return isinstance(ome, OME)
 
         # tifffile exception, tifffile exception, ome-types / etree exception
         except (TiffFileError, TypeError, ET.ParseError):
@@ -179,7 +163,7 @@ class OmeTiffReader(TiffReader):
         """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        self.extension = self.path.split(".")[-1]
+        self.extension = ".".join(self.path.split(".")[1:])
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
@@ -190,7 +174,7 @@ class OmeTiffReader(TiffReader):
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    ome = self._create_ome_from_tiff(tiff)
+                    ome = self._get_ome(tiff.pages[0].description)
                     self._scenes = tuple(image_meta.id for image_meta in ome.images)
 
         return self._scenes
@@ -247,9 +231,7 @@ class OmeTiffReader(TiffReader):
         ome_shape = []
         for d in dims:
             ome_shape.append(
-                getattr(
-                    ome.images[scene_index].pixels, f"size_{d.lower()}"
-                )
+                getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             )
 
         # TODO handle Samples dimension attachment for RGB OME TIFF
@@ -291,7 +273,7 @@ class OmeTiffReader(TiffReader):
         # Create OME
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                ome = self._create_ome_from_tiff(tiff)
+                ome = self._get_ome(tiff.pages[0].description)
 
         # Unpack dims and coords from OME
         dims, coords = self._process_ome_metadata(
@@ -344,7 +326,7 @@ class OmeTiffReader(TiffReader):
                 # Create OME
                 with self.fs.open(self.path) as open_resource:
                     with TiffFile(open_resource) as tiff:
-                        ome = self._create_ome_from_tiff(tiff)
+                        ome = self._get_ome(tiff.pages[0].description)
 
                 # Unpack dims and coords from OME
                 dims, coords = self._process_ome_metadata(

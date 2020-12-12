@@ -16,9 +16,9 @@ requirements = [
     "imageio[ffmpeg]~=2.9.0",
     "lxml~=4.5.2",
     "numpy~=1.16",
-    "ome-types~=0.2.0",
+    "ome-types~=0.2.1",
     "readlif~=0.2.1",
-    # We need this for ome-types HTTPError
+    # We need requests for ome-types HTTPError
     # TODO
     # Make a PR to create a metadata validation failed error
     "requests",

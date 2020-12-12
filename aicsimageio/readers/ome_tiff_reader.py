@@ -35,7 +35,7 @@ KNOWN_INVALID_OME_XSD_REFERENCES = [
     "www.openmicroscopy.org/Schemas/ome/2013-06",
     "www.openmicroscopy.org/Schemas/OME/2012-03",
 ]
-REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2013-06"
+REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2016-06"
 
 ###############################################################################
 
@@ -84,15 +84,17 @@ class OmeTiffReader(TiffReader):
             for pixels in image.findall(f"{namespace}Pixels"):
                 pixels_id = pixels.attrib["ID"]
                 if not pixels_id.startswith("Pixels"):
-                    pixels.set("ID", f"Pixels:{pixels}")
+                    pixels.set("ID", f"Pixels:{pixels_id}")
                     metadata_was_changed = True
 
         # If any piece of metadata was changed alert and rewrite
         if metadata_was_changed:
             print("we updated the metadata")
             warnings.warn(
-                "OME Metadata was cleaned and fixed for known AICSImageIO OMEXML "
-                "errors. Recommended to rewrite image data with 4.x OmeTiffWriter."
+                "OME metadata was cleaned and fixed for known AICSImageIO 3.x OMEXML "
+                "errors. It is recommended to rewrite image data with 4.x "
+                "OmeTiffWriter. To see exactly how the metadata is cleaned, view the "
+                "`_clean_ome_xml_for_known_issues` function on `OmeTiffReader`."
             )
 
             # Register namespace

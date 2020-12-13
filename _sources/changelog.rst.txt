@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/replace-napari-is-pyramid-with-multiscale  (`#172
+  <https://github.com/AllenCellModeling/aicsimageio/pull/172>`_)
+  [Dimitri Hürlimann, dimi-huer]
+
+
 v3.3.2 (2020-11-17)
 -------------------
 - admin/update-base-reader-dep-versions  (`#156

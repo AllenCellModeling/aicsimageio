@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
 from typing import Dict, List, Tuple, Union
 import re
 import warnings
@@ -87,9 +88,76 @@ class OmeTiffReader(TiffReader):
                     pixels.set("ID", f"Pixels:{pixels_id}")
                     metadata_was_changed = True
 
+                # Determine if there is an out-of-order channel / plane elem
+                pixels_children_out_of_order = False
+                encountered_something_besides_channel = False
+                for child in pixels:
+                    if child.tag != f"{namespace}Channel":
+                        encountered_something_besides_channel = True
+                    if (
+                        encountered_something_besides_channel
+                        and child.tag == f"{namespace}Channel"
+                    ):
+                        pixels_children_out_of_order = True
+                        break
+
+                # Ensure order of:
+                # channels -> bindata | tiffdata | metadataonly -> planes
+                if pixels_children_out_of_order:
+                    # Get all relevant elems
+                    channels = [
+                        deepcopy(c) for c in pixels.findall(f"{namespace}Channel")
+                    ]
+                    bin_data = [
+                        deepcopy(b) for b in pixels.findall(f"{namespace}BinData")
+                    ]
+                    tiff_data = [
+                        deepcopy(t) for t in pixels.findall(f"{namespace}TiffData")
+                    ]
+                    metadata_only = [
+                        deepcopy(m) for m in pixels.findall(f"{namespace}MetadataOnly")
+                    ]
+                    planes = [deepcopy(p) for p in pixels.findall(f"{namespace}Plane")]
+
+                    # Validate that there is only one of bindata, tiffdata, or metadata
+                    if len(bin_data) > 0:
+                        if len(tiff_data) == 0 and len(metadata_only) == 0:
+                            selected_choice = bin_data
+                        else:
+                            # Return XML and let XMLSchema Validation show error
+                            return xml
+                    elif len(tiff_data) > 0:
+                        if len(bin_data) == 0 and len(metadata_only) == 0:
+                            selected_choice = tiff_data
+                        else:
+                            # Return XML and let XMLSchema Validation show error
+                            return xml
+                    elif len(metadata_only) == 1:
+                        if len(bin_data) == 0 and len(tiff_data) == 0:
+                            selected_choice = metadata_only
+                        else:
+                            # Return XML and let XMLSchema Validation show error
+                            return xml
+                    else:
+                        # Return XML and let XMLSchema Validation show error
+                        return xml
+
+                    # Remove all children from element to be replaced
+                    # with ordered elements
+                    for elem in list(pixels):
+                        pixels.remove(elem)
+
+                    # Re-attach elements
+                    for channel in channels:
+                        pixels.append(channel)
+                    for elem in selected_choice:
+                        pixels.append(elem)
+                    for plane in planes:
+                        pixels.append(plane)
+
+                    metadata_was_changed = True
         # If any piece of metadata was changed alert and rewrite
         if metadata_was_changed:
-            print("we updated the metadata")
             warnings.warn(
                 "OME metadata was cleaned and fixed for known AICSImageIO 3.x OMEXML "
                 "errors. It is recommended to rewrite image data with 4.x "

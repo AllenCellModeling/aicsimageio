@@ -409,7 +409,7 @@ def test_view_napari(
 
             # Check extra call kwargs
             call_kwargs = mocked_napari.call_args[1]
-            assert not call_kwargs["is_pyramid"]
+            assert not call_kwargs["multiscale"]
             assert call_kwargs["ndisplay"] == expected_ndim
             assert call_kwargs["axis_labels"] == expected_axis_labels
             if not rgb:

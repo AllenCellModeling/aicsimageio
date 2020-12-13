@@ -531,7 +531,7 @@ class AICSImage:
                 with napari.gui_qt():
                     napari.view_image(
                         data,
-                        is_pyramid=False,
+                        multiscale=False,
                         ndisplay=3 if Dimensions.SpatialZ in dims else 2,
                         title=title,
                         axis_labels=dims.replace(Dimensions.Channel, ""),
@@ -568,7 +568,7 @@ class AICSImage:
                 with napari.gui_qt():
                     napari.view_image(
                         data,
-                        is_pyramid=False,
+                        multiscale=False,
                         ndisplay=3 if Dimensions.SpatialZ in dims else 2,
                         channel_axis=c_axis,
                         axis_labels=dims,

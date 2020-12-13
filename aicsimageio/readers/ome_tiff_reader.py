@@ -114,22 +114,23 @@ class OmeTiffReader(TiffReader):
         return xml
 
     @staticmethod
-    def _get_ome(ome_xml: str) -> OME:
-        # Clean for known issues
-        cleaned_ome_xml = OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml)
+    def _get_ome(ome_xml: str, clean_metadata: bool = True) -> OME:
+        # To clean or not to clean, that is the question
+        if clean_metadata:
+            return from_xml(OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml))
 
-        # Return as ome-types
-        return from_xml(cleaned_ome_xml)
+        return from_xml(ome_xml)
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True
+    ) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
-                    # Assert that it is a valid OME object
-                    ome = OmeTiffReader._get_ome(tiff.pages[0].description)
-                    return isinstance(ome, OME)
+                    xml = tiff.pages[0].description
+                    return OmeTiffReader._get_ome(xml, clean_metadata)
 
         # tifffile exception, tifffile exception, ome-types / etree exception
         except (TiffFileError, TypeError, ET.ParseError):
@@ -145,7 +146,7 @@ class OmeTiffReader(TiffReader):
                 msg="Failed in retrieving the referenced remote OME schema",
             )
 
-    def __init__(self, image: types.PathLike):
+    def __init__(self, image: types.PathLike, clean_metadata: bool = True):
         """
         Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
         API but for volumetric OME-TIFF images.
@@ -154,6 +155,11 @@ class OmeTiffReader(TiffReader):
         ----------
         image: types.PathLike
             Path to image file to construct Reader for.
+
+        clean_metadata: bool
+            Should the OME XML metadata found in the file be cleaned for known
+            AICSImageIO 3.x created errors.
+            Default: True
 
         Notes
         -----
@@ -166,9 +172,10 @@ class OmeTiffReader(TiffReader):
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension = ".".join(self.path.split(".")[1:])
+        self.clean_metadata = clean_metadata
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path):
+        if not self._is_supported_image(self.fs, self.path, clean_metadata):
             raise exceptions.UnsupportedFileFormatError(self.extension)
 
     @property
@@ -176,7 +183,7 @@ class OmeTiffReader(TiffReader):
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    ome = self._get_ome(tiff.pages[0].description)
+                    ome = self._get_ome(tiff.pages[0].description, self.clean_metadata)
                     self._scenes = tuple(image_meta.id for image_meta in ome.images)
 
         return self._scenes
@@ -275,7 +282,7 @@ class OmeTiffReader(TiffReader):
         # Create OME
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                ome = self._get_ome(tiff.pages[0].description)
+                ome = self._get_ome(tiff.pages[0].description, self.clean_metadata)
 
         # Unpack dims and coords from OME
         dims, coords = self._process_ome_metadata(
@@ -328,7 +335,9 @@ class OmeTiffReader(TiffReader):
                 # Create OME
                 with self.fs.open(self.path) as open_resource:
                     with TiffFile(open_resource) as tiff:
-                        ome = self._get_ome(tiff.pages[0].description)
+                        ome = self._get_ome(
+                            tiff.pages[0].description, self.clean_metadata
+                        )
 
                 # Unpack dims and coords from OME
                 dims, coords = self._process_ome_metadata(

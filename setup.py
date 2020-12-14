@@ -18,10 +18,6 @@ requirements = [
     "numpy~=1.16",
     "ome-types~=0.2.1",
     "readlif~=0.2.1",
-    # We need requests for ome-types HTTPError
-    # TODO
-    # Make a PR to create a metadata validation failed error
-    "requests",
     "tifffile>=2020.9.22",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
@@ -34,7 +30,7 @@ setup_requirements = [
 test_requirements = [
     "black>=19.10b0",
     "codecov>=2.1.4",
-    "distributed>=2.9.0",
+    "distributed~=2.9.0",
     "docutils>=0.10,<0.16",
     "flake8>=3.8.3",
     "flake8-debugger>=3.2.1",
@@ -42,8 +38,7 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "quilt3>=3.1.12",
-    "s3fs>=0.5",
+    "s3fs~=0.5.1",
 ]
 
 dev_requirements = [

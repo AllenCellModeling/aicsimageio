@@ -10,6 +10,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/172>`_)
   [Dimitri Hürlimann, dimi-huer]
 
+Other
+~~~~~
+- admin/support-py39  (`#169
+  <https://github.com/AllenCellModeling/aicsimageio/pull/169>`_)
+  [Jackson Maxfield Brown]
+
 
 v3.3.2 (2020-11-17)
 -------------------

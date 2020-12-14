@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
-import requests
 from tifffile import TiffFile, TiffFileError, TiffTag
 import xarray as xr
 
@@ -274,7 +273,9 @@ class OmeTiffReader(TiffReader):
                 root,
                 encoding="unicode",
                 method="xml",
-                xml_declaration=True,
+                # TODO:
+                # Add xml_declaration param
+                # After we drop py37
             )
 
         return xml
@@ -301,16 +302,6 @@ class OmeTiffReader(TiffReader):
         # tifffile exception, tifffile exception, ome-types / etree exception
         except (TiffFileError, TypeError, ET.ParseError):
             return False
-
-        # In the case where the OME metadata is not the latest version it will attempt
-        # make a request to the remote XSD if this fails we need to catch the error.
-        # TODO
-        # Figure out why this is failing to catch
-        except requests.exceptions.HTTPError:
-            raise exceptions.MalformedMetadataError(
-                path=path,
-                msg="Failed in retrieving the referenced remote OME schema",
-            )
 
     def __init__(self, image: types.PathLike, clean_metadata: bool = True):
         """

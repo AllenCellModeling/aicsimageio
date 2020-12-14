@@ -106,7 +106,9 @@ class DefaultReader(Reader):
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
-            raise exceptions.UnsupportedFileFormatError(self.extension)
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, self.extension
+            )
 
     @staticmethod
     def _guess_dim_order(shape: Tuple[int]) -> str:
@@ -346,7 +348,9 @@ class DefaultReader(Reader):
                 # Catch all other image types as unsupported
                 # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
                 else:
-                    raise exceptions.UnsupportedFileFormatError(self.extension)
+                    raise exceptions.UnsupportedFileFormatError(
+                        self.__class__.__name__, self.extension
+                    )
 
                 # Get basic metadata
                 metadata = reader.get_meta_data()

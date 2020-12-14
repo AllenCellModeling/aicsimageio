@@ -373,7 +373,9 @@ class OmeTiffReader(TiffReader):
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path, clean_metadata):
-            raise exceptions.UnsupportedFileFormatError(self.extension)
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, self.extension
+            )
 
     @property
     def scenes(self) -> Tuple[str]:

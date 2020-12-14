@@ -123,11 +123,37 @@ class OmeTiffReader(TiffReader):
                     tiff_data = [
                         deepcopy(t) for t in pixels.findall(f"{namespace}TiffData")
                     ]
+                    # There should only be one metadata only element but to standardize
+                    # list comprehensions later we findall
                     metadata_only = [
                         deepcopy(m) for m in pixels.findall(f"{namespace}MetadataOnly")
                     ]
                     planes = [deepcopy(p) for p in pixels.findall(f"{namespace}Plane")]
 
+                    # Old (2018 ish) cell feature explorer files sometimes contain both
+                    # an empty metadata only element and filled tiffdata elements
+                    # Since the metadata only elements are empty we can check this and
+                    # choose the tiff data elements instead
+                    #
+                    # First check if there are any metadata only elements
+                    if len(metadata_only) == 1:
+                        # Now check if _one of_ of the other two choices are filled
+                        # ^ in Python is XOR
+                        if (len(bin_data) > 0) ^ (len(tiff_data) > 0):
+                            metadata_children = list(metadata_only[0])
+                            # Now check if the metadata only elem has no children
+                            if len(metadata_children) == 0:
+                                # If so, just "purge" by creating empty list
+                                metadata_only = []
+
+                            # If there are children elements
+                            # Return XML and let XMLSchema Validation show error
+                            else:
+                                return xml
+
+                    # After cleaning metadata only, validate the normal behaviors of
+                    # OME schema
+                    #
                     # Validate that there is only one of bindata, tiffdata, or metadata
                     if len(bin_data) > 0:
                         if len(tiff_data) == 0 and len(metadata_only) == 0:

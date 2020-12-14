@@ -9,24 +9,24 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .[all]
-    - name: Generate Docs
-      run: |
-        gitchangelog
-        make docs
-        touch docs/_build/html/.nojekyll
-    - name: Publish Docs
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BASE_BRANCH: master # The branch the action should deploy from.
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: docs/_build/html/ # The folder the action should deploy.
+      - uses: actions/checkout@v1
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install .[all]
+      - name: Generate Docs
+        run: |
+          gitchangelog
+          make docs
+          touch docs/_build/html/.nojekyll
+      - name: Publish Docs
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BASE_BRANCH: master # The branch the action should deploy from.
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: docs/_build/html/ # The folder the action should deploy.

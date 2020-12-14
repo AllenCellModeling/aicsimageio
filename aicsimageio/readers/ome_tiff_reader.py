@@ -44,14 +44,11 @@ REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2016-06"
 class OmeTiffReader(TiffReader):
     @staticmethod
     def _clean_ome_xml_for_known_issues(xml: str) -> str:
-        with open("pre-fix.xml", "w", encoding="utf-8") as open_resource:
-            open_resource.write(xml)
-
         # Store list of changes to print out with warning
         metadata_changes = []
 
-        # Fix old aicsimageio / vendor code mistakes
         # Fix xsd reference
+        # This is from OMEXML object just having invalid reference
         for known_invalid_ref in KNOWN_INVALID_OME_XSD_REFERENCES:
             if known_invalid_ref in xml:
                 xml = xml.replace(
@@ -77,6 +74,7 @@ class OmeTiffReader(TiffReader):
             raise ValueError("XML does not contain a namespace")
 
         # Find all Image elements and fix IDs
+        # This is for certain for test files of ours and ACTK files
         for image_index, image in enumerate(root.findall(f"{namespace}Image")):
             image_id = image.get("ID")
             if not image_id.startswith("Image"):
@@ -98,6 +96,26 @@ class OmeTiffReader(TiffReader):
                     )
 
                 # Determine if there is an out-of-order channel / plane elem
+                # This is due to OMEXML "add channel" function
+                # That added Channels and appropriate Planes to the XML
+                # But, placed them in:
+                # Channel
+                # Plane
+                # Plane
+                # ...
+                # Channel
+                # Plane
+                # Plane
+                #
+                # Instead of grouped together:
+                # Channel
+                # Channel
+                # ...
+                # Plane
+                # Plane
+                # ...
+                #
+                # This effects all CFE files (new and old) but for different reasons
                 pixels_children_out_of_order = False
                 encountered_something_besides_channel = False
                 for child in pixels:
@@ -195,101 +213,55 @@ class OmeTiffReader(TiffReader):
                         f"position {pixels_index}."
                     )
 
-        # This is a result of someone just dumping basically all experiement metadata
+        # This is a result of dumping basically all experiement metadata
         # into "StructuredAnnotation" blocks
         #
-        # For AICS devs, see 2020 CellFeatureExplorer OME-TIFF for an example of this
-        # behavior
-        for sa_index, sa in enumerate(
-            root.findall(f"{namespace}StructuredAnnotations")
-        ):
-            xml_anno = sa.find(f"{namespace}XMLAnnotation")
-            if xml_anno is not None:
-                anno_value = xml_anno.find(f"{namespace}Value")
-                if anno_value is not None:
-                    img_doc = anno_value.find(f"{namespace}ImageDocument")
-                    if img_doc is not None:
-                        meta_elem = img_doc.find(f"{namespace}Metadata")
-                        if meta_elem is not None:
+        # This affects new (2020) Cell Feature Explorer files
+        #
+        # Because these are structured annotations we don't want to mess with anyones
+        # besides the AICS generated bad structured annotations
+        # So find only the annotations that are of
+        # /StructuredAnnotations/XMLAnnotation/Value/ImageDocument
+        # and delete those
+        aics_anno_removed_count = 0
+        sa = root.find(f"{namespace}StructuredAnnotations")
+        if sa is not None:
+            for xml_anno in sa.findall(f"{namespace}XMLAnnotation"):
+                # At least these are namespaced
+                if xml_anno.get("Namespace") == "alleninstitute.org/CZIMetadata":
+                    # Get ID because some elements have annotation refs
+                    # in both the base Image element and all plane elements
+                    aics_anno_id = xml_anno.get("ID")
+                    for image in root.findall(f"{namespace}Image"):
+                        for anno_ref in image.findall(f"{namespace}AnnotationRef"):
+                            if anno_ref.get("ID") == aics_anno_id:
+                                image.remove(anno_ref)
 
-                            # Find any Experiment blocks that don't have IDs
-                            # At the same time move the contents of Experiment blocks
-                            # to Description elems as whole strings
-                            experiment = meta_elem.find(f"{namespace}Experiment")
-                            if experiment is not None:
-                                # Handle any content in the experiment blocks that
-                                # isn't valid OME
-                                if any(
-                                    [
-                                        e.tag
-                                        not in [
-                                            "Description",
-                                            "ExperimentRef",
-                                            "MicrobeamManipulation",
-                                        ]
-                                        for e in list(experiment)
-                                    ]
-                                ):
-                                    # Dump experiment details to string
-                                    current_experiment = ET.tostring(
-                                        experiment, encoding="unicode", method="xml"
-                                    )
+                        # Clean planes
+                        pixels = image.find(f"{namespace}Pixels")
+                        for plane in pixels.findall(f"{namespace}Plane"):
+                            for anno_ref in plane.findall(f"{namespace}AnnotationRef"):
+                                if anno_ref.get("ID") == aics_anno_id:
+                                    plane.remove(anno_ref)
 
-                                    # Create or append experiment details to
-                                    # description string
-                                    description = experiment.find(
-                                        "{namespace}Description"
-                                    )
+                    # Remove the whole etree
+                    sa.remove(xml_anno)
+                    aics_anno_removed_count += 1
 
-                                    if description is None:
-                                        description = ET.Element("Description")
-                                        description.text = (
-                                            f"UNCHANGED EXPERIMENT XML:\n"
-                                            f"{current_experiment}"
-                                        )
+        # Log changes
+        if aics_anno_removed_count > 0:
+            metadata_changes.append(
+                f"Removed {aics_anno_removed_count} AICS generated XMLAnnotations."
+            )
 
-                                    else:
-                                        description = deepcopy(description)
-                                        description.text += (
-                                            f"\nUNCHANGED EXPERIMENT XML:\n"
-                                            f"{current_experiment}"
-                                        )
-
-                                    # Remove all children from element to be replaced
-                                    # with string description
-                                    for elem in list(experiment):
-                                        experiment.remove(elem)
-
-                                    # Add the description child
-                                    experiment.append(description)
-                                    metadata_changes.append(
-                                        f"Moved children of Experiment element to "
-                                        f"Description element text for "
-                                        f"StructuredAnnotation element at "
-                                        f"position {sa_index}."
-                                    )
-
-                                # Create ID for experiment if None
-                                if experiment.get("ID") is None:
-                                    experiment.set("ID", f"Experiment:{sa_index}")
-                                    metadata_changes.append(
-                                        f"Added attribute 'ID' to Experiment element "
-                                        f"in StructuredAnnotation at "
-                                        f"position {sa_index}."
-                                    )
-
-                                # Remove version from experiment if present
-                                if experiment.get("Version") is not None:
-                                    experiment.attrib.pop("Version")
-                                    metadata_changes.append(
-                                        f"Removed attribute 'Version' from Experiment "
-                                        f"element in StructuredAnnotation at "
-                                        f"position {sa_index}."
-                                    )
+        # If there are no annotations in StructuredAnnotations, remove it
+        if sa is not None:
+            if len(list(sa)) == 0:
+                root.remove(sa)
 
         # If any piece of metadata was changed alert and rewrite
         if len(metadata_changes) > 0:
-            print(
+            warnings.warn(
                 f"OME metadata was cleaned and fixed for known AICSImageIO 3.x OMEXML "
                 f"errors. Full list of changes: {metadata_changes}"
             )
@@ -304,9 +276,6 @@ class OmeTiffReader(TiffReader):
                 method="xml",
                 xml_declaration=True,
             )
-
-            with open("post-fix.xml", "w", encoding="utf-8") as open_resource:
-                open_resource.write(xml)
 
         return xml
 

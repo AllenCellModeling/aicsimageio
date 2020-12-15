@@ -8,6 +8,7 @@ import warnings
 import xml.etree.ElementTree as ET
 
 from fsspec.spec import AbstractFileSystem
+import numpy as np
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile import TiffFile, TiffFileError, TiffTag
@@ -219,9 +220,6 @@ class OmeTiffReader(TiffReader):
         #
         # Because these are structured annotations we don't want to mess with anyones
         # besides the AICS generated bad structured annotations
-        # So find only the annotations that are of
-        # /StructuredAnnotations/XMLAnnotation/Value/ImageDocument
-        # and delete those
         aics_anno_removed_count = 0
         sa = root.find(f"{namespace}StructuredAnnotations")
         if sa is not None:
@@ -273,9 +271,6 @@ class OmeTiffReader(TiffReader):
                 root,
                 encoding="unicode",
                 method="xml",
-                # TODO:
-                # Add xml_declaration param
-                # After we drop py37
             )
 
         return xml
@@ -284,7 +279,7 @@ class OmeTiffReader(TiffReader):
     def _get_ome(ome_xml: str, clean_metadata: bool = True) -> OME:
         # To clean or not to clean, that is the question
         if clean_metadata:
-            return from_xml(OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml))
+            ome_xml = OmeTiffReader._clean_ome_xml_for_known_issues(ome_xml)
 
         return from_xml(ome_xml)
 
@@ -378,13 +373,47 @@ class OmeTiffReader(TiffReader):
 
         # Get coordinate planes
         coords = {}
+
+        # Channels
         coords[DimensionNames.Channel] = [
             channel.name for channel in scene_meta.pixels.channels
         ]
-        # TODO ADD COORDS
-        # coords[DimensionNames.SpatialZ] = [
-        #     np.linspace(0, )
-        # ]
+
+        # Time
+        # If global linear timescale we can np.linspace with metadata
+        if scene_meta.pixels.time_increment is not None:
+            coords[DimensionNames.Time] = np.linspace(
+                0,
+                scene_meta.pixels.time_increment_quantity,
+                scene_meta.pixels.time_increment,
+            )
+        # If non global linear timescale, we need to create an array of every plane
+        # time value
+        elif scene_meta.pixels.size_t > 1:
+            t_index_to_delta_map = {
+                p.the_t: p.delta_t for p in scene_meta.pixels.planes
+            }
+            coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
+
+        # Spatial Z
+        if scene_meta.pixels.physical_size_z is not None:
+            coords[DimensionNames.SpatialZ] = np.arange(
+                0,
+                scene_meta.pixels.size_z * scene_meta.pixels.physical_size_z,
+                scene_meta.pixels.physical_size_z,
+            )
+
+        # Spatial Y and Spatial X should always be available
+        coords[DimensionNames.SpatialY] = np.arange(
+            0,
+            scene_meta.pixels.size_y * scene_meta.pixels.physical_size_y,
+            scene_meta.pixels.physical_size_y,
+        )
+        coords[DimensionNames.SpatialX] = np.arange(
+            0,
+            scene_meta.pixels.size_x * scene_meta.pixels.physical_size_x,
+            scene_meta.pixels.physical_size_x,
+        )
 
         return dims, coords
 

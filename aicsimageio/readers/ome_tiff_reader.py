@@ -395,7 +395,7 @@ class OmeTiffReader(TiffReader):
             }
             coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
 
-        # Spatial Z
+        # Handle Spatial Dimensions
         if scene_meta.pixels.physical_size_z is not None:
             coords[DimensionNames.SpatialZ] = np.arange(
                 0,
@@ -403,17 +403,19 @@ class OmeTiffReader(TiffReader):
                 scene_meta.pixels.physical_size_z,
             )
 
-        # Spatial Y and Spatial X should always be available
-        coords[DimensionNames.SpatialY] = np.arange(
-            0,
-            scene_meta.pixels.size_y * scene_meta.pixels.physical_size_y,
-            scene_meta.pixels.physical_size_y,
-        )
-        coords[DimensionNames.SpatialX] = np.arange(
-            0,
-            scene_meta.pixels.size_x * scene_meta.pixels.physical_size_x,
-            scene_meta.pixels.physical_size_x,
-        )
+        if scene_meta.pixels.physical_size_y is not None:
+            coords[DimensionNames.SpatialY] = np.arange(
+                0,
+                scene_meta.pixels.size_y * scene_meta.pixels.physical_size_y,
+                scene_meta.pixels.physical_size_y,
+            )
+
+        if scene_meta.pixels.physical_size_x is not None:
+            coords[DimensionNames.SpatialX] = np.arange(
+                0,
+                scene_meta.pixels.size_x * scene_meta.pixels.physical_size_x,
+                scene_meta.pixels.physical_size_x,
+            )
 
         return dims, coords
 

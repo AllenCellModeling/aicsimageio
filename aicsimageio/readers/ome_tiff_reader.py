@@ -441,11 +441,18 @@ class OmeTiffReader(TiffReader):
                 getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             )
 
-        # TODO handle Samples dimension attachment for RGB OME TIFF
+        # Check for num samples and expand dims if greater than 1
+        n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
+        if n_samples > 1:
+            # Append to the end, i.e. the last dimension
+            dims.append("S")
+            ome_shape.append(n_samples)
 
+        # The file may not have all the data but OME requires certain dimensions
+        # expand to fill
         expand_dim_ops = []
         for d_size in ome_shape:
-            # Add empty dimension where OME requires dimension but not data exists
+            # Add empty dimension where OME requires dimension but no data exists
             if d_size == 1:
                 expand_dim_ops.append(None)
             # Add full slice where data exists

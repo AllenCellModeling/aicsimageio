@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
+import logging
 from typing import Dict, List, Tuple, Union
 import re
-import warnings
 import xml.etree.ElementTree as ET
 
 from fsspec.spec import AbstractFileSystem
@@ -18,6 +18,14 @@ from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
 from ..utils import io_utils
 from .tiff_reader import TiffReader
+
+###############################################################################
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="[%(levelname)4s: %(module)s:%(lineno)4s %(asctime)s] %(message)s",
+)
+log = logging.getLogger(__name__)
 
 ###############################################################################
 
@@ -258,10 +266,10 @@ class OmeTiffReader(TiffReader):
 
         # If any piece of metadata was changed alert and rewrite
         if len(metadata_changes) > 0:
-            warnings.warn(
-                f"OME metadata was cleaned and fixed for known AICSImageIO 3.x OMEXML "
-                f"errors. Full list of changes: {metadata_changes}"
+            log.debug(
+                "OME metadata was cleaned for known AICSImageIO 3.x OMEXML errors."
             )
+            log.debug(f"Full list of OME cleaning changes: {metadata_changes}")
 
             # Register namespace
             ET.register_namespace("", f"http://{REPLACEMENT_OME_XSD_REFERENCE}")

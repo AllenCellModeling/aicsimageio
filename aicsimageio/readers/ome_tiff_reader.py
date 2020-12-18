@@ -14,10 +14,12 @@ from ome_types.model.ome import OME
 from tifffile import TiffFile, TiffFileError, TiffTag
 import xarray as xr
 
-from .. import constants, exceptions, types
-from ..dimensions import DimensionNames
+from .. import constants, exceptions, transforms, types
+from ..dimensions import DimensionNames, DEFAULT_DIMENSION_ORDER
 from ..utils import io_utils
 from .tiff_reader import TiffReader
+from ..types import PhysicalPixelSizes
+
 
 ###############################################################################
 
@@ -462,25 +464,9 @@ class OmeTiffReader(TiffReader):
         # Apply operators to dask array
         return image_data[tuple(expand_dim_ops)]
 
-    def _read_delayed(self) -> xr.DataArray:
-        """
-        Construct the delayed xarray DataArray object for the image.
-
-        Returns
-        -------
-        image: xr.DataArray
-            The fully constructed and fully delayed image as a DataArray object.
-            Metadata is attached in some cases as coords, dims, and attrs contains
-            unprocessed tags and processed OME object.
-
-        Raises
-        ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
-        """
-        # Create the delayed dask array
-        image_data = self._create_dask_array()
-
+    def _general_data_array_constructor(
+        self, image_data: types.ArrayLike
+    ) -> xr.DataArray:
         # Get unprocessed metadata from tags
         tiff_tags = self._get_tiff_tags()
 
@@ -503,6 +489,22 @@ class OmeTiffReader(TiffReader):
             scene_index=self.current_scene_index,
         )
 
+        # Always order array
+        if DimensionNames.Samples in dims:
+            out_order = f"{DEFAULT_DIMENSION_ORDER}{DimensionNames.Samples}"
+        else:
+            out_order = DEFAULT_DIMENSION_ORDER
+
+        # Transform into order
+        image_data = transforms.reshape_data(
+            image_data,
+            "".join(dims),
+            out_order,
+        )
+
+        # Reset dims after transform
+        dims = [d for d in out_order]
+
         return xr.DataArray(
             image_data,
             dims=dims,
@@ -512,6 +514,27 @@ class OmeTiffReader(TiffReader):
                 constants.METADATA_PROCESSED: ome,
             },
         )
+
+    def _read_delayed(self) -> xr.DataArray:
+        """
+        Construct the delayed xarray DataArray object for the image.
+
+        Returns
+        -------
+        image: xr.DataArray
+            The fully constructed and fully delayed image as a DataArray object.
+            Metadata is attached in some cases as coords, dims, and attrs contains
+            unprocessed tags and processed OME object.
+
+        Raises
+        ------
+        exceptions.UnsupportedFileFormatError: The file could not be read or is not
+            supported.
+        """
+        # Create the delayed dask array
+        image_data = self._create_dask_array()
+
+        return self._general_data_array_constructor(image_data)
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -534,8 +557,7 @@ class OmeTiffReader(TiffReader):
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
 
-                # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                return self._general_data_array_constructor(image_data)
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:

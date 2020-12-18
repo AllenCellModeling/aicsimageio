@@ -537,33 +537,26 @@ class OmeTiffReader(TiffReader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags()
 
-                # Create OME
-                with self.fs.open(self.path) as open_resource:
-                    with TiffFile(open_resource) as tiff:
-                        ome = self._get_ome(
-                            tiff.pages[0].description, self.clean_metadata
-                        )
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """
+        Returns
+        -------
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
 
-                # Unpack dims and coords from OME
-                dims, coords = self._process_ome_metadata(
-                    ome=ome,
-                    scene_index=self.current_scene_index,
-                )
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
+        """
+        z = self.metadata.images[self.current_scene_index].pixels.physical_size_z
+        y = self.metadata.images[self.current_scene_index].pixels.physical_size_y
+        x = self.metadata.images[self.current_scene_index].pixels.physical_size_x
 
-                # Expand the image data to match the OME empty dimensions
-                image_data = self._expand_dims_to_match_ome(
-                    image_data=image_data,
-                    ome=ome,
-                    dims=dims,
-                    scene_index=self.current_scene_index,
-                )
-
-                return xr.DataArray(
-                    image_data,
-                    dims=dims,
-                    coords=coords,
-                    attrs={
-                        constants.METADATA_UNPROCESSED: tiff_tags,
-                        constants.METADATA_PROCESSED: ome,
-                    },
-                )
+        return PhysicalPixelSizes(
+            z if z is not None else 1.0,
+            y if y is not None else 1.0,
+            x if x is not None else 1.0,
+        )

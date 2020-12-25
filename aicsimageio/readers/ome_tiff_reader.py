@@ -321,7 +321,7 @@ class OmeTiffReader(TiffReader):
         clean_metadata: bool
             Should the OME XML metadata found in the file be cleaned for known
             AICSImageIO 3.x created errors.
-            Default: True (Do not clean, any error will result in failure to read)
+            Default: True (Clean the metadata for known errors)
 
         Notes
         -----

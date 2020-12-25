@@ -26,21 +26,3 @@ class UnsupportedFileFormatError(Exception):
             f"{self.reader_name} does not support the "
             f"image file type: '{self.extension}'."
         )
-
-
-class MalformedMetadataError(Exception):
-    """
-    This exception is intended to communicate that the metadata found in the file could
-    not be parsed.
-    """
-
-    def __init__(self, path: str, msg: str, **kwargs):
-        super().__init__(**kwargs)
-        self.path = path
-        self.msg = msg
-
-    def __str__(self):
-        return (
-            f"Could not create or validate metadata found in the file ({self.path})."
-            f"{self.msg}"
-        )

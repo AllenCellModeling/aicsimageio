@@ -42,7 +42,6 @@ from .reader_test_utils import run_image_read_checks
             "example.png",
             "Image:1",
             None,
-            None,
             marks=pytest.mark.raises(exception=IndexError),
         ),
     ],

@@ -155,6 +155,133 @@ def test_ome_tiff_reader(
     )
 
 
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "expected_scenes, "
+    "expected_shape, "
+    "expected_dtype, "
+    "expected_dims_order, "
+    "expected_channel_names, "
+    "expected_physical_pixel_sizes",
+    [
+        (
+            "pipeline-4.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 4, 65, 600, 900),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Bright_2", "EGFP", "CMDRP", "H3342"],
+            (0.29, 0.10833333333333332, 0.10833333333333332),
+        ),
+        (
+            "3d-cell-viewer.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 9, 74, 1024, 1024),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            [
+                "DRAQ5",
+                "EGFP",
+                "Hoechst 33258",
+                "TL Brightfield",
+                "SEG_STRUCT",
+                "SEG_Memb",
+                "SEG_DNA",
+                "CON_Memb",
+                "CON_DNA",
+            ],
+            (0.29, 0.065, 0.065),
+        ),
+        (
+            "pre-variance-cfe.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 9, 65, 600, 900),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            [
+                "Bright_2",
+                "EGFP",
+                "CMDRP",
+                "H3342",
+                "SEG_STRUCT",
+                "SEG_Memb",
+                "SEG_DNA",
+                "CON_Memb",
+                "CON_DNA",
+            ],
+            (0.29, 0.10833333333333334, 0.10833333333333334),
+        ),
+        (
+            "variance-cfe.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 9, 65, 600, 900),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            [
+                "CMDRP",
+                "EGFP",
+                "H3342",
+                "Bright_2",
+                "SEG_STRUCT",
+                "SEG_Memb",
+                "SEG_DNA",
+                "CON_Memb",
+                "CON_DNA",
+            ],
+            (0.29, 0.10833333333333332, 0.10833333333333332),
+        ),
+        (
+            "actk.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 6, 65, 233, 345),
+            np.float64,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            [
+                "nucleus_segmentation",
+                "membrane_segmentation",
+                "dna",
+                "membrane",
+                "structure",
+                "brightfield",
+            ],
+            (0.29, 0.29, 0.29),
+        ),
+    ],
+)
+def test_ome_tiff_reader_large_files(
+    filename,
+    set_scene,
+    expected_scenes,
+    expected_shape,
+    expected_dtype,
+    expected_dims_order,
+    expected_channel_names,
+    expected_physical_pixel_sizes,
+):
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_image_read_checks(
+        ReaderClass=OmeTiffReader,
+        uri=uri,
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=set_scene,
+        expected_shape=expected_shape,
+        expected_dtype=expected_dtype,
+        expected_dims_order=expected_dims_order,
+        expected_channel_names=expected_channel_names,
+        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+    )
+
+
 @pytest.mark.parametrize("host", [LOCAL, REMOTE])
 @pytest.mark.parametrize(
     "filename, "
@@ -203,22 +330,27 @@ def test_multi_scene_ome_tiff_reader(
     )
 
 
+@pytest.mark.parametrize("host", [LOCAL, REMOTE])
 @pytest.mark.parametrize(
     "filename",
     [
         # Pipline 4 is valid, :tada:
-        "3500000719_100X_20170317_F08_P06.ome.tiff",
+        "pipeline-4.ome.tiff",
         # Some of our test files are valid, :tada:
         "s_1_t_1_c_1_z_1.ome.tiff",
         "s_3_t_1_c_3_z_5.ome.tiff",
         # A lot of our files aren't valid, :upside-down-smiley:
         # These files have invalid schema / layout
         pytest.param(
-            "new-cfe-file.ome.tiff",
+            "3d-cell-viewer.ome.tiff",
             marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
         ),
         pytest.param(
-            "old-cfe-file.ome.tiff",
+            "pre-variance-cfe.ome.tiff",
+            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+        ),
+        pytest.param(
+            "variance-cfe.ome.tiff",
             marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
         ),
         pytest.param(
@@ -231,23 +363,8 @@ def test_multi_scene_ome_tiff_reader(
         ),
     ],
 )
-def test_known_errors_without_cleaning(filename):
-    filepath = get_resource_full_path(filename, "LOCAL")
-    OmeTiffReader(filepath, clean_metadata=False)
+def test_known_errors_without_cleaning(filename, host):
+    # Construct full filepath
+    uri = get_resource_full_path(filename, host)
 
-
-@pytest.mark.parametrize(
-    "filename",
-    [
-        "3500000719_100X_20170317_F08_P06.ome.tiff",
-        "new-cfe-file.ome.tiff",
-        "old-cfe-file.ome.tiff",
-        "s_1_t_1_c_1_z_1.ome.tiff",
-        "s_1_t_1_c_10_z_1.ome.tiff",
-        "s_3_t_1_c_3_z_5.ome.tiff",
-        "actk.ome.tiff",
-    ],
-)
-def test_ome_validates_after_cleaning(filename):
-    filepath = get_resource_full_path(filename, "LOCAL")
-    OmeTiffReader(filepath)
+    OmeTiffReader(uri, clean_metadata=False)

@@ -72,7 +72,7 @@ class OmeTiffReader(TiffReader):
         Notes
         -----
         If the OME metadata in your file isn't OME schema compilant or does not validate
-        this will fail to read you file and raise an exception.
+        this will fail to read your file and raise an exception.
 
         If the OME metadata in your file doesn't use the latest OME schema (2016-06),
         this reader will make a request to the referenced remote OME schema to validate.
@@ -99,7 +99,7 @@ class OmeTiffReader(TiffReader):
         return self._scenes
 
     @staticmethod
-    def _process_ome_metadata(
+    def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
     ) -> Tuple[List[str], Dict[str, Union[List, types.ArrayLike]]]:
@@ -222,7 +222,7 @@ class OmeTiffReader(TiffReader):
                 ome = self._get_ome(tiff.pages[0].description, self.clean_metadata)
 
         # Unpack dims and coords from OME
-        dims, coords = self._process_ome_metadata(
+        dims, coords = self._get_dims_and_coords_from_ome(
             ome=ome,
             scene_index=self.current_scene_index,
         )

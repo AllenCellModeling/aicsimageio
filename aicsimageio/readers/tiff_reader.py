@@ -15,6 +15,7 @@ from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
 from ..utils import io_utils
 from .reader import Reader
+from ..metadata import utils as metadata_utils
 
 ###############################################################################
 
@@ -62,7 +63,10 @@ class TiffReader(Reader):
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indicies
-                    self._scenes = tuple(f"Image:{i}" for i in range(len(tiff.series)))
+                    self._scenes = tuple(
+                        metadata_utils.generate_ome_image_id(i)
+                        for i in range(len(tiff.series))
+                    )
 
         return self._scenes
 

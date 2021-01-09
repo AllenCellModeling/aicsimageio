@@ -19,6 +19,7 @@ from ..dimensions import DimensionNames, DEFAULT_DIMENSION_ORDER
 from ..utils import io_utils
 from .tiff_reader import TiffReader
 from ..types import PhysicalPixelSizes
+from ..metadata import utils as metadata_utils
 
 
 ###############################################################################
@@ -84,14 +85,14 @@ class OmeTiffReader(TiffReader):
             raise ValueError("XML does not contain a namespace")
 
         # Find all Image elements and fix IDs
-        # This is for certain for test files of ours and ACTK files
+        # This is for certain for test files of o.urs and ACTK files
         for image_index, image in enumerate(root.findall(f"{namespace}Image")):
             image_id = image.get("ID")
             if not image_id.startswith("Image"):
-                image.set("ID", f"Image:{image_id}")
+                image.set("ID", metadata_utils.generate_ome_image_id(image_id))
                 metadata_changes.append(
                     f"Updated attribute 'ID' from '{image_id}' to 'Image:{image_id}' "
-                    f"on Image element at position {image_index}."
+                    f"on Image element at position {image_index}"
                 )
 
             # Find all Pixels elements and fix IDs

@@ -4,9 +4,8 @@
 import logging
 import re
 import xml.etree.ElementTree as ET
+from copy import deepcopy
 from typing import Union
-
-import deepcopy
 
 ###############################################################################
 

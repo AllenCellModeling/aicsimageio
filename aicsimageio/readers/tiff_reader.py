@@ -3,19 +3,19 @@
 
 from typing import Dict, List, Tuple, Union
 
-from dask import delayed
 import dask.array as da
-from fsspec.spec import AbstractFileSystem
 import numpy as np
+import xarray as xr
+from dask import delayed
+from fsspec.spec import AbstractFileSystem
 from tifffile import TiffFile, TiffFileError
 from tifffile.tifffile import TiffTags
-import xarray as xr
 
 from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
-from ..metadata import utils as metadata_utils
 
 ###############################################################################
 

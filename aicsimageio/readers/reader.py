@@ -479,7 +479,8 @@ class Reader(ABC):
             format / Python object, this will return the result.
 
             For both the unprocessed and processed metadata from the file, use
-            `xarray_dask_data.attrs` which will contain a dictionary with keys: `unprocessed` and `processed` that you can then select.
+            `xarray_dask_data.attrs` which will contain a dictionary with keys:
+            `unprocessed` and `processed` that you can then select.
         """
         if self._metadata is None:
             if constants.METADATA_PROCESSED in self.xarray_dask_data.attrs:

@@ -247,7 +247,10 @@ class TiffReader(Reader):
             image_data,
             dims=dims,
             coords=coords,
-            attrs={constants.METADATA_UNPROCESSED: tiff_tags},
+            attrs={
+                constants.METADATA_UNPROCESSED: tiff_tags,
+                constants.METADATA_PROCESSED: tiff_tags[270].value,
+            },
         )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -281,5 +284,8 @@ class TiffReader(Reader):
                     image_data,
                     dims=dims,
                     coords=coords,
-                    attrs={constants.METADATA_UNPROCESSED: tiff_tags},
+                    attrs={
+                        constants.METADATA_UNPROCESSED: tiff_tags,
+                        constants.METADATA_PROCESSED: tiff_tags[270].value,
+                    },
                 )

@@ -475,11 +475,11 @@ class Reader(ABC):
         metadata: Any
             The metadata for the formats supported by the inhereting Reader.
 
-            If the inhereting Reader supports processing the metadata into a more useful
+            If the inheriting Reader supports processing the metadata into a more useful
             format / Python object, this will return the result.
 
             For both the unprocessed and processed metadata from the file, use
-            `xarray_dask_data.attrs`
+            `xarray_dask_data.attrs` which will contain a dictionary with keys: `unprocessed` and `processed` that you can then select.
         """
         if self._metadata is None:
             if constants.METADATA_PROCESSED in self.xarray_dask_data.attrs:

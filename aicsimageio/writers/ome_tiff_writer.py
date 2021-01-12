@@ -167,8 +167,9 @@ class OmeTiffWriter:
                 dimension_order=dimension_order,
             )
             xml = self.omeMetadata.to_xml().encode()
-        elif type(ome_xml) == str:
-            # if the xml passed in is a string, then just pass it straight through to the writer.
+        elif isinstance(ome_xml, str):
+            # if the xml passed in is a string, 
+            # then just pass it straight through to the writer.
             self.omeMetadata = omexml.OMEXML(ome_xml)
             xml = ome_xml.encode()
         else:

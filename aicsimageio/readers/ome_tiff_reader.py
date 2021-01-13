@@ -93,8 +93,12 @@ class OmeTiffReader(TiffReader):
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    ome = self._get_ome(tiff.pages[0].description, self.clean_metadata)
-                    self._scenes = tuple(image_meta.id for image_meta in ome.images)
+                    self._ome = self._get_ome(
+                        tiff.pages[0].description, self.clean_metadata
+                    )
+                    self._scenes = tuple(
+                        image_meta.id for image_meta in self._ome.images
+                    )
 
         return self._scenes
 
@@ -216,21 +220,16 @@ class OmeTiffReader(TiffReader):
         # Get unprocessed metadata from tags
         tiff_tags = self._get_tiff_tags()
 
-        # Create OME
-        with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                ome = self._get_ome(tiff.pages[0].description, self.clean_metadata)
-
         # Unpack dims and coords from OME
         dims, coords = self._get_dims_and_coords_from_ome(
-            ome=ome,
+            ome=self._ome,
             scene_index=self.current_scene_index,
         )
 
         # Expand the image data to match the OME empty dimensions
         image_data = self._expand_dims_to_match_ome(
             image_data=image_data,
-            ome=ome,
+            ome=self._ome,
             dims=dims,
             scene_index=self.current_scene_index,
         )
@@ -257,7 +256,7 @@ class OmeTiffReader(TiffReader):
             coords=coords,
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
-                constants.METADATA_PROCESSED: ome,
+                constants.METADATA_PROCESSED: self._ome,
             },
         )
 

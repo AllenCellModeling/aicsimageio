@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- ome-xml as string to ome tiff writer  (`#180
+  <https://github.com/AllenCellModeling/aicsimageio/pull/180>`_)
+  [toloudis]
+
+
 v3.3.3 (2020-12-14)
 -------------------
 

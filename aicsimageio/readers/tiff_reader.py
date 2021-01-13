@@ -22,6 +22,7 @@ from .reader import Reader
 # "Q" is used by Gohlke to say "unknown dimension"
 # https://github.com/cgohlke/tifffile/blob/master/tifffile/tifffile.py#L10840
 UNKNOWN_DIM_CHAR = "Q"
+TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 ###############################################################################
 
@@ -249,7 +250,9 @@ class TiffReader(Reader):
             coords=coords,
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
-                constants.METADATA_PROCESSED: tiff_tags[270].value,
+                constants.METADATA_PROCESSED: tiff_tags[
+                    TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                ].value,
             },
         )
 
@@ -286,6 +289,8 @@ class TiffReader(Reader):
                     coords=coords,
                     attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
-                        constants.METADATA_PROCESSED: tiff_tags[270].value,
+                        constants.METADATA_PROCESSED: tiff_tags[
+                            TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                        ].value,
                     },
                 )

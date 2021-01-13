@@ -12,6 +12,7 @@ from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
 
@@ -133,7 +134,7 @@ class DefaultReader(Reader):
         # files with multiple scenes. But, if we do encounter a file that DefaultReader
         # hits and a user wants scene management from that file type, we can update
         # this property then.
-        return ("Image:0",)
+        return (metadata_utils.generate_ome_image_id(0),)
 
     @staticmethod
     def _get_image_data(

@@ -112,9 +112,10 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     for image_index, image in enumerate(root.findall(f"{namespace}Image")):
         image_id = image.get("ID")
         if not image_id.startswith("Image"):
-            image.set("ID", generate_ome_image_id(image_id))
+            ome_image_id = generate_ome_image_id(image_id)
+            image.set("ID", ome_image_id)
             metadata_changes.append(
-                f"Updated attribute 'ID' from '{image_id}' to 'Image:{image_id}' "
+                f"Updated attribute 'ID' from '{image_id}' to '{ome_image_id}' "
                 f"on Image element at position {image_index}"
             )
 

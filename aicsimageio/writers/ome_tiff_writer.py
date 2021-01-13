@@ -166,11 +166,17 @@ class OmeTiffWriter:
                 channel_colors=channel_colors,
                 dimension_order=dimension_order,
             )
+            xml = self.omeMetadata.to_xml().encode()
+        elif isinstance(ome_xml, str):
+            # if the xml passed in is a string,
+            # then just pass it straight through to the writer.
+            self.omeMetadata = omexml.OMEXML(ome_xml)
+            xml = ome_xml.encode()
         else:
             pixels = ome_xml.image().Pixels
             pixels.populate_TiffData()
             self.omeMetadata = ome_xml
-        xml = self.omeMetadata.to_xml().encode()
+            xml = self.omeMetadata.to_xml().encode()
 
         tif = tifffile.TiffWriter(
             self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY

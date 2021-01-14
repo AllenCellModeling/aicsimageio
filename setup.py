@@ -21,6 +21,7 @@ requirements = [
     "tifffile>=2020.9.22",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
+    "zarr~=2.6.1",
 ]
 
 setup_requirements = [

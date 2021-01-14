@@ -8,7 +8,7 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError
+from tifffile import TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
@@ -176,48 +176,13 @@ class TiffReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                # Get a sample YX plane
-                sample = self._get_image_data(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene_index,
-                    index=0,
+            return da.from_zarr(
+                imread(
+                    open_resource,
+                    aszarr=True,
+                    series=self.current_scene_index,
                 )
-
-                # Get shape of current scene
-                # Replace YX dims with empty dimensions
-                operating_shape = tiff.series[self.current_scene_index].shape
-
-                # If the data is RGB we need to pull in the channels as well
-                if tiff.series[self.current_scene_index].keyframe.samplesperpixel != 1:
-                    operating_shape = operating_shape[:-3] + (1, 1, 1)
-
-                # Otherwise the data is in 2D planes (Y, X)
-                else:
-                    operating_shape = operating_shape[:-2] + (1, 1)
-
-                # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                for plane_index, (np_index, _) in enumerate(
-                    np.ndenumerate(lazy_arrays)
-                ):
-                    # Fill the numpy array with the delayed arrays
-                    lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._get_image_data)(
-                            fs=self.fs,
-                            path=self.path,
-                            scene=self.current_scene_index,
-                            index=plane_index,
-                        ),
-                        shape=sample.shape,
-                        dtype=sample.dtype,
-                    )
-
-                # Convert the numpy array of lazy readers into a dask array
-                image_data = da.block(lazy_arrays.tolist())
-
-                return image_data
+            )
 
     def _read_delayed(self) -> xr.DataArray:
         """

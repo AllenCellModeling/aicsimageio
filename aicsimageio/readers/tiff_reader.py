@@ -175,14 +175,14 @@ class TiffReader(Reader):
         image_data: da.Array
             The fully constructed and fully delayed image as a Dask Array object.
         """
-        with self.fs.open(self.path) as open_resource:
-            return da.from_zarr(
-                imread(
-                    open_resource,
-                    aszarr=True,
-                    series=self.current_scene_index,
-                )
+        # with self.fs.open(self.path) as open_resource:
+        return da.from_zarr(
+            imread(
+                self.path,
+                aszarr=True,
+                series=self.current_scene_index,
             )
+        )
 
     def _read_delayed(self) -> xr.DataArray:
         """

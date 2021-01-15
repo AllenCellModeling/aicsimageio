@@ -93,9 +93,6 @@ class _ReaderTimeSuite(_ImageSuite):
 
         r.get_image_dask_data(r.dims.order, **random_index_selections).compute()
 
-    def time_numpy_read(self, host, fname):
-        self._init_reader(host, fname).data
-
 
 ###############################################################################
 # Reader benchmarks

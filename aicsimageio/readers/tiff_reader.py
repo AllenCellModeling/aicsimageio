@@ -95,9 +95,9 @@ class TiffReader(Reader):
             The image plane as a numpy array.
         """
         with fs.open(path) as open_resource:
-            return da.from_zarr(imread(open_resource, aszarr=True, series=scene))[
-                indicies
-            ].compute()
+            return da.from_zarr(
+                imread(open_resource, aszarr=True, series=scene, chunkmode="page")
+            )[indicies].compute()
 
     def _get_tiff_tags(self) -> TiffTags:
         with self.fs.open(self.path) as open_resource:
@@ -183,7 +183,6 @@ class TiffReader(Reader):
                 # Get shape of current scene
                 # Replace {?}YX dims with empty dimensions
                 operating_shape = selected_scene.shape
-                print(operating_shape)
 
                 # If the data is RGB we need to pull in the samples as well
                 if selected_scene.keyframe.samplesperpixel != 1:
@@ -202,7 +201,6 @@ class TiffReader(Reader):
                 # Otherwise the data is greyscale
                 else:
                     if len(operating_shape) > 2:
-                        print("im in here")
                         slice_ops = -3
                         operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
                         block_shape = selected_scene.shape[slice_ops:]
@@ -210,8 +208,6 @@ class TiffReader(Reader):
                         slice_ops = -2
                         operating_shape = operating_shape[:slice_ops] + (1, 1)
                         block_shape = selected_scene.shape[slice_ops:]
-
-                print(operating_shape)
 
                 # Make ndarray for lazy arrays to fill
                 lazy_arrays = np.ndarray(operating_shape, dtype=object)
@@ -221,7 +217,6 @@ class TiffReader(Reader):
                     indicies_with_slices = np_index[:slice_ops] + (
                         slice(None, None, None),
                     ) * abs(slice_ops)
-                    print(indicies_with_slices)
 
                     # Fill the numpy array with the delayed arrays
                     lazy_arrays[np_index] = da.from_delayed(

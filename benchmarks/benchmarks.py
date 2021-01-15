@@ -4,8 +4,8 @@
 import random
 from pathlib import Path
 
+from aicsimageio import readers
 from aicsimageio.dimensions import DimensionNames
-from aicsimageio.readers import TiffReader
 
 ###############################################################################
 
@@ -20,7 +20,7 @@ REMOTE_RESOURCES_DIR = (
 )
 
 
-def get_resource_full_path(filename, host):
+def get_resource_full_path(host, filename):
     if host is LOCAL:
         return LOCAL_RESOURCES_DIR / filename
     elif host is REMOTE:
@@ -30,29 +30,47 @@ def get_resource_full_path(filename, host):
 ###############################################################################
 
 
-class TiffReaderSuite:
-    params = [
-        # tiff_path params
-        sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
-        # host params
-        [LOCAL],
-    ]
+class _ImageSuite:
+    # Benchmark utils
+    def _init_reader(self, host, fname):
+        return self.ReaderClass(get_resource_full_path(host, fname))
 
-    def setup(self, tiff_path, host):
-        random.seed(1612)
 
-    def time_init(self, tiff_path, host):
-        TiffReader(get_resource_full_path(tiff_path, host))
+class _ReaderMemorySuite(_ImageSuite):
+    def mem_init(self, host, fname):
+        """
+        How much memory do we use for the fully delayed object.
+        """
+        return self._init_reader(host, fname)
 
-    def time_array_construct(self, tiff_path, host):
-        TiffReader(get_resource_full_path(tiff_path, host)).dask_data
+    def mem_delayed_image(self, host, fname):
+        """
+        Over the init, not much additional memory should be used.
+        Metadata should account for most of the difference.
+        """
+        r = self._init_reader(host, fname)
+        r.dask_data
+        return r
 
-    def time_first_plane_read(self, tiff_path, host):
-        r = TiffReader(get_resource_full_path(tiff_path, host))
-        r.get_image_dask_data("YX").compute()
+    def mem_cached_image(self, host, fname):
+        """
+        Sanity benchmark for us.
+        Serves as a comparison against the array construct.
+        """
+        r = self._init_reader(host, fname)
+        r.data
+        return r
 
-    def time_random_plane_read(self, tiff_path, host):
-        r = TiffReader(get_resource_full_path(tiff_path, host))
+
+class _ReaderTimeSuite(_ImageSuite):
+    def time_init(self, host, fname):
+        self._init_reader(host, fname)
+
+    def time_array_construct(self, host, fname):
+        self._init_reader(host, fname).dask_data
+
+    def time_random_plane_read(self, host, fname):
+        r = self._init_reader(host, fname)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
@@ -61,8 +79,68 @@ class TiffReaderSuite:
 
         r.get_image_dask_data("YX", **random_index_selections).compute()
 
-    def time_numpy_read(self, tiff_path, host):
-        TiffReader(get_resource_full_path(tiff_path, host)).data
+    def time_random_chunk_read(self, host, fname):
+        r = self._init_reader(host, fname)
 
-    def time_dask_read(self, tiff_path, host):
-        TiffReader(get_resource_full_path(tiff_path, host)).dask_data.compute()
+        random_index_selections = {}
+        for dim, size in zip(r.dims.order, r.dims.shape):
+            if dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX]:
+                a = random.randint(0, size - 1)
+                b = random.randint(0, size - 1)
+                lower = min(a, b)
+                upper = max(a, b)
+                random_index_selections[dim] = slice(lower, upper, 1)
+
+        r.get_image_dask_data(r.dims.order, **random_index_selections)
+
+    def time_numpy_read(self, host, fname):
+        self._init_reader(host, fname).data
+
+
+###############################################################################
+# Reader benchmarks
+
+
+class DefaultReaderSuit(_ReaderTimeSuite):
+    params = [
+        # host params
+        [LOCAL],
+        # fname params
+        [
+            "example_valid_frame_count.mp4",
+            "example.bmp",
+            "example.gif",
+            "example.jpg",
+            "example.png",
+        ],
+    ]
+
+    def setup(self, host, fname):
+        random.seed(666)
+        self.ReaderClass = readers.DefaultReader
+
+
+class TiffReaderSuite(_ReaderTimeSuite):
+    params = [
+        # host params
+        [LOCAL],
+        # fname params
+        sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
+    ]
+
+    def setup(self, host, fname):
+        random.seed(666)
+        self.ReaderClass = readers.TiffReader
+
+
+class OmeTiffReaderSuite(_ReaderTimeSuite):
+    params = [
+        # host params
+        [LOCAL],
+        # fname params
+        sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
+    ]
+
+    def setup(self, host, fname):
+        random.seed(666)
+        self.ReaderClass = readers.OmeTiffReader

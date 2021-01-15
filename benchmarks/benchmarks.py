@@ -91,7 +91,7 @@ class _ReaderTimeSuite(_ImageSuite):
                 upper = max(a, b)
                 random_index_selections[dim] = slice(lower, upper, 1)
 
-        r.get_image_dask_data(r.dims.order, **random_index_selections)
+        r.get_image_dask_data(r.dims.order, **random_index_selections).compute()
 
     def time_numpy_read(self, host, fname):
         self._init_reader(host, fname).data

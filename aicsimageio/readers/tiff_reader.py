@@ -73,7 +73,7 @@ class TiffReader(Reader):
 
     @staticmethod
     def _get_image_data(
-        fs: AbstractFileSystem, path: str, scene: int, index: int
+        fs: AbstractFileSystem, path: str, scene: int, indicies: List
     ) -> np.ndarray:
         """
         Open a file for reading, seek to plane index and read as numpy.
@@ -95,8 +95,9 @@ class TiffReader(Reader):
             The image plane as a numpy array.
         """
         with fs.open(path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                return tiff.series[scene].pages[index].asarray()
+            return da.from_zarr(imread(open_resource, aszarr=True, series=scene))[
+                indicies
+            ].compute()
 
     def _get_tiff_tags(self) -> TiffTags:
         with self.fs.open(self.path) as open_resource:
@@ -177,41 +178,61 @@ class TiffReader(Reader):
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                # Get a sample YX plane
-                sample = self._get_image_data(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene_index,
-                    index=0,
-                )
+                selected_scene = tiff.series[self.current_scene_index]
 
                 # Get shape of current scene
-                # Replace YX dims with empty dimensions
-                operating_shape = tiff.series[self.current_scene_index].shape
+                # Replace {?}YX dims with empty dimensions
+                operating_shape = selected_scene.shape
+                print(operating_shape)
 
-                # If the data is RGB we need to pull in the channels as well
-                if tiff.series[self.current_scene_index].keyframe.samplesperpixel != 1:
-                    operating_shape = operating_shape[:-3] + (1, 1, 1)
+                # If the data is RGB we need to pull in the samples as well
+                if selected_scene.keyframe.samplesperpixel != 1:
+                    if len(operating_shape) > 2:
+                        slice_ops = -4
+                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+                        block_shape = selected_scene.shape[slice_ops:] + (
+                            selected_scene.keyframe.samplesperpixel,
+                        )
 
-                # Otherwise the data is in 2D planes (Y, X)
+                    else:
+                        slice_ops = -3
+                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+                        block_shape = selected_scene.shape[slice_ops:]
+
+                # Otherwise the data is greyscale
                 else:
-                    operating_shape = operating_shape[:-2] + (1, 1)
+                    if len(operating_shape) > 2:
+                        print("im in here")
+                        slice_ops = -3
+                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+                        block_shape = selected_scene.shape[slice_ops:]
+                    else:
+                        slice_ops = -2
+                        operating_shape = operating_shape[:slice_ops] + (1, 1)
+                        block_shape = selected_scene.shape[slice_ops:]
+
+                print(operating_shape)
 
                 # Make ndarray for lazy arrays to fill
                 lazy_arrays = np.ndarray(operating_shape, dtype=object)
                 for plane_index, (np_index, _) in enumerate(
                     np.ndenumerate(lazy_arrays)
                 ):
+                    indicies_with_slices = np_index[:slice_ops] + (
+                        slice(None, None, None),
+                    ) * abs(slice_ops)
+                    print(indicies_with_slices)
+
                     # Fill the numpy array with the delayed arrays
                     lazy_arrays[np_index] = da.from_delayed(
                         delayed(TiffReader._get_image_data)(
                             fs=self.fs,
                             path=self.path,
                             scene=self.current_scene_index,
-                            index=plane_index,
+                            indicies=indicies_with_slices,
                         ),
-                        shape=sample.shape,
-                        dtype=sample.dtype,
+                        shape=block_shape,
+                        dtype=selected_scene.dtype,
                     )
 
                 # Convert the numpy array of lazy readers into a dask array

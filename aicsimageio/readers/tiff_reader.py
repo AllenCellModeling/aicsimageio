@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -9,9 +9,11 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 from tifffile import TiffFile, TiffFileError
+from tifffile.tifffile import TiffTags
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
 
@@ -20,6 +22,7 @@ from .reader import Reader
 # "Q" is used by Gohlke to say "unknown dimension"
 # https://github.com/cgohlke/tifffile/blob/master/tifffile/tifffile.py#L10840
 UNKNOWN_DIM_CHAR = "Q"
+TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 ###############################################################################
 
@@ -51,24 +54,22 @@ class TiffReader(Reader):
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
-            raise exceptions.UnsupportedFileFormatError(self.extension)
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, self.extension
+            )
 
     @property
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indicies
-                    self._scenes = tuple(range(len(tiff.series)))
+                    self._scenes = tuple(
+                        metadata_utils.generate_ome_image_id(i)
+                        for i in range(len(tiff.series))
+                    )
 
         return self._scenes
-
-    @property
-    def current_scene(self) -> int:
-        if self._current_scene is None:
-            self._current_scene = self.scenes[0]
-
-        return self._current_scene
 
     @staticmethod
     def _get_image_data(
@@ -97,18 +98,13 @@ class TiffReader(Reader):
             with TiffFile(open_resource) as tiff:
                 return tiff.series[scene].pages[index].asarray()
 
-    @staticmethod
-    def _get_metadata(
-        fs: AbstractFileSystem,
-        path: str,
-        scene: int,
-    ) -> Dict:
-        with fs.open(path) as open_resource:
+    def _get_tiff_tags(self) -> TiffTags:
+        with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                return tiff.series[scene].pages[0].tags
+                return tiff.series[self.current_scene_index].pages[0].tags
 
     @staticmethod
-    def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str):
+    def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str) -> str:
         # Construct a "best guess" (super naive)
         best_guess = []
         for dim_from_meta in dims_from_meta:
@@ -136,10 +132,10 @@ class TiffReader(Reader):
 
         return "".join(best_guess)
 
-    def _guess_dim_order(self):
+    def _guess_dim_order(self) -> List[str]:
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                scene = tiff.series[self.current_scene]
+                scene = tiff.series[self.current_scene_index]
                 dims_from_meta = scene.pages.axes
 
                 # If all dims are known, simply return as list
@@ -155,7 +151,10 @@ class TiffReader(Reader):
                     ]
 
     @staticmethod
-    def _get_coords(dims: str, shape: Tuple[int]):
+    def _get_coords(
+        dims: str,
+        shape: Tuple[int],
+    ) -> Dict[str, Union[List, types.ArrayLike]]:
         # Use dims for coord determination
         coords = {}
 
@@ -167,20 +166,14 @@ class TiffReader(Reader):
 
         return coords
 
-    def _read_delayed(self) -> xr.DataArray:
+    def _create_dask_array(self) -> da.Array:
         """
-        Construct the delayed xarray DataArray object for the image.
+        Creates a delayed dask array for the file.
 
         Returns
         -------
-        image: xr.DataArray
-            The fully constructed and fully delayed image as a DataArray  object.
-            Metadata is attached in some cases as coords, dims, and attrs.
-
-        Raises
-        ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        image_data: da.Array
+            The fully constructed and fully delayed image as a Dask Array object.
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
@@ -188,16 +181,16 @@ class TiffReader(Reader):
                 sample = self._get_image_data(
                     fs=self.fs,
                     path=self.path,
-                    scene=self.current_scene,
+                    scene=self.current_scene_index,
                     index=0,
                 )
 
                 # Get shape of current scene
                 # Replace YX dims with empty dimensions
-                operating_shape = tiff.series[self.current_scene].shape
+                operating_shape = tiff.series[self.current_scene_index].shape
 
                 # If the data is RGB we need to pull in the channels as well
-                if tiff.series[self.current_scene].keyframe.samplesperpixel != 1:
+                if tiff.series[self.current_scene_index].keyframe.samplesperpixel != 1:
                     operating_shape = operating_shape[:-3] + (1, 1, 1)
 
                 # Otherwise the data is in 2D planes (Y, X)
@@ -214,7 +207,7 @@ class TiffReader(Reader):
                         delayed(TiffReader._get_image_data)(
                             fs=self.fs,
                             path=self.path,
-                            scene=self.current_scene,
+                            scene=self.current_scene_index,
                             index=plane_index,
                         ),
                         shape=sample.shape,
@@ -224,23 +217,44 @@ class TiffReader(Reader):
                 # Convert the numpy array of lazy readers into a dask array
                 image_data = da.block(lazy_arrays.tolist())
 
-                # Get metadata from tags
-                metadata = self._get_metadata(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene,
-                )
+                return image_data
 
-                # Create dims and coords
-                dims = self._guess_dim_order()
-                coords = self._get_coords(dims, image_data.shape)
+    def _read_delayed(self) -> xr.DataArray:
+        """
+        Construct the delayed xarray DataArray object for the image.
 
-                return xr.DataArray(
-                    image_data,
-                    dims=dims,
-                    coords=coords,
-                    attrs=metadata,
-                )
+        Returns
+        -------
+        image: xr.DataArray
+            The fully constructed and fully delayed image as a DataArray object.
+            Metadata is attached in some cases as coords, dims, and attrs.
+
+        Raises
+        ------
+        exceptions.UnsupportedFileFormatError: The file could not be read or is not
+            supported.
+        """
+        # Create the delayed dask array
+        image_data = self._create_dask_array()
+
+        # Get unprocessed metadata from tags
+        tiff_tags = self._get_tiff_tags()
+
+        # Create dims and coords
+        dims = self._guess_dim_order()
+        coords = self._get_coords(dims, image_data.shape)
+
+        return xr.DataArray(
+            image_data,
+            dims=dims,
+            coords=coords,
+            attrs={
+                constants.METADATA_UNPROCESSED: tiff_tags,
+                constants.METADATA_PROCESSED: tiff_tags[
+                    TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                ].value,
+            },
+        )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -259,14 +273,11 @@ class TiffReader(Reader):
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                image_data = tiff.series[self.current_scene].asarray()
+                # Read image into memory
+                image_data = tiff.series[self.current_scene_index].asarray()
 
-                # Get metadata from tags
-                metadata = self._get_metadata(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene,
-                )
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags()
 
                 # Create dims and coords
                 dims = self._guess_dim_order()
@@ -276,12 +287,10 @@ class TiffReader(Reader):
                     image_data,
                     dims=dims,
                     coords=coords,
-                    attrs=metadata,
+                    attrs={
+                        constants.METADATA_UNPROCESSED: tiff_tags,
+                        constants.METADATA_PROCESSED: tiff_tags[
+                            TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                        ].value,
+                    },
                 )
-
-    @property
-    def metadata(self):
-        if self._metadata is None:
-            self._metadata = self.xarray_dask_data.attrs
-
-        return self._metadata

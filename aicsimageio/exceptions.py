@@ -16,9 +16,13 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, extension, **kwargs):
+    def __init__(self, reader_name: str, extension: str, **kwargs):
         super().__init__(**kwargs)
+        self.reader_name = reader_name
         self.extension = extension
 
     def __str__(self):
-        return f"AICSImageIO does not support the image file type: '{self.extension}'."
+        return (
+            f"{self.reader_name} does not support the "
+            f"image file type: '{self.extension}'."
+        )

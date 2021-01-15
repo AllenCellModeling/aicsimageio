@@ -9,7 +9,7 @@ import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
 
-from .. import transforms, types
+from .. import constants, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
 
@@ -107,16 +107,16 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         """
         Returns
         -------
-        scenes: Tuple[int]
+        scenes: Tuple[str]
             A tuple of valid scene ids in the file.
 
         Notes
         -----
-        Scene IDs are not a range of integers.
+        Scene IDs are strings - not a range of integers.
 
         When iterating over scenes please use:
 
@@ -129,22 +129,35 @@ class Reader(ABC):
         pass
 
     @property
-    def current_scene(self) -> int:
+    def current_scene(self) -> str:
         """
         Returns
         -------
-        scene: int
+        scene: str
             The current operating scene.
         """
-        pass
+        if self._current_scene is None:
+            self._current_scene = self.scenes[0]
 
-    def set_scene(self, scene_id: int):
+        return self._current_scene
+
+    @property
+    def current_scene_index(self) -> int:
+        """
+        Returns
+        -------
+        scene_index: int
+            The current operating scene index in the file.
+        """
+        return self.scenes.index(self.current_scene)
+
+    def set_scene(self, scene_id: str):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        scene_id: int
+        scene_id: str
             The scene id to set as the operating scene.
 
         Raises
@@ -455,15 +468,31 @@ class Reader(ABC):
         )
 
     @property
-    @abstractmethod
     def metadata(self) -> Any:
         """
         Returns
         -------
         metadata: Any
             The metadata for the formats supported by the inhereting Reader.
+
+            If the inheriting Reader supports processing the metadata into a more useful
+            format / Python object, this will return the result.
+
+            For both the unprocessed and processed metadata from the file, use
+            `xarray_dask_data.attrs` which will contain a dictionary with keys:
+            `unprocessed` and `processed` that you can then select.
         """
-        pass
+        if self._metadata is None:
+            if constants.METADATA_PROCESSED in self.xarray_dask_data.attrs:
+                self._metadata = self.xarray_dask_data.attrs[
+                    constants.METADATA_PROCESSED
+                ]
+            else:
+                self._metadata = self.xarray_dask_data.attrs[
+                    constants.METADATA_UNPROCESSED
+                ]
+
+        return self._metadata
 
     @property
     def channel_names(self) -> Optional[List[str]]:

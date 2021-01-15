@@ -1,13 +1,11 @@
 # AICSImage Metadata Module
 
-Undecided how to organize this module. This likely isn't included in 4.0 but more
-likely 4.1 or similar but good to start thinking about.
+Planned layout of the `metadata` submodule
 
-I am currently thinking:
 ```
 aicsimageio/
     metadata/
-        omexml.py  # our remade and updated omexml object generated from source XSD
+        utils.py  # common utilities and cleaning
         transform.py  # the transform functions to convert to ome
         xslt/
             czi.xslt  # from czi to ome
@@ -16,6 +14,8 @@ aicsimageio/
 ```
 
 This results in:
+
 ```python
-from aicsimageio.metadata import OMEXML, transform_czi_to_ome
+from aicsimageio.metadata import transform_czi_to_ome
+from aicsimageio.metadata import utils as metadata_utils
 ```

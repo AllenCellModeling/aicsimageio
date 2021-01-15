@@ -10,8 +10,9 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
 
@@ -106,7 +107,9 @@ class DefaultReader(Reader):
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
-            raise exceptions.UnsupportedFileFormatError(self.extension)
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, self.extension
+            )
 
     @staticmethod
     def _guess_dim_order(shape: Tuple[int]) -> str:
@@ -126,16 +129,12 @@ class DefaultReader(Reader):
         return Reader._guess_dim_order(shape)
 
     @property
-    def scenes(self) -> Tuple[int]:
+    def scenes(self) -> Tuple[str]:
         # There is currently an assumption that DefaultReader will not encounter
         # files with multiple scenes. But, if we do encounter a file that DefaultReader
         # hits and a user wants scene management from that file type, we can update
         # this property then.
-        return (0,)
-
-    @property
-    def current_scene(self) -> int:
-        return self.scenes[0]
+        return (metadata_utils.generate_ome_image_id(0),)
 
     @staticmethod
     def _get_image_data(
@@ -350,7 +349,9 @@ class DefaultReader(Reader):
                 # Catch all other image types as unsupported
                 # https://imageio.readthedocs.io/en/stable/userapi.html#imageio.core.format.Reader.get_length
                 else:
-                    raise exceptions.UnsupportedFileFormatError(self.extension)
+                    raise exceptions.UnsupportedFileFormatError(
+                        self.__class__.__name__, self.extension
+                    )
 
                 # Get basic metadata
                 metadata = reader.get_meta_data()
@@ -362,7 +363,7 @@ class DefaultReader(Reader):
                     image_data,
                     dims=dims,
                     coords=coords,
-                    attrs=metadata,
+                    attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -417,12 +418,5 @@ class DefaultReader(Reader):
                 image_data,
                 dims=dims,
                 coords=coords,
-                attrs=metadata,
+                attrs={constants.METADATA_UNPROCESSED: metadata},
             )
-
-    @property
-    def metadata(self):
-        if self._metadata is None:
-            self._metadata = self.xarray_dask_data.attrs
-
-        return self._metadata

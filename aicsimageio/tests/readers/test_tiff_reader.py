@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import numpy as np
 import pytest
 
 from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
+import numpy as np
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
@@ -21,12 +21,28 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
     "expected_dims_order, "
     "expected_channel_names",
     [
-        ("s_1_t_1_c_1_z_1.ome.tiff", 0, (0,), (325, 475), np.uint16, "YX", None),
-        ("s_1_t_1_c_1_z_1.tiff", 0, (0,), (325, 475), np.uint16, "YX", None),
+        (
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            "Image:0",
+            ("Image:0",),
+            (325, 475),
+            np.uint16,
+            "YX",
+            None,
+        ),
+        (
+            "s_1_t_1_c_1_z_1.tiff",
+            "Image:0",
+            ("Image:0",),
+            (325, 475),
+            np.uint16,
+            "YX",
+            None,
+        ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
-            0,
-            (0,),
+            "Image:0",
+            ("Image:0",),
             (10, 1736, 1776),
             np.uint16,
             "CYX",
@@ -34,8 +50,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_1_t_10_c_3_z_1.tiff",
-            0,
-            (0,),
+            "Image:0",
+            ("Image:0",),
             (10, 3, 325, 475),
             np.uint16,
             "TCYX",
@@ -43,8 +59,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            0,
-            (0, 1, 2),
+            "Image:0",
+            ("Image:0", "Image:1", "Image:2"),
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
@@ -52,8 +68,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            1,
-            (0, 1, 2),
+            "Image:1",
+            ("Image:0", "Image:1", "Image:2"),
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
@@ -61,8 +77,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            2,
-            (0, 1, 2),
+            "Image:2",
+            ("Image:0", "Image:1", "Image:2"),
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
@@ -70,8 +86,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_1_t_1_c_1_z_1_RGB.tiff",
-            0,
-            (0,),
+            "Image:0",
+            ("Image:0",),
             (7548, 7548, 3),
             np.uint16,
             "YXS",  # S stands for samples dimension
@@ -79,8 +95,8 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         (
             "s_1_t_1_c_2_z_1_RGB.tiff",
-            0,
-            (0,),
+            "Image:0",
+            ("Image:0",),
             (2, 32, 32, 3),
             np.uint8,
             "CYXS",  # S stands for samples dimension
@@ -108,7 +124,7 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
-            1,
+            "Image:1",
             None,
             None,
             None,
@@ -118,7 +134,7 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
         ),
         pytest.param(
             "s_3_t_1_c_3_z_5.ome.tiff",
-            3,
+            "Image:3",
             None,
             None,
             None,
@@ -166,16 +182,16 @@ def test_tiff_reader(
     [
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            0,
+            "Image:0",
             (5, 3, 325, 475),
-            1,
+            "Image:1",
             (5, 3, 325, 475),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            1,
+            "Image:1",
             (5, 3, 325, 475),
-            2,
+            "Image:2",
             (5, 3, 325, 475),
         ),
     ],

@@ -176,64 +176,72 @@ class TiffReader(Reader):
         image_data: da.Array
             The fully constructed and fully delayed image as a Dask Array object.
         """
-        with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                selected_scene = tiff.series[self.current_scene_index]
+        return da.from_zarr(
+            imread(
+                self.path,
+                aszarr=True,
+                series=self.current_scene_index,
+                chunkmode="page",
+            )
+        )
+        # with self.fs.open(self.path) as open_resource:
+        #     with TiffFile(open_resource) as tiff:
+        #         selected_scene = tiff.series[self.current_scene_index]
 
-                # Get shape of current scene
-                # Replace {?}YX dims with empty dimensions
-                operating_shape = selected_scene.shape
+        #         # Get shape of current scene
+        #         # Replace {?}YX dims with empty dimensions
+        #         operating_shape = selected_scene.shape
 
-                # If the data is RGB we need to pull in the samples as well
-                if selected_scene.keyframe.samplesperpixel != 1:
-                    if len(operating_shape) > 2:
-                        slice_ops = -4
-                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
-                        block_shape = selected_scene.shape[slice_ops:] + (
-                            selected_scene.keyframe.samplesperpixel,
-                        )
+        #         # If the data is RGB we need to pull in the samples as well
+        #         if selected_scene.keyframe.samplesperpixel != 1:
+        #             if len(operating_shape) > 2:
+        #                 slice_ops = -4
+        #                 operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+        #                 block_shape = selected_scene.shape[slice_ops:] + (
+        #                     selected_scene.keyframe.samplesperpixel,
+        #                 )
 
-                    else:
-                        slice_ops = -3
-                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
-                        block_shape = selected_scene.shape[slice_ops:]
+        #             else:
+        #                 slice_ops = -3
+        #                 operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+        #                 block_shape = selected_scene.shape[slice_ops:]
 
-                # Otherwise the data is greyscale
-                else:
-                    if len(operating_shape) > 2:
-                        slice_ops = -3
-                        operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
-                        block_shape = selected_scene.shape[slice_ops:]
-                    else:
-                        slice_ops = -2
-                        operating_shape = operating_shape[:slice_ops] + (1, 1)
-                        block_shape = selected_scene.shape[slice_ops:]
+        #         # Otherwise the data is greyscale
+        #         else:
+        #             if len(operating_shape) > 2:
+        #                 slice_ops = -3
+        #                 operating_shape = operating_shape[:slice_ops] + (1, 1, 1)
+        #                 block_shape = selected_scene.shape[slice_ops:]
+        #             else:
+        #                 slice_ops = -2
+        #                 operating_shape = operating_shape[:slice_ops] + (1, 1)
+        #                 block_shape = selected_scene.shape[slice_ops:]
 
-                # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                for plane_index, (np_index, _) in enumerate(
-                    np.ndenumerate(lazy_arrays)
-                ):
-                    indicies_with_slices = np_index[:slice_ops] + (
-                        slice(None, None, None),
-                    ) * abs(slice_ops)
+        #         # Make ndarray for lazy arrays to fill
+        #         lazy_arrays = np.ndarray(operating_shape, dtype=object)
+        #         for plane_index, (np_index, _) in enumerate(
+        #             np.ndenumerate(lazy_arrays)
+        #         ):
+        #             indicies_with_slices = np_index[:slice_ops] + (
+        #                 slice(None, None, None),
+        #             ) * abs(slice_ops)
 
-                    # Fill the numpy array with the delayed arrays
-                    lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._get_image_data)(
-                            fs=self.fs,
-                            path=self.path,
-                            scene=self.current_scene_index,
-                            indicies=indicies_with_slices,
-                        ),
-                        shape=block_shape,
-                        dtype=selected_scene.dtype,
-                    )
+        #             # Fill the numpy array with the delayed arrays
+        #             lazy_arrays[np_index] = da.from_delayed(
+        #                 delayed(TiffReader._get_image_data)(
+        #                     fs=self.fs,
+        #                     path=self.path,
+        #                     scene=self.current_scene_index,
+        #                     indicies=indicies_with_slices,
+        #                 ),
+        #                 shape=block_shape,
+        #                 dtype=selected_scene.dtype,
+        #             )
 
-                # Convert the numpy array of lazy readers into a dask array
-                image_data = da.block(lazy_arrays.tolist())
+        #         # Convert the numpy array of lazy readers into a dask array
+        #         image_data = da.block(lazy_arrays.tolist())
 
-                return image_data
+        #         return image_data
 
     def _read_delayed(self) -> xr.DataArray:
         """

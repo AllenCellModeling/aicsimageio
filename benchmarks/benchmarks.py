@@ -82,9 +82,15 @@ class _ReaderTimeSuite(_ImageSuite):
     def time_random_chunk_read(self, host, fname):
         r = self._init_reader(host, fname)
 
+        # Image chunks aren't entirely random
+        # We generally pull a whole Z stack or T stack at once
+        expected_chunk_dims = [DimensionNames.SpatialY, DimensionNames.SpatialX]
+        if len(r.shape) > 2:
+            expected_chunk_dims.append(r.dims.order[-3])
+
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
-            if dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX]:
+            if dim not in expected_chunk_dims:
                 a = random.randint(0, size - 1)
                 b = random.randint(0, size - 1)
                 lower = min(a, b)

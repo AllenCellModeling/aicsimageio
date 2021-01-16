@@ -25,6 +25,13 @@ DEFAULT_DIMENSION_ORDER_LIST = [
 
 DEFAULT_DIMENSION_ORDER = "".join(DEFAULT_DIMENSION_ORDER_LIST)
 
+DEFAULT_CHUNK_BY_DIMS = [
+    DimensionNames.SpatialZ,
+    DimensionNames.SpatialY,
+    DimensionNames.SpatialX,
+    DimensionNames.Samples,
+]
+
 ###############################################################################
 
 

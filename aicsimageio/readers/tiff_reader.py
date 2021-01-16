@@ -12,7 +12,7 @@ from tifffile import TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
-from ..dimensions import DimensionNames
+from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
@@ -41,12 +41,7 @@ class TiffReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: List[str] = [
-            DimensionNames.SpatialZ,
-            DimensionNames.SpatialY,
-            DimensionNames.SpatialX,
-            DimensionNames.Samples,
-        ],
+        chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
     ):
         """
         Wraps the tifffile API to provide the same aicsimageio Reader API but for
@@ -56,8 +51,9 @@ class TiffReader(Reader):
         ----------
         image: types.PathLike
             Path to image file to construct Reader for.
-        chunk_by_dims: Union[str, List[str]]
+        chunk_by_dims: List[str]
             Which dimensions to create chunks for.
+            Default: DEFAULT_CHUNK_BY_DIMS
             Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
             will always be added to the list if not present during dask array
             construction.
@@ -202,6 +198,8 @@ class TiffReader(Reader):
             self.chunk_by_dims.append(DimensionNames.SpatialY)
         if DimensionNames.SpatialX not in self.chunk_by_dims:
             self.chunk_by_dims.append(DimensionNames.SpatialX)
+        if DimensionNames.Samples not in self.chunk_by_dims:
+            self.chunk_by_dims.append(DimensionNames.Samples)
 
         # Safety measure / "feature"
         self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]

@@ -1,17 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import pytest
-
 from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
-import numpy as np
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
 
 
-@pytest.mark.parametrize("host", [LOCAL, REMOTE])
+@pytest.mark.parametrize(
+    "host",
+    [LOCAL, REMOTE],
+)
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "

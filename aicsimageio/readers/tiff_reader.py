@@ -245,7 +245,7 @@ class TiffReader(Reader):
 
     def _read_delayed(self) -> xr.DataArray:
         """
-        Construct the delayed xarray DataArray object for the image.
+        Creates a delayed dask array for the file.
 
         Returns
         -------

@@ -78,10 +78,11 @@ class Dimensions:
         """
         return self._shape
 
+    def items(self):
+        return self._dims_shape.items()
+
     def __str__(self):
-        dims_string = ", ".join(
-            [f"{dim}: {size}" for dim, size in self._dims_shape.items()]
-        )
+        dims_string = ", ".join([f"{dim}: {size}" for dim, size in self.items()])
         return f"<Dimensions [{dims_string}]>"
 
     def __repr__(self):

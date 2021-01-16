@@ -1,5 +1,5 @@
-# Write the benchmarking functions here.
-# See "Writing benchmarks" in the asv docs for more information.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import random
 from pathlib import Path

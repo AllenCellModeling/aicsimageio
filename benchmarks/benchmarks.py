@@ -132,7 +132,7 @@ class DefaultReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
     ]
 
     def setup(self, img_path):
-        random.seed(123)
+        random.seed(42)
         self.ReaderClass = readers.DefaultReader
 
 
@@ -142,18 +142,15 @@ class TiffReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
     ]
 
     def setup(self, img_path):
-        random.seed(666)
+        random.seed(42)
         self.ReaderClass = readers.TiffReader
 
 
-# class OmeTiffReaderSuite(_ReaderTimeSuite):
-#     params = [
-#         # host params
-#         [LOCAL],
-#         # fname params
-#         sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
-#     ]
+class OmeTiffReaderSuite(_ReaderTimeSuite):
+    params = [
+        sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
+    ]
 
-#     def setup(self, host, fname):
-#         random.seed(666)
-#         self.ReaderClass = readers.OmeTiffReader
+    def setup(self, img_path):
+        random.seed(42)
+        self.ReaderClass = readers.OmeTiffReader

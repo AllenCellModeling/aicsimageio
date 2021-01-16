@@ -43,7 +43,7 @@ class _ReaderMemorySuite:
         current scene is read into memory.
 
         Serves as a comparison against the delayed construct and as a sanity check.
-        The full size should be ~ array shape * dtype size + some overhead.
+        Estimate: `r.data.size * r.data.itemsize` + some metadata and object overhead.
         """
         r = self.ReaderClass(img_path)
         r.data
@@ -82,7 +82,7 @@ class _ReaderTimeSuite:
         r = self.ReaderClass(img_path)
 
         random_index_selections = {}
-        for dim, size in r.dims.items():
+        for dim, size in zip(r.dims.order, r.dims.shape):
             if dim not in self.DEFAULT_CHUNK_DIMS:
                 random_index_selections[dim] = random.randint(0, size - 1)
 
@@ -100,7 +100,7 @@ class _ReaderTimeSuite:
         r = self.ReaderClass(img_path)
 
         random_index_selections = {}
-        for dim, size in r.dims.items():
+        for dim, size in zip(r.dims.order, r.dims.shape):
             if dim not in self.DEFAULT_CHUNK_DIMS:
                 a = random.randint(0, size - 1)
                 b = random.randint(0, size - 1)

@@ -63,32 +63,44 @@ class _ReaderMemorySuite(_ImageSuite):
 
 
 class _ReaderTimeSuite(_ImageSuite):
+
+    DEFAULT_CHUNK_DIMS = [
+        DimensionNames.SpatialZ,
+        DimensionNames.SpatialY,
+        DimensionNames.SpatialX,
+        DimensionNames.Samples,
+    ]
+
     def time_init(self, host, fname):
         self._init_reader(host, fname)
 
     def time_array_construct(self, host, fname):
         self._init_reader(host, fname).dask_data
 
-    def time_random_plane_read(self, host, fname):
+    def time_random_single_chunk_read(self, host, fname):
         r = self._init_reader(host, fname)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
-            if dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX]:
+            if dim not in self.DEFAULT_CHUNK_DIMS:
                 random_index_selections[dim] = random.randint(0, size - 1)
 
-        r.get_image_dask_data("YX", **random_index_selections).compute()
+        valid_dims_to_return = "".join(
+            [d for d in r.dims.order if d in self.DEFAULT_CHUNK_DIMS]
+        )
+        r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()
 
-    def time_random_chunk_read(self, host, fname):
+    def time_random_many_chunk_read(self, host, fname):
         r = self._init_reader(host, fname)
 
         random_index_selections = {}
-        for dim, size in zip(r.dims.order[:-3], r.dims.shape[:-3]):
-            a = random.randint(0, size - 1)
-            b = random.randint(0, size - 1)
-            lower = min(a, b)
-            upper = max(a, b)
-            random_index_selections[dim] = slice(lower, upper, 1)
+        for dim, size in zip(r.dims.order, r.dims.shape):
+            if dim not in self.DEFAULT_CHUNK_DIMS:
+                a = random.randint(0, size - 1)
+                b = random.randint(0, size - 1)
+                lower = min(a, b)
+                upper = max(a, b)
+                random_index_selections[dim] = slice(lower, upper, 1)
 
         r.get_image_dask_data(r.dims.order, **random_index_selections).compute()
 
@@ -119,7 +131,7 @@ class _ReaderTimeSuite(_ImageSuite):
 class TiffReaderSuite(_ReaderTimeSuite):
     params = [
         # host params
-        [LOCAL],
+        [LOCAL, REMOTE],
         # fname params
         sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
     ]
@@ -129,14 +141,14 @@ class TiffReaderSuite(_ReaderTimeSuite):
         self.ReaderClass = readers.TiffReader
 
 
-class OmeTiffReaderSuite(_ReaderTimeSuite):
-    params = [
-        # host params
-        [LOCAL],
-        # fname params
-        sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
-    ]
+# class OmeTiffReaderSuite(_ReaderTimeSuite):
+#     params = [
+#         # host params
+#         [LOCAL],
+#         # fname params
+#         sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
+#     ]
 
-    def setup(self, host, fname):
-        random.seed(666)
-        self.ReaderClass = readers.OmeTiffReader
+#     def setup(self, host, fname):
+#         random.seed(666)
+#         self.ReaderClass = readers.OmeTiffReader

@@ -9,61 +9,51 @@ from aicsimageio.dimensions import DimensionNames
 
 ###############################################################################
 
-LOCAL = "LOCAL"
-REMOTE = "REMOTE"
-
+# We only benchmark against local files as remote files are unit tested as well
+# and generally are just slower than local but scale at a similar rate.
 LOCAL_RESOURCES_DIR = (
     Path(__file__).parent.parent / "aicsimageio" / "tests" / "resources"
 )
-REMOTE_RESOURCES_DIR = (
-    "s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources"
-)
-
-
-def get_resource_full_path(host, filename):
-    if host is LOCAL:
-        return LOCAL_RESOURCES_DIR / filename
-    elif host is REMOTE:
-        return f"{REMOTE_RESOURCES_DIR}/{filename}"
-
 
 ###############################################################################
 
 
-class _ImageSuite:
-    # Benchmark utils
-    def _init_reader(self, host, fname):
-        return self.ReaderClass(get_resource_full_path(host, fname))
+class _ReaderMemorySuite:
+    def peakmem_init(self, img_path):
+        """
+        Benchmark how much memory is used for just the initialized reader.
+        """
+        return self.ReaderClass(img_path)
 
+    def peakmem_delayed_array(self, img_path):
+        """
+        Benchmark how much memory is used for the reader once the
+        delayed dask array is constructed.
 
-class _ReaderMemorySuite(_ImageSuite):
-    def mem_init(self, host, fname):
+        Serves as a comparison against the init.
+        Metadata should account for most of the memory difference.
         """
-        How much memory do we use for the fully delayed object.
-        """
-        return self._init_reader(host, fname)
-
-    def mem_delayed_image(self, host, fname):
-        """
-        Over the init, not much additional memory should be used.
-        Metadata should account for most of the difference.
-        """
-        r = self._init_reader(host, fname)
+        r = self.ReaderClass(img_path)
         r.dask_data
         return r
 
-    def mem_cached_image(self, host, fname):
+    def peakmem_cached_array(self, img_path):
         """
-        Sanity benchmark for us.
-        Serves as a comparison against the array construct.
+        Benchmark how much memory is used for the whole reader once the
+        current scene is read into memory.
+
+        Serves as a comparison against the delayed construct and as a sanity check.
+        The full size should be ~ array shape * dtype size + some overhead.
         """
-        r = self._init_reader(host, fname)
+        r = self.ReaderClass(img_path)
         r.data
         return r
 
 
-class _ReaderTimeSuite(_ImageSuite):
+class _ReaderTimeSuite:
 
+    # These default chunk dimensions don't exist on every reader
+    # so we have to define them here as well
     DEFAULT_CHUNK_DIMS = [
         DimensionNames.SpatialZ,
         DimensionNames.SpatialY,
@@ -71,17 +61,28 @@ class _ReaderTimeSuite(_ImageSuite):
         DimensionNames.Samples,
     ]
 
-    def time_init(self, host, fname):
-        self._init_reader(host, fname)
+    def time_init(self, img_path):
+        """
+        Benchmark how long it takes to validate a file and finish general setup.
+        """
+        self.ReaderClass(img_path)
 
-    def time_array_construct(self, host, fname):
-        self._init_reader(host, fname).dask_data
+    def time_delayed_array_construct(self, img_path):
+        """
+        Benchmark how long it takes to construct the delayed dask array for a file.
+        """
+        self.ReaderClass(img_path).dask_data
 
-    def time_random_single_chunk_read(self, host, fname):
-        r = self._init_reader(host, fname)
+    def time_random_single_chunk_read(self, img_path):
+        """
+        Benchmark how long it takes to read a single chunk out of a file.
+
+        I.E. "Pull just the Brightfield channel z-stack.
+        """
+        r = self.ReaderClass(img_path)
 
         random_index_selections = {}
-        for dim, size in zip(r.dims.order, r.dims.shape):
+        for dim, size in r.dims.items():
             if dim not in self.DEFAULT_CHUNK_DIMS:
                 random_index_selections[dim] = random.randint(0, size - 1)
 
@@ -90,11 +91,16 @@ class _ReaderTimeSuite(_ImageSuite):
         )
         r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()
 
-    def time_random_many_chunk_read(self, host, fname):
-        r = self._init_reader(host, fname)
+    def time_random_many_chunk_read(self, img_path):
+        """
+        Open a file, get many chunks out of the file at once.
+
+        I.E. "Pull the DNA and Nucleus channel z-stacks, for the middle 50% timepoints".
+        """
+        r = self.ReaderClass(img_path)
 
         random_index_selections = {}
-        for dim, size in zip(r.dims.order, r.dims.shape):
+        for dim, size in r.dims.items():
             if dim not in self.DEFAULT_CHUNK_DIMS:
                 a = random.randint(0, size - 1)
                 b = random.randint(0, size - 1)
@@ -109,34 +115,33 @@ class _ReaderTimeSuite(_ImageSuite):
 # Reader benchmarks
 
 
-# class DefaultReaderSuit(_ReaderTimeSuite):
-#     params = [
-#         # host params
-#         [LOCAL],
-#         # fname params
-#         [
-#             "example_valid_frame_count.mp4",
-#             "example.bmp",
-#             "example.gif",
-#             "example.jpg",
-#             "example.png",
-#         ],
-#     ]
-
-#     def setup(self, host, fname):
-#         random.seed(666)
-#         self.ReaderClass = readers.DefaultReader
-
-
-class TiffReaderSuite(_ReaderTimeSuite):
+class DefaultReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
     params = [
-        # host params
-        [LOCAL, REMOTE],
-        # fname params
-        sorted([f.name for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
+        # We can't check any of the ffmpeg formats because asv doesn't run
+        # properly with spawned subprocesses and the ffmpeg formats all
+        # passthrough the request to ffmpeg...
+        #
+        # Because of this, these benchmarks are largely sanity checks
+        sorted(
+            [
+                str(LOCAL_RESOURCES_DIR / "example.bmp"),
+                str(LOCAL_RESOURCES_DIR / "example.jpg"),
+                str(LOCAL_RESOURCES_DIR / "example.png"),
+            ]
+        ),
     ]
 
-    def setup(self, host, fname):
+    def setup(self, img_path):
+        random.seed(123)
+        self.ReaderClass = readers.DefaultReader
+
+
+class TiffReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
+    params = [
+        sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
+    ]
+
+    def setup(self, img_path):
         random.seed(666)
         self.ReaderClass = readers.TiffReader
 

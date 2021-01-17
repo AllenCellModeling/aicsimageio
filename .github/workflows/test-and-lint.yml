@@ -90,11 +90,13 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install .[dev]
-    - name: Run and Store Benchmark Comparison
-      id: run-and-store-benchmark
+    - id: run-and-store-benchmark
       run: |
         asv machine --machine github-ci --yes
         report=`asv continuous ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}`
+        report="${report//'%'/'%25'}"
+        report="${report//$'\n'/'%0A'}"
+        report="${report//$'\r'/'%0D'}" 
         echo ::set-output name=report::$report
     - name: Report Result
       uses: peter-evans/create-or-update-comment@v1
@@ -103,5 +105,5 @@ jobs:
         body: |
           # Benchmark Comparison
           ```
-          ${{ steps.run-and-store-benchmark.outputs.report }
+          ${{ steps.run-and-store-benchmark.outputs.report }}
           ```

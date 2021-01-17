@@ -86,7 +86,10 @@ jobs:
         pip install .[dev]
     - name: Run Benchmark Comparison
       run: |
-        asv continuous ${{ github.base_ref }} ${{ github.head_ref }} > benchmarks.txt
+        asv continuous ${{ github.base_ref }} ${{ github.head_ref }}
+    - name: Temp File Create
+      run: |
+        echo "This is a test" > benchmarks.txt
     - name: Report Benchmarks
       uses: machine-learning-apps/pr-comment@master
       env:

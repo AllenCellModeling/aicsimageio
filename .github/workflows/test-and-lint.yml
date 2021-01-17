@@ -87,7 +87,7 @@ jobs:
         pip install .[dev]
     - name: Run Benchmark Comparison
       run: |
-        asv continuous ${{ github.base_ref }} ${{ github.head_ref }}
+        asv continuous ${{ github.base_ref }} HEAD
     - name: Format File
       run: |
         sed -i '1i# Benchmark Comparison\n\n```' benchmarks.md

@@ -77,7 +77,10 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 0
-        ref: ${{ github.head_ref }}
+        ref: ${{ github.event.pull_request.head.sha }}
+    - name: test
+      run: |
+        git branch
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
@@ -89,7 +92,7 @@ jobs:
     - name: Run Benchmark Comparison
       run: |
         asv machine --machine github-ci --yes
-        asv continuous ${{ github.base_ref }} ${{ github.head_ref }} > benchmarks.md
+        asv continuous ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > benchmarks.md
     - name: Format File
       run: |
         sed -i '1i# Benchmark Comparison\n\n```' benchmarks.md

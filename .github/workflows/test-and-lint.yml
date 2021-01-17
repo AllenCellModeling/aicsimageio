@@ -90,17 +90,18 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install .[dev]
-    - name: Run Benchmark Comparison
+    - name: Run and Store Benchmark Comparison
+      id: run-and-store-benchmark
       run: |
         asv machine --machine github-ci --yes
-        asv continuous ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > benchmarks.md
-    - name: Format File
-      run: |
-        sed -i '1i# Benchmark Comparison\n\n```' benchmarks.md
-        sed -i -e '$a```' benchmarks.md
-    - name: Report Benchmarks
-      uses: machine-learning-apps/pr-comment@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        report=`asv continuous ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}`
+        echo ::set-output name=report::$report
+    - name: Report Result
+      uses: peter-evans/create-or-update-comment@v1
       with:
-        path: benchmarks.md
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          # Benchmark Comparison
+          ```
+          ${{ steps.run-and-store-benchmark.outputs.report }
+          ```

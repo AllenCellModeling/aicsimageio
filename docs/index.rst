@@ -9,7 +9,7 @@ Welcome to aicsimageio's documentation!
    Overview <self>
    Installation <installation>
    Package modules <modules>
-   Benchmarks <benchmarks>
+   Benchmarks <./_benchmarks/index.html#http://>
    Contributing <contributing>
    Changelog <changelog>
 

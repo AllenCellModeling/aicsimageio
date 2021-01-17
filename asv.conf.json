@@ -3,7 +3,7 @@
   "project": "aicsimageio",
   "project_url": "http://allencellmodeling.github.io/aicsimageio/",
   "repo": ".",
-  "branches": ["feature/update-to-4.0-api", "feature/benchmarks"],
+  "branches": ["master", "feature/update-to-4.0-api", "feature/benchmarks"],
   "dvcs": "git",
   "environment_type": "virtualenv",
   "install_command": ["in-dir={env_dir} python -mpip install {build_dir}[dev]"],

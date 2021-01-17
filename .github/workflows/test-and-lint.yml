@@ -85,7 +85,7 @@ jobs:
     - id: run-and-store-benchmark
       run: |
         echo "hello world" > benchmarks.txt
-        report=`$(cat benchmarks.txt)`
+        report=$(cat benchmarks.txt)
         report="${report//'%'/'%25'}"
         report="${report//$'\n'/'%0A'}"
         report="${report//$'\r'/'%0D'}" 

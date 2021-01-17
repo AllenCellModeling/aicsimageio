@@ -84,8 +84,8 @@ jobs:
         python-version: 3.8
     - id: run-and-store-benchmark
       run: |
-        echo "hello world" > benchmarks.txt
-        report=$(cat benchmarks.txt)
+        echo "${{ github.event.pull_request.base.sha}}\n${{ github.event.pull_request.head.sha }}" > hashes.txt        
+        report=$(cat hashes.txt)
         report="${report//'%'/'%25'}"
         report="${report//$'\n'/'%0A'}"
         report="${report//$'\r'/'%0D'}" 

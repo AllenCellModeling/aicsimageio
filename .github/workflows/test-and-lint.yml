@@ -78,13 +78,14 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ github.event.pull_request.head.sha }}
-    - name: test
-      run: |
-        git branch
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Download Test Resources
+      run: |
+        pip install quilt3~=3.1.12
+        python scripts/download_test_resources.py --debug
     - name: Install Dependencies
       run: |
         pip install --upgrade pip

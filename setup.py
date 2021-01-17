@@ -29,7 +29,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "black==19.10b0",
+    "black>=19.10b0",
     "codecov>=2.1.4",
     "distributed~=2.9.0",
     "docutils>=0.10,<0.16",

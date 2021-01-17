@@ -93,7 +93,9 @@ jobs:
     - id: run-and-store-benchmark
       run: |
         asv machine --machine github-ci --yes
-        asv continuous --quick --machine github-ci ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > report.txt
+        asv continuous --quick --machine github-ci ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
+        asv compare ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
+        asv compare ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > report.txt
         report=$(cat report.txt)
         report="${report//'%'/'%25'}"
         report="${report//$'\n'/'%0A'}"

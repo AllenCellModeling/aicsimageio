@@ -72,7 +72,6 @@ jobs:
 
   benchmark:
     runs-on: ubuntu-latest
-    needs: [test, lint, docs]
 
     steps:
     - uses: actions/checkout@v1

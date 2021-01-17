@@ -99,10 +99,15 @@ jobs:
         asv run HASHFILE:hashes.txt
         asv compare ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
         asv compare ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} > report.txt
-        report=$(cat report.txt)
+        tail -n+7 report.txt > report.md
+        sed -i 's/ \+/\ |\t/g' report.md
+        sed -i 's/ |/|/g' report.md
+        sed -i '1 s/^/|--------	|--------	|-------	|---	    |\n/' report.md
+        sed -i '1 s/^/| before     | after     | ratio     | benchmark |\n/' report.md
+        report=$(cat report.md)
         report="${report//'%'/'%25'}"
         report="${report//$'\n'/'%0A'}"
-        report="${report//$'\r'/'%0D'}" 
+        report="${report//$'\r'/'%0D'}"
         echo ::set-output name=report::$report
     - name: Report Result
       uses: peter-evans/create-or-update-comment@v1

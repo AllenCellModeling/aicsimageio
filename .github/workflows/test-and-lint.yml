@@ -82,18 +82,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Download Test Resources
+    - id: run-and-store-benchmark
       run: |
-        pip install quilt3~=3.1.12
-        python scripts/download_test_resources.py --debug
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .[dev]
-    - name: Run and Store Benchmark
-      run: |
-        asv machine --machine github-ci --yes
-        echo "hello world" > benchmarks.md
+        echo "hello world" > benchmarks.txt
+        report=`$(cat benchmarks.txt)`
+        report="${report//'%'/'%25'}"
+        report="${report//$'\n'/'%0A'}"
+        report="${report//$'\r'/'%0D'}" 
+        echo ::set-output name=report::$report
     - name: Report Result
       uses: peter-evans/create-or-update-comment@v1
       with:
@@ -101,5 +97,5 @@ jobs:
         body: |
           # Benchmark Comparison
           ```
-          $(cat benchmarks.md)
+          ${{ steps.run-and-store-benchmark.outputs.report }}
           ```

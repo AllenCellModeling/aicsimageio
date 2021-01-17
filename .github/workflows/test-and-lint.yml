@@ -93,7 +93,6 @@ jobs:
         pip install .[dev]
     - name: Run Benchmark Comparison
       run: |
-        asv machine --machine github-ci
         asv continuous ${{ github.base_ref }} ${{ github.head_ref }}
     - name: Format File
       run: |

@@ -79,9 +79,13 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Temp File Create
+    - name: Install Dependencies
       run: |
-        echo "This is a test" > benchmarks.md
+        pip install --upgrade pip
+        pip install .[dev]
+    - name: Run Benchmark Comparison
+      run: |
+        asv continuous ${{ github.base_ref }} ${{ github.head_ref }}
     - name: Format File
       run: |
         sed -i '1i# Benchmark Comparison\n\n```' benchmarks.md

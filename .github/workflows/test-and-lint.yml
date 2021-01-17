@@ -79,19 +79,16 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .[dev]
-    - name: Run Benchmark Comparison
-      run: |
-        asv continuous ${{ github.base_ref }} ${{ github.head_ref }}
     - name: Temp File Create
       run: |
-        echo "This is a test" > benchmarks.txt
+        echo "This is a test" > benchmarks.md
+    - name: Format File
+      run: |
+        sed -i '1i# Benchmark Comparison\n\n```' benchmarks.md
+        sed -i -e '$a```' benchmarks.md
     - name: Report Benchmarks
       uses: machine-learning-apps/pr-comment@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        path: benchmarks.txt
+        path: benchmarks.md

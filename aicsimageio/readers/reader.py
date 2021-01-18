@@ -233,6 +233,9 @@ class Reader(ABC):
             The delayed image and metadata as an annotated data array.
         """
         if self._xarray_dask_data is None:
+            import time
+
+            time.sleep(1.0)
             self._xarray_dask_data = self._read_delayed()
 
         return self._xarray_dask_data

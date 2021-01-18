@@ -9,8 +9,8 @@ from aicsimageio.dimensions import DimensionNames
 
 ###############################################################################
 
-# We only benchmark against local files as remote files are unit tested as well
-# and generally are just slower than local but scale at a similar rate.
+# We only benchmark against local files as remote files are covered by unit tests
+# and are generally slower than local but scale at a similar rate.
 LOCAL_RESOURCES_DIR = (
     Path(__file__).parent.parent / "aicsimageio" / "tests" / "resources"
 )

@@ -31,10 +31,24 @@ jobs:
       run: |
         pip install --upgrade pip
         pip install .[all]
+    - name: Get Prior Benchmark Results
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: benchmark-results
+        path: .asv/
     - name: Run Benchmarks
       run: |
         asv machine --machine github-ci --yes
         asv run --machine github-ci
+    - name: Store New Benchmark Results
+      run: |
+        cd .asv
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Benchmark results for {{ github.event.pull_request.head.sha }}"
+        git push
     - name: Generate Docs
       run: |
         gitchangelog

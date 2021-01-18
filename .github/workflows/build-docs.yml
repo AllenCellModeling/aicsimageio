@@ -20,7 +20,8 @@ jobs:
         pip install .[all]
     - name: Run Benchmarks
       run: |
-        asv run
+        asv machine --machine github-ci --yes
+        asv run --machine github-ci
     - name: Generate Docs
       run: |
         gitchangelog

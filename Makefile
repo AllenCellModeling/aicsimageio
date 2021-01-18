@@ -56,6 +56,7 @@ gen-docs: ## generate Sphinx HTML documentation, including API docs
 
 gen-docs-full: ## generate Sphinx docs + benchmark docs
 	make gen-docs
+	asv run
 	asv publish
 	cp -r .asv/html/ docs/_build/html/_benchmarks
 

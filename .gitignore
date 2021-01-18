@@ -121,4 +121,3 @@ resources/
 # asv / benchmarks
 .asv/html
 .asv/env
-.asv/results

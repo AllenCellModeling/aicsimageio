@@ -47,7 +47,7 @@ jobs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add .
-        git commit -m "Benchmark results for {{ github.event.pull_request.head.sha }}"
+        git commit -m "Benchmark results for ${{ github.sha }}"
         git push
     - name: Generate Docs
       run: |

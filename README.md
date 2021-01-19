@@ -172,7 +172,7 @@ memory instead of the entire image.
 
 ## Benchmarks
 
-AICSImageIO is benchmarked useing [asv](https://asv.readthedocs.io/en/stable/).
+AICSImageIO is benchmarked using [asv](https://asv.readthedocs.io/en/stable/).
 You can find the benchmark results for every commit to `master` starting at the 4.0
 release on our
 [benchmarks page](https://AllenCellModeling.github.io/aicsimageio/_benchmarks/index.html).

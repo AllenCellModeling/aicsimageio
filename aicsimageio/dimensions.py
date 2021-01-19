@@ -32,6 +32,12 @@ DEFAULT_CHUNK_BY_DIMS = [
     DimensionNames.Samples,
 ]
 
+REQUIRED_CHUNK_BY_DIMS = [
+    DimensionNames.SpatialY,
+    DimensionNames.SpatialX,
+    DimensionNames.Samples,
+]
+
 ###############################################################################
 
 

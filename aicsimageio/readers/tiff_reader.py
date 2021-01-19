@@ -12,7 +12,7 @@ from tifffile import TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
-from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DimensionNames
+from ..dimensions import DEFAULT_CHUNK_BY_DIMS, REQUIRED_CHUNK_BY_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
@@ -194,12 +194,9 @@ class TiffReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         # Always add the plane dimensions if not present already
-        if DimensionNames.SpatialY not in self.chunk_by_dims:
-            self.chunk_by_dims.append(DimensionNames.SpatialY)
-        if DimensionNames.SpatialX not in self.chunk_by_dims:
-            self.chunk_by_dims.append(DimensionNames.SpatialX)
-        if DimensionNames.Samples not in self.chunk_by_dims:
-            self.chunk_by_dims.append(DimensionNames.Samples)
+        for dim in REQUIRED_CHUNK_BY_DIMS:
+            if dim not in self.chunk_by_dims:
+                self.chunk_by_dims.append(dim)
 
         # Safety measure / "feature"
         self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]

@@ -330,14 +330,14 @@ class DefaultReader(Reader):
                     # Create numpy array of empty arrays for delayed get data
                     # functions
                     lazy_arrays = np.ndarray(operating_shape, dtype=object)
-                    for indicies, _ in np.ndenumerate(lazy_arrays):
-                        lazy_arrays[indicies] = da.from_delayed(
+                    for indices, _ in np.ndenumerate(lazy_arrays):
+                        lazy_arrays[indices] = da.from_delayed(
                             delayed(self._get_image_data)(
                                 fs=self.fs,
                                 path=self.path,
                                 format=self.extension,
                                 mode=self.imageio_read_mode,
-                                index=indicies[0],
+                                index=indices[0],
                             ),
                             shape=sample.shape,
                             dtype=sample.dtype,

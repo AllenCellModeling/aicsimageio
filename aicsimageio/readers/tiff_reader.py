@@ -76,7 +76,7 @@ class TiffReader(Reader):
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    # This is non-metadata tiff, just use available series indicies
+                    # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
                         metadata_utils.generate_ome_image_id(i)
                         for i in range(len(tiff.series))
@@ -89,7 +89,7 @@ class TiffReader(Reader):
         fs: AbstractFileSystem,
         path: str,
         scene: int,
-        indicies: Tuple[Union[int, slice]],
+        indices: Tuple[Union[int, slice]],
     ) -> np.ndarray:
         """
         Open a file for reading, construct a Zarr store, select data, and compute to
@@ -103,8 +103,8 @@ class TiffReader(Reader):
             The path to file to read.
         scene: int
             The scene index to pull the chunk from.
-        indicies: Tuple[Union[int, slice]]
-            The image indicies to retrieve.
+        indices: Tuple[Union[int, slice]]
+            The image indices to retrieve.
 
         Returns
         -------
@@ -114,7 +114,7 @@ class TiffReader(Reader):
         with fs.open(path) as open_resource:
             return da.from_zarr(
                 imread(open_resource, aszarr=True, series=scene, chunkmode="page")
-            )[indicies].compute()
+            )[indices].compute()
 
     def _get_tiff_tags(self) -> TiffTags:
         with self.fs.open(self.path) as open_resource:
@@ -237,7 +237,7 @@ class TiffReader(Reader):
                 ):
                     # All dimensions get their normal index except for chunk dims
                     # which get filled with "full" slices
-                    indicies_with_slices = np_index[: len(non_chunk_shape)] + (
+                    indices_with_slices = np_index[: len(non_chunk_shape)] + (
                         (slice(None, None, None),) * len(chunk_shape)
                     )
 
@@ -247,7 +247,7 @@ class TiffReader(Reader):
                             fs=self.fs,
                             path=self.path,
                             scene=self.current_scene_index,
-                            indicies=indicies_with_slices,
+                            indices=indices_with_slices,
                         ),
                         shape=chunk_shape,
                         dtype=selected_scene.dtype,

@@ -162,7 +162,7 @@ def reshape_data(
             and dim not in return_dims
         ):
             raise ConflictingArgumentsError(
-                f"When selecting a multiple dimension indicies, the specified "
+                f"When selecting a multiple dimension indices, the specified "
                 f"dimension must be provided in return_dims. "
                 f"return_dims={return_dims}, dimension {dim} = {kwargs.get(dim)}"
             )

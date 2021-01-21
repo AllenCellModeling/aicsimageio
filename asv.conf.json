@@ -8,7 +8,7 @@
   "environment_type": "virtualenv",
   "install_command": ["in-dir={env_dir} python -mpip install {build_dir}[dev]"],
   "show_commit_url": "http://github.com/AllenCellModeling/aicsimageio/commit/",
-  "pythons": ["3.8"],
+  "pythons": ["3.9"],
   "benchmark_dir": "benchmarks",
   "env_dir": ".asv/env",
   "results_dir": ".asv/results",

@@ -58,6 +58,17 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
 8.  Submit a pull request through the GitHub website.
 
+## Benchmarking
+
+If you are working on a patch that would change a base reader it is recommended
+to run `asv` to benchmark how the change compares to the current release.
+
+To do so simply run `asv` in the top level directory of this repo.
+You can create a specific comparison by running `asv continuous branch_a branch_b`.
+
+For more information on `asv` and full commands please see
+[their documentation](https://asv.readthedocs.io/en/stable/).
+
 ## Deploying
 
 A reminder for the maintainers on how to deploy.

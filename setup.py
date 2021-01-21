@@ -18,9 +18,10 @@ requirements = [
     "numpy~=1.16",
     "ome-types~=0.2.3",
     "readlif~=0.3.1",
-    "tifffile>=2020.9.22",
+    "tifffile>=2021.1.14",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
+    "zarr~=2.6.1",
 ]
 
 setup_requirements = [
@@ -44,6 +45,7 @@ test_requirements = [
 dev_requirements = [
     *setup_requirements,
     *test_requirements,
+    "asv>=0.4.2",
     "bumpversion>=0.6.0",
     "coverage>=5.1",
     "gitchangelog>=3.0.4",
@@ -58,22 +60,10 @@ dev_requirements = [
     "wheel>=0.34.2",
 ]
 
-benchmark_requirements = [
-    "altair",
-    "altair_saver",
-    "czifile==2019.7.2",
-    "dask_jobqueue==0.7.0",
-    "imageio==2.8.0",
-    "quilt3>=3.1.12",
-    "tifffile==2020.2.16",
-    "tqdm",
-]
-
 extra_requirements = {
     "setup": setup_requirements,
     "test": test_requirements,
     "dev": dev_requirements,
-    "benchmark": benchmark_requirements,
     "all": [*requirements, *dev_requirements],
 }
 

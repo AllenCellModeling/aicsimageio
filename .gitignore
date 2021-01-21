@@ -117,3 +117,8 @@ workbench.ipynb
 
 # Ignore test resources directory
 resources/
+
+# asv / benchmarks
+.asv/html
+.asv/env
+.asv/results

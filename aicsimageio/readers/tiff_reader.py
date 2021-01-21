@@ -8,11 +8,11 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError
+from tifffile import TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
-from ..dimensions import DimensionNames
+from ..dimensions import DEFAULT_CHUNK_BY_DIMS, REQUIRED_CHUNK_BY_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
@@ -38,7 +38,11 @@ class TiffReader(Reader):
         except (TiffFileError, TypeError):
             return False
 
-    def __init__(self, image: types.PathLike):
+    def __init__(
+        self,
+        image: types.PathLike,
+        chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+    ):
         """
         Wraps the tifffile API to provide the same aicsimageio Reader API but for
         volumetric Tiff (and other tifffile supported) images.
@@ -47,10 +51,19 @@ class TiffReader(Reader):
         ----------
         image: types.PathLike
             Path to image file to construct Reader for.
+        chunk_by_dims: List[str]
+            Which dimensions to create chunks for.
+            Default: DEFAULT_CHUNK_BY_DIMS
+            Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+            will always be added to the list if not present during dask array
+            construction.
         """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension = self.path.split(".")[-1]
+
+        # Store params
+        self.chunk_by_dims = chunk_by_dims
 
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
@@ -63,7 +76,7 @@ class TiffReader(Reader):
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    # This is non-metadata tiff, just use available series indicies
+                    # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
                         metadata_utils.generate_ome_image_id(i)
                         for i in range(len(tiff.series))
@@ -73,10 +86,14 @@ class TiffReader(Reader):
 
     @staticmethod
     def _get_image_data(
-        fs: AbstractFileSystem, path: str, scene: int, index: int
+        fs: AbstractFileSystem,
+        path: str,
+        scene: int,
+        indices: Tuple[Union[int, slice]],
     ) -> np.ndarray:
         """
-        Open a file for reading, seek to plane index and read as numpy.
+        Open a file for reading, construct a Zarr store, select data, and compute to
+        numpy.
 
         Parameters
         ----------
@@ -85,18 +102,19 @@ class TiffReader(Reader):
         path: str
             The path to file to read.
         scene: int
-            The scene index to pull the plane from.
-        index: int
-            The image plane index to seek to and read from the file.
+            The scene index to pull the chunk from.
+        indices: Tuple[Union[int, slice]]
+            The image indices to retrieve.
 
         Returns
         -------
-        plane: np.ndarray
-            The image plane as a numpy array.
+        chunk: np.ndarray
+            The image chunk as a numpy array.
         """
         with fs.open(path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                return tiff.series[scene].pages[index].asarray()
+            return da.from_zarr(
+                imread(open_resource, aszarr=True, series=scene, chunkmode="page")
+            )[indices].compute()
 
     def _get_tiff_tags(self) -> TiffTags:
         with self.fs.open(self.path) as open_resource:
@@ -175,47 +193,87 @@ class TiffReader(Reader):
         image_data: da.Array
             The fully constructed and fully delayed image as a Dask Array object.
         """
+        # Always add the plane dimensions if not present already
+        for dim in REQUIRED_CHUNK_BY_DIMS:
+            if dim not in self.chunk_by_dims:
+                self.chunk_by_dims.append(dim)
+
+        # Safety measure / "feature"
+        self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
+
+        # Construct delayed dask array
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                # Get a sample YX plane
-                sample = self._get_image_data(
-                    fs=self.fs,
-                    path=self.path,
-                    scene=self.current_scene_index,
-                    index=0,
-                )
+                selected_scene = tiff.series[self.current_scene_index]
+                selected_scene_dims = selected_scene.axes
 
-                # Get shape of current scene
-                # Replace YX dims with empty dimensions
-                operating_shape = tiff.series[self.current_scene_index].shape
+                # Constuct the chunk and non-chunk shapes one dim at a time
+                # We also collect the chunk and non-chunk dimension order so that
+                # we can swap the dimensions after we block out the array
+                non_chunk_dim_order = []
+                non_chunk_shape = []
+                chunk_dim_order = []
+                chunk_shape = []
+                for dim, size in zip(selected_scene_dims, selected_scene.shape):
+                    if dim in self.chunk_by_dims:
+                        chunk_dim_order.append(dim)
+                        chunk_shape.append(size)
 
-                # If the data is RGB we need to pull in the channels as well
-                if tiff.series[self.current_scene_index].keyframe.samplesperpixel != 1:
-                    operating_shape = operating_shape[:-3] + (1, 1, 1)
+                    else:
+                        non_chunk_dim_order.append(dim)
+                        non_chunk_shape.append(size)
 
-                # Otherwise the data is in 2D planes (Y, X)
-                else:
-                    operating_shape = operating_shape[:-2] + (1, 1)
+                # Fill out the rest of the blocked shape with dimension sizes of 1 to
+                # match the length of the sample chunk
+                # When dask.block happens it fills the dimensions from inner-most to
+                # outer-most with the chunks as long as the dimension is size 1
+                blocked_dim_order = non_chunk_dim_order + chunk_dim_order
+                blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
 
                 # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                lazy_arrays = np.ndarray(blocked_shape, dtype=object)
                 for plane_index, (np_index, _) in enumerate(
                     np.ndenumerate(lazy_arrays)
                 ):
+                    # All dimensions get their normal index except for chunk dims
+                    # which get filled with "full" slices
+                    indices_with_slices = np_index[: len(non_chunk_shape)] + (
+                        (slice(None, None, None),) * len(chunk_shape)
+                    )
+
                     # Fill the numpy array with the delayed arrays
                     lazy_arrays[np_index] = da.from_delayed(
                         delayed(TiffReader._get_image_data)(
                             fs=self.fs,
                             path=self.path,
                             scene=self.current_scene_index,
-                            index=plane_index,
+                            indices=indices_with_slices,
                         ),
-                        shape=sample.shape,
-                        dtype=sample.dtype,
+                        shape=chunk_shape,
+                        dtype=selected_scene.dtype,
                     )
 
                 # Convert the numpy array of lazy readers into a dask array
                 image_data = da.block(lazy_arrays.tolist())
+
+                # Because we have set certain dimensions to be chunked and others not
+                # we will need to transpose back to original dimension ordering
+                # Example, if the original dimension ordering was "TZYX" and we
+                # chunked by "T", "Y", and "X"
+                # we created an array with dimensions ordering "ZTYX"
+                transpose_indices = []
+                transpose_required = False
+                for i, d in enumerate(selected_scene_dims):
+                    new_index = blocked_dim_order.index(d)
+                    if new_index != i:
+                        transpose_required = True
+                        transpose_indices.append(new_index)
+                    else:
+                        transpose_indices.append(i)
+
+                # Only run if the transpose is actually required
+                if transpose_required:
+                    image_data = da.transpose(image_data, tuple(transpose_indices))
 
                 return image_data
 

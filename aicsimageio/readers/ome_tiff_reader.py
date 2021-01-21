@@ -13,7 +13,7 @@ from ome_types.model.ome import OME
 from tifffile import TiffFile, TiffFileError, TiffTag
 
 from .. import constants, exceptions, transforms, types
-from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames
+from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -54,7 +54,12 @@ class OmeTiffReader(TiffReader):
         except (TiffFileError, TypeError, ET.ParseError):
             return False
 
-    def __init__(self, image: types.PathLike, clean_metadata: bool = True):
+    def __init__(
+        self,
+        image: types.PathLike,
+        chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+        clean_metadata: bool = True,
+    ):
         """
         Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
         API but for volumetric OME-TIFF images.
@@ -63,7 +68,12 @@ class OmeTiffReader(TiffReader):
         ----------
         image: types.PathLike
             Path to image file to construct Reader for.
-
+        chunk_by_dims: List[str]
+            Which dimensions to create chunks for.
+            Default: DEFAULT_CHUNK_BY_DIMS
+            Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+            will always be added to the list if not present during dask array
+            construction.
         clean_metadata: bool
             Should the OME XML metadata found in the file be cleaned for known
             AICSImageIO 3.x and earlier created errors.
@@ -80,6 +90,9 @@ class OmeTiffReader(TiffReader):
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension = ".".join(self.path.split(".")[1:])
+
+        # Store params
+        self.chunk_by_dims = chunk_by_dims
         self.clean_metadata = clean_metadata
 
         # Enforce valid image

@@ -54,6 +54,11 @@ gen-docs: ## generate Sphinx HTML documentation, including API docs
 	sphinx-apidoc -o docs/ aicsimageio **/tests/
 	$(MAKE) -C docs html
 
+gen-docs-full: ## generate Sphinx docs + benchmark docs
+	make gen-docs
+	asv publish
+	cp -r .asv/html/ docs/_build/html/_benchmarks
+
 docs: ## generate Sphinx HTML documentation, including API docs, and serve to browser
 	make gen-docs
 	$(BROWSER) docs/_build/html/index.html

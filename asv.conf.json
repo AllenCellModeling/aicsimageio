@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "project": "aicsimageio",
+  "project_url": "http://AllenCellModeling.github.io/aicsimageio/",
+  "repo": ".",
+  "branches": ["master"],
+  "dvcs": "git",
+  "environment_type": "virtualenv",
+  "install_command": ["in-dir={env_dir} python -mpip install {build_dir}[dev]"],
+  "show_commit_url": "http://github.com/AllenCellModeling/aicsimageio/commit/",
+  "pythons": ["3.8"],
+  "benchmark_dir": "benchmarks",
+  "env_dir": ".asv/env",
+  "results_dir": ".asv/results",
+  "html_dir": ".asv/html",
+  "hash_length": 8,
+  "build_cache_size": 8
+}

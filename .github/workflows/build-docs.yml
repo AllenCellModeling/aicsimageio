@@ -9,24 +9,55 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: master
     - name: Set up Python
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Download Test Resources
+      run: |
+        pip install quilt3~=3.1.12
+        python scripts/download_test_resources.py --debug
     - name: Install Dependencies
       run: |
         pip install --upgrade pip
         pip install .[all]
+    - name: Get Prior Benchmark Results
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+        ref: benchmark-results
+        path: .asv/
+    - name: Run Benchmarks
+      run: |
+        asv machine --machine github-ci --yes
+        asv run --machine github-ci
+    - name: Store New Benchmark Results
+      run: |
+        cd .asv
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Benchmark results for ${{ github.sha }}"
+        git push
     - name: Generate Docs
       run: |
         gitchangelog
-        make gen-docs
+        make gen-docs-full
         touch docs/_build/html/.nojekyll
     - name: Publish Docs
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BASE_BRANCH: master # The branch the action should deploy from.
         BRANCH: gh-pages # The branch the action should deploy to.
         FOLDER: docs/_build/html/ # The folder the action should deploy.

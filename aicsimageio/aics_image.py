@@ -49,7 +49,6 @@ class AICSImage:
             No reader could be found that supports the provided image.
         """
         for ReaderClass in AICSImage.SUPPORTED_READERS:
-            print(ReaderClass)
             if ReaderClass.is_supported_image(image, **kwargs):
                 return ReaderClass
 

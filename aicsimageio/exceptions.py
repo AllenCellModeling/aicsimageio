@@ -10,6 +10,15 @@ class ConflictingArgumentsError(Exception):
     pass
 
 
+class InvalidDimensionOrderingError(Exception):
+    """
+    A general exception that can be thrown when handling dimension ordering or
+    validation. Should be provied a message for the user to be given more context.
+    """
+
+    pass
+
+
 class UnsupportedFileFormatError(Exception):
     """
     This exception is intended to communicate that the file extension is not one of

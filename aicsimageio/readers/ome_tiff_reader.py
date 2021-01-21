@@ -89,7 +89,6 @@ class OmeTiffReader(TiffReader):
         """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        self.extension = ".".join(self.path.split(".")[1:])
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
@@ -98,7 +97,7 @@ class OmeTiffReader(TiffReader):
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path, clean_metadata):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.extension
+                self.__class__.__name__, self.path
             )
 
     @property

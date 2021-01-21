@@ -108,7 +108,7 @@ class DefaultReader(Reader):
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.extension
+                self.__class__.__name__, self.path
             )
 
     @staticmethod

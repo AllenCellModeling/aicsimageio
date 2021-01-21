@@ -10,9 +10,9 @@ with open("README.md") as readme_file:
 
 requirements = [
     "aicspylibczi~=2.7.5",
-    "dask[array]~=2.9.0",
+    "dask[array]>=2021.1.0",
     "fsspec~=0.8.4",
-    "imagecodecs~=2020.5.30",
+    "imagecodecs>=2020.5.30",
     "imageio[ffmpeg]~=2.9.0",
     "lxml~=4.5.2",
     "numpy~=1.16",

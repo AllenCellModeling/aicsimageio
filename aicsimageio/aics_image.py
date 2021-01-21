@@ -371,7 +371,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The natural image dimension order.
+            Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -396,27 +396,27 @@ class AICSImage:
         --------
         Specific index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... c1 = img.get_image_dask_data("ZYX", C=1)
 
         List of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_and_second = img.get_image_dask_data("CZYX", C=[0, 1])
 
         Tuple of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_and_last = img.get_image_dask_data("CZYX", C=(0, -1))
 
         Range of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_three = img.get_image_dask_data("CZYX", C=range(3))
 
         Slice selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... every_other = img.get_image_dask_data("CZYX", C=slice(0, -1, 2))
 
         Notes
@@ -448,7 +448,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: The natural image dimension order.
+            Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -473,27 +473,27 @@ class AICSImage:
         --------
         Specific index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... c1 = img.get_image_data("ZYX", C=1)
 
         List of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_and_second = img.get_image_data("CZYX", C=[0, 1])
 
         Tuple of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_and_last = img.get_image_data("CZYX", C=(0, -1))
 
         Range of index selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... first_three = img.get_image_dask_data("CZYX", C=range(3))
 
         Slice selection
 
-        >>> img = Reader("s_1_t_1_c_10_z_20.ome.tiff")
+        >>> img = AICSImage("s_1_t_1_c_10_z_20.ome.tiff")
         ... every_other = img.get_image_data("CZYX", C=slice(0, -1, 2))
 
         Notes
@@ -522,14 +522,9 @@ class AICSImage:
         Returns
         -------
         metadata: Any
-            The metadata for the formats supported by the inhereting Reader.
-
-            If the inheriting Reader supports processing the metadata into a more useful
-            format / Python object, this will return the result.
-
-            For both the unprocessed and processed metadata from the file, use
-            `xarray_dask_data.attrs` which will contain a dictionary with keys:
-            `unprocessed` and `processed` that you can then select.
+            Passthrough to the base image reader metadata property.
+            For more information, see the specific image format reader you are using
+            for details on its metadata property.
         """
         return self.reader.metadata
 

@@ -41,7 +41,7 @@ class OmeTiffReader(TiffReader):
 
     @staticmethod
     def _is_supported_image(
-        fs: AbstractFileSystem, path: str, clean_metadata: bool = True
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs
     ) -> bool:
         try:
             with fs.open(path) as open_resource:

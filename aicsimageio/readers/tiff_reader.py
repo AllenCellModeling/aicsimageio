@@ -29,7 +29,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffReader(Reader):
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):

@@ -526,7 +526,8 @@ class Reader(ABC):
 
     def __str__(self):
         return (
-            f"<{self.__class__.__name__} [In-Memory: {self._xarray_data is not None}]>"
+            f"<{self.__class__.__name__} "
+            f"[Image-is-in-Memory: {self._xarray_data is not None}]>"
         )
 
     def __repr__(self):

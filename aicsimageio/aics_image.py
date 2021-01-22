@@ -567,6 +567,19 @@ class AICSImage:
         return str(self)
 
 
+def _construct_img(
+    image: types.ImageLike, scene_id: Optional[str] = None, **kwargs
+) -> AICSImage:
+    # Construct image
+    img = AICSImage(image, **kwargs)
+
+    # Select scene
+    if scene_id is not None:
+        img.set_scene(scene_id)
+
+    return img
+
+
 def imread_xarray_dask(
     image: types.ImageLike,
     scene_id: Optional[str] = None,
@@ -591,18 +604,12 @@ def imread_xarray_dask(
         The image read, scene selected, and returned as an AICS standard shaped delayed
         xarray DataArray.
     """
-    img = AICSImage(image, **kwargs)
-
-    # Select scene
-    if scene_id is not None:
-        img.set_scene(scene_id)
-
-    return img.xarray_dask_data
+    return _construct_img(image, scene_id, **kwargs).xarray_dask_data
 
 
 def imread_dask(
     image: types.ImageLike,
-    scene: Optional[int] = None,
+    scene_id: Optional[str] = None,
     **kwargs,
 ) -> da.Array:
     """
@@ -624,18 +631,13 @@ def imread_dask(
         The image read, scene selected, and returned as an AICS standard shaped delayed
         dask array.
     """
-    img = AICSImage(image, **kwargs)
 
-    # Select scene
-    if scene is not None:
-        img.set_scene(scene)
-
-    return img.dask_data
+    return _construct_img(image, scene_id, **kwargs).dask_data
 
 
 def imread_xarray(
     image: types.ImageLike,
-    scene: Optional[int] = None,
+    scene_id: Optional[int] = None,
     **kwargs,
 ) -> da.Array:
     """
@@ -657,18 +659,12 @@ def imread_xarray(
         The image read, scene selected, and returned as an AICS standard shaped
         in-memory DataArray.
     """
-    img = AICSImage(image, **kwargs)
-
-    # Select scene
-    if scene is not None:
-        img.set_scene(scene)
-
-    return img.xarray_data
+    return _construct_img(image, scene_id, **kwargs).xarray_data
 
 
 def imread(
     image: types.ImageLike,
-    scene: Optional[int] = None,
+    scene_id: Optional[int] = None,
     **kwargs,
 ) -> da.Array:
     """
@@ -690,10 +686,4 @@ def imread(
         The image read, scene selected, and returned as an AICS standard shaped
         np.ndarray.
     """
-    img = AICSImage(image, **kwargs)
-
-    # Select scene
-    if scene is not None:
-        img.set_scene(scene)
-
-    return img.data
+    return _construct_img(image, scene_id, **kwargs).data

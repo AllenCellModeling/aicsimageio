@@ -54,6 +54,19 @@ from ..image_container_test_utils import (
             (1.0, 1.0, 1.0),
         ),
         (
+            # This is actually an OME-TIFF file
+            # Shows we don't just work off of extensions
+            # But the content of the file
+            "s_1_t_1_c_2_z_1_RGB.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 2, 1, 32, 32, 3),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
+            [None, None],
+            (1.0, 1.0, 1.0),
+        ),
+        (
             "s_3_t_1_c_3_z_5.ome.tiff",
             "Image:0",
             ("Image:0", "Image:1", "Image:2"),

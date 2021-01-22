@@ -7,10 +7,8 @@ from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from ..image_container_test_utils import (
-    run_image_read_checks,
-    run_multi_scene_image_read_checks,
-)
+from ..image_container_test_utils import (run_image_read_checks,
+                                          run_multi_scene_image_read_checks)
 
 
 @pytest.mark.parametrize(
@@ -99,6 +97,7 @@ from ..image_container_test_utils import (
             None,
         ),
         (
+            # Doesn't affect this test but this is actually an OME-TIFF file
             "s_1_t_1_c_2_z_1_RGB.tiff",
             "Image:0",
             ("Image:0",),

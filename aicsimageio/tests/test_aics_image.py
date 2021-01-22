@@ -147,7 +147,10 @@ from .image_container_test_utils import (
             (1.0, 1.0, 1.0),
         ),
         (
-            "s_1_t_1_c_2_z_1_RGB.ome.tiff",
+            # This is actually an OME-TIFF file
+            # Shows we don't just work off of extensions
+            # But the content of the file
+            "s_1_t_1_c_2_z_1_RGB.tiff",
             "Image:0",
             ("Image:0",),
             (1, 2, 1, 32, 32, 3),

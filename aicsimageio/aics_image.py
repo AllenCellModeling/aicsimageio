@@ -639,7 +639,7 @@ def imread_xarray(
     image: types.ImageLike,
     scene_id: Optional[int] = None,
     **kwargs,
-) -> da.Array:
+) -> xr.DataArray:
     """
     Read image as an in-memory xarray DataArray.
 
@@ -666,7 +666,7 @@ def imread(
     image: types.ImageLike,
     scene_id: Optional[int] = None,
     **kwargs,
-) -> da.Array:
+) -> np.ndarray:
     """
     Read image as a numpy array.
 

@@ -159,9 +159,9 @@ class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = list(
         set(
-            DefaultReaderSuite.params
-            + TiffReaderSuite.params
-            + OmeTiffReaderSuite.params
+            DefaultReaderSuite.params[0]
+            + TiffReaderSuite.params[0]
+            + OmeTiffReaderSuite.params[0]
         )
     )
 

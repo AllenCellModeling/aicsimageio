@@ -311,7 +311,7 @@ class AICSImage:
         Returns
         -------
         dask_data: da.Array
-            The image as a dask array with the native dimension ordering.
+            The image as a dask array with standard dimension ordering.
         """
         return self.xarray_dask_data.data
 
@@ -321,7 +321,7 @@ class AICSImage:
         Returns
         -------
         data: np.ndarray
-            The image as a numpy array with native dimension ordering.
+            The image as a numpy array with standard dimension ordering.
         """
         return self.xarray_data.data
 

@@ -234,7 +234,6 @@ class AICSImage:
             self._xarray_dask_data = None
             self._xarray_data = None
             self._dims = None
-            self._metadata = None
 
     def _transform_data_array_to_aics_image_standard(
         self,

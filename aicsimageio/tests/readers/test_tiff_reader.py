@@ -7,7 +7,10 @@ from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
+from ..image_container_test_utils import (
+    run_image_read_checks,
+    run_multi_scene_image_read_checks,
+)
 
 
 @pytest.mark.parametrize(
@@ -161,7 +164,7 @@ def test_tiff_reader(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=TiffReader,
+        ImageContainer=TiffReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -211,7 +214,7 @@ def test_multi_scene_tiff_reader(
 
     # Run checks
     run_multi_scene_image_read_checks(
-        ReaderClass=TiffReader,
+        ImageContainer=TiffReader,
         uri=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,

@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pytest
+from urllib.error import HTTPError
 
+import numpy as np
+import pytest
 from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader
-import numpy as np
-from urllib.error import HTTPError
 from xmlschema.validators import (
     XMLSchemaChildrenValidationError,
     XMLSchemaValidationError,
 )
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
+from ..image_container_test_utils import (
+    run_image_read_checks,
+    run_multi_scene_image_read_checks,
+)
 
 
 @pytest.mark.parametrize(
@@ -142,7 +145,7 @@ def test_ome_tiff_reader(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -269,7 +272,7 @@ def test_ome_tiff_reader_large_files(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -319,7 +322,7 @@ def test_multi_scene_ome_tiff_reader(
 
     # Run checks
     run_multi_scene_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,

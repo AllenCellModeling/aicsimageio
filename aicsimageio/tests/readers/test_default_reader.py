@@ -3,12 +3,11 @@
 
 import numpy as np
 import pytest
-
 from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import run_image_read_checks
+from ..image_container_test_utils import run_image_read_checks
 
 
 @pytest.mark.parametrize("host", [LOCAL, REMOTE])
@@ -59,7 +58,7 @@ def test_default_reader(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=DefaultReader,
+        ImageContainer=DefaultReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=("Image:0",),

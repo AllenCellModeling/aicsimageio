@@ -157,6 +157,10 @@ class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
 
 class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
+    # This suite utilizes the same suite that the base readers do.
+    # In all cases, the time or peak memory used by AICSImage should
+    # be minimal additional overhead from the base reader.
+
     params = list(
         set(
             DefaultReaderSuite.params[0]

@@ -14,7 +14,6 @@ requirements = [
     "fsspec~=0.8.4",
     "imagecodecs>=2020.5.30",
     "imageio[ffmpeg]~=2.9.0",
-    "lxml~=4.5.2",
     "numpy~=1.16",
     "ome-types~=0.2.3",
     "readlif~=0.3.1",

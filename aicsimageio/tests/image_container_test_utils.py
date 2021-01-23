@@ -133,7 +133,6 @@ def run_multi_scene_image_read_checks(
     assert image_container._xarray_dask_data is None
     assert image_container._xarray_data is None
     assert image_container._dims is None
-    assert image_container._metadata is None
 
     # Check basics
     assert image_container.shape == second_scene_shape

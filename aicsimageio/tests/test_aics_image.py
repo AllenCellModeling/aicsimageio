@@ -6,14 +6,12 @@ import pytest
 from aicsimageio import AICSImage, dimensions, exceptions
 
 from .conftest import LOCAL, get_resource_full_path
-from .image_container_test_utils import (
-    run_image_read_checks,
-    run_multi_scene_image_read_checks,
-)
+from .image_container_test_utils import (run_image_read_checks,
+                                         run_multi_scene_image_read_checks)
 
 ###############################################################################
 
-# We only run checks on local files
+# We only run checks on a subset of local files
 # The base reader unit tests show that we can handle both local or remote
 # If we handled them here, tests would just take longer than they already do
 
@@ -33,16 +31,6 @@ from .image_container_test_utils import (
         #######################################################################
         # DefaultReader
         (
-            "example.bmp",
-            "Image:0",
-            ("Image:0",),
-            (1, 1, 1, 480, 640, 4),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
-            (1.0, 1.0, 1.0),
-        ),
-        (
             "example.png",
             "Image:0",
             ("Image:0",),
@@ -53,30 +41,10 @@ from .image_container_test_utils import (
             (1.0, 1.0, 1.0),
         ),
         (
-            "example.jpg",
-            "Image:0",
-            ("Image:0",),
-            (1, 1, 1, 452, 400, 3),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
-            (1.0, 1.0, 1.0),
-        ),
-        (
             "example.gif",
             "Image:0",
             ("Image:0",),
             (72, 1, 1, 268, 268, 4),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
-            (1.0, 1.0, 1.0),
-        ),
-        (
-            "example_invalid_frame_count.mp4",
-            "Image:0",
-            ("Image:0",),
-            (55, 1, 1, 1080, 1920, 3),
             np.uint8,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
             [None],
@@ -94,16 +62,6 @@ from .image_container_test_utils import (
         ),
         #######################################################################
         # TiffReader
-        (
-            "s_1_t_1_c_1_z_1.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 1, 1, 325, 475),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [None],
-            (1.0, 1.0, 1.0),
-        ),
         (
             "s_1_t_10_c_3_z_1.tiff",
             "Image:0",
@@ -126,16 +84,6 @@ from .image_container_test_utils import (
         ),
         #######################################################################
         # OmeTiffReader
-        (
-            "s_1_t_1_c_1_z_1.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 1, 1, 325, 475),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Bright"],
-            (1.0, 1.0833333333333333, 1.0833333333333333),
-        ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
             "Image:0",
@@ -168,96 +116,6 @@ from .image_container_test_utils import (
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["EGFP", "TaRFP", "Bright"],
             (1.0, 1.0833333333333333, 1.0833333333333333),
-        ),
-        (
-            "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:1",
-            ("Image:0", "Image:1", "Image:2"),
-            (1, 3, 5, 325, 475),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["EGFP", "TaRFP", "Bright"],
-            (1.0, 1.0833333333333333, 1.0833333333333333),
-        ),
-        (
-            "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:2",
-            ("Image:0", "Image:1", "Image:2"),
-            (1, 3, 5, 325, 475),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["EGFP", "TaRFP", "Bright"],
-            (1.0, 1.0833333333333333, 1.0833333333333333),
-        ),
-        (
-            "pipeline-4.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 4, 65, 600, 900),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Bright_2", "EGFP", "CMDRP", "H3342"],
-            (0.29, 0.10833333333333332, 0.10833333333333332),
-        ),
-        (
-            "3d-cell-viewer.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 9, 74, 1024, 1024),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [
-                "DRAQ5",
-                "EGFP",
-                "Hoechst 33258",
-                "TL Brightfield",
-                "SEG_STRUCT",
-                "SEG_Memb",
-                "SEG_DNA",
-                "CON_Memb",
-                "CON_DNA",
-            ],
-            (0.29, 0.065, 0.065),
-        ),
-        (
-            "pre-variance-cfe.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 9, 65, 600, 900),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [
-                "Bright_2",
-                "EGFP",
-                "CMDRP",
-                "H3342",
-                "SEG_STRUCT",
-                "SEG_Memb",
-                "SEG_DNA",
-                "CON_Memb",
-                "CON_DNA",
-            ],
-            (0.29, 0.10833333333333334, 0.10833333333333334),
-        ),
-        (
-            "variance-cfe.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 9, 65, 600, 900),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [
-                "CMDRP",
-                "EGFP",
-                "H3342",
-                "Bright_2",
-                "SEG_STRUCT",
-                "SEG_Memb",
-                "SEG_DNA",
-                "CON_Memb",
-                "CON_DNA",
-            ],
-            (0.29, 0.10833333333333332, 0.10833333333333332),
         ),
         (
             "actk.ome.tiff",

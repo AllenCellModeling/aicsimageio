@@ -6,8 +6,10 @@ import pytest
 from aicsimageio import AICSImage, dimensions, exceptions
 
 from .conftest import LOCAL, get_resource_full_path
-from .image_container_test_utils import (run_image_read_checks,
-                                         run_multi_scene_image_read_checks)
+from .image_container_test_utils import (
+    run_image_read_checks,
+    run_multi_scene_image_read_checks,
+)
 
 ###############################################################################
 

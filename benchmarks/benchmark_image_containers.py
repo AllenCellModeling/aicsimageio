@@ -19,13 +19,13 @@ LOCAL_RESOURCES_DIR = (
 
 
 class _ImageContainerMemorySuite:
-    def peakmem_init(self, img_path):
+    def mem_init(self, img_path):
         """
         Benchmark how much memory is used for just the initialized image container.
         """
         return self.ImageContainer(img_path)
 
-    def peakmem_delayed_array(self, img_path):
+    def mem_delayed_array(self, img_path):
         """
         Benchmark how much memory is used for the image container once the
         delayed dask array is constructed.
@@ -37,7 +37,7 @@ class _ImageContainerMemorySuite:
         r.dask_data
         return r
 
-    def peakmem_cached_array(self, img_path):
+    def mem_cached_array(self, img_path):
         """
         Benchmark how much memory is used for the whole image container once the
         current scene is read into memory.

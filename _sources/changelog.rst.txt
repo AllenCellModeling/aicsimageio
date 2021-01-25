@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/pin-readlif  (`#187
+  <https://github.com/AllenCellModeling/aicsimageio/pull/187>`_)
+  [Jackson Maxfield Brown]
+
+
 v3.3.4 (2021-01-13)
 -------------------
 - ome-xml as string to ome tiff writer  (`#180

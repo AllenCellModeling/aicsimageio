@@ -10,7 +10,7 @@ library. If you believe a document or information is missing please check our
    :maxdepth: 1
    :caption: Contents:
 
-   Benchmarks <BENCHMARKS>
+   Benchmarks <./_benchmarks/index.html#http://>
    Contributing <CONTRIBUTING>
    Code of Conduct <CODE_OF_CONDUCT>
    Governance Model <GOVERNANCE>

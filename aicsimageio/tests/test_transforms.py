@@ -50,6 +50,13 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
             {"Z": slice(0, 2, 1)},
             (2, 1, 200, 1, 400, 1),
         ),
+        (
+            (6, 200, 200, 3),
+            "ZYXS",
+            "YX",
+            {"Z": 0, "S": 0},
+            (200, 200),
+        ),
         ((2, 2, 2), "ABI", "ZCYSXT", {}, (1, 1, 1, 1, 1, 1)),
         pytest.param(
             (6, 200, 400),

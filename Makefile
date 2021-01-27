@@ -65,7 +65,7 @@ docs: ## generate Sphinx HTML documentation, including API docs, and serve to br
 	make gen-docs
 	$(BROWSER) docs/_build/html/index.html
 
-prepare-release: ## Checkout master, generate new section of changelog
+prepare-release: ## Checkout main, generate new section of changelog
 	bumpversion patch
 	gitchangelog
 	git add docs/changelog.rst

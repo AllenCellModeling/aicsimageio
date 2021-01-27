@@ -173,7 +173,7 @@ img.physical_pixel_size.X  # returns the X dimension pixel size as found in the 
 ## Benchmarks
 
 AICSImageIO is benchmarked using [asv](https://asv.readthedocs.io/en/stable/).
-You can find the benchmark results for every commit to `master` starting at the 4.0
+You can find the benchmark results for every commit to `main` starting at the 4.0
 release on our
 [benchmarks page](https://AllenCellModeling.github.io/aicsimageio/_benchmarks/index.html).
 

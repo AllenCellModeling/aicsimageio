@@ -329,7 +329,8 @@ def test_multi_scene_ome_tiff_reader(
     [
         # TODO:
         # Handle pyramid data w/ tifffile Zarr
-        pytest.param(
+        # It fails to read due to a value error in retrieving the correct planes
+        (
             "variable_scene_shape_first_scene_pyramid.ome.tiff",
             "Image:0",
             ("Image:0", "Image:1"),
@@ -338,7 +339,6 @@ def test_multi_scene_ome_tiff_reader(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["EGFP", "mCher", "PGC"],
             (1.0, 0.9082107048835328, 0.9082107048835328),
-            marks=pytest.mark.raises(exception=ValueError),
         ),
         # TODO:
         # Handle known ome-types multi-scene pyramid bug

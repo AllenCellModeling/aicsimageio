@@ -198,6 +198,8 @@ default viewer itself.
 
 ## Development
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
+See our
+[developer resources](https://allencellmodeling.github.io/aicsimageio/developer_resources)
+for information related to developing the code.
 
 _Free software: BSD-3-Clause_

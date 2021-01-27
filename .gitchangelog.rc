@@ -219,7 +219,7 @@ include_merge = False
 ##        for a complete copy-pastable example.
 ##
 #publish = stdout
-OUTPUT_FILE = "docs/changelog.rst"
+OUTPUT_FILE = "docs/CHANGELOG.rst"
 INSERT_POINT_REGEX = r'''(?isxu)
 ^
 (
@@ -285,7 +285,7 @@ publish = FileRegexSubst(OUTPUT_FILE, INSERT_POINT_REGEX, r"\1\o\g<rev>")
 revs = [
     Caret(
         FileFirstRegexMatch(
-            "docs/changelog.rst",
+            "docs/CHANGELOG.rst",
             r"(?P<rev>v[0-9]+\.[0-9]+(\.[0-9]+)?)\s+\([0-9]+-[0-9]{2}-[0-9]{2}\)\n--+\n")),
     "HEAD"
 ]

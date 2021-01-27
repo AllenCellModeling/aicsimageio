@@ -147,8 +147,11 @@ class OmeTiffReader(TiffReader):
         coords = {}
 
         # Channels
+        # Channel name isn't required by OME spec, so try to use it but
+        # roll back to ID if not found
         coords[DimensionNames.Channel] = [
-            channel.name for channel in scene_meta.pixels.channels
+            channel.name if channel.name is not None else channel.id
+            for channel in scene_meta.pixels.channels
         ]
 
         # Time

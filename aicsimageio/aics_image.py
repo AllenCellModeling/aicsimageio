@@ -257,7 +257,7 @@ class AICSImage:
 
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
-            coords[dimensions.DimensionNames.Channel] = [None]
+            coords[dimensions.DimensionNames.Channel] = ["Channel:0"]
 
         return xr.DataArray(
             data,

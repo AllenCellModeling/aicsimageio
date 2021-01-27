@@ -39,7 +39,7 @@ from .image_container_test_utils import (
             (1, 1, 1, 800, 537, 4),
             np.uint8,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
+            ["Channel:0"],
             (1.0, 1.0, 1.0),
         ),
         (
@@ -49,7 +49,7 @@ from .image_container_test_utils import (
             (72, 1, 1, 268, 268, 4),
             np.uint8,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
+            ["Channel:0"],
             (1.0, 1.0, 1.0),
         ),
         (
@@ -59,7 +59,7 @@ from .image_container_test_utils import (
             (72, 1, 1, 272, 272, 3),
             np.uint8,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
+            ["Channel:0"],
             (1.0, 1.0, 1.0),
         ),
         #######################################################################
@@ -71,7 +71,7 @@ from .image_container_test_utils import (
             (10, 3, 1, 325, 475),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["0", "1", "2"],
+            ["Channel:0", "Channel:1", "Channel:2"],
             (1.0, 1.0, 1.0),
         ),
         (
@@ -81,7 +81,7 @@ from .image_container_test_utils import (
             (1, 1, 1, 7548, 7548, 3),
             np.uint16,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None],
+            ["Channel:0"],
             (1.0, 1.0, 1.0),
         ),
         #######################################################################
@@ -106,7 +106,7 @@ from .image_container_test_utils import (
             (1, 2, 1, 32, 32, 3),
             np.uint8,
             dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
-            [None, None],
+            ["Channel:0:0", "Channel:0:1"],
             (1.0, 1.0, 1.0),
         ),
         (

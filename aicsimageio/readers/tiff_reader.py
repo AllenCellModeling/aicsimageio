@@ -112,7 +112,9 @@ class TiffReader(Reader):
         """
         with fs.open(path) as open_resource:
             return da.from_zarr(
-                imread(open_resource, aszarr=True, series=scene, chunkmode="page")
+                imread(
+                    open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
+                )
             )[indices].compute()
 
     def _get_tiff_tags(self) -> TiffTags:

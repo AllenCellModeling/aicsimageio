@@ -316,7 +316,6 @@ def test_multi_scene_ome_tiff_reader(
     )
 
 
-@pytest.mark.skip(reason="Planned for 4.1 Levels / Multi-Resolution Support")
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "
@@ -328,8 +327,8 @@ def test_multi_scene_ome_tiff_reader(
     "expected_physical_pixel_sizes",
     [
         # TODO:
-        # Handle pyramid data w/ tifffile Zarr
-        # It fails to read due to a value error in retrieving the correct planes
+        # Select a different level besides level 0
+        # TiffReader / OmeTiffReader defaults to reading level 0
         (
             "variable_scene_shape_first_scene_pyramid.ome.tiff",
             "Image:0",

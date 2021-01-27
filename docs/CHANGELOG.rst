@@ -1,6 +1,46 @@
 Changelog
 =========
 
+v3.3.5 (2021-01-25)
+-------------------
+
+Fix
+~~~
+- bugfix/pin-readlif  (`#187
+  <https://github.com/AllenCellModeling/aicsimageio/pull/187>`_)
+  [Jackson Maxfield Brown]
+
+
+v3.3.4 (2021-01-13)
+-------------------
+- ome-xml as string to ome tiff writer  (`#180
+  <https://github.com/AllenCellModeling/aicsimageio/pull/180>`_)
+  [toloudis]
+
+
+v3.3.3 (2020-12-14)
+-------------------
+
+Fix
+~~~
+- bugfix/replace-napari-is-pyramid-with-multiscale  (`#172
+  <https://github.com/AllenCellModeling/aicsimageio/pull/172>`_)
+  [Dimitri Hürlimann, dimi-huer]
+
+Other
+~~~~~
+- admin/support-py39  (`#169
+  <https://github.com/AllenCellModeling/aicsimageio/pull/169>`_)
+  [Jackson Maxfield Brown]
+
+
+v3.3.2 (2020-11-17)
+-------------------
+- admin/update-base-reader-dep-versions  (`#156
+  <https://github.com/AllenCellModeling/aicsimageio/pull/156>`_) [Jamie
+  Sherman]
+
+
 v3.3.1 (2020-09-23)
 -------------------
 

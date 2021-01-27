@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>aicsimageio package &mdash; aicsimageio 3.3.5 documentation</title>
+  <title>aicsimageio package &mdash; AICSImageIO 3.3.5 documentation</title>
   
 
   
@@ -32,14 +32,13 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="aicsimageio.readers package" href="aicsimageio.readers.html" />
+    <link rel="next" title="aicsimageio.bin package" href="aicsimageio.bin.html" />
     <link rel="prev" title="aicsimageio" href="modules.html" /> 
 </head>
 
@@ -54,7 +53,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> aicsimageio
+            <a href="index.html" class="icon icon-home"> AICSImageIO
           
 
           
@@ -92,24 +91,25 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#from-sources">From sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">Package modules</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">aicsimageio package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.bin.html">aicsimageio.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.utils.html">aicsimageio.utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.constants">aicsimageio.constants module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -118,101 +118,138 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#results">Results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarks.html#configs">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#deploying">Deploying</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#discussion">Discussion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#running-the-tests">Running the Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#steering-council">Steering Council</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id9">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#about-this-document">About This Document</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id14">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id16">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id16">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id19">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id21">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id21">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id25">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id28">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id26">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id32">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id34">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id28">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id36">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id38">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id30">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id40">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id42">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id32">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id34">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id45">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id48">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id37">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id51">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id53">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id39">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id43">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id46">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id57">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id59">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id50">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id52">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id62">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id63">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id54">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id56">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id60">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id66">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id69">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id71">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id75">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id77">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id80">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id81">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
 </ul>
 </li>
 </ul>
@@ -230,7 +267,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">aicsimageio</a>
+          <a href="index.html">AICSImageIO</a>
         
       </nav>
 
@@ -281,7 +318,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="aicsimageio.readers.html" class="btn btn-neutral float-right" title="aicsimageio.readers package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="aicsimageio.bin.html" class="btn btn-neutral float-right" title="aicsimageio.bin package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral float-left" title="aicsimageio" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
@@ -299,28 +336,33 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.bin.html">aicsimageio.bin package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.bin.html#module-aicsimageio.bin">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.metadata.html">aicsimageio.metadata package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.metadata.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.metadata.html#module-aicsimageio.metadata.utils">aicsimageio.metadata.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.metadata.html#module-aicsimageio.metadata">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.arraylike_reader">aicsimageio.readers.arraylike_reader module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.czi_reader">aicsimageio.readers.czi_reader module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.default_reader">aicsimageio.readers.default_reader module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.lif_reader">aicsimageio.readers.lif_reader module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.ome_tiff_reader">aicsimageio.readers.ome_tiff_reader module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.reader">aicsimageio.readers.reader module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers.tiff_reader">aicsimageio.readers.tiff_reader module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.html#module-aicsimageio.readers">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#module-aicsimageio.vendor.omexml">aicsimageio.vendor.omexml module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.vendor.html#module-aicsimageio.vendor">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.utils.html">aicsimageio.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.utils.html#module-aicsimageio.utils.io_utils">aicsimageio.utils.io_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.utils.html#module-aicsimageio.utils">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.ome_tiff_writer">aicsimageio.writers.ome_tiff_writer module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.png_writer">aicsimageio.writers.png_writer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers.writer">aicsimageio.writers.writer module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.html#module-aicsimageio.writers">Module contents</a></li>
 </ul>
@@ -333,27 +375,21 @@
 </div>
 <div class="section" id="module-aicsimageio.aics_image">
 <span id="aicsimageio-aics-image-module"></span><h2>aicsimageio.aics_image module<a class="headerlink" href="#module-aicsimageio.aics_image" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
+<dl class="py class">
 <dt id="aicsimageio.aics_image.AICSImage">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">AICSImage</code><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">AICSImage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">known_dims</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>AICSImage takes microscopy image data types (files) of varying dimensions
-(“ZYX”, “TCZYX”, “CYX”) and puts them into a consistent 6D “STCZYX” ordered
-dask array. The data, metadata are lazy loaded and can be accessed as needed.
-Note the dims are assumed to match “STCZYX” from right to left meaning if
-dimensional data is provided then the dimensions are assigned to be “CZYX”, 2
-dimensional would be “YX”. This guessed assignment is only for file types
-without dimension metadata (i.e. not .ome.tiff or .czi).</p>
+<p>AICSImage takes microscopy image data types (files or arrays) of varying
+dimensions (“ZYX”, “TCZYX”, “CYX”) and reads them as consistent 5D “TCZYX”
+(“Time-Channel-Z-Y-X”) ordered array(s). The data and metadata are lazy
+loaded and can be accessed as needed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>types.ImageLike</em>) – String with path to file, numpy.ndarray, or dask.array.Array with up to six
-dimensions.</p></li>
+<li><p><strong>image</strong> (<em>types.ImageLike</em>) – A string, Path, fsspec supported URI, or arraylike to read.</p></li>
 <li><p><strong>known_dims</strong> (<em>Optional[str]</em>) – Optional string with the known dimension order. If None, the reader will
 attempt to parse dim order.</p></li>
-<li><p><strong>dask_kwargs</strong> (<em>Dict[str, Any] = {}</em>) – A dictionary of arguments to pass to a dask cluster and or client.</p></li>
-<li><p><strong>kwargs</strong> (<em>Dict[str, Any]</em>) – Extra keyword arguments that can be passed down to either the reader
-subclass or, if using the context manager, the LocalCluster initialization.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Extra keyword arguments that will be passed down to the reader subclass.</p></li>
 </ul>
 </dd>
 </dl>
@@ -361,13 +397,13 @@ subclass or, if using the context manager, the LocalCluster initialization.</p><
 <p>Initialize an image then read the file and return specified slices as a numpy
 array.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
-<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Initialize an image, construct a delayed dask array for certain slices, then
-read only that data.</p>
+read only the specified chunk of data.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.czi&quot;</span><span class="p">)</span>
-<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">zstack_t8</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">... </span><span class="n">zstack_t8_data</span> <span class="o">=</span> <span class="n">zstack_t8</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -376,121 +412,169 @@ read only that data.</p>
 <span class="gp">... </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Initialize an image from S3 with s3fs.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;s3://my_bucket/my_file.tiff&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Initialize an image and pass arguments to the reader using kwargs.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.czi&quot;</span><span class="p">,</span> <span class="n">chunk_by_dims</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Create a local dask cluster for the duration of the context manager.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Create a local dask cluster with arguments for the duration of the context
-manager.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span> <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;nworkers&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">})</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Connect to a specific dask cluster for the duration of the context manager.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">AICSImage</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s2">&quot;filename.ome.tiff&quot;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">dask_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;address&quot;</span><span class="p">:</span> <span class="s2">&quot;tcp://localhost:1234&quot;</span><span class="p">},</span>
-<span class="gp">... </span>    <span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">data</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;ZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<p>Initialize an image, change scene, read data to numpy.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_many_scene.czi&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">img</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
 </div>
 <p class="rubric">Notes</p>
-<p>When using the AICSImage context manager, the processing machine or container
-must have networking capabilities enabled to function properly.</p>
 <p>Constructor for AICSImage class intended for providing a unified interface for
 dealing with microscopy images. To extend support to a new reader simply add a
-new reader child class of Reader ([readers/reader.py]) and add the class to
+new reader child class of Reader ([readers/reader.py]) and add the class to the
 SUPPORTED_READERS variable.</p>
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.client">
-<em class="property">property </em><code class="sig-name descname">client</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.client" title="Permalink to this definition">¶</a></dt>
-<dd><p>If connected to a Dask cluster, return the connected Client.</p>
-</dd></dl>
+<dl class="py attribute">
+<dt id="aicsimageio.aics_image.AICSImage.SUPPORTED_READERS">
+<code class="sig-name descname">SUPPORTED_READERS</code><em class="property"> = (&lt;class 'aicsimageio.readers.ome_tiff_reader.OmeTiffReader'&gt;, &lt;class 'aicsimageio.readers.tiff_reader.TiffReader'&gt;, &lt;class 'aicsimageio.readers.default_reader.DefaultReader'&gt;)</em><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.SUPPORTED_READERS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.close" title="Permalink to this definition">¶</a></dt>
-<dd><p>Close the connection to the Dask distributed Client.
-If this object created a LocalCluster, close it down as well.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.cluster">
-<em class="property">property </em><code class="sig-name descname">cluster</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.cluster" title="Permalink to this definition">¶</a></dt>
-<dd><p>If this object created a local Dask cluster, return it.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.dask_data">
-<em class="property">property </em><code class="sig-name descname">dask_data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.dask_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a dask array with dimension ordering “STCZYX”.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.data">
-<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the entire image as a numpy array with dimension ordering “STCZYX”.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.determine_reader">
-<em class="property">static </em><code class="sig-name descname">determine_reader</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.determine_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.determine_reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Cheaply check to see if a given file is a recognized type and return the
-appropriate reader for the file.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.get_channel_names">
-<code class="sig-name descname">get_channel_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_channel_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_channel_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to use the image’s metadata to get the image’s channel names.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>scene</strong> (<em>int</em>) – The index of the scene for which to return channel names.</p>
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.channel_names">
+<em class="property">property </em><code class="sig-name descname">channel_names</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.channel_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>channel_names</strong> – Using available metadata, the list of strings representing channel names.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>channels_names</strong> – List of strings representing the channel names.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[str]</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.current_scene">
+<em class="property">property </em><code class="sig-name descname">current_scene</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.current_scene" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>scene</strong> – The current operating scene.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.current_scene_index">
+<em class="property">property </em><code class="sig-name descname">current_scene_index</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.current_scene_index" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>scene_index</strong> – The current operating scene index in the file.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.dask_data">
+<em class="property">property </em><code class="sig-name descname">dask_data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.dask_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>dask_data</strong> – The image as a dask array with standard dimension ordering.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>da.Array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>data</strong> – The image as a numpy array with standard dimension ordering.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.determine_reader">
+<em class="property">static </em><code class="sig-name descname">determine_reader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader" title="aicsimageio.readers.reader.Reader">aicsimageio.readers.reader.Reader</a><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.determine_reader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.determine_reader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cheaply check to see if a given file is a recognized type and return the
+appropriate reader for the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>ReaderClass</strong> (<em>Reader</em>) – The reader that supports the provided image.</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Any kwargs used for reading and validation of the file.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#aicsimageio.exceptions.UnsupportedFileFormatError" title="aicsimageio.exceptions.UnsupportedFileFormatError"><strong>exceptions.UnsupportedFileFormatError</strong></a> – No reader could be found that supports the provided image.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.dims">
+<em class="property">property </em><code class="sig-name descname">dims</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.dims" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>dims</strong> – Object with the paired dimension names and their sizes.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#aicsimageio.dimensions.Dimensions" title="aicsimageio.dimensions.Dimensions">dimensions.Dimensions</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.dtype">
+<em class="property">property </em><code class="sig-name descname">dtype</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>dtype</strong> – Data-type of the image array’s elements.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>np.dtype</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aicsimageio.aics_image.AICSImage.get_image_dask_data">
-<code class="sig-name descname">get_image_dask_data</code><span class="sig-paren">(</span><em class="sig-param">out_orientation: Optional[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; dask.array.core.Array<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_image_dask_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_image_dask_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_image_dask_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension_order_out</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dask.array.core.Array<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_image_dask_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_image_dask_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get specific dimension image data out of an image as a dask array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>out_orientation</strong> (<em>Optional[str]</em>) – A string containing the dimension ordering desired for the returned ndarray.
-Default: The current image dimensions. i.e. <cite>self.dims</cite></p></li>
-<li><p><strong>kwargs</strong> –</p>
+<li><p><strong>dimension_order_out</strong> (<em>Optional[str]</em>) – A string containing the dimension ordering desired for the returned ndarray.
+Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) –</p>
 <ul>
 <li><p>C=1: specifies Channel 1</p></li>
 <li><p>T=3: specifies the fourth index in T</p></li>
 <li><p>D=n: D is Dimension letter and n is the index desired. D should not be
-present in the out_orientation.</p></li>
-<li><p>D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
-desired. D should be present in the out_orientation.</p></li>
-<li><p>D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
-desired. D should be present in the out_orientation.</p></li>
+present in the dimension_order_out.</p></li>
+<li><p>D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
+desired. D should be present in the dimension_order_out.</p></li>
+<li><p>D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
+desired. D should be present in the dimension_order_out.</p></li>
 <li><p>D=range(…): D is Dimension letter and range is the standard Python
-range function. D should be present in the out_orientation.</p></li>
+range function. D should be present in the dimension_order_out.</p></li>
 <li><p>D=slice(…): D is Dimension letter and slice is the standard Python
-slice function. D should be present in the out_orientation.</p></li>
+slice function. D should be present in the dimension_order_out.</p></li>
 </ul>
 </li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>data</strong> – The read data with the dimension ordering that was specified with
-out_orientation.</p>
+<dd class="field-even"><p><strong>data</strong> – The image data with the specified dimension ordering.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dask array</p>
@@ -530,32 +614,38 @@ added with a depth of 1.</p></li>
 <p>See <cite>aicsimageio.transforms.reshape_data</cite> for more details.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="aicsimageio.aics_image.AICSImage.get_image_data">
-<code class="sig-name descname">get_image_data</code><span class="sig-paren">(</span><em class="sig-param">out_orientation: Optional[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_image_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_image_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension_order_out</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dask.array.core.Array<a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_image_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_image_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the image as a numpy array then return specific dimension image data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>out_orientation</strong> (<em>Optional[str]</em>) – A string containing the dimension ordering desired for the returned ndarray.
-Default: The current image dimensions. i.e. <cite>self.dims</cite></p></li>
-<li><p><strong>kwargs</strong> –</p>
+<li><p><strong>dimension_order_out</strong> (<em>Optional[str]</em>) – A string containing the dimension ordering desired for the returned ndarray.
+Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) –</p>
 <ul>
 <li><p>C=1: specifies Channel 1</p></li>
 <li><p>T=3: specifies the fourth index in T</p></li>
 <li><p>D=n: D is Dimension letter and n is the index desired. D should not be
-present in the out_orientation.</p></li>
-<li><p>D=[a, b, c]: D is Dimension letter and a, b, c is the list of indicies
-desired. D should be present in the out_orientation.</p></li>
-<li><p>D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indicies
-desired. D should be present in the out_orientation.</p></li>
+present in the dimension_order_out.</p></li>
+<li><p>D=[a, b, c]: D is Dimension letter and a, b, c is the list of indices
+desired. D should be present in the dimension_order_out.</p></li>
+<li><p>D=(a, b, c): D is Dimension letter and a, b, c is the tuple of indices
+desired. D should be present in the dimension_order_out.</p></li>
 <li><p>D=range(…): D is Dimension letter and range is the standard Python
-range function. D should be present in the out_orientation.</p></li>
+range function. D should be present in the dimension_order_out.</p></li>
 <li><p>D=slice(…): D is Dimension letter and slice is the standard Python
-slice function. D should be present in the out_orientation.</p></li>
+slice function. D should be present in the dimension_order_out.</p></li>
 </ul>
 </li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – The image data with the specified dimension ordering.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>numpy array</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -576,7 +666,7 @@ slice function. D should be present in the out_orientation.</p></li>
 </div>
 <p>Range of index selection</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;s_1_t_1_c_10_z_20.ome.tiff&quot;</span><span class="p">)</span>
-<span class="gp">... </span><span class="n">first_three</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">... </span><span class="n">first_three</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Slice selection</p>
@@ -584,15 +674,6 @@ slice function. D should be present in the out_orientation.</p></li>
 <span class="gp">... </span><span class="n">every_other</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>data</strong> – The read data with the dimension ordering that was specified with
-out_orientation.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>np.ndarray</p>
-</dd>
-</dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
 <li><p>If a requested dimension is not present in the data the dimension is
@@ -602,31 +683,14 @@ added with a depth of 1.</p></li>
 <p>See <cite>aicsimageio.transforms.reshape_data</cite> for more details.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.get_physical_pixel_size">
-<code class="sig-name descname">get_physical_pixel_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.get_physical_pixel_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.get_physical_pixel_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to retrieve physical pixel size for the specified scene.
-If none available, returns <cite>1.0</cite> for each spatial dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>scene</strong> (<em>int</em>) – The index of the scene for which to return physical pixel sizes.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>sizes</strong> – Tuple of floats representing the pixel sizes for X, Y, Z, in that order.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
+<dl class="py method">
 <dt id="aicsimageio.aics_image.AICSImage.metadata">
 <em class="property">property </em><code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.metadata" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>metadata</strong> – The Metadata from the Czi, or Ome.Tiff file, or other base class type with
-metadata. For pure image files an empty string or None is returned.</p>
+<dd class="field-odd"><p><strong>metadata</strong> – Passthrough to the base image reader metadata property.
+For more information, see the specific image format reader you are using
+for details on its metadata property.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Any</p>
@@ -634,15 +698,31 @@ metadata. For pure image files an empty string or None is returned.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.physical_pixel_sizes">
+<em class="property">property </em><code class="sig-name descname">physical_pixel_sizes</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.physical_pixel_sizes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>sizes</strong> – Using available metadata, the floats representing physical pixel sizes for
+dimensions Z, Y, and X.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#aicsimageio.types.PhysicalPixelSizes" title="aicsimageio.types.PhysicalPixelSizes">PhysicalPixelSizes</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>We currently do not handle unit attachment to these values. Please see the file
+metadata for unit information.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aicsimageio.aics_image.AICSImage.reader">
 <em class="property">property </em><code class="sig-name descname">reader</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.reader" title="Permalink to this definition">¶</a></dt>
-<dd><p>This property returns the class created to read the image file type.
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>reader</strong> – The object created to read the image file type.
 The intent is that if the AICSImage class doesn’t provide a raw enough
 interface then the base class can be used directly.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>reader</strong> – A child of Reader; CziReader OmeTiffReader, TiffReader, DefaultReader, etc.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.reader.Reader" title="aicsimageio.readers.reader.Reader">Reader</a></p>
@@ -650,12 +730,49 @@ interface then the base class can be used directly.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.scenes">
+<em class="property">property </em><code class="sig-name descname">scenes</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.scenes" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>scenes</strong> – A tuple of valid scene ids in the file.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[str]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Scene IDs are strings - not a range of integers.</p>
+<p>When iterating over scenes please use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">scenes</span>
+</pre></div>
+</div>
+<p>and not:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">scenes</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.set_scene">
+<code class="sig-name descname">set_scene</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scene_id</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.set_scene"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.set_scene" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the operating scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scene_id</strong> (<em>str</em>) – The scene id to set as the operating scene.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>IndexError</strong> – the provided scene id is not found in the available scene id list:</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="aicsimageio.aics_image.AICSImage.shape">
 <em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.shape" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>shape</strong> – A tuple with the size of all dimensions.</p>
+<dd class="field-odd"><p><strong>shape</strong> – Tuple of the image array’s dimensions.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>Tuple[int]</p>
@@ -663,131 +780,50 @@ interface then the base class can be used directly.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size">
-<code class="sig-name descname">size</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dims</strong> (<em>str</em>) – A string containing a list of dimensions being requested. The default is to
-return the six standard dims.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>size</strong> – A tuple with the requested dimensions filled in.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[int]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_c">
-<em class="property">property </em><code class="sig-name descname">size_c</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_c" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.xarray_dask_data">
+<em class="property">property </em><code class="sig-name descname">xarray_dask_data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.xarray_dask_data" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Channel dimension.</p>
+<dd class="field-odd"><p><strong>xarray_dask_data</strong> – The delayed image and metadata as an annotated data array.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
+<dd class="field-even"><p>xr.DataArray</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_s">
-<em class="property">property </em><code class="sig-name descname">size_s</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_s" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="aicsimageio.aics_image.AICSImage.xarray_data">
+<em class="property">property </em><code class="sig-name descname">xarray_data</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.xarray_data" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Scene dimension.</p>
+<dd class="field-odd"><p><strong>xarray_data</strong> – The fully read image and metadata as an annotated data array.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_t">
-<em class="property">property </em><code class="sig-name descname">size_t</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_t" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Time dimension.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_x">
-<em class="property">property </em><code class="sig-name descname">size_x</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_x" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Spatial X dimension.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_y">
-<em class="property">property </em><code class="sig-name descname">size_y</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_y" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Spatial Y dimension.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.size_z">
-<em class="property">property </em><code class="sig-name descname">size_z</code><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.size_z" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>size</strong> – The size of the Spatial Z dimension.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.aics_image.AICSImage.view_napari">
-<code class="sig-name descname">view_napari</code><span class="sig-paren">(</span><em class="sig-param">rgb: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.view_napari"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.view_napari" title="Permalink to this definition">¶</a></dt>
-<dd><p>If installed, load the image in a napari viewer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>rgb</strong> (<em>bool</em>) – Is the image RGB / RGBA
-Default: False (is not RGB)</p></li>
-<li><p><strong>**kwargs</strong> – Extra arguments passed down to the viewer</p></li>
-</ul>
+<dd class="field-even"><p>xr.DataArray</p>
 </dd>
 </dl>
 </dd></dl>
 
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="aicsimageio.aics_image.imread">
-<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray, dask.array.core.Array], **kwargs</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read image as a numpy ndarray.</p>
+<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scene_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image as a numpy array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>types.ImageLike</em>) – A filepath, in memory numpy array, or preconfigured dask array.</p></li>
-<li><p><strong>kwargs</strong> (<em>Dict[str, Any]</em>) – Any extra arguments to passed down to AICSImage and subsequent readers.</p></li>
+<li><p><strong>image</strong> (<em>types.ImageLike</em>) – A string, Path, fsspec supported URI, or arraylike to read.</p></li>
+<li><p><strong>scene_id</strong> (<em>Optional[str]</em>) – An optional scene id to create the numpy array with.
+Default: None (First Scene)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Extra keyword arguments to be passed down to the AICSImage and Reader subclass.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>data</strong> – The image read and configured as a numpy ndarray.</p>
+<dd class="field-even"><p><strong>data</strong> – The image read, scene selected, and returned as an AICS standard shaped
+np.ndarray.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>np.ndarray</p>
@@ -795,19 +831,22 @@ Default: False (is not RGB)</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="aicsimageio.aics_image.imread_dask">
-<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread_dask</code><span class="sig-paren">(</span><em class="sig-param">data: Union[str, pathlib.Path, bytes, io.BufferedIOBase, numpy.ndarray, dask.array.core.Array], **kwargs</em><span class="sig-paren">)</span> &#x2192; dask.array.core.Array<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread_dask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread_dask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read image as a dask array.</p>
+<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread_dask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scene_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; dask.array.core.Array<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread_dask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread_dask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image as a delayed dask array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>types.ImageLike</em>) – A filepath, in memory numpy array, or preconfigured dask array.</p></li>
-<li><p><strong>kwargs</strong> (<em>Dict[str, Any]</em>) – Any extra arguments to passed down to AICSImage and subsequent readers.</p></li>
+<li><p><strong>image</strong> (<em>types.ImageLike</em>) – A string, Path, fsspec supported URI, or arraylike to read.</p></li>
+<li><p><strong>scene_id</strong> (<em>Optional[str]</em>) – An optional scene id to create the dask array with.
+Default: None (First Scene)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Extra keyword arguments to be passed down to the AICSImage and Reader subclass.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>data</strong> – The image read and configured as a dask array.</p>
+<dd class="field-even"><p><strong>data</strong> – The image read, scene selected, and returned as an AICS standard shaped delayed
+dask array.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>da.core.Array</p>
@@ -815,179 +854,166 @@ Default: False (is not RGB)</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-aicsimageio.buffer_reader">
-<span id="aicsimageio-buffer-reader-module"></span><h2>aicsimageio.buffer_reader module<a class="headerlink" href="#module-aicsimageio.buffer_reader" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="aicsimageio.buffer_reader.BufferReader">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.buffer_reader.</code><code class="sig-name descname">BufferReader</code><span class="sig-paren">(</span><em class="sig-param">buffer: Union[str, pathlib.Path, bytes, io.BufferedIOBase]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="aicsimageio.buffer_reader.BufferReader.INTEL_ENDIAN">
-<code class="sig-name descname">INTEL_ENDIAN</code><em class="property"> = b'II'</em><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.INTEL_ENDIAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="py function">
+<dt id="aicsimageio.aics_image.imread_xarray">
+<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread_xarray</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scene_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; xarray.core.dataarray.DataArray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread_xarray"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread_xarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image as an in-memory xarray DataArray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>types.ImageLike</em>) – A string, Path, fsspec supported URI, or arraylike to read.</p></li>
+<li><p><strong>scene_id</strong> (<em>Optional[str]</em>) – An optional scene id to create the DataArray with.
+Default: None (First Scene)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Extra keyword arguments to be passed down to the AICSImage and Reader subclass.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – The image read, scene selected, and returned as an AICS standard shaped
+in-memory DataArray.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xr.DataArray</p>
+</dd>
+</dl>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.buffer_reader.BufferReader.MOTOROLA_ENDIAN">
-<code class="sig-name descname">MOTOROLA_ENDIAN</code><em class="property"> = b'MM'</em><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.MOTOROLA_ENDIAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.buffer_reader.BufferReader.read_bytes">
-<code class="sig-name descname">read_bytes</code><span class="sig-paren">(</span><em class="sig-param">n_bytes: int</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_bytes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_bytes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.buffer_reader.BufferReader.read_uint16">
-<code class="sig-name descname">read_uint16</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint16" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.buffer_reader.BufferReader.read_uint32">
-<code class="sig-name descname">read_uint32</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint32" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.buffer_reader.BufferReader.read_uint64">
-<code class="sig-name descname">read_uint64</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.read_uint64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.read_uint64" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="aicsimageio.buffer_reader.BufferReader.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/buffer_reader.html#BufferReader.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.buffer_reader.BufferReader.reset" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="py function">
+<dt id="aicsimageio.aics_image.imread_xarray_dask">
+<code class="sig-prename descclassname">aicsimageio.aics_image.</code><code class="sig-name descname">imread_xarray_dask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">image</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">, </span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">scene_id</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; xarray.core.dataarray.DataArray<a class="reference internal" href="_modules/aicsimageio/aics_image.html#imread_xarray_dask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.aics_image.imread_xarray_dask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read image as a delayed xarray DataArray.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>types.ImageLike</em>) – A string, Path, fsspec supported URI, or arraylike to read.</p></li>
+<li><p><strong>scene_id</strong> (<em>Optional[str]</em>) – An optional scene id to create the DataArray with.
+Default: None (First Scene)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>) – Extra keyword arguments to be passed down to the AICSImage and Reader subclass.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – The image read, scene selected, and returned as an AICS standard shaped delayed
+xarray DataArray.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>xr.DataArray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-aicsimageio.constants">
 <span id="aicsimageio-constants-module"></span><h2>aicsimageio.constants module<a class="headerlink" href="#module-aicsimageio.constants" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="aicsimageio.constants.Dimensions">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.constants.</code><code class="sig-name descname">Dimensions</code><a class="reference internal" href="_modules/aicsimageio/constants.html#Dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.constants.Dimensions" title="Permalink to this definition">¶</a></dt>
+</div>
+<div class="section" id="module-aicsimageio.dimensions">
+<span id="aicsimageio-dimensions-module"></span><h2>aicsimageio.dimensions module<a class="headerlink" href="#module-aicsimageio.dimensions" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="aicsimageio.dimensions.DimensionNames">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.dimensions.</code><code class="sig-name descname">DimensionNames</code><a class="reference internal" href="_modules/aicsimageio/dimensions.html#DimensionNames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.Channel">
-<code class="sig-name descname">Channel</code><em class="property"> = 'C'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.Channel" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.Channel">
+<code class="sig-name descname">Channel</code><em class="property"> = 'C'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.Channel" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.DefaultOrder">
-<code class="sig-name descname">DefaultOrder</code><em class="property"> = 'STCZYX'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.DefaultOrder" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.Samples">
+<code class="sig-name descname">Samples</code><em class="property"> = 'S'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.Samples" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.DefaultOrderList">
-<code class="sig-name descname">DefaultOrderList</code><em class="property"> = ['S', 'T', 'C', 'Z', 'Y', 'X']</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.DefaultOrderList" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.SpatialX">
+<code class="sig-name descname">SpatialX</code><em class="property"> = 'X'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.SpatialX" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.Scene">
-<code class="sig-name descname">Scene</code><em class="property"> = 'S'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.Scene" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.SpatialY">
+<code class="sig-name descname">SpatialY</code><em class="property"> = 'Y'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.SpatialY" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.SpatialX">
-<code class="sig-name descname">SpatialX</code><em class="property"> = 'X'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.SpatialX" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.SpatialZ">
+<code class="sig-name descname">SpatialZ</code><em class="property"> = 'Z'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.SpatialZ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.SpatialY">
-<code class="sig-name descname">SpatialY</code><em class="property"> = 'Y'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.SpatialY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.SpatialZ">
-<code class="sig-name descname">SpatialZ</code><em class="property"> = 'Z'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.SpatialZ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="aicsimageio.constants.Dimensions.Time">
-<code class="sig-name descname">Time</code><em class="property"> = 'T'</em><a class="headerlink" href="#aicsimageio.constants.Dimensions.Time" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.dimensions.DimensionNames.Time">
+<code class="sig-name descname">Time</code><em class="property"> = 'T'</em><a class="headerlink" href="#aicsimageio.dimensions.DimensionNames.Time" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-</div>
-<div class="section" id="module-aicsimageio.dask_utils">
-<span id="aicsimageio-dask-utils-module"></span><h2>aicsimageio.dask_utils module<a class="headerlink" href="#module-aicsimageio.dask_utils" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="aicsimageio.dask_utils.cluster_and_client">
-<code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">cluster_and_client</code><span class="sig-paren">(</span><em class="sig-param">address: Optional[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dask_utils.html#cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.cluster_and_client" title="Permalink to this definition">¶</a></dt>
-<dd><p>If provided an address, create a Dask Client connection.
-If not provided an address, create a LocalCluster and Client connection.
-If not provided an address, other Dask kwargs are accepted and passed down to the
-LocalCluster object.</p>
-<p>These objects will only live for the duration of this context manager.</p>
+<dl class="py class">
+<dt id="aicsimageio.dimensions.Dimensions">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.dimensions.</code><code class="sig-name descname">Dimensions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dims</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Iterable<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">shape</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>int<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dimensions.html#Dimensions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dimensions.Dimensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A general object for managing the pairing of dimension name and dimension size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dims</strong> (<em>Union[str, Iterable]</em>) – An ordered string or iterable of the dimensions to pair with their sizes.</p></li>
+<li><p><strong>shape</strong> (<em>Tuple[int]</em>) – An ordered tuple of the dimensions sizes to pair with their names.</p></li>
+</ul>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">cluster_and_client</span><span class="p">()</span> <span class="k">as</span> <span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">client</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">img1</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;1.tiff&quot;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">img2</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;2.czi&quot;</span><span class="p">)</span>
-<span class="gp">... </span>    <span class="n">other</span> <span class="n">processing</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dims</span> <span class="o">=</span> <span class="n">Dimensions</span><span class="p">(</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">624</span><span class="p">,</span> <span class="mi">924</span><span class="p">))</span>
+<span class="gp">... </span><span class="n">dims</span><span class="o">.</span><span class="n">X</span>
 </pre></div>
 </div>
-<p class="rubric">Notes</p>
-<p>When using this context manager, the processing machine or container must have
-networking capabilities enabled to function properly.</p>
+<dl class="py method">
+<dt id="aicsimageio.dimensions.Dimensions.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dimensions.html#Dimensions.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dimensions.Dimensions.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="aicsimageio.dimensions.Dimensions.order">
+<em class="property">property </em><code class="sig-name descname">order</code><a class="headerlink" href="#aicsimageio.dimensions.Dimensions.order" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>order</strong> – The natural order of the dimensions as a single string.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="aicsimageio.dask_utils.shutdown_cluster_and_client">
-<code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">shutdown_cluster_and_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dask_utils.html#shutdown_cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.shutdown_cluster_and_client" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shutdown a cluster and client.</p>
-<p class="rubric">Notes</p>
-<p>When using this function, the processing machine or container must have networking
-capabilities enabled to function properly.</p>
+<dl class="py method">
+<dt id="aicsimageio.dimensions.Dimensions.shape">
+<em class="property">property </em><code class="sig-name descname">shape</code><a class="headerlink" href="#aicsimageio.dimensions.Dimensions.shape" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>shape</strong> – The dimension sizes in their natural order.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[int]</p>
+</dd>
+</dl>
 </dd></dl>
 
-<dl class="function">
-<dt id="aicsimageio.dask_utils.spawn_cluster_and_client">
-<code class="sig-prename descclassname">aicsimageio.dask_utils.</code><code class="sig-name descname">spawn_cluster_and_client</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/dask_utils.html#spawn_cluster_and_client"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.dask_utils.spawn_cluster_and_client" title="Permalink to this definition">¶</a></dt>
-<dd><p>If provided an address, create a Dask Client connection.
-If not provided an address, create a LocalCluster and Client connection.
-If not provided an address, other Dask kwargs are accepted and passed down to the
-LocalCluster object.</p>
-<p class="rubric">Notes</p>
-<p>When using this function, the processing machine or container must have networking
-capabilities enabled to function properly.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-aicsimageio.exceptions">
 <span id="aicsimageio-exceptions-module"></span><h2>aicsimageio.exceptions module<a class="headerlink" href="#module-aicsimageio.exceptions" title="Permalink to this headline">¶</a></h2>
-<dl class="exception">
+<dl class="py exception">
 <dt id="aicsimageio.exceptions.ConflictingArgumentsError">
 <em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">ConflictingArgumentsError</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#ConflictingArgumentsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.ConflictingArgumentsError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>This exception is returned when 2 arguments to the same function are in conflict.</p>
 </dd></dl>
 
-<dl class="exception">
-<dt id="aicsimageio.exceptions.InconsistentPixelType">
-<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InconsistentPixelType</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InconsistentPixelType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InconsistentPixelType" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>This exception is returned when the metadata has conflicting pixel types.</p>
-</dd></dl>
-
-<dl class="exception">
-<dt id="aicsimageio.exceptions.InconsistentShapeError">
-<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InconsistentShapeError</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InconsistentShapeError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InconsistentShapeError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>A general function to use when the shape returned or requested from an array
-operation is invalid.</p>
-</dd></dl>
-
-<dl class="exception">
+<dl class="py exception">
 <dt id="aicsimageio.exceptions.InvalidDimensionOrderingError">
-<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InvalidDimensionOrderingError</code><span class="sig-paren">(</span><em class="sig-param">message: str</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InvalidDimensionOrderingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InvalidDimensionOrderingError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">InvalidDimensionOrderingError</code><a class="reference internal" href="_modules/aicsimageio/exceptions.html#InvalidDimensionOrderingError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.InvalidDimensionOrderingError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>A general exception that can be thrown when handling dimension ordering or
-validation. Should be provided a message for the user to be given more context.</p>
+validation. Should be provied a message for the user to be given more context.</p>
 </dd></dl>
 
-<dl class="exception">
+<dl class="py exception">
 <dt id="aicsimageio.exceptions.UnsupportedFileFormatError">
-<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">UnsupportedFileFormatError</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#UnsupportedFileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.UnsupportedFileFormatError" title="Permalink to this definition">¶</a></dt>
+<em class="property">exception </em><code class="sig-prename descclassname">aicsimageio.exceptions.</code><code class="sig-name descname">UnsupportedFileFormatError</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">reader_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">path</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/exceptions.html#UnsupportedFileFormatError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.exceptions.UnsupportedFileFormatError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>This exception is intended to communicate that the file extension is not one of
 the supported file types and cannot be parsed with AICSImage.</p>
@@ -996,9 +1022,9 @@ the supported file types and cannot be parsed with AICSImage.</p>
 </div>
 <div class="section" id="module-aicsimageio.transforms">
 <span id="aicsimageio-transforms-module"></span><h2>aicsimageio.transforms module<a class="headerlink" href="#module-aicsimageio.transforms" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
+<dl class="py function">
 <dt id="aicsimageio.transforms.reshape_data">
-<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">reshape_data</code><span class="sig-paren">(</span><em class="sig-param">data: Union[numpy.ndarray, dask.array.core.Array], given_dims: str, return_dims: str, **kwargs</em><span class="sig-paren">)</span> &#x2192; Union[numpy.ndarray, dask.array.core.Array]<a class="reference internal" href="_modules/aicsimageio/transforms.html#reshape_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.reshape_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">reshape_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">given_dims</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">return_dims</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span><a class="reference internal" href="_modules/aicsimageio/transforms.html#reshape_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.reshape_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reshape the data into return_dims, pad missing dimensions, and prune extra
 dimensions. Warns the user to use the base reader if the depth of the Dimension
 being removed is not 1.</p>
@@ -1030,11 +1056,16 @@ every fifth timepoint</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return
-would have order “STCZYX”</p>
+<dd class="field-even"><p><strong>data</strong> – The data with the specified dimension ordering.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>types.ArrayLike</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#aicsimageio.exceptions.ConflictingArgumentsError" title="aicsimageio.exceptions.ConflictingArgumentsError"><strong>ConflictingArgumentsError</strong></a> – Missing dimension in return dims when using range,: slice, or multi-index dimension selection for the requested dimension.</p></li>
+<li><p><strong>IndexError</strong> – Requested dimension index not present in data.:</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -1080,9 +1111,9 @@ would have order “STCZYX”</p>
 </div>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="aicsimageio.transforms.transpose_to_dims">
-<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">transpose_to_dims</code><span class="sig-paren">(</span><em class="sig-param">data: Union[numpy.ndarray, dask.array.core.Array], given_dims: str, return_dims: str</em><span class="sig-paren">)</span> &#x2192; Union[numpy.ndarray, dask.array.core.Array]<a class="reference internal" href="_modules/aicsimageio/transforms.html#transpose_to_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.transpose_to_dims" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">aicsimageio.transforms.</code><code class="sig-name descname">transpose_to_dims</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">given_dims</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">return_dims</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>numpy.ndarray<span class="p">, </span>dask.array.core.Array<span class="p">]</span><a class="reference internal" href="_modules/aicsimageio/transforms.html#transpose_to_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.transforms.transpose_to_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>This shuffles the data dimensions from given_dims to return_dims. Each dimension
 must be present in given_dims must be used in return_dims</p>
 <dl class="simple">
@@ -1096,11 +1127,13 @@ specified in given_dims</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>data</strong> – An array in return_dims order, if return_dims=DEFAULT_DIMS then the return
-would have order “STCZYX”</p>
+<dd class="field-odd"><p><strong>data</strong> – The data with the specified dimension ordering.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>types.ArrayLike</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#aicsimageio.exceptions.ConflictingArgumentsError" title="aicsimageio.exceptions.ConflictingArgumentsError"><strong>ConflictingArgumentsError</strong></a> – given_dims and return_dims are incompatible.:</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1108,28 +1141,27 @@ would have order “STCZYX”</p>
 </div>
 <div class="section" id="module-aicsimageio.types">
 <span id="aicsimageio-types-module"></span><h2>aicsimageio.types module<a class="headerlink" href="#module-aicsimageio.types" title="Permalink to this headline">¶</a></h2>
-<p>Collection of types used across multiple objects and functions.</p>
-<dl class="class">
-<dt id="aicsimageio.types.LoadResults">
-<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.types.</code><code class="sig-name descname">LoadResults</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dims</em>, <em class="sig-param">metadata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/types.html#LoadResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.types.LoadResults" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
-<p>Create new instance of LoadResults(data, dims, metadata)</p>
-<dl class="attribute">
-<dt id="aicsimageio.types.LoadResults.data">
-<code class="sig-name descname">data</code><a class="headerlink" href="#aicsimageio.types.LoadResults.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 0</p>
+<dl class="py class">
+<dt id="aicsimageio.types.PhysicalPixelSizes">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.types.</code><code class="sig-name descname">PhysicalPixelSizes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Z</span></em>, <em class="sig-param"><span class="n">Y</span></em>, <em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/types.html#PhysicalPixelSizes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.types.PhysicalPixelSizes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></p>
+<p>Create new instance of PhysicalPixelSizes(Z, Y, X)</p>
+<dl class="py attribute">
+<dt id="aicsimageio.types.PhysicalPixelSizes.X">
+<code class="sig-name descname">X</code><em class="property">: float</em><a class="headerlink" href="#aicsimageio.types.PhysicalPixelSizes.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.types.LoadResults.dims">
-<code class="sig-name descname">dims</code><a class="headerlink" href="#aicsimageio.types.LoadResults.dims" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="aicsimageio.types.PhysicalPixelSizes.Y">
+<code class="sig-name descname">Y</code><em class="property">: float</em><a class="headerlink" href="#aicsimageio.types.PhysicalPixelSizes.Y" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="aicsimageio.types.LoadResults.metadata">
-<code class="sig-name descname">metadata</code><a class="headerlink" href="#aicsimageio.types.LoadResults.metadata" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 2</p>
+<dl class="py attribute">
+<dt id="aicsimageio.types.PhysicalPixelSizes.Z">
+<code class="sig-name descname">Z</code><em class="property">: float</em><a class="headerlink" href="#aicsimageio.types.PhysicalPixelSizes.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
 </dd></dl>
 
 </dd></dl>
@@ -1137,6 +1169,12 @@ would have order “STCZYX”</p>
 </div>
 <div class="section" id="module-aicsimageio">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio" title="Permalink to this headline">¶</a></h2>
+<p>Top-level package for AICSImageIO.</p>
+<dl class="py function">
+<dt id="aicsimageio.get_module_version">
+<code class="sig-prename descclassname">aicsimageio.</code><code class="sig-name descname">get_module_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio.html#get_module_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.get_module_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 
@@ -1150,7 +1188,7 @@ would have order “STCZYX”</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Allen Institute for Cell Science.
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
 
     </p>
   </div>

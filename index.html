@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Welcome to aicsimageio’s documentation! &mdash; aicsimageio 3.3.5 documentation</title>
+  <title>Welcome to AICSImageIO’s documentation! &mdash; AICSImageIO 3.3.5 documentation</title>
   
 
   
@@ -32,14 +32,13 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Installation" href="INSTALLATION.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -53,7 +52,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> aicsimageio
+            <a href="#" class="icon icon-home"> AICSImageIO
           
 
           
@@ -91,24 +90,25 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#from-sources">From sources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">Package modules</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.bin.html">aicsimageio.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.utils.html">aicsimageio.utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
@@ -117,101 +117,138 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarks</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#results">Results</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="benchmarks.html#configs">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#deploying">Deploying</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#discussion">Discussion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#running-the-tests">Running the Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
-<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+<li class="toctree-l2"><a class="reference internal" href="GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#steering-council">Steering Council</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id9">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#about-this-document">About This Document</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">New</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id14">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id16">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id16">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id19">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id21">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id21">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id25">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id28">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id26">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id32">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id34">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id28">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id36">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id38">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id30">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id40">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id42">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id32">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id34">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id45">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id48">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id37">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id51">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id53">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id39">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id43">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id46">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id57">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id59">Fix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id50">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id52">Fix</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id62">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id63">Other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id54">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id56">Other</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id60">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id66">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id69">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id71">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id75">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id77">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id80">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id81">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
 </ul>
 </li>
 </ul>
@@ -229,7 +266,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">aicsimageio</a>
+          <a href="#">AICSImageIO</a>
         
       </nav>
 
@@ -262,7 +299,7 @@
     
       <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Welcome to aicsimageio’s documentation!</li>
+      <li>Welcome to AICSImageIO’s documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -278,7 +315,7 @@
   
   <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="INSTALLATION.html" class="btn btn-neutral float-right" title="Installation" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
       
       
   </div>
@@ -289,22 +326,22 @@
            <div itemprop="articleBody">
             
   <div class="section" id="welcome-to-aicsimageio-s-documentation">
-<h1>Welcome to aicsimageio’s documentation!<a class="headerlink" href="#welcome-to-aicsimageio-s-documentation" title="Permalink to this headline">¶</a></h1>
+<h1>Welcome to AICSImageIO’s documentation!<a class="headerlink" href="#welcome-to-aicsimageio-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 </div>
 <div class="section" id="aicsimageio">
 <h1>AICSImageIO<a class="headerlink" href="#aicsimageio" title="Permalink to this headline">¶</a></h1>
-<a class="reference external image-reference" href="https://github.com/AllenCellModeling/aicsimageio/actions"><img alt="Build Status" src="https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Master/badge.svg" /></a>
-<a class="reference external image-reference" href="https://allencellmodeling.github.io/aicsimageio"><img alt="Documentation" src="https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg" /></a>
-<a class="reference external image-reference" href="https://codecov.io/gh/AllenCellModeling/aicsimageio"><img alt="Code Coverage" src="https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg" /></a>
-<p>Delayed Parallel Image Reading for Microscopy Images in Python</p>
+<a class="reference external image-reference" href="https://github.com/AllenCellModeling/aicsimageio/actions"><img alt="Build Status" src="https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Main/badge.svg" /></a>
+<a class="reference external image-reference" href="https://AllenCellModeling.github.io/aicsimageio/"><img alt="Documentation" src="https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg" /></a>
+<a class="reference external image-reference" href="https://codecov.io/gh/AllenCellModeling/aicsimageio"><img alt="Code Coverage" src="https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg" /></a>
+<p>Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python</p>
 <hr class="docutils" />
 <div class="section" id="features">
 <h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Supports reading metadata and imaging data for:</p>
 <ul>
+<li><p>Supports reading metadata and imaging data for:</p>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">CZI</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OME-TIFF</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">TIFF</span></code></p></li>
@@ -313,9 +350,19 @@
 </ul>
 </li>
 <li><p>Supports writing metadata and imaging data for:</p>
-<ul>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">OME-TIFF</span></code></p></li>
 </ul>
+</li>
+<li><p>Supports reading from and writing to any
+<a class="reference external" href="https://github.com/intake/filesystem_spec">fsspec</a> supported file system:</p>
+<ul class="simple">
+<li><p>Local paths (i.e. <code class="docutils literal notranslate"><span class="pre">my-file.png</span></code>)</p></li>
+<li><p>HTTP URLs (i.e. <code class="docutils literal notranslate"><span class="pre">https://my-domain.com/my-file.png</span></code>)</p></li>
+<li><p><a class="reference external" href="https://github.com/dask/s3fs">s3fs</a> (i.e. <code class="docutils literal notranslate"><span class="pre">s3://my-bucket/my-file.png</span></code>)</p></li>
+<li><p><a class="reference external" href="https://github.com/dask/gcsfs">gcsfs</a> (i.e. <code class="docutils literal notranslate"><span class="pre">gcs://my-bucket/my-file.png</span></code>)</p></li>
+</ul>
+<p>See the <a class="reference external" href="https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations">list of known implementations</a>.</p>
 </li>
 </ul>
 </div>
@@ -329,22 +376,49 @@
 <p>For full package documentation please visit
 <a class="reference external" href="https://allencellmodeling.github.io/aicsimageio/index.html">allencellmodeling.github.io/aicsimageio</a>.</p>
 </div>
-<div class="section" id="quick-start">
-<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="full-image-reading">
 <h3>Full Image Reading<a class="headerlink" href="#full-image-reading" title="Permalink to this headline">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">imread</span>
 
 <span class="c1"># Get an AICSImage object</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
-<span class="n">img</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># returns 6D STCZYX numpy array</span>
-<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns string &quot;STCZYX&quot;</span>
-<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in STCZYX order</span>
-<span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>  <span class="c1"># selects the first scene found</span>
+<span class="n">img</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># returns 5D TCZYX numpy array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">xarray_data</span>  <span class="c1"># returns 5D TCZYX xarray data array backed by numpy</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns a Dimensions object</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">order</span>  <span class="c1"># returns string &quot;TCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># returns size of X dimension</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in TCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX numpy array</span>
 
-<span class="c1"># Get 6D STCZYX numpy array</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="c1"># Get the id of the current operating scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">current_scene</span>
+
+<span class="c1"># Get a list valid scene ids</span>
+<span class="n">img</span><span class="o">.</span><span class="n">scenes</span>
+
+<span class="c1"># Change scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Same operations on a different scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># returns 5D TCZYX numpy array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">xarray_data</span>  <span class="c1"># returns 5D TCZYX xarray data array backed by numpy</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns a Dimensions object</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">order</span>  <span class="c1"># returns string &quot;TCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># returns size of X dimension</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in TCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+
+<span class="c1"># Get 5D TCZYX numpy array</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>  <span class="c1"># optionally provide a scene id, default first</span>
 </pre></div>
+</div>
+<div class="section" id="full-image-reading-notes">
+<h4>Full Image Reading Notes<a class="headerlink" href="#full-image-reading-notes" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">.data</span></code> and <code class="docutils literal notranslate"><span class="pre">.xarray_data</span></code> properties and the <code class="docutils literal notranslate"><span class="pre">.get_image_data</span></code> function will
+load the whole image into memory prior to returning the specified chunk (if using
+<code class="docutils literal notranslate"><span class="pre">.get_image_data</span></code>).</p>
 </div>
 </div>
 <div class="section" id="delayed-image-reading">
@@ -352,33 +426,62 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span><span class="p">,</span> <span class="n">imread_dask</span>
 
 <span class="c1"># Get an AICSImage object</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
-<span class="n">img</span><span class="o">.</span><span class="n">dask_data</span>  <span class="c1"># returns 6D STCZYX dask array</span>
-<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns string &quot;STCZYX&quot;</span>
-<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in STCZYX order</span>
-<span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="s2">&quot;STC&quot;</span><span class="p">)</span>  <span class="c1"># returns tuple of dimensions sizes for just STC</span>
-<span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>  <span class="c1"># selects the first scene found</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dask_data</span>  <span class="c1"># returns 5D TCZYX dask array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">xarray_dask_data</span>  <span class="c1"># returns 5D TCZYX xarray data array backed by dask array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns a Dimensions object</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">order</span>  <span class="c1"># returns string &quot;TCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># returns size of X dimension</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in TCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
 
-<span class="c1"># Read specified portion of dask array</span>
-<span class="n">lazy_s0t0</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
-<span class="n">s0t0</span> <span class="o">=</span> <span class="n">lazy_s0t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+<span class="c1"># Get the id of the current operating scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">current_scene</span>
 
-<span class="c1"># Or use normal numpy array slicing</span>
-<span class="n">lazy_data</span> <span class="o">=</span> <span class="n">imread_dask</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
-<span class="n">lazy_s0t0</span> <span class="o">=</span> <span class="n">lazy_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-<span class="n">s0t0</span> <span class="o">=</span> <span class="n">lazy_s0t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># Get a list valid scene ids</span>
+<span class="n">img</span><span class="o">.</span><span class="n">scenes</span>
+
+<span class="c1"># Change scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">set_scene</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Same operations on a different scene</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dask_data</span>  <span class="c1"># returns 5D TCZYX dask array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">xarray_dask_data</span>  <span class="c1"># returns 5D TCZYX xarray data array backed by dask array</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span>  <span class="c1"># returns a Dimensions object</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">order</span>  <span class="c1"># returns string &quot;TCZYX&quot;</span>
+<span class="n">img</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># returns size of X dimension</span>
+<span class="n">img</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># returns tuple of dimension sizes in TCZYX order</span>
+<span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
+
+<span class="c1"># Read a specified portion of dask array</span>
+<span class="n">lazy_t0</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get_image_dask_data</span><span class="p">(</span><span class="s2">&quot;CZYX&quot;</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># returns 4D CZYX dask array</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">lazy_t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>  <span class="c1"># returns 4D CZYX numpy array</span>
+
+<span class="c1"># Get a 5D TCZYX dask array</span>
+<span class="n">lazy_data</span> <span class="o">=</span> <span class="n">imread_dask</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>  <span class="c1"># optionally provide a scene id, default first</span>
+<span class="n">lazy_t0</span> <span class="o">=</span> <span class="n">lazy_data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">lazy_t0</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 </pre></div>
 </div>
-<div class="section" id="quick-start-notes">
-<h4>Quick Start Notes<a class="headerlink" href="#quick-start-notes" title="Permalink to this headline">¶</a></h4>
-<p>In short, if the word “dask” appears in the function or property name, the function
-utilizes delayed reading. If not, the requested image will be loaded immediately and
-the internal implementation may result in loading the entire image even if only a small
-chunk was requested. Currently, <code class="docutils literal notranslate"><span class="pre">AICSImage.data</span></code> and <code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_data</span></code> load
-and cache the entire image in memory before performing their operation.
-<code class="docutils literal notranslate"><span class="pre">AICSImage.dask_data</span></code> and <code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_dask_data</span></code> do not load any image data
-until the user calls <code class="docutils literal notranslate"><span class="pre">compute</span></code> on the <code class="docutils literal notranslate"><span class="pre">dask.Array</span></code> object and only the requested chunk
-will be loaded into memory instead of the entire image.</p>
+<div class="section" id="delayed-image-reading-notes">
+<h4>Delayed Image Reading Notes<a class="headerlink" href="#delayed-image-reading-notes" title="Permalink to this headline">¶</a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">.dask_data</span></code> and <code class="docutils literal notranslate"><span class="pre">.xarray_dask_data</span></code> properties and the <code class="docutils literal notranslate"><span class="pre">.get_image_dask_data</span></code>
+function will not load any piece of the image into memory until you specifically
+call <code class="docutils literal notranslate"><span class="pre">.compute</span></code> on the returned Dask array. In doing so, you will only then load the
+selected data in-memory.</p>
+</div>
+</div>
+<div class="section" id="remote-image-reading">
+<h3>Remote Image Reading<a class="headerlink" href="#remote-image-reading" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span>
+
+<span class="c1"># Get an AICSImage object</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;http://my-website.com/my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;s3://my-bucket/my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;gcs://my-bucket/my_file.tiff&quot;</span><span class="p">)</span>
+
+<span class="c1"># All other normal operations work just fine</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="metadata-reading">
@@ -386,9 +489,12 @@ will be loaded into memory instead of the entire image.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aicsimageio</span> <span class="kn">import</span> <span class="n">AICSImage</span>
 
 <span class="c1"># Get an AICSImage object</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">AICSImage</span><span class="p">(</span><span class="s2">&quot;my_file.tiff&quot;</span><span class="p">)</span>  <span class="c1"># selects the first scene found</span>
 <span class="n">img</span><span class="o">.</span><span class="n">metadata</span>  <span class="c1"># returns the metadata object for this image type</span>
-<span class="n">img</span><span class="o">.</span><span class="n">get_channel_names</span><span class="p">()</span>  <span class="c1"># returns a list of string channel names found in the metadata</span>
+<span class="n">img</span><span class="o">.</span><span class="n">channel_names</span>  <span class="c1"># returns a list of string channel names found in the metadata</span>
+<span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_size</span><span class="o">.</span><span class="n">Z</span>  <span class="c1"># returns the Z dimension pixel size as found in the metadata</span>
+<span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_size</span><span class="o">.</span><span class="n">Y</span>  <span class="c1"># returns the Y dimension pixel size as found in the metadata</span>
+<span class="n">img</span><span class="o">.</span><span class="n">physical_pixel_size</span><span class="o">.</span><span class="n">X</span>  <span class="c1"># returns the X dimension pixel size as found in the metadata</span>
 </pre></div>
 </div>
 </div>
@@ -396,11 +502,21 @@ will be loaded into memory instead of the entire image.</p>
 <div class="section" id="performance-considerations">
 <h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li><p><strong>If your image fits in memory:</strong> use <code class="docutils literal notranslate"><span class="pre">AICSImage.data</span></code>, <code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_data</span></code>,
-or <code class="docutils literal notranslate"><span class="pre">Reader</span></code> equivalents.</p></li>
+<li><p><strong>If your image fits in memory:</strong> use <code class="docutils literal notranslate"><span class="pre">AICSImage.data</span></code>, <code class="docutils literal notranslate"><span class="pre">AICSImage.xarray_data</span></code>,
+<code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_data</span></code>, or <code class="docutils literal notranslate"><span class="pre">Reader</span></code> equivalents.</p></li>
 <li><p><strong>If your image is too large to fit in memory:</strong> use <code class="docutils literal notranslate"><span class="pre">AICSImage.dask_data</span></code>,
-<code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_dask_data</span></code>, or <code class="docutils literal notranslate"><span class="pre">Reader</span></code> equivalents.</p></li>
+<code class="docutils literal notranslate"><span class="pre">AICSImage.xarray_dask_data</span></code>, <code class="docutils literal notranslate"><span class="pre">AICSImage.get_image_dask_data</span></code>, or <code class="docutils literal notranslate"><span class="pre">Reader</span></code> equivalents.</p></li>
+<li><p><strong>If your image does not support native chunk reading:</strong> it may not be best to read
+chunks from a remote source. While possible, the format of the image matters a lot for
+chunked read performance.</p></li>
 </ul>
+</div>
+<div class="section" id="benchmarks">
+<h2>Benchmarks<a class="headerlink" href="#benchmarks" title="Permalink to this headline">¶</a></h2>
+<p>AICSImageIO is benchmarked using <a class="reference external" href="https://asv.readthedocs.io/en/stable/">asv</a>.
+You can find the benchmark results for every commit to <code class="docutils literal notranslate"><span class="pre">main</span></code> starting at the 4.0
+release on our
+<a class="reference external" href="https://AllenCellModeling.github.io/aicsimageio/_benchmarks/index.html">benchmarks page</a>.</p>
 </div>
 <div class="section" id="napari-interactive-viewer">
 <h2>Napari Interactive Viewer<a class="headerlink" href="#napari-interactive-viewer" title="Permalink to this headline">¶</a></h2>
@@ -412,25 +528,11 @@ tends to interact with.</p>
 that allows use of all the functionality described in this library, but in the <code class="docutils literal notranslate"><span class="pre">napari</span></code>
 default viewer itself.</p>
 </div>
-<div class="section" id="notes">
-<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p>Image <code class="docutils literal notranslate"><span class="pre">data</span></code> and <code class="docutils literal notranslate"><span class="pre">dask_data</span></code> are always returned as six dimensional in dimension
-order <code class="docutils literal notranslate"><span class="pre">STCZYX</span></code> or <code class="docutils literal notranslate"><span class="pre">Scene</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span></code>, <code class="docutils literal notranslate"><span class="pre">Channel</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>, and <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p></li>
-<li><p>Each file format may use a different metadata parser it is dependent on the reader’s
-implementation.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code> object will only pull the <code class="docutils literal notranslate"><span class="pre">Scene</span></code>, <code class="docutils literal notranslate"><span class="pre">Time</span></code>, <code class="docutils literal notranslate"><span class="pre">Channel</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span></code>, <code class="docutils literal notranslate"><span class="pre">X</span></code>
-dimensions from the reader.
-If your file has dimensions outside of those, use the base reader classes <code class="docutils literal notranslate"><span class="pre">CziReader</span></code>,
-<code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code>, <code class="docutils literal notranslate"><span class="pre">TiffReader</span></code>, or <code class="docutils literal notranslate"><span class="pre">DefaultReader</span></code>.</p></li>
-<li><p>We make some choices for the user based off the image data during <code class="docutils literal notranslate"><span class="pre">img.view_napari</span></code>.
-If you don’t want this behavior, simply pass the <code class="docutils literal notranslate"><span class="pre">img.dask_data</span></code> into
-<code class="docutils literal notranslate"><span class="pre">napari.view_image</span></code> instead.</p></li>
-</ul>
-</div>
 <div class="section" id="development">
 <h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
-<p>See <a class="reference external" href="CONTRIBUTING.md">CONTRIBUTING.md</a> for information related to developing the code.</p>
+<p>See our
+<a class="reference external" href="https://allencellmodeling.github.io/aicsimageio/developer_resources">developer resources</a>
+for information related to developing the code.</p>
 <p><em>Free software: BSD-3-Clause</em></p>
 </div>
 </div>
@@ -453,7 +555,7 @@ If you don’t want this behavior, simply pass the <code class="docutils literal
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2020, Allen Institute for Cell Science.
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
 
     </p>
   </div>

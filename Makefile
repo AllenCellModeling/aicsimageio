@@ -34,10 +34,10 @@ clean:  ## clean all build, python, and testing files
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
-	find . -name '*.egg' -exec rm -f {} +
-	find . -name '*.pyc' -exec rm -f {} +
-	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
+	find . -name '*.egg' -exec rm -fr {} +
+	find . -name '*.pyc' -exec rm -fr {} +
+	find . -name '*.pyo' -exec rm -fr {} +
+	find . -name '*~' -exec rm -fr {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 	rm -fr .tox/
 	rm -fr .coverage

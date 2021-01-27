@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
 import dask.array as da
@@ -12,6 +13,7 @@ from fsspec.spec import AbstractFileSystem
 from .. import constants, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
+from ..utils import io_utils
 
 ###############################################################################
 
@@ -26,7 +28,7 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
         """
         The per-Reader implementation used to validate that an image is supported or not
         by the Reader itself.
@@ -37,6 +39,8 @@ class Reader(ABC):
             The file system to used for reading.
         path: str
             The path to the file to read.
+        kwargs: Any
+            Any kwargs used for reading and validation of the file.
 
         Returns
         -------
@@ -46,7 +50,7 @@ class Reader(ABC):
         pass
 
     @classmethod
-    def is_supported_image(cls, image: types.ImageLike) -> bool:
+    def is_supported_image(cls, image: types.ImageLike, **kwargs) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 
@@ -54,6 +58,8 @@ class Reader(ABC):
         ----------
         image: types.ImageLike
             The filepath or array to validate as a supported type.
+        kwargs: Any
+            Any kwargs used for reading and validation of the file.
 
         Returns
         -------
@@ -65,7 +71,21 @@ class Reader(ABC):
         ------
         TypeError: Invalid type provided to image parameter.
         """
-        pass
+        # Check path
+        if isinstance(image, (str, Path)):
+            # Expand details of provided image
+            fs, path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+
+            return cls._is_supported_image(fs, path, **kwargs)
+
+        # Special cases
+        if isinstance(image, (np.ndarray, da.core.Array)):
+            return cls._is_this_type(image, **kwargs)
+
+        # Raise because none of the above returned
+        raise TypeError(
+            f"Reader only accepts types: {types.ImageLike}. Received: '{type(image)}'."
+        )
 
     def __init__(self, image: types.ImageLike, **kwargs):
         """
@@ -526,7 +546,8 @@ class Reader(ABC):
 
     def __str__(self):
         return (
-            f"<{self.__class__.__name__} [In-Memory: {self._xarray_data is not None}]>"
+            f"<{self.__class__.__name__} "
+            f"[Image-is-in-Memory: {self._xarray_data is not None}]>"
         )
 
     def __repr__(self):

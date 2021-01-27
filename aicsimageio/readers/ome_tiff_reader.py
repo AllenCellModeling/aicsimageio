@@ -41,7 +41,7 @@ class OmeTiffReader(TiffReader):
 
     @staticmethod
     def _is_supported_image(
-        fs: AbstractFileSystem, path: str, clean_metadata: bool = True
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
@@ -89,7 +89,6 @@ class OmeTiffReader(TiffReader):
         """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        self.extension = ".".join(self.path.split(".")[1:])
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
@@ -98,7 +97,7 @@ class OmeTiffReader(TiffReader):
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path, clean_metadata):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.extension
+                self.__class__.__name__, self.path
             )
 
     @property
@@ -148,8 +147,11 @@ class OmeTiffReader(TiffReader):
         coords = {}
 
         # Channels
+        # Channel name isn't required by OME spec, so try to use it but
+        # roll back to ID if not found
         coords[DimensionNames.Channel] = [
-            channel.name for channel in scene_meta.pixels.channels
+            channel.name if channel.name is not None else channel.id
+            for channel in scene_meta.pixels.channels
         ]
 
         # Time

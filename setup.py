@@ -10,11 +10,10 @@ with open("README.md") as readme_file:
 
 requirements = [
     "aicspylibczi~=2.7.5",
-    "dask[array]~=2.9.0",
+    "dask[array]>=2021.1.0",
     "fsspec~=0.8.4",
-    "imagecodecs~=2020.5.30",
+    "imagecodecs>=2020.5.30",
     "imageio[ffmpeg]~=2.9.0",
-    "lxml~=4.5.2",
     "numpy~=1.16",
     "ome-types~=0.2.3",
     "readlif~=0.3.1",
@@ -81,6 +80,7 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "

@@ -1,19 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pytest
+from urllib.error import HTTPError
 
+import numpy as np
+import pytest
 from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader
-import numpy as np
-from urllib.error import HTTPError
 from xmlschema.validators import (
     XMLSchemaChildrenValidationError,
     XMLSchemaValidationError,
 )
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
-from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read_checks
+from ..image_container_test_utils import (
+    run_image_read_checks,
+    run_multi_scene_image_read_checks,
+)
 
 
 @pytest.mark.parametrize(
@@ -48,6 +51,19 @@ from .reader_test_utils import run_image_read_checks, run_multi_scene_image_read
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             [f"C:{i}" for i in range(10)],  # This is the actual metadata
+            (1.0, 1.0, 1.0),
+        ),
+        (
+            # This is actually an OME-TIFF file
+            # Shows we don't just work off of extensions
+            # But the content of the file
+            "s_1_t_1_c_2_z_1_RGB.tiff",
+            "Image:0",
+            ("Image:0",),
+            (1, 2, 1, 32, 32, 3),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
+            ["Channel:0:0", "Channel:0:1"],
             (1.0, 1.0, 1.0),
         ),
         (
@@ -142,7 +158,7 @@ def test_ome_tiff_reader(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -165,36 +181,6 @@ def test_ome_tiff_reader(
     "expected_channel_names, "
     "expected_physical_pixel_sizes",
     [
-        (
-            "pipeline-4.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 4, 65, 600, 900),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Bright_2", "EGFP", "CMDRP", "H3342"],
-            (0.29, 0.10833333333333332, 0.10833333333333332),
-        ),
-        (
-            "3d-cell-viewer.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 9, 74, 1024, 1024),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [
-                "DRAQ5",
-                "EGFP",
-                "Hoechst 33258",
-                "TL Brightfield",
-                "SEG_STRUCT",
-                "SEG_Memb",
-                "SEG_DNA",
-                "CON_Memb",
-                "CON_DNA",
-            ],
-            (0.29, 0.065, 0.065),
-        ),
         (
             "pre-variance-cfe.ome.tiff",
             "Image:0",
@@ -269,7 +255,7 @@ def test_ome_tiff_reader_large_files(
 
     # Run checks
     run_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -319,7 +305,7 @@ def test_multi_scene_ome_tiff_reader(
 
     # Run checks
     run_multi_scene_image_read_checks(
-        ReaderClass=OmeTiffReader,
+        ImageContainer=OmeTiffReader,
         uri=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
@@ -327,6 +313,85 @@ def test_multi_scene_ome_tiff_reader(
         second_scene_id=second_scene_id,
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.uint16,
+    )
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "expected_scenes, "
+    "expected_shape, "
+    "expected_dtype, "
+    "expected_dims_order, "
+    "expected_channel_names, "
+    "expected_physical_pixel_sizes",
+    [
+        # TODO:
+        # Select a different level besides level 0
+        # TiffReader / OmeTiffReader defaults to reading level 0
+        (
+            "variable_scene_shape_first_scene_pyramid.ome.tiff",
+            "Image:0",
+            ("Image:0", "Image:1"),
+            (1, 3, 1, 6184, 7712),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["EGFP", "mCher", "PGC"],
+            (1.0, 0.9082107048835328, 0.9082107048835328),
+        ),
+        # TODO:
+        # Handle known ome-types multi-scene pyramid bug
+        # ome-types incorrectly assumes that the images should be
+        # Image:0 and Image:1
+        # and when looking up channel names based off of those image ids
+        # the incorrect channels are retrived
+        # For this particular file the correct Image id should be
+        # Image:0 and Image:4
+        # Because in OME metadata spec the resolutions / levels are stored
+        # as their own "Image" elements
+        # And the actual channel name for the actual second scene
+        # and not second resolution, should be "Channel:4:0"
+        # and the physical pixel sizes should be different between the two scenes
+        #
+        # Tracking here:
+        # https://github.com/AllenCellModeling/aicsimageio/issues/140
+        (
+            "variable_scene_shape_first_scene_pyramid.ome.tiff",
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 1, 1, 2030, 422),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:1:0"],
+            (1.0, 0.9082107048835328, 0.9082107048835328),
+        ),
+    ],
+)
+def test_multi_resolution_ome_tiff_reader(
+    filename,
+    set_scene,
+    expected_scenes,
+    expected_shape,
+    expected_dtype,
+    expected_dims_order,
+    expected_channel_names,
+    expected_physical_pixel_sizes,
+):
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_image_read_checks(
+        ImageContainer=OmeTiffReader,
+        uri=uri,
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=set_scene,
+        expected_shape=expected_shape,
+        expected_dtype=expected_dtype,
+        expected_dims_order=expected_dims_order,
+        expected_channel_names=expected_channel_names,
+        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
     )
 
 

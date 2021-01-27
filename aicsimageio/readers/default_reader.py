@@ -62,7 +62,7 @@ class DefaultReader(Reader):
         return extension, mode
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
         # Get extension and mode for reading the file
         extension, mode = DefaultReader._get_extension_and_mode(path)
 
@@ -108,7 +108,7 @@ class DefaultReader(Reader):
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.extension
+                self.__class__.__name__, self.path
             )
 
     @staticmethod

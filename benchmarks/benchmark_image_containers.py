@@ -4,7 +4,7 @@
 import random
 from pathlib import Path
 
-from aicsimageio import readers
+from aicsimageio import AICSImage, readers
 from aicsimageio.dimensions import DimensionNames
 
 ###############################################################################
@@ -18,41 +18,41 @@ LOCAL_RESOURCES_DIR = (
 ###############################################################################
 
 
-class _ReaderMemorySuite:
+class _ImageContainerMemorySuite:
     def peakmem_init(self, img_path):
         """
-        Benchmark how much memory is used for just the initialized reader.
+        Benchmark how much memory is used for just the initialized image container.
         """
-        return self.ReaderClass(img_path)
+        return self.ImageContainer(img_path)
 
     def peakmem_delayed_array(self, img_path):
         """
-        Benchmark how much memory is used for the reader once the
+        Benchmark how much memory is used for the image container once the
         delayed dask array is constructed.
 
         Serves as a comparison against the init.
         Metadata should account for most of the memory difference.
         """
-        r = self.ReaderClass(img_path)
+        r = self.ImageContainer(img_path)
         r.dask_data
         return r
 
     def peakmem_cached_array(self, img_path):
         """
-        Benchmark how much memory is used for the whole reader once the
+        Benchmark how much memory is used for the whole image container once the
         current scene is read into memory.
 
         Serves as a comparison against the delayed construct and as a sanity check.
         Estimate: `r.data.size * r.data.itemsize` + some metadata and object overhead.
         """
-        r = self.ReaderClass(img_path)
+        r = self.ImageContainer(img_path)
         r.data
         return r
 
 
-class _ReaderTimeSuite:
+class _ImageContainerTimeSuite:
 
-    # These default chunk dimensions don't exist on every reader
+    # These default chunk dimensions don't exist on every image container
     # so we have to define them here as well
     DEFAULT_CHUNK_DIMS = [
         DimensionNames.SpatialZ,
@@ -65,13 +65,13 @@ class _ReaderTimeSuite:
         """
         Benchmark how long it takes to validate a file and finish general setup.
         """
-        self.ReaderClass(img_path)
+        self.ImageContainer(img_path)
 
     def time_delayed_array_construct(self, img_path):
         """
         Benchmark how long it takes to construct the delayed dask array for a file.
         """
-        self.ReaderClass(img_path).dask_data
+        self.ImageContainer(img_path).dask_data
 
     def time_random_single_chunk_read(self, img_path):
         """
@@ -79,7 +79,7 @@ class _ReaderTimeSuite:
 
         I.E. "Pull just the Brightfield channel z-stack.
         """
-        r = self.ReaderClass(img_path)
+        r = self.ImageContainer(img_path)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
@@ -97,7 +97,7 @@ class _ReaderTimeSuite:
 
         I.E. "Pull the DNA and Nucleus channel z-stacks, for the middle 50% timepoints".
         """
-        r = self.ReaderClass(img_path)
+        r = self.ImageContainer(img_path)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
@@ -112,10 +112,10 @@ class _ReaderTimeSuite:
 
 
 ###############################################################################
-# Reader benchmarks
+# ImageContainer benchmarks
 
 
-class DefaultReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
+class DefaultReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
         # We can't check any of the ffmpeg formats because asv doesn't run
         # properly with spawned subprocesses and the ffmpeg formats all
@@ -133,24 +133,42 @@ class DefaultReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
 
     def setup(self, img_path):
         random.seed(42)
-        self.ReaderClass = readers.DefaultReader
+        self.ImageContainer = readers.DefaultReader
 
 
-class TiffReaderSuite(_ReaderTimeSuite, _ReaderMemorySuite):
+class TiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
         sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
     ]
 
     def setup(self, img_path):
         random.seed(42)
-        self.ReaderClass = readers.TiffReader
+        self.ImageContainer = readers.TiffReader
 
 
-class OmeTiffReaderSuite(_ReaderTimeSuite):
+class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
         sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
     ]
 
     def setup(self, img_path):
         random.seed(42)
-        self.ReaderClass = readers.OmeTiffReader
+        self.ImageContainer = readers.OmeTiffReader
+
+
+class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
+    # This suite utilizes the same suite that the base readers do.
+    # In all cases, the time or peak memory used by AICSImage should
+    # be minimal additional overhead from the base reader.
+
+    params = list(
+        set(
+            DefaultReaderSuite.params[0]
+            + TiffReaderSuite.params[0]
+            + OmeTiffReaderSuite.params[0]
+        )
+    )
+
+    def setup(self, img_path):
+        random.seed(42)
+        self.ImageContainer = AICSImage

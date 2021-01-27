@@ -29,7 +29,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffReader(Reader):
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):
@@ -60,7 +60,6 @@ class TiffReader(Reader):
         """
         # Expand details of provided image
         self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        self.extension = self.path.split(".")[-1]
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
@@ -68,7 +67,7 @@ class TiffReader(Reader):
         # Enforce valid image
         if not self._is_supported_image(self.fs, self.path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.extension
+                self.__class__.__name__, self.path
             )
 
     @property
@@ -113,7 +112,9 @@ class TiffReader(Reader):
         """
         with fs.open(path) as open_resource:
             return da.from_zarr(
-                imread(open_resource, aszarr=True, series=scene, chunkmode="page")
+                imread(
+                    open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
+                )
             )[indices].compute()
 
     def _get_tiff_tags(self) -> TiffTags:
@@ -179,7 +180,7 @@ class TiffReader(Reader):
         # Use range for channel indices
         if DimensionNames.Channel in dims:
             coords[DimensionNames.Channel] = [
-                str(i) for i in range(shape[dims.index(DimensionNames.Channel)])
+                f"Channel:{i}" for i in range(shape[dims.index(DimensionNames.Channel)])
             ]
 
         return coords

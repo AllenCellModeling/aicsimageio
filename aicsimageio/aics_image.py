@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 from typing import Any, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
+import xarray as xr
 
-from . import types
-from .dimensions import Dimensions
+from . import dimensions, exceptions, readers, transforms, types
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
 
@@ -20,14 +21,45 @@ class AICSImage:
     # Example:
     # if TiffReader was placed before OmeTiffReader,
     # we would never hit the OmeTiffReader
-    # SUPPORTED_READERS = [
-    #     ArrayLikeReader,
-    #     CziReader,
-    #     LifReader,
-    #     OmeTiffReader,
-    #     TiffReader,
-    #     DefaultReader,
-    # ]
+    SUPPORTED_READERS = (
+        # readers.ArrayLikeReader,
+        # readers.CziReader,
+        # readers.LifReader,
+        readers.OmeTiffReader,
+        readers.TiffReader,
+        readers.DefaultReader,
+    )
+
+    @staticmethod
+    def determine_reader(image: types.ImageLike, **kwargs) -> Reader:
+        """
+        Cheaply check to see if a given file is a recognized type and return the
+        appropriate reader for the image.
+
+        Returns
+        -------
+        ReaderClass: Reader
+            The reader that supports the provided image.
+        kwargs: Any
+            Any kwargs used for reading and validation of the file.
+
+        Raises
+        ------
+        exceptions.UnsupportedFileFormatError
+            No reader could be found that supports the provided image.
+        """
+        for ReaderClass in AICSImage.SUPPORTED_READERS:
+            if ReaderClass.is_supported_image(image, **kwargs):
+                return ReaderClass
+
+        # Construct non-URI image "paths"
+        # numpy, dask, etc.
+        if isinstance(image, (str, Path)):
+            path = str(image)
+        else:
+            path = type(image)
+
+        raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
     def __init__(
         self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs
@@ -41,7 +73,7 @@ class AICSImage:
         Parameters
         ----------
         image: types.ImageLike
-            A string, Path, fsspec based file, or, numpy or dask array, to read.
+            A string, Path, fsspec supported URI, or arraylike to read.
         known_dims: Optional[str]
             Optional string with the known dimension order. If None, the reader will
             attempt to parse dim order.
@@ -57,7 +89,7 @@ class AICSImage:
         ... zstack_t8 = img.get_image_data("ZYX", T=8, C=0)
 
         Initialize an image, construct a delayed dask array for certain slices, then
-        read only that data.
+        read only the specified chunk of data.
 
         >>> img = AICSImage("my_file.czi")
         ... zstack_t8 = img.get_image_dask_data("ZYX", T=8, C=0)
@@ -86,25 +118,36 @@ class AICSImage:
         -----
         Constructor for AICSImage class intended for providing a unified interface for
         dealing with microscopy images. To extend support to a new reader simply add a
-        new reader child class of Reader ([readers/reader.py]) and add the class to
+        new reader child class of Reader ([readers/reader.py]) and add the class to the
         SUPPORTED_READERS variable.
         """
-        pass
+        # Check known dims
+        if known_dims is not None:
+            if not all(
+                [
+                    d in dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES
+                    for d in known_dims
+                ]
+            ):
+                raise exceptions.InvalidDimensionOrderingError(
+                    f"The provided dimension string to the 'known_dims' argument "
+                    f"includes dimensions that AICSImage does not support. "
+                    f"Received: '{known_dims}'. "
+                    f"Supported dimensions: "
+                    f"{dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES}."
+                )
 
-    @staticmethod
-    def determine_reader(image: types.ImageLike) -> Reader:
-        """
-        Returns
-        -------
-        reader: Reader
-            Cheaply check to see if a given file is a recognized type and return the
-            appropriate reader for the file.
+        # Hold onto known dims until data is requested
+        self._known_dims = known_dims
 
-        Raises
-        ------
-        TypeError: Unsupported file format.
-        """
-        pass
+        # Determine reader class and create dask delayed array
+        ReaderClass = self.determine_reader(image=image, **kwargs)
+        self._reader = ReaderClass(image, **kwargs)
+
+        # Lazy load data from reader and reformat to standard dimensions
+        self._xarray_dask_data = None
+        self._xarray_data = None
+        self._dims = None
 
     @property
     def reader(self) -> Reader:
@@ -116,19 +159,19 @@ class AICSImage:
             The intent is that if the AICSImage class doesn't provide a raw enough
             interface then the base class can be used directly.
         """
-        pass
+        return self._reader
 
     @property
-    def scenes(self) -> List[int]:
+    def scenes(self) -> Tuple[str]:
         """
         Returns
         -------
-        scenes: List[int]
-            A list of valid scene ids in the file.
+        scenes: Tuple[str]
+            A tuple of valid scene ids in the file.
 
         Notes
         -----
-        Scene IDs are not a range of integers.
+        Scene IDs are strings - not a range of integers.
 
         When iterating over scenes please use:
 
@@ -138,28 +181,129 @@ class AICSImage:
 
         >>> for i in range(len(image.scenes))
         """
-        pass
+        return self.reader.scenes
 
     @property
-    def current_scene(self) -> int:
+    def current_scene(self) -> str:
         """
         Returns
         -------
-        scene: int
+        scene: str
             The current operating scene.
         """
-        pass
+        return self.reader.current_scene
 
-    def set_scene(self, id: int):
+    @property
+    def current_scene_index(self) -> int:
+        """
+        Returns
+        -------
+        scene_index: int
+            The current operating scene index in the file.
+        """
+        return self.scenes.index(self.current_scene)
+
+    def set_scene(self, scene_id: str):
         """
         Set the operating scene.
 
         Parameters
         ----------
-        id: int
+        scene_id: str
             The scene id to set as the operating scene.
+
+        Raises
+        ------
+        IndexError: the provided scene id is not found in the available scene id list
         """
-        pass
+        # Only need to run when the scene id is different from current scene
+        if scene_id != self.reader.current_scene:
+
+            # Validate scene id
+            if scene_id not in self.scenes:
+                raise IndexError(
+                    f"Scene id: {scene_id} "
+                    f"is not present in available image scenes: {self.scenes}"
+                )
+
+            # Update current scene on the base Reader
+            # This clears the base Reader's cache
+            self.reader.set_scene(scene_id)
+
+            # Reset the data stored in the AICSImage object
+            self._xarray_dask_data = None
+            self._xarray_data = None
+            self._dims = None
+
+    def _transform_data_array_to_aics_image_standard(
+        self,
+        arr: xr.DataArray,
+    ) -> xr.DataArray:
+        # Determine if we include Samples dim or not
+        if dimensions.DimensionNames.Samples in arr.dims:
+            return_dims = dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES
+        else:
+            return_dims = dimensions.DEFAULT_DIMENSION_ORDER
+
+        # Pull the data with the appropriate dimensions
+        data = transforms.reshape_data(
+            data=arr.data,
+            given_dims=self._known_dims or self.reader.dims.order,
+            return_dims=return_dims,
+        )
+
+        # Pull coordinate planes
+        coords = {d: arr.coords[d] for d in arr.coords if d in return_dims}
+
+        # Add channel coordinate plane because it is required in AICSImage
+        if dimensions.DimensionNames.Channel not in coords:
+            coords[dimensions.DimensionNames.Channel] = ["Channel:0"]
+
+        return xr.DataArray(
+            data,
+            dims=tuple([d for d in return_dims]),
+            coords=coords,
+            attrs=arr.attrs,
+        )
+
+    @property
+    def xarray_dask_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_dask_data: xr.DataArray
+            The delayed image and metadata as an annotated data array.
+        """
+        if self._xarray_dask_data is None:
+            self._xarray_dask_data = self._transform_data_array_to_aics_image_standard(
+                self.reader.xarray_dask_data
+            )
+
+        return self._xarray_dask_data
+
+    @property
+    def xarray_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_data: xr.DataArray
+            The fully read image and metadata as an annotated data array.
+        """
+        if self._xarray_data is None:
+            self._xarray_data = self._transform_data_array_to_aics_image_standard(
+                self.reader.xarray_data
+            )
+
+            # Remake the delayed xarray dataarray object using a rechunked dask array
+            # from the just retrieved in-memory xarray dataarray
+            self._xarray_dask_data = xr.DataArray(
+                da.from_array(self._xarray_data.data),
+                dims=self._xarray_data.dims,
+                coords=self._xarray_data.coords,
+                attrs=self._xarray_data.attrs,
+            )
+
+        return self._xarray_data
 
     @property
     def dask_data(self) -> da.Array:
@@ -167,9 +311,9 @@ class AICSImage:
         Returns
         -------
         dask_data: da.Array
-            The image as a dask array with dimension ordering "TCZYX".
+            The image as a dask array with standard dimension ordering.
         """
-        pass
+        return self.xarray_dask_data.data
 
     @property
     def data(self) -> np.ndarray:
@@ -177,19 +321,19 @@ class AICSImage:
         Returns
         -------
         data: np.ndarray
-            The image as a numpy array with dimension ordering "TCZYX".
+            The image as a numpy array with standard dimension ordering.
         """
-        pass
+        return self.xarray_data.data
 
     @property
     def dtype(self) -> np.dtype:
         """
         Returns
         -------
-        dtype: np.ndtype
+        dtype: np.dtype
             Data-type of the image array's elements.
         """
-        pass
+        return self.xarray_dask_data.dtype
 
     @property
     def shape(self) -> Tuple[int]:
@@ -199,17 +343,22 @@ class AICSImage:
         shape: Tuple[int]
             Tuple of the image array's dimensions.
         """
-        pass
+        return self.xarray_dask_data.shape
 
     @property
-    def dims(self) -> Dimensions:
+    def dims(self) -> dimensions.Dimensions:
         """
         Returns
         -------
-        dims: Dimensions
+        dims: dimensions.Dimensions
             Object with the paired dimension names and their sizes.
         """
-        pass
+        if self._dims is None:
+            self._dims = dimensions.Dimensions(
+                dims=self.xarray_dask_data.dims, shape=self.shape
+            )
+
+        return self._dims
 
     def get_image_dask_data(
         self, dimension_order_out: Optional[str] = None, **kwargs
@@ -221,7 +370,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: "TCZYX"
+            Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -276,7 +425,17 @@ class AICSImage:
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        pass
+        # If no out orientation, simply return current data as dask array
+        if dimension_order_out is None:
+            return self.dask_data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.dask_data,
+            given_dims=self.dims.order,
+            return_dims=dimension_order_out,
+            **kwargs,
+        )
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs
@@ -288,7 +447,7 @@ class AICSImage:
         ----------
         dimension_order_out: Optional[str]
             A string containing the dimension ordering desired for the returned ndarray.
-            Default: "TCZYX"
+            Default: dimensions.DEFAULT_DIMENSION_ORDER (with or without Samples)
 
         kwargs: Any
             * C=1: specifies Channel 1
@@ -344,7 +503,17 @@ class AICSImage:
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
-        pass
+        # If no out orientation, simply return current data as dask array
+        if dimension_order_out is None:
+            return self.data
+
+        # Transform and return
+        return transforms.reshape_data(
+            data=self.data,
+            given_dims=self.dims.order,
+            return_dims=dimension_order_out,
+            **kwargs,
+        )
 
     @property
     def metadata(self) -> Any:
@@ -356,7 +525,7 @@ class AICSImage:
             For more information, see the specific image format reader you are using
             for details on its metadata property.
         """
-        pass
+        return self.reader.metadata
 
     @property
     def channel_names(self) -> List[str]:
@@ -366,61 +535,135 @@ class AICSImage:
         channel_names: List[str]
             Using available metadata, the list of strings representing channel names.
         """
-        pass
+        # Unlike the base readers, the AICSImage guarantees a Channel dim
+        return list(self.xarray_dask_data[dimensions.DimensionNames.Channel].values)
 
     @property
-    def physical_pixel_size(self) -> PhysicalPixelSizes:
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
         """
         Returns
         -------
         sizes: PhysicalPixelSizes
             Using available metadata, the floats representing physical pixel sizes for
             dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
         """
-        pass
+        return self.reader.physical_pixel_sizes
 
     def __str__(self) -> str:
-        return f"<AICSImage [{type(self.reader).__name__} -- {self.shape}]>"
+        return (
+            f"<AICSImage ["
+            f"Reader: {type(self.reader).__name__}, "
+            f"Image-is-in-Memory: {self._xarray_data is not None}"
+            f"]>"
+        )
 
     def __repr__(self) -> str:
         return str(self)
 
 
-def imread_dask(
+def _construct_img(
+    image: types.ImageLike, scene_id: Optional[str] = None, **kwargs
+) -> AICSImage:
+    # Construct image
+    img = AICSImage(image, **kwargs)
+
+    # Select scene
+    if scene_id is not None:
+        img.set_scene(scene_id)
+
+    return img
+
+
+def imread_xarray_dask(
     image: types.ImageLike,
-    scene: Optional[int] = None,
+    scene_id: Optional[str] = None,
     **kwargs,
-) -> da.Array:
+) -> xr.DataArray:
     """
-    Read image as a dask array.
+    Read image as a delayed xarray DataArray.
 
     Parameters
     ----------
     image: types.ImageLike
-        A filepath, in memory numpy array, or preconfigured dask array.
-    scene: Optional[int]
-        A scene id to create a dask array for.
-        Default: first
+        A string, Path, fsspec supported URI, or arraylike to read.
+    scene_id: Optional[str]
+        An optional scene id to create the DataArray with.
+        Default: None (First Scene)
     kwargs: Any
-        Extra keyword arguments that will be passed down to the reader subclass.
+        Extra keyword arguments to be passed down to the AICSImage and Reader subclass.
+
+    Returns
+    -------
+    data: xr.DataArray
+        The image read, scene selected, and returned as an AICS standard shaped delayed
+        xarray DataArray.
+    """
+    return _construct_img(image, scene_id, **kwargs).xarray_dask_data
+
+
+def imread_dask(
+    image: types.ImageLike,
+    scene_id: Optional[str] = None,
+    **kwargs,
+) -> da.Array:
+    """
+    Read image as a delayed dask array.
+
+    Parameters
+    ----------
+    image: types.ImageLike
+        A string, Path, fsspec supported URI, or arraylike to read.
+    scene_id: Optional[str]
+        An optional scene id to create the dask array with.
+        Default: None (First Scene)
+    kwargs: Any
+        Extra keyword arguments to be passed down to the AICSImage and Reader subclass.
 
     Returns
     -------
     data: da.core.Array
-        The image read and configured as a dask array.
+        The image read, scene selected, and returned as an AICS standard shaped delayed
+        dask array.
     """
-    img = AICSImage(image, **kwargs)
 
-    # Select scene
-    if scene is not None:
-        img.set_scene(scene)
+    return _construct_img(image, scene_id, **kwargs).dask_data
 
-    return img.dask_data
+
+def imread_xarray(
+    image: types.ImageLike,
+    scene_id: Optional[int] = None,
+    **kwargs,
+) -> xr.DataArray:
+    """
+    Read image as an in-memory xarray DataArray.
+
+    Parameters
+    ----------
+    image: types.ImageLike
+        A string, Path, fsspec supported URI, or arraylike to read.
+    scene_id: Optional[str]
+        An optional scene id to create the DataArray with.
+        Default: None (First Scene)
+    kwargs: Any
+        Extra keyword arguments to be passed down to the AICSImage and Reader subclass.
+
+    Returns
+    -------
+    data: xr.DataArray
+        The image read, scene selected, and returned as an AICS standard shaped
+        in-memory DataArray.
+    """
+    return _construct_img(image, scene_id, **kwargs).xarray_data
 
 
 def imread(
     image: types.ImageLike,
-    scene: Optional[int] = None,
+    scene_id: Optional[int] = None,
     **kwargs,
 ) -> np.ndarray:
     """
@@ -429,50 +672,17 @@ def imread(
     Parameters
     ----------
     image: types.ImageLike
-        A filepath, in memory numpy array, or preconfigured dask array.
-    scene: Optional[int]
-        A scene id to read the image data for.
-        Default: first
+        A string, Path, fsspec supported URI, or arraylike to read.
+    scene_id: Optional[str]
+        An optional scene id to create the numpy array with.
+        Default: None (First Scene)
     kwargs: Any
-        Extra keyword arguments that will be passed down to the reader subclass.
+        Extra keyword arguments to be passed down to the AICSImage and Reader subclass.
 
     Returns
     -------
     data: np.ndarray
-        The image read and configured as a numpy ndarray.
+        The image read, scene selected, and returned as an AICS standard shaped
+        np.ndarray.
     """
-    img = AICSImage(image, **kwargs)
-
-    # Select scene
-    if scene is not None:
-        img.set_scene(scene)
-
-    return img.data
-
-
-def imwrite(
-    data: types.ArrayLike,
-    filepath: types.PathLike,
-    dims: Optional[str] = None,
-    **kwargs,
-):
-    """
-    Save an array to an image file.
-
-    Parameters
-    ----------
-    data: types.ArrayLike
-        The numpy or dask array to save to a file.
-    filepath: types.FileLike
-        The path to save the image and metadata to.
-        The image writer is determined based off of the file extension included in
-        this path.
-    dims: str
-        Optional string with the dimension order.
-        If None, we will guess the order based off the selected image writer.
-    kwargs: Any
-        Extra keyword arguments that will be passed down to the writer subclass.
-    """
-    return AICSImage(data, known_dims=dims).save(
-        filepath=filepath, save_dims=dims, **kwargs
-    )
+    return _construct_img(image, scene_id, **kwargs).data

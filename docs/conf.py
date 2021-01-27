@@ -21,10 +21,11 @@
 import os
 import sys
 
-import aicsimageio
 import sphinx_rtd_theme
 
-sys.path.insert(0, os.path.abspath("../.."))
+import aicsimageio
+
+sys.path.insert(0, os.path.abspath(".."))
 
 
 # -- General configuration ---------------------------------------------
@@ -40,7 +41,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
-    "m2r",
+    "m2r2",
 ]
 
 # Control napoleon
@@ -68,9 +69,9 @@ source_suffix = {
 master_doc = "index"
 
 # General information about the project.
-project = u"aicsimageio"
-copyright = u"2020, Allen Institute for Cell Science"
-author = u"Allen Institute for Cell Science"
+project = u"AICSImageIO"
+copyright = u"2021, Jackson Maxfield Brown, Allen Institute for Cell Science"
+author = u"Jackson Maxfield Brown, Allen Institute for Cell Science"
 
 # The version info for the project you"re documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -152,8 +153,8 @@ latex_documents = [
     (
         master_doc,
         "aicsimageio.tex",
-        u"aicsimageio Documentation",
-        u"Allen Institute for Cell Science",
+        u"AICSImageIO Documentation",
+        u"Jackson Maxfield Brown, Allen Institute for Cell Science",
         "manual",
     ),
 ]
@@ -163,7 +164,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "aicsimageio", u"aicsimageio Documentation", [author], 1)]
+man_pages = [(master_doc, "aicsimageio", u"AICSImageIO Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------
@@ -175,11 +176,12 @@ texinfo_documents = [
     (
         master_doc,
         "aicsimageio",
-        u"aicsimageio Documentation",
+        u"AICSImageIO Documentation",
         author,
         "aicsimageio",
-        "Delayed Image Reading, Metadata Conversion, and Image Writing for Microscopy "
-        "Images in Pure Python",
-        "Image Processing, Computational Biology",
+        (
+            "Image Reading, Metadata Conversion, and Image Writing for Microscopy "
+            "Images in Pure Python"
+        ),
     ),
 ]

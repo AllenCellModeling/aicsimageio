@@ -11,20 +11,23 @@ Python
 
 ## Features
 
-- Supports reading metadata and imaging data for:
-  - `CZI`
-  - `OME-TIFF`
-  - `TIFF`
-  - `LIF`
-  - Any additional format supported by [imageio](https://github.com/imageio/imageio)
-- Supports writing metadata and imaging data for:
-  - `OME-TIFF`
-- Supports reading from and writing to any
-  [fsspec](https://github.com/intake/filesystem_spec) supported file system:
-  _ Local paths (i.e. `my-file.png`)
-  _ HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
-  _ [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
-  _ [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`) \* See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
+-   Supports reading metadata and imaging data for:
+    -   `CZI`
+    -   `OME-TIFF`
+    -   `TIFF`
+    -   `LIF`
+    -   Any additional format supported by [imageio](https://github.com/imageio/imageio)
+-   Supports writing metadata and imaging data for:
+    -   `OME-TIFF`
+-   Supports reading from and writing to any
+    [fsspec](https://github.com/intake/filesystem_spec) supported file system:
+
+    -   Local paths (i.e. `my-file.png`)
+    -   HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
+    -   [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
+    -   [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
+
+    See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 
 ## Installation
 
@@ -75,6 +78,12 @@ img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
 data = imread("my_file.tiff")  # optionally provide a scene id, default first
 ```
 
+#### Full Image Reading Notes
+
+The `.data` and `.xarray_data` properties and the `.get_image_data` function will
+load the whole image into memory prior to returning the specified chunk (if using
+`.get_image_data`).
+
 ### Delayed Image Reading
 
 ```python
@@ -118,6 +127,13 @@ lazy_t0 = lazy_data[0, :]
 t0 = lazy_t0.compute()
 ```
 
+#### Delayed Image Reading Notes
+
+The `.dask_data` and `.xarray_dask_data` properties and the `.get_image_dask_data`
+function will not load any piece of the image into memory until you specifically
+call `.compute` on the returned Dask array. In doing so, you will only then load the
+selected data in-memory.
+
 ### Remote Image Reading
 
 ```python
@@ -145,30 +161,15 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
-#### Quickstart Notes
-
-In short, if the word "dask" appears in the function or property name, the function
-utilizes delayed reading. If not, the requested image will be loaded immediately and
-the internal implementation may result in loading the entire image even if only a small
-chunk was requested. Currently, `AICSImage.data`, `AICSImage.xarray_data`, and
-`AICSImage.get_image_data` load and cache the entire image in memory before performing
-their operation. `AICSImage.dask_data`, `AICSImage.xarray_dask_data`, and
-`AICSImage.get_image_dask_data` do not load any image data until the user calls
-`compute` on the `dask.Array` object and only the requested chunk will be loaded into
-memory instead of the entire image.
-
 ## Performance Considerations
 
-- **The quickest read operation will always be `.data` on a local file.** All other
-  operations come with _some_ minor overhead. We try to minimize this overhead wherever
-  possible.
-- **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
-  or `Reader` equivalents.
-- **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
-  `AICSImage.get_image_dask_data`, or `Reader` equivalents.
-- **If your image does not support native chunk reading:** it may not be best to read
-  chunks from a remote source. While possible, the format of the image matters a lot for
-  chunked read performance.
+-   **If your image fits in memory:** use `AICSImage.data`, `AICSImage.xarray_data`,
+    `AICSImage.get_image_data`, or `Reader` equivalents.
+-   **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+    `AICSImage.xarray_dask_data`, `AICSImage.get_image_dask_data`, or `Reader` equivalents.
+-   **If your image does not support native chunk reading:** it may not be best to read
+    chunks from a remote source. While possible, the format of the image matters a lot for
+    chunked read performance.
 
 ## Benchmarks
 
@@ -187,14 +188,6 @@ We have also released
 [napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
 that allows use of all the functionality described in this library, but in the `napari`
 default viewer itself.
-
-## Notes
-
-- Each file format may use a different metadata parser as it is dependent on the
-  format's reader class implementation.
-- The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
-  dimensions from the reader. If your file has dimensions outside of those, use the base
-  `Reader` classes.
 
 ## Development
 

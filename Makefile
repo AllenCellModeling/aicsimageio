@@ -1,4 +1,4 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help
+.PHONY: clean build gen-docs gen-docs-full docs prepare-release update-from-cookiecutter help
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
@@ -72,3 +72,6 @@ prepare-release: ## Checkout master, generate new section of changelog
 	git commit -m "Update changelog"
 	git reset --soft HEAD~1
 	git commit --amend  # This and the line above squash the "Update changelog" and bumpversion commits together
+
+update-from-cookiecutter: ## update this repo using latest cookiecutter-pypackage
+	cookiecutter gh:AllenCellModeling/cookiecutter-pypackage --config-file cookiecutter.yaml --no-input --overwrite-if-exists --output-dir ..

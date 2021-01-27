@@ -8,21 +8,6 @@ from setuptools import find_packages, setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-requirements = [
-    "aicspylibczi~=2.7.5",
-    "dask[array]>=2021.1.0",
-    "fsspec~=0.8.4",
-    "imagecodecs>=2020.5.30",
-    "imageio[ffmpeg]~=2.9.0",
-    "numpy~=1.16",
-    "ome-types~=0.2.3",
-    "readlif~=0.3.1",
-    "tifffile>=2021.1.14",
-    "toolz~=0.11.0",
-    "xarray~=0.16.1",
-    "zarr~=2.6.1",
-]
-
 setup_requirements = [
     "pytest-runner>=5.2",
 ]
@@ -45,32 +30,48 @@ dev_requirements = [
     *setup_requirements,
     *test_requirements,
     "asv>=0.4.2",
-    "bumpversion>=0.6.0",
+    "bump2version>=1.0.1",
     "coverage>=5.1",
     "gitchangelog>=3.0.4",
     "ipython>=7.15.0",
     "isort>=5.7.0",
-    "m2r>=0.2.1",
+    "m2r2>=0.2.7",
     "pytest-runner>=5.2",
-    "Sphinx>=2.0.0b1,<3",
-    "sphinx_rtd_theme>=0.4.3",
+    "Sphinx>=3.4.3",
+    "sphinx_rtd_theme>=0.5.1",
     "tox>=3.15.2",
     "twine>=3.1.1",
     "wheel>=0.34.2",
+]
+
+requirements = [
+    "aicspylibczi~=2.7.5",
+    "dask[array]>=2021.1.0",
+    "fsspec~=0.8.4",
+    "imagecodecs>=2020.5.30",
+    "imageio[ffmpeg]~=2.9.0",
+    "numpy~=1.16",
+    "ome-types~=0.2.3",
+    "readlif~=0.3.1",
+    "tifffile>=2021.1.14",
+    "toolz~=0.11.0",
+    "xarray~=0.16.1",
+    "zarr~=2.6.1",
 ]
 
 extra_requirements = {
     "setup": setup_requirements,
     "test": test_requirements,
     "dev": dev_requirements,
-    "all": [*requirements, *dev_requirements],
+    "all": [
+        *requirements,
+        *dev_requirements,
+    ],
 }
 
 setup(
-    author="Allen Institute for Cell Science",
-    author_email=(
-        "jmaxfieldbrown@gmail.com, jamies@alleninstitute.org, bowdenm@spu.edu"
-    ),
+    author="Jackson Maxfield Brown, Allen Institute for Cell Science",
+    author_email="jmaxfieldbrown@gmail.com, jamies@alleninstitute.org, bowdenm@spu.edu",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",

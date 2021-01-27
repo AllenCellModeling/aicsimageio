@@ -1,4 +1,4 @@
-Welcome to aicsimageio's documentation!
+Welcome to AICSImageIO's documentation!
 =======================================
 
 .. toctree::

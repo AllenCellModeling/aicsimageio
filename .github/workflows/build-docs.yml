@@ -54,10 +54,10 @@ jobs:
         gitchangelog
         make gen-docs-full
         touch docs/_build/html/.nojekyll
-    # - name: Publish Docs
-    #   uses: JamesIves/github-pages-deploy-action@releases/v3
-    #   with:
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #     BASE_BRANCH: main # The branch the action should deploy from.
-    #     BRANCH: gh-pages # The branch the action should deploy to.
-    #     FOLDER: docs/_build/html/ # The folder the action should deploy.
+    - name: Publish Docs
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BASE_BRANCH: main # The branch the action should deploy from.
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: docs/_build/html/ # The folder the action should deploy.

@@ -1,6 +1,87 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/add-aicsimage-obj  (`#185
+  <https://github.com/AllenCellModeling/aicsimageio/pull/185>`_)
+  [Jackson Maxfield Brown]
+- feature/optimize-tiff-reader-and-add-benchmarks  (`#183
+  <https://github.com/AllenCellModeling/aicsimageio/pull/183>`_)
+  [Jackson Maxfield Brown]
+- feature/ome-tiff-reader  (`#176
+  <https://github.com/AllenCellModeling/aicsimageio/pull/176>`_)
+  [Jackson Maxfield Brown]
+- feature/add-tiff-reader  (`#160
+  <https://github.com/AllenCellModeling/aicsimageio/pull/160>`_)
+  [Jackson Maxfield Brown]
+- feature/add-default-reader  (`#157
+  <https://github.com/AllenCellModeling/aicsimageio/pull/157>`_)
+  [Jackson Maxfield Brown]
+- feature/add-timeseries-writer  (`#137
+  <https://github.com/AllenCellModeling/aicsimageio/pull/137>`_)
+  [Jackson Maxfield Brown]
+- feature/add-rgb-writer  (`#134
+  <https://github.com/AllenCellModeling/aicsimageio/pull/134>`_)
+  [JacksonMaxfield]
+- feature/centralize-reader-tests  (`#135
+  <https://github.com/AllenCellModeling/aicsimageio/pull/135>`_)
+  [JacksonMaxfield]
+- feature/writer-base-class-proposal  (`#98
+  <https://github.com/AllenCellModeling/aicsimageio/pull/98>`_)
+  [JacksonMaxfield]
+- feature/deprecate-context-manager-cluster-spawning  (`#97
+  <https://github.com/AllenCellModeling/aicsimageio/pull/97>`_)
+  [JacksonMaxfield]
+- feature/deprecate-napari-functionality  (`#96
+  <https://github.com/AllenCellModeling/aicsimageio/pull/96>`_)
+  [JacksonMaxfield]
+
+Fix
+~~~
+- Fix benchmarks links and remove old files [JacksonMaxfield]
+- bugfix/adopt-samples-as-rgb-default  (`#165
+  <https://github.com/AllenCellModeling/aicsimageio/pull/165>`_)
+  [Jackson Maxfield Brown]
+- Fix guess tiff dims, lint, and format [JacksonMaxfield]
+
+Other
+~~~~~
+- Remove macOS11 and fix prepare-release [JacksonMaxfield]
+- Attach dev0 to all references of version number [JacksonMaxfield]
+- Configure dev_release bumpversion [JacksonMaxfield]
+- Turn on doc building [JacksonMaxfield]
+- Replace all references of master w/ main [JacksonMaxfield]
+- Do not push docs on main yet [JacksonMaxfield]
+- Second run of cookiecutter to ensure [JacksonMaxfield]
+- Updates from cookiecutter [JacksonMaxfield]
+- Force remove extra files [JacksonMaxfield]
+- admin/fix-deadlink-in-documentation [JacksonMaxfield]
+- admin/developer-documentation  (`#150
+  <https://github.com/AllenCellModeling/aicsimageio/pull/150>`_)
+  [Jackson Maxfield Brown, Josh Moore]
+- Upgrade dependency versions [JacksonMaxfield]
+- Working for small files [JacksonMaxfield]
+- admin/proposed-api  (`#145
+  <https://github.com/AllenCellModeling/aicsimageio/pull/145>`_)
+  [Jackson Maxfield Brown]
+- Remove everything [JacksonMaxfield]
+- Remove dims setting entirely [JacksonMaxfield]
+- Read dims, shape, and dtype from Tiff metadata in single shot
+  [JacksonMaxfield]
+- Change all self.dask_data.shape calls to self.shape in reader
+  subclasses [JacksonMaxfield]
+- Linting and formatting [JacksonMaxfield]
+- Readers API stabilization, verbs -> functions, nouns -> properties
+  [JacksonMaxfield]
+- admin/update-from-cookiecutter  (`#136
+  <https://github.com/AllenCellModeling/aicsimageio/pull/136>`_)
+  [JacksonMaxfield]
+
+
 v3.3.5 (2021-01-25)
 -------------------
 

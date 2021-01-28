@@ -50,6 +50,7 @@ Fix
 
 Other
 ~~~~~
+- Attach dev0 to all references of version number [JacksonMaxfield]
 - Configure dev_release bumpversion [JacksonMaxfield]
 - Turn on doc building [JacksonMaxfield]
 - Replace all references of master w/ main [JacksonMaxfield]

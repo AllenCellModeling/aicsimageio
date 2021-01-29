@@ -56,6 +56,7 @@ requirements = [
     "tifffile>=2021.1.14",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
+    "xmlschema",  # no pin because it's pulled in from OME types
     "zarr~=2.6.1",
 ]
 

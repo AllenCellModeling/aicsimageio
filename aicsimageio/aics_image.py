@@ -9,6 +9,7 @@ import numpy as np
 import xarray as xr
 
 from . import dimensions, exceptions, readers, transforms, types
+from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
 
@@ -257,7 +258,9 @@ class AICSImage:
 
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
-            coords[dimensions.DimensionNames.Channel] = ["Channel:0"]
+            coords[dimensions.DimensionNames.Channel] = [
+                metadata_utils.generate_ome_channel_id(0)
+            ]
 
         return xr.DataArray(
             data,

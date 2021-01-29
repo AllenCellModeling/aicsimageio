@@ -180,7 +180,8 @@ class TiffReader(Reader):
         # Use range for channel indices
         if DimensionNames.Channel in dims:
             coords[DimensionNames.Channel] = [
-                f"Channel:{i}" for i in range(shape[dims.index(DimensionNames.Channel)])
+                metadata_utils.generate_ome_channel_id(i)
+                for i in range(shape[dims.index(DimensionNames.Channel)])
             ]
 
         return coords

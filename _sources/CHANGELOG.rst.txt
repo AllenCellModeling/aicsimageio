@@ -50,6 +50,9 @@ Fix
 
 Other
 ~~~~~
+- admin/temp-bump-aicspylibczi  (`#194
+  <https://github.com/AllenCellModeling/aicsimageio/pull/194>`_)
+  [Jackson Maxfield Brown]
 - Remove macOS11 and fix prepare-release [JacksonMaxfield]
 - Attach dev0 to all references of version number [JacksonMaxfield]
 - Configure dev_release bumpversion [JacksonMaxfield]

@@ -11,6 +11,7 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile import TiffFile, TiffFileError, TiffTag
+from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -50,8 +51,20 @@ class OmeTiffReader(TiffReader):
                     xml = tiff.pages[0].description
                     return OmeTiffReader._get_ome(xml, clean_metadata)
 
-        # tifffile exception, tifffile exception, ome-types / etree exception
-        except (TiffFileError, TypeError, ET.ParseError):
+        # tifffile exceptions
+        except (TiffFileError, TypeError):
+            return False
+
+        # xml parse errors
+        except ET.ParseError as e:
+            log.debug("Failed to parse metadata for the provided file.")
+            log.debug(e)
+            return False
+
+        # invalid OME XMl
+        except XMLSchemaValidationError as e:
+            log.debug("XML Validation failed")
+            log.debug(e)
             return False
 
     def __init__(

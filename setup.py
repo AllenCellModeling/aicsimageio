@@ -45,7 +45,7 @@ dev_requirements = [
 ]
 
 requirements = [
-    "aicspylibczi~=2.7.5",
+    "aicspylibczi~=2.8.0",
     "dask[array]>=2021.1.0",
     "fsspec~=0.8.4",
     "imagecodecs>=2020.5.30",

@@ -57,13 +57,13 @@ class OmeTiffReader(TiffReader):
 
         # xml parse errors
         except ET.ParseError as e:
-            log.debug("Failed to parse metadata for the provided file.")
+            log.debug("Failed to parse XML for the provided file.")
             log.debug(e)
             return False
 
         # invalid OME XMl
         except XMLSchemaValidationError as e:
-            log.debug("XML Validation failed")
+            log.debug("OME XML validation failed")
             log.debug(e)
             return False
 

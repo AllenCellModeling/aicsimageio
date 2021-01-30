@@ -49,7 +49,17 @@ class OmeTiffReader(TiffReader):
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     xml = tiff.pages[0].description
-                    return OmeTiffReader._get_ome(xml, clean_metadata)
+                    ome = OmeTiffReader._get_ome(xml, clean_metadata)
+
+                    # Handle no images in metadata
+                    # this commonly means it is a "BinaryData" OME file
+                    # i.e. a non-main OME-TIFF from MicroManager or similar
+                    # in this case, because it's not the main file we want to just role
+                    # back to TiffReader
+                    if ome.binary_only:
+                        return False
+
+                    return True
 
         # tifffile exceptions
         except (TiffFileError, TypeError):

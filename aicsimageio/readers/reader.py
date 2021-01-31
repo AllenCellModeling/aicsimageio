@@ -80,7 +80,7 @@ class Reader(ABC):
 
         # Special cases
         if isinstance(image, (np.ndarray, da.core.Array)):
-            return cls._is_this_type(image, **kwargs)
+            return cls._is_supported_image(image, **kwargs)
 
         # Raise because none of the above returned
         raise TypeError(

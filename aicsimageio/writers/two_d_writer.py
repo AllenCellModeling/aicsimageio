@@ -107,7 +107,7 @@ class TwoDWriter(Writer):
         ):
             raise InvalidDimensionOrderingError(
                 f"The dim_order parameter only accepts dimensions: "
-                f"{TwoDWriter._PLANE_WITH_SAMPLES_DIMENSIONS} "
+                f"{TwoDWriter._PLANE_WITH_SAMPLES_DIMENSIONS}. "
                 f"Provided dim_order string: '{dim_order}'."
             )
 

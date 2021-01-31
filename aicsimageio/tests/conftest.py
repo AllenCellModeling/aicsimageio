@@ -3,6 +3,10 @@
 
 from pathlib import Path
 
+import dask.array as da
+import numpy as np
+import pytest
+
 ###############################################################################
 
 
@@ -12,9 +16,24 @@ REMOTE = "REMOTE"
 LOCAL_RESOURCES_DIR = Path(__file__).parent / "resources"
 REMOTE_RESOURCES_DIR = "s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources"  # noqa: E501
 
+LOCAL_RESOURCES_WRITE_DIR = Path(__file__).parent / "writer_products"
+REMOTE_RESOURCES_WRITER_DIR = "s3://aics-modeling-packages-test-resources/aicsimageio/writer_products"  # noqa: E501
+
 
 def get_resource_full_path(filename, host):
     if host is LOCAL:
         return LOCAL_RESOURCES_DIR / filename
     elif host is REMOTE:
         return f"{REMOTE_RESOURCES_DIR}/{filename}"
+
+
+def get_resource_write_full_path(filename, host):
+    if host is LOCAL:
+        LOCAL_RESOURCES_WRITE_DIR.mkdir(parents=True, exist_ok=True)
+        return LOCAL_RESOURCES_WRITE_DIR / filename
+    elif host is REMOTE:
+        return f"{REMOTE_RESOURCES_WRITER_DIR}/{filename}"
+
+
+host = pytest.mark.parametrize("host", [LOCAL, REMOTE])
+array_constructor = pytest.mark.parametrize("array_constructor", [np.ones, da.ones])

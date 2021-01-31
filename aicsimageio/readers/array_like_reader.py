@@ -33,7 +33,7 @@ class ArrayLikeReader(Reader):
     """
 
     @staticmethod
-    def _is_supported_image(image: ArrayLike, **kwargs) -> bool:
+    def _is_supported_image(image: ArrayLike, *args, **kwargs) -> bool:
         return isinstance(image, (np.ndarray, da.Array))
 
     def __init__(self, image: ArrayLike, known_dims: Optional[str] = None, **kwargs):
@@ -95,6 +95,7 @@ class ArrayLikeReader(Reader):
         return xr.DataArray(
             data=self._xarray_dask_data.data.compute(),
             dims=self._xarray_dask_data.dims,
+            coords=self._xarray_dask_data.coords,
             attrs=self._xarray_dask_data.attrs,
         )
 

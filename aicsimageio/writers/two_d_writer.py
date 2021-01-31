@@ -54,7 +54,7 @@ class TwoDWriter(Writer):
             The dimension order of the provided data.
             Default: None. Based off the number of dimensions, will assume
             the dimensions similar to how aicsimageio.readers.DefaultReader reads in
-            data. That is, two dimensions: YX and three dimensions: YXC.
+            data. That is, two dimensions: YX and three dimensions: YXS.
 
         Examples
         --------

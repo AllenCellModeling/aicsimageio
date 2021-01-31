@@ -23,7 +23,7 @@ class AICSImage:
     # if TiffReader was placed before OmeTiffReader,
     # we would never hit the OmeTiffReader
     SUPPORTED_READERS = (
-        # readers.ArrayLikeReader,
+        readers.ArrayLikeReader,
         # readers.CziReader,
         # readers.LifReader,
         readers.OmeTiffReader,
@@ -142,8 +142,10 @@ class AICSImage:
         self._known_dims = known_dims
 
         # Determine reader class and create dask delayed array
-        ReaderClass = self.determine_reader(image=image, **kwargs)
-        self._reader = ReaderClass(image, **kwargs)
+        ReaderClass = self.determine_reader(
+            image=image, known_dims=known_dims, **kwargs
+        )
+        self._reader = ReaderClass(image, known_dims=known_dims, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions
         self._xarray_dask_data = None

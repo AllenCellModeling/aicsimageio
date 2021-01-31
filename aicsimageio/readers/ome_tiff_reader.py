@@ -59,6 +59,7 @@ class OmeTiffReader(TiffReader):
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
         clean_metadata: bool = True,
+        **kwargs,
     ):
         """
         Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader

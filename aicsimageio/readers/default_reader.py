@@ -91,7 +91,7 @@ class DefaultReader(Reader):
         except OSError:
             raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
-    def __init__(self, image: types.PathLike):
+    def __init__(self, image: types.PathLike, **kwargs):
         """
         A catch all for image file reading that defaults to using imageio
         implementations.

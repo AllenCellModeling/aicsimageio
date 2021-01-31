@@ -49,7 +49,7 @@ class TwoDWriter(Writer):
         data: types.ArrayLike
             The array of data to store. Data must have either two or three dimensions.
         uri: types.PathLike
-            The URI or local path to where to save the data.
+            The URI or local path for where to save the data.
         dim_order: str
             The dimension order of the provided data.
             Default: None. Based off the number of dimensions, will assume

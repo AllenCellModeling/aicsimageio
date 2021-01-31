@@ -126,7 +126,7 @@ class AICSImage:
         if known_dims is not None:
             if not all(
                 [
-                    d in dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES
+                    d in dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
                     for d in known_dims
                 ]
             ):
@@ -135,7 +135,7 @@ class AICSImage:
                     f"includes dimensions that AICSImage does not support. "
                     f"Received: '{known_dims}'. "
                     f"Supported dimensions: "
-                    f"{dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES}."
+                    f"{dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES}."
                 )
 
         # Hold onto known dims until data is requested
@@ -242,7 +242,7 @@ class AICSImage:
     ) -> xr.DataArray:
         # Determine if we include Samples dim or not
         if dimensions.DimensionNames.Samples in arr.dims:
-            return_dims = dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES
+            return_dims = dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
         else:
             return_dims = dimensions.DEFAULT_DIMENSION_ORDER
 

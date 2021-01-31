@@ -62,7 +62,7 @@ from ..image_container_test_utils import (
             ("Image:0",),
             (1, 2, 1, 32, 32, 3),
             np.uint8,
-            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0", "Channel:0:1"],
             (1.0, 1.0, 1.0),
         ),

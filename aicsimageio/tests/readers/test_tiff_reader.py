@@ -3,12 +3,13 @@
 
 import numpy as np
 import pytest
+
 from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from ..image_container_test_utils import (
-    run_image_read_checks,
+    run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
 
@@ -164,9 +165,9 @@ def test_tiff_reader(
     uri = get_resource_full_path(filename, host)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
@@ -175,6 +176,7 @@ def test_tiff_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_metadata_type=str,
     )
 
 
@@ -216,7 +218,7 @@ def test_multi_scene_tiff_reader(
     # Run checks
     run_multi_scene_image_read_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
         first_scene_dtype=np.uint16,

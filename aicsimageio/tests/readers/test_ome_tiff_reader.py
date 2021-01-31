@@ -393,6 +393,7 @@ def test_multi_resolution_ome_tiff_reader(
     )
 
 
+@host
 @pytest.mark.parametrize(
     "filename",
     [

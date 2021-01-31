@@ -48,7 +48,7 @@ class ArrayLikeReader(Reader):
             dims = known_dims
 
         # Turn dims to list
-        dims = [d for d in dims]
+        dims = list(dims)
 
         # Catch dims not matching data
         if len(dims) != len(image.shape):

@@ -269,7 +269,7 @@ def test_multi_scene_aicsimage(
 @pytest.mark.parametrize(
     "array_constructor",
     [
-        # np.ones,
+        np.ones,
         da.ones,
     ],
 )

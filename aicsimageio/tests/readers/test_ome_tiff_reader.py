@@ -392,19 +392,19 @@ def test_multi_resolution_ome_tiff_reader(
         # These files have invalid schema / layout
         pytest.param(
             "3d-cell-viewer.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "pre-variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "actk.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         # This file has a namespace that doesn't exist
         pytest.param(

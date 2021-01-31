@@ -5,12 +5,9 @@ from urllib.error import HTTPError
 
 import numpy as np
 import pytest
+
 from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader
-from xmlschema.validators import (
-    XMLSchemaChildrenValidationError,
-    XMLSchemaValidationError,
-)
 
 from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from ..image_container_test_utils import (
@@ -417,3 +414,50 @@ def test_known_errors_without_cleaning(filename, host):
     uri = get_resource_full_path(filename, host)
 
     OmeTiffReader(uri, clean_metadata=False)
+
+
+def test_micromanager_ome_tiff_main_file():
+    # Construct full filepath
+    uri = get_resource_full_path(
+        "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
+        LOCAL,
+    )
+
+    # MicroManager will split up multi-scene image sets into multiple files
+    # tifffile will then read in all of the scenes at once when it detects
+    # the file is a micromanager file set
+    # resulting in this single file truly only containing the binary for a
+    # single scene but containing the metadata for all files in the set
+    # and, while this file only contains the binary for itself, tifffile will
+    # read the image data for the linked files
+
+    # Run image read checks on the first scene
+    # (this files binary data)
+    run_image_read_checks(
+        ImageContainer=OmeTiffReader,
+        uri=uri,
+        set_scene="Image:0",
+        expected_scenes=("Image:0", "Image:1"),
+        expected_current_scene="Image:0",
+        expected_shape=(50, 3, 5, 256, 256),
+        expected_dtype=np.uint16,
+        expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
+        expected_channel_names=["Cy5", "DAPI", "FITC"],
+        expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+    )
+
+    # Run image read checks on the second scene
+    # (a different files binary data)
+    # (image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif)
+    run_image_read_checks(
+        ImageContainer=OmeTiffReader,
+        uri=uri,
+        set_scene="Image:1",
+        expected_scenes=("Image:0", "Image:1"),
+        expected_current_scene="Image:1",
+        expected_shape=(50, 3, 5, 256, 256),
+        expected_dtype=np.uint16,
+        expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
+        expected_channel_names=["Cy5", "DAPI", "FITC"],
+        expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+    )

@@ -36,4 +36,16 @@ def get_resource_write_full_path(filename, host):
 
 
 host = pytest.mark.parametrize("host", [LOCAL, REMOTE])
-array_constructor = pytest.mark.parametrize("array_constructor", [np.ones, da.ones])
+
+
+def np_random_from_shape(shape, **kwargs):
+    return np.random.randint(255, size=shape, **kwargs)
+
+
+def da_random_from_shape(shape, **kwargs):
+    return da.random.randint(255, size=shape, **kwargs)
+
+
+array_constructor = pytest.mark.parametrize(
+    "array_constructor", [np_random_from_shape, da_random_from_shape]
+)

@@ -54,7 +54,7 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
 )
 @host
 @pytest.mark.parametrize("filename", ["a.png", "d.bmp"])
-def test_rgb_writer(
+def test_two_d_writer(
     array_constructor,
     host,
     write_shape,

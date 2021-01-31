@@ -339,22 +339,6 @@ def test_multi_scene_ome_tiff_reader(
             ["EGFP", "mCher", "PGC"],
             (1.0, 0.9082107048835328, 0.9082107048835328),
         ),
-        # TODO:
-        # Handle known ome-types multi-scene pyramid bug
-        # ome-types incorrectly assumes that the images should be
-        # Image:0 and Image:1
-        # and when looking up channel names based off of those image ids
-        # the incorrect channels are retrived
-        # For this particular file the correct Image id should be
-        # Image:0 and Image:4
-        # Because in OME metadata spec the resolutions / levels are stored
-        # as their own "Image" elements
-        # And the actual channel name for the actual second scene
-        # and not second resolution, should be "Channel:4:0"
-        # and the physical pixel sizes should be different between the two scenes
-        #
-        # Tracking here:
-        # https://github.com/AllenCellModeling/aicsimageio/issues/140
         (
             "variable_scene_shape_first_scene_pyramid.ome.tiff",
             "Image:1",

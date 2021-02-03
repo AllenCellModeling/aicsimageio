@@ -89,9 +89,8 @@ class TiffReader(Reader):
         fs: AbstractFileSystem,
         path: str,
         scene: int,
-        indices: Tuple[Union[int, slice]],
-        scene_dims: str,
-        block_dims: str,
+        retrieve_indices: Tuple[Union[int, slice]],
+        transpose_indices: List[int],
     ) -> np.ndarray:
         """
         Open a file for reading, construct a Zarr store, select data, and compute to
@@ -105,12 +104,10 @@ class TiffReader(Reader):
             The path to file to read.
         scene: int
             The scene index to pull the chunk from.
-        indices: Tuple[Union[int, slice]]
+        retrieve_indices: Tuple[Union[int, slice]]
             The image indices to retrieve.
-        scene_dims: str
-            The natural dimensions of the array.
-        block_dims: str
-            The dimensions used for pulling a single chunk that we need to transpose to.
+        transpose_indices: List[int]
+            The indices to transpose to prior to requesting data.
 
         Returns
         -------
@@ -123,8 +120,8 @@ class TiffReader(Reader):
                     open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
                 )
             )
-            arr = transpose_to_dims(arr, given_dims=scene_dims, return_dims=block_dims)
-            return arr[indices].compute()
+            arr = arr.transpose(transpose_indices)
+            return arr[retrieve_indices].compute()
 
     def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
         return tiff.series[self.current_scene_index].pages[0].tags
@@ -241,6 +238,13 @@ class TiffReader(Reader):
         blocked_dim_order = non_chunk_dim_order + chunk_dim_order
         blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
 
+        # Construct the transpose indices that will be used to
+        # transpose the array prior to pulling the chunk dims
+        match_map = {dim: selected_scene_dims.find(dim) for dim in selected_scene_dims}
+        transposer = []
+        for dim in blocked_dim_order:
+            transposer.append(match_map[dim])
+
         # Make ndarray for lazy arrays to fill
         lazy_arrays = np.ndarray(blocked_shape, dtype=object)
         for plane_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
@@ -256,9 +260,8 @@ class TiffReader(Reader):
                     fs=self.fs,
                     path=self.path,
                     scene=self.current_scene_index,
-                    indices=indices_with_slices,
-                    scene_dims=selected_scene_dims,
-                    block_dims=blocked_dim_order,
+                    retrieve_indices=indices_with_slices,
+                    transpose_indices=transposer,
                 ),
                 shape=chunk_shape,
                 dtype=selected_scene.dtype,

@@ -149,11 +149,22 @@ class OmeTiffWriter(Writer):
             dimension_order = DEFAULT_DIMENSION_ORDER
         ndims = len(data.shape)
 
+        if ndims > 5:
+            # select last 5 dims
+            slc = [0] * (ndims - 5)
+            slc += [slice(None)] * 5
+            data = data[slc]
+
+        ndims = len(data.shape)
         assert (
-            ndims == 5 or ndims == 4 or ndims == 3
-        ), "Expected 3, 4, or 5 dimensions in data array"
+            ndims == 5 or ndims == 4 or ndims == 3 or ndims == 2
+        ), "Expected 2, 3, 4, or 5 dimensions in data array"
 
         # assert valid characters in dimension_order
+        if dimension_order.find("S") > -1:
+            raise InvalidDimensionOrderingError(
+                "Samples not yet supported in OmeTiffWriter."
+            )
         if not (all(d in DEFAULT_DIMENSION_ORDER for d in dimension_order)):
             raise InvalidDimensionOrderingError(
                 f"Invalid dimension_order {dimension_order}"
@@ -167,18 +178,21 @@ class OmeTiffWriter(Writer):
                 f"dimension_order {dimension_order} must have at least as many \
                 dimensions as data shape {shape}"
             )
-        if dimension_order.find("S") > 0:
-            raise InvalidDimensionOrderingError(
-                f"S must be the leading dim in dimension_order {dimension_order}"
-            )
         # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape
         if len(dimension_order) > ndims:
             dimension_order = dimension_order[-ndims:]
 
-        # if this is 3d data, then expand to 5D and add appropriate dimensions
-        if ndims == 3:
+        # expand to 5D and add appropriate dimensions
+        if ndims == 2:
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            dimension_order = DEFAULT_DIMENSION_ORDER
+
+        # expand to 5D and add appropriate dimensions
+        elif ndims == 3:
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             # prepend either TC, TZ or CZ
@@ -189,7 +203,7 @@ class OmeTiffWriter(Writer):
             elif dimension_order[0] == "Z":
                 dimension_order = "TC" + dimension_order
 
-        # if this is 4d data, then expand to 5D and add appropriate dimensions
+        # expand to 5D and add appropriate dimensions
         elif ndims == 4:
             data = np.expand_dims(data, axis=0)
             # prepend either T, C, or Z

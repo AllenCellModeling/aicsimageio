@@ -17,27 +17,30 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
     [
         ((5, 16, 16), None, (1, 1, 5, 16, 16), "TCZYX"),
         ((5, 16, 16), "ZYX", (1, 1, 5, 16, 16), "TCZYX"),
-        ((5, 16, 16), "CYX", (1, 1, 5, 16, 16), "TZCYX"),
-        # ((5, 16, 16), "TYX", (5, 16, 16), "TYX"),
-        # # Note that files get saved out with RGBA, instead of just RGB
-        # ((30, 100, 100, 3), None, (30, 100, 100, 4), "TYXS"),
-        # ((100, 30, 100), "XTY", (30, 100, 100), "TYX"),
-        # # Note that files get saved out with RGBA, instead of just RGB
-        # ((3, 100, 30, 100), "SYTX", (30, 100, 100, 4), "TYXS"),
-        # pytest.param(
-        #     (1, 1),
-        #     None,
-        #     None,
-        #     None,
-        #     marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
-        # ),
-        # pytest.param(
-        #     (1, 1, 1, 1, 1),
-        #     None,
-        #     None,
-        #     None,
-        #     marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
-        # ),
+        # ((5, 16, 16), "CYX", (1, 1, 5, 16, 16), "TZCYX"),
+        ((16, 16), "YX", (1, 1, 1, 16, 16), "TCZYX"),
+        pytest.param(
+            (2, 3, 3),
+            "AYX",
+            None,
+            None,
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
+        ),
+        pytest.param(
+            (2, 3, 3),
+            "YXZ",
+            None,
+            None,
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
+        ),
+        ((1, 2, 3, 4, 5), None, (1, 2, 3, 4, 5), "TCZYX"),
+        ((2, 3, 4, 5, 6), "TCZYX", (2, 3, 4, 5, 6), "TCZYX"),
+        ((2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
+        ((1, 2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
         # pytest.param(
         #     (1, 1, 1, 1, 1, 1),
         #     "STCZYX",
@@ -75,6 +78,7 @@ def test_ome_tiff_writer(
 
     # Normal save
     OmeTiffWriter.save(arr, save_uri, write_dim_order)
+    OmeTiffWriter.save(arr, "C:\\Users\\dmt\\test.ome.tiff", write_dim_order)
 
     # Read written result and check basics
     reader = OmeTiffReader(save_uri)

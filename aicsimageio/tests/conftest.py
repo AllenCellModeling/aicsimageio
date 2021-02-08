@@ -35,7 +35,7 @@ def get_resource_write_full_path(filename, host):
         return f"{REMOTE_RESOURCES_WRITER_DIR}/{filename}"
 
 
-host = pytest.mark.parametrize("host", [LOCAL, REMOTE])
+host = pytest.mark.parametrize("host", [LOCAL])  # , REMOTE])
 
 
 def np_random_from_shape(shape, **kwargs):

@@ -120,7 +120,8 @@ class OmeTiffWriter(Writer):
             xml = to_xml(ome_xml).encode()
         else:
             raise (
-                "Unknown OME-XML metadata passed in. Use OME object, or xml string or None"
+                "Unknown OME-XML metadata passed in. Use OME object, or xml string or \
+                None"
             )
 
         # Save image to tiff!
@@ -171,7 +172,8 @@ class OmeTiffWriter(Writer):
             )
         if dimension_order[-2:] != "YX":
             raise InvalidDimensionOrderingError(
-                f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
+                f"Last two characters of dimension_order {dimension_order} expected to \
+                be YX.  Please transpose your data."
             )
         if len(dimension_order) < ndims:
             raise InvalidDimensionOrderingError(
@@ -216,128 +218,6 @@ class OmeTiffWriter(Writer):
                 dimension_order = "T" + dimension_order
 
         return dimension_order, data
-
-    # def save(
-    #     self,
-    #     data,
-    #     ome_xml=None,
-    #     channel_names=None,
-    #     image_name="IMAGE0",
-    #     pixels_physical_size=None,
-    #     channel_colors=None,
-    #     dimension_order="STZCYX",
-    # ):
-    #     """
-    #     Save an image with the proper OME XML metadata.
-
-    #     Parameters
-    #     ----------
-    #     data: An array of 3, 4, or 5 dimensions to be written out to a file.
-    #     ome_xml: A premade omexml.OMEXML object to use for metadata.
-    #     channel_names: The names for each channel to be put into the OME metadata
-    #     image_name: The name of the image to be put into the OME metadata
-    #     pixels_physical_size: The physical size of each pixel in the image
-    #     channel_colors: The channel colors to be put into the OME metadata
-    #     dimension_order: The dimension ordering in the data array. Will be assumed
-    #     STZCYX if not specified
-    #     """
-    #     if self.silent_pass:
-    #         return
-
-    #     shape = data.shape
-    #     ndims = len(shape)
-
-    #     assert (
-    #         ndims == 5 or ndims == 4 or ndims == 3
-    #     ), "Expected 3, 4, or 5 dimensions in data array"
-
-    #     # assert valid characters in dimension_order
-    #     if not (all(d in "STCZYX" for d in dimension_order)):
-    #         raise InvalidDimensionOrderingError(
-    #             f"Invalid dimension_order {dimension_order}"
-    #         )
-    #     if dimension_order[-2:] != "YX":
-    #         raise InvalidDimensionOrderingError(
-    #             f"Last two characters of dimension_order {dimension_order} expected to \
-    #             be YX.  Please transpose your data."
-    #         )
-    #     if len(dimension_order) < ndims:
-    #         raise InvalidDimensionOrderingError(
-    #             f"dimension_order {dimension_order} must have at least as many \
-    #             dimensions as data shape {shape}"
-    #         )
-    #     if dimension_order.find("S") > 0:
-    #         raise InvalidDimensionOrderingError(
-    #             f"S must be the leading dim in dimension_order {dimension_order}"
-    #         )
-    #     # todo ensure no letter appears more than once?
-
-    #     # ensure dimension_order is same len as shape
-    #     if len(dimension_order) > ndims:
-    #         dimension_order = dimension_order[-ndims:]
-
-    #     # if this is 3d data, then expand to 5D and add appropriate dimensions
-    #     if ndims == 3:
-    #         data = np.expand_dims(data, axis=0)
-    #         data = np.expand_dims(data, axis=0)
-    #         # prepend either TC, TZ or CZ
-    #         if dimension_order[0] == "T":
-    #             dimension_order = "CZ" + dimension_order
-    #         elif dimension_order[0] == "C":
-    #             dimension_order = "TZ" + dimension_order
-    #         elif dimension_order[0] == "Z":
-    #             dimension_order = "TC" + dimension_order
-
-    #     # if this is 4d data, then expand to 5D and add appropriate dimensions
-    #     elif ndims == 4:
-    #         data = np.expand_dims(data, axis=0)
-    #         # prepend either T, C, or Z
-    #         first2 = dimension_order[:2]
-    #         if first2 == "TC" or first2 == "CT":
-    #             dimension_order = "Z" + dimension_order
-    #         elif first2 == "TZ" or first2 == "ZT":
-    #             dimension_order = "C" + dimension_order
-    #         elif first2 == "CZ" or first2 == "ZC":
-    #             dimension_order = "T" + dimension_order
-
-    #     if ome_xml is None:
-    #         self._make_meta(
-    #             data,
-    #             channel_names=channel_names,
-    #             image_name=image_name,
-    #             pixels_physical_size=pixels_physical_size,
-    #             channel_colors=channel_colors,
-    #             dimension_order=dimension_order,
-    #         )
-    #         xml = self.omeMetadata.to_xml().encode()
-    #     elif isinstance(ome_xml, str):
-    #         # if the xml passed in is a string,
-    #         # then just pass it straight through to the writer.
-    #         self.omeMetadata = omexml.OMEXML(ome_xml)
-    #         xml = ome_xml.encode()
-    #     else:
-    #         pixels = ome_xml.image().Pixels
-    #         pixels.populate_TiffData()
-    #         self.omeMetadata = ome_xml
-    #         xml = self.omeMetadata.to_xml().encode()
-
-    #     tif = tifffile.TiffWriter(
-    #         self.file_path, bigtiff=self._size_of_ndarray(data=data) > BYTE_BOUNDARY
-    #     )
-
-    #     # check data shape for TZCYX or ZCYX or ZYX
-    #     if ndims == 5 or ndims == 4 or ndims == 3:
-    #         # minisblack instructs TiffWriter to not try to infer rgb color within the
-    #         # data array metadata param fixes the double image description bug
-    #         tif.save(
-    #             data,
-    #             compress=9,
-    #             description=xml,
-    #             photometric="minisblack",
-    #             metadata=None,
-    #         )
-
-    #     tif.close()
 
     @staticmethod
     def _size_of_ndarray(data: types.ArrayLike) -> int:
@@ -457,6 +337,6 @@ class OmeTiffWriter(Writer):
 
         # validate????
         test = to_xml(ox)
-        tested = from_xml(test)
+        from_xml(test)
 
         return ox

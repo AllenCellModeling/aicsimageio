@@ -176,7 +176,7 @@ class OmeTiffWriter(Writer):
         if len(dimension_order) < ndims:
             raise InvalidDimensionOrderingError(
                 f"dimension_order {dimension_order} must have at least as many \
-                dimensions as data shape {shape}"
+                dimensions as data shape {data.shape}"
             )
         # todo ensure no letter appears more than once?
 

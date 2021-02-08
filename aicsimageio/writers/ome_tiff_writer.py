@@ -1,10 +1,14 @@
 import dask.array as da
+import numpy as np
 from ome_types import from_xml, to_xml
-from ome_types.model.ome import OME, Image, Pixels, PixelType, TiffData, Channel
+from ome_types.model import OME, Image, Channel, Pixels, TiffData
+from ome_types.model.simple_types import PixelType
 import tifffile
 from typing import List, Tuple, Union
 
 from .. import types
+from ..dimensions import DEFAULT_DIMENSION_ORDER
+from ..exceptions import InvalidDimensionOrderingError
 from ..readers import DefaultReader
 from ..utils import io_utils
 from .writer import Writer
@@ -21,11 +25,11 @@ class OmeTiffWriter(Writer):
     def save(
         data: types.ArrayLike,
         uri: types.PathLike,
-        dim_order: str = None,
+        dimension_order: str = None,
         ome_xml: Union[str, OME, None] = None,
         channel_names: List[str] = None,
         image_name: str = None,
-        pixels_physical_size: List[float] = [1, 1, 1],
+        pixels_physical_size: List[float] = [1.0, 1.0, 1.0],
         channel_colors: List[float] = None,
         **kwargs,
     ):
@@ -38,7 +42,7 @@ class OmeTiffWriter(Writer):
             The array of data to store. Data must have 2 to 5 dimensions
         uri: types.PathLike
             The URI or local path for where to save the data.
-        dim_order: str
+        dimension_order: str
             The dimension order of the provided data.
             Default: None. Based off the number of dimensions, will assume
             the dimensions similar to how aicsimageio.readers.DefaultReader reads in
@@ -90,7 +94,9 @@ class OmeTiffWriter(Writer):
         if isinstance(data, da.core.Array):
             data = data.compute()
 
-        dim_order, data = OmeTiffWriter._resolve_dimension_order(data, dim_order)
+        dimension_order, data = OmeTiffWriter._resolve_dimension_order(
+            data, dimension_order
+        )
 
         # xml = OmeTiffWriter._resolve_ome_xml(ome_xml)
         xml = ""
@@ -101,14 +107,15 @@ class OmeTiffWriter(Writer):
                 image_name=image_name,
                 pixels_physical_size=pixels_physical_size,
                 channel_colors=channel_colors,
-                dimension_order=dim_order,
+                dimension_order=dimension_order,
             )
             xml = to_xml(ome_xml).encode()
         elif isinstance(ome_xml, str):
             # if the xml passed in is a string,
             # then just pass it straight through to the writer.
-            # do not validate or anything.(?)
-            xml = ome_xml.encode()
+            # But first, validate it.
+            valid_ome = from_xml(ome_xml)
+            xml = to_xml(valid_ome)
         elif isinstance(ome_xml, OME):
             xml = to_xml(ome_xml).encode()
         else:
@@ -136,63 +143,65 @@ class OmeTiffWriter(Writer):
 
     @staticmethod
     def _resolve_dimension_order(
-        data: types.ArrayLike, dim_order: str
+        data: types.ArrayLike, dimension_order: str
     ) -> Tuple[str, types.ArrayLike]:
-        return dim_order, data
-        # ndims = len(data.shape)
+        if dimension_order is None:
+            dimension_order = DEFAULT_DIMENSION_ORDER
+        ndims = len(data.shape)
 
-        # assert (
-        #     ndims == 5 or ndims == 4 or ndims == 3
-        # ), "Expected 3, 4, or 5 dimensions in data array"
+        assert (
+            ndims == 5 or ndims == 4 or ndims == 3
+        ), "Expected 3, 4, or 5 dimensions in data array"
 
-        # # assert valid characters in dimension_order
-        # if not (all(d in "STCZYX" for d in dimension_order)):
-        #     raise InvalidDimensionOrderingError(
-        #         f"Invalid dimension_order {dimension_order}"
-        #     )
-        # if dimension_order[-2:] != "YX":
-        #     raise InvalidDimensionOrderingError(
-        #         f"Last two characters of dimension_order {dimension_order} expected to \
-        #         be YX.  Please transpose your data."
-        #     )
-        # if len(dimension_order) < ndims:
-        #     raise InvalidDimensionOrderingError(
-        #         f"dimension_order {dimension_order} must have at least as many \
-        #         dimensions as data shape {shape}"
-        #     )
-        # if dimension_order.find("S") > 0:
-        #     raise InvalidDimensionOrderingError(
-        #         f"S must be the leading dim in dimension_order {dimension_order}"
-        #     )
-        # # todo ensure no letter appears more than once?
+        # assert valid characters in dimension_order
+        if not (all(d in DEFAULT_DIMENSION_ORDER for d in dimension_order)):
+            raise InvalidDimensionOrderingError(
+                f"Invalid dimension_order {dimension_order}"
+            )
+        if dimension_order[-2:] != "YX":
+            raise InvalidDimensionOrderingError(
+                f"Last two characters of dimension_order {dimension_order} expected to be YX.  Please transpose your data."
+            )
+        if len(dimension_order) < ndims:
+            raise InvalidDimensionOrderingError(
+                f"dimension_order {dimension_order} must have at least as many \
+                dimensions as data shape {shape}"
+            )
+        if dimension_order.find("S") > 0:
+            raise InvalidDimensionOrderingError(
+                f"S must be the leading dim in dimension_order {dimension_order}"
+            )
+        # todo ensure no letter appears more than once?
 
-        # # ensure dimension_order is same len as shape
-        # if len(dimension_order) > ndims:
-        #     dimension_order = dimension_order[-ndims:]
+        # ensure dimension_order is same len as shape
+        if len(dimension_order) > ndims:
+            dimension_order = dimension_order[-ndims:]
 
-        # # if this is 3d data, then expand to 5D and add appropriate dimensions
-        # if ndims == 3:
-        #     data = np.expand_dims(data, axis=0)
-        #     data = np.expand_dims(data, axis=0)
-        #     # prepend either TC, TZ or CZ
-        #     if dimension_order[0] == "T":
-        #         dimension_order = "CZ" + dimension_order
-        #     elif dimension_order[0] == "C":
-        #         dimension_order = "TZ" + dimension_order
-        #     elif dimension_order[0] == "Z":
-        #         dimension_order = "TC" + dimension_order
+        # if this is 3d data, then expand to 5D and add appropriate dimensions
+        if ndims == 3:
+            data = np.expand_dims(data, axis=0)
+            data = np.expand_dims(data, axis=0)
+            # prepend either TC, TZ or CZ
+            if dimension_order[0] == "T":
+                dimension_order = "CZ" + dimension_order
+            elif dimension_order[0] == "C":
+                dimension_order = "TZ" + dimension_order
+            elif dimension_order[0] == "Z":
+                dimension_order = "TC" + dimension_order
 
-        # # if this is 4d data, then expand to 5D and add appropriate dimensions
-        # elif ndims == 4:
-        #     data = np.expand_dims(data, axis=0)
-        #     # prepend either T, C, or Z
-        #     first2 = dimension_order[:2]
-        #     if first2 == "TC" or first2 == "CT":
-        #         dimension_order = "Z" + dimension_order
-        #     elif first2 == "TZ" or first2 == "ZT":
-        #         dimension_order = "C" + dimension_order
-        #     elif first2 == "CZ" or first2 == "ZC":
-        #         dimension_order = "T" + dimension_order
+        # if this is 4d data, then expand to 5D and add appropriate dimensions
+        elif ndims == 4:
+            data = np.expand_dims(data, axis=0)
+            # prepend either T, C, or Z
+            first2 = dimension_order[:2]
+            if first2 == "TC" or first2 == "CT":
+                dimension_order = "Z" + dimension_order
+            elif first2 == "TZ" or first2 == "ZT":
+                dimension_order = "C" + dimension_order
+            elif first2 == "CZ" or first2 == "ZC":
+                dimension_order = "T" + dimension_order
+
+        return dimension_order, data
 
     # def save(
     #     self,
@@ -333,7 +342,7 @@ class OmeTiffWriter(Writer):
     @staticmethod
     def build_ome(
         data: types.ArrayLike,
-        dim_order: str = None,
+        dimension_order: str = DEFAULT_DIMENSION_ORDER,
         channel_names: List[str] = None,
         image_name: str = None,
         pixels_physical_size: Tuple[float, float, float] = (1, 1, 1),
@@ -348,30 +357,59 @@ class OmeTiffWriter(Writer):
         :param dimension_order: The order of dimensions in the data array, using
         T,C,Z,Y and X
         """
-        pixels = Pixels(id="0")
+        shape = data.shape
+
+        if len(shape) != 5:
+            raise ValueError("OmeTiffWriter.build_ome only accepts 5d arrays")
+        if len(dimension_order) != len(DEFAULT_DIMENSION_ORDER):
+            raise ValueError("OmeTiffWriter.build_ome only accepts 5d dimension_order")
+        for c in DEFAULT_DIMENSION_ORDER:
+            if c not in dimension_order:
+                raise ValueError(f"Unrecognized OME TIFF dimension {c}")
+
+        def dim_or_1(dim):
+            idx = dimension_order.find(dim)
+            return 1 if idx == -1 else shape[idx]
+
+        def dtype_to_pixel_type(npdtype) -> PixelType:
+            ometypedict = {
+                np.dtype(np.int8): PixelType.INT8,
+                np.dtype(np.int16): PixelType.INT16,
+                np.dtype(np.int32): PixelType.INT32,
+                np.dtype(np.uint8): PixelType.UINT8,
+                np.dtype(np.uint16): PixelType.UINT16,
+                np.dtype(np.uint32): PixelType.UINT32,
+                np.dtype(np.float32): PixelType.FLOAT,
+                np.dtype(np.float64): PixelType.DOUBLE,
+                np.dtype(np.complex64): PixelType.COMPLEXFLOAT,
+                np.dtype(np.complex128): PixelType.COMPLEXDOUBLE,
+            }
+            ptype = ometypedict.get(npdtype)
+            if ptype is None:
+                raise ValueError(
+                    f"OmeTiffWriter can't resolve pixel type: {npdtype.name}"
+                )
+            return ptype
+
+        # pixels.channel_count = dim_or_1("C")
+
+        # dimension_order must be set to the *reverse* of what dimensionality
+        # the ome tif file is saved as
+        pixels = Pixels(
+            id="Pixels:0",
+            dimension_order=dimension_order[::-1],
+            type=dtype_to_pixel_type(data.dtype),
+            size_t=dim_or_1("T"),
+            size_c=dim_or_1("C"),
+            size_z=dim_or_1("Z"),
+            size_y=dim_or_1("Y"),
+            size_x=dim_or_1("X"),
+        )
+
         if pixels_physical_size is not None:
             pixels.physical_size_x = pixels_physical_size[0]
             pixels.physical_size_y = pixels_physical_size[1]
             pixels.physical_size_z = pixels_physical_size[2]
-        shape = data.shape
-
-        def dim_or_1(dim):
-            idx = dim_order.find(dim)
-            return 1 if idx == -1 else shape[idx]
-
-        # pixels.channel_count = dim_or_1("C")
-        pixels.size_t = dim_or_1("T")
-        pixels.size_c = dim_or_1("C")
-        pixels.size_z = dim_or_1("Z")
-        pixels.size_y = dim_or_1("Y")
-        pixels.size_x = dim_or_1("X")
-
-        # this must be set to the *reverse* of what dimensionality
-        # the ome tif file is saved as
-        pixels.dimension_order = dim_order[::-1]
-
-        # convert our numpy dtype to a ome compatible pixeltype
-        pixels.type = PixelType(data.dtype)
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [

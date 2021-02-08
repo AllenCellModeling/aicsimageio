@@ -15,9 +15,9 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
 @pytest.mark.parametrize(
     "write_shape, write_dim_order, read_shape, read_dim_order",
     [
-        ((5, 16, 16), None, (5, 16, 16), "ZYX"),
-        # ((5, 16, 16), "ZYX", (5, 16, 16), "ZYX"),
-        # ((5, 16, 16), "CYX", (5, 16, 16), "CYX"),
+        ((5, 16, 16), None, (1, 1, 5, 16, 16), "TCZYX"),
+        ((5, 16, 16), "ZYX", (1, 1, 5, 16, 16), "TCZYX"),
+        ((5, 16, 16), "CYX", (1, 1, 5, 16, 16), "TZCYX"),
         # ((5, 16, 16), "TYX", (5, 16, 16), "TYX"),
         # # Note that files get saved out with RGBA, instead of just RGB
         # ((30, 100, 100, 3), None, (30, 100, 100, 4), "TYXS"),

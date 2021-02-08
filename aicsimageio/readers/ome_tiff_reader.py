@@ -165,10 +165,17 @@ class OmeTiffReader(TiffReader):
         # If non global linear timescale, we need to create an array of every plane
         # time value
         elif scene_meta.pixels.size_t > 1:
-            t_index_to_delta_map = {
-                p.the_t: p.delta_t for p in scene_meta.pixels.planes
-            }
-            coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
+            if len(scene_meta.pixels.planes) > 0:
+                t_index_to_delta_map = {
+                    p.the_t: p.delta_t for p in scene_meta.pixels.planes
+                }
+                coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
+            else:
+                coords[DimensionNames.Time] = np.linspace(
+                    0,
+                    scene_meta.pixels.size_t,
+                    scene_meta.pixels.size_t,
+                )
 
         # Handle Spatial Dimensions
         if scene_meta.pixels.physical_size_z is not None:

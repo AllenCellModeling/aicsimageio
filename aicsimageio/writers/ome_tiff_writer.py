@@ -350,6 +350,7 @@ class OmeTiffWriter(Writer):
         if len(ome_xml.images) < 1:
             raise ValueError("OME has no images")
 
+        # reverse the OME dimension order to compare against numpy shape
         dimension_order = ome_xml.images[0].pixels.dimension_order.value[::-1]
         dims = {
             "T": ome_xml.images[0].pixels.size_t,
@@ -361,6 +362,7 @@ class OmeTiffWriter(Writer):
         expected_shape = tuple(dims[i] for i in dimension_order)
         if expected_shape != data_shape:
             raise ValueError(
-                f"OME shape {expected_shape} is not the same as data array shape: {data_shape}"
+                f"OME shape {expected_shape} is not the same as data array shape: \
+                {data_shape}"
             )
         pass

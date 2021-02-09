@@ -6,7 +6,7 @@ from ome_types.model.simple_types import PixelType
 import tifffile
 from typing import List, Tuple, Union
 
-from .. import types
+from .. import types, get_module_version
 from ..dimensions import DEFAULT_DIMENSION_ORDER
 from ..exceptions import InvalidDimensionOrderingError
 from ..readers import DefaultReader
@@ -30,7 +30,7 @@ class OmeTiffWriter(Writer):
         channel_names: List[str] = None,
         image_name: str = None,
         pixels_physical_size: List[float] = [1.0, 1.0, 1.0],
-        channel_colors: List[float] = None,
+        channel_colors: List[int] = None,
         **kwargs,
     ):
         """
@@ -53,7 +53,7 @@ class OmeTiffWriter(Writer):
             Default: None
             The passed-in metadata will be validated against current OME_XML schema and
             raise exception if invalid.
-            The ome_xml will also be compared against the dimensions if the input data.
+            The ome_xml will also be compared against the dimensions of the input data.
             If None is given, then OME-XML metadata will be generated from the data
             array and any of the following metadata arguments.
         channel_names: List[str]
@@ -69,7 +69,7 @@ class OmeTiffWriter(Writer):
         pixels_physical_size: List[float]
             List of numbers representing the physical pixel sizes in x,y,z in microns
             Default: [1,1,1]
-        channel_colors: List[float]
+        channel_colors: List[int]
             List of rgb color values per channel
             Default: None
 
@@ -102,7 +102,8 @@ class OmeTiffWriter(Writer):
         xml = ""
         if ome_xml is None:
             ome_xml = OmeTiffWriter.build_ome(
-                data,
+                data.shape,
+                data.dtype,
                 channel_names=channel_names,
                 image_name=image_name,
                 pixels_physical_size=pixels_physical_size,
@@ -117,9 +118,11 @@ class OmeTiffWriter(Writer):
             valid_ome = from_xml(ome_xml)
             xml = to_xml(valid_ome)
         elif isinstance(ome_xml, OME):
+            # do some simple consistency check against the passed in OME dimensions
+            OmeTiffWriter._check_ome_dims(ome_xml, data.shape, data.dtype)
             xml = to_xml(ome_xml).encode()
         else:
-            raise (
+            raise ValueError(
                 "Unknown OME-XML metadata passed in. Use OME object, or xml string or \
                 None"
             )
@@ -235,11 +238,12 @@ class OmeTiffWriter(Writer):
     # set up some sensible defaults from provided info
     @staticmethod
     def build_ome(
-        data: types.ArrayLike,
+        data_shape: Tuple,
+        data_dtype: np.dtype,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         channel_names: List[str] = None,
         image_name: str = None,
-        pixels_physical_size: Tuple[float, float, float] = (1, 1, 1),
+        pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
         channel_colors: List[int] = None,
     ) -> OME:
         """Creates the necessary metadata for an OME tiff image
@@ -251,7 +255,7 @@ class OmeTiffWriter(Writer):
         :param dimension_order: The order of dimensions in the data array, using
         T,C,Z,Y and X
         """
-        shape = data.shape
+        shape = data_shape
 
         if len(shape) != 5:
             raise ValueError("OmeTiffWriter.build_ome only accepts 5d arrays")
@@ -292,7 +296,7 @@ class OmeTiffWriter(Writer):
         pixels = Pixels(
             id="Pixels:0",
             dimension_order=dimension_order[::-1],
-            type=dtype_to_pixel_type(data.dtype),
+            type=dtype_to_pixel_type(data_dtype),
             size_t=dim_or_1("T"),
             size_c=dim_or_1("C"),
             size_z=dim_or_1("Z"),
@@ -333,10 +337,30 @@ class OmeTiffWriter(Writer):
         img = Image(name=image_name, id="Image:0", pixels=pixels)
 
         # TODO get aics version string here
-        ox = OME(creator="aicsimageio 4.x", images=[img])
+        ox = OME(creator=f"aicsimageio {get_module_version()}", images=[img])
 
         # validate????
         test = to_xml(ox)
         from_xml(test)
 
         return ox
+
+    @staticmethod
+    def _check_ome_dims(ome_xml: OME, data_shape: Tuple, data_dtype: np.dtype):
+        if len(ome_xml.images) < 1:
+            raise ValueError("OME has no images")
+
+        dimension_order = ome_xml.images[0].pixels.dimension_order.value[::-1]
+        dims = {
+            "T": ome_xml.images[0].pixels.size_t,
+            "C": ome_xml.images[0].pixels.size_c,
+            "Z": ome_xml.images[0].pixels.size_z,
+            "Y": ome_xml.images[0].pixels.size_y,
+            "X": ome_xml.images[0].pixels.size_x,
+        }
+        expected_shape = tuple(dims[i] for i in dimension_order)
+        if expected_shape != data_shape:
+            raise ValueError(
+                f"OME shape {expected_shape} is not the same as data array shape: {data_shape}"
+            )
+        pass

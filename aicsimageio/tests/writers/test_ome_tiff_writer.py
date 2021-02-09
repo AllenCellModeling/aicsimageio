@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from ome_types import to_xml
+from ome_types.model import OME
 import pytest
+import urllib
 
 from aicsimageio import exceptions
 from aicsimageio.readers import OmeTiffReader
@@ -55,7 +58,7 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
 )
 @host
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
-def test_ome_tiff_writer(
+def test_ome_tiff_writer_no_meta(
     array_constructor,
     host,
     write_shape,
@@ -79,5 +82,50 @@ def test_ome_tiff_writer(
     # Check basics
     assert reader.shape == read_shape
     assert reader.dims.order == read_dim_order
+
+
+@array_constructor
+@pytest.mark.parametrize(
+    "ome_xml",
+    [
+        (to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8)))),
+        (OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+        pytest.param(
+            to_xml(OME()),
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+        pytest.param(
+            OME(),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        pytest.param(
+            "bad ome string",
+            marks=pytest.mark.raises(exception=urllib.error.URLError),
+        ),
+    ],
+)
+@host
+@pytest.mark.parametrize("filename", ["e.ome.tiff"])
+def test_ome_tiff_writer_with_meta(
+    array_constructor,
+    host,
+    ome_xml,
+    filename,
+):
+    # Create array
+    arr = array_constructor((1, 2, 3, 4, 5), dtype=np.uint8)
+
+    # Construct save end point
+    save_uri = get_resource_write_full_path(filename, host)
+
+    # Normal save
+    OmeTiffWriter.save(arr, save_uri, dimension_order=None, ome_xml=ome_xml)
+
+    # Read written result and check basics
+    reader = OmeTiffReader(save_uri)
+
+    # Check basics
+    assert reader.shape == (1, 2, 3, 4, 5)
+    assert reader.dims.order == "TCZYX"
 
     # Can't do "easy" testing because compression + shape mismatches on RGB data

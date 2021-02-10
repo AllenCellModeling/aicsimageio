@@ -9,6 +9,7 @@ from typing import List, Tuple, Union
 from .. import types, get_module_version
 from ..dimensions import DEFAULT_DIMENSION_ORDER
 from ..exceptions import InvalidDimensionOrderingError
+from ..metadata import utils
 from ..readers import DefaultReader
 from ..utils import io_utils
 from .writer import Writer
@@ -116,6 +117,7 @@ class OmeTiffWriter(Writer):
             # then just pass it straight through to the writer.
             # But first, validate it.
             valid_ome = from_xml(ome_xml)
+            OmeTiffWriter._check_ome_dims(valid_ome, data.shape, data.dtype)
             xml = to_xml(valid_ome)
         elif isinstance(ome_xml, OME):
             # do some simple consistency check against the passed in OME dimensions
@@ -269,26 +271,6 @@ class OmeTiffWriter(Writer):
             idx = dimension_order.find(dim)
             return 1 if idx == -1 else shape[idx]
 
-        def dtype_to_pixel_type(npdtype) -> PixelType:
-            ometypedict = {
-                np.dtype(np.int8): PixelType.INT8,
-                np.dtype(np.int16): PixelType.INT16,
-                np.dtype(np.int32): PixelType.INT32,
-                np.dtype(np.uint8): PixelType.UINT8,
-                np.dtype(np.uint16): PixelType.UINT16,
-                np.dtype(np.uint32): PixelType.UINT32,
-                np.dtype(np.float32): PixelType.FLOAT,
-                np.dtype(np.float64): PixelType.DOUBLE,
-                np.dtype(np.complex64): PixelType.COMPLEXFLOAT,
-                np.dtype(np.complex128): PixelType.COMPLEXDOUBLE,
-            }
-            ptype = ometypedict.get(npdtype)
-            if ptype is None:
-                raise ValueError(
-                    f"OmeTiffWriter can't resolve pixel type: {npdtype.name}"
-                )
-            return ptype
-
         # pixels.channel_count = dim_or_1("C")
 
         # dimension_order must be set to the *reverse* of what dimensionality
@@ -296,7 +278,7 @@ class OmeTiffWriter(Writer):
         pixels = Pixels(
             id="Pixels:0",
             dimension_order=dimension_order[::-1],
-            type=dtype_to_pixel_type(data_dtype),
+            type=utils.dtype_to_ome_type(data_dtype),
             size_t=dim_or_1("T"),
             size_c=dim_or_1("C"),
             size_z=dim_or_1("Z"),
@@ -365,4 +347,10 @@ class OmeTiffWriter(Writer):
                 f"OME shape {expected_shape} is not the same as data array shape: \
                 {data_shape}"
             )
-        pass
+
+        expected_type = utils.ome_to_numpy_dtype(ome_xml.images[0].pixels.type)
+        if expected_type != data_dtype:
+            raise ValueError(
+                f"OME pixel type {expected_type.name} is not the same as data array type: \
+                {data_dtype.name}"
+            )

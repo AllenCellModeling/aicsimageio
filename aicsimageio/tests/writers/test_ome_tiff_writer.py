@@ -88,18 +88,40 @@ def test_ome_tiff_writer_no_meta(
 @pytest.mark.parametrize(
     "ome_xml",
     [
+        # ok dims
         (to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8)))),
         (OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+        # wrong dtype
+        pytest.param(
+            to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float))),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        pytest.param(
+            OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float)),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        # wrong dims
+        pytest.param(
+            to_xml(OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float))),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        pytest.param(
+            OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float)),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        # just totally wrong but valid ome
         pytest.param(
             to_xml(OME()),
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
             OME(),
             marks=pytest.mark.raises(exception=ValueError),
         ),
+        # even more blatantly bad ome
         pytest.param(
             "bad ome string",
+            # raised from within ome-types
             marks=pytest.mark.raises(exception=urllib.error.URLError),
         ),
     ],

@@ -7,7 +7,10 @@ import tifffile
 from typing import List, Tuple, Union
 
 from .. import types, get_module_version
-from ..dimensions import DEFAULT_DIMENSION_ORDER
+from ..dimensions import (
+    DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES,
+)
 from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils
 from ..readers import DefaultReader
@@ -95,11 +98,10 @@ class OmeTiffWriter(Writer):
         if isinstance(data, da.core.Array):
             data = data.compute()
 
-        dimension_order, data = OmeTiffWriter._resolve_dimension_order(
+        ome_dimension_order, data, is_rgb = OmeTiffWriter._resolve_dimension_order(
             data, dimension_order
         )
 
-        # xml = OmeTiffWriter._resolve_ome_xml(ome_xml)
         xml = ""
         if ome_xml is None:
             ome_xml = OmeTiffWriter.build_ome(
@@ -109,7 +111,8 @@ class OmeTiffWriter(Writer):
                 image_name=image_name,
                 pixels_physical_size=pixels_physical_size,
                 channel_colors=channel_colors,
-                dimension_order=dimension_order,
+                dimension_order=ome_dimension_order,
+                is_rgb=is_rgb,
             )
             xml = to_xml(ome_xml).encode()
         elif isinstance(ome_xml, str):
@@ -118,7 +121,7 @@ class OmeTiffWriter(Writer):
             # But first, validate it.
             valid_ome = from_xml(ome_xml)
             OmeTiffWriter._check_ome_dims(valid_ome, data.shape, data.dtype)
-            xml = to_xml(valid_ome)
+            xml = to_xml(valid_ome).encode()
         elif isinstance(ome_xml, OME):
             # do some simple consistency check against the passed in OME dimensions
             OmeTiffWriter._check_ome_dims(ome_xml, data.shape, data.dtype)
@@ -134,14 +137,14 @@ class OmeTiffWriter(Writer):
             path, bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BYTE_BOUNDARY
         )
 
-        # check data shape for TZCYX or ZCYX or ZYX
         # minisblack instructs TiffWriter to not try to infer rgb color within the
-        # data array metadata param fixes the double image description bug
+        # data array.
+        # metadata param fixes the double image description bug
         tif.save(
             data,
             compress=9,
             description=xml,
-            photometric="minisblack",
+            photometric="rgb" if is_rgb else "minisblack",
             metadata=None,
         )
 
@@ -150,53 +153,67 @@ class OmeTiffWriter(Writer):
     @staticmethod
     def _resolve_dimension_order(
         data: types.ArrayLike, dimension_order: str
-    ) -> Tuple[str, types.ArrayLike]:
+    ) -> Tuple[str, types.ArrayLike, bool]:
         if dimension_order is None:
             dimension_order = DEFAULT_DIMENSION_ORDER
         ndims = len(data.shape)
 
-        if ndims > 5:
-            # select last 5 dims
-            slc = [0] * (ndims - 5)
-            slc += [slice(None)] * 5
+        # data is rgb if last dimension is S and its size is 3 or 4
+        is_rgb = dimension_order[-1] == "S" and (
+            data.shape[-1] == 3 or data.shape[-1] == 4
+        )
+
+        # select last 5 (or 6 if rgb) dims
+        max_dims = 6 if is_rgb else 5
+        if ndims > max_dims:
+            slc = [0] * (ndims - max_dims)
+            slc += [slice(None)] * max_dims
             data = data[slc]
 
         ndims = len(data.shape)
         assert (
-            ndims == 5 or ndims == 4 or ndims == 3 or ndims == 2
-        ), "Expected 2, 3, 4, or 5 dimensions in data array"
+            ndims == 6 or ndims == 5 or ndims == 4 or ndims == 3 or ndims == 2
+        ), "Expected no more than 6 dimensions in data array"
 
         # assert valid characters in dimension_order
-        if dimension_order.find("S") > -1:
-            raise InvalidDimensionOrderingError(
-                "Samples not yet supported in OmeTiffWriter."
+        if not (
+            all(
+                d in DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES for d in dimension_order
             )
-        if not (all(d in DEFAULT_DIMENSION_ORDER for d in dimension_order)):
+        ):
             raise InvalidDimensionOrderingError(
                 f"Invalid dimension_order {dimension_order}"
             )
-        if dimension_order[-2:] != "YX":
+        if dimension_order.find("S") > -1 and not is_rgb:
             raise InvalidDimensionOrderingError(
-                f"Last two characters of dimension_order {dimension_order} expected to \
-                be YX.  Please transpose your data."
+                "Samples must be last dimension if present, and only S=3 or 4 is supported."
+            )
+        if dimension_order[-2:] != "YX" and dimension_order[-3:] != "YXS":
+            raise InvalidDimensionOrderingError(
+                f"Last characters of dimension_order {dimension_order} expected to \
+                be YX or YXS.  Please transpose your data."
             )
         if len(dimension_order) < ndims:
             raise InvalidDimensionOrderingError(
                 f"dimension_order {dimension_order} must have at least as many \
                 dimensions as data shape {data.shape}"
             )
-        # todo ensure no letter appears more than once?
 
         # ensure dimension_order is same len as shape
         if len(dimension_order) > ndims:
             dimension_order = dimension_order[-ndims:]
+
+        # remember whether S was a dim or not, and remove it for now
+        if is_rgb:
+            ndims = ndims - 1
+            dimension_order = dimension_order[:-1]
 
         # expand to 5D and add appropriate dimensions
         if ndims == 2:
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
             data = np.expand_dims(data, axis=0)
-            dimension_order = DEFAULT_DIMENSION_ORDER
+            dimension_order = "TCZ" + dimension_order
 
         # expand to 5D and add appropriate dimensions
         elif ndims == 3:
@@ -222,7 +239,7 @@ class OmeTiffWriter(Writer):
             elif first2 == "CZ" or first2 == "ZC":
                 dimension_order = "T" + dimension_order
 
-        return dimension_order, data
+        return dimension_order, data, is_rgb
 
     @staticmethod
     def _size_of_ndarray(data: types.ArrayLike) -> int:
@@ -247,6 +264,7 @@ class OmeTiffWriter(Writer):
         image_name: str = None,
         pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
         channel_colors: List[int] = None,
+        is_rgb: bool = False,
     ) -> OME:
         """Creates the necessary metadata for an OME tiff image
         :param data: An array to be written out to a file.
@@ -259,8 +277,10 @@ class OmeTiffWriter(Writer):
         """
         shape = data_shape
 
-        if len(shape) != 5:
-            raise ValueError("OmeTiffWriter.build_ome only accepts 5d arrays")
+        if len(shape) != 5 and not (is_rgb and len(shape) == 6):
+            raise ValueError(
+                "OmeTiffWriter.build_ome only accepts 5d arrays or 6d with RGB"
+            )
         if len(dimension_order) != len(DEFAULT_DIMENSION_ORDER):
             raise ValueError("OmeTiffWriter.build_ome only accepts 5d dimension_order")
         for c in DEFAULT_DIMENSION_ORDER:
@@ -296,7 +316,12 @@ class OmeTiffWriter(Writer):
             TiffData(plane_count=pixels.size_t * pixels.size_c * pixels.size_z)
         ]
 
-        pixels.channels = [Channel() for i in range(pixels.size_c)]
+        # should only ever be 1, 3 or 4
+        samples = shape[-1] if is_rgb else 1
+
+        pixels.channels = [
+            Channel(samples_per_pixel=samples) for i in range(pixels.size_c)
+        ]
         if channel_names is None:
             for i in range(pixels.size_c):
                 pixels.channels[i].id = "Channel:0:" + str(i)
@@ -311,10 +336,6 @@ class OmeTiffWriter(Writer):
             assert len(channel_colors) >= pixels.size_c
             for i in range(pixels.size_c):
                 pixels.channels[i].color = channel_colors[i]
-
-        # assume 1 sample per channel
-        for i in range(pixels.size_c):
-            pixels.channels[i].samples_per_pixel = 1
 
         img = Image(name=image_name, id="Image:0", pixels=pixels)
 

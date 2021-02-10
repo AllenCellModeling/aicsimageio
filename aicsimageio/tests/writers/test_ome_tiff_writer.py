@@ -54,6 +54,8 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
         ((2, 3, 4, 5, 6), "TCZYX", (2, 3, 4, 5, 6), "TCZYX"),
         ((2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
         ((1, 2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
+        ((5, 16, 16, 3), "ZYXS", (1, 1, 5, 16, 16, 3), "TCZYXS"),
+        ((5, 16, 16, 4), "CYXS", (1, 5, 1, 16, 16, 4), "TCZYXS"),
     ],
 )
 @host
@@ -75,6 +77,7 @@ def test_ome_tiff_writer_no_meta(
 
     # Normal save
     OmeTiffWriter.save(arr, save_uri, write_dim_order)
+    OmeTiffWriter.save(arr, "C:\\Users\\dmt\\test.ome.tiff", write_dim_order)
 
     # Read written result and check basics
     reader = OmeTiffReader(save_uri)

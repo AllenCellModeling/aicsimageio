@@ -307,7 +307,7 @@ class OmeTiffWriter(Writer):
             size_z=dim_or_1("Z"),
             size_y=dim_or_1("Y"),
             size_x=dim_or_1("X"),
-            interleaved=True if is_rgb else False,
+            interleaved=True if is_rgb else None,
         )
 
         if pixels_physical_size is not None:

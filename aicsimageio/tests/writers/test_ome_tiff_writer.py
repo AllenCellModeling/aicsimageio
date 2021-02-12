@@ -77,7 +77,6 @@ def test_ome_tiff_writer_no_meta(
 
     # Normal save
     OmeTiffWriter.save(arr, save_uri, write_dim_order)
-    OmeTiffWriter.save(arr, "C:\\Users\\dmt\\test.ome.tiff", write_dim_order)
 
     # Read written result and check basics
     reader = OmeTiffReader(save_uri)

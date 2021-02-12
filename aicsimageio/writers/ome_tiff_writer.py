@@ -2,8 +2,8 @@ import dask.array as da
 import numpy as np
 from ome_types import from_xml, to_xml
 from ome_types.model import OME, Image, Channel, Pixels, TiffData
-from ome_types.model.simple_types import PixelType
 import tifffile
+from tifffile import TIFF
 from typing import List, Tuple, Union
 
 from .. import types, get_module_version
@@ -140,12 +140,13 @@ class OmeTiffWriter(Writer):
         # minisblack instructs TiffWriter to not try to infer rgb color within the
         # data array.
         # metadata param fixes the double image description bug
-        tif.save(
+        tif.write(
             data,
-            compress=9,
             description=xml,
-            photometric="rgb" if is_rgb else "minisblack",
+            photometric=TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK,
+            planarconfig=TIFF.PLANARCONFIG.CONTIG,
             metadata=None,
+            compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
         )
 
         tif.close()
@@ -186,7 +187,8 @@ class OmeTiffWriter(Writer):
             )
         if dimension_order.find("S") > -1 and not is_rgb:
             raise InvalidDimensionOrderingError(
-                "Samples must be last dimension if present, and only S=3 or 4 is supported."
+                "Samples must be last dimension if present, and only S=3 or 4 is \
+                supported."
             )
         if dimension_order[-2:] != "YX" and dimension_order[-3:] != "YXS":
             raise InvalidDimensionOrderingError(
@@ -304,6 +306,7 @@ class OmeTiffWriter(Writer):
             size_z=dim_or_1("Z"),
             size_y=dim_or_1("Y"),
             size_x=dim_or_1("X"),
+            interleaved=True if is_rgb else False,
         )
 
         if pixels_physical_size is not None:
@@ -313,7 +316,7 @@ class OmeTiffWriter(Writer):
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
-            TiffData(plane_count=pixels.size_t * pixels.size_c * pixels.size_z)
+            TiffData(ifd=0, plane_count=pixels.size_t * pixels.size_c * pixels.size_z)
         ]
 
         # should only ever be 1, 3 or 4

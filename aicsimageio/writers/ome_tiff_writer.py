@@ -134,12 +134,10 @@ class OmeTiffWriter(Writer):
 
         # Save image to tiff!
         tif = tifffile.TiffWriter(
-            path, bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BYTE_BOUNDARY
+            path,
+            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BYTE_BOUNDARY,
         )
 
-        # minisblack instructs TiffWriter to not try to infer rgb color within the
-        # data array.
-        # metadata param fixes the double image description bug
         tif.write(
             data,
             description=xml,
@@ -293,7 +291,10 @@ class OmeTiffWriter(Writer):
             idx = dimension_order.find(dim)
             return 1 if idx == -1 else shape[idx]
 
-        # pixels.channel_count = dim_or_1("C")
+        channel_count = dim_or_1("C")
+
+        # should only ever be 1, 3 or 4
+        samples = shape[-1] if is_rgb else 1
 
         # dimension_order must be set to the *reverse* of what dimensionality
         # the ome tif file is saved as
@@ -302,7 +303,7 @@ class OmeTiffWriter(Writer):
             dimension_order=dimension_order[::-1],
             type=utils.dtype_to_ome_type(data_dtype),
             size_t=dim_or_1("T"),
-            size_c=dim_or_1("C"),
+            size_c=channel_count * samples,
             size_z=dim_or_1("Z"),
             size_y=dim_or_1("Y"),
             size_x=dim_or_1("X"),
@@ -316,28 +317,25 @@ class OmeTiffWriter(Writer):
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
-            TiffData(ifd=0, plane_count=pixels.size_t * pixels.size_c * pixels.size_z)
+            TiffData(plane_count=pixels.size_t * channel_count * pixels.size_z)
         ]
-
-        # should only ever be 1, 3 or 4
-        samples = shape[-1] if is_rgb else 1
 
         pixels.channels = [
-            Channel(samples_per_pixel=samples) for i in range(pixels.size_c)
+            Channel(samples_per_pixel=samples) for i in range(channel_count)
         ]
         if channel_names is None:
-            for i in range(pixels.size_c):
+            for i in range(channel_count):
                 pixels.channels[i].id = "Channel:0:" + str(i)
                 pixels.channels[i].name = "C:" + str(i)
         else:
-            for i in range(pixels.size_c):
+            for i in range(channel_count):
                 name = channel_names[i]
                 pixels.channels[i].id = "Channel:0:" + str(i)
                 pixels.channels[i].name = name
 
         if channel_colors is not None:
             assert len(channel_colors) >= pixels.size_c
-            for i in range(pixels.size_c):
+            for i in range(channel_count):
                 pixels.channels[i].color = channel_colors[i]
 
         img = Image(name=image_name, id="Image:0", pixels=pixels)

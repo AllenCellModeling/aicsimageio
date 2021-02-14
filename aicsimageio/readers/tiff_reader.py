@@ -14,7 +14,6 @@ from tifffile.tifffile import TiffTags
 from .. import constants, exceptions, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, REQUIRED_CHUNK_BY_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
-from ..transforms import transpose_to_dims
 from ..utils import io_utils
 from .reader import Reader
 

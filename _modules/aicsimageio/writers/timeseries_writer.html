@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.writers.timeseries_writer &mdash; AICSImageIO 4.0.0.dev1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.0.0.dev1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.bin.html">aicsimageio.bin package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id19">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id22">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id24">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id27">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id29">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id31">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id33">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id35">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id37">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id40">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id42">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id46">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id49">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id53">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id55">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id57">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id59">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id61">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id63">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id66">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id69">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id72">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id74">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id78">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id80">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id83">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id84">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+        
+      <li>aicsimageio.writers.timeseries_writer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.writers.timeseries_writer</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">fsspec.implementations.local</span> <span class="kn">import</span> <span class="n">LocalFileSystem</span>
+<span class="kn">from</span> <span class="nn">imageio</span> <span class="kn">import</span> <span class="n">get_writer</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="n">DimensionNames</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">,</span> <span class="n">UnexpectedShapeError</span>
+<span class="kn">from</span> <span class="nn">..readers</span> <span class="kn">import</span> <span class="n">DefaultReader</span>
+<span class="kn">from</span> <span class="nn">..transforms</span> <span class="kn">import</span> <span class="n">reshape_data</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">.writer</span> <span class="kn">import</span> <span class="n">Writer</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="TimeseriesWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.timeseries_writer.TimeseriesWriter">[docs]</a><span class="k">class</span> <span class="nc">TimeseriesWriter</span><span class="p">(</span><span class="n">Writer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A writer for timeseries Greyscale, RGB, or RGBA image data.</span>
+<span class="sd">    Primarily directed at formats: &quot;gif&quot;, &quot;mp4&quot;, &quot;mkv&quot;, etc.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_TIMEPOINT_DIMENSIONS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">_TIMEPOINT_WITH_SAMPLES_DIMENSIONS</span> <span class="o">=</span> <span class="n">_TIMEPOINT_DIMENSIONS</span> <span class="o">+</span> <span class="p">[</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span>
+    <span class="p">]</span>
+
+    <span class="n">DIM_ORDERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_TIMEPOINT_DIMENSIONS</span><span class="p">),</span>  <span class="c1"># Greyscale</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_TIMEPOINT_WITH_SAMPLES_DIMENSIONS</span><span class="p">),</span>  <span class="c1"># RGB / RGBA</span>
+    <span class="p">}</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_write_chunks</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span>
+        <span class="n">extension</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">imageio_mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">with</span> <span class="n">get_writer</span><span class="p">(</span>
+            <span class="n">f</span><span class="p">,</span>
+            <span class="nb">format</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">imageio_mode</span><span class="p">,</span>
+            <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+            <span class="c1"># Make each chunk of the dask array be a frame</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dim_order</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+
+            <span class="c1"># Save each frame</span>
+            <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">blocks</span><span class="p">:</span>
+                <span class="c1"># Need to squeeze to remove the singleton T dimension</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">append_data</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">block</span><span class="p">)</span><span class="o">.</span><span class="n">compute</span><span class="p">())</span>
+
+<div class="viewcode-block" id="TimeseriesWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.timeseries_writer.TimeseriesWriter.save">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">uri</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">24</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a data array to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: types.ArrayLike</span>
+<span class="sd">            The array of data to store. Data must have either three or four dimensions.</span>
+<span class="sd">        uri: types.PathLike</span>
+<span class="sd">            The URI or local path for where to save the data.</span>
+<span class="sd">        dim_order: str</span>
+<span class="sd">            The dimension order of the provided data.</span>
+<span class="sd">            Default: None. Based off the number of dimensions, will assume</span>
+<span class="sd">            the dimensions -- three dimensions: TYX and four dimensions: TYXS.</span>
+<span class="sd">        fps: int</span>
+<span class="sd">            Frames per second to attach as metadata.</span>
+<span class="sd">            Default: 24</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Data is the correct shape and dimension order</span>
+
+<span class="sd">        &gt;&gt;&gt; image = dask.array.random.random((50, 100, 100))</span>
+<span class="sd">        ... TimeseriesWriter.save(image, &quot;file.gif&quot;)</span>
+
+<span class="sd">        Data provided with current dimension order</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.random.rand(100, 3, 1024, 2048)</span>
+<span class="sd">        ... TimeseriesWriter.save(image, &quot;file.mkv&quot;, &quot;TSYX&quot;)</span>
+
+<span class="sd">        Save to remote</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.random.rand(300, 100, 100, 3)</span>
+<span class="sd">        ... TimeseriesWriter.save(image, &quot;s3://my-bucket/file.png&quot;)</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IOError: Cannot write FFMPEG formats to remote storage.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This writer can also be useful when wanting to create a timeseries image using</span>
+<span class="sd">        a non-time dimension. For example, creating a timeseries image where each frame</span>
+<span class="sd">        is a Z-plane from a source volumetric image as seen below.</span>
+
+<span class="sd">        &gt;&gt;&gt; image = AICSImageIO(&quot;some_z_stack.ome.tiff&quot;)</span>
+<span class="sd">        ... TimeseriesWriter.save(</span>
+<span class="sd">        ...     data=image.get_image_data(&quot;ZYX&quot;, T=0, C=0),</span>
+<span class="sd">        ...     uri=&quot;some_z_stack.mp4&quot;,</span>
+<span class="sd">        ...     # Overloading the Z dimension as the Time dimension</span>
+<span class="sd">        ...     # Technically not needed as it would have been assumed due to three dim</span>
+<span class="sd">        ...     dim_order=&quot;TYX&quot;,</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check unpack uri and extension</span>
+        <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">extension</span><span class="p">,</span>
+            <span class="n">imageio_mode</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">DefaultReader</span><span class="o">.</span><span class="n">_get_extension_and_mode</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Convert to dask array to make downstream usage of data have a consistent API</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># Shorthand num dimensions</span>
+        <span class="n">n_dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Check num dimensions</span>
+        <span class="k">if</span> <span class="n">n_dims</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnexpectedShapeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;TimeseriesWriter requires that data must have either 3 or 4 &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dimensions. Provided data with </span><span class="si">{</span><span class="n">n_dims</span><span class="si">}</span><span class="s2"> dimensions. (</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Assume dim order if not provided</span>
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dim_order</span> <span class="o">=</span> <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]</span>
+
+        <span class="c1"># Uppercase dim order</span>
+        <span class="n">dim_order</span> <span class="o">=</span> <span class="n">dim_order</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="c1"># Check dimensions provided in the dim order string are all T, Y, X, or S</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">_TIMEPOINT_WITH_SAMPLES_DIMENSIONS</span>
+                <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dim_order</span>
+            <span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The dim_order parameter only accepts dimensions: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">_TIMEPOINT_WITH_SAMPLES_DIMENSIONS</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided dim_order string: &#39;</span><span class="si">{</span><span class="n">dim_order</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Transpose dimensions if dim_order not ready for imageio</span>
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="o">!=</span> <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]:</span>
+            <span class="c1"># Actual reshape of the data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">reshape_data</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">given_dims</span><span class="o">=</span><span class="n">dim_order</span><span class="p">,</span>
+                <span class="n">return_dims</span><span class="o">=</span><span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Set dim order to updated order</span>
+            <span class="n">dim_order</span> <span class="o">=</span> <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]</span>
+
+        <span class="c1"># Handle FFMPEG formats</span>
+        <span class="k">if</span> <span class="n">extension</span> <span class="ow">in</span> <span class="n">DefaultReader</span><span class="o">.</span><span class="n">FFMPEG_FORMATS</span><span class="p">:</span>
+            <span class="c1"># FFMPEG can only handle local files</span>
+            <span class="c1"># https://github.com/imageio/imageio-ffmpeg/issues/28#issuecomment-566012783</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">LocalFileSystem</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Can only write to local files for formats: &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">DefaultReader</span><span class="o">.</span><span class="n">FFMPEG_FORMATS</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Else, write with local</span>
+            <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">_write_chunks</span><span class="p">(</span>
+                <span class="n">f</span><span class="o">=</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+                <span class="n">imageio_mode</span><span class="o">=</span><span class="n">imageio_mode</span><span class="p">,</span>
+                <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                <span class="n">dim_order</span><span class="o">=</span><span class="n">dim_order</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Handle all non-ffmpeg formats</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_resource</span><span class="p">:</span>
+                <span class="n">TimeseriesWriter</span><span class="o">.</span><span class="n">_write_chunks</span><span class="p">(</span>
+                    <span class="n">f</span><span class="o">=</span><span class="n">open_resource</span><span class="p">,</span>
+                    <span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+                    <span class="n">imageio_mode</span><span class="o">=</span><span class="n">imageio_mode</span><span class="p">,</span>
+                    <span class="n">fps</span><span class="o">=</span><span class="n">fps</span><span class="p">,</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                    <span class="n">dim_order</span><span class="o">=</span><span class="n">dim_order</span><span class="p">,</span>
+                <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

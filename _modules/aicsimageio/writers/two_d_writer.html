@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>aicsimageio.utils.io_utils &mdash; AICSImageIO 4.0.0.dev1 documentation</title>
+  <title>aicsimageio.writers.two_d_writer &mdash; AICSImageIO 4.0.0.dev1 documentation</title>
   
 
   
@@ -302,7 +302,7 @@
         
           <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
         
-      <li>aicsimageio.utils.io_utils</li>
+      <li>aicsimageio.writers.two_d_writer</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -317,64 +317,134 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for aicsimageio.utils.io_utils</h1><div class="highlight"><pre>
+  <h1>Source code for aicsimageio.writers.two_d_writer</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">from</span> <span class="nn">imageio</span> <span class="kn">import</span> <span class="n">get_writer</span>
 
-<span class="kn">from</span> <span class="nn">fsspec.core</span> <span class="kn">import</span> <span class="n">url_to_fs</span>
-<span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
-
-<span class="kn">from</span> <span class="nn">..types</span> <span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="n">DimensionNames</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">,</span> <span class="n">UnexpectedShapeError</span>
+<span class="kn">from</span> <span class="nn">..readers</span> <span class="kn">import</span> <span class="n">DefaultReader</span>
+<span class="kn">from</span> <span class="nn">..transforms</span> <span class="kn">import</span> <span class="n">reshape_data</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">.writer</span> <span class="kn">import</span> <span class="n">Writer</span>
 
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="pathlike_to_fs"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.io_utils.pathlike_to_fs">[docs]</a><span class="k">def</span> <span class="nf">pathlike_to_fs</span><span class="p">(</span>
-    <span class="n">uri</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
-    <span class="n">enforce_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<div class="viewcode-block" id="TwoDWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.two_d_writer.TwoDWriter">[docs]</a><span class="k">class</span> <span class="nc">TwoDWriter</span><span class="p">(</span><span class="n">Writer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find and return the appropriate filesystem and path from a path-like object.</span>
+<span class="sd">    A writer for image data is only 2 dimension with samples (RGB / RGBA) optional.</span>
+<span class="sd">    Primarily directed at formats: &quot;png&quot;, &quot;jpg&quot;, etc.</span>
 
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    uri: PathLike</span>
-<span class="sd">        The local or remote path or uri.</span>
-<span class="sd">    enforce_exists: bool</span>
-<span class="sd">        Check whether or not the resource exists, if not, raise FileNotFoundError.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    fs: AbstractFileSystem</span>
-<span class="sd">        The filesystem to operate on.</span>
-<span class="sd">    path: str</span>
-<span class="sd">        The full path to the target resource.</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    FileNotFoundError: If enforce_exists is provided value True and the resource is not</span>
-<span class="sd">    found or is unavailable.</span>
+<span class="sd">    This is primarily a passthrough to imageio.imwrite.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Convert paths to string to be handled by url_to_fs</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="n">uri</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
-    <span class="c1"># Get details</span>
-    <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">url_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+    <span class="n">_PLANE_DIMENSIONS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+        <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">_PLANE_WITH_SAMPLES_DIMENSIONS</span> <span class="o">=</span> <span class="n">_PLANE_DIMENSIONS</span> <span class="o">+</span> <span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span><span class="p">]</span>
 
-    <span class="c1"># Check file exists</span>
-    <span class="k">if</span> <span class="n">enforce_exists</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fs</span><span class="o">.</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">DIM_ORDERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_PLANE_DIMENSIONS</span><span class="p">),</span>  <span class="c1"># Greyscale</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_PLANE_WITH_SAMPLES_DIMENSIONS</span><span class="p">),</span>  <span class="c1"># RGB / RGBA</span>
+    <span class="p">}</span>
 
-    <span class="c1"># Get and store details</span>
-    <span class="c1"># We do not return an AbstractBufferedFile (i.e. fs.open) as we do not want to have</span>
-    <span class="c1"># any open file buffers _after_ any API call. API calls must themselves call</span>
-    <span class="c1"># fs.open and complete their function during the context of the opened buffer.</span>
-    <span class="k">return</span> <span class="n">fs</span><span class="p">,</span> <span class="n">path</span></div>
+<div class="viewcode-block" id="TwoDWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.two_d_writer.TwoDWriter.save">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+        <span class="n">uri</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a data array to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: types.ArrayLike</span>
+<span class="sd">            The array of data to store. Data must have either two or three dimensions.</span>
+<span class="sd">        uri: types.PathLike</span>
+<span class="sd">            The URI or local path for where to save the data.</span>
+<span class="sd">        dim_order: str</span>
+<span class="sd">            The dimension order of the provided data.</span>
+<span class="sd">            Default: None. Based off the number of dimensions, will assume</span>
+<span class="sd">            the dimensions similar to how aicsimageio.readers.DefaultReader reads in</span>
+<span class="sd">            data. That is, two dimensions: YX and three dimensions: YXS.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Data is the correct shape and dimension order</span>
+
+<span class="sd">        &gt;&gt;&gt; image = dask.array.random.random((100, 100, 4))</span>
+<span class="sd">        ... TwoDWriter.save(image, &quot;file.png&quot;)</span>
+
+<span class="sd">        Data provided with current dimension order</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.random.rand(3, 1024, 2048)</span>
+<span class="sd">        ... TwoDWriter.save(image, &quot;file.png&quot;, &quot;SYX&quot;)</span>
+
+<span class="sd">        Save to remote</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.random.rand(100, 100, 3)</span>
+<span class="sd">        ... TwoDWriter.save(image, &quot;s3://my-bucket/file.png&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check unpack uri and extension</span>
+        <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+        <span class="p">(</span>
+            <span class="n">extension</span><span class="p">,</span>
+            <span class="n">imageio_mode</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">DefaultReader</span><span class="o">.</span><span class="n">_get_extension_and_mode</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="c1"># Assumption: if provided a dask array to save, it can fit into memory</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+        <span class="c1"># Shorthand num dimensions</span>
+        <span class="n">n_dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Check num dimensions</span>
+        <span class="k">if</span> <span class="n">n_dims</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TwoDWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">UnexpectedShapeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;TwoDWriter requires that data must have either 2 or 3 dimensions. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided data with </span><span class="si">{</span><span class="n">n_dims</span><span class="si">}</span><span class="s2"> dimensions. (</span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Assume dim order if not provided</span>
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dim_order</span> <span class="o">=</span> <span class="n">TwoDWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]</span>
+
+        <span class="c1"># Uppercase dim order</span>
+        <span class="n">dim_order</span> <span class="o">=</span> <span class="n">dim_order</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+        <span class="c1"># Check dimensions provided in the dim order string are all Y, X, or S</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TwoDWriter</span><span class="o">.</span><span class="n">_PLANE_WITH_SAMPLES_DIMENSIONS</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">dim_order</span><span class="p">]</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;The dim_order parameter only accepts dimensions: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">TwoDWriter</span><span class="o">.</span><span class="n">_PLANE_WITH_SAMPLES_DIMENSIONS</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided dim_order string: &#39;</span><span class="si">{</span><span class="n">dim_order</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Transpose dimensions if dim_order not ready for imageio</span>
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="o">!=</span> <span class="n">TwoDWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">reshape_data</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">dim_order</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">TwoDWriter</span><span class="o">.</span><span class="n">DIM_ORDERS</span><span class="p">[</span><span class="n">n_dims</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Save image</span>
+        <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_resource</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">get_writer</span><span class="p">(</span>
+                <span class="n">open_resource</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span>
+                <span class="n">mode</span><span class="o">=</span><span class="n">imageio_mode</span><span class="p">,</span>
+            <span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+                <span class="n">writer</span><span class="o">.</span><span class="n">append_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
 </pre></div>
 
            </div>

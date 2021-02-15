@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/writers  (`#198
+  <https://github.com/AllenCellModeling/aicsimageio/pull/198>`_)
+  [Jackson Maxfield Brown]
 - feature/add-aicsimage-obj  (`#185
   <https://github.com/AllenCellModeling/aicsimageio/pull/185>`_)
   [Jackson Maxfield Brown]

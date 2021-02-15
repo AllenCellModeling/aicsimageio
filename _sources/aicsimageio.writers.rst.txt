@@ -4,6 +4,22 @@ aicsimageio.writers package
 Submodules
 ----------
 
+aicsimageio.writers.timeseries\_writer module
+---------------------------------------------
+
+.. automodule:: aicsimageio.writers.timeseries_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aicsimageio.writers.two\_d\_writer module
+-----------------------------------------
+
+.. automodule:: aicsimageio.writers.two_d_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.writers.writer module
 ---------------------------------
 

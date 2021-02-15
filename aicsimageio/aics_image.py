@@ -107,7 +107,7 @@ class AICSImage:
         Initialize an image, change scene, read data to numpy.
 
         >>> img = AICSImage("my_many_scene.czi")
-        ... img.set_scene(3)
+        ... img.set_scene("Image:3")
         ... img.data
 
         Notes

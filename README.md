@@ -62,7 +62,7 @@ img.current_scene
 img.scenes
 
 # Change scene
-img.set_scene(1)
+img.set_scene("Image:1")
 
 # Same operations on a different scene
 img.data  # returns 5D TCZYX numpy array
@@ -79,9 +79,9 @@ data = imread("my_file.tiff")  # optionally provide a scene id, default first
 
 #### Full Image Reading Notes
 
-The `.data` and `.xarray_data` properties and the `.get_image_data` function will
-load the whole image into memory prior to returning the specified chunk (if using
-`.get_image_data`).
+The `.data` and `.xarray_data` properties will load the whole image into memory.
+The `.get_image_data` function will load the whole image into memory and then retrieve
+the specific chunk.
 
 ### Delayed Image Reading
 
@@ -105,7 +105,7 @@ img.current_scene
 img.scenes
 
 # Change scene
-img.set_scene(1)
+img.set_scene("Image:1")
 
 # Same operations on a different scene
 img.dask_data  # returns 5D TCZYX dask array
@@ -129,7 +129,7 @@ t0 = lazy_t0.compute()
 #### Delayed Image Reading Notes
 
 The `.dask_data` and `.xarray_dask_data` properties and the `.get_image_dask_data`
-function will not load any piece of the image into memory until you specifically
+function will not load any piece of the pixel data into memory until you specifically
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected data in-memory.
 
@@ -145,6 +145,14 @@ img = AICSImage("gcs://my-bucket/my_file.tiff")
 
 # All other normal operations work just fine
 ```
+
+Remote reading requires that the file-system specification implementation for the
+target backend is installed.
+
+-   For `s3`: `pip install s3fs`
+-   For `gs`: `pip install gcsfs`
+
+See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 
 ### Metadata Reading
 

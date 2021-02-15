@@ -17,7 +17,7 @@ LOCAL_RESOURCES_DIR = Path(__file__).parent / "resources"
 REMOTE_RESOURCES_DIR = "s3://aics-modeling-packages-test-resources/aicsimageio/test_resources/resources"  # noqa: E501
 
 LOCAL_RESOURCES_WRITE_DIR = Path(__file__).parent / "writer_products"
-REMOTE_RESOURCES_WRITER_DIR = "s3://aics-modeling-packages-test-resources/aicsimageio/writer_products"  # noqa: E501
+REMOTE_RESOURCES_WRITER_DIR = "s3://aics-modeling-packages-test-resources/fake/dir"
 
 
 def get_resource_full_path(filename, host):

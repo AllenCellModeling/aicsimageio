@@ -3,14 +3,15 @@
 
 import numpy as np
 import pytest
+
 from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 
-from ..conftest import LOCAL, REMOTE, get_resource_full_path
+from ..conftest import get_resource_full_path, host
 from ..image_container_test_utils import run_image_read_checks
 
 
-@pytest.mark.parametrize("host", [LOCAL, REMOTE])
+@host
 @pytest.mark.parametrize(
     "filename, set_scene, expected_shape, expected_dims_order",
     [

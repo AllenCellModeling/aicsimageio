@@ -30,7 +30,7 @@ class Writer(ABC):
         data: types.ArrayLike
             The array of data to store.
         uri: types.PathLike
-            The URI to save the data at.
+            The URI or local path for where to save the data.
         dim_order: str
             The dimension order of the data.
 

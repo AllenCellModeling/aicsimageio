@@ -35,7 +35,9 @@ class ArrayLikeReader(Reader):
         A single, numpy ndarray, dask Array, or xarray DataArray, or list of many.
         If provided a list, each item in the list will be exposed through the scene API.
         If provided an xarray DataArray alone or as an element of the list, the
-        known_dims and known_channel_names, kwargs are ignored.
+        known_dims and known_channel_names, kwargs are ignored if there is dimension
+        (or channel coordinate) information attached the xarray object. If the provided
+        xarray object is missing these pieces, the AICSImageIO defaults will be added.
 
     known_dims: Optional[Union[List[str], str]]
         A string of known dimensions to be applied to all array(s) or a

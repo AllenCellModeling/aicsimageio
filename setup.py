@@ -45,13 +45,13 @@ dev_requirements = [
 ]
 
 requirements = [
-    "aicspylibczi~=2.7.5",
+    "aicspylibczi~=2.8.0",
     "dask[array]>=2021.1.0",
     "fsspec~=0.8.4",
     "imagecodecs>=2020.5.30",
     "imageio[ffmpeg]~=2.9.0",
     "numpy~=1.16",
-    "ome-types~=0.2.3",
+    "ome-types~=0.2.4",
     "readlif~=0.3.1",
     "tifffile>=2021.1.14",
     "toolz~=0.11.0",
@@ -104,6 +104,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.0.0.dev0",
+    version="4.0.0.dev1",
     zip_safe=False,
 )

@@ -40,8 +40,11 @@ class Args(argparse.Namespace):
         p.add_argument(
             "--top-hash",
             # Generated package hash from upload_test_resources
-            default="8f6584820cbadc32d7eb606dfa70510c081e8442c91ce45af76336a6761c0504",
-            help="A specific version of the package to retrieve.",
+            default=None,
+            help=(
+                "A specific version of the package to retrieve. "
+                "If none, will read from the TEST_RESOURCES_HASH.txt file."
+            ),
         )
         p.add_argument(
             "--debug",
@@ -66,11 +69,20 @@ def download_test_resources(args: Args):
         ).resolve()
         resources_dir.mkdir(exist_ok=True)
 
+        # Use or read top hash
+        if args.top_hash is None:
+            with open(Path(__file__).parent / "TEST_RESOURCES_HASH.txt", "r") as f:
+                top_hash = f.readline()
+        else:
+            top_hash = args.top_hash
+
+        log.info(f"Downloading test resources using top hash: {top_hash}")
+
         # Get quilt package
         package = Package.browse(
             "aicsimageio/test_resources",
             "s3://aics-modeling-packages-test-resources",
-            top_hash=args.top_hash,
+            top_hash=top_hash,
         )
 
         # Download

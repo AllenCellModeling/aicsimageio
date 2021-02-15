@@ -7,17 +7,14 @@ import pytest
 from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
-from ..conftest import LOCAL, REMOTE, get_resource_full_path
+from ..conftest import get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
 
 
-@pytest.mark.parametrize(
-    "host",
-    [LOCAL, REMOTE],
-)
+@host
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "
@@ -180,7 +177,7 @@ def test_tiff_reader(
     )
 
 
-@pytest.mark.parametrize("host", [LOCAL, REMOTE])
+@host
 @pytest.mark.parametrize(
     "filename, "
     "first_scene_id, "

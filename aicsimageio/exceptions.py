@@ -13,7 +13,16 @@ class ConflictingArgumentsError(Exception):
 class InvalidDimensionOrderingError(Exception):
     """
     A general exception that can be thrown when handling dimension ordering or
-    validation. Should be provied a message for the user to be given more context.
+    validation. Should be provided with a message for the user to be given more context.
+    """
+
+    pass
+
+
+class UnexpectedShapeError(Exception):
+    """
+    A general exception that can be thrown when handling shape validation.
+    Should be provided with a message for the user to be given more context.
     """
 
     pass

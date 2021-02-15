@@ -116,6 +116,14 @@ class DefaultReader(Reader):
         if len(shape) == 2:
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:
+            # Handle greyscale timeseries
+            if shape[-1] > 4:
+                return (
+                    f"{DimensionNames.Time}"
+                    f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
+                )
+
+            # Else, return normal RGB / RGBA dims
             return (
                 f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
                 f"{DimensionNames.Samples}"

@@ -79,7 +79,7 @@ class Reader(ABC):
             return cls._is_supported_image(fs, path, **kwargs)
 
         # Special cases
-        if isinstance(image, (np.ndarray, da.core.Array)):
+        if isinstance(image, (list, np.ndarray, da.core.Array, xr.DataArray)):
             return cls._is_supported_image(image, **kwargs)
 
         # Raise because none of the above returned

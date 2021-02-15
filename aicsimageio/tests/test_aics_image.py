@@ -4,6 +4,7 @@
 import dask.array as da
 import numpy as np
 import pytest
+import xarray as xr
 from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
@@ -267,86 +268,228 @@ def test_multi_scene_aicsimage(
 
 
 @pytest.mark.parametrize(
-    "array_constructor",
+    "image, "
+    "known_dims, "
+    "known_channel_names, "
+    "set_scene, "
+    "expected_scenes, "
+    "expected_shape, "
+    "expected_dims, "
+    "expected_channel_names",
     [
-        np.ones,
-        da.ones,
-    ],
-)
-@pytest.mark.parametrize(
-    "arr_shape, known_dims, expected_shape, expected_dims, expected_channel_names",
-    [
+        # Check no metadata provided 2D
+        # these are really simple just None checks
         (
-            (1, 1),
+            np.random.rand(1, 1),
             None,
-            (1, 1, 1, 1, 1),
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0"],
-        ),
-        (
-            (1, 1, 1),
             None,
+            "Image:0",
+            ("Image:0",),
             (1, 1, 1, 1, 1),
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0"],
+            ["Channel:0:0"],
         ),
         (
-            (1, 1, 1, 1),
+            xr.DataArray(np.random.rand(1, 1)),
             None,
-            (1, 1, 1, 1, 1),
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0"],
-        ),
-        (
-            (1, 1, 1, 1, 1),
             None,
+            "Image:0",
+            ("Image:0",),
             (1, 1, 1, 1, 1),
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0"],
+            ["Channel:0:0"],
         ),
+        # Check no metadata provided 4D
+        # these check that channel names are created for all
+        # and specifically for xr that channel names are overwritten
         (
-            (1, 1, 1),
-            "SYX",
-            (1, 1, 1, 1, 1, 1),
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
-            ["Channel:0"],
-        ),
-        (
-            (1, 1, 1, 1),
-            "ZCYX",
+            np.random.rand(1, 1, 1, 1),
+            None,
+            None,
+            "Image:0",
+            ("Image:0",),
             (1, 1, 1, 1, 1),
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0"],
+            ["Channel:0:0"],
         ),
         (
+            xr.DataArray(np.random.rand(1, 1, 1, 1)),
+            None,
+            None,
+            "Image:0",
+            ("Image:0",),
             (1, 1, 1, 1, 1),
-            "SZCYX",
-            (1, 1, 1, 1, 1, 1),
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
-            ["Channel:0"],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+        ),
+        # Test many scene, same known_dims, second scene
+        (
+            [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
+            "CYX",
+            None,
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 2, 1, 2, 2),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:1:0", "Channel:1:1"],
         ),
         (
-            (3, 2, 5, 4, 10, 10),
-            "STCZYX",
-            (2, 5, 4, 10, 10, 3),
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
-            ["Channel:0", "Channel:1", "Channel:2", "Channel:3", "Channel:4"],
+            [
+                xr.DataArray(np.random.rand(1, 1, 1)),
+                xr.DataArray(np.random.rand(2, 2, 2)),
+            ],
+            "CYX",
+            None,
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 2, 1, 2, 2),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:1:0", "Channel:1:1"],
+        ),
+        # Test many scene, different known_dims, different channel_names, second scene
+        (
+            [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
+            [None, "CYX"],
+            [None, ["A", "B"]],
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 2, 1, 2, 2),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B"],
+        ),
+        (
+            [
+                xr.DataArray(np.random.rand(1, 1, 1)),
+                xr.DataArray(np.random.rand(2, 2, 2)),
+            ],
+            [None, "CYX"],
+            [None, ["A", "B"]],
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 2, 1, 2, 2),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B"],
+        ),
+        # Test filled in xarray(s)
+        # no metadata should be overwritten
+        (
+            xr.DataArray(np.random.rand(1, 1, 1), dims=list("TYX")),
+            None,
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+        ),
+        (
+            xr.DataArray(
+                np.random.rand(1, 1, 1), dims=list("CYX"), coords={"C": ["A"]}
+            ),
+            None,
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A"],
+        ),
+        (
+            [
+                xr.DataArray(np.random.rand(1, 1, 1), dims=list("TYX")),
+                xr.DataArray(
+                    np.random.rand(2, 2, 2), dims=list("CYX"), coords={"C": ["A", "B"]}
+                ),
+            ],
+            None,
+            None,
+            "Image:0",
+            ("Image:0", "Image:1"),
+            (1, 1, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+        ),
+        (
+            [
+                xr.DataArray(np.random.rand(1, 1, 1), dims=list("TYX")),
+                xr.DataArray(
+                    np.random.rand(2, 2, 2), dims=list("CYX"), coords={"C": ["A", "B"]}
+                ),
+            ],
+            None,
+            None,
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 2, 1, 2, 2),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B"],
+        ),
+        # Test non-standard dimensions
+        (
+            np.random.rand(2, 2, 2),
+            "ABD",
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+        ),
+        (
+            xr.DataArray(np.random.rand(2, 2, 2)),
+            "ABD",
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+        ),
+        # Test that we can support many dimensions if known dims is provided
+        (
+            np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
+            "ABCDEFGH",
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 3, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+        ),
+        (
+            [
+                np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
+                da.random.random((1, 2, 3, 4, 5, 6, 7, 8)),
+            ],
+            "ABCDEFGH",
+            None,
+            "Image:0",
+            ("Image:0", "Image:1"),
+            (1, 3, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+        ),
+        (
+            [
+                np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
+                da.random.random((2, 3, 4, 5, 6, 7, 8, 9)),
+            ],
+            "ABCDEFGH",
+            None,
+            "Image:1",
+            ("Image:0", "Image:1"),
+            (1, 4, 1, 1, 1),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:1:0", "Channel:1:1", "Channel:1:2", "Channel:1:3"],
         ),
         # Test that without known dims and with more than five dims, it raises an error
         # Our guess dim order only support up to five dims
         pytest.param(
-            (1, 2, 3, 4, 5, 6),
+            np.random.rand(1, 2, 3, 4, 5, 6),
             None,
             None,
             None,
             None,
-            marks=pytest.mark.raises(
-                exceptions=exceptions.InvalidDimensionOrderingError
-            ),
-        ),
-        pytest.param(
-            (1, 1),
-            "AB",
             None,
             None,
             None,
@@ -360,33 +503,42 @@ def test_multi_scene_aicsimage(
             None,
             None,
             None,
+            None,
+            None,
+            None,
             marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
 def test_aicsimage_from_array(
-    array_constructor,
-    arr_shape,
+    image,
     known_dims,
+    known_channel_names,
+    set_scene,
+    expected_scenes,
     expected_shape,
     expected_dims,
     expected_channel_names,
 ):
-    # Construct array
-    arr = array_constructor(arr_shape)
-
     # Init
-    image_container = AICSImage(arr, known_dims=known_dims)
+    image_container = AICSImage(
+        image, known_dims=known_dims, known_channel_names=known_channel_names
+    )
 
     run_image_container_checks(
         image_container=image_container,
-        set_scene="Image:0",
-        expected_scenes=("Image:0",),
-        expected_current_scene="Image:0",
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=set_scene,
         expected_shape=expected_shape,
         expected_dtype=np.float64,
         expected_dims_order=expected_dims,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
-        expected_metadata_type=type(None),
+        # we allow both None and Dict because the user can pass an already initialized
+        # xarray DataArray which has metadata as a dict
+        expected_metadata_type=(
+            type(None),
+            dict,
+        ),
     )

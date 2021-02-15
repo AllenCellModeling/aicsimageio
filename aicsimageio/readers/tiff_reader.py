@@ -174,14 +174,18 @@ class TiffReader(Reader):
     def _get_coords(
         dims: str,
         shape: Tuple[int],
+        scene_index: int,
     ) -> Dict[str, Union[List, types.ArrayLike]]:
         # Use dims for coord determination
         coords = {}
 
+        # Get ImageId for channel naming
+        image_id = metadata_utils.generate_ome_image_id(scene_index)
+
         # Use range for channel indices
         if DimensionNames.Channel in dims:
             coords[DimensionNames.Channel] = [
-                metadata_utils.generate_ome_channel_id(i)
+                metadata_utils.generate_ome_channel_id(image_id=image_id, channel_id=i)
                 for i in range(shape[dims.index(DimensionNames.Channel)])
             ]
 
@@ -303,7 +307,9 @@ class TiffReader(Reader):
 
         # Create dims and coords
         dims = self._guess_dim_order()
-        coords = self._get_coords(dims, image_data.shape)
+        coords = self._get_coords(
+            dims, image_data.shape, scene_index=self.current_scene_index
+        )
 
         return xr.DataArray(
             image_data,
@@ -342,7 +348,9 @@ class TiffReader(Reader):
 
                 # Create dims and coords
                 dims = self._guess_dim_order()
-                coords = self._get_coords(dims, image_data.shape)
+                coords = self._get_coords(
+                    dims, image_data.shape, scene_index=self.current_scene_index
+                )
 
                 return xr.DataArray(
                     image_data,

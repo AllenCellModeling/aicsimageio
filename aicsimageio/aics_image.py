@@ -62,9 +62,7 @@ class AICSImage:
 
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
-    def __init__(
-        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs
-    ):
+    def __init__(self, image: types.ImageLike, **kwargs):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
         dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
@@ -75,9 +73,6 @@ class AICSImage:
         ----------
         image: types.ImageLike
             A string, Path, fsspec supported URI, or arraylike to read.
-        known_dims: Optional[str]
-            Optional string with the known dimension order. If None, the reader will
-            attempt to parse dim order.
         kwargs: Any
             Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -122,30 +117,9 @@ class AICSImage:
         new reader child class of Reader ([readers/reader.py]) and add the class to the
         SUPPORTED_READERS variable.
         """
-        # Check known dims
-        if known_dims is not None:
-            if not all(
-                [
-                    d in dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
-                    for d in known_dims
-                ]
-            ):
-                raise exceptions.InvalidDimensionOrderingError(
-                    f"The provided dimension string to the 'known_dims' argument "
-                    f"includes dimensions that AICSImage does not support. "
-                    f"Received: '{known_dims}'. "
-                    f"Supported dimensions: "
-                    f"{dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES}."
-                )
-
-        # Hold onto known dims until data is requested
-        self._known_dims = known_dims
-
         # Determine reader class and create dask delayed array
-        ReaderClass = self.determine_reader(
-            image=image, known_dims=known_dims, **kwargs
-        )
-        self._reader = ReaderClass(image, known_dims=known_dims, **kwargs)
+        ReaderClass = self.determine_reader(image, **kwargs)
+        self._reader = ReaderClass(image, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions
         self._xarray_dask_data = None
@@ -251,7 +225,7 @@ class AICSImage:
         # Pull the data with the appropriate dimensions
         data = transforms.reshape_data(
             data=arr.data,
-            given_dims=self._known_dims or self.reader.dims.order,
+            given_dims=self.reader.dims.order,
             return_dims=return_dims,
         )
 

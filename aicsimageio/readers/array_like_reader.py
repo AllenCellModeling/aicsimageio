@@ -255,8 +255,12 @@ class ArrayLikeReader(Reader):
                         else:
                             set_channel_names = []
                             for c_index in range(this_scene.shape[channel_dim_index]):
-                                ome = metadata_utils.generate_ome_channel_id(s_index)
-                                set_channel_names.append(f"{ome}:{c_index}")
+                                image_id = metadata_utils.generate_ome_image_id(s_index)
+                                set_channel_names.append(
+                                    metadata_utils.generate_ome_channel_id(
+                                        image_id=image_id, channel_id=c_index
+                                    )
+                                )
 
                             this_scene.coords[
                                 DimensionNames.Channel
@@ -266,12 +270,11 @@ class ArrayLikeReader(Reader):
                 if channel_names is None:
                     this_scene_channels = []
                     for c_index in range(this_scene.shape[channel_dim_index]):
-                        # This will create "Channel:0:0" or "Channel:1:0"
-                        # where the first integer is the scene index and the second is
-                        # the channel index
+                        image_id = metadata_utils.generate_ome_image_id(s_index)
                         this_scene_channels.append(
-                            f"{metadata_utils.generate_ome_channel_id(s_index)}:"
-                            f"{c_index}"
+                            metadata_utils.generate_ome_channel_id(
+                                image_id=image_id, channel_id=c_index
+                            )
                         )
 
                     self._scene_channel_names.append(this_scene_channels)

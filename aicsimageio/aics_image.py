@@ -261,7 +261,10 @@ class AICSImage:
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
             coords[dimensions.DimensionNames.Channel] = [
-                metadata_utils.generate_ome_channel_id(0)
+                metadata_utils.generate_ome_channel_id(
+                    image_id=self.current_scene,
+                    channel_id=0,
+                )
             ]
 
         return xr.DataArray(

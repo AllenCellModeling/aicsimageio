@@ -56,12 +56,15 @@ def generate_ome_image_id(image_id: Union[str, int]) -> str:
     return f"Image:{image_id}"
 
 
-def generate_ome_channel_id(channel_id: Union[str, int]) -> str:
+def generate_ome_channel_id(image_id: str, channel_id: Union[str, int]) -> str:
     """
     Naively generates the standard OME channel ID using a provided ID.
 
     Parameters
     ----------
+    image_id: str
+        An image id to pull the image specific index from.
+        See: `generate_ome_image_id` for more details.
     channel_id: Union[str, int]
         A string or int representing the ID for a channel.
         In the context of the usage of this function, this is usually used with the
@@ -71,8 +74,16 @@ def generate_ome_channel_id(channel_id: Union[str, int]) -> str:
     -------
     ome_channel_id: str
         The OME standard for channel IDs.
+
+    Notes
+    -----
+    ImageIds are usually: "Image:0", "Image:1", or "Image:N",
+    ChannelIds are usually the combination of image index + channel index --
+    "Channel:0:0" for the first channel of the first image for example.
     """
-    return f"Channel:{channel_id}"
+    # Remove the prefix 'Image:' to get just the index
+    image_index = image_id.replace("Image:", "")
+    return f"Channel:{image_index}:{channel_id}"
 
 
 def clean_ome_xml_for_known_issues(xml: str) -> str:

@@ -49,7 +49,7 @@ from ..image_container_test_utils import (
             (10, 1736, 1776),
             np.uint16,
             "CYX",
-            [f"Channel:{i}" for i in range(10)],
+            [f"Channel:0:{i}" for i in range(10)],
         ),
         (
             "s_1_t_10_c_3_z_1.tiff",
@@ -58,7 +58,7 @@ from ..image_container_test_utils import (
             (10, 3, 325, 475),
             np.uint16,
             "TCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -67,7 +67,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -76,7 +76,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:1:0", "Channel:1:1", "Channel:1:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -85,7 +85,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:2:0", "Channel:2:1", "Channel:2:2"],
         ),
         (
             "s_1_t_1_c_1_z_1_RGB.tiff",
@@ -104,7 +104,7 @@ from ..image_container_test_utils import (
             (2, 32, 32, 3),
             np.uint8,
             "CYXS",  # S stands for samples dimension
-            ["Channel:0", "Channel:1"],
+            ["Channel:0:0", "Channel:0:1"],
         ),
         pytest.param(
             "example.txt",

@@ -158,8 +158,16 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
                 instrument.findall(f"{namespace}Detector")
             ):
                 detector_id = detector.get("ID")
+
+                # Create ome detector id if needed
+                ome_detector_id = None
                 if detector_id == "Camera":
                     ome_detector_id = generate_ome_detector_id(detector_index)
+                elif not detector_id.startswith("Detector:"):
+                    ome_detector_id = generate_ome_detector_id(detector_id)
+
+                # Apply ome detector id if replaced
+                if ome_detector_id is not None:
                     detector.set("ID", ome_detector_id)
                     metadata_changes.append(
                         f"Updated attribute 'ID' from '{detector_id}' to "

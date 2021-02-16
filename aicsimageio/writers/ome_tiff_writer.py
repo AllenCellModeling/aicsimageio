@@ -275,6 +275,7 @@ class OmeTiffWriter(Writer):
         :param dimension_order: The order of dimensions in the data array, using
         T,C,Z,Y and X
         """
+        image_index = 0
         shape = data_shape
 
         if len(shape) != 5 and not (is_rgb and len(shape) == 6):
@@ -325,12 +326,12 @@ class OmeTiffWriter(Writer):
         ]
         if channel_names is None:
             for i in range(channel_count):
-                pixels.channels[i].id = "Channel:0:" + str(i)
+                pixels.channels[i].id = utils.generate_ome_channel_id(image_index, i)
                 pixels.channels[i].name = "C:" + str(i)
         else:
             for i in range(channel_count):
                 name = channel_names[i]
-                pixels.channels[i].id = "Channel:0:" + str(i)
+                pixels.channels[i].id = utils.generate_ome_channel_id(image_index, i)
                 pixels.channels[i].name = name
 
         if channel_colors is not None:
@@ -338,7 +339,9 @@ class OmeTiffWriter(Writer):
             for i in range(channel_count):
                 pixels.channels[i].color = channel_colors[i]
 
-        img = Image(name=image_name, id="Image:0", pixels=pixels)
+        img = Image(
+            name=image_name, id=utils.generate_ome_image_id(image_index), pixels=pixels
+        )
 
         # TODO get aics version string here
         ox = OME(creator=f"aicsimageio {get_module_version()}", images=[img])

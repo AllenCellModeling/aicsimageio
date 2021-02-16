@@ -8,7 +8,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 from aicsimageio.writers import TwoDWriter
 
-from ..conftest import array_constructor, get_resource_write_full_path, host
+from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
 
 
 @array_constructor
@@ -52,11 +52,9 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
         ),
     ],
 )
-@host
 @pytest.mark.parametrize("filename", ["a.png", "d.bmp"])
 def test_two_d_writer(
     array_constructor,
-    host,
     write_shape,
     write_dim_order,
     read_shape,
@@ -67,7 +65,7 @@ def test_two_d_writer(
     arr = array_constructor(write_shape, dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, host)
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
     # Save
     TwoDWriter.save(arr, save_uri, write_dim_order)

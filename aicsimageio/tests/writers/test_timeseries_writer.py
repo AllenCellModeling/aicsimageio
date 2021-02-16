@@ -8,7 +8,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 from aicsimageio.writers import TimeseriesWriter
 
-from ..conftest import REMOTE, array_constructor, get_resource_write_full_path, host
+from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
 
 
 @array_constructor
@@ -53,11 +53,9 @@ from ..conftest import REMOTE, array_constructor, get_resource_write_full_path, 
         ),
     ],
 )
-@host
 @pytest.mark.parametrize("filename", ["e.gif"])
 def test_timeseries_writer(
     array_constructor,
-    host,
     write_shape,
     write_dim_order,
     read_shape,
@@ -68,7 +66,7 @@ def test_timeseries_writer(
     arr = array_constructor(write_shape, dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, host)
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
     # Normal save
     TimeseriesWriter.save(arr, save_uri, write_dim_order)
@@ -126,11 +124,9 @@ def test_timeseries_writer(
         ),
     ],
 )
-@host
 @pytest.mark.parametrize("filename", ["f.mp4"])
 def test_timeseries_writer_ffmpeg(
     array_constructor,
-    host,
     write_shape,
     write_dim_order,
     read_shape,
@@ -141,14 +137,14 @@ def test_timeseries_writer_ffmpeg(
     arr = array_constructor(write_shape, dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, host)
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
-    # Catch invalid save save
-    if host == REMOTE:
-        with pytest.raises(IOError):
-            TimeseriesWriter.save(arr, save_uri, write_dim_order)
+    # Catch invalid save
+    # if host == REMOTE:
+    #     with pytest.raises(IOError):
+    #         TimeseriesWriter.save(arr, save_uri, write_dim_order)
 
-        return
+    #     return
 
     # Normal save
     TimeseriesWriter.save(arr, save_uri, write_dim_order)

@@ -10,7 +10,7 @@ import xarray as xr
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
-from tifffile import TiffFile, TiffFileError, TiffTag
+from tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
 from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
@@ -248,13 +248,17 @@ class OmeTiffReader(TiffReader):
     ) -> types.ArrayLike:
         # Expand image_data for empty dimensions
         ome_shape = []
+
+        # need to correct channel count if this is a RGB image
+        n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         for d in dims:
-            ome_shape.append(
-                getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
-            )
+            if d == "C" and n_samples > 1:
+                count = len(ome.images[scene_index].pixels.channels)
+            else:
+                count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
+            ome_shape.append(count)
 
         # Check for num samples and expand dims if greater than 1
-        n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         if n_samples > 1:
             # Append to the end, i.e. the last dimension
             dims.append("S")

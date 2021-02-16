@@ -326,12 +326,16 @@ class OmeTiffWriter(Writer):
         ]
         if channel_names is None:
             for i in range(channel_count):
-                pixels.channels[i].id = utils.generate_ome_channel_id(image_index, i)
+                pixels.channels[i].id = utils.generate_ome_channel_id(
+                    str(image_index), i
+                )
                 pixels.channels[i].name = "C:" + str(i)
         else:
             for i in range(channel_count):
                 name = channel_names[i]
-                pixels.channels[i].id = utils.generate_ome_channel_id(image_index, i)
+                pixels.channels[i].id = utils.generate_ome_channel_id(
+                    str(image_index), i
+                )
                 pixels.channels[i].name = name
 
         if channel_colors is not None:
@@ -340,7 +344,9 @@ class OmeTiffWriter(Writer):
                 pixels.channels[i].color = channel_colors[i]
 
         img = Image(
-            name=image_name, id=utils.generate_ome_image_id(image_index), pixels=pixels
+            name=image_name,
+            id=utils.generate_ome_image_id(str(image_index)),
+            pixels=pixels,
         )
 
         # TODO get aics version string here

@@ -11,7 +11,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
 
-from ..conftest import array_constructor, get_resource_write_full_path, host
+from ..conftest import array_constructor, get_resource_write_full_path, LOCAL
 
 
 @array_constructor
@@ -59,11 +59,9 @@ from ..conftest import array_constructor, get_resource_write_full_path, host
         ((3, 5, 16, 16, 4), "ZCYXS", (1, 5, 3, 16, 16, 4), "TCZYXS"),
     ],
 )
-@host
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
 def test_ome_tiff_writer_no_meta(
     array_constructor,
-    host,
     write_shape,
     write_dim_order,
     read_shape,
@@ -74,7 +72,7 @@ def test_ome_tiff_writer_no_meta(
     arr = array_constructor(write_shape, dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, host)
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
     # Normal save
     OmeTiffWriter.save(arr, save_uri, write_dim_order)
@@ -129,11 +127,9 @@ def test_ome_tiff_writer_no_meta(
         ),
     ],
 )
-@host
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
 def test_ome_tiff_writer_with_meta(
     array_constructor,
-    host,
     ome_xml,
     filename,
 ):
@@ -141,7 +137,7 @@ def test_ome_tiff_writer_with_meta(
     arr = array_constructor((1, 2, 3, 4, 5), dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, host)
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
     # Normal save
     OmeTiffWriter.save(arr, save_uri, dimension_order=None, ome_xml=ome_xml)

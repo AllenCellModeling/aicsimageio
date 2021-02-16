@@ -123,6 +123,21 @@ class OmeTiffReader(TiffReader):
                 self.__class__.__name__, self.path
             )
 
+        # Warn of other behaviors
+        with self.fs.open(self.path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Log a warning stating that if this is a MM OME-TIFF, don't read
+                # many series
+                if tiff.is_micromanager:
+                    log.warn(
+                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
+                        "have limited support for scene API. "
+                        "It is recommended to use independent AICSImage or Reader "
+                        "objects for each file instead of the `set_scene` API. "
+                        "Track progress on support here: "
+                        "https://github.com/AllenCellModeling/aicsimageio/issues/196"
+                    )
+
     @property
     def scenes(self) -> Tuple[str]:
         if self._scenes is None:

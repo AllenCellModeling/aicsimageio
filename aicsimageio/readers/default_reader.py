@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import dask.array as da
 import imageio
@@ -62,7 +62,7 @@ class DefaultReader(Reader):
         return extension, mode
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         # Get extension and mode for reading the file
         extension, mode = DefaultReader._get_extension_and_mode(path)
 
@@ -112,7 +112,7 @@ class DefaultReader(Reader):
             )
 
     @staticmethod
-    def _guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int, ...]) -> str:
         if len(shape) == 2:
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:

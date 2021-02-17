@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Tuple
+
 import numpy as np
 import pytest
 
@@ -48,12 +50,12 @@ from ..image_container_test_utils import run_image_read_checks
     ],
 )
 def test_default_reader(
-    filename,
-    host,
-    set_scene,
-    expected_shape,
-    expected_dims_order,
-):
+    filename: str,
+    host: str,
+    set_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_dims_order: str,
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 
@@ -72,7 +74,7 @@ def test_default_reader(
     )
 
 
-def test_ffmpeg_header_fail():
+def test_ffmpeg_header_fail() -> None:
     with pytest.raises(IOError):
         # Big Buck Bunny
         DefaultReader("https://archive.org/embed/archive-video-files/test.mp4")

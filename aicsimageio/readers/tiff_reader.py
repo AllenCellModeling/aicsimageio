@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple, Union
+from typing import Any, List, Mapping, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -29,7 +29,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffReader(Reader):
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):
@@ -71,7 +71,7 @@ class TiffReader(Reader):
             )
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
@@ -151,7 +151,7 @@ class TiffReader(Reader):
 
         return "".join(best_guess)
 
-    def _guess_dim_order(self) -> List[str]:
+    def _guess_tiff_dim_order(self) -> List[str]:
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 scene = tiff.series[self.current_scene_index]
@@ -171,9 +171,9 @@ class TiffReader(Reader):
 
     @staticmethod
     def _get_coords(
-        dims: str,
-        shape: Tuple[int],
-    ) -> Dict[str, Union[List, types.ArrayLike]]:
+        dims: List[str],
+        shape: Tuple[int, ...],
+    ) -> Mapping[str, List[str]]:
         # Use dims for coord determination
         coords = {}
 
@@ -300,7 +300,7 @@ class TiffReader(Reader):
         tiff_tags = self._get_tiff_tags()
 
         # Create dims and coords
-        dims = self._guess_dim_order()
+        dims = self._guess_tiff_dim_order()
         coords = self._get_coords(dims, image_data.shape)
 
         return xr.DataArray(
@@ -339,7 +339,7 @@ class TiffReader(Reader):
                 tiff_tags = self._get_tiff_tags()
 
                 # Create dims and coords
-                dims = self._guess_dim_order()
+                dims = self._guess_tiff_dim_order()
                 coords = self._get_coords(dims, image_data.shape)
 
                 return xr.DataArray(

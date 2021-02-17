@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
+from typing import Any
 
 from . import types
 from .exceptions import ConflictingArgumentsError
@@ -54,7 +55,7 @@ def transpose_to_dims(
 
 
 def reshape_data(
-    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs
+    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs: Any
 ) -> types.ArrayLike:
     """
     Reshape the data into return_dims, pad missing dimensions, and prune extra

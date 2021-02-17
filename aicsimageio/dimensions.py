@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Iterable, Tuple, Union
+from typing import ItemsView, Iterable, Tuple, Union
 
 ###############################################################################
 
@@ -48,7 +48,7 @@ REQUIRED_CHUNK_BY_DIMS = [
 
 
 class Dimensions:
-    def __init__(self, dims: Union[str, Iterable], shape: Tuple[int]):
+    def __init__(self, dims: Union[str, Iterable], shape: Tuple[int, ...]):
         """
         A general object for managing the pairing of dimension name and dimension size.
 
@@ -56,7 +56,7 @@ class Dimensions:
         ----------
         dims: Union[str, Iterable]
             An ordered string or iterable of the dimensions to pair with their sizes.
-        shape: Tuple[int]
+        shape: Tuple[int, ...]
             An ordered tuple of the dimensions sizes to pair with their names.
 
         Examples
@@ -88,21 +88,21 @@ class Dimensions:
         return self._order
 
     @property
-    def shape(self) -> Tuple[int]:
+    def shape(self) -> Tuple[int, ...]:
         """
         Returns
         -------
-        shape: Tuple[int]
+        shape: Tuple[int, ...]
             The dimension sizes in their natural order.
         """
         return self._shape
 
-    def items(self):
+    def items(self) -> ItemsView[str, int]:
         return self._dims_shape.items()
 
-    def __str__(self):
+    def __str__(self) -> str:
         dims_string = ", ".join([f"{dim}: {size}" for dim, size in self.items()])
         return f"<Dimensions [{dims_string}]>"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)

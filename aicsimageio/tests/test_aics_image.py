@@ -3,6 +3,7 @@
 
 import numpy as np
 import pytest
+
 from aicsimageio import AICSImage, dimensions, exceptions
 
 from .conftest import LOCAL, get_resource_full_path

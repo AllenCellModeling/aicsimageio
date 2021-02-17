@@ -4,12 +4,13 @@
 from typing import ClassVar, List, Optional, Tuple, Union
 
 import numpy as np
-from aicsimageio import AICSImage, types
-from aicsimageio.readers.reader import Reader
 from distributed.protocol import deserialize, serialize
 from fsspec.implementations.local import LocalFileSystem
 from psutil import Process
 from xarray.testing import assert_equal
+
+from aicsimageio import AICSImage, types
+from aicsimageio.readers.reader import Reader
 
 ###############################################################################
 

@@ -9,6 +9,7 @@ from typing import List, Tuple, Union
 from .. import types, get_module_version
 from ..dimensions import (
     DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
     DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES,
 )
 from ..exceptions import InvalidDimensionOrderingError
@@ -98,6 +99,7 @@ class OmeTiffWriter(Writer):
         if isinstance(data, da.core.Array):
             data = data.compute()
 
+        # make sure we are writing 5D data to ome-tiff
         ome_dimension_order, data, is_rgb = OmeTiffWriter._resolve_dimension_order(
             data, dimension_order
         )
@@ -151,16 +153,25 @@ class OmeTiffWriter(Writer):
 
     @staticmethod
     def _resolve_dimension_order(
-        data: types.ArrayLike, dimension_order: str
+        data: types.ArrayLike,
+        dimension_order: str,
     ) -> Tuple[str, types.ArrayLike, bool]:
-        if dimension_order is None:
-            dimension_order = DEFAULT_DIMENSION_ORDER
         ndims = len(data.shape)
 
         # data is rgb if last dimension is S and its size is 3 or 4
-        is_rgb = dimension_order[-1] == "S" and (
-            data.shape[-1] == 3 or data.shape[-1] == 4
-        )
+        is_rgb = False
+        if dimension_order is None:
+            # we will only guess rgb here if ndims > 5
+            is_rgb = ndims > 5 and data.shape[-1] == 3 or data.shape[-1] == 4
+            dimension_order = (
+                DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES
+                if is_rgb
+                else DEFAULT_DIMENSION_ORDER
+            )
+        else:
+            is_rgb = dimension_order[-1] == "S" and (
+                data.shape[-1] == 3 or data.shape[-1] == 4
+            )
 
         # select last 5 (or 6 if rgb) dims
         max_dims = 6 if is_rgb else 5

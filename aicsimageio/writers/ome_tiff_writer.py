@@ -100,7 +100,7 @@ class OmeTiffWriter(Writer):
             data = data.compute()
 
         # make sure we are writing 5D data to ome-tiff
-        ome_dimension_order, data, is_rgb = OmeTiffWriter._resolve_dimension_order(
+        ome_dimension_order, data, is_rgb = OmeTiffWriter._resolve_dimensionality(
             data, dimension_order
         )
 
@@ -152,7 +152,7 @@ class OmeTiffWriter(Writer):
         tif.close()
 
     @staticmethod
-    def _resolve_dimension_order(
+    def _resolve_dimensionality(
         data: types.ArrayLike,
         dimension_order: str,
     ) -> Tuple[str, types.ArrayLike, bool]:
@@ -162,6 +162,7 @@ class OmeTiffWriter(Writer):
         is_rgb = False
         if dimension_order is None:
             # we will only guess rgb here if ndims > 5
+            # I could make a better guess if I look at any ome-xml passed in
             is_rgb = ndims > 5 and data.shape[-1] == 3 or data.shape[-1] == 4
             dimension_order = (
                 DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES

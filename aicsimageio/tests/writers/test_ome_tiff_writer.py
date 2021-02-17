@@ -110,6 +110,13 @@ def test_ome_tiff_writer_no_meta(
             ),
             "TCZYXS",
         ),
+        (
+            (2, 2, 3, 4, 5, 3),
+            OmeTiffWriter.build_ome(
+                (2, 2, 3, 4, 5, 3), np.dtype(np.uint8), is_rgb=True
+            ),
+            "TCZYXS",
+        ),
         # wrong dtype
         pytest.param(
             (1, 2, 3, 4, 5),
@@ -182,5 +189,3 @@ def test_ome_tiff_writer_with_meta(
     # Check basics
     assert reader.shape == shape_to_create
     assert reader.dims.order == expected_dim_order
-
-    # Can't do "easy" testing because compression + shape mismatches on RGB data

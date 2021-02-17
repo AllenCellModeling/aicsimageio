@@ -13,8 +13,7 @@ from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
 
 from .. import constants, exceptions, transforms, types
-from ..dimensions import (DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER,
-                          DimensionNames)
+from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils

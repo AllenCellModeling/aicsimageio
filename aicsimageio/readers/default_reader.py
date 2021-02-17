@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import imageio
@@ -261,7 +261,7 @@ class DefaultReader(Reader):
         dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
 
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Handle typical RGB and RGBA from Samples
         if DimensionNames.Samples in dims:

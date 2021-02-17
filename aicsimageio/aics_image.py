@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
@@ -47,7 +47,7 @@ class AICSImage:
             No reader could be found that supports the provided image.
         """
         for ReaderClass in AICSImage.SUPPORTED_READERS:
-            if ReaderClass.is_supported_image(image, **kwargs):
+            if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
                 return ReaderClass
 
         # Construct non-URI image "paths"
@@ -55,7 +55,7 @@ class AICSImage:
         if isinstance(image, (str, Path)):
             path = str(image)
         else:
-            path = type(image)
+            path = str(type(image))
 
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
@@ -251,7 +251,10 @@ class AICSImage:
         )
 
         # Pull coordinate planes
-        coords = {d: arr.coords[d] for d in arr.coords if d in return_dims}
+        coords: Dict[str, Any] = {}
+        for d in return_dims:
+            if d in arr.coords:
+                coords[d] = arr.coords[d]
 
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
@@ -260,7 +263,7 @@ class AICSImage:
         return xr.DataArray(
             data,
             dims=tuple([d for d in return_dims]),
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs=arr.attrs,
         )
 

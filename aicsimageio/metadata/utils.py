@@ -5,7 +5,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Union
+from typing import Optional, Union
 
 ###############################################################################
 
@@ -275,11 +275,16 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
                     if image is not None:
                         found_image = image
 
-                        pixels = found_image.find(f"{namespace}Pixels")
-                        for plane in pixels.findall(f"{namespace}Plane"):
-                            for anno_ref in plane.findall(f"{namespace}AnnotationRef"):
-                                if anno_ref.get("ID") == aics_anno_id:
-                                    plane.remove(anno_ref)
+                        pixels_planes: Optional[ET.Element] = found_image.find(
+                            f"{namespace}Pixels"
+                        )
+                        if pixels_planes is not None:
+                            for plane in pixels_planes.findall(f"{namespace}Plane"):
+                                for anno_ref in plane.findall(
+                                    f"{namespace}AnnotationRef"
+                                ):
+                                    if anno_ref.get("ID") == aics_anno_id:
+                                        plane.remove(anno_ref)
 
                 # Remove the whole etree
                 sa.remove(xml_anno)

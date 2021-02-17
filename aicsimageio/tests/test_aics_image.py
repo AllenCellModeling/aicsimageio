@@ -243,8 +243,8 @@ def test_multi_scene_aicsimage(
         uri=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
-        first_scene_dtype=np.uint16,
+        first_scene_dtype=np.dtype(np.uint16),
         second_scene_id=second_scene_id,
         second_scene_shape=second_scene_shape,
-        second_scene_dtype=np.uint16,
+        second_scene_dtype=np.dtype(np.uint16),
     )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, List, Mapping, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -173,9 +173,9 @@ class TiffReader(Reader):
     def _get_coords(
         dims: List[str],
         shape: Tuple[int, ...],
-    ) -> Mapping[str, List[str]]:
+    ) -> Dict[str, Any]:
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Any] = {}
 
         # Use range for channel indices
         if DimensionNames.Channel in dims:
@@ -301,12 +301,12 @@ class TiffReader(Reader):
 
         # Create dims and coords
         dims = self._guess_tiff_dim_order()
-        coords = self._get_coords(dims, image_data.shape)
+        coords: Dict[str, Any] = self._get_coords(dims, image_data.shape)
 
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: tiff_tags[
@@ -345,7 +345,7 @@ class TiffReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[

@@ -118,7 +118,7 @@ class OmeTiffReader(TiffReader):
     def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List, types.ArrayLike]]]:
+    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[np.ndarray, Any]]]]:
         """
         Process the OME metadata to retrieve the dimension names and coordinate planes.
 
@@ -133,7 +133,7 @@ class OmeTiffReader(TiffReader):
         -------
         dims: List[str]
             The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List, types.ArrayLike]]
+        coords: Dict[str, Union[List[Any], Union[np.ndarray, Any]]]
             The coordinate planes / data for each dimension.
         """
         # Select scene
@@ -144,7 +144,7 @@ class OmeTiffReader(TiffReader):
         dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
         # Get coordinate planes
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Channels
         # Channel name isn't required by OME spec, so try to use it but
@@ -268,7 +268,7 @@ class OmeTiffReader(TiffReader):
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: self._ome,

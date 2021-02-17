@@ -45,12 +45,14 @@ def transpose_to_dims(
         raise ConflictingArgumentsError(
             f"given_dims={given_dims} and return_dims={return_dims} are incompatible."
         )
+
     # Resort the data into return_dims order
     match_map = {dim: given_dims.find(dim) for dim in given_dims}
     transposer = []
     for dim in return_dims:
         transposer.append(match_map[dim])
     data = data.transpose(transposer)
+
     return data
 
 

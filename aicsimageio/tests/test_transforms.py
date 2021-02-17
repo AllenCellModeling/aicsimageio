@@ -237,7 +237,7 @@ def test_reshape_data_values(
     actual = reshape_data(data=data, given_dims=given_dims, return_dims=return_dims)
 
     # Handle dask vs numpy
-    if isinstance(data, da.core.Array):
+    if isinstance(actual, da.core.Array):
         slice_in_computed = slice_in.compute()
         actual_computed = actual.compute()
     else:
@@ -316,7 +316,7 @@ def test_reshape_data_kwargs_values(
     # Check that the output data is the same type as the input
     assert type(actual) == type(expected)
 
-    if isinstance(data, da.core.Array):
+    if isinstance(actual, da.core.Array):
         actual = actual.compute()
         expected = expected.compute()
 

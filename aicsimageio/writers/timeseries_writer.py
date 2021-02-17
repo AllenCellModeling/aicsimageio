@@ -45,7 +45,7 @@ class TimeseriesWriter(Writer):
         extension: str,
         imageio_mode: str,
         fps: int,
-        data: types.ArrayLike,
+        data: da.Array,
         dim_order: str,
     ) -> None:
         with get_writer(

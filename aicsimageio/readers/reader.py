@@ -25,8 +25,8 @@ class Reader(ABC):
     _metadata: Optional[Any] = None
     _scenes: Optional[Tuple[str, ...]] = None
     _current_scene: Optional[str] = None
-    fs: Optional[AbstractFileSystem] = None
-    path: Optional[str] = None
+    fs: AbstractFileSystem
+    path: str
 
     @staticmethod
     @abstractmethod

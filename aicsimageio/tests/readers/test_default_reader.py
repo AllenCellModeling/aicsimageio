@@ -67,7 +67,7 @@ def test_default_reader(
         expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
         expected_shape=expected_shape,
-        expected_dtype=np.uint8,
+        expected_dtype=np.dtype(np.uint8),
         expected_dims_order=expected_dims_order,
         expected_channel_names=None,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),

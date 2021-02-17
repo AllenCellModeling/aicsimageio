@@ -38,7 +38,7 @@ class AICSImage:
 
         Returns
         -------
-        ReaderClass: Type[Reader]
+        ReaderClass: ReaderType
             The reader that supports the provided image.
 
         Raises

@@ -267,13 +267,17 @@ class OmeTiffWriter(Writer):
         is_rgb: bool = False,
     ) -> OME:
         """Creates the necessary metadata for an OME tiff image
-        :param data: An array to be written out to a file.
+        :param data_shape: A 5- or 6-d tuple of TCZYX(S) dimensions
+        :param data_dtype: a numpy dtype of the data array
+        :param dimension_order: The order of dimensions in the data array, using
+        T,C,Z,Y,X and optionally S
         :param channel_names: The names for each channel to be put into the OME metadata
         :param image_name: The name of the image to be put into the OME metadata
-        :param pixels_physical_size: The physical size of each pixel in the image
+        :param pixels_physical_size: X,Y, and Z physical dimensions of each pixel,
+        defaulting to microns
         :param channel_colors: The channel colors to be put into the OME metadata
-        :param dimension_order: The order of dimensions in the data array, using
-        T,C,Z,Y and X
+        :param is_rgb: is a S dimension present?  S is expected to be the last dim in
+        the data shape
         """
         image_index = 0
         shape = data_shape
@@ -363,15 +367,26 @@ class OmeTiffWriter(Writer):
         if len(ome_xml.images) < 1:
             raise ValueError("OME has no images")
 
+        image_index = 0
+
+        # look at number of samples from first channel only (possible bad assumption)
+        samples = ome_xml.images[image_index].pixels.channels[0].samples_per_pixel
+
         # reverse the OME dimension order to compare against numpy shape
-        dimension_order = ome_xml.images[0].pixels.dimension_order.value[::-1]
+        dimension_order = ome_xml.images[image_index].pixels.dimension_order.value[::-1]
+
         dims = {
-            "T": ome_xml.images[0].pixels.size_t,
-            "C": ome_xml.images[0].pixels.size_c,
-            "Z": ome_xml.images[0].pixels.size_z,
-            "Y": ome_xml.images[0].pixels.size_y,
-            "X": ome_xml.images[0].pixels.size_x,
+            "T": ome_xml.images[image_index].pixels.size_t,
+            "C": ome_xml.images[image_index].pixels.size_c,
+            "Z": ome_xml.images[image_index].pixels.size_z,
+            "Y": ome_xml.images[image_index].pixels.size_y,
+            "X": ome_xml.images[image_index].pixels.size_x,
         }
+        if samples > 1:
+            dims["C"] = len(ome_xml.images[image_index].pixels.channels)
+            dims["S"] = samples
+            dimension_order += "S"
+
         expected_shape = tuple(dims[i] for i in dimension_order)
         if expected_shape != data_shape:
             raise ValueError(
@@ -379,7 +394,9 @@ class OmeTiffWriter(Writer):
                 {data_shape}"
             )
 
-        expected_type = utils.ome_to_numpy_dtype(ome_xml.images[0].pixels.type)
+        expected_type = utils.ome_to_numpy_dtype(
+            ome_xml.images[image_index].pixels.type
+        )
         if expected_type != data_dtype:
             raise ValueError(
                 f"OME pixel type {expected_type.name} is not the same as data array type: \

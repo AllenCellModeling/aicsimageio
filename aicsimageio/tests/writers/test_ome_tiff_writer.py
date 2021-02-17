@@ -87,40 +87,59 @@ def test_ome_tiff_writer_no_meta(
 
 @array_constructor
 @pytest.mark.parametrize(
-    "ome_xml",
+    "shape_to_create, ome_xml",
     [
         # ok dims
-        (to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8)))),
-        (OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+        (
+            (1, 2, 3, 4, 5),
+            to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+        ),
+        ((1, 2, 3, 4, 5), OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+        # with RGB data:
+        (
+            (2, 2, 3, 4, 5, 3),
+            to_xml(
+                OmeTiffWriter.build_ome(
+                    (2, 2, 3, 4, 5, 3), np.dtype(np.uint8), is_rgb=True
+                )
+            ),
+        ),
         # wrong dtype
         pytest.param(
+            (1, 2, 3, 4, 5),
             to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float))),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
+            (1, 2, 3, 4, 5),
             OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float)),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # wrong dims
         pytest.param(
+            (1, 2, 3, 4, 5),
             to_xml(OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float))),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
+            (1, 2, 3, 4, 5),
             OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float)),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # just totally wrong but valid ome
         pytest.param(
+            (1, 2, 3, 4, 5),
             to_xml(OME()),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
+            (1, 2, 3, 4, 5),
             OME(),
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # even more blatantly bad ome
         pytest.param(
+            (1, 2, 3, 4, 5),
             "bad ome string",
             # raised from within ome-types
             marks=pytest.mark.raises(exception=urllib.error.URLError),
@@ -130,11 +149,12 @@ def test_ome_tiff_writer_no_meta(
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
 def test_ome_tiff_writer_with_meta(
     array_constructor,
+    shape_to_create,
     ome_xml,
     filename,
 ):
     # Create array
-    arr = array_constructor((1, 2, 3, 4, 5), dtype=np.uint8)
+    arr = array_constructor(shape_to_create, dtype=np.uint8)
 
     # Construct save end point
     save_uri = get_resource_write_full_path(filename, LOCAL)
@@ -146,7 +166,7 @@ def test_ome_tiff_writer_with_meta(
     reader = OmeTiffReader(save_uri)
 
     # Check basics
-    assert reader.shape == (1, 2, 3, 4, 5)
+    assert reader.shape == shape_to_create
     assert reader.dims.order == "TCZYX"
 
     # Can't do "easy" testing because compression + shape mismatches on RGB data

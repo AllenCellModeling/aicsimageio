@@ -45,6 +45,9 @@ New
 
 Fix
 ~~~
+- bugfix/provide-correct-indices-to-data-select-in-tiff-chunked-reads
+  (`#201 <https://github.com/AllenCellModeling/aicsimageio/pull/201>`_)
+  [Jackson Maxfield Brown]
 - Fix benchmarks links and remove old files [JacksonMaxfield]
 - bugfix/adopt-samples-as-rgb-default  (`#165
   <https://github.com/AllenCellModeling/aicsimageio/pull/165>`_)

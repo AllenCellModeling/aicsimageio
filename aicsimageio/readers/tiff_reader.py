@@ -154,7 +154,7 @@ class TiffReader(Reader):
 
         return "".join(best_guess)
 
-    def _guess_dim_order(self, tiff: TiffFile) -> List[str]:
+    def _guess_tiff_dim_order(self, tiff: TiffFile) -> List[str]:
         scene = tiff.series[self.current_scene_index]
         dims_from_meta = scene.pages.axes
 
@@ -185,7 +185,7 @@ class TiffReader(Reader):
         return coords
 
     def _create_dask_array(
-        self, tiff: TiffFile, selected_scene_dims: List[str]
+        self, tiff: TiffFile, selected_scene_dims_list: List[str]
     ) -> da.Array:
         """
         Creates a delayed dask array for the file.
@@ -194,7 +194,7 @@ class TiffReader(Reader):
         ----------
         tiff: TiffFile
             An open TiffFile for processing.
-        selected_scene_dims: List[str]
+        selected_scene_dims_list: List[str]
             The dimensions to use for constructing the array with.
             Required for managing chunked vs non-chunked dimensions.
 
@@ -213,7 +213,7 @@ class TiffReader(Reader):
 
         # Construct delayed dask array
         selected_scene = tiff.series[self.current_scene_index]
-        selected_scene_dims = "".join(selected_scene_dims)
+        selected_scene_dims = "".join(selected_scene_dims_list)
 
         # Constuct the chunk and non-chunk shapes one dim at a time
         # We also collect the chunk and non-chunk dimension order so that
@@ -305,7 +305,7 @@ class TiffReader(Reader):
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
-                dims = self._guess_dim_order(tiff)
+                dims = self._guess_tiff_dim_order(tiff)
 
                 # Create the delayed dask array
                 image_data = self._create_dask_array(tiff, dims)
@@ -346,7 +346,7 @@ class TiffReader(Reader):
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
-                dims = self._guess_dim_order(tiff)
+                dims = self._guess_tiff_dim_order(tiff)
 
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()

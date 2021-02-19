@@ -233,7 +233,7 @@ class OmeTiffReader(TiffReader):
         self,
         image_data: types.ArrayLike,
         dims: List[str],
-        coords: Dict[str, Dict[str, Union[List, types.ArrayLike]]],
+        coords: Dict[str, Union[List[Any], np.ndarray]],
         tiff_tags: TiffTags,
     ) -> xr.DataArray:
         # Expand the image data to match the OME empty dimensions

@@ -346,10 +346,9 @@ class OmeTiffReader(TiffReader):
                     scene_index=self.current_scene_index,
                 )
 
-                # Because the data in the TIFF may not have all five OME standard dims
-                # we just use the axes dimension names
-                # We can only do this because OME TIFF axes in tifffile will always
-                # have valid axis names
+                # Grab the tifffile axes to use for dask array construction
+                # If any of the non-"standard" dims are present
+                # they will be filtered out during later reshape data calls
                 strictly_read_dims = list(tiff.series[self.current_scene_index].axes)
 
                 # Create the delayed dask array

@@ -10,7 +10,7 @@ import xarray as xr
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
-from tifffile import TiffFile, TiffFileError, TiffTag
+from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -230,17 +230,12 @@ class OmeTiffReader(TiffReader):
         return image_data[tuple(expand_dim_ops)]
 
     def _general_data_array_constructor(
-        self, image_data: types.ArrayLike
+        self,
+        image_data: types.ArrayLike,
+        dims: List[str],
+        coords: Dict[str, Dict[str, Union[List, types.ArrayLike]]],
+        tiff_tags: TiffTags,
     ) -> xr.DataArray:
-        # Get unprocessed metadata from tags
-        tiff_tags = self._get_tiff_tags()
-
-        # Unpack dims and coords from OME
-        dims, coords = self._get_dims_and_coords_from_ome(
-            ome=self._ome,
-            scene_index=self.current_scene_index,
-        )
-
         # Expand the image data to match the OME empty dimensions
         image_data = self._expand_dims_to_match_ome(
             image_data=image_data,
@@ -291,10 +286,31 @@ class OmeTiffReader(TiffReader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        # Create the delayed dask array
-        image_data = self._create_dask_array()
+        with self.fs.open(self.path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags(tiff)
 
-        return self._general_data_array_constructor(image_data)
+                # Unpack dims and coords from OME
+                dims, coords = self._get_dims_and_coords_from_ome(
+                    ome=self._ome,
+                    scene_index=self.current_scene_index,
+                )
+
+                # Grab the tifffile axes to use for dask array construction
+                # If any of the non-"standard" dims are present
+                # they will be filtered out during later reshape data calls
+                strictly_read_dims = list(tiff.series[self.current_scene_index].axes)
+
+                # Create the delayed dask array
+                image_data = self._create_dask_array(tiff, strictly_read_dims)
+
+                return self._general_data_array_constructor(
+                    image_data,
+                    dims,
+                    coords,
+                    tiff_tags,
+                )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -314,10 +330,24 @@ class OmeTiffReader(TiffReader):
         """
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags(tiff)
+
+                # Unpack dims and coords from OME
+                dims, coords = self._get_dims_and_coords_from_ome(
+                    ome=self._ome,
+                    scene_index=self.current_scene_index,
+                )
+
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
 
-                return self._general_data_array_constructor(image_data)
+                return self._general_data_array_constructor(
+                    image_data,
+                    dims,
+                    coords,
+                    tiff_tags,
+                )
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:

@@ -4,12 +4,13 @@
 from typing import ClassVar, List, Optional, Tuple, Union
 
 import numpy as np
-from aicsimageio import AICSImage, types
-from aicsimageio.readers.reader import Reader
 from distributed.protocol import deserialize, serialize
 from fsspec.implementations.local import LocalFileSystem
 from psutil import Process
 from xarray.testing import assert_equal
+
+from aicsimageio import AICSImage, types
+from aicsimageio.readers.reader import Reader
 
 ###############################################################################
 
@@ -77,10 +78,25 @@ def run_image_read_checks(
     assert image_container.channel_names == expected_channel_names
     assert image_container.physical_pixel_sizes == expected_physical_pixel_sizes
 
-    # Read only a chunk, then read a chunk from the in-memory, compare
+    # Read different chunks
+    zyx_chunk_from_delayed = image_container.get_image_dask_data("ZYX").compute()
+    cyx_chunk_from_delayed = image_container.get_image_dask_data("CYX").compute()
+
+    # Check image still not fully in memory
+    assert image_container._xarray_data is None
+
+    # Read in mem then pull chunks
+    zyx_chunk_from_mem = image_container.get_image_data("ZYX")
+    cyz_chunk_from_mem = image_container.get_image_data("CYX")
+
+    # Compare chunk reads
     np.testing.assert_array_equal(
-        image_container.get_image_dask_data("YX").compute(),
-        image_container.get_image_data("YX"),
+        zyx_chunk_from_delayed,
+        zyx_chunk_from_mem,
+    )
+    np.testing.assert_array_equal(
+        cyx_chunk_from_delayed,
+        cyz_chunk_from_mem,
     )
 
     # Check that the shape and dtype are expected after reading in full

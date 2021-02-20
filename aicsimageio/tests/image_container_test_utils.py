@@ -20,9 +20,9 @@ def check_local_file_not_open(image_container: Union[AICSImage, Reader]) -> None
         image_container = image_container.reader
 
     # Check that there are no open file pointers
-    if isinstance(image_container.fs, LocalFileSystem):
+    if isinstance(image_container._fs, LocalFileSystem):
         proc = Process()
-        assert str(image_container.path) not in [f.path for f in proc.open_files()]
+        assert str(image_container._path) not in [f.path for f in proc.open_files()]
 
 
 def check_can_serialize_image_container(

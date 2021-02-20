@@ -107,7 +107,8 @@ class TimeseriesWriter(Writer):
 
         Raises
         ------
-        IOError: Cannot write FFMPEG formats to remote storage.
+        IOError
+            Cannot write FFMPEG formats to remote storage.
 
         Notes
         -----

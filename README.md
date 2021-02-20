@@ -168,6 +168,15 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
+### Base Reader Specification
+
+All base readers (`TiffReader`, `OmeTiffReader`, `DefaultReader`, etc.) all follow the
+same base specification. Each reader will have documentation for functions and properties
+specific to themselves while
+[the base Reader documentation](./aicsimageio.readers.html#module-aicsimageio.readers.reader)
+is the best place to get an overview of all functions and properties available to all
+base reading classes.
+
 ## Performance Considerations
 
 -   **If your image fits in memory:** use `AICSImage.data`, `AICSImage.xarray_data`,

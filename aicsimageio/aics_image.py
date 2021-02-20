@@ -371,7 +371,7 @@ class AICSImage:
 
         Returns
         -------
-        data: dask array
+        data: da.Array
             The image data with the specified dimension ordering.
 
         Examples
@@ -403,8 +403,8 @@ class AICSImage:
 
         Notes
         -----
-        * If a requested dimension is not present in the data the dimension is
-          added with a depth of 1.
+        If a requested dimension is not present in the data the dimension is
+        added with a depth of 1.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
@@ -422,7 +422,7 @@ class AICSImage:
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs: Any
-    ) -> da.Array:
+    ) -> np.ndarray:
         """
         Read the image as a numpy array then return specific dimension image data.
 
@@ -448,7 +448,7 @@ class AICSImage:
 
         Returns
         -------
-        data: numpy array
+        data: np.ndarray
             The image data with the specified dimension ordering.
 
         Examples

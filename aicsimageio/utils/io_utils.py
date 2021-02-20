@@ -35,8 +35,9 @@ def pathlike_to_fs(
 
     Raises
     ------
-    FileNotFoundError: If enforce_exists is provided value True and the resource is not
-    found or is unavailable.
+    FileNotFoundError
+        If enforce_exists is provided value True and the resource is not found or is
+        unavailable.
     """
     # Convert paths to string to be handled by url_to_fs
     if isinstance(uri, Path):

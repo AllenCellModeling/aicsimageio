@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
+from typing import Any
 
 from . import types
 from .exceptions import ConflictingArgumentsError
@@ -18,6 +19,8 @@ def transpose_to_dims(
     This shuffles the data dimensions from given_dims to return_dims. Each dimension
     must be present in given_dims must be used in return_dims
 
+    Parameters
+    ----------
     data: types.ArrayLike
         Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions
         specified in given_dims
@@ -33,7 +36,8 @@ def transpose_to_dims(
 
     Raises
     ------
-    ConflictingArgumentsError: given_dims and return_dims are incompatible.
+    ConflictingArgumentsError
+        given_dims and return_dims are incompatible.
     """
     # Use a counter to track that the contents are composed of the same letters
     # and that no letter is repeated
@@ -44,17 +48,19 @@ def transpose_to_dims(
         raise ConflictingArgumentsError(
             f"given_dims={given_dims} and return_dims={return_dims} are incompatible."
         )
+
     # Resort the data into return_dims order
     match_map = {dim: given_dims.find(dim) for dim in given_dims}
     transposer = []
     for dim in return_dims:
         transposer.append(match_map[dim])
     data = data.transpose(transposer)
+
     return data
 
 
 def reshape_data(
-    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs
+    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs: Any
 ) -> types.ArrayLike:
     """
     Reshape the data into return_dims, pad missing dimensions, and prune extra
@@ -93,9 +99,12 @@ def reshape_data(
 
     Raises
     ------
-    ConflictingArgumentsError: Missing dimension in return dims when using range,
-        slice, or multi-index dimension selection for the requested dimension.
-    IndexError: Requested dimension index not present in data.
+    ConflictingArgumentsError
+        Missing dimension in return dims when using range, slice, or multi-index
+        dimension selection for the requested dimension.
+
+    IndexError
+        Requested dimension index not present in data.
 
     Examples
     --------

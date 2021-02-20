@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/writers  (`#198
+  <https://github.com/AllenCellModeling/aicsimageio/pull/198>`_)
+  [Jackson Maxfield Brown]
 - feature/add-aicsimage-obj  (`#185
   <https://github.com/AllenCellModeling/aicsimageio/pull/185>`_)
   [Jackson Maxfield Brown]
@@ -42,6 +45,12 @@ New
 
 Fix
 ~~~
+- bugfix/catch-all-errors-in-ome-tiff  (`#207
+  <https://github.com/AllenCellModeling/aicsimageio/pull/207>`_)
+  [Jackson Maxfield Brown]
+- bugfix/provide-correct-indices-to-data-select-in-tiff-chunked-reads
+  (`#201 <https://github.com/AllenCellModeling/aicsimageio/pull/201>`_)
+  [Jackson Maxfield Brown]
 - Fix benchmarks links and remove old files [JacksonMaxfield]
 - bugfix/adopt-samples-as-rgb-default  (`#165
   <https://github.com/AllenCellModeling/aicsimageio/pull/165>`_)
@@ -50,6 +59,12 @@ Fix
 
 Other
 ~~~~~
+- admin/adopt-mypy-and-stricter-linting  (`#208
+  <https://github.com/AllenCellModeling/aicsimageio/pull/208>`_)
+  [Jackson Maxfield Brown]
+- admin/move-test-resources-hash-to-text-file  (`#202
+  <https://github.com/AllenCellModeling/aicsimageio/pull/202>`_)
+  [Jackson Maxfield Brown]
 - admin/temp-bump-aicspylibczi  (`#194
   <https://github.com/AllenCellModeling/aicsimageio/pull/194>`_)
   [Jackson Maxfield Brown]

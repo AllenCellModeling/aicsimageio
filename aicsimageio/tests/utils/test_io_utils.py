@@ -28,7 +28,7 @@ from ..conftest import LOCAL, REMOTE, get_resource_full_path
         ),
     ],
 )
-def test_pathlike_to_fs(filename, host, enforce_exists):
+def test_pathlike_to_fs(filename: str, host: str, enforce_exists: bool) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 

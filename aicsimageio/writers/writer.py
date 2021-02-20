@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from .. import types
 from ..dimensions import DEFAULT_DIMENSION_ORDER
@@ -20,8 +21,8 @@ class Writer(ABC):
         data: types.ArrayLike,
         uri: types.PathLike,
         dim_order: str = DEFAULT_DIMENSION_ORDER,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         Write a data array to a file.
 

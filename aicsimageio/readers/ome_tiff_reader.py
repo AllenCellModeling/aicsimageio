@@ -3,14 +3,15 @@
 
 import logging
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
-from tifffile import TiffFile, TiffFileError, TiffTag
+from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
+from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -31,6 +32,34 @@ log = logging.getLogger(__name__)
 
 
 class OmeTiffReader(TiffReader):
+    """
+    Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
+    API but for volumetric OME-TIFF images.
+
+    Parameters
+    ----------
+    image: types.PathLike
+        Path to image file to construct Reader for.
+    chunk_by_dims: List[str]
+        Which dimensions to create chunks for.
+        Default: DEFAULT_CHUNK_BY_DIMS
+        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+        will always be added to the list if not present during dask array
+        construction.
+    clean_metadata: bool
+        Should the OME XML metadata found in the file be cleaned for known
+        AICSImageIO 3.x and earlier created errors.
+        Default: True (Clean the metadata for known errors)
+
+    Notes
+    -----
+    If the OME metadata in your file isn't OME schema compilant or does not validate
+    this will fail to read your file and raise an exception.
+
+    If the OME metadata in your file doesn't use the latest OME schema (2016-06),
+    this reader will make a request to the referenced remote OME schema to validate.
+    """
+
     @staticmethod
     def _get_ome(ome_xml: str, clean_metadata: bool = True) -> OME:
         # To clean or not to clean, that is the question
@@ -41,17 +70,39 @@ class OmeTiffReader(TiffReader):
 
     @staticmethod
     def _is_supported_image(
-        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs: Any
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     xml = tiff.pages[0].description
-                    return OmeTiffReader._get_ome(xml, clean_metadata)
+                    ome = OmeTiffReader._get_ome(xml, clean_metadata)
 
-        # tifffile exception, tifffile exception, ome-types / etree exception
-        except (TiffFileError, TypeError, ET.ParseError):
+                    # Handle no images in metadata
+                    # this commonly means it is a "BinaryData" OME file
+                    # i.e. a non-main OME-TIFF from MicroManager or similar
+                    # in this case, because it's not the main file we want to just role
+                    # back to TiffReader
+                    if ome.binary_only:
+                        return False
+
+                    return True
+
+        # tifffile exceptions
+        except (TiffFileError, TypeError):
+            return False
+
+        # xml parse errors
+        except ET.ParseError as e:
+            log.error("Failed to parse XML for the provided file.")
+            log.error(e)
+            return False
+
+        # invalid OME XMl
+        except XMLSchemaValidationError as e:
+            log.error("OME XML validation failed")
+            log.error(e)
             return False
 
     def __init__(
@@ -59,51 +110,40 @@ class OmeTiffReader(TiffReader):
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
         clean_metadata: bool = True,
+        **kwargs: Any,
     ):
-        """
-        Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
-        API but for volumetric OME-TIFF images.
-
-        Parameters
-        ----------
-        image: types.PathLike
-            Path to image file to construct Reader for.
-        chunk_by_dims: List[str]
-            Which dimensions to create chunks for.
-            Default: DEFAULT_CHUNK_BY_DIMS
-            Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-            will always be added to the list if not present during dask array
-            construction.
-        clean_metadata: bool
-            Should the OME XML metadata found in the file be cleaned for known
-            AICSImageIO 3.x and earlier created errors.
-            Default: True (Clean the metadata for known errors)
-
-        Notes
-        -----
-        If the OME metadata in your file isn't OME schema compilant or does not validate
-        this will fail to read your file and raise an exception.
-
-        If the OME metadata in your file doesn't use the latest OME schema (2016-06),
-        this reader will make a request to the referenced remote OME schema to validate.
-        """
         # Expand details of provided image
-        self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
         self.clean_metadata = clean_metadata
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path, clean_metadata):
+        if not self._is_supported_image(self._fs, self._path, clean_metadata):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.path
+                self.__class__.__name__, self._path
             )
 
+        # Warn of other behaviors
+        with self._fs.open(self._path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Log a warning stating that if this is a MM OME-TIFF, don't read
+                # many series
+                if tiff.is_micromanager:
+                    log.warn(
+                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
+                        "have limited support for scene API. "
+                        "It is recommended to use independent AICSImage or Reader "
+                        "objects for each file instead of the `set_scene` API. "
+                        "Track progress on support here: "
+                        "https://github.com/AllenCellModeling/aicsimageio/issues/196"
+                    )
+
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            with self.fs.open(self.path) as open_resource:
+            with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     self._ome = self._get_ome(
                         tiff.pages[0].description, self.clean_metadata
@@ -118,7 +158,7 @@ class OmeTiffReader(TiffReader):
     def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List, types.ArrayLike]]]:
+    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:
         """
         Process the OME metadata to retrieve the dimension names and coordinate planes.
 
@@ -133,7 +173,7 @@ class OmeTiffReader(TiffReader):
         -------
         dims: List[str]
             The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List, types.ArrayLike]]
+        coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
             The coordinate planes / data for each dimension.
         """
         # Select scene
@@ -144,7 +184,7 @@ class OmeTiffReader(TiffReader):
         dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
         # Get coordinate planes
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Channels
         # Channel name isn't required by OME spec, so try to use it but
@@ -160,7 +200,7 @@ class OmeTiffReader(TiffReader):
             coords[DimensionNames.Time] = np.linspace(
                 0,
                 scene_meta.pixels.time_increment_quantity,
-                scene_meta.pixels.time_increment,
+                scene_meta.pixels.size_t,
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value
@@ -217,7 +257,7 @@ class OmeTiffReader(TiffReader):
 
         # The file may not have all the data but OME requires certain dimensions
         # expand to fill
-        expand_dim_ops = []
+        expand_dim_ops: List[Optional[slice]] = []
         for d_size in ome_shape:
             # Add empty dimension where OME requires dimension but no data exists
             if d_size == 1:
@@ -230,17 +270,12 @@ class OmeTiffReader(TiffReader):
         return image_data[tuple(expand_dim_ops)]
 
     def _general_data_array_constructor(
-        self, image_data: types.ArrayLike
+        self,
+        image_data: types.ArrayLike,
+        dims: List[str],
+        coords: Dict[str, Union[List[Any], types.ArrayLike]],
+        tiff_tags: TiffTags,
     ) -> xr.DataArray:
-        # Get unprocessed metadata from tags
-        tiff_tags = self._get_tiff_tags()
-
-        # Unpack dims and coords from OME
-        dims, coords = self._get_dims_and_coords_from_ome(
-            ome=self._ome,
-            scene_index=self.current_scene_index,
-        )
-
         # Expand the image data to match the OME empty dimensions
         image_data = self._expand_dims_to_match_ome(
             image_data=image_data,
@@ -268,7 +303,7 @@ class OmeTiffReader(TiffReader):
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: self._ome,
@@ -291,10 +326,31 @@ class OmeTiffReader(TiffReader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        # Create the delayed dask array
-        image_data = self._create_dask_array()
+        with self._fs.open(self._path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags(tiff)
 
-        return self._general_data_array_constructor(image_data)
+                # Unpack dims and coords from OME
+                dims, coords = self._get_dims_and_coords_from_ome(
+                    ome=self._ome,
+                    scene_index=self.current_scene_index,
+                )
+
+                # Grab the tifffile axes to use for dask array construction
+                # If any of the non-"standard" dims are present
+                # they will be filtered out during later reshape data calls
+                strictly_read_dims = list(tiff.series[self.current_scene_index].axes)
+
+                # Create the delayed dask array
+                image_data = self._create_dask_array(tiff, strictly_read_dims)
+
+                return self._general_data_array_constructor(
+                    image_data,
+                    dims,
+                    coords,
+                    tiff_tags,
+                )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -312,12 +368,26 @@ class OmeTiffReader(TiffReader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags(tiff)
+
+                # Unpack dims and coords from OME
+                dims, coords = self._get_dims_and_coords_from_ome(
+                    ome=self._ome,
+                    scene_index=self.current_scene_index,
+                )
+
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
 
-                return self._general_data_array_constructor(image_data)
+                return self._general_data_array_constructor(
+                    image_data,
+                    dims,
+                    coords,
+                    tiff_tags,
+                )
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:

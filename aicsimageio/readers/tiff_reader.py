@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -29,7 +29,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffReader(Reader):
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):
@@ -42,6 +42,7 @@ class TiffReader(Reader):
         self,
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+        **kwargs: Any,
     ):
         """
         Wraps the tifffile API to provide the same aicsimageio Reader API but for
@@ -59,21 +60,21 @@ class TiffReader(Reader):
             construction.
         """
         # Expand details of provided image
-        self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path):
+        if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.path
+                self.__class__.__name__, self._path
             )
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            with self.fs.open(self.path) as open_resource:
+            with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
@@ -88,7 +89,8 @@ class TiffReader(Reader):
         fs: AbstractFileSystem,
         path: str,
         scene: int,
-        indices: Tuple[Union[int, slice]],
+        retrieve_indices: Tuple[Union[int, slice]],
+        transpose_indices: List[int],
     ) -> np.ndarray:
         """
         Open a file for reading, construct a Zarr store, select data, and compute to
@@ -102,8 +104,10 @@ class TiffReader(Reader):
             The path to file to read.
         scene: int
             The scene index to pull the chunk from.
-        indices: Tuple[Union[int, slice]]
+        retrieve_indices: Tuple[Union[int, slice]]
             The image indices to retrieve.
+        transpose_indices: List[int]
+            The indices to transpose to prior to requesting data.
 
         Returns
         -------
@@ -111,16 +115,16 @@ class TiffReader(Reader):
             The image chunk as a numpy array.
         """
         with fs.open(path) as open_resource:
-            return da.from_zarr(
+            arr = da.from_zarr(
                 imread(
                     open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
                 )
-            )[indices].compute()
+            )
+            arr = arr.transpose(transpose_indices)
+            return arr[retrieve_indices].compute()
 
-    def _get_tiff_tags(self) -> TiffTags:
-        with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                return tiff.series[self.current_scene_index].pages[0].tags
+    def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
+        return tiff.series[self.current_scene_index].pages[0].tags
 
     @staticmethod
     def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str) -> str:
@@ -151,43 +155,54 @@ class TiffReader(Reader):
 
         return "".join(best_guess)
 
-    def _guess_dim_order(self) -> List[str]:
-        with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                scene = tiff.series[self.current_scene_index]
-                dims_from_meta = scene.pages.axes
+    def _guess_tiff_dim_order(self, tiff: TiffFile) -> List[str]:
+        scene = tiff.series[self.current_scene_index]
+        dims_from_meta = scene.pages.axes
 
-                # If all dims are known, simply return as list
-                if UNKNOWN_DIM_CHAR not in dims_from_meta:
-                    return [d for d in dims_from_meta]
+        # If all dims are known, simply return as list
+        if UNKNOWN_DIM_CHAR not in dims_from_meta:
+            return [d for d in dims_from_meta]
 
-                # Otherwise guess the dimensions and return merge
-                else:
-                    # Get basic guess from shape size
-                    guessed_dims = Reader._guess_dim_order(scene.shape)
-                    return [
-                        d for d in self._merge_dim_guesses(dims_from_meta, guessed_dims)
-                    ]
+        # Otherwise guess the dimensions and return merge
+        else:
+            # Get basic guess from shape size
+            guessed_dims = Reader._guess_dim_order(scene.shape)
+            return [d for d in self._merge_dim_guesses(dims_from_meta, guessed_dims)]
 
     @staticmethod
     def _get_coords(
-        dims: str,
-        shape: Tuple[int],
-    ) -> Dict[str, Union[List, types.ArrayLike]]:
+        dims: List[str],
+        shape: Tuple[int, ...],
+        scene_index: int,
+    ) -> Dict[str, Any]:
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Any] = {}
+
+        # Get ImageId for channel naming
+        image_id = metadata_utils.generate_ome_image_id(scene_index)
 
         # Use range for channel indices
         if DimensionNames.Channel in dims:
             coords[DimensionNames.Channel] = [
-                f"Channel:{i}" for i in range(shape[dims.index(DimensionNames.Channel)])
+                metadata_utils.generate_ome_channel_id(image_id=image_id, channel_id=i)
+                for i in range(shape[dims.index(DimensionNames.Channel)])
             ]
 
         return coords
 
-    def _create_dask_array(self) -> da.Array:
+    def _create_dask_array(
+        self, tiff: TiffFile, selected_scene_dims_list: List[str]
+    ) -> da.Array:
         """
         Creates a delayed dask array for the file.
+
+        Parameters
+        ----------
+        tiff: TiffFile
+            An open TiffFile for processing.
+        selected_scene_dims_list: List[str]
+            The dimensions to use for constructing the array with.
+            Required for managing chunked vs non-chunked dimensions.
 
         Returns
         -------
@@ -203,80 +218,80 @@ class TiffReader(Reader):
         self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
 
         # Construct delayed dask array
-        with self.fs.open(self.path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                selected_scene = tiff.series[self.current_scene_index]
-                selected_scene_dims = selected_scene.axes
+        selected_scene = tiff.series[self.current_scene_index]
+        selected_scene_dims = "".join(selected_scene_dims_list)
 
-                # Constuct the chunk and non-chunk shapes one dim at a time
-                # We also collect the chunk and non-chunk dimension order so that
-                # we can swap the dimensions after we block out the array
-                non_chunk_dim_order = []
-                non_chunk_shape = []
-                chunk_dim_order = []
-                chunk_shape = []
-                for dim, size in zip(selected_scene_dims, selected_scene.shape):
-                    if dim in self.chunk_by_dims:
-                        chunk_dim_order.append(dim)
-                        chunk_shape.append(size)
+        # Constuct the chunk and non-chunk shapes one dim at a time
+        # We also collect the chunk and non-chunk dimension order so that
+        # we can swap the dimensions after we block out the array
+        non_chunk_dim_order = []
+        non_chunk_shape = []
+        chunk_dim_order = []
+        chunk_shape = []
+        for dim, size in zip(selected_scene_dims, selected_scene.shape):
+            if dim in self.chunk_by_dims:
+                chunk_dim_order.append(dim)
+                chunk_shape.append(size)
+            else:
+                non_chunk_dim_order.append(dim)
+                non_chunk_shape.append(size)
 
-                    else:
-                        non_chunk_dim_order.append(dim)
-                        non_chunk_shape.append(size)
+        # Fill out the rest of the blocked shape with dimension sizes of 1 to
+        # match the length of the sample chunk
+        # When dask.block happens it fills the dimensions from inner-most to
+        # outer-most with the chunks as long as the dimension is size 1
+        blocked_dim_order = non_chunk_dim_order + chunk_dim_order
+        blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
 
-                # Fill out the rest of the blocked shape with dimension sizes of 1 to
-                # match the length of the sample chunk
-                # When dask.block happens it fills the dimensions from inner-most to
-                # outer-most with the chunks as long as the dimension is size 1
-                blocked_dim_order = non_chunk_dim_order + chunk_dim_order
-                blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
+        # Construct the transpose indices that will be used to
+        # transpose the array prior to pulling the chunk dims
+        match_map = {dim: selected_scene_dims.find(dim) for dim in selected_scene_dims}
+        transposer = []
+        for dim in blocked_dim_order:
+            transposer.append(match_map[dim])
 
-                # Make ndarray for lazy arrays to fill
-                lazy_arrays = np.ndarray(blocked_shape, dtype=object)
-                for plane_index, (np_index, _) in enumerate(
-                    np.ndenumerate(lazy_arrays)
-                ):
-                    # All dimensions get their normal index except for chunk dims
-                    # which get filled with "full" slices
-                    indices_with_slices = np_index[: len(non_chunk_shape)] + (
-                        (slice(None, None, None),) * len(chunk_shape)
-                    )
+        # Make ndarray for lazy arrays to fill
+        lazy_arrays = np.ndarray(blocked_shape, dtype=object)
+        for plane_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
+            # All dimensions get their normal index except for chunk dims
+            # which get filled with "full" slices
+            indices_with_slices = np_index[: len(non_chunk_shape)] + (
+                (slice(None, None, None),) * len(chunk_shape)
+            )
 
-                    # Fill the numpy array with the delayed arrays
-                    lazy_arrays[np_index] = da.from_delayed(
-                        delayed(TiffReader._get_image_data)(
-                            fs=self.fs,
-                            path=self.path,
-                            scene=self.current_scene_index,
-                            indices=indices_with_slices,
-                        ),
-                        shape=chunk_shape,
-                        dtype=selected_scene.dtype,
-                    )
+            # Fill the numpy array with the delayed arrays
+            lazy_arrays[np_index] = da.from_delayed(
+                delayed(TiffReader._get_image_data)(
+                    fs=self._fs,
+                    path=self._path,
+                    scene=self.current_scene_index,
+                    retrieve_indices=indices_with_slices,
+                    transpose_indices=transposer,
+                ),
+                shape=chunk_shape,
+                dtype=selected_scene.dtype,
+            )
 
-                # Convert the numpy array of lazy readers into a dask array
-                image_data = da.block(lazy_arrays.tolist())
+        # Convert the numpy array of lazy readers into a dask array
+        image_data = da.block(lazy_arrays.tolist())
 
-                # Because we have set certain dimensions to be chunked and others not
-                # we will need to transpose back to original dimension ordering
-                # Example, if the original dimension ordering was "TZYX" and we
-                # chunked by "T", "Y", and "X"
-                # we created an array with dimensions ordering "ZTYX"
-                transpose_indices = []
-                transpose_required = False
-                for i, d in enumerate(selected_scene_dims):
-                    new_index = blocked_dim_order.index(d)
-                    if new_index != i:
-                        transpose_required = True
-                        transpose_indices.append(new_index)
-                    else:
-                        transpose_indices.append(i)
+        # Because we have set certain dimensions to be chunked and others not
+        # we will need to transpose back to original dimension ordering
+        # Example, if the original dimension ordering was "TZYX" and we
+        # chunked by "T", "Y", and "X"
+        # we created an array with dimensions ordering "ZTYX"
+        transpose_indices = []
+        for i, d in enumerate(selected_scene_dims):
+            new_index = blocked_dim_order.index(d)
+            if new_index != i:
+                transpose_indices.append(new_index)
+            else:
+                transpose_indices.append(i)
 
-                # Only run if the transpose is actually required
-                if transpose_required:
-                    image_data = da.transpose(image_data, tuple(transpose_indices))
+        # Transpose back to normal
+        image_data = da.transpose(image_data, tuple(transpose_indices))
 
-                return image_data
+        return image_data
 
     def _read_delayed(self) -> xr.DataArray:
         """
@@ -293,27 +308,33 @@ class TiffReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        # Create the delayed dask array
-        image_data = self._create_dask_array()
+        with self._fs.open(self._path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Get / guess dims
+                dims = self._guess_tiff_dim_order(tiff)
 
-        # Get unprocessed metadata from tags
-        tiff_tags = self._get_tiff_tags()
+                # Create the delayed dask array
+                image_data = self._create_dask_array(tiff, dims)
 
-        # Create dims and coords
-        dims = self._guess_dim_order()
-        coords = self._get_coords(dims, image_data.shape)
+                # Get unprocessed metadata from tags
+                tiff_tags = self._get_tiff_tags(tiff)
 
-        return xr.DataArray(
-            image_data,
-            dims=dims,
-            coords=coords,
-            attrs={
-                constants.METADATA_UNPROCESSED: tiff_tags,
-                constants.METADATA_PROCESSED: tiff_tags[
-                    TIFF_IMAGE_DESCRIPTION_TAG_INDEX
-                ].value,
-            },
-        )
+                # Create coords
+                coords = self._get_coords(
+                    dims, image_data.shape, scene_index=self.current_scene_index
+                )
+
+                return xr.DataArray(
+                    image_data,
+                    dims=dims,
+                    coords=coords,  # type: ignore
+                    attrs={
+                        constants.METADATA_UNPROCESSED: tiff_tags,
+                        constants.METADATA_PROCESSED: tiff_tags[
+                            TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                        ].value,
+                    },
+                )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -330,22 +351,26 @@ class TiffReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
+                # Get / guess dims
+                dims = self._guess_tiff_dim_order(tiff)
+
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
 
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                tiff_tags = self._get_tiff_tags(tiff)
 
                 # Create dims and coords
-                dims = self._guess_dim_order()
-                coords = self._get_coords(dims, image_data.shape)
+                coords = self._get_coords(
+                    dims, image_data.shape, scene_index=self.current_scene_index
+                )
 
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[

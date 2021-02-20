@@ -60,9 +60,7 @@ class AICSImage:
 
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
-    def __init__(
-        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs: Any
-    ):
+    def __init__(self, image: types.ImageLike, **kwargs: Any):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
         dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"

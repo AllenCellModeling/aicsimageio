@@ -29,39 +29,46 @@ class ArrayLikeReader(Reader):
     """
     A catch all for numpy, dask, or xarray to Reader interface.
 
+    See Notes for more details.
+
     Parameters
     ----------
     image: Union[List[MetaArrayLike], MetaArrayLike]
         A single, numpy ndarray, dask Array, or xarray DataArray, or list of many.
         If provided a list, each item in the list will be exposed through the scene API.
         If provided an xarray DataArray alone or as an element of the list, the
-        known_dims and known_channel_names, kwargs are ignored if there is dimension
-        (or channel coordinate) information attached the xarray object. If the provided
-        xarray object is missing these pieces, the AICSImageIO defaults will be added.
+        known_dims and known_channel_names kwargs are ignored if there non-xarray
+        default dimension (or channel coordinate) information attached the xarray
+        object. The channel and dimension information are updated independent of the
+        other. If either is using xarray default values, they will be replaced by
+        AICSImageIO defaults will be added.
 
     known_dims: Optional[Union[List[str], str]]
         A string of known dimensions to be applied to all array(s) or a
         list of string dimension names to be mapped onto the list of arrays
-        provided to image.
+        provided to image. I.E. "TYX".
         Default: None (guess dimensions for single array or multiple arrays)
 
     known_channel_names: Optional[Union[List[str], List[List[str]]]]
         A list of string channel names to be applied to all array(s) or a
         list of lists of string channel names to be mapped onto the list of arrays
         provided to image.
-        Default: None (create fake channel names for single or multiple arrays)
+        Default: None (create OME channel IDs for names for single or multiple arrays)
 
     Raises
     ------
-    exceptions.ConflictingArgumentsError: Raised when the number of scenes provided is
-    different from the number of items provided to the metadata parameters if as a list.
+    exceptions.ConflictingArgumentsError
+        Raised when the number of scenes provided is different from the number of items
+        provided to the metadata parameters if as a list.
 
-    exceptions.ConflictingArgumentsError: Raised when known_channel_names is provided
-    but the channel dimension was either not guessed or not provided in known_dims.
+    exceptions.ConflictingArgumentsError
+        Raised when known_channel_names is provided but the channel dimension was
+        either not guessed or not provided in known_dims.
 
-    ValueError: Provided known_dims string or known_channel_names are not the same
-    length as the number of dimensions or the size of the channel dimensions for the
-    array at the matching index.
+    ValueError
+        Provided known_dims string or known_channel_names are not the same length as
+        the number of dimensions or the size of the channel dimensions for the array at
+        the matching index.
 
     Notes
     -----
@@ -69,27 +76,22 @@ class ArrayLikeReader(Reader):
     and attach metadata to all non-xarray.DataArrays, you can do so, the metadata for
     the xarray DataArray scenes will simply be ignored if it the non-xarray defaults.
 
-    Other way of saying this is:
-    If there are dimension names besides "dim_N" and there are coordinates
-    for the channel dimension, then the known_dims and known_channel_names will be
-    ignored. If the provided xarray object IS using the xarray defaults, we will
-    override their defaults.
-
-    In such cases, it is recommended that you provided metadata for those scenes as
+    In such cases, it is recommended that you provide metadata for those scenes as
     None. I.E.
 
-    >>> some_xr = ...
+    >>> some_metadata_attached_xr = ...
     ... some_np = ...
     ... some_dask = ...
     ... reader = ArrayLikeReader(
-    ...     image=[some_xr, some_np, some_dask],
+    ...     image=[some_metadata_attached_xr, some_np, some_dask],
     ...     known_dims=[None, "CTYX", "ZTYX"],
     ...     known_channel_names=[None, ["A", "B", C"], None],
     ... )
 
-    Will create a three scene ArrayLikeReader with the raw xarray DataArray as the first
-    scene, a numpy array with CTYX as the dimensions and ["A", "B", "C"] as the
-    channel names, and a dask array with ZTYX as the dimensions and no channel names.
+    Will create a three scene ArrayLikeReader with the metadata and coordinate
+    information filled xarray DataArray as the first scene, a numpy array with CTYX as
+    the dimensions and ["A", "B", "C"] as the channel names, and a dask array with ZTYX
+    as the dimensions and no channel names (as there is no channel dimension).
     """
 
     @staticmethod
@@ -158,7 +160,7 @@ class ArrayLikeReader(Reader):
         # but many scenes provided, expand
         if isinstance(image, list):
             if known_dims is None or isinstance(known_dims, str):
-                known_dims = [known_dims for i in range(len(image))]
+                known_dims = [known_dims for i in range(len(image))]  # type: ignore
             if known_channel_names is None or isinstance(known_channel_names[0], str):
                 known_channel_names = [  # type: ignore
                     known_channel_names for i in range(len(image))
@@ -168,7 +170,7 @@ class ArrayLikeReader(Reader):
         if not isinstance(image, list):
             image = [image]
         if not isinstance(known_dims, list):
-            known_dims = [known_dims]
+            known_dims = [known_dims]  # type: ignore
         if known_channel_names is None:
             known_channel_names = [known_channel_names]  # type: ignore
         # Also wrap the channel names list if they were provided
@@ -242,7 +244,7 @@ class ArrayLikeReader(Reader):
 
         # Validate and store channel_names
         self._scene_channel_names = []
-        for s_index, channel_names in enumerate(known_channel_names):
+        for s_index, channel_names in enumerate(known_channel_names):  # type: ignore
             this_scene = self._all_scenes[s_index]
             this_scene_dims = self._scene_dims_list[s_index]
 

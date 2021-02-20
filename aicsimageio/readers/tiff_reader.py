@@ -42,7 +42,7 @@ class TiffReader(Reader):
         self,
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
-        **kwargs,
+        **kwargs: Any,
     ):
         """
         Wraps the tifffile API to provide the same aicsimageio Reader API but for
@@ -363,7 +363,6 @@ class TiffReader(Reader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Create dims and coords
-                dims = self._guess_dim_order(tiff)
                 coords = self._get_coords(
                     dims, image_data.shape, scene_index=self.current_scene_index
                 )

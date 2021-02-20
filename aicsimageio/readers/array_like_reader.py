@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -93,8 +93,8 @@ class ArrayLikeReader(Reader):
     """
 
     @staticmethod
-    def _is_supported_image(
-        image: Union[List[MetaArrayLike], MetaArrayLike], *args, **kwargs
+    def _is_supported_image(  # type: ignore
+        image: Union[List[MetaArrayLike], MetaArrayLike], *args: Any, **kwargs: Any
     ) -> bool:
         if isinstance(image, list):
             return all(
@@ -109,11 +109,13 @@ class ArrayLikeReader(Reader):
         image: Union[List[MetaArrayLike], MetaArrayLike],
         known_dims: Optional[Union[List[str], str]] = None,
         known_channel_names: Optional[Union[List[str], List[List[str]]]] = None,
-        **kwargs,
+        **kwargs: Any,
     ):
         # Enforce valid image
         if not self._is_supported_image(image):
-            raise exceptions.UnsupportedFileFormatError(self.__class__.__name__, image)
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, str(type(image))
+            )
 
         # General note
         # Any time we do a `known_channel_names[0]` it's because the type check for
@@ -158,7 +160,9 @@ class ArrayLikeReader(Reader):
             if known_dims is None or isinstance(known_dims, str):
                 known_dims = [known_dims for i in range(len(image))]
             if known_channel_names is None or isinstance(known_channel_names[0], str):
-                known_channel_names = [known_channel_names for i in range(len(image))]
+                known_channel_names = [  # type: ignore
+                    known_channel_names for i in range(len(image))
+                ]
 
         # Set all kwargs to lists for standard interface
         if not isinstance(image, list):
@@ -166,11 +170,11 @@ class ArrayLikeReader(Reader):
         if not isinstance(known_dims, list):
             known_dims = [known_dims]
         if known_channel_names is None:
-            known_channel_names = [known_channel_names]
+            known_channel_names = [known_channel_names]  # type: ignore
         # Also wrap the channel names list if they were provided
         # but only a single scene was
         elif len(image) == 1 and not isinstance(known_channel_names[0], list):
-            known_channel_names = [known_channel_names]
+            known_channel_names = [known_channel_names]  # type: ignore
 
         # Store image(s)
         self._all_scenes = image
@@ -193,7 +197,7 @@ class ArrayLikeReader(Reader):
                         )
                         # Rename the dimensions from "dim_N" to just the guess dim
                         # Update scene list in place
-                        self._all_scenes[i] = this_scene.rename(
+                        self._all_scenes[i] = this_scene.rename(  # type: ignore
                             {
                                 f"dim_{d_index}": d
                                 for d_index, d in enumerate(
@@ -221,7 +225,7 @@ class ArrayLikeReader(Reader):
                             # Rename the dimensions from "dim_N" to just the guess dim
                             # Update scene list in place
                             self._all_scenes[i] = this_scene.rename(
-                                {
+                                {  # type: ignore
                                     f"dim_{d_index}": d
                                     for d_index, d in enumerate(dims_string)
                                 }
@@ -332,9 +336,9 @@ class ArrayLikeReader(Reader):
 
             # Handle non-xarray cases
             else:
-                dims = list(dims)
+                dims_list = list(dims)
                 coords = {}
-                if DimensionNames.Channel in dims:
+                if DimensionNames.Channel in dims_list:
                     coords[DimensionNames.Channel] = channel_names
 
                 # Handle dask
@@ -345,14 +349,14 @@ class ArrayLikeReader(Reader):
                 self._xr_darrays.append(
                     xr.DataArray(
                         data=scene_data,
-                        dims=dims,
-                        coords=coords,
+                        dims=dims_list,
+                        coords=coords,  # type: ignore
                         attrs={constants.METADATA_UNPROCESSED: None},
                     )
                 )
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             self._scenes = tuple(
                 metadata_utils.generate_ome_image_id(i)

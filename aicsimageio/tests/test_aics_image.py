@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -9,7 +9,7 @@ import pytest
 import xarray as xr
 from ome_types import OME
 
-from aicsimageio import AICSImage, dimensions, exceptions
+from aicsimageio import AICSImage, dimensions, exceptions, types
 
 from .conftest import LOCAL, get_resource_full_path
 from .image_container_test_utils import (
@@ -202,7 +202,7 @@ def test_aicsimage(
     expected_dims_order: str,
     expected_channel_names: List[str],
     expected_physical_pixel_sizes: Tuple[float, float, float],
-    expected_metadata_type,
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
@@ -513,15 +513,15 @@ def test_multi_scene_aicsimage(
     ],
 )
 def test_aicsimage_from_array(
-    image,
-    known_dims,
-    known_channel_names,
-    set_scene,
-    expected_scenes,
-    expected_shape,
-    expected_dims,
-    expected_channel_names,
-):
+    image: Union[types.MetaArrayLike, List[types.MetaArrayLike]],
+    known_dims: Optional[str],
+    known_channel_names: Optional[List[str]],
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dims: str,
+    expected_channel_names: List[str],
+) -> None:
     # Init
     image_container = AICSImage(
         image, known_dims=known_dims, known_channel_names=known_channel_names
@@ -533,7 +533,7 @@ def test_aicsimage_from_array(
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
         expected_shape=expected_shape,
-        expected_dtype=np.float64,
+        expected_dtype=np.dtype(np.float64),
         expected_dims_order=expected_dims,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),

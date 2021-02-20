@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import ClassVar, List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Tuple, Type, Union
 
 import numpy as np
 from distributed.protocol import deserialize, serialize
@@ -53,7 +53,7 @@ def run_image_container_checks(
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
     expected_physical_pixel_sizes: Tuple[float, float, float],
-    expected_metadata_type: Type,
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     """
     A general suite of tests to run against image containers (Reader and AICSImage).
@@ -110,17 +110,17 @@ def run_image_container_checks(
 
 
 def run_image_file_checks(
-    ImageContainer: ClassVar[Union[AICSImage, Reader]],
+    ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,
     set_scene: str,
-    expected_scenes: Tuple[str],
+    expected_scenes: Tuple[str, ...],
     expected_current_scene: str,
-    expected_shape: Tuple[int],
+    expected_shape: Tuple[int, ...],
     expected_dtype: np.dtype,
     expected_dims_order: str,
-    expected_channel_names: List[str],
-    expected_physical_pixel_sizes: Tuple[float],
-    expected_metadata_type: Type,
+    expected_channel_names: Optional[List[str]],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     # Init container
     image_container = ImageContainer(image)
@@ -149,7 +149,7 @@ def run_image_file_checks(
 
 
 def run_multi_scene_image_read_checks(
-    ImageContainer: ClassVar[Union[AICSImage, Reader]],
+    ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,
     first_scene_id: str,
     first_scene_shape: Tuple[int, ...],

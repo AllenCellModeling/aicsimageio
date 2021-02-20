@@ -261,9 +261,9 @@ def test_micromanager_ome_tiff_binary_file() -> None:
 
     # Run image read checks on the first scene
     # (this files binary data)
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         set_scene="Image:0",
         expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
@@ -272,6 +272,7 @@ def test_micromanager_ome_tiff_binary_file() -> None:
         # Note this dimension order is correct but is different from OmeTiffReader
         # because we swap the dimensions into "standard" order
         expected_dims_order="TZCYX",
-        expected_channel_names=["Channel:0", "Channel:1", "Channel:2"],
+        expected_channel_names=["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_metadata_type=str,
     )

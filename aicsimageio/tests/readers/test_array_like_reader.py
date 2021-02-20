@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import List, Optional, Tuple, Union
+
 import dask.array as da
 import numpy as np
 import pytest
 import xarray as xr
 
-from aicsimageio import exceptions
+from aicsimageio import exceptions, types
 from aicsimageio.readers import ArrayLikeReader
 
 from ..image_container_test_utils import run_image_container_checks
@@ -824,15 +826,15 @@ from ..image_container_test_utils import run_image_container_checks
     ],
 )
 def test_arraylike_reader(
-    image,
-    known_dims,
-    known_channel_names,
-    set_scene,
-    expected_scenes,
-    expected_shape,
-    expected_dims,
-    expected_channel_names,
-):
+    image: Union[types.MetaArrayLike, List[types.MetaArrayLike]],
+    known_dims: Optional[Union[str, List[str]]],
+    known_channel_names: Optional[Union[List[str], List[List[str]]]],
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dims: str,
+    expected_channel_names: Optional[List[str]],
+) -> None:
     # Init
     image_container = ArrayLikeReader(
         image, known_dims=known_dims, known_channel_names=known_channel_names
@@ -844,7 +846,7 @@ def test_arraylike_reader(
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
         expected_shape=expected_shape,
-        expected_dtype=np.float64,
+        expected_dtype=np.dtype(np.float64),
         expected_dims_order=expected_dims,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),

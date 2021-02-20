@@ -435,9 +435,9 @@ def test_micromanager_ome_tiff_main_file() -> None:
 
     # Run image read checks on the first scene
     # (this files binary data)
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         set_scene="Image:0",
         expected_scenes=("Image:0", "Image:1"),
         expected_current_scene="Image:0",
@@ -446,6 +446,7 @@ def test_micromanager_ome_tiff_main_file() -> None:
         expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
         expected_channel_names=["Cy5", "DAPI", "FITC"],
         expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+        expected_metadata_type=OME,
     )
 
     # TODO:

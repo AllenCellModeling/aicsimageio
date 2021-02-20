@@ -414,7 +414,7 @@ def test_known_errors_without_cleaning(filename: str, host: str) -> None:
     OmeTiffReader(uri, clean_metadata=False)
 
 
-def test_micromanager_ome_tiff_main_file():
+def test_micromanager_ome_tiff_main_file() -> None:
     # Construct full filepath
     uri = get_resource_full_path(
         "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
@@ -438,7 +438,7 @@ def test_micromanager_ome_tiff_main_file():
         expected_scenes=("Image:0", "Image:1"),
         expected_current_scene="Image:0",
         expected_shape=(50, 3, 5, 256, 256),
-        expected_dtype=np.uint16,
+        expected_dtype=np.dtype(np.uint16),
         expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
         expected_channel_names=["Cy5", "DAPI", "FITC"],
         expected_physical_pixel_sizes=(1.75, 2.0, 2.0),

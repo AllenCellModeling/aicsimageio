@@ -244,7 +244,7 @@ def test_merge_dim_guesses(
     assert TiffReader._merge_dim_guesses(dims_from_meta, guessed_dims) == expected
 
 
-def test_micromanager_ome_tiff_binary_file():
+def test_micromanager_ome_tiff_binary_file() -> None:
     # Construct full filepath
     uri = get_resource_full_path(
         "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif",
@@ -267,7 +267,7 @@ def test_micromanager_ome_tiff_binary_file():
         expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
         expected_shape=(50, 5, 3, 256, 256),
-        expected_dtype=np.uint16,
+        expected_dtype=np.dtype(np.uint16),
         # Note this dimension order is correct but is different from OmeTiffReader
         # because we swap the dimensions into "standard" order
         expected_dims_order="TZCYX",

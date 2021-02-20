@@ -239,7 +239,7 @@ class DefaultReader(Reader):
     @staticmethod
     def _unpack_dims_and_coords(
         image_data: types.ArrayLike, metadata: Dict
-    ) -> Tuple[List[str], Dict]:
+    ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
         Unpack image data into assumed dims and coords.
 
@@ -254,7 +254,7 @@ class DefaultReader(Reader):
         -------
         dims: List[str]
             The dimension names for each dimension in the image data.
-        coords: Dict
+        coords: Dict[str, Union[List[str], types.ArrayLike]]
             If possible, the coordinates for dimensions in the image data.
         """
         # Guess dims
@@ -370,7 +370,7 @@ class DefaultReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
@@ -425,6 +425,6 @@ class DefaultReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,
+                coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: metadata},
             )

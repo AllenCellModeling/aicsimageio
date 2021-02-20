@@ -118,7 +118,7 @@ class OmeTiffReader(TiffReader):
     def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[np.ndarray, Any]]]]:
+    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:
         """
         Process the OME metadata to retrieve the dimension names and coordinate planes.
 
@@ -133,7 +133,7 @@ class OmeTiffReader(TiffReader):
         -------
         dims: List[str]
             The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List[Any], Union[np.ndarray, Any]]]
+        coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
             The coordinate planes / data for each dimension.
         """
         # Select scene
@@ -233,7 +233,7 @@ class OmeTiffReader(TiffReader):
         self,
         image_data: types.ArrayLike,
         dims: List[str],
-        coords: Dict[str, Union[List[Any], np.ndarray]],
+        coords: Dict[str, Union[List[Any], types.ArrayLike]],
         tiff_tags: TiffTags,
     ) -> xr.DataArray:
         # Expand the image data to match the OME empty dimensions

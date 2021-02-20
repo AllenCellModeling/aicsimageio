@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   aicsimageio.bin
    aicsimageio.metadata
    aicsimageio.readers
    aicsimageio.utils

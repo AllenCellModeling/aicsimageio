@@ -56,6 +56,9 @@ Fix
 
 Other
 ~~~~~
+- admin/adopt-mypy-and-stricter-linting  (`#208
+  <https://github.com/AllenCellModeling/aicsimageio/pull/208>`_)
+  [Jackson Maxfield Brown]
 - admin/move-test-resources-hash-to-text-file  (`#202
   <https://github.com/AllenCellModeling/aicsimageio/pull/202>`_)
   [Jackson Maxfield Brown]

@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Any
+
 import dask.array as da
 import numpy as np
 from fsspec.implementations.local import LocalFileSystem
@@ -39,13 +41,13 @@ class TimeseriesWriter(Writer):
 
     @staticmethod
     def _write_chunks(
-        f,
+        f: str,
         extension: str,
         imageio_mode: str,
         fps: int,
-        data: types.ArrayLike,
+        data: da.Array,
         dim_order: str,
-    ):
+    ) -> None:
         with get_writer(
             f,
             format=extension,
@@ -67,8 +69,8 @@ class TimeseriesWriter(Writer):
         uri: types.PathLike,
         dim_order: str = None,
         fps: int = 24,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         """
         Write a data array to a file.
 

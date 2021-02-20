@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -29,7 +29,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffReader(Reader):
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):
@@ -72,7 +72,7 @@ class TiffReader(Reader):
             )
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
@@ -155,7 +155,7 @@ class TiffReader(Reader):
 
         return "".join(best_guess)
 
-    def _guess_dim_order(self, tiff: TiffFile) -> List[str]:
+    def _guess_tiff_dim_order(self, tiff: TiffFile) -> List[str]:
         scene = tiff.series[self.current_scene_index]
         dims_from_meta = scene.pages.axes
 
@@ -171,12 +171,12 @@ class TiffReader(Reader):
 
     @staticmethod
     def _get_coords(
-        dims: str,
-        shape: Tuple[int],
+        dims: List[str],
+        shape: Tuple[int, ...],
         scene_index: int,
-    ) -> Dict[str, Union[List, types.ArrayLike]]:
+    ) -> Dict[str, Any]:
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Any] = {}
 
         # Get ImageId for channel naming
         image_id = metadata_utils.generate_ome_image_id(scene_index)
@@ -191,7 +191,7 @@ class TiffReader(Reader):
         return coords
 
     def _create_dask_array(
-        self, tiff: TiffFile, selected_scene_dims: List[str]
+        self, tiff: TiffFile, selected_scene_dims_list: List[str]
     ) -> da.Array:
         """
         Creates a delayed dask array for the file.
@@ -200,7 +200,7 @@ class TiffReader(Reader):
         ----------
         tiff: TiffFile
             An open TiffFile for processing.
-        selected_scene_dims: List[str]
+        selected_scene_dims_list: List[str]
             The dimensions to use for constructing the array with.
             Required for managing chunked vs non-chunked dimensions.
 
@@ -219,7 +219,7 @@ class TiffReader(Reader):
 
         # Construct delayed dask array
         selected_scene = tiff.series[self.current_scene_index]
-        selected_scene_dims = "".join(selected_scene_dims)
+        selected_scene_dims = "".join(selected_scene_dims_list)
 
         # Constuct the chunk and non-chunk shapes one dim at a time
         # We also collect the chunk and non-chunk dimension order so that
@@ -311,7 +311,7 @@ class TiffReader(Reader):
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
-                dims = self._guess_dim_order(tiff)
+                dims = self._guess_tiff_dim_order(tiff)
 
                 # Create the delayed dask array
                 image_data = self._create_dask_array(tiff, dims)
@@ -327,7 +327,7 @@ class TiffReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[
@@ -354,7 +354,7 @@ class TiffReader(Reader):
         with self.fs.open(self.path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
-                dims = self._guess_dim_order(tiff)
+                dims = self._guess_tiff_dim_order(tiff)
 
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
@@ -371,7 +371,7 @@ class TiffReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[

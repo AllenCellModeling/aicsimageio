@@ -19,6 +19,8 @@ test_requirements = [
     "docutils>=0.10,<0.16",
     "flake8>=3.8.3",
     "flake8-debugger>=3.2.1",
+    "isort>=5.7.0",
+    "mypy>=0.800",
     "psutil>=5.7.0",
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
@@ -34,7 +36,6 @@ dev_requirements = [
     "coverage>=5.1",
     "gitchangelog>=3.0.4",
     "ipython>=7.15.0",
-    "isort>=5.7.0",
     "m2r2>=0.2.7",
     "pytest-runner>=5.2",
     "Sphinx>=3.4.3",
@@ -53,9 +54,10 @@ requirements = [
     "numpy~=1.16",
     "ome-types~=0.2.4",
     "readlif~=0.3.1",
-    "tifffile>=2021.1.14",
+    "tifffile>=2021.2.1",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
+    "xmlschema",  # no pin because it's pulled in from OME types
     "zarr~=2.6.1",
 ]
 

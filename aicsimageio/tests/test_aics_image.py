@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import List, Tuple
+
 import dask.array as da
 import numpy as np
 import pytest
@@ -192,16 +194,16 @@ from .image_container_test_utils import (
     ],
 )
 def test_aicsimage(
-    filename,
-    set_scene,
-    expected_scenes,
-    expected_shape,
-    expected_dtype,
-    expected_dims_order,
-    expected_channel_names,
-    expected_physical_pixel_sizes,
+    filename: str,
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dtype: np.dtype,
+    expected_dims_order: str,
+    expected_channel_names: List[str],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
     expected_metadata_type,
-):
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
 
@@ -245,12 +247,12 @@ def test_aicsimage(
     ],
 )
 def test_multi_scene_aicsimage(
-    filename,
-    first_scene_id,
-    first_scene_shape,
-    second_scene_id,
-    second_scene_shape,
-):
+    filename: str,
+    first_scene_id: str,
+    first_scene_shape: Tuple[int, ...],
+    second_scene_id: str,
+    second_scene_shape: Tuple[int, ...],
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
 
@@ -260,10 +262,10 @@ def test_multi_scene_aicsimage(
         image=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
-        first_scene_dtype=np.uint16,
+        first_scene_dtype=np.dtype(np.uint16),
         second_scene_id=second_scene_id,
         second_scene_shape=second_scene_shape,
-        second_scene_dtype=np.uint16,
+        second_scene_dtype=np.dtype(np.uint16),
     )
 
 

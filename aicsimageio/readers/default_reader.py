@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import imageio
@@ -62,7 +62,7 @@ class DefaultReader(Reader):
         return extension, mode
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         # Get extension and mode for reading the file
         extension, mode = DefaultReader._get_extension_and_mode(path)
 
@@ -112,7 +112,7 @@ class DefaultReader(Reader):
             )
 
     @staticmethod
-    def _guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int, ...]) -> str:
         if len(shape) == 2:
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:
@@ -239,7 +239,7 @@ class DefaultReader(Reader):
     @staticmethod
     def _unpack_dims_and_coords(
         image_data: types.ArrayLike, metadata: Dict
-    ) -> Tuple[List[str], Dict]:
+    ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
         Unpack image data into assumed dims and coords.
 
@@ -254,14 +254,14 @@ class DefaultReader(Reader):
         -------
         dims: List[str]
             The dimension names for each dimension in the image data.
-        coords: Dict
+        coords: Dict[str, Union[List[str], types.ArrayLike]]
             If possible, the coordinates for dimensions in the image data.
         """
         # Guess dims
         dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
 
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Handle typical RGB and RGBA from Samples
         if DimensionNames.Samples in dims:
@@ -370,7 +370,7 @@ class DefaultReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
@@ -425,6 +425,6 @@ class DefaultReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,
+                coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: metadata},
             )

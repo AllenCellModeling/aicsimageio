@@ -3,7 +3,7 @@
 
 import logging
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
@@ -11,6 +11,7 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
+from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -41,17 +42,39 @@ class OmeTiffReader(TiffReader):
 
     @staticmethod
     def _is_supported_image(
-        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs: Any
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     xml = tiff.pages[0].description
-                    return OmeTiffReader._get_ome(xml, clean_metadata)
+                    ome = OmeTiffReader._get_ome(xml, clean_metadata)
 
-        # tifffile exception, tifffile exception, ome-types / etree exception
-        except (TiffFileError, TypeError, ET.ParseError):
+                    # Handle no images in metadata
+                    # this commonly means it is a "BinaryData" OME file
+                    # i.e. a non-main OME-TIFF from MicroManager or similar
+                    # in this case, because it's not the main file we want to just role
+                    # back to TiffReader
+                    if ome.binary_only:
+                        return False
+
+                    return True
+
+        # tifffile exceptions
+        except (TiffFileError, TypeError):
+            return False
+
+        # xml parse errors
+        except ET.ParseError as e:
+            log.error("Failed to parse XML for the provided file.")
+            log.error(e)
+            return False
+
+        # invalid OME XMl
+        except XMLSchemaValidationError as e:
+            log.error("OME XML validation failed")
+            log.error(e)
             return False
 
     def __init__(
@@ -101,8 +124,23 @@ class OmeTiffReader(TiffReader):
                 self.__class__.__name__, self.path
             )
 
+        # Warn of other behaviors
+        with self.fs.open(self.path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Log a warning stating that if this is a MM OME-TIFF, don't read
+                # many series
+                if tiff.is_micromanager:
+                    log.warn(
+                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
+                        "have limited support for scene API. "
+                        "It is recommended to use independent AICSImage or Reader "
+                        "objects for each file instead of the `set_scene` API. "
+                        "Track progress on support here: "
+                        "https://github.com/AllenCellModeling/aicsimageio/issues/196"
+                    )
+
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
@@ -119,7 +157,7 @@ class OmeTiffReader(TiffReader):
     def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List, types.ArrayLike]]]:
+    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:
         """
         Process the OME metadata to retrieve the dimension names and coordinate planes.
 
@@ -134,7 +172,7 @@ class OmeTiffReader(TiffReader):
         -------
         dims: List[str]
             The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List, types.ArrayLike]]
+        coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
             The coordinate planes / data for each dimension.
         """
         # Select scene
@@ -145,7 +183,7 @@ class OmeTiffReader(TiffReader):
         dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
         # Get coordinate planes
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Channels
         # Channel name isn't required by OME spec, so try to use it but
@@ -161,7 +199,7 @@ class OmeTiffReader(TiffReader):
             coords[DimensionNames.Time] = np.linspace(
                 0,
                 scene_meta.pixels.time_increment_quantity,
-                scene_meta.pixels.time_increment,
+                scene_meta.pixels.size_t,
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value
@@ -218,7 +256,7 @@ class OmeTiffReader(TiffReader):
 
         # The file may not have all the data but OME requires certain dimensions
         # expand to fill
-        expand_dim_ops = []
+        expand_dim_ops: List[Optional[slice]] = []
         for d_size in ome_shape:
             # Add empty dimension where OME requires dimension but no data exists
             if d_size == 1:
@@ -234,7 +272,7 @@ class OmeTiffReader(TiffReader):
         self,
         image_data: types.ArrayLike,
         dims: List[str],
-        coords: Dict[str, Dict[str, Union[List, types.ArrayLike]]],
+        coords: Dict[str, Union[List[Any], types.ArrayLike]],
         tiff_tags: TiffTags,
     ) -> xr.DataArray:
         # Expand the image data to match the OME empty dimensions
@@ -264,7 +302,7 @@ class OmeTiffReader(TiffReader):
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: self._ome,

@@ -9,7 +9,7 @@ import pytest
 from aicsimageio import exceptions
 from aicsimageio.readers import TiffReader
 
-from ..conftest import get_resource_full_path, host
+from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_read_checks,
     run_multi_scene_image_read_checks,
@@ -242,3 +242,35 @@ def test_merge_dim_guesses(
     dims_from_meta: str, guessed_dims: str, expected: str
 ) -> None:
     assert TiffReader._merge_dim_guesses(dims_from_meta, guessed_dims) == expected
+
+
+def test_micromanager_ome_tiff_binary_file() -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(
+        "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif",
+        LOCAL,
+    )
+
+    # Even though the file name says it is an OME TIFF, this is
+    # a binary TIFF file where the actual metadata for all scenes
+    # lives in a different image file.
+    # (image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif)
+    # Because of this, we will read "non-main" micromanager files as just
+    # normal TIFFs
+
+    # Run image read checks on the first scene
+    # (this files binary data)
+    run_image_read_checks(
+        ImageContainer=TiffReader,
+        uri=uri,
+        set_scene="Image:0",
+        expected_scenes=("Image:0",),
+        expected_current_scene="Image:0",
+        expected_shape=(50, 5, 3, 256, 256),
+        expected_dtype=np.dtype(np.uint16),
+        # Note this dimension order is correct but is different from OmeTiffReader
+        # because we swap the dimensions into "standard" order
+        expected_dims_order="TZCYX",
+        expected_channel_names=["Channel:0", "Channel:1", "Channel:2"],
+        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+    )

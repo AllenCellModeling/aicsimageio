@@ -11,6 +11,7 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
+from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_BY_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -48,10 +49,32 @@ class OmeTiffReader(TiffReader):
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     xml = tiff.pages[0].description
-                    return OmeTiffReader._get_ome(xml, clean_metadata)
+                    ome = OmeTiffReader._get_ome(xml, clean_metadata)
 
-        # tifffile exception, tifffile exception, ome-types / etree exception
-        except (TiffFileError, TypeError, ET.ParseError):
+                    # Handle no images in metadata
+                    # this commonly means it is a "BinaryData" OME file
+                    # i.e. a non-main OME-TIFF from MicroManager or similar
+                    # in this case, because it's not the main file we want to just role
+                    # back to TiffReader
+                    if ome.binary_only:
+                        return False
+
+                    return True
+
+        # tifffile exceptions
+        except (TiffFileError, TypeError):
+            return False
+
+        # xml parse errors
+        except ET.ParseError as e:
+            log.error("Failed to parse XML for the provided file.")
+            log.error(e)
+            return False
+
+        # invalid OME XMl
+        except XMLSchemaValidationError as e:
+            log.error("OME XML validation failed")
+            log.error(e)
             return False
 
     def __init__(
@@ -99,6 +122,21 @@ class OmeTiffReader(TiffReader):
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self.path
             )
+
+        # Warn of other behaviors
+        with self.fs.open(self.path) as open_resource:
+            with TiffFile(open_resource) as tiff:
+                # Log a warning stating that if this is a MM OME-TIFF, don't read
+                # many series
+                if tiff.is_micromanager:
+                    log.warn(
+                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
+                        "have limited support for scene API. "
+                        "It is recommended to use independent AICSImage or Reader "
+                        "objects for each file instead of the `set_scene` API. "
+                        "Track progress on support here: "
+                        "https://github.com/AllenCellModeling/aicsimageio/issues/196"
+                    )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -160,7 +198,7 @@ class OmeTiffReader(TiffReader):
             coords[DimensionNames.Time] = np.linspace(
                 0,
                 scene_meta.pixels.time_increment_quantity,
-                scene_meta.pixels.time_increment,
+                scene_meta.pixels.size_t,
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value

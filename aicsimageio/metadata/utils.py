@@ -56,9 +56,44 @@ def generate_ome_image_id(image_id: Union[str, int]) -> str:
     return f"Image:{image_id}"
 
 
+def generate_ome_instrument_id(instrument_id: Union[str, int]) -> str:
+    """
+    Naively generates the standard OME instrument ID using a provided ID.
+
+    Parameters
+    ----------
+    instrument_id: Union[str, int]
+        A string or int representing the ID for an instrument.
+
+    Returns
+    -------
+    ome_instrument_id: str
+        The OME standard for instrument IDs.
+    """
+    return f"Instrument:{instrument_id}"
+
+
+def generate_ome_detector_id(detector_id: Union[str, int]) -> str:
+    """
+    Naively generates the standard OME detector ID using a provided ID.
+
+    Parameters
+    ----------
+    detector_id: Union[str, int]
+        A string or int representing the ID for an detector.
+
+    Returns
+    -------
+    ome_detector_id: str
+        The OME standard for detector IDs.
+    """
+    return f"Detector:{detector_id}"
+
+
 def clean_ome_xml_for_known_issues(xml: str) -> str:
     """
-    Clean an OME XML string for known issues created by AICS systems and tools.
+    Clean an OME XML string for known issues created by AICS or MicroManager
+    systems and tools.
 
     Commonly this is used for cleaning a file produced by AICS prior to noticing the
     issue (2021), or for other users of aicsimageio as a whole prior to 4.x series of
@@ -107,7 +142,40 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     else:
         raise ValueError("XML does not contain a namespace")
 
-    # Find all Image elements and fix IDs
+    # Fix MicroManager Instrument and Detector
+    instrument = root.find(f"{namespace}Instrument")
+    if instrument is not None:
+        instrument_id = instrument.get("ID")
+        if instrument_id == "Microscope":
+            ome_instrument_id = generate_ome_instrument_id(0)
+            instrument.set("ID", ome_instrument_id)
+            metadata_changes.append(
+                f"Updated attribute 'ID' from '{instrument_id}' to "
+                f"'{ome_instrument_id}' on Instrument element."
+            )
+
+            for detector_index, detector in enumerate(
+                instrument.findall(f"{namespace}Detector")
+            ):
+                detector_id = detector.get("ID")
+                if detector_id is not None:
+                    # Create ome detector id if needed
+                    ome_detector_id = None
+                    if detector_id == "Camera":
+                        ome_detector_id = generate_ome_detector_id(detector_index)
+                    elif not detector_id.startswith("Detector:"):
+                        ome_detector_id = generate_ome_detector_id(detector_id)
+
+                    # Apply ome detector id if replaced
+                    if ome_detector_id is not None:
+                        detector.set("ID", ome_detector_id)
+                        metadata_changes.append(
+                            f"Updated attribute 'ID' from '{detector_id}' to "
+                            f"'{ome_detector_id}' on Detector element at "
+                            f"position {detector_index}."
+                        )
+
+    # Find all Image elements and fix IDs and refs to fixed instruments
     # This is for certain for test files of o.urs and ACTK files
     for image_index, image in enumerate(root.findall(f"{namespace}Image")):
         image_id = image.get("ID")
@@ -118,9 +186,16 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
                 ome_image_id = generate_ome_image_id(found_image_id)
                 image.set("ID", ome_image_id)
                 metadata_changes.append(
-                    f"Updated attribute 'ID' from '{found_image_id}' to "
-                    f"'{ome_image_id}' on Image element at position {image_index}."
+                    f"Updated attribute 'ID' from '{image_id}' to '{ome_image_id}' "
+                    f"on Image element at position {image_index}."
                 )
+
+        # Fix MicroManager bad instrument refs
+        instrument_ref = image.find(f"{namespace}InstrumentRef")
+        if instrument_ref is not None:
+            instrument_ref_id = instrument_ref.get("ID")
+            if instrument_ref_id == "Microscope":
+                instrument_ref.set("ID", ome_instrument_id)
 
         # Find all Pixels elements and fix IDs
         for pixels_index, pixels in enumerate(image.findall(f"{namespace}Pixels")):

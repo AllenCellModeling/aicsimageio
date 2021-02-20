@@ -62,7 +62,7 @@ img.current_scene
 img.scenes
 
 # Change scene
-img.set_scene(1)
+img.set_scene("Image:1")
 
 # Same operations on a different scene
 img.data  # returns 5D TCZYX numpy array
@@ -105,7 +105,7 @@ img.current_scene
 img.scenes
 
 # Change scene
-img.set_scene(1)
+img.set_scene("Image:1")
 
 # Same operations on a different scene
 img.dask_data  # returns 5D TCZYX dask array

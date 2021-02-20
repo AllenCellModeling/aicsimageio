@@ -6,10 +6,6 @@ from urllib.error import HTTPError
 
 import numpy as np
 import pytest
-from xmlschema.validators import (
-    XMLSchemaChildrenValidationError,
-    XMLSchemaValidationError,
-)
 
 from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader
@@ -338,22 +334,6 @@ def test_multi_scene_ome_tiff_reader(
             ["EGFP", "mCher", "PGC"],
             (1.0, 0.9082107048835328, 0.9082107048835328),
         ),
-        # TODO:
-        # Handle known ome-types multi-scene pyramid bug
-        # ome-types incorrectly assumes that the images should be
-        # Image:0 and Image:1
-        # and when looking up channel names based off of those image ids
-        # the incorrect channels are retrived
-        # For this particular file the correct Image id should be
-        # Image:0 and Image:4
-        # Because in OME metadata spec the resolutions / levels are stored
-        # as their own "Image" elements
-        # And the actual channel name for the actual second scene
-        # and not second resolution, should be "Channel:4:0"
-        # and the physical pixel sizes should be different between the two scenes
-        #
-        # Tracking here:
-        # https://github.com/AllenCellModeling/aicsimageio/issues/140
         (
             "variable_scene_shape_first_scene_pyramid.ome.tiff",
             "Image:1",
@@ -407,19 +387,19 @@ def test_multi_resolution_ome_tiff_reader(
         # These files have invalid schema / layout
         pytest.param(
             "3d-cell-viewer.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "pre-variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaChildrenValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "actk.ome.tiff",
-            marks=pytest.mark.raises(exception=XMLSchemaValidationError),
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
         # This file has a namespace that doesn't exist
         pytest.param(
@@ -432,3 +412,56 @@ def test_known_errors_without_cleaning(filename: str, host: str) -> None:
     uri = get_resource_full_path(filename, host)
 
     OmeTiffReader(uri, clean_metadata=False)
+
+
+def test_micromanager_ome_tiff_main_file() -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(
+        "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
+        LOCAL,
+    )
+
+    # MicroManager will split up multi-scene image sets into multiple files
+    # tifffile will then read in all of the scenes at once when it detects
+    # the file is a micromanager file set
+    # resulting in this single file truly only containing the binary for a
+    # single scene but containing the metadata for all files in the set
+    # and, while this file only contains the binary for itself, tifffile will
+    # read the image data for the linked files
+
+    # Run image read checks on the first scene
+    # (this files binary data)
+    run_image_read_checks(
+        ImageContainer=OmeTiffReader,
+        uri=uri,
+        set_scene="Image:0",
+        expected_scenes=("Image:0", "Image:1"),
+        expected_current_scene="Image:0",
+        expected_shape=(50, 3, 5, 256, 256),
+        expected_dtype=np.dtype(np.uint16),
+        expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
+        expected_channel_names=["Cy5", "DAPI", "FITC"],
+        expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+    )
+
+    # TODO:
+    # The user shouldn't do this because it can raise a "Seek on closed file" error
+    # Long term solution is something like:
+    # https://github.com/AllenCellModeling/aicsimageio/issues/196
+    # or more generally "support many file OME-TIFFs"
+    #
+    # Run image read checks on the second scene
+    # (a different files binary data)
+    # (image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif)
+    # run_image_read_checks(
+    #     ImageContainer=OmeTiffReader,
+    #     uri=uri,
+    #     set_scene="Image:1",
+    #     expected_scenes=("Image:0", "Image:1"),
+    #     expected_current_scene="Image:1",
+    #     expected_shape=(50, 3, 5, 256, 256),
+    #     expected_dtype=np.uint16,
+    #     expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
+    #     expected_channel_names=["Cy5", "DAPI", "FITC"],
+    #     expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+    # )

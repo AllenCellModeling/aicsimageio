@@ -45,6 +45,9 @@ New
 
 Fix
 ~~~
+- bugfix/catch-all-errors-in-ome-tiff  (`#207
+  <https://github.com/AllenCellModeling/aicsimageio/pull/207>`_)
+  [Jackson Maxfield Brown]
 - bugfix/provide-correct-indices-to-data-select-in-tiff-chunked-reads
   (`#201 <https://github.com/AllenCellModeling/aicsimageio/pull/201>`_)
   [Jackson Maxfield Brown]

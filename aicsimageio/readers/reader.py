@@ -19,16 +19,18 @@ from ..utils import io_utils
 
 
 class Reader(ABC):
-    _xarray_dask_data = None
-    _xarray_data = None
-    _dims = None
-    _metadata = None
-    _scenes = None
-    _current_scene = None
+    _xarray_dask_data: Optional[xr.DataArray] = None
+    _xarray_data: Optional[xr.DataArray] = None
+    _dims: Optional[Dimensions] = None
+    _metadata: Optional[Any] = None
+    _scenes: Optional[Tuple[str, ...]] = None
+    _current_scene: Optional[str] = None
+    fs: AbstractFileSystem
+    path: str
 
     @staticmethod
     @abstractmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         """
         The per-Reader implementation used to validate that an image is supported or not
         by the Reader itself.
@@ -50,7 +52,7 @@ class Reader(ABC):
         pass
 
     @classmethod
-    def is_supported_image(cls, image: types.ImageLike, **kwargs) -> bool:
+    def is_supported_image(cls, image: types.ImageLike, **kwargs: Any) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 
@@ -80,14 +82,14 @@ class Reader(ABC):
 
         # Special cases
         if isinstance(image, (np.ndarray, da.core.Array)):
-            return cls._is_this_type(image, **kwargs)
+            return cls._is_supported_image(image, **kwargs)
 
         # Raise because none of the above returned
         raise TypeError(
             f"Reader only accepts types: {types.ImageLike}. Received: '{type(image)}'."
         )
 
-    def __init__(self, image: types.ImageLike, **kwargs):
+    def __init__(self, image: types.ImageLike, **kwargs: Any):
         """
         A small class to build standardized image reader objects that deal with the raw
         image and metadata.
@@ -106,7 +108,7 @@ class Reader(ABC):
         pass
 
     @staticmethod
-    def _guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int, ...]) -> str:
         """
         Given an image shape attempts to guess the dimension order.
 
@@ -115,7 +117,7 @@ class Reader(ABC):
 
         Parameters
         ----------
-        shape: Tuple[int]
+        shape: Tuple[int, ...]
             Tuple of the image array's dimensions.
 
         Returns
@@ -127,11 +129,11 @@ class Reader(ABC):
 
     @property
     @abstractmethod
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         """
         Returns
         -------
-        scenes: Tuple[str]
+        scenes: Tuple[str, ...]
             A tuple of valid scene ids in the file.
 
         Notes
@@ -171,7 +173,7 @@ class Reader(ABC):
         """
         return self.scenes.index(self.current_scene)
 
-    def set_scene(self, scene_id: str):
+    def set_scene(self, scene_id: str) -> None:
         """
         Set the operating scene.
 
@@ -310,11 +312,11 @@ class Reader(ABC):
         return self.xarray_dask_data.dtype
 
     @property
-    def shape(self) -> Tuple[int]:
+    def shape(self) -> Tuple[int, ...]:
         """
         Returns
         -------
-        shape: Tuple[int]
+        shape: Tuple[int, ...]
             Tuple of the image array's dimensions.
         """
         return self.xarray_dask_data.shape
@@ -333,7 +335,7 @@ class Reader(ABC):
         return self._dims
 
     def get_image_dask_data(
-        self, dimension_order_out: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs: Any
     ) -> da.Array:
         """
         Get specific dimension image data out of an image as a dask array.
@@ -410,7 +412,7 @@ class Reader(ABC):
         )
 
     def get_image_data(
-        self, dimension_order_out: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs: Any
     ) -> da.Array:
         """
         Read the image as a numpy array then return specific dimension image data.
@@ -544,11 +546,11 @@ class Reader(ABC):
         """
         return PhysicalPixelSizes(1.0, 1.0, 1.0)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return (
             f"<{self.__class__.__name__} "
             f"[Image-is-in-Memory: {self._xarray_data is not None}]>"
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)

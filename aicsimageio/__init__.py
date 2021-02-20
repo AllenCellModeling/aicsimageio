@@ -16,5 +16,5 @@ __email__ = "jmaxfieldbrown@gmail.com, jamies@alleninstitute.org, bowdenm@spu.ed
 __version__ = "4.0.0.dev1"
 
 
-def get_module_version():
+def get_module_version() -> str:
     return __version__

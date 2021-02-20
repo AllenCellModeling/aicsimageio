@@ -3,7 +3,7 @@
 
 import logging
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
@@ -41,7 +41,7 @@ class OmeTiffReader(TiffReader):
 
     @staticmethod
     def _is_supported_image(
-        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs
+        fs: AbstractFileSystem, path: str, clean_metadata: bool = True, **kwargs: Any
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
@@ -101,7 +101,7 @@ class OmeTiffReader(TiffReader):
             )
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self.fs.open(self.path) as open_resource:
                 with TiffFile(open_resource) as tiff:
@@ -118,7 +118,7 @@ class OmeTiffReader(TiffReader):
     def _get_dims_and_coords_from_ome(
         ome: TiffTag,
         scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List, types.ArrayLike]]]:
+    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:
         """
         Process the OME metadata to retrieve the dimension names and coordinate planes.
 
@@ -133,7 +133,7 @@ class OmeTiffReader(TiffReader):
         -------
         dims: List[str]
             The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List, types.ArrayLike]]
+        coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
             The coordinate planes / data for each dimension.
         """
         # Select scene
@@ -144,7 +144,7 @@ class OmeTiffReader(TiffReader):
         dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
         # Get coordinate planes
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Channels
         # Channel name isn't required by OME spec, so try to use it but
@@ -217,7 +217,7 @@ class OmeTiffReader(TiffReader):
 
         # The file may not have all the data but OME requires certain dimensions
         # expand to fill
-        expand_dim_ops = []
+        expand_dim_ops: List[Optional[slice]] = []
         for d_size in ome_shape:
             # Add empty dimension where OME requires dimension but no data exists
             if d_size == 1:
@@ -233,7 +233,7 @@ class OmeTiffReader(TiffReader):
         self,
         image_data: types.ArrayLike,
         dims: List[str],
-        coords: Dict[str, Dict[str, Union[List, types.ArrayLike]]],
+        coords: Dict[str, Union[List[Any], types.ArrayLike]],
         tiff_tags: TiffTags,
     ) -> xr.DataArray:
         # Expand the image data to match the OME empty dimensions
@@ -263,7 +263,7 @@ class OmeTiffReader(TiffReader):
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: self._ome,

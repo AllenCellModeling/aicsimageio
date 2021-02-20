@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
+from typing import Any
 
 from . import types
 from .exceptions import ConflictingArgumentsError
@@ -44,17 +45,19 @@ def transpose_to_dims(
         raise ConflictingArgumentsError(
             f"given_dims={given_dims} and return_dims={return_dims} are incompatible."
         )
+
     # Resort the data into return_dims order
     match_map = {dim: given_dims.find(dim) for dim in given_dims}
     transposer = []
     for dim in return_dims:
         transposer.append(match_map[dim])
     data = data.transpose(transposer)
+
     return data
 
 
 def reshape_data(
-    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs
+    data: types.ArrayLike, given_dims: str, return_dims: str, **kwargs: Any
 ) -> types.ArrayLike:
     """
     Reshape the data into return_dims, pad missing dimensions, and prune extra

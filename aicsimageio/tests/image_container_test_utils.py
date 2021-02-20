@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import ClassVar, List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Type, Union
 
 import numpy as np
 from distributed.protocol import deserialize, serialize
@@ -15,7 +15,7 @@ from aicsimageio.readers.reader import Reader
 ###############################################################################
 
 
-def check_local_file_not_open(image_container: Union[AICSImage, Reader]):
+def check_local_file_not_open(image_container: Union[AICSImage, Reader]) -> None:
     if isinstance(image_container, AICSImage):
         image_container = image_container.reader
 
@@ -25,7 +25,9 @@ def check_local_file_not_open(image_container: Union[AICSImage, Reader]):
         assert str(image_container.path) not in [f.path for f in proc.open_files()]
 
 
-def check_can_serialize_image_container(image_container: Union[AICSImage, Reader]):
+def check_can_serialize_image_container(
+    image_container: Union[AICSImage, Reader]
+) -> None:
     # Dump and reconstruct
     reconstructed = deserialize(*serialize(image_container))
 
@@ -42,16 +44,16 @@ def check_can_serialize_image_container(image_container: Union[AICSImage, Reader
 
 
 def run_image_read_checks(
-    ImageContainer: ClassVar[Union[AICSImage, Reader]],
+    ImageContainer: Type[Union[AICSImage, Reader]],
     uri: types.PathLike,
     set_scene: str,
-    expected_scenes: Tuple[str],
+    expected_scenes: Tuple[str, ...],
     expected_current_scene: str,
-    expected_shape: Tuple[int],
+    expected_shape: Tuple[int, ...],
     expected_dtype: np.dtype,
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
-    expected_physical_pixel_sizes: Tuple[float],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
 ) -> Union[AICSImage, Reader]:
     """
     A general suite of tests to run against image containers (Reader and AICSImage).
@@ -110,13 +112,13 @@ def run_image_read_checks(
 
 
 def run_multi_scene_image_read_checks(
-    ImageContainer: ClassVar[Union[AICSImage, Reader]],
+    ImageContainer: Type[Union[AICSImage, Reader]],
     uri: types.PathLike,
     first_scene_id: str,
-    first_scene_shape: Tuple[int],
+    first_scene_shape: Tuple[int, ...],
     first_scene_dtype: np.dtype,
     second_scene_id: str,
-    second_scene_shape: Tuple[int],
+    second_scene_shape: Tuple[int, ...],
     second_scene_dtype: np.dtype,
 ) -> Union[AICSImage, Reader]:
     """

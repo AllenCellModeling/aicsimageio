@@ -5,7 +5,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Union
+from typing import Optional, Union
 
 ###############################################################################
 
@@ -111,24 +111,30 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     # This is for certain for test files of o.urs and ACTK files
     for image_index, image in enumerate(root.findall(f"{namespace}Image")):
         image_id = image.get("ID")
-        if not image_id.startswith("Image"):
-            ome_image_id = generate_ome_image_id(image_id)
-            image.set("ID", ome_image_id)
-            metadata_changes.append(
-                f"Updated attribute 'ID' from '{image_id}' to '{ome_image_id}' "
-                f"on Image element at position {image_index}"
-            )
+        if image_id is not None:
+            found_image_id = image_id
+
+            if not found_image_id.startswith("Image"):
+                ome_image_id = generate_ome_image_id(found_image_id)
+                image.set("ID", ome_image_id)
+                metadata_changes.append(
+                    f"Updated attribute 'ID' from '{found_image_id}' to "
+                    f"'{ome_image_id}' on Image element at position {image_index}."
+                )
 
         # Find all Pixels elements and fix IDs
         for pixels_index, pixels in enumerate(image.findall(f"{namespace}Pixels")):
             pixels_id = pixels.get("ID")
-            if not pixels_id.startswith("Pixels"):
-                pixels.set("ID", f"Pixels:{pixels_id}")
-                metadata_changes.append(
-                    f"Updated attribute 'ID' from '{pixels_id}' to "
-                    f"Pixels:{pixels_id}' on Pixels element at "
-                    f"position {pixels_index}."
-                )
+            if pixels_id is not None:
+                found_pixels_id = pixels_id
+
+                if not found_pixels_id.startswith("Pixels"):
+                    pixels.set("ID", f"Pixels:{found_pixels_id}")
+                    metadata_changes.append(
+                        f"Updated attribute 'ID' from '{found_pixels_id}' to "
+                        f"Pixels:{found_pixels_id}' on Pixels element at "
+                        f"position {pixels_index}."
+                    )
 
             # Determine if there is an out-of-order channel / plane elem
             # This is due to OMEXML "add channel" function
@@ -266,11 +272,19 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
                             image.remove(anno_ref)
 
                     # Clean planes
-                    pixels = image.find(f"{namespace}Pixels")
-                    for plane in pixels.findall(f"{namespace}Plane"):
-                        for anno_ref in plane.findall(f"{namespace}AnnotationRef"):
-                            if anno_ref.get("ID") == aics_anno_id:
-                                plane.remove(anno_ref)
+                    if image is not None:
+                        found_image = image
+
+                        pixels_planes: Optional[ET.Element] = found_image.find(
+                            f"{namespace}Pixels"
+                        )
+                        if pixels_planes is not None:
+                            for plane in pixels_planes.findall(f"{namespace}Plane"):
+                                for anno_ref in plane.findall(
+                                    f"{namespace}AnnotationRef"
+                                ):
+                                    if anno_ref.get("ID") == aics_anno_id:
+                                        plane.remove(anno_ref)
 
                 # Remove the whole etree
                 sa.remove(xml_anno)

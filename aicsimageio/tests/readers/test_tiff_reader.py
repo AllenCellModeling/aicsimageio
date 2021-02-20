@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import List, Tuple
+
 import numpy as np
 import pytest
 
@@ -149,15 +151,15 @@ from ..image_container_test_utils import (
     ],
 )
 def test_tiff_reader(
-    filename,
-    host,
-    set_scene,
-    expected_scenes,
-    expected_shape,
-    expected_dtype,
-    expected_dims_order,
-    expected_channel_names,
-):
+    filename: str,
+    host: str,
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dtype: np.dtype,
+    expected_dims_order: str,
+    expected_channel_names: List[str],
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 
@@ -201,13 +203,13 @@ def test_tiff_reader(
     ],
 )
 def test_multi_scene_tiff_reader(
-    filename,
-    host,
-    first_scene_id,
-    first_scene_shape,
-    second_scene_id,
-    second_scene_shape,
-):
+    filename: str,
+    host: str,
+    first_scene_id: str,
+    first_scene_shape: Tuple[int, ...],
+    second_scene_id: str,
+    second_scene_shape: Tuple[int, ...],
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 
@@ -217,10 +219,10 @@ def test_multi_scene_tiff_reader(
         uri=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
-        first_scene_dtype=np.uint16,
+        first_scene_dtype=np.dtype(np.uint16),
         second_scene_id=second_scene_id,
         second_scene_shape=second_scene_shape,
-        second_scene_dtype=np.uint16,
+        second_scene_dtype=np.dtype(np.uint16),
     )
 
 
@@ -236,5 +238,7 @@ def test_multi_scene_tiff_reader(
         ("LTCYX", "DIMOK", "LTCYX"),
     ],
 )
-def test_merge_dim_guesses(dims_from_meta, guessed_dims, expected):
+def test_merge_dim_guesses(
+    dims_from_meta: str, guessed_dims: str, expected: str
+) -> None:
     assert TiffReader._merge_dim_guesses(dims_from_meta, guessed_dims) == expected

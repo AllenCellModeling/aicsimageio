@@ -19,6 +19,8 @@ def transpose_to_dims(
     This shuffles the data dimensions from given_dims to return_dims. Each dimension
     must be present in given_dims must be used in return_dims
 
+    Parameters
+    ----------
     data: types.ArrayLike
         Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions
         specified in given_dims
@@ -34,7 +36,8 @@ def transpose_to_dims(
 
     Raises
     ------
-    ConflictingArgumentsError: given_dims and return_dims are incompatible.
+    ConflictingArgumentsError
+        given_dims and return_dims are incompatible.
     """
     # Use a counter to track that the contents are composed of the same letters
     # and that no letter is repeated
@@ -96,9 +99,12 @@ def reshape_data(
 
     Raises
     ------
-    ConflictingArgumentsError: Missing dimension in return dims when using range,
-        slice, or multi-index dimension selection for the requested dimension.
-    IndexError: Requested dimension index not present in data.
+    ConflictingArgumentsError
+        Missing dimension in return dims when using range, slice, or multi-index
+        dimension selection for the requested dimension.
+
+    IndexError
+        Requested dimension index not present in data.
 
     Examples
     --------

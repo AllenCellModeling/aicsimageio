@@ -32,6 +32,34 @@ log = logging.getLogger(__name__)
 
 
 class OmeTiffReader(TiffReader):
+    """
+    Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
+    API but for volumetric OME-TIFF images.
+
+    Parameters
+    ----------
+    image: types.PathLike
+        Path to image file to construct Reader for.
+    chunk_by_dims: List[str]
+        Which dimensions to create chunks for.
+        Default: DEFAULT_CHUNK_BY_DIMS
+        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+        will always be added to the list if not present during dask array
+        construction.
+    clean_metadata: bool
+        Should the OME XML metadata found in the file be cleaned for known
+        AICSImageIO 3.x and earlier created errors.
+        Default: True (Clean the metadata for known errors)
+
+    Notes
+    -----
+    If the OME metadata in your file isn't OME schema compilant or does not validate
+    this will fail to read your file and raise an exception.
+
+    If the OME metadata in your file doesn't use the latest OME schema (2016-06),
+    this reader will make a request to the referenced remote OME schema to validate.
+    """
+
     @staticmethod
     def _get_ome(ome_xml: str, clean_metadata: bool = True) -> OME:
         # To clean or not to clean, that is the question
@@ -82,49 +110,23 @@ class OmeTiffReader(TiffReader):
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
         clean_metadata: bool = True,
+        **kwargs: Any,
     ):
-        """
-        Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
-        API but for volumetric OME-TIFF images.
-
-        Parameters
-        ----------
-        image: types.PathLike
-            Path to image file to construct Reader for.
-        chunk_by_dims: List[str]
-            Which dimensions to create chunks for.
-            Default: DEFAULT_CHUNK_BY_DIMS
-            Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-            will always be added to the list if not present during dask array
-            construction.
-        clean_metadata: bool
-            Should the OME XML metadata found in the file be cleaned for known
-            AICSImageIO 3.x and earlier created errors.
-            Default: True (Clean the metadata for known errors)
-
-        Notes
-        -----
-        If the OME metadata in your file isn't OME schema compilant or does not validate
-        this will fail to read your file and raise an exception.
-
-        If the OME metadata in your file doesn't use the latest OME schema (2016-06),
-        this reader will make a request to the referenced remote OME schema to validate.
-        """
         # Expand details of provided image
-        self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
         self.clean_metadata = clean_metadata
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path, clean_metadata):
+        if not self._is_supported_image(self._fs, self._path, clean_metadata):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.path
+                self.__class__.__name__, self._path
             )
 
         # Warn of other behaviors
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
@@ -141,7 +143,7 @@ class OmeTiffReader(TiffReader):
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            with self.fs.open(self.path) as open_resource:
+            with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     self._ome = self._get_ome(
                         tiff.pages[0].description, self.clean_metadata
@@ -324,7 +326,7 @@ class OmeTiffReader(TiffReader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
@@ -366,7 +368,7 @@ class OmeTiffReader(TiffReader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)

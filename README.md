@@ -79,9 +79,9 @@ data = imread("my_file.tiff")  # optionally provide a scene id, default first
 
 #### Full Image Reading Notes
 
-The `.data` and `.xarray_data` properties and the `.get_image_data` function will
-load the whole image into memory prior to returning the specified chunk (if using
-`.get_image_data`).
+The `.data` and `.xarray_data` properties will load the whole image into memory.
+The `.get_image_data` function will load the whole image into memory and then retrieve
+the specific chunk.
 
 ### Delayed Image Reading
 
@@ -129,7 +129,7 @@ t0 = lazy_t0.compute()
 #### Delayed Image Reading Notes
 
 The `.dask_data` and `.xarray_dask_data` properties and the `.get_image_dask_data`
-function will not load any piece of the image into memory until you specifically
+function will not load any piece of the pixel data into memory until you specifically
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected data in-memory.
 
@@ -146,6 +146,14 @@ img = AICSImage("gcs://my-bucket/my_file.tiff")
 # All other normal operations work just fine
 ```
 
+Remote reading requires that the file-system specification implementation for the
+target backend is installed.
+
+-   For `s3`: `pip install s3fs`
+-   For `gs`: `pip install gcsfs`
+
+See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
+
 ### Metadata Reading
 
 ```python
@@ -159,6 +167,15 @@ img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the 
 img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
+
+### Base Reader Specification
+
+All base readers (`TiffReader`, `OmeTiffReader`, `DefaultReader`, etc.) all follow the
+same base specification. Each reader will have documentation for functions and properties
+specific to themselves while
+[the base Reader documentation](./aicsimageio.readers.html#module-aicsimageio.readers.reader)
+is the best place to get an overview of all functions and properties available to all
+base reading classes.
 
 ## Performance Considerations
 

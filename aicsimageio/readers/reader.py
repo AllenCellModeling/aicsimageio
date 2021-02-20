@@ -19,14 +19,30 @@ from ..utils import io_utils
 
 
 class Reader(ABC):
+    """
+    A small class to build standardized image reader objects that deal with the raw
+    image and metadata.
+
+    Parameters
+    ----------
+    image: Any
+        Some type of object to read and follow the Reader specification.
+
+    Notes
+    -----
+    It is up to the implementer of the Reader to decide which types they would like to
+    accept (certain readers may not support buffers for example).
+    """
+
     _xarray_dask_data: Optional[xr.DataArray] = None
     _xarray_data: Optional[xr.DataArray] = None
     _dims: Optional[Dimensions] = None
     _metadata: Optional[Any] = None
     _scenes: Optional[Tuple[str, ...]] = None
     _current_scene: Optional[str] = None
-    fs: AbstractFileSystem
-    path: str
+    # Do not default because they aren't used by all readers
+    _fs: AbstractFileSystem
+    _path: str
 
     @staticmethod
     @abstractmethod
@@ -81,7 +97,7 @@ class Reader(ABC):
             return cls._is_supported_image(fs, path, **kwargs)
 
         # Special cases
-        if isinstance(image, (np.ndarray, da.core.Array)):
+        if isinstance(image, (list, np.ndarray, da.core.Array, xr.DataArray)):
             return cls._is_supported_image(image, **kwargs)
 
         # Raise because none of the above returned
@@ -89,22 +105,7 @@ class Reader(ABC):
             f"Reader only accepts types: {types.ImageLike}. Received: '{type(image)}'."
         )
 
-    def __init__(self, image: types.ImageLike, **kwargs: Any):
-        """
-        A small class to build standardized image reader objects that deal with the raw
-        image and metadata.
-
-        Parameters
-        ----------
-        image: types.ImageLike
-            The filepath or array to read.
-
-        Notes
-        -----
-        While this base class accepts image as any "ImageLike", it is up to the
-        implementer of the Reader to decide which types they would like to accept
-        (certain readers may not support buffers for example).
-        """
+    def __init__(self, image: Any, **kwargs: Any):
         pass
 
     @staticmethod
@@ -362,7 +363,7 @@ class Reader(ABC):
 
         Returns
         -------
-        data: dask array
+        data: da.Array
             The image data with the specified dimension ordering.
 
         Examples
@@ -394,8 +395,8 @@ class Reader(ABC):
 
         Notes
         -----
-        * If a requested dimension is not present in the data the dimension is
-          added with a depth of 1.
+        If a requested dimension is not present in the data the dimension is
+        added with a depth of 1.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
@@ -413,7 +414,7 @@ class Reader(ABC):
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs: Any
-    ) -> da.Array:
+    ) -> np.ndarray:
         """
         Read the image as a numpy array then return specific dimension image data.
 
@@ -439,7 +440,7 @@ class Reader(ABC):
 
         Returns
         -------
-        data: numpy array
+        data: np.ndarray
             The image data with the specified dimension ordering.
 
         Examples

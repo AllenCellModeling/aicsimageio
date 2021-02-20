@@ -10,7 +10,7 @@ from aicsimageio import exceptions
 from aicsimageio.readers import DefaultReader
 
 from ..conftest import get_resource_full_path, host
-from ..image_container_test_utils import run_image_read_checks
+from ..image_container_test_utils import run_image_file_checks
 
 
 @host
@@ -60,9 +60,9 @@ def test_default_reader(
     uri = get_resource_full_path(filename, host)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=DefaultReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
@@ -71,6 +71,7 @@ def test_default_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=None,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_metadata_type=dict,
     )
 
 

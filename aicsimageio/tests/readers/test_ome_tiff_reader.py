@@ -6,13 +6,14 @@ from urllib.error import HTTPError
 
 import numpy as np
 import pytest
+from ome_types import OME
 
 from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
-    run_image_read_checks,
+    run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
 
@@ -57,7 +58,7 @@ from ..image_container_test_utils import (
             ("Image:0",),
             (1, 2, 1, 32, 32, 3),
             np.uint8,
-            dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0", "Channel:0:1"],
             (1.0, 1.0, 1.0),
         ),
@@ -152,9 +153,9 @@ def test_ome_tiff_reader(
     uri = get_resource_full_path(filename, host)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
@@ -163,6 +164,7 @@ def test_ome_tiff_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=OME,
     )
 
 
@@ -249,9 +251,9 @@ def test_ome_tiff_reader_large_files(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
@@ -260,6 +262,7 @@ def test_ome_tiff_reader_large_files(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=OME,
     )
 
 
@@ -301,7 +304,7 @@ def test_multi_scene_ome_tiff_reader(
     # Run checks
     run_multi_scene_image_read_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
         first_scene_dtype=np.dtype(np.uint16),
@@ -360,9 +363,9 @@ def test_multi_resolution_ome_tiff_reader(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
@@ -371,6 +374,7 @@ def test_multi_resolution_ome_tiff_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=OME,
     )
 
 
@@ -431,9 +435,9 @@ def test_micromanager_ome_tiff_main_file() -> None:
 
     # Run image read checks on the first scene
     # (this files binary data)
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=OmeTiffReader,
-        uri=uri,
+        image=uri,
         set_scene="Image:0",
         expected_scenes=("Image:0", "Image:1"),
         expected_current_scene="Image:0",
@@ -442,6 +446,7 @@ def test_micromanager_ome_tiff_main_file() -> None:
         expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
         expected_channel_names=["Cy5", "DAPI", "FITC"],
         expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
+        expected_metadata_type=OME,
     )
 
     # TODO:

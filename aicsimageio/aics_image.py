@@ -9,6 +9,7 @@ import numpy as np
 import xarray as xr
 
 from . import dimensions, exceptions, readers, transforms, types
+from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes, ReaderType
 
@@ -22,7 +23,7 @@ class AICSImage:
     # if TiffReader was placed before OmeTiffReader,
     # we would never hit the OmeTiffReader
     SUPPORTED_READERS = (
-        # readers.ArrayLikeReader,
+        readers.ArrayLikeReader,
         # readers.CziReader,
         # readers.LifReader,
         readers.OmeTiffReader,
@@ -59,9 +60,7 @@ class AICSImage:
 
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
-    def __init__(
-        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs: Any
-    ):
+    def __init__(self, image: types.ImageLike, **kwargs: Any):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
         dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
@@ -72,9 +71,6 @@ class AICSImage:
         ----------
         image: types.ImageLike
             A string, Path, fsspec supported URI, or arraylike to read.
-        known_dims: Optional[str]
-            Optional string with the known dimension order. If None, the reader will
-            attempt to parse dim order.
         kwargs: Any
             Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -119,27 +115,8 @@ class AICSImage:
         new reader child class of Reader ([readers/reader.py]) and add the class to the
         SUPPORTED_READERS variable.
         """
-        # Check known dims
-        if known_dims is not None:
-            if not all(
-                [
-                    d in dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES
-                    for d in known_dims
-                ]
-            ):
-                raise exceptions.InvalidDimensionOrderingError(
-                    f"The provided dimension string to the 'known_dims' argument "
-                    f"includes dimensions that AICSImage does not support. "
-                    f"Received: '{known_dims}'. "
-                    f"Supported dimensions: "
-                    f"{dimensions.DEFAULT_DIMENSIONS_ORDER_LIST_WITH_SAMPLES}."
-                )
-
-        # Hold onto known dims until data is requested
-        self._known_dims = known_dims
-
         # Determine reader class and create dask delayed array
-        ReaderClass = self.determine_reader(image=image, **kwargs)
+        ReaderClass = self.determine_reader(image, **kwargs)
         self._reader = ReaderClass(image, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions
@@ -239,14 +216,14 @@ class AICSImage:
     ) -> xr.DataArray:
         # Determine if we include Samples dim or not
         if dimensions.DimensionNames.Samples in arr.dims:
-            return_dims = dimensions.DEFAULT_DIMENSIONS_ORDER_WITH_SAMPLES
+            return_dims = dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
         else:
             return_dims = dimensions.DEFAULT_DIMENSION_ORDER
 
         # Pull the data with the appropriate dimensions
         data = transforms.reshape_data(
             data=arr.data,
-            given_dims=self._known_dims or self.reader.dims.order,
+            given_dims=self.reader.dims.order,
             return_dims=return_dims,
         )
 
@@ -258,7 +235,12 @@ class AICSImage:
 
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
-            coords[dimensions.DimensionNames.Channel] = ["Channel:0"]
+            coords[dimensions.DimensionNames.Channel] = [
+                metadata_utils.generate_ome_channel_id(
+                    image_id=self.current_scene,
+                    channel_id=0,
+                )
+            ]
 
         return xr.DataArray(
             data,
@@ -389,7 +371,7 @@ class AICSImage:
 
         Returns
         -------
-        data: dask array
+        data: da.Array
             The image data with the specified dimension ordering.
 
         Examples
@@ -421,8 +403,8 @@ class AICSImage:
 
         Notes
         -----
-        * If a requested dimension is not present in the data the dimension is
-          added with a depth of 1.
+        If a requested dimension is not present in the data the dimension is
+        added with a depth of 1.
 
         See `aicsimageio.transforms.reshape_data` for more details.
         """
@@ -440,7 +422,7 @@ class AICSImage:
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs: Any
-    ) -> da.Array:
+    ) -> np.ndarray:
         """
         Read the image as a numpy array then return specific dimension image data.
 
@@ -466,7 +448,7 @@ class AICSImage:
 
         Returns
         -------
-        data: numpy array
+        data: np.ndarray
             The image data with the specified dimension ordering.
 
         Examples

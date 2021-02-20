@@ -11,7 +11,7 @@ from aicsimageio.readers import TiffReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
-    run_image_read_checks,
+    run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
 
@@ -51,7 +51,7 @@ from ..image_container_test_utils import (
             (10, 1736, 1776),
             np.uint16,
             "CYX",
-            [f"Channel:{i}" for i in range(10)],
+            [f"Channel:0:{i}" for i in range(10)],
         ),
         (
             "s_1_t_10_c_3_z_1.tiff",
@@ -60,7 +60,7 @@ from ..image_container_test_utils import (
             (10, 3, 325, 475),
             np.uint16,
             "TCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -69,7 +69,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -78,7 +78,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:1:0", "Channel:1:1", "Channel:1:2"],
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -87,7 +87,7 @@ from ..image_container_test_utils import (
             (5, 3, 325, 475),
             np.uint16,
             "ZCYX",
-            ["Channel:0", "Channel:1", "Channel:2"],
+            ["Channel:2:0", "Channel:2:1", "Channel:2:2"],
         ),
         (
             "s_1_t_1_c_1_z_1_RGB.tiff",
@@ -106,7 +106,7 @@ from ..image_container_test_utils import (
             (2, 32, 32, 3),
             np.uint8,
             "CYXS",  # S stands for samples dimension
-            ["Channel:0", "Channel:1"],
+            ["Channel:0:0", "Channel:0:1"],
         ),
         pytest.param(
             "example.txt",
@@ -164,9 +164,9 @@ def test_tiff_reader(
     uri = get_resource_full_path(filename, host)
 
     # Run checks
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
         expected_current_scene=set_scene,
@@ -175,6 +175,7 @@ def test_tiff_reader(
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_metadata_type=str,
     )
 
 
@@ -216,7 +217,7 @@ def test_multi_scene_tiff_reader(
     # Run checks
     run_multi_scene_image_read_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
         first_scene_dtype=np.dtype(np.uint16),
@@ -260,9 +261,9 @@ def test_micromanager_ome_tiff_binary_file() -> None:
 
     # Run image read checks on the first scene
     # (this files binary data)
-    run_image_read_checks(
+    run_image_file_checks(
         ImageContainer=TiffReader,
-        uri=uri,
+        image=uri,
         set_scene="Image:0",
         expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
@@ -271,6 +272,7 @@ def test_micromanager_ome_tiff_binary_file() -> None:
         # Note this dimension order is correct but is different from OmeTiffReader
         # because we swap the dimensions into "standard" order
         expected_dims_order="TZCYX",
-        expected_channel_names=["Channel:0", "Channel:1", "Channel:2"],
+        expected_channel_names=["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_metadata_type=str,
     )

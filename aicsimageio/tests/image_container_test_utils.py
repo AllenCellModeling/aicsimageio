@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Tuple, Type, Union
 
 import numpy as np
 from distributed.protocol import deserialize, serialize
@@ -20,9 +20,9 @@ def check_local_file_not_open(image_container: Union[AICSImage, Reader]) -> None
         image_container = image_container.reader
 
     # Check that there are no open file pointers
-    if isinstance(image_container.fs, LocalFileSystem):
+    if isinstance(image_container._fs, LocalFileSystem):
         proc = Process()
-        assert str(image_container.path) not in [f.path for f in proc.open_files()]
+        assert str(image_container._path) not in [f.path for f in proc.open_files()]
 
 
 def check_can_serialize_image_container(
@@ -43,9 +43,8 @@ def check_can_serialize_image_container(
         assert_equal(image_container._xarray_dask_data, reconstructed._xarray_dask_data)
 
 
-def run_image_read_checks(
-    ImageContainer: Type[Union[AICSImage, Reader]],
-    uri: types.PathLike,
+def run_image_container_checks(
+    image_container: Union[AICSImage, Reader],
     set_scene: str,
     expected_scenes: Tuple[str, ...],
     expected_current_scene: str,
@@ -54,14 +53,13 @@ def run_image_read_checks(
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
     expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     """
     A general suite of tests to run against image containers (Reader and AICSImage).
     """
-    # Read file
-    image_container = ImageContainer(uri)
 
-    check_local_file_not_open(image_container)
+    # Check serdes
     check_can_serialize_image_container(image_container)
 
     # Set scene
@@ -76,9 +74,9 @@ def run_image_read_checks(
     assert image_container.dtype == expected_dtype
     assert image_container.dims.order == expected_dims_order
     assert image_container.dims.shape == expected_shape
-    assert image_container.metadata
     assert image_container.channel_names == expected_channel_names
     assert image_container.physical_pixel_sizes == expected_physical_pixel_sizes
+    assert isinstance(image_container.metadata, expected_metadata_type)
 
     # Read different chunks
     zyx_chunk_from_delayed = image_container.get_image_dask_data("ZYX").compute()
@@ -105,15 +103,54 @@ def run_image_read_checks(
     assert image_container.data.shape == expected_shape
     assert image_container.data.dtype == expected_dtype
 
-    check_local_file_not_open(image_container)
+    # Check serdes
     check_can_serialize_image_container(image_container)
+
+    return image_container
+
+
+def run_image_file_checks(
+    ImageContainer: Type[Union[AICSImage, Reader]],
+    image: types.PathLike,
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_current_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_dtype: np.dtype,
+    expected_dims_order: str,
+    expected_channel_names: Optional[List[str]],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
+) -> Union[AICSImage, Reader]:
+    # Init container
+    image_container = ImageContainer(image)
+
+    # Check for file pointers
+    check_local_file_not_open(image_container)
+
+    # Run array and metadata check operations
+    run_image_container_checks(
+        image_container=image_container,
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=expected_current_scene,
+        expected_shape=expected_shape,
+        expected_dtype=expected_dtype,
+        expected_dims_order=expected_dims_order,
+        expected_channel_names=expected_channel_names,
+        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=expected_metadata_type,
+    )
+
+    # Check for file pointers
+    check_local_file_not_open(image_container)
 
     return image_container
 
 
 def run_multi_scene_image_read_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
-    uri: types.PathLike,
+    image: types.PathLike,
     first_scene_id: str,
     first_scene_shape: Tuple[int, ...],
     first_scene_dtype: np.dtype,
@@ -125,7 +162,7 @@ def run_multi_scene_image_read_checks(
     A suite of tests to ensure that data is reset when switching scenes.
     """
     # Read file
-    image_container = ImageContainer(uri)
+    image_container = ImageContainer(image)
 
     check_local_file_not_open(image_container)
     check_can_serialize_image_container(image_container)

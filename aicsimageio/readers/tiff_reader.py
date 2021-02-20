@@ -42,6 +42,7 @@ class TiffReader(Reader):
         self,
         image: types.PathLike,
         chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+        **kwargs: Any,
     ):
         """
         Wraps the tifffile API to provide the same aicsimageio Reader API but for
@@ -59,21 +60,21 @@ class TiffReader(Reader):
             construction.
         """
         # Expand details of provided image
-        self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
         self.chunk_by_dims = chunk_by_dims
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path):
+        if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.path
+                self.__class__.__name__, self._path
             )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            with self.fs.open(self.path) as open_resource:
+            with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
@@ -172,14 +173,19 @@ class TiffReader(Reader):
     def _get_coords(
         dims: List[str],
         shape: Tuple[int, ...],
+        scene_index: int,
     ) -> Dict[str, Any]:
         # Use dims for coord determination
         coords: Dict[str, Any] = {}
 
+        # Get ImageId for channel naming
+        image_id = metadata_utils.generate_ome_image_id(scene_index)
+
         # Use range for channel indices
         if DimensionNames.Channel in dims:
             coords[DimensionNames.Channel] = [
-                f"Channel:{i}" for i in range(shape[dims.index(DimensionNames.Channel)])
+                metadata_utils.generate_ome_channel_id(image_id=image_id, channel_id=i)
+                for i in range(shape[dims.index(DimensionNames.Channel)])
             ]
 
         return coords
@@ -256,8 +262,8 @@ class TiffReader(Reader):
             # Fill the numpy array with the delayed arrays
             lazy_arrays[np_index] = da.from_delayed(
                 delayed(TiffReader._get_image_data)(
-                    fs=self.fs,
-                    path=self.path,
+                    fs=self._fs,
+                    path=self._path,
                     scene=self.current_scene_index,
                     retrieve_indices=indices_with_slices,
                     transpose_indices=transposer,
@@ -302,7 +308,7 @@ class TiffReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
                 dims = self._guess_tiff_dim_order(tiff)
@@ -314,7 +320,9 @@ class TiffReader(Reader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Create coords
-                coords = self._get_coords(dims, image_data.shape)
+                coords = self._get_coords(
+                    dims, image_data.shape, scene_index=self.current_scene_index
+                )
 
                 return xr.DataArray(
                     image_data,
@@ -343,7 +351,7 @@ class TiffReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get / guess dims
                 dims = self._guess_tiff_dim_order(tiff)
@@ -354,8 +362,10 @@ class TiffReader(Reader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
-                # Create coords
-                coords = self._get_coords(dims, image_data.shape)
+                # Create dims and coords
+                coords = self._get_coords(
+                    dims, image_data.shape, scene_index=self.current_scene_index
+                )
 
                 return xr.DataArray(
                     image_data,

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import dask.array as da
 import numpy as np
@@ -10,7 +10,7 @@ import xarray as xr
 
 from . import dimensions, exceptions, readers, transforms, types
 from .readers.reader import Reader
-from .types import PhysicalPixelSizes
+from .types import PhysicalPixelSizes, ReaderType
 
 ###############################################################################
 
@@ -31,17 +31,15 @@ class AICSImage:
     )
 
     @staticmethod
-    def determine_reader(image: types.ImageLike, **kwargs) -> Reader:
+    def determine_reader(image: types.ImageLike, **kwargs: Any) -> ReaderType:
         """
         Cheaply check to see if a given file is a recognized type and return the
         appropriate reader for the image.
 
         Returns
         -------
-        ReaderClass: Reader
+        ReaderClass: ReaderType
             The reader that supports the provided image.
-        kwargs: Any
-            Any kwargs used for reading and validation of the file.
 
         Raises
         ------
@@ -49,7 +47,7 @@ class AICSImage:
             No reader could be found that supports the provided image.
         """
         for ReaderClass in AICSImage.SUPPORTED_READERS:
-            if ReaderClass.is_supported_image(image, **kwargs):
+            if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
                 return ReaderClass
 
         # Construct non-URI image "paths"
@@ -57,12 +55,12 @@ class AICSImage:
         if isinstance(image, (str, Path)):
             path = str(image)
         else:
-            path = type(image)
+            path = str(type(image))
 
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
     def __init__(
-        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs
+        self, image: types.ImageLike, known_dims: Optional[str] = None, **kwargs: Any
     ):
         """
         AICSImage takes microscopy image data types (files or arrays) of varying
@@ -145,9 +143,9 @@ class AICSImage:
         self._reader = ReaderClass(image, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions
-        self._xarray_dask_data = None
-        self._xarray_data = None
-        self._dims = None
+        self._xarray_dask_data: Optional[xr.DataArray] = None
+        self._xarray_data: Optional[xr.DataArray] = None
+        self._dims: Optional[dimensions.Dimensions] = None
 
     @property
     def reader(self) -> Reader:
@@ -162,11 +160,11 @@ class AICSImage:
         return self._reader
 
     @property
-    def scenes(self) -> Tuple[str]:
+    def scenes(self) -> Tuple[str, ...]:
         """
         Returns
         -------
-        scenes: Tuple[str]
+        scenes: Tuple[str, ...]
             A tuple of valid scene ids in the file.
 
         Notes
@@ -203,7 +201,7 @@ class AICSImage:
         """
         return self.scenes.index(self.current_scene)
 
-    def set_scene(self, scene_id: str):
+    def set_scene(self, scene_id: str) -> None:
         """
         Set the operating scene.
 
@@ -253,7 +251,10 @@ class AICSImage:
         )
 
         # Pull coordinate planes
-        coords = {d: arr.coords[d] for d in arr.coords if d in return_dims}
+        coords: Dict[str, Any] = {}
+        for d in return_dims:
+            if d in arr.coords:
+                coords[d] = arr.coords[d]
 
         # Add channel coordinate plane because it is required in AICSImage
         if dimensions.DimensionNames.Channel not in coords:
@@ -262,7 +263,7 @@ class AICSImage:
         return xr.DataArray(
             data,
             dims=tuple([d for d in return_dims]),
-            coords=coords,
+            coords=coords,  # type: ignore
             attrs=arr.attrs,
         )
 
@@ -336,11 +337,11 @@ class AICSImage:
         return self.xarray_dask_data.dtype
 
     @property
-    def shape(self) -> Tuple[int]:
+    def shape(self) -> Tuple[int, ...]:
         """
         Returns
         -------
-        shape: Tuple[int]
+        shape: Tuple[int, ...]
             Tuple of the image array's dimensions.
         """
         return self.xarray_dask_data.shape
@@ -361,7 +362,7 @@ class AICSImage:
         return self._dims
 
     def get_image_dask_data(
-        self, dimension_order_out: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs: Any
     ) -> da.Array:
         """
         Get specific dimension image data out of an image as a dask array.
@@ -438,7 +439,7 @@ class AICSImage:
         )
 
     def get_image_data(
-        self, dimension_order_out: Optional[str] = None, **kwargs
+        self, dimension_order_out: Optional[str] = None, **kwargs: Any
     ) -> da.Array:
         """
         Read the image as a numpy array then return specific dimension image data.
@@ -567,7 +568,7 @@ class AICSImage:
 
 
 def _construct_img(
-    image: types.ImageLike, scene_id: Optional[str] = None, **kwargs
+    image: types.ImageLike, scene_id: Optional[str] = None, **kwargs: Any
 ) -> AICSImage:
     # Construct image
     img = AICSImage(image, **kwargs)
@@ -582,7 +583,7 @@ def _construct_img(
 def imread_xarray_dask(
     image: types.ImageLike,
     scene_id: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> xr.DataArray:
     """
     Read image as a delayed xarray DataArray.
@@ -609,7 +610,7 @@ def imread_xarray_dask(
 def imread_dask(
     image: types.ImageLike,
     scene_id: Optional[str] = None,
-    **kwargs,
+    **kwargs: Any,
 ) -> da.Array:
     """
     Read image as a delayed dask array.
@@ -636,8 +637,8 @@ def imread_dask(
 
 def imread_xarray(
     image: types.ImageLike,
-    scene_id: Optional[int] = None,
-    **kwargs,
+    scene_id: Optional[str] = None,
+    **kwargs: Any,
 ) -> xr.DataArray:
     """
     Read image as an in-memory xarray DataArray.
@@ -663,8 +664,8 @@ def imread_xarray(
 
 def imread(
     image: types.ImageLike,
-    scene_id: Optional[int] = None,
-    **kwargs,
+    scene_id: Optional[str] = None,
+    **kwargs: Any,
 ) -> np.ndarray:
     """
     Read image as a numpy array.

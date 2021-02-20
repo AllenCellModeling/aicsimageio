@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Any, Callable, List, Mapping, Tuple, Union
+
 import dask.array as da
 import numpy as np
 import pytest
+
+from aicsimageio import types
 from aicsimageio.exceptions import ConflictingArgumentsError
 from aicsimageio.transforms import reshape_data, transpose_to_dims
 
@@ -157,13 +161,13 @@ from aicsimageio.transforms import reshape_data, transpose_to_dims
     ],
 )
 def test_reshape_data_shape(
-    array_maker,
-    data_shape,
-    given_dims,
-    return_dims,
-    other_args,
-    expected_shape,
-):
+    array_maker: Callable,
+    data_shape: Tuple[int, ...],
+    given_dims: str,
+    return_dims: str,
+    other_args: Any,
+    expected_shape: Tuple[int, ...],
+) -> None:
     data = array_maker(data_shape)
 
     actual = reshape_data(
@@ -222,13 +226,25 @@ def test_reshape_data_shape(
         ),
     ],
 )
-def test_reshape_data_values(data, given_dims, return_dims, idx_in, idx_out):
+def test_reshape_data_values(
+    data: types.ArrayLike,
+    given_dims: str,
+    return_dims: str,
+    idx_in: Tuple[int, ...],
+    idx_out: Tuple[int, ...],
+) -> None:
     slice_in = data[idx_in]
     actual = reshape_data(data=data, given_dims=given_dims, return_dims=return_dims)
-    if isinstance(data, da.core.Array):
-        slice_in = slice_in.compute()
-        actual = actual.compute()
-    np.testing.assert_array_equal(slice_in, actual[idx_out])
+
+    # Handle dask vs numpy
+    if isinstance(actual, da.core.Array):
+        slice_in_computed = slice_in.compute()
+        actual_computed = actual.compute()
+    else:
+        slice_in_computed = slice_in
+        actual_computed = actual
+
+    np.testing.assert_array_equal(slice_in_computed, actual_computed[idx_out])
 
     # Check that the output data is the same type as the input
     assert type(actual) == type(slice_in)
@@ -275,13 +291,13 @@ TEST_DARRAY = da.stack([DA_ONES * i for i in range(7)])
     ],
 )
 def test_reshape_data_kwargs_values(
-    data,
-    given_dims,
-    return_dims,
-    other_args,
-    getitem_ops_for_expected,
-    transposer,
-):
+    data: types.ArrayLike,
+    given_dims: str,
+    return_dims: str,
+    other_args: Mapping[str, Union[int, List[int], range, slice]],
+    getitem_ops_for_expected: List[int],
+    transposer: Tuple[int],
+) -> None:
     actual = reshape_data(
         data=data,
         given_dims=given_dims,
@@ -300,7 +316,7 @@ def test_reshape_data_kwargs_values(
     # Check that the output data is the same type as the input
     assert type(actual) == type(expected)
 
-    if isinstance(data, da.core.Array):
+    if isinstance(actual, da.core.Array):
         actual = actual.compute()
         expected = expected.compute()
 
@@ -345,7 +361,12 @@ def test_reshape_data_kwargs_values(
         ),
     ],
 )
-def test_transpose_to_dims(data, given_dims, return_dims, expected_shape):
+def test_transpose_to_dims(
+    data: types.ArrayLike,
+    given_dims: str,
+    return_dims: str,
+    expected_shape: Tuple[int, ...],
+) -> None:
     actual = transpose_to_dims(
         data=data, given_dims=given_dims, return_dims=return_dims
     )

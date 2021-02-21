@@ -345,13 +345,9 @@ class LifReader(Reader):
         scene_channel_list = []
         channels = img.findall(".//ChannelDescription")
         channel_details = img.findall(".//WideFieldChannelInfo")
-        for channel in channels:
-            if channel_details is not None:
-                channel_detail = next(
-                    x
-                    for x in channel_details
-                    if x.attrib["LUT"] == channel.attrib["LUTName"]
-                )
+        for i, channel in enumerate(channels):
+            if len(channels) <= len(channel_details):
+                channel_detail = channel_details[i]
                 scene_channel_list.append(
                     (
                         f"{channel_detail.attrib['LUT']}"

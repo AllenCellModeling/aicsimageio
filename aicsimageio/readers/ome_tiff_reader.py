@@ -200,10 +200,10 @@ class OmeTiffReader(TiffReader):
         # Time
         # If global linear timescale we can np.linspace with metadata
         if scene_meta.pixels.time_increment is not None:
-            coords[DimensionNames.Time] = np.linspace(
+            coords[DimensionNames.Time] = np.arange(
                 0,
-                scene_meta.pixels.time_increment_quantity,
-                scene_meta.pixels.size_t,
+                scene_meta.pixels.size_t * scene_meta.pixels.time_increment,
+                scene_meta.pixels.time_increment,
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value

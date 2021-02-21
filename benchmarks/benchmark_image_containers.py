@@ -156,6 +156,16 @@ class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
         self.ImageContainer = readers.OmeTiffReader
 
 
+class LifReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
+    params = [
+        sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.lif")]),
+    ]
+
+    def setup(self, img_path):
+        random.seed(42)
+        self.ImageContainer = readers.LifReader
+
+
 class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     # This suite utilizes the same suite that the base readers do.
     # In all cases, the time or peak memory used by AICSImage should

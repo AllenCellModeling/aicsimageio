@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -10,7 +11,7 @@ from dask import delayed
 from fsspec.spec import AbstractFileSystem
 from readlif.reader import LifFile
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES,
@@ -63,6 +64,9 @@ class LifReader(Reader):
             chunk_by_dims = list(chunk_by_dims)
 
         self.chunk_by_dims = chunk_by_dims
+
+        # Delayed storage
+        self._px_sizes = None
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -184,8 +188,6 @@ class LifReader(Reader):
                 else:
                     plane_indices["z"] = use_selected_or_np_map[DimensionNames.SpatialZ]
 
-                print(plane_indices)
-
                 # Append the retrieved plane as a numpy array
                 planes.append(np.asarray(selected_scene.get_frame(**plane_indices)))
 
@@ -208,14 +210,18 @@ class LifReader(Reader):
 
             return retrieved_chunk
 
-    def _create_dask_array(self, lif: LifFile) -> xr.DataArray:
+    def _create_dask_array(
+        self, lif: LifFile, selected_scene_dims: List[str]
+    ) -> xr.DataArray:
         """
         Creates a delayed dask array for the file.
 
         Parameters
         ----------
-        lif: TiffFile
-            An open TiffFile for processing.
+        lif: LifFile
+            An open LifFile for processing.
+        selected_scene_dims: List[str]
+            The dimensions for the scene to create the dask array for
 
         Returns
         -------
@@ -232,7 +238,6 @@ class LifReader(Reader):
 
         # Construct the delayed dask array
         selected_scene = lif.get_image(self.current_scene_index)
-        selected_scene_dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
         selected_scene_shape: List[int] = []
         for dim in selected_scene_dims:
             if dim == DimensionNames.MosaicTile:
@@ -317,6 +322,83 @@ class LifReader(Reader):
 
         return image_data
 
+    @staticmethod
+    def _get_coords_and_physical_px_sizes(
+        xml: ET.Element, image_short_info: Dict[str, Any], scene_index: int
+    ) -> Tuple[Dict[str, Union[List[str], np.ndarray]], types.PhysicalPixelSizes]:
+        # Create coord dict
+        coords = {}
+
+        # Get all images
+        img_sets = xml.findall(".//Image")
+
+        # Select the current scene
+        img = img_sets[scene_index]
+
+        # Construct channel list
+        scene_channel_list = []
+        channels = img.findall(".//ChannelDescription")
+        channel_details = img.findall(".//WideFieldChannelInfo")
+        for channel in channels:
+            if channel_details is not None:
+                channel_detail = next(
+                    x
+                    for x in channel_details
+                    if x.attrib["LUT"] == channel.attrib["LUTName"]
+                )
+                scene_channel_list.append(
+                    (
+                        f"{channel_detail.attrib['LUT']}"
+                        f"--{channel_detail.attrib['ContrastingMethodName']}"
+                        f"--{channel_detail.attrib['FluoCubeName']}"
+                    )
+                )
+            else:
+                scene_channel_list.append(f"{channel.attrib['LUTName']}")
+
+        # Attach channel names to coords
+        coords[DimensionNames.Channel] = scene_channel_list
+
+        # Unpack short info scales
+        scale_x, scale_y, scale_z, scale_t = image_short_info["scale"]
+
+        # Handle Spatial Dimensions
+        if scale_z is not None:
+            coords[DimensionNames.SpatialZ] = np.arange(
+                0,
+                image_short_info["dims"].z * scale_z,
+                scale_z,
+            )
+        if scale_y is not None:
+            coords[DimensionNames.SpatialY] = np.arange(
+                0,
+                image_short_info["dims"].y * scale_y,
+                scale_y,
+            )
+        if scale_x is not None:
+            coords[DimensionNames.SpatialX] = np.arange(
+                0,
+                image_short_info["dims"].x * scale_x,
+                scale_x,
+            )
+
+        # Time
+        if scale_t is not None:
+            coords[DimensionNames.Time] = np.arange(
+                0,
+                image_short_info["dims"].t * scale_t,
+                scale_t,
+            )
+
+        # Create physical pixal sizes
+        px_sizes = types.PhysicalPixelSizes(
+            scale_z if scale_z is not None else 1.0,
+            scale_y if scale_y is not None else 1.0,
+            scale_x if scale_x is not None else 1.0,
+        )
+
+        return coords, px_sizes
+
     def _read_delayed(self) -> xr.DataArray:
         """
         Construct the delayed xarray DataArray object for the image.
@@ -332,7 +414,34 @@ class LifReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        pass
+        with self._fs.open(self._path) as open_resource:
+            lif = LifFile(open_resource)
+
+            # Dims are always the same
+            dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+
+            # Get image data
+            image_data = self._create_dask_array(lif, dims)
+
+            # Get metadata
+            meta = lif.xml_root
+
+            # Create coordinate planes
+            coords, px_sizes = self._get_coords_and_physical_px_sizes(
+                xml=meta,
+                image_short_info=lif.get_image(self.current_scene_index).info,
+                scene_index=self.current_scene_index,
+            )
+
+            # Store pixel sizes
+            self._px_sizes = px_sizes
+
+            return xr.DataArray(
+                image_data,
+                dims=dims,
+                coords=coords,  # type: ignore
+                attrs={constants.METADATA_UNPROCESSED: meta},
+            )
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -349,4 +458,58 @@ class LifReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        pass
+        with self._fs.open(self._path) as open_resource:
+            lif = LifFile(open_resource)
+
+            # Dims are always the same
+            dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+
+            # Get image data
+            image_data = self._get_image_data(
+                fs=self._fs,
+                path=self._path,
+                scene=self.current_scene_index,
+                retrieve_dims=dims,
+                retrieve_indices=(None,) * len(dims),  # Get all planes
+            )
+
+            # Get metadata
+            meta = lif.xml_root
+
+            # Create coordinate planes
+            coords, px_sizes = self._get_coords_and_physical_px_sizes(
+                xml=meta,
+                image_short_info=lif.get_image(self.current_scene_index).info,
+                scene_index=self.current_scene_index,
+            )
+
+            # Store pixel sizes
+            self._px_sizes = px_sizes
+
+            return xr.DataArray(
+                image_data,
+                dims=dims,
+                coords=coords,  # type: ignore
+                attrs={constants.METADATA_UNPROCESSED: meta},
+            )
+
+    @property
+    def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
+        """
+        Returns
+        -------
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
+        """
+        if self._px_sizes is None:
+            # We get pixel sizes as a part of array construct
+            # so simply run array construct
+            self.dask_data
+
+        return self._px_sizes

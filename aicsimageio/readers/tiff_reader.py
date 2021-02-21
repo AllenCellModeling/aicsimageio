@@ -252,7 +252,7 @@ class TiffReader(Reader):
 
         # Make ndarray for lazy arrays to fill
         lazy_arrays = np.ndarray(blocked_shape, dtype=object)
-        for plane_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
+        for np_index, _ in np.ndenumerate(lazy_arrays):
             # All dimensions get their normal index except for chunk dims
             # which get filled with "full" slices
             indices_with_slices = np_index[: len(non_chunk_shape)] + (

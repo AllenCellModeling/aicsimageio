@@ -66,7 +66,7 @@ class LifReader(Reader):
         self.chunk_by_dims = chunk_by_dims
 
         # Delayed storage
-        self._px_sizes = None
+        self._px_sizes: Optional[types.PhysicalPixelSizes] = None
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -160,7 +160,7 @@ class LifReader(Reader):
                         retrieve_dims.index(DimensionNames.MosaicTile)
                     ]
                 else:
-                    plane_indices["m"] = use_selected_or_np_map[
+                    plane_indices["m"] = use_selected_or_np_map[  # type: ignore
                         DimensionNames.MosaicTile
                     ]
 
@@ -170,7 +170,9 @@ class LifReader(Reader):
                         retrieve_dims.index(DimensionNames.Time)
                     ]
                 else:
-                    plane_indices["t"] = use_selected_or_np_map[DimensionNames.Time]
+                    plane_indices["t"] = use_selected_or_np_map[  # type: ignore
+                        DimensionNames.Time
+                    ]
 
                 # Handle Channels
                 if use_selected_or_np_map[DimensionNames.Channel] is None:
@@ -178,7 +180,9 @@ class LifReader(Reader):
                         retrieve_dims.index(DimensionNames.Channel)
                     ]
                 else:
-                    plane_indices["c"] = use_selected_or_np_map[DimensionNames.Channel]
+                    plane_indices["c"] = use_selected_or_np_map[  # type: ignore
+                        DimensionNames.Channel
+                    ]
 
                 # Handle SpatialZ
                 if use_selected_or_np_map[DimensionNames.SpatialZ] is None:
@@ -186,7 +190,9 @@ class LifReader(Reader):
                         retrieve_dims.index(DimensionNames.SpatialZ)
                     ]
                 else:
-                    plane_indices["z"] = use_selected_or_np_map[DimensionNames.SpatialZ]
+                    plane_indices["z"] = use_selected_or_np_map[  # type: ignore
+                        DimensionNames.SpatialZ
+                    ]
 
                 # Append the retrieved plane as a numpy array
                 planes.append(np.asarray(selected_scene.get_frame(**plane_indices)))
@@ -199,8 +205,8 @@ class LifReader(Reader):
 
             # Remove extra dimensions if they were not requested
             remove_dim_ops_list: List[Union[int, slice]] = []
-            for dim in retrieve_indices:
-                if isinstance(dim, int):
+            for index in retrieve_indices:
+                if isinstance(index, int):
                     remove_dim_ops_list.append(0)
                 else:
                     remove_dim_ops_list.append(slice(None, None, None))
@@ -325,7 +331,7 @@ class LifReader(Reader):
     @staticmethod
     def _get_coords_and_physical_px_sizes(
         xml: ET.Element, image_short_info: Dict[str, Any], scene_index: int
-    ) -> Tuple[Dict[str, Union[List[str], np.ndarray]], types.PhysicalPixelSizes]:
+    ) -> Tuple[Dict[str, Any], types.PhysicalPixelSizes]:
         # Create coord dict
         coords = {}
 
@@ -470,7 +476,7 @@ class LifReader(Reader):
                 path=self._path,
                 scene=self.current_scene_index,
                 retrieve_dims=dims,
-                retrieve_indices=(None,) * len(dims),  # Get all planes
+                retrieve_indices=[None] * len(dims),  # Get all planes
             )
 
             # Get metadata
@@ -512,4 +518,4 @@ class LifReader(Reader):
             # so simply run array construct
             self.dask_data
 
-        return self._px_sizes
+        return self._px_sizes  # type: ignore

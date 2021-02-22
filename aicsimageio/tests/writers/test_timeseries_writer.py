@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Callable, Tuple
+
 import numpy as np
 import pytest
 
@@ -55,13 +57,13 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
 )
 @pytest.mark.parametrize("filename", ["e.gif"])
 def test_timeseries_writer(
-    array_constructor,
-    write_shape,
-    write_dim_order,
-    read_shape,
-    read_dim_order,
-    filename,
-):
+    array_constructor: Callable,
+    write_shape: Tuple[int, ...],
+    write_dim_order: str,
+    read_shape: Tuple[int, ...],
+    read_dim_order: str,
+    filename: str,
+) -> None:
     # Create array
     arr = array_constructor(write_shape, dtype=np.uint8)
 
@@ -126,13 +128,13 @@ def test_timeseries_writer(
 )
 @pytest.mark.parametrize("filename", ["f.mp4"])
 def test_timeseries_writer_ffmpeg(
-    array_constructor,
-    write_shape,
-    write_dim_order,
-    read_shape,
-    read_dim_order,
-    filename,
-):
+    array_constructor: Callable,
+    write_shape: Tuple[int, ...],
+    write_dim_order: str,
+    read_shape: Tuple[int, ...],
+    read_dim_order: str,
+    filename: str,
+) -> None:
     # Create array
     arr = array_constructor(write_shape, dtype=np.uint8)
 

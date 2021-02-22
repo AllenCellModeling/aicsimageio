@@ -1,18 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from abc import ABCMeta
 from pathlib import Path
-from typing import NamedTuple, Union
+from typing import List, NamedTuple, Union
 
 import dask.array as da
 import numpy as np
+import xarray as xr
 
 ###############################################################################
 
 # IO Types
 PathLike = Union[str, Path]
 ArrayLike = Union[np.ndarray, da.Array]
-ImageLike = Union[PathLike, ArrayLike]
+MetaArrayLike = Union[ArrayLike, xr.DataArray]
+ImageLike = Union[PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike]]
+
+# Reader Type
+ReaderType = ABCMeta
 
 
 # Image Utility Types

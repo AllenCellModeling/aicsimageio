@@ -57,6 +57,8 @@ jobs:
     - name: Lint with flake8
       run: |
         flake8 aicsimageio --count --verbose --show-source --statistics
+        isort aicsimageio --check-only
+        mypy aicsimageio
         black --check --exclude vendor aicsimageio
 
   docs:

@@ -176,6 +176,7 @@ class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
             DefaultReaderSuite.params[0]
             + TiffReaderSuite.params[0]
             + OmeTiffReaderSuite.params[0]
+            + LifReaderSuite.params[0]
         )
     )
 

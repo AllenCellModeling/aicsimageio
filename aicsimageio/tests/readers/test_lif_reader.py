@@ -158,6 +158,13 @@ def test_sanity_check_correct_indexing(
             (1, 4, 1, 5632, 7680),
             "TCZYX",
         ),
+        # Doesn't error because LIFs always have a tile
+        (
+            "s_1_t_1_c_2_z_1.lif",
+            "PEI_laminin_35k",
+            (1, 2, 1, 2048, 2048),
+            "TCZYX",
+        ),
     ],
 )
 def test_lif_reader_mosaic_stitching(

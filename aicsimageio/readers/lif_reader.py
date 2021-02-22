@@ -547,7 +547,13 @@ class LifReader(Reader):
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            last_tile_position = selected_scene.info["mosaic_position"][-1]
+            # LIFs always have a tile but not always have mosaic positions in the case
+            # of a single tiled LIF
+            # catch the index error and return (0, 0) for the indices of the mosaic grid
+            try:
+                last_tile_position = selected_scene.info["mosaic_position"][-1]
+            except IndexError:
+                last_tile_position = (0, 0)
 
         # Stitch
         stitched = self._stitch_tiles(

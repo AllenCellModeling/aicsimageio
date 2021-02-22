@@ -251,13 +251,14 @@ class Reader(ABC):
         """
         pass
 
-    def _get_stitched_dask_mosaic(self) -> da.Array:
+    def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         """
-        Stitch all mosaic tiles back together and return as a single dask array.
+        Stitch all mosaic tiles back together and return as a single xr.DataArray with
+        a delayed dask array for backing data.
 
         Returns
         -------
-        mosaic: da.Array
+        mosaic: xr.DataArray
             The fully stitched together image. Contains all the dimensions of the image
             with the YX expanded to the full mosaic.
 
@@ -268,9 +269,10 @@ class Reader(ABC):
         """
         pass
 
-    def _get_stitched_mosaic(self) -> np.ndarray:
+    def _get_stitched_mosaic(self) -> xr.DataArray:
         """
-        Stitch all mosaic tiles back together and return as a single numpy array.
+        Stitch all mosaic tiles back together and return as a single xr.DataArray with
+        an in-memory numpy array for backing data.
 
         Returns
         -------

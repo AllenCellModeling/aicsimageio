@@ -518,9 +518,9 @@ class LifReader(Reader):
                 arr_shape_list.append(size * nx)
 
         # Fill all tiles
-        tile_grid = []
+        tile_grid: List[List[np.ndarray]] = []
         for row_i in range(ny):
-            row = []
+            row: List[np.ndarray] = []
             for col_i in range(nx):
                 # Calc m_index
                 m_index = (row_i * nx) + col_i

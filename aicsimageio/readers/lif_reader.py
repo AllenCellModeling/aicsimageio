@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
+from copy import copy
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -11,7 +12,7 @@ from dask import delayed
 from fsspec.spec import AbstractFileSystem
 from readlif.reader import LifFile
 
-from .. import constants, exceptions, types
+from .. import constants, exceptions, transforms, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES,
@@ -494,6 +495,96 @@ class LifReader(Reader):
                 coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
+
+    @staticmethod
+    def _stitch_tiles(
+        data: types.ArrayLike,
+        dims: str,
+        ny: int,
+        nx: int,
+    ) -> types.ArrayLike:
+        # Create empty array
+        arr_shape_list = []
+        for dim, size in zip(dims, data.shape):
+            if dim not in [
+                DimensionNames.MosaicTile,
+                DimensionNames.SpatialY,
+                DimensionNames.SpatialX,
+            ]:
+                arr_shape_list.append(size)
+            elif dim == DimensionNames.SpatialY:
+                arr_shape_list.append(size * ny)
+            elif dim == DimensionNames.SpatialX:
+                arr_shape_list.append(size * nx)
+
+        # Fill all tiles
+        tile_grid = []
+        for row_i in range(ny):
+            row = []
+            for col_i in range(nx):
+                # Calc m_index
+                m_index = (row_i * nx) + col_i
+
+                # Get tile by getting all data for specific M
+                tile = transforms.reshape_data(
+                    data,
+                    given_dims=dims,
+                    return_dims=dims.replace(DimensionNames.MosaicTile, ""),
+                    M=m_index,
+                )
+                row.insert(0, tile)
+
+            tile_grid.insert(0, row)
+
+        # Concatenate
+        mosaic_rows = [np.concatenate(row, axis=-1) for row in tile_grid]
+        mosaic = np.concatenate(mosaic_rows, axis=-2)
+
+        return mosaic
+
+    def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
+        # Get max of mosaic positions from lif
+        with self._fs.open(self._path) as open_resource:
+            lif = LifFile(open_resource)
+            selected_scene = lif.get_image(self.current_scene_index)
+            last_tile_position = selected_scene.info["mosaic_position"][-1]
+
+        # Stitch
+        stitched = self._stitch_tiles(
+            data=data,
+            dims=self.dims.order,
+            ny=last_tile_position[0] + 1,
+            nx=last_tile_position[1] + 1,
+        )
+
+        # Copy metadata
+        dims = [
+            d for d in self.xarray_dask_data.dims if d is not DimensionNames.MosaicTile
+        ]
+        coords = {
+            d: v
+            for d, v in self.xarray_dask_data.coords.items()
+            if d
+            not in [
+                DimensionNames.MosaicTile,
+                DimensionNames.SpatialY,
+                DimensionNames.SpatialX,
+            ]
+        }
+        attrs = copy(self.xarray_dask_data.attrs)
+
+        return xr.DataArray(
+            data=stitched,
+            dims=dims,
+            coords=coords,
+            attrs=attrs,
+        )
+
+    def _get_stitched_dask_mosaic(self) -> xr.DataArray:
+        return self._construct_mosaic_xarray(self.dask_data)
+
+    def _get_stitched_mosaic(self) -> xr.DataArray:
+        return self._construct_mosaic_xarray(self.data)
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

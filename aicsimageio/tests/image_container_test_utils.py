@@ -109,6 +109,35 @@ def run_image_container_checks(
     return image_container
 
 
+def run_image_container_mosaic_checks(
+    image_container: Reader,
+    set_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_dims_order: str,
+) -> Reader:
+    """
+    A general suite of tests to run against readers that can stitch mosaic tiles.
+    """
+
+    # Check serdes
+    check_can_serialize_image_container(image_container)
+
+    # Set scene
+    image_container.set_scene(set_scene)
+
+    # Check basics
+    assert image_container.mosaic_xarray_dask_data.shape == expected_shape
+    assert (
+        "".join(image_container.mosaic_xarray_dask_data.dims)  # type: ignore
+        == expected_dims_order
+    )
+
+    # Check serdes
+    check_can_serialize_image_container(image_container)
+
+    return image_container
+
+
 def run_image_file_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,

@@ -12,7 +12,10 @@ from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import LifReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
-from ..image_container_test_utils import run_image_file_checks
+from ..image_container_test_utils import (
+    run_image_container_mosaic_checks,
+    run_image_file_checks,
+)
 
 
 @host
@@ -45,6 +48,16 @@ from ..image_container_test_utils import run_image_file_checks
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
             (1.0, 2.9485556406398508, 2.9485556406398508),
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            ("TileScan_002",),
+            (165, 1, 4, 1, 512, 512),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
+            ["Gray", "Red", "Green", "Cyan"],
+            (1.0, 4.984719055966396, 4.984719055966396),
         ),
         pytest.param(
             "example.txt",
@@ -134,3 +147,35 @@ def test_sanity_check_correct_indexing(
 
     # Compare
     np.testing.assert_array_equal(chunk_from_lif_reader, chunk_from_read_lif)
+
+
+@pytest.mark.parametrize(
+    "filename, set_scene, expected_shape, expected_dims_order",
+    [
+        (
+            "tiled.lif",
+            "TileScan_002",
+            (1, 4, 1, 5632, 7680),
+            "TCZYX",
+        ),
+    ],
+)
+def test_lif_reader_mosaic_stitching(
+    filename: str,
+    set_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_dims_order: str,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct reader
+    reader = LifReader(uri)
+
+    # Run checks
+    run_image_container_mosaic_checks(
+        image_container=reader,
+        set_scene=set_scene,
+        expected_shape=expected_shape,
+        expected_dims_order=expected_dims_order,
+    )

@@ -28,14 +28,16 @@ BYTE_BOUNDARY = 2 ** 21
 class OmeTiffWriter(Writer):
     @staticmethod
     def save(
-        data: types.ArrayLike,
+        data: Union[List[types.ArrayLike], types.ArrayLike],
         uri: types.PathLike,
-        dimension_order: str = None,
+        dimension_order: Union[str, List[str], None] = None,
         ome_xml: Union[str, OME, None] = None,
-        channel_names: List[str] = None,
-        image_name: str = None,
-        pixels_physical_size: List[float] = [1.0, 1.0, 1.0],
-        channel_colors: List[int] = None,
+        channel_names: Union[List[str], List[List[str]], None] = None,
+        image_name: Union[str, List[str], None] = None,
+        pixels_physical_size: Union[
+            Tuple[float, float, float], List[Tuple[float, float, float]]
+        ] = (1.0, 1.0, 1.0),
+        channel_colors: Union[List[int], List[List[int]], None] = None,
         **kwargs,
     ):
         """
@@ -43,11 +45,14 @@ class OmeTiffWriter(Writer):
 
         Parameters
         ----------
-        data: types.ArrayLike
-            The array of data to store. Data must have 2 to 5 dimensions
+        data: Union[List[types.ArrayLike], types.ArrayLike]
+            The array of data to store. Data must have 2 to 5 dimensions.  If a list is
+            provided, then it is understood to be multiple images written to the
+            ome-tiff file. All following metadata parameters will be expanded to the
+            length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
-        dimension_order: str
+        dimension_order: Union[str, list[str], None]
             The dimension order of the provided data.
             Default: None. Based off the number of dimensions, will assume
             the dimensions similar to how aicsimageio.readers.DefaultReader reads in
@@ -61,20 +66,21 @@ class OmeTiffWriter(Writer):
             The ome_xml will also be compared against the dimensions of the input data.
             If None is given, then OME-XML metadata will be generated from the data
             array and any of the following metadata arguments.
-        channel_names: List[str]
+        channel_names: Union[List[str], List[List[str]], None]
             List of strings representing the names of the data channels
             Default: None
-            If None is given, the list will be created as a 0-indexed list of strings
-            of the form "Channel:0"
-        image_names: List[str]
+            If None is given, the list will be generated as a 0-indexed list of strings
+            of the form "Channel:image_index:channel_index"
+        image_names: Union[str, List[str], None]
             List of strings representing the names of the images
             Default: None
-            If None is given, the list will be created as a 0-indexed list of strings
-            of the form "Image:0"
-        pixels_physical_size: List[float]
+            If None is given, the list will be generated as a 0-indexed list of strings
+            of the form "Image:image_index"
+        pixels_physical_size: Union[Tuple[float, float, float],
+                List[Tuple[float, float, float]]]
             List of numbers representing the physical pixel sizes in x,y,z in microns
-            Default: [1,1,1]
-        channel_colors: List[int]
+            Default: (1,1,1)
+        channel_colors: Union[List[int], List[List[int]], None]
             List of rgb color values per channel
             Default: None
 

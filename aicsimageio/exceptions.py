@@ -34,10 +34,10 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, reader_name: str, path: str, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, reader_name: str, path: str):
+        super().__init__()
         self.reader_name = reader_name
         self.path = path
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.reader_name} does not support the image: '{self.path}'."

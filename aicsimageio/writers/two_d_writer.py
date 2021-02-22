@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Any
+
 import dask.array as da
 from imageio import get_writer
 
@@ -39,8 +41,8 @@ class TwoDWriter(Writer):
         data: types.ArrayLike,
         uri: types.PathLike,
         dim_order: str = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> None:
         """
         Write a data array to a file.
 

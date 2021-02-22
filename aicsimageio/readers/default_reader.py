@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import imageio
@@ -62,7 +62,7 @@ class DefaultReader(Reader):
         return extension, mode
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         # Get extension and mode for reading the file
         extension, mode = DefaultReader._get_extension_and_mode(path)
 
@@ -91,7 +91,7 @@ class DefaultReader(Reader):
         except OSError:
             raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
-    def __init__(self, image: types.PathLike):
+    def __init__(self, image: types.PathLike, **kwargs: Any):
         """
         A catch all for image file reading that defaults to using imageio
         implementations.
@@ -102,17 +102,19 @@ class DefaultReader(Reader):
             Path to image file to construct Reader for.
         """
         # Expand details of provided image
-        self.fs, self.path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        self.extension, self.imageio_read_mode = self._get_extension_and_mode(self.path)
+        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self.extension, self.imageio_read_mode = self._get_extension_and_mode(
+            self._path
+        )
 
         # Enforce valid image
-        if not self._is_supported_image(self.fs, self.path):
+        if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
-                self.__class__.__name__, self.path
+                self.__class__.__name__, self._path
             )
 
     @staticmethod
-    def _guess_dim_order(shape: Tuple[int]) -> str:
+    def _guess_dim_order(shape: Tuple[int, ...]) -> str:
         if len(shape) == 2:
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:
@@ -239,7 +241,7 @@ class DefaultReader(Reader):
     @staticmethod
     def _unpack_dims_and_coords(
         image_data: types.ArrayLike, metadata: Dict
-    ) -> Tuple[List[str], Dict]:
+    ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
         Unpack image data into assumed dims and coords.
 
@@ -254,14 +256,14 @@ class DefaultReader(Reader):
         -------
         dims: List[str]
             The dimension names for each dimension in the image data.
-        coords: Dict
+        coords: Dict[str, Union[List[str], types.ArrayLike]]
             If possible, the coordinates for dimensions in the image data.
         """
         # Guess dims
         dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
 
         # Use dims for coord determination
-        coords = {}
+        coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Handle typical RGB and RGBA from Samples
         if DimensionNames.Samples in dims:
@@ -296,14 +298,14 @@ class DefaultReader(Reader):
         exceptions.UnsupportedFileFormatError: The file could not be read or is not
             supported.
         """
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             with imageio.get_reader(
                 open_resource, format=self.extension, mode=self.imageio_read_mode
             ) as reader:
                 # Store image length
                 image_length = self._get_image_length(
-                    fs=self.fs,
-                    path=self.path,
+                    fs=self._fs,
+                    path=self._path,
                     format=self.extension,
                     mode=self.imageio_read_mode,
                 )
@@ -312,8 +314,8 @@ class DefaultReader(Reader):
                 if image_length == 1:
                     image_data = da.from_array(
                         self._get_image_data(
-                            fs=self.fs,
-                            path=self.path,
+                            fs=self._fs,
+                            path=self._path,
                             format=self.extension,
                             mode=self.imageio_read_mode,
                             index=0,
@@ -324,8 +326,8 @@ class DefaultReader(Reader):
                 elif image_length > 1:
                     # Get a sample image
                     sample = self._get_image_data(
-                        fs=self.fs,
-                        path=self.path,
+                        fs=self._fs,
+                        path=self._path,
                         format=self.extension,
                         mode=self.imageio_read_mode,
                         index=0,
@@ -341,8 +343,8 @@ class DefaultReader(Reader):
                     for indices, _ in np.ndenumerate(lazy_arrays):
                         lazy_arrays[indices] = da.from_delayed(
                             delayed(self._get_image_data)(
-                                fs=self.fs,
-                                path=self.path,
+                                fs=self._fs,
+                                path=self._path,
                                 format=self.extension,
                                 mode=self.imageio_read_mode,
                                 index=indices[0],
@@ -370,7 +372,7 @@ class DefaultReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,
+                    coords=coords,  # type: ignore
                     attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
@@ -390,15 +392,15 @@ class DefaultReader(Reader):
             supported.
         """
         # Read image
-        with self.fs.open(self.path) as open_resource:
+        with self._fs.open(self._path) as open_resource:
             reader = imageio.get_reader(
                 open_resource, format=self.extension, mode=self.imageio_read_mode
             )
 
             # Store image length
             image_length = self._get_image_length(
-                fs=self.fs,
-                path=self.path,
+                fs=self._fs,
+                path=self._path,
                 format=self.extension,
                 mode=self.imageio_read_mode,
             )
@@ -425,6 +427,6 @@ class DefaultReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,
+                coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: metadata},
             )

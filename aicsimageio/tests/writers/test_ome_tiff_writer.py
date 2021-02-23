@@ -195,38 +195,38 @@ def test_ome_tiff_writer_with_meta(
     assert reader.dims.order == expected_dim_order
 
 
-# @pytest.mark.parametrize(
-#     "array_data, write_dim_order, read_shape, read_dim_order",
-#     [
-#         ([np.random.rand(5, 16, 16)], None, (1, 1, 5, 16, 16), "TCZYX"),
-#         pytest.param(
-#             [np.random.rand(2, 3, 3)],
-#             "AYX",
-#             None,
-#             None,
-#             marks=pytest.mark.raises(
-#                 exception=exceptions.InvalidDimensionOrderingError
-#             ),
-#         ),
-#     ],
-# )
-# @pytest.mark.parametrize("filename", ["e.ome.tiff"])
-# def test_ome_tiff_writer_multiscene(
-#     array_data,
-#     write_dim_order,
-#     read_shape,
-#     read_dim_order,
-#     filename,
-# ):
-#     # Construct save end point
-#     save_uri = get_resource_write_full_path(filename, LOCAL)
+@pytest.mark.parametrize(
+    "array_data, write_dim_order, read_shape, read_dim_order",
+    [
+        ([np.random.rand(5, 16, 16)], None, (1, 1, 5, 16, 16), "TCZYX"),
+        pytest.param(
+            [np.random.rand(2, 3, 3)],
+            "AYX",
+            None,
+            None,
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
+        ),
+    ],
+)
+@pytest.mark.parametrize("filename", ["e.ome.tiff"])
+def test_ome_tiff_writer_multiscene(
+    array_data,
+    write_dim_order,
+    read_shape,
+    read_dim_order,
+    filename,
+):
+    # Construct save end point
+    save_uri = get_resource_write_full_path(filename, LOCAL)
 
-#     # Normal save
-#     OmeTiffWriter.save(array_data, save_uri, write_dim_order)
+    # Normal save
+    OmeTiffWriter.save(array_data, save_uri, write_dim_order)
 
-#     # Read written result and check basics
-#     reader = OmeTiffReader(save_uri)
+    # Read written result and check basics
+    reader = OmeTiffReader(save_uri)
 
-#     # Check basics
-#     assert reader.shape == read_shape
-#     assert reader.dims.order == read_dim_order
+    # Check basics
+    assert reader.shape == read_shape
+    assert reader.dims.order == read_dim_order

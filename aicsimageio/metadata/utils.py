@@ -229,13 +229,6 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
             if instrument_ref_id == "Microscope":
                 instrument_ref.set("ID", ome_instrument_id)
 
-        # Fix MicroManager bad instrument refs
-        instrument_ref = image.find(f"{namespace}InstrumentRef")
-        if instrument_ref is not None:
-            instrument_ref_id = instrument_ref.get("ID")
-            if instrument_ref_id == "Microscope":
-                instrument_ref.set("ID", ome_instrument_id)
-
         # Find all Pixels elements and fix IDs
         for pixels_index, pixels in enumerate(image.findall(f"{namespace}Pixels")):
             pixels_id = pixels.get("ID")

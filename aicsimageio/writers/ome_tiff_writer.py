@@ -222,17 +222,24 @@ class OmeTiffWriter(Writer):
             is_rgb = (
                 ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
             )
-            tif.write(
-                data[scene_index],
-                description=xml if scene_index == 0 else None,
-                photometric=TIFF.PHOTOMETRIC.MINISBLACK
-                if not is_rgb
-                else TIFF.PHOTOMETRIC.RGB,
-                metadata=None,
-                contiguous=False,
-                planarconfig=TIFF.PLANARCONFIG.CONTIG if is_rgb else None,
-                compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
-            )
+            if is_rgb:
+                tif.write(
+                    data[scene_index],
+                    description=xml if scene_index == 0 else None,
+                    photometric=TIFF.PHOTOMETRIC.RGB,
+                    metadata=None,
+                    planarconfig=TIFF.PLANARCONFIG.CONTIG,
+                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+                )
+            else:
+                tif.write(
+                    data[scene_index],
+                    description=xml if scene_index == 0 else None,
+                    photometric=TIFF.PHOTOMETRIC.MINISBLACK,
+                    metadata=None,
+                    planarconfig=None,
+                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+                )
 
         tif.close()
 

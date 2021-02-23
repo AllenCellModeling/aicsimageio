@@ -174,15 +174,6 @@ class OmeTiffWriter(Writer):
         if channel_colors is None or isinstance(channel_colors[0], int):
             channel_colors = [channel_colors] * num_scenes
 
-        # once this is done, we can loop thru all items in data list...
-        scene_index = 0
-
-        # Assumption: if provided a dask array to save, it can fit into memory
-        if isinstance(data[scene_index], da.core.Array):
-            image_data = data[scene_index].compute()
-        else:
-            image_data = data[scene_index]
-
         xml = ""
         # if None, then try to construct OME
         if ome_xml is None:
@@ -207,26 +198,41 @@ class OmeTiffWriter(Writer):
             )
 
         # vaidate and convert to string for writing
-        # TODO this validation is per-scene...
-        OmeTiffWriter._check_ome_dims(
-            ome_xml, scene_index, image_data.shape, image_data.dtype
-        )
+        for scene_index in range(len(data)):
+            OmeTiffWriter._check_ome_dims(
+                ome_xml, scene_index, data[scene_index].shape, data[scene_index].dtype
+            )
+
         xml = to_xml(ome_xml).encode()
+
+        # now the heavy lifting. assemble the raw data and write it
+
+        for scene_index in range(len(data)):
+            # Assumption: if provided a dask array to save, it can fit into memory
+            if isinstance(data[scene_index], da.core.Array):
+                data[scene_index].compute()
 
         # Save image to tiff!
         tif = tifffile.TiffWriter(
             path,
-            bigtiff=OmeTiffWriter._size_of_ndarray(data=image_data) > BYTE_BOUNDARY,
+            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BYTE_BOUNDARY,
         )
 
-        tif.write(
-            image_data,
-            description=xml,
-            photometric=TIFF.PHOTOMETRIC.MINISBLACK,
-            planarconfig=TIFF.PLANARCONFIG.CONTIG,
-            metadata=None,
-            compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
-        )
+        for scene_index in range(len(data)):
+            is_rgb = (
+                ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
+            )
+            tif.write(
+                data[scene_index],
+                description=xml if scene_index == 0 else None,
+                photometric=TIFF.PHOTOMETRIC.MINISBLACK
+                if not is_rgb
+                else TIFF.PHOTOMETRIC.RGB,
+                metadata=None,
+                contiguous=False,
+                planarconfig=TIFF.PLANARCONFIG.CONTIG if is_rgb else None,
+                compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+            )
 
         tif.close()
 
@@ -331,16 +337,16 @@ class OmeTiffWriter(Writer):
         return dimension_order, is_rgb
 
     @staticmethod
-    def _size_of_ndarray(data: types.ArrayLike) -> int:
+    def _size_of_ndarray(data: List[types.ArrayLike]) -> int:
         """
         Calculate the size of data to determine if we require bigtiff
         Returns
         -------
         the size of data in bytes
         """
-        if data is None:
-            return 0
-        size = data.size * data.itemsize
+        size = 0
+        for i in range(len(data)):
+            size += data[i].size * data[i].itemsize
         return size
 
     @staticmethod
@@ -399,7 +405,7 @@ class OmeTiffWriter(Writer):
         # dimension_order must be set to the *reverse* of what dimensionality
         # the ome tif file is saved as
         pixels = Pixels(
-            id="Pixels:0",
+            id=f"Pixels:{image_index}:0",
             dimension_order=dimension_order[::-1],
             type=utils.dtype_to_ome_type(data_dtype),
             size_t=dim_or_1("T"),
@@ -516,11 +522,14 @@ class OmeTiffWriter(Writer):
                 channel_names[image_index],
                 channel_colors[image_index],
             )
-            # TODO increment tiff_plane_offset for next image
+            # increment tiff_plane_offset for next image
+            tiff_plane_offset += (
+                img.pixels.size_z * img.pixels.size_t * len(img.pixels.channels)
+            )
             images.append(img)
 
         # TODO get aics version string here
-        ox = OME(creator=f"aicsimageio {get_module_version()}", images=[img])
+        ox = OME(creator=f"aicsimageio {get_module_version()}", images=images)
 
         # validate????
         test = to_xml(ox)
@@ -540,7 +549,6 @@ class OmeTiffWriter(Writer):
 
         # reverse the OME dimension order to compare against numpy shape
         dimension_order = ome_xml.images[image_index].pixels.dimension_order.value[::-1]
-        print(f"REVERSED DIM ORDER  {dimension_order}")
         dims = {
             "T": ome_xml.images[image_index].pixels.size_t,
             "C": ome_xml.images[image_index].pixels.size_c,

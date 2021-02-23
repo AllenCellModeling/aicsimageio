@@ -91,6 +91,7 @@ def test_ome_tiff_writer_no_meta(
     reader = OmeTiffReader(save_uri)
 
     # Check basics
+    assert len(reader.scenes) == 1
     assert reader.shape == expected_read_shape
     assert reader.dims.order == expected_read_dim_order
 
@@ -191,14 +192,33 @@ def test_ome_tiff_writer_with_meta(
     reader = OmeTiffReader(save_uri)
 
     # Check basics
+    assert len(reader.scenes) == 1
     assert reader.shape == shape_to_create
     assert reader.dims.order == expected_dim_order
 
 
 @pytest.mark.parametrize(
-    "array_data, write_dim_order, read_shape, read_dim_order",
+    "array_data, write_dim_order, read_shapes, read_dim_order",
     [
-        ([np.random.rand(5, 16, 16)], None, (1, 1, 5, 16, 16), "TCZYX"),
+        ([np.random.rand(5, 16, 16)], None, [(1, 1, 5, 16, 16)], ["TCZYX"]),
+        (
+            [np.random.rand(5, 16, 16), np.random.rand(4, 12, 12)],
+            None,
+            [(1, 1, 5, 16, 16), (1, 1, 4, 12, 12)],
+            ["TCZYX", "TCZYX"],
+        ),
+        (
+            [np.random.rand(5, 16, 16, 3), np.random.rand(4, 12, 12, 3)],
+            None,
+            [(1, 5, 16, 16, 3), (1, 4, 12, 12, 3)],
+            ["TCZYX", "TCZYX"],
+        ),
+        (
+            [np.random.rand(5, 16, 16, 3), np.random.rand(4, 12, 12, 3)],
+            ["ZYXS", "CYXS"],
+            [(1, 1, 5, 16, 16, 3), (1, 4, 1, 12, 12, 3)],
+            ["TCZYXS", "TCZYXS"],
+        ),
         pytest.param(
             [np.random.rand(2, 3, 3)],
             "AYX",
@@ -214,7 +234,7 @@ def test_ome_tiff_writer_with_meta(
 def test_ome_tiff_writer_multiscene(
     array_data,
     write_dim_order,
-    read_shape,
+    read_shapes,
     read_dim_order,
     filename,
 ):
@@ -228,5 +248,8 @@ def test_ome_tiff_writer_multiscene(
     reader = OmeTiffReader(save_uri)
 
     # Check basics
-    assert reader.shape == read_shape
-    assert reader.dims.order == read_dim_order
+    assert len(reader.scenes) == len(read_shapes)
+    for i in range(len(reader.scenes)):
+        reader.set_scene(reader.scenes[i])
+        assert reader.shape == read_shapes[i]
+        assert reader.dims.order == read_dim_order[i]

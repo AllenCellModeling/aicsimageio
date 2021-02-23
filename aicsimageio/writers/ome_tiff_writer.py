@@ -4,7 +4,7 @@ from ome_types import from_xml, to_xml
 from ome_types.model import OME, Image, Channel, Pixels, TiffData
 import tifffile
 from tifffile import TIFF
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 from .. import exceptions, types, get_module_version
 from ..dimensions import (
@@ -30,23 +30,25 @@ class OmeTiffWriter(Writer):
     def save(
         data: Union[List[types.ArrayLike], types.ArrayLike],
         uri: types.PathLike,
-        dimension_order: Union[str, List[str], None] = None,
+        dimension_order: Union[str, List[Union[str, None]], None] = None,
         ome_xml: Union[str, OME, None] = None,
-        channel_names: Union[List[str], List[List[str]], None] = None,
-        image_name: Union[str, List[str], None] = None,
+        channel_names: Union[
+            List[Union[str, None]], List[List[Union[str, None]]], None
+        ] = None,
+        image_name: Union[str, List[Union[str, None]], None] = None,
         pixels_physical_size: Union[
-            Tuple[float, float, float], List[Tuple[float, float, float]]
-        ] = (1.0, 1.0, 1.0),
+            Tuple[float, float, float], List[Tuple[float, float, float]], None
+        ] = None,
         channel_colors: Union[List[int], List[List[int]], None] = None,
         **kwargs,
-    ):
+    ) -> None:
         """
         Write a data array to a file.
 
         Parameters
         ----------
         data: Union[List[types.ArrayLike], types.ArrayLike]
-            The array of data to store. Data must have 2 to 5 dimensions.  If a list is
+            The array of data to store. Data arrays must have 2 to 6 dimensions.  If a list is
             provided, then it is understood to be multiple images written to the
             ome-tiff file. All following metadata parameters will be expanded to the
             length of this list.
@@ -77,11 +79,12 @@ class OmeTiffWriter(Writer):
             If None is given, the list will be generated as a 0-indexed list of strings
             of the form "Image:image_index"
         pixels_physical_size: Union[Tuple[float, float, float],
-                List[Tuple[float, float, float]]]
+                List[Tuple[float, float, float]], None]
             List of numbers representing the physical pixel sizes in x,y,z in microns
-            Default: (1,1,1)
+            Default: None
+            If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Union[List[int], List[List[int]], None]
-            List of rgb color values per channel
+            List of rgb color values per channel.  These must be values compatible with the OME spec.
             Default: None
 
         Examples
@@ -101,10 +104,8 @@ class OmeTiffWriter(Writer):
             imageio_mode,
         ) = DefaultReader._get_extension_and_mode(path)
 
-        # If metadata is attached as lists
-        # Enforcing matching shape
+        # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
-            num_scenes = len(data)
             if isinstance(dimension_order, list):
                 if len(dimension_order) != len(data):
                     raise exceptions.ConflictingArgumentsError(
@@ -158,6 +159,7 @@ class OmeTiffWriter(Writer):
                             f"{len(channel_colors)}"
                         )
 
+        # make sure data is a list
         if not isinstance(data, list):
             data = [data]
         num_scenes = len(data)
@@ -167,15 +169,17 @@ class OmeTiffWriter(Writer):
             dimension_order = [dimension_order] * num_scenes
         if image_name is None or isinstance(image_name, str):
             image_name = [image_name] * num_scenes
-        if pixels_physical_size is None or isinstance(pixels_physical_size, tuple):
+        if isinstance(pixels_physical_size, tuple):
             pixels_physical_size = [pixels_physical_size] * num_scenes
+        elif pixels_physical_size is None:
+            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_scenes
         if channel_names is None or isinstance(channel_names[0], str):
             channel_names = [channel_names] * num_scenes
         if channel_colors is None or isinstance(channel_colors[0], int):
             channel_colors = [channel_colors] * num_scenes
 
         xml = ""
-        # if None, then try to construct OME
+        # try to construct OME from params
         if ome_xml is None:
             ome_xml = OmeTiffWriter.build_ome(
                 [i.shape for i in data],
@@ -190,19 +194,20 @@ class OmeTiffWriter(Writer):
         elif isinstance(ome_xml, str):
             ome_xml = from_xml(ome_xml)
 
-        # if we do not have an OME object now something is wrong
+        # if we do not have an OME object now, something is wrong
         if not isinstance(ome_xml, OME):
             raise ValueError(
                 "Unknown OME-XML metadata passed in. Use OME object, or xml string or \
                 None"
             )
 
-        # vaidate and convert to string for writing
+        # vaidate ome
         for scene_index in range(len(data)):
             OmeTiffWriter._check_ome_dims(
                 ome_xml, scene_index, data[scene_index].shape, data[scene_index].dtype
             )
 
+        # convert to string for writing
         xml = to_xml(ome_xml).encode()
 
         # now the heavy lifting. assemble the raw data and write it
@@ -371,7 +376,7 @@ class OmeTiffWriter(Writer):
         data_dtype: np.dtype = np.uint8,
         is_rgb: bool = False,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
-        image_name: str = "I0",
+        image_name: Optional[str] = "I0",
         pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
         channel_names: List[str] = None,
         channel_colors: List[int] = None,
@@ -389,7 +394,7 @@ class OmeTiffWriter(Writer):
                 data_shape, len(dimension_order)
             )
 
-        def dim_or_1(dim):
+        def dim_or_1(dim: str) -> int:
             idx = dimension_order.find(dim)
             return 1 if idx == -1 else data_shape[idx]
 
@@ -463,19 +468,19 @@ class OmeTiffWriter(Writer):
         )
         return img
 
-    # set up some sensible defaults from provided info
     @staticmethod
     def build_ome(
         data_shapes: List[Tuple[int, ...]],
         data_types: List[np.dtype],
-        dimension_order: List[str] = None,
-        channel_names: List[List[str]] = None,
-        image_name: List[str] = None,
+        dimension_order: Optional[List[Optional[str]]] = None,
+        channel_names: List[Optional[List[str]]] = None,
+        image_name: List[Optional[str]] = None,
         pixels_physical_size: List[Tuple[float, float, float]] = None,
-        channel_colors: List[List[int]] = None,
+        channel_colors: List[Optional[List[int]]] = None,
     ) -> OME:
         """Creates the necessary metadata for an OME tiff image
-        :param data: A list of 5- or 6-d data arrays
+        :param data_shapes: A list of 5- or 6-d tuples
+        :param data_types: A list of data types
         :param dimension_order: The order of dimensions in the data array, using
         T,C,Z,Y,X and optionally S
         :param channel_names: The names for each channel to be put into the OME metadata
@@ -547,7 +552,7 @@ class OmeTiffWriter(Writer):
     @staticmethod
     def _check_ome_dims(
         ome_xml: OME, image_index: int, data_shape: Tuple, data_dtype: np.dtype
-    ):
+    ) -> None:
         if len(ome_xml.images) < 1:
             raise ValueError("OME has no images")
 

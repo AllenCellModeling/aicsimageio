@@ -16,7 +16,7 @@ from ..conftest import array_constructor, get_resource_write_full_path, LOCAL
 
 @array_constructor
 @pytest.mark.parametrize(
-    "write_shape, write_dim_order, read_shape, read_dim_order",
+    "write_shape, write_dim_order, expected_read_shape, expected_read_dim_order",
     [
         ((5, 16, 16), None, (1, 1, 5, 16, 16), "TCZYX"),
         ((5, 16, 16), "ZYX", (1, 1, 5, 16, 16), "TCZYX"),
@@ -55,7 +55,15 @@ from ..conftest import array_constructor, get_resource_write_full_path, LOCAL
         ((1, 2, 3, 4, 5), None, (1, 2, 3, 4, 5), "TCZYX"),
         ((2, 3, 4, 5, 6), "TCZYX", (2, 3, 4, 5, 6), "TCZYX"),
         ((2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
-        ((1, 2, 3, 4, 5, 6), None, (2, 3, 4, 5, 6), "TCZYX"),
+        ((1, 2, 3, 4, 5, 3), None, (1, 2, 3, 4, 5, 3), "TCZYXS"),
+        # error 6D data doesn't work unless last dim is 3 or 4
+        pytest.param(
+            (1, 2, 3, 4, 5, 6),
+            None,
+            (1, 2, 3, 4, 5, 6),
+            "TCZYXS",
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
         ((5, 16, 16, 3), "ZYXS", (1, 1, 5, 16, 16, 3), "TCZYXS"),
         ((5, 16, 16, 4), "CYXS", (1, 5, 1, 16, 16, 4), "TCZYXS"),
         ((3, 5, 16, 16, 4), "ZCYXS", (1, 5, 3, 16, 16, 4), "TCZYXS"),
@@ -66,8 +74,8 @@ def test_ome_tiff_writer_no_meta(
     array_constructor,
     write_shape,
     write_dim_order,
-    read_shape,
-    read_dim_order,
+    expected_read_shape,
+    expected_read_dim_order,
     filename,
 ):
     # Create array
@@ -83,8 +91,8 @@ def test_ome_tiff_writer_no_meta(
     reader = OmeTiffReader(save_uri)
 
     # Check basics
-    assert reader.shape == read_shape
-    assert reader.dims.order == read_dim_order
+    assert reader.shape == expected_read_shape
+    assert reader.dims.order == expected_read_dim_order
 
 
 @array_constructor
@@ -94,54 +102,48 @@ def test_ome_tiff_writer_no_meta(
         # ok dims
         (
             (1, 2, 3, 4, 5),
-            to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8))),
+            to_xml(OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.uint8)])),
             "TCZYX",
         ),
         (
             (1, 2, 3, 4, 5),
-            OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.uint8)),
+            OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.uint8)]),
             "TCZYX",
         ),
         # with RGB data:
         (
             (2, 2, 3, 4, 5, 3),
-            to_xml(
-                OmeTiffWriter.build_ome(
-                    (2, 2, 3, 4, 5, 3), np.dtype(np.uint8), is_rgb=True
-                )
-            ),
+            to_xml(OmeTiffWriter.build_ome([(2, 2, 3, 4, 5, 3)], [np.dtype(np.uint8)])),
             "TCZYXS",
         ),
         (
             (2, 2, 3, 4, 5, 3),
-            OmeTiffWriter.build_ome(
-                (2, 2, 3, 4, 5, 3), np.dtype(np.uint8), is_rgb=True
-            ),
+            OmeTiffWriter.build_ome([(2, 2, 3, 4, 5, 3)], [np.dtype(np.uint8)]),
             "TCZYXS",
         ),
         # wrong dtype
         pytest.param(
             (1, 2, 3, 4, 5),
-            to_xml(OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float))),
+            to_xml(OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float)])),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
             (1, 2, 3, 4, 5),
-            OmeTiffWriter.build_ome((1, 2, 3, 4, 5), np.dtype(np.float)),
+            OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float)]),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # wrong dims
         pytest.param(
             (1, 2, 3, 4, 5),
-            to_xml(OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float))),
+            to_xml(OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float)])),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         pytest.param(
             (1, 2, 3, 4, 5),
-            OmeTiffWriter.build_ome((2, 2, 3, 4, 5), np.dtype(np.float)),
+            OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float)]),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),

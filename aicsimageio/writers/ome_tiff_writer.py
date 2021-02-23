@@ -183,44 +183,35 @@ class OmeTiffWriter(Writer):
         else:
             image_data = data[scene_index]
 
-        # make sure we are writing 5D data to ome-tiff
-        ome_dimension_order, image_data, is_rgb = OmeTiffWriter._resolve_dimensionality(
-            image_data, dimension_order[scene_index]
-        )
-
         xml = ""
+        # if None, then try to construct OME
         if ome_xml is None:
             ome_xml = OmeTiffWriter.build_ome(
-                image_data.shape,
-                image_data.dtype,
-                channel_names=channel_names[scene_index],
-                image_name=image_name[scene_index],
-                pixels_physical_size=pixels_physical_size[scene_index],
-                channel_colors=channel_colors[scene_index],
-                dimension_order=ome_dimension_order,
-                is_rgb=is_rgb,
+                [i.shape for i in data],
+                [i.dtype for i in data],
+                channel_names=channel_names,
+                image_name=image_name,
+                pixels_physical_size=pixels_physical_size,
+                channel_colors=channel_colors,
+                dimension_order=dimension_order,
             )
-            xml = to_xml(ome_xml).encode()
+        # else if string, then construct OME from string
         elif isinstance(ome_xml, str):
-            # if the xml passed in is a string,
-            # then just pass it straight through to the writer.
-            # But first, validate it.
-            valid_ome = from_xml(ome_xml)
-            OmeTiffWriter._check_ome_dims(
-                valid_ome, scene_index, image_data.shape, image_data.dtype
-            )
-            xml = to_xml(valid_ome).encode()
-        elif isinstance(ome_xml, OME):
-            # do some simple consistency check against the passed in OME dimensions
-            OmeTiffWriter._check_ome_dims(
-                ome_xml, scene_index, image_data.shape, image_data.dtype
-            )
-            xml = to_xml(ome_xml).encode()
-        else:
+            ome_xml = from_xml(ome_xml)
+
+        # if we do not have an OME object now something is wrong
+        if not isinstance(ome_xml, OME):
             raise ValueError(
                 "Unknown OME-XML metadata passed in. Use OME object, or xml string or \
                 None"
             )
+
+        # vaidate and convert to string for writing
+        # TODO this validation is per-scene...
+        OmeTiffWriter._check_ome_dims(
+            ome_xml, scene_index, image_data.shape, image_data.dtype
+        )
+        xml = to_xml(ome_xml).encode()
 
         # Save image to tiff!
         tif = tifffile.TiffWriter(
@@ -231,7 +222,7 @@ class OmeTiffWriter(Writer):
         tif.write(
             image_data,
             description=xml,
-            photometric=TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK,
+            photometric=TIFF.PHOTOMETRIC.MINISBLACK,
             planarconfig=TIFF.PLANARCONFIG.CONTIG,
             metadata=None,
             compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
@@ -240,36 +231,51 @@ class OmeTiffWriter(Writer):
         tif.close()
 
     @staticmethod
-    def _resolve_dimensionality(
-        data: types.ArrayLike,
-        dimension_order: str,
-    ) -> Tuple[str, types.ArrayLike, bool]:
-        ndims = len(data.shape)
+    def _resolve_OME_dimension_order(
+        shape: Tuple[int, ...], dimension_order: Union[str, None]
+    ) -> Tuple[str, bool]:
+        """
+        Do some dimension validation and return an ome-compatible 5D dimension order
+        """
+        ndims = len(shape)
+
+        if ndims > 5 and (shape[-1] != 3 and shape[-1] != 4):
+            raise ValueError(
+                f"Passed in greater than 5D data but last dimension is not 3 or 4: "
+                f"{shape[-1]}"
+            )
+
+        if dimension_order is not None and len(dimension_order) != ndims:
+            raise InvalidDimensionOrderingError(
+                f"Dimension order string has {len(dimension_order)} dims but data "
+                f"shape has {ndims} dims"
+            )
 
         # data is rgb if last dimension is S and its size is 3 or 4
         is_rgb = False
         if dimension_order is None:
             # we will only guess rgb here if ndims > 5
             # I could make a better guess if I look at any ome-xml passed in
-            is_rgb = ndims > 5 and data.shape[-1] == 3 or data.shape[-1] == 4
+            is_rgb = ndims > 5 and (shape[-1] == 3 or shape[-1] == 4)
             dimension_order = (
                 DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
                 if is_rgb
                 else DEFAULT_DIMENSION_ORDER
             )
         else:
-            is_rgb = dimension_order[-1] == "S" and (
-                data.shape[-1] == 3 or data.shape[-1] == 4
-            )
+            is_rgb = dimension_order[-1] == "S" and (shape[-1] == 3 or shape[-1] == 4)
 
         # select last 5 (or 6 if rgb) dims
         max_dims = 6 if is_rgb else 5
         if ndims > max_dims:
-            slc = [0] * (ndims - max_dims)
-            slc += [slice(None)] * max_dims
-            data = data[slc]
+            raise ValueError(
+                f"Data array should be less than 7D: is_rgb = {is_rgb} and {shape}"
+            )
+        #     slc = [0] * (ndims - max_dims)
+        #     slc += [slice(None)] * max_dims
+        #     data = data[slc]
 
-        ndims = len(data.shape)
+        ndims = len(shape)
         assert (
             ndims == 6 or ndims == 5 or ndims == 4 or ndims == 3 or ndims == 2
         ), "Expected no more than 6 dimensions in data array"
@@ -291,15 +297,6 @@ class OmeTiffWriter(Writer):
                 f"Last characters of dimension_order {dimension_order} expected to \
                 be YX or YXS.  Please transpose your data."
             )
-        if len(dimension_order) < ndims:
-            raise InvalidDimensionOrderingError(
-                f"dimension_order {dimension_order} must have at least as many \
-                dimensions as data shape {data.shape}"
-            )
-
-        # ensure dimension_order is same len as shape
-        if len(dimension_order) > ndims:
-            dimension_order = dimension_order[-ndims:]
 
         # remember whether S was a dim or not, and remove it for now
         if is_rgb:
@@ -307,16 +304,11 @@ class OmeTiffWriter(Writer):
             dimension_order = dimension_order[:-1]
 
         # expand to 5D and add appropriate dimensions
-        if ndims == 2:
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
+        if len(dimension_order) == 2:
             dimension_order = "TCZ" + dimension_order
 
         # expand to 5D and add appropriate dimensions
-        elif ndims == 3:
-            data = np.expand_dims(data, axis=0)
-            data = np.expand_dims(data, axis=0)
+        elif len(dimension_order) == 3:
             # prepend either TC, TZ or CZ
             if dimension_order[0] == "T":
                 dimension_order = "CZ" + dimension_order
@@ -326,8 +318,7 @@ class OmeTiffWriter(Writer):
                 dimension_order = "TC" + dimension_order
 
         # expand to 5D and add appropriate dimensions
-        elif ndims == 4:
-            data = np.expand_dims(data, axis=0)
+        elif len(dimension_order) == 4:
             # prepend either T, C, or Z
             first2 = dimension_order[:2]
             if first2 == "TC" or first2 == "CT":
@@ -337,7 +328,7 @@ class OmeTiffWriter(Writer):
             elif first2 == "CZ" or first2 == "ZC":
                 dimension_order = "T" + dimension_order
 
-        return dimension_order, data, is_rgb
+        return dimension_order, is_rgb
 
     @staticmethod
     def _size_of_ndarray(data: types.ArrayLike) -> int:
@@ -352,52 +343,58 @@ class OmeTiffWriter(Writer):
         size = data.size * data.itemsize
         return size
 
-    # set up some sensible defaults from provided info
     @staticmethod
-    def build_ome(
-        data_shape: Tuple,
-        data_dtype: np.dtype,
-        dimension_order: str = DEFAULT_DIMENSION_ORDER,
-        channel_names: List[str] = None,
-        image_name: str = None,
-        pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
-        channel_colors: List[int] = None,
-        is_rgb: bool = False,
-    ) -> OME:
-        """Creates the necessary metadata for an OME tiff image
-        :param data_shape: A 5- or 6-d tuple of TCZYX(S) dimensions
-        :param data_dtype: a numpy dtype of the data array
-        :param dimension_order: The order of dimensions in the data array, using
-        T,C,Z,Y,X and optionally S
-        :param channel_names: The names for each channel to be put into the OME metadata
-        :param image_name: The name of the image to be put into the OME metadata
-        :param pixels_physical_size: X,Y, and Z physical dimensions of each pixel,
-        defaulting to microns
-        :param channel_colors: The channel colors to be put into the OME metadata
-        :param is_rgb: is a S dimension present?  S is expected to be the last dim in
-        the data shape
-        """
-        image_index = 0
-        shape = data_shape
+    def _extend_data_shape(shape: Tuple[int, ...], num_dims: int) -> Tuple[int, ...]:
+        # extend data shape to be same len as dimension_order
+        if len(shape) < num_dims:
+            shape = tuple([1] * (num_dims - len(shape))) + shape
+        return shape
 
-        if len(shape) != 5 and not (is_rgb and len(shape) == 6):
-            raise ValueError(
-                "OmeTiffWriter.build_ome only accepts 5d arrays or 6d with RGB"
+    @staticmethod
+    def _build_ome_image(
+        image_index: int = 0,
+        tiff_plane_offset: int = 0,
+        data_shape: Tuple[int, ...] = (1, 1, 1, 1, 1),
+        data_dtype: np.dtype = np.uint8,
+        is_rgb: bool = False,
+        dimension_order: str = DEFAULT_DIMENSION_ORDER,
+        image_name: str = "I0",
+        pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
+        channel_names: List[str] = None,
+        channel_colors: List[int] = None,
+    ) -> Image:
+        if len(data_shape) < 2 or len(data_shape) > 6:
+            raise ValueError(f"Bad OME image shape length: {data_shape}")
+
+        # extend data shape to be same len as dimension_order, accounting for rgb
+        if is_rgb:
+            data_shape = OmeTiffWriter._extend_data_shape(
+                data_shape, len(dimension_order) + 1
             )
-        if len(dimension_order) != len(DEFAULT_DIMENSION_ORDER):
-            raise ValueError("OmeTiffWriter.build_ome only accepts 5d dimension_order")
-        for c in DEFAULT_DIMENSION_ORDER:
-            if c not in dimension_order:
-                raise ValueError(f"Unrecognized OME TIFF dimension {c}")
+        else:
+            data_shape = OmeTiffWriter._extend_data_shape(
+                data_shape, len(dimension_order)
+            )
 
         def dim_or_1(dim):
             idx = dimension_order.find(dim)
-            return 1 if idx == -1 else shape[idx]
+            return 1 if idx == -1 else data_shape[idx]
 
         channel_count = dim_or_1("C")
 
-        # should only ever be 1, 3 or 4
-        samples = shape[-1] if is_rgb else 1
+        if len(dimension_order) != 5:
+            raise ValueError(f"Unrecognized OME TIFF dimension order {dimension_order}")
+        for c in dimension_order:
+            if c not in DEFAULT_DIMENSION_ORDER:
+                raise ValueError(f"Unrecognized OME TIFF dimension {c}")
+        if isinstance(channel_names, list) and len(channel_names) != channel_count:
+            raise ValueError(f"Wrong number of channel names {len(channel_names)}")
+        if isinstance(channel_colors, list) and len(channel_colors) != channel_count:
+            raise ValueError(f"Wrong number of channel colors {len(channel_colors)}")
+
+        samples_per_pixel = 1
+        if is_rgb:
+            samples_per_pixel = data_shape[-1]
 
         # dimension_order must be set to the *reverse* of what dimensionality
         # the ome tif file is saved as
@@ -406,25 +403,26 @@ class OmeTiffWriter(Writer):
             dimension_order=dimension_order[::-1],
             type=utils.dtype_to_ome_type(data_dtype),
             size_t=dim_or_1("T"),
-            size_c=channel_count * samples,
+            size_c=channel_count * samples_per_pixel,
             size_z=dim_or_1("Z"),
             size_y=dim_or_1("Y"),
             size_x=dim_or_1("X"),
-            interleaved=True if is_rgb else None,
+            interleaved=True if samples_per_pixel > 1 else None,
         )
-
-        if pixels_physical_size is not None:
-            pixels.physical_size_x = pixels_physical_size[0]
-            pixels.physical_size_y = pixels_physical_size[1]
-            pixels.physical_size_z = pixels_physical_size[2]
+        pixels.physical_size_x = pixels_physical_size[0]
+        pixels.physical_size_y = pixels_physical_size[1]
+        pixels.physical_size_z = pixels_physical_size[2]
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
-            TiffData(plane_count=pixels.size_t * channel_count * pixels.size_z)
+            TiffData(
+                plane_count=pixels.size_t * channel_count * pixels.size_z,
+                ifd=tiff_plane_offset,
+            )
         ]
 
         pixels.channels = [
-            Channel(samples_per_pixel=samples) for i in range(channel_count)
+            Channel(samples_per_pixel=samples_per_pixel) for i in range(channel_count)
         ]
         if channel_names is None:
             for i in range(channel_count):
@@ -450,6 +448,76 @@ class OmeTiffWriter(Writer):
             id=utils.generate_ome_image_id(str(image_index)),
             pixels=pixels,
         )
+        return img
+
+    # set up some sensible defaults from provided info
+    @staticmethod
+    def build_ome(
+        data_shapes: List[Tuple[int, ...]],
+        data_types: List[np.dtype],
+        dimension_order: List[str] = None,
+        channel_names: List[List[str]] = None,
+        image_name: List[str] = None,
+        pixels_physical_size: List[Tuple[float, float, float]] = None,
+        channel_colors: List[List[int]] = None,
+    ) -> OME:
+        """Creates the necessary metadata for an OME tiff image
+        :param data: A list of 5- or 6-d data arrays
+        :param dimension_order: The order of dimensions in the data array, using
+        T,C,Z,Y,X and optionally S
+        :param channel_names: The names for each channel to be put into the OME metadata
+        :param image_name: The name of the image to be put into the OME metadata
+        :param pixels_physical_size: X,Y, and Z physical dimensions of each pixel,
+        defaulting to microns
+        :param channel_colors: The channel colors to be put into the OME metadata
+        :param is_rgb: is a S dimension present?  S is expected to be the last dim in
+        the data shape
+        """
+        num_images = len(data_shapes)
+        # resolve defaults that are None
+        if dimension_order is None:
+            dimension_order = [None] * num_images
+        if channel_names is None:
+            channel_names = [None] * num_images
+        if image_name is None:
+            image_name = [None] * num_images
+        if pixels_physical_size is None:
+            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_images
+        if channel_colors is None:
+            channel_colors = [None] * num_images
+
+        # assert all lists are same length
+        if (
+            num_images != len(data_types)
+            or num_images != len(dimension_order)
+            or num_images != len(channel_names)
+            or num_images != len(image_name)
+            or num_images != len(pixels_physical_size)
+            or num_images != len(channel_colors)
+        ):
+            raise ValueError("Mismatched array counts in parameters to build_ome")
+
+        images = []
+        tiff_plane_offset = 0
+        for image_index in range(len(data_shapes)):
+            # correct the data shape for ome
+            ome_dimension_order, is_rgb = OmeTiffWriter._resolve_OME_dimension_order(
+                data_shapes[image_index], dimension_order[image_index]
+            )
+            img = OmeTiffWriter._build_ome_image(
+                image_index,
+                tiff_plane_offset,
+                data_shapes[image_index],
+                data_types[image_index],
+                is_rgb,
+                ome_dimension_order,
+                image_name[image_index],
+                pixels_physical_size[image_index],
+                channel_names[image_index],
+                channel_colors[image_index],
+            )
+            # TODO increment tiff_plane_offset for next image
+            images.append(img)
 
         # TODO get aics version string here
         ox = OME(creator=f"aicsimageio {get_module_version()}", images=[img])
@@ -472,7 +540,7 @@ class OmeTiffWriter(Writer):
 
         # reverse the OME dimension order to compare against numpy shape
         dimension_order = ome_xml.images[image_index].pixels.dimension_order.value[::-1]
-
+        print(f"REVERSED DIM ORDER  {dimension_order}")
         dims = {
             "T": ome_xml.images[image_index].pixels.size_t,
             "C": ome_xml.images[image_index].pixels.size_c,
@@ -486,6 +554,7 @@ class OmeTiffWriter(Writer):
             dimension_order += "S"
 
         expected_shape = tuple(dims[i] for i in dimension_order)
+        data_shape = OmeTiffWriter._extend_data_shape(data_shape, len(dimension_order))
         if expected_shape != data_shape:
             raise ValueError(
                 f"OME shape {expected_shape} is not the same as data array shape: \

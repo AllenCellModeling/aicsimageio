@@ -32,9 +32,7 @@ class OmeTiffWriter(Writer):
         uri: types.PathLike,
         dim_order: Union[str, List[Union[str, None]], None] = None,
         ome_xml: Union[str, OME, None] = None,
-        channel_names: Union[
-            List[Union[str, None]], List[List[Union[str, None]]], None
-        ] = None,
+        channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
         image_name: Union[str, List[Union[str, None]], None] = None,
         pixels_physical_size: Union[
             Tuple[float, float, float], List[Tuple[float, float, float]], None
@@ -73,8 +71,8 @@ class OmeTiffWriter(Writer):
             The ome_xml will also be compared against the dimensions of the input data.
             If None is given, then OME-XML metadata will be generated from the data
             array and any of the following metadata arguments.
-        channel_names: Union[List[str], List[List[str]], None]
-            List of strings representing the names of the data channels
+        channel_names: Optional[Union[List[str], List[Optional[List[str]]]]]
+            Lists of strings representing the names of the data channels
             Default: None
             If None is given, the list will be generated as a 0-indexed list of strings
             of the form "Channel:image_index:channel_index"
@@ -192,10 +190,10 @@ class OmeTiffWriter(Writer):
             pixels_physical_size = [pixels_physical_size] * num_scenes
         elif pixels_physical_size is None:
             pixels_physical_size = [(1.0, 1.0, 1.0)] * num_scenes
-        if channel_names is None or isinstance(channel_names[0], str):
-            channel_names = [channel_names] * num_scenes
+        if channel_names is None or isinstance(channel_names[0], int):
+            channel_names = [channel_names] * num_scenes  # type: ignore
         if channel_colors is None or isinstance(channel_colors[0], int):
-            channel_colors = [channel_colors] * num_scenes
+            channel_colors = [channel_colors] * num_scenes  # type: ignore
 
         xml = ""
         # try to construct OME from params
@@ -203,10 +201,10 @@ class OmeTiffWriter(Writer):
             ome_xml = OmeTiffWriter.build_ome(
                 [i.shape for i in data],
                 [i.dtype for i in data],
-                channel_names=channel_names,
+                channel_names=channel_names,  # type: ignore
                 image_name=image_name,
                 pixels_physical_size=pixels_physical_size,
-                channel_colors=channel_colors,
+                channel_colors=channel_colors,  # type: ignore
                 dimension_order=dim_order,
             )
         # else if string, then construct OME from string
@@ -507,7 +505,7 @@ class OmeTiffWriter(Writer):
         data_shapes: List[Tuple[int, ...]],
         data_types: List[np.dtype],
         dimension_order: Optional[List[Optional[str]]] = None,
-        channel_names: List[Optional[List[str]]] = None,
+        channel_names: Optional[List[Optional[List[str]]]] = None,
         image_name: List[Optional[str]] = None,
         pixels_physical_size: List[Tuple[float, float, float]] = None,
         channel_colors: List[Optional[List[int]]] = None,

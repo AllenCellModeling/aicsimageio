@@ -5,10 +5,10 @@ import numpy as np
 from ome_types import to_xml
 from ome_types.model import OME
 import pytest
-from typing import Callable, Optional, Tuple
+from typing import Callable, List, Optional, Tuple, Union
 import urllib
 
-from aicsimageio import exceptions
+from aicsimageio import exceptions, types
 from aicsimageio.readers import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
 
@@ -177,11 +177,11 @@ def test_ome_tiff_writer_no_meta(
 )
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
 def test_ome_tiff_writer_with_meta(
-    array_constructor,
-    shape_to_create,
-    ome_xml,
-    expected_dim_order,
-    filename,
+    array_constructor: Callable,
+    shape_to_create: Tuple[int, ...],
+    ome_xml: Union[str, OME, None],
+    expected_dim_order: Tuple[int, ...],
+    filename: str,
 ) -> None:
     # Create array
     arr = array_constructor(shape_to_create, dtype=np.uint8)
@@ -257,11 +257,11 @@ def test_ome_tiff_writer_with_meta(
 )
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
 def test_ome_tiff_writer_multiscene(
-    array_data,
-    write_dim_order,
-    read_shapes,
-    read_dim_order,
-    filename,
+    array_data: List[types.ArrayLike],
+    write_dim_order: List[Optional[str]],
+    read_shapes: List[Tuple[int, ...]],
+    read_dim_order: List[str],
+    filename: str,
 ) -> None:
     # Construct save end point
     save_uri = get_resource_write_full_path(filename, LOCAL)

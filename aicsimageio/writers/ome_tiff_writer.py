@@ -4,7 +4,7 @@ from ome_types import from_xml, to_xml
 from ome_types.model import OME, Image, Channel, Pixels, TiffData
 import tifffile
 from tifffile import TIFF
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 from .. import exceptions, types, get_module_version
 from ..dimensions import (
@@ -30,7 +30,7 @@ class OmeTiffWriter(Writer):
     def save(
         data: Union[List[types.ArrayLike], types.ArrayLike],
         uri: types.PathLike,
-        dimension_order: Union[str, List[Union[str, None]], None] = None,
+        dim_order: Union[str, List[Union[str, None]], None] = None,
         ome_xml: Union[str, OME, None] = None,
         channel_names: Union[
             List[Union[str, None]], List[List[Union[str, None]]], None
@@ -40,7 +40,7 @@ class OmeTiffWriter(Writer):
             Tuple[float, float, float], List[Tuple[float, float, float]], None
         ] = None,
         channel_colors: Union[List[int], List[List[int]], None] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         """
         Write a data array to a file.
@@ -54,7 +54,7 @@ class OmeTiffWriter(Writer):
             length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
-        dimension_order: Union[str, list[str], None]
+        dim_order: Union[str, list[str], None]
             The dimension order of the provided data.
             Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
             Dimension strings must be same length as number of dimensions in the data.
@@ -125,15 +125,15 @@ class OmeTiffWriter(Writer):
 
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
-            if isinstance(dimension_order, list):
-                if len(dimension_order) != len(data):
+            if isinstance(dim_order, list):
+                if len(dim_order) != len(data):
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeTiffWriter received a list of arrays to use as scenes "
                         f"but the provided list of dimension_order is of different "
                         f"length. "
                         f"Number of provided scenes: {len(data)}, "
                         f"Number of provided known dimension strings: "
-                        f"{len(dimension_order)}"
+                        f"{len(dim_order)}"
                     )
             if isinstance(image_name, list):
                 if len(image_name) != len(data):
@@ -184,8 +184,8 @@ class OmeTiffWriter(Writer):
         num_scenes = len(data)
 
         # If metadata is attached as singles, expand to lists to match data
-        if dimension_order is None or isinstance(dimension_order, str):
-            dimension_order = [dimension_order] * num_scenes
+        if dim_order is None or isinstance(dim_order, str):
+            dim_order = [dim_order] * num_scenes
         if image_name is None or isinstance(image_name, str):
             image_name = [image_name] * num_scenes
         if isinstance(pixels_physical_size, tuple):
@@ -207,7 +207,7 @@ class OmeTiffWriter(Writer):
                 image_name=image_name,
                 pixels_physical_size=pixels_physical_size,
                 channel_colors=channel_colors,
-                dimension_order=dimension_order,
+                dimension_order=dim_order,
             )
         # else if string, then construct OME from string
         elif isinstance(ome_xml, str):

@@ -127,28 +127,28 @@ def test_ome_tiff_writer_no_meta(
         # wrong dtype
         pytest.param(
             (1, 2, 3, 4, 5),
-            to_xml(OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float)])),
+            to_xml(OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float32)])),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # wrong dtype
         pytest.param(
             (1, 2, 3, 4, 5),
-            OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float)]),
+            OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float32)]),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # wrong dims
         pytest.param(
             (1, 2, 3, 4, 5),
-            to_xml(OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float)])),
+            to_xml(OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float32)])),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),
         # wrong dims
         pytest.param(
             (1, 2, 3, 4, 5),
-            OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float)]),
+            OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float32)]),
             "TCZYX",
             marks=pytest.mark.raises(exception=ValueError),
         ),

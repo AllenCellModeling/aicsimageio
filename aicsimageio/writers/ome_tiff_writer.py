@@ -233,7 +233,7 @@ class OmeTiffWriter(Writer):
         for scene_index in range(len(data)):
             # Assumption: if provided a dask array to save, it can fit into memory
             if isinstance(data[scene_index], da.core.Array):
-                data[scene_index].compute()
+                data[scene_index].compute()  # type: ignore
 
         # Save image to tiff!
         tif = tifffile.TiffWriter(
@@ -406,7 +406,7 @@ class OmeTiffWriter(Writer):
         image_index: int = 0,
         tiff_plane_offset: int = 0,
         data_shape: Tuple[int, ...] = (1, 1, 1, 1, 1),
-        data_dtype: np.dtype = np.uint8,
+        data_dtype: np.dtype = np.dtype(np.uint8),
         is_rgb: bool = False,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         image_name: Optional[str] = "I0",

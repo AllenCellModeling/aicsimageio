@@ -5,7 +5,7 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Dict, Optional, Union
 
 import numpy as np
 from ome_types.model.simple_types import PixelType
@@ -473,7 +473,7 @@ def ome_to_numpy_dtype(ome_type: PixelType) -> np.dtype:
     npdtype: numpy.dtype
         A numpy datatype.
     """
-    ometypedict = {
+    ometypedict: Dict[PixelType, np.dtype] = {
         PixelType.INT8: np.dtype(np.int8),
         PixelType.INT16: np.dtype(np.int16),
         PixelType.INT32: np.dtype(np.int32),

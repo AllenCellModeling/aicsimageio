@@ -131,7 +131,7 @@ class OmeTiffReader(TiffReader):
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
                 if tiff.is_micromanager:
-                    log.warn(
+                    log.warning(
                         "Multi-image (or scene) OME-TIFFs created by MicroManager "
                         "have limited support for scene API. "
                         "It is recommended to use independent AICSImage or Reader "

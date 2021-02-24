@@ -220,6 +220,13 @@ def test_ome_tiff_writer_with_meta(
             [(1, 1, 5, 16, 16, 3), (1, 4, 1, 12, 12, 3)],
             ["TCZYXS", "TCZYXS"],
         ),
+        # spread dim_order to each image written
+        (
+            [np.random.rand(3, 10, 16, 16), np.random.rand(4, 12, 16, 16)],
+            "CZYX",
+            [(1, 3, 10, 16, 16), (1, 4, 12, 16, 16)],
+            ["TCZYX", "TCZYX"],
+        ),
         pytest.param(
             [np.random.rand(2, 3, 3)],
             "AYX",

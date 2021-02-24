@@ -22,7 +22,7 @@ from .writer import Writer
 # the libtiff writer was unable to handle a 2GB numpy array.
 # It would be great if we better understood exactly what this threshold is and how to
 # calculate it but for now this is a stopgap working value
-BYTE_BOUNDARY = 2 ** 21
+BIGTIFF_BYTE_LIMIT = 2 ** 21
 
 
 class OmeTiffWriter(Writer):
@@ -48,20 +48,25 @@ class OmeTiffWriter(Writer):
         Parameters
         ----------
         data: Union[List[types.ArrayLike], types.ArrayLike]
-            The array of data to store. Data arrays must have 2 to 6 dimensions.  If a list is
-            provided, then it is understood to be multiple images written to the
+            The array of data to store. Data arrays must have 2 to 6 dimensions.  If a
+            list is provided, then it is understood to be multiple images written to the
             ome-tiff file. All following metadata parameters will be expanded to the
             length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
         dimension_order: Union[str, list[str], None]
             The dimension order of the provided data.
-            Default: None. Based off the number of dimensions, will assume
-            the dimensions similar to how aicsimageio.readers.DefaultReader reads in
-            data. That is, two dimensions: YX and three dimensions: YXS.
+            Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
+            Dimension strings must be same length as number of dimensions in the data.
+            If S is present it must be last and its data count must be 3 or 4.
+            Default: None.
+            If None is provided for any data array, we will guess dimensions based on a
+            TCZYX ordering.
+            In the None case, data will be assumed to be scalar, not RGB.
         ome_xml: Union[str, OME, None]
             Provided OME metadata. The metadata can be an xml string or an OME object
-            from ome-types.
+            from ome-types.  A provided ome_xml will override any other provided
+            metadata arguments.
             Default: None
             The passed-in metadata will be validated against current OME_XML schema and
             raise exception if invalid.
@@ -84,11 +89,14 @@ class OmeTiffWriter(Writer):
             Default: None
             If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Union[List[int], List[List[int]], None]
-            List of rgb color values per channel.  These must be values compatible with the OME spec.
+            List of rgb color values per channel.  These must be values compatible with
+            the OME spec.
             Default: None
 
         Examples
         --------
+        Write a TCZYX data set to OME-Tiff
+
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
         ... OmeTiffWriter.save(image, "file.ome.tif")
 
@@ -96,6 +104,17 @@ class OmeTiffWriter(Writer):
 
         >>> reader = cziReader.CziReader("file3.czi")
         ... OmeTiffWriter.save(reader.load(), "file3.ome.tif")
+
+        Write multi-scene data to OME-Tiff, specifying channel names
+
+        >>> image0 = numpy.ndarray([3, 10, 1024, 2048])
+        ... image1 = numpy.ndarray([3, 10, 512, 512])
+        ... OmeTiffWriter.save(
+        ...     [image0, image1],
+        ...     "file.ome.tif",
+        ...     dim_order="CZYX",  # this single value will be repeated to each image
+        ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
+        ... )
         """
         # Check unpack uri and extension
         fs, path = io_utils.pathlike_to_fs(uri)
@@ -220,7 +239,7 @@ class OmeTiffWriter(Writer):
         # Save image to tiff!
         tif = tifffile.TiffWriter(
             path,
-            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BYTE_BOUNDARY,
+            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
         )
 
         for scene_index in range(len(data)):

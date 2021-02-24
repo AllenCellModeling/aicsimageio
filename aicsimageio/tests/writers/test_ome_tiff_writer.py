@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import urllib
+from typing import Callable, List, Optional, Tuple, Union
+
 import numpy as np
+import pytest
 from ome_types import to_xml
 from ome_types.model import OME
-import pytest
-from typing import Callable, List, Optional, Tuple, Union
-import urllib
 
 from aicsimageio import exceptions, types
 from aicsimageio.readers import OmeTiffReader
 from aicsimageio.writers import OmeTiffWriter
 
-from ..conftest import array_constructor, get_resource_write_full_path, LOCAL
+from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
 
 
 @array_constructor

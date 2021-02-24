@@ -5,9 +5,10 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from ome_types.model.simple_types import PixelType
-import numpy as np
 from typing import Optional, Union
+
+import numpy as np
+from ome_types.model.simple_types import PixelType
 
 ###############################################################################
 

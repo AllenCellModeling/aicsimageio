@@ -1,16 +1,17 @@
-import dask.array as da
-import numpy as np
-from ome_types import from_xml, to_xml
-from ome_types.model import OME, Image, Channel, Pixels, TiffData
-import tifffile
-from tifffile import TIFF
 from typing import Any, List, Optional, Tuple, Union
 
-from .. import exceptions, types, get_module_version
+import dask.array as da
+import numpy as np
+import tifffile
+from ome_types import from_xml, to_xml
+from ome_types.model import OME, Channel, Image, Pixels, TiffData
+from tifffile import TIFF
+
+from .. import exceptions, get_module_version, types
 from ..dimensions import (
     DEFAULT_DIMENSION_ORDER,
-    DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
+    DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
 )
 from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils

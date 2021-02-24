@@ -243,27 +243,23 @@ class OmeTiffWriter(Writer):
         )
 
         for scene_index in range(len(data)):
+            description = xml if scene_index == 0 else None
+            # assume if first channel is rgb then all of it is
             is_rgb = (
                 ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
             )
-            if is_rgb:
-                tif.write(
-                    data[scene_index],
-                    description=xml if scene_index == 0 else None,
-                    photometric=TIFF.PHOTOMETRIC.RGB,
-                    metadata=None,
-                    planarconfig=TIFF.PLANARCONFIG.CONTIG,
-                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
-                )
-            else:
-                tif.write(
-                    data[scene_index],
-                    description=xml if scene_index == 0 else None,
-                    photometric=TIFF.PHOTOMETRIC.MINISBLACK,
-                    metadata=None,
-                    planarconfig=None,
-                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
-                )
+            photometric = (
+                TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
+            )
+            planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
+            tif.write(
+                data[scene_index],
+                description=description,
+                photometric=photometric,
+                metadata=None,
+                planarconfig=planarconfig,
+                compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+            )
 
         tif.close()
 
@@ -273,6 +269,20 @@ class OmeTiffWriter(Writer):
     ) -> Tuple[str, bool]:
         """
         Do some dimension validation and return an ome-compatible 5D dimension order
+        and whether the data is rgb multisample
+
+        Parameters
+        ----------
+        shape: Tuple[int, ...]
+            A data array shape
+        dimension_order: Union[str, None]
+            A dimension order string, composed of some subset of TCZYXS
+
+        Returns
+        -------
+        Tuple[str, bool]
+            An OME-compatible 5D dimension_order string and a boolean for whether the
+            data shape had rgb samples
         """
         ndims = len(shape)
 
@@ -371,9 +381,14 @@ class OmeTiffWriter(Writer):
     def _size_of_ndarray(data: List[types.ArrayLike]) -> int:
         """
         Calculate the size of data to determine if we require bigtiff
+
+        Parameters
+        ----------
+        data: list of data arrays, one per image to be saved to tiff
+
         Returns
         -------
-        the size of data in bytes
+        the total size of data in bytes
         """
         size = 0
         for i in range(len(data)):
@@ -497,18 +512,36 @@ class OmeTiffWriter(Writer):
         pixels_physical_size: List[Tuple[float, float, float]] = None,
         channel_colors: List[Optional[List[int]]] = None,
     ) -> OME:
-        """Creates the necessary metadata for an OME tiff image
-        :param data_shapes: A list of 5- or 6-d tuples
-        :param data_types: A list of data types
-        :param dimension_order: The order of dimensions in the data array, using
-        T,C,Z,Y,X and optionally S
-        :param channel_names: The names for each channel to be put into the OME metadata
-        :param image_name: The name of the image to be put into the OME metadata
-        :param pixels_physical_size: X,Y, and Z physical dimensions of each pixel,
-        defaulting to microns
-        :param channel_colors: The channel colors to be put into the OME metadata
-        :param is_rgb: is a S dimension present?  S is expected to be the last dim in
-        the data shape
+        """
+
+        Create the necessary metadata for an OME tiff image
+
+        Parameters
+        ----------
+        data_shapes:
+            A list of 5- or 6-d tuples
+        data_types:
+            A list of data types
+        dimension_order:
+            The order of dimensions in the data array, using
+            T,C,Z,Y,X and optionally S
+        channel_names:
+            The names for each channel to be put into the OME metadata
+        image_name:
+            The name of the image to be put into the OME metadata
+        pixels_physical_size:
+            X,Y, and Z physical dimensions of each pixel,
+            defaulting to microns
+        channel_colors:
+            The channel colors to be put into the OME metadata
+        is_rgb:
+            is a S dimension present?  S is expected to be the last dim in
+            the data shape
+
+        Returns
+        -------
+        OME
+            An OME object that can be converted to a valid OME-XML string
         """
         num_images = len(data_shapes)
         # resolve defaults that are None
@@ -537,7 +570,7 @@ class OmeTiffWriter(Writer):
         images = []
         tiff_plane_offset = 0
         for image_index in range(len(data_shapes)):
-            # correct the data shape for ome
+            # correct the dimension_order for ome
             ome_dimension_order, is_rgb = OmeTiffWriter._resolve_OME_dimension_order(
                 data_shapes[image_index], dimension_order[image_index]
             )
@@ -559,7 +592,6 @@ class OmeTiffWriter(Writer):
             )
             images.append(img)
 
-        # TODO get aics version string here
         ox = OME(creator=f"aicsimageio {get_module_version()}", images=images)
 
         # validate????

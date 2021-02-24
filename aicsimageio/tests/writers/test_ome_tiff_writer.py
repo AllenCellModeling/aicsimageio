@@ -230,19 +230,21 @@ def test_ome_tiff_writer_with_meta(
             [(1, 3, 10, 16, 16), (1, 4, 12, 16, 16)],
             ["TCZYX", "TCZYX"],
         ),
+        # different dims, rgb last
         (
             [np.random.rand(5, 16, 16), np.random.rand(4, 12, 12, 3)],
             ["ZYX", "CYXS"],
             [(1, 1, 5, 16, 16), (1, 4, 1, 12, 12, 3)],
             ["TCZYX", "TCZYXS"],
         ),
+        # different dims, rgb first
         (
             [np.random.rand(5, 16, 16, 3), np.random.rand(4, 12, 12)],
             ["ZYXS", "CYX"],
             [(1, 1, 5, 16, 16, 3), (1, 4, 1, 12, 12)],
             ["TCZYXS", "TCZYX"],
         ),
-        # two scenes but only one dimension order
+        # two scenes but only one dimension order as list
         pytest.param(
             [np.random.rand(5, 16, 16, 3), np.random.rand(4, 12, 12)],
             ["ZYXS"],

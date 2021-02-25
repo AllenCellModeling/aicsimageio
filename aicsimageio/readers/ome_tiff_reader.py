@@ -213,7 +213,7 @@ class OmeTiffReader(TiffReader):
             else:
                 coords[DimensionNames.Time] = np.linspace(
                     0,
-                    scene_meta.pixels.size_t,
+                    scene_meta.pixels.size_t - 1,
                     scene_meta.pixels.size_t,
                 )
 

@@ -308,7 +308,8 @@ class OmeTiffWriter(Writer):
 
         if (ndims > 5 and not is_rgb) or ndims > 6 or ndims < 2:
             raise ValueError(
-                f"Data array has unexpected number of dimensions: is_rgb = {is_rgb} and shape is {shape}"
+                f"Data array has unexpected number of dimensions: is_rgb = {is_rgb} "
+                f"and shape is {shape}"
             )
 
         # assert valid characters in dimension_order

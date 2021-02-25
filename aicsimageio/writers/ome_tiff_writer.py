@@ -30,14 +30,17 @@ class OmeTiffWriter(Writer):
     def save(
         data: Union[List[types.ArrayLike], types.ArrayLike],
         uri: types.PathLike,
-        dim_order: Union[str, List[Union[str, None]], None] = None,
-        ome_xml: Union[str, OME, None] = None,
+        dim_order: Optional[Union[str, List[Union[str, None]]]] = None,
+        ome_xml: Optional[Union[str, OME]] = None,
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
-        image_name: Union[str, List[Union[str, None]], None] = None,
-        physical_pixel_sizes: Union[
-            Tuple[float, float, float], List[Tuple[float, float, float]], None
+        image_name: Optional[Union[str, List[Union[str, None]]]] = None,
+        physical_pixel_sizes: Optional[
+            Union[
+                types.PhysicalPixelSizes,
+                List[types.PhysicalPixelSizes],
+            ]
         ] = None,
-        channel_colors: Union[List[int], List[List[int]], None] = None,
+        channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -186,7 +189,9 @@ class OmeTiffWriter(Writer):
         if isinstance(physical_pixel_sizes, tuple):
             physical_pixel_sizes = [physical_pixel_sizes] * num_images
         elif physical_pixel_sizes is None:
-            physical_pixel_sizes = [(1.0, 1.0, 1.0)] * num_images
+            physical_pixel_sizes = [
+                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+            ] * num_images
         if channel_names is None or isinstance(channel_names[0], int):
             channel_names = [channel_names] * num_images  # type: ignore
         if channel_colors is None or isinstance(channel_colors[0], int):
@@ -495,7 +500,7 @@ class OmeTiffWriter(Writer):
         dimension_order: Optional[List[Optional[str]]] = None,
         channel_names: Optional[List[Optional[List[str]]]] = None,
         image_name: List[Optional[str]] = None,
-        physical_pixel_sizes: List[Tuple[float, float, float]] = None,
+        physical_pixel_sizes: List[types.PhysicalPixelSizes] = None,
         channel_colors: List[Optional[List[int]]] = None,
     ) -> OME:
         """
@@ -538,7 +543,9 @@ class OmeTiffWriter(Writer):
         if image_name is None:
             image_name = [None] * num_images
         if physical_pixel_sizes is None:
-            physical_pixel_sizes = [(1.0, 1.0, 1.0)] * num_images
+            physical_pixel_sizes = [
+                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+            ] * num_images
         if channel_colors is None:
             channel_colors = [None] * num_images
 

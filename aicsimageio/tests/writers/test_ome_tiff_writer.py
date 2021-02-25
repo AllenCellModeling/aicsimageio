@@ -291,15 +291,28 @@ def test_ome_tiff_writer_multiscene(
 
 
 @pytest.mark.parametrize(
-    "array_data, write_dim_order, channel_names, read_shapes, read_dim_order",
+    "array_data, write_dim_order, pixel_size, channel_names, channel_colors, "
+    "read_shapes, read_dim_order, expected_pixel_size",
     [
-        ([np.random.rand(5, 16, 16)], None, ["C0"], [(1, 1, 5, 16, 16)], ["TCZYX"]),
+        (
+            [np.random.rand(5, 16, 16)],
+            None,
+            [(1.0, 2.0, 3.0)],
+            ["C0"],
+            None,
+            [(1, 1, 5, 16, 16)],
+            ["TCZYX"],
+            [(1.0, 2.0, 3.0)],
+        ),
         (
             [np.random.rand(2, 16, 16), np.random.rand(2, 12, 12)],
             "CYX",
+            [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)],
             [["C0", "C1"], None],
+            None,
             [(1, 2, 1, 16, 16), (1, 2, 1, 12, 12)],
             ["TCZYX", "TCZYX"],
+            [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)],
         ),
     ],
 )
@@ -307,9 +320,12 @@ def test_ome_tiff_writer_multiscene(
 def test_ome_tiff_writer_channel_names(
     array_data: List[types.ArrayLike],
     write_dim_order: List[Optional[str]],
+    pixel_size: List[types.PhysicalPixelSizes],
     channel_names: List[Optional[List[str]]],
+    channel_colors: List[Optional[List[int]]],
     read_shapes: List[Tuple[int, ...]],
     read_dim_order: List[str],
+    expected_pixel_size: List[types.PhysicalPixelSizes],
     filename: str,
 ) -> None:
     # Construct save end point
@@ -317,7 +333,12 @@ def test_ome_tiff_writer_channel_names(
 
     # Normal save
     OmeTiffWriter.save(
-        array_data, save_uri, write_dim_order, channel_names=channel_names
+        array_data,
+        save_uri,
+        write_dim_order,
+        channel_names=channel_names,
+        channel_colors=channel_colors,
+        physical_pixel_sizes=pixel_size,
     )
 
     # Read written result and check basics
@@ -329,3 +350,4 @@ def test_ome_tiff_writer_channel_names(
         reader.set_scene(reader.scenes[i])
         assert reader.shape == read_shapes[i]
         assert reader.dims.order == read_dim_order[i]
+        assert reader.physical_pixel_sizes == expected_pixel_size[i]

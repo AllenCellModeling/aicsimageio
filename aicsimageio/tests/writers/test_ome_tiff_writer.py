@@ -288,3 +288,44 @@ def test_ome_tiff_writer_multiscene(
         reader.set_scene(reader.scenes[i])
         assert reader.shape == read_shapes[i]
         assert reader.dims.order == read_dim_order[i]
+
+
+@pytest.mark.parametrize(
+    "array_data, write_dim_order, channel_names, read_shapes, read_dim_order",
+    [
+        ([np.random.rand(5, 16, 16)], None, ["C0"], [(1, 1, 5, 16, 16)], ["TCZYX"]),
+        (
+            [np.random.rand(2, 16, 16), np.random.rand(2, 12, 12)],
+            "CYX",
+            [["C0", "C1"], None],
+            [(1, 2, 1, 16, 16), (1, 2, 1, 12, 12)],
+            ["TCZYX", "TCZYX"],
+        ),
+    ],
+)
+@pytest.mark.parametrize("filename", ["e.ome.tiff"])
+def test_ome_tiff_writer_channel_names(
+    array_data: List[types.ArrayLike],
+    write_dim_order: List[Optional[str]],
+    channel_names: List[Optional[List[str]]],
+    read_shapes: List[Tuple[int, ...]],
+    read_dim_order: List[str],
+    filename: str,
+) -> None:
+    # Construct save end point
+    save_uri = get_resource_write_full_path(filename, LOCAL)
+
+    # Normal save
+    OmeTiffWriter.save(
+        array_data, save_uri, write_dim_order, channel_names=channel_names
+    )
+
+    # Read written result and check basics
+    reader = OmeTiffReader(save_uri)
+
+    # Check basics
+    assert len(reader.scenes) == len(read_shapes)
+    for i in range(len(reader.scenes)):
+        reader.set_scene(reader.scenes[i])
+        assert reader.shape == read_shapes[i]
+        assert reader.dims.order == read_dim_order[i]

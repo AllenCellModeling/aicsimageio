@@ -15,7 +15,6 @@ from ..dimensions import (
 )
 from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils
-from ..readers import DefaultReader
 from ..utils import io_utils
 from .writer import Writer
 
@@ -99,10 +98,10 @@ class OmeTiffWriter(Writer):
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
         ... OmeTiffWriter.save(image, "file.ome.tif")
 
-        Convert a CZI file into OME-Tiff
+        Write data with a known dimension order into OME-Tiff
 
-        >>> reader = cziReader.CziReader("file3.czi")
-        ... OmeTiffWriter.save(reader.load(), "file3.ome.tif")
+        >>> image = numpy.ndarray([10, 3, 1024, 2048])
+        ... OmeTiffWriter.save(image, "file.ome.tif", dim_order="ZCYX")
 
         Write multi-scene data to OME-Tiff, specifying channel names
 
@@ -115,64 +114,61 @@ class OmeTiffWriter(Writer):
         ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
         ... )
         """
-        # Check unpack uri and extension
+        # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
-        (
-            extension,
-            imageio_mode,
-        ) = DefaultReader._get_extension_and_mode(path)
 
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
+            num_images = len(data)
             if isinstance(dim_order, list):
-                if len(dim_order) != len(data):
+                if len(dim_order) != num_images:
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeTiffWriter received a list of arrays to use as scenes "
                         f"but the provided list of dimension_order is of different "
                         f"length. "
-                        f"Number of provided scenes: {len(data)}, "
+                        f"Number of provided scenes: {num_images}, "
                         f"Number of provided known dimension strings: "
                         f"{len(dim_order)}"
                     )
             if isinstance(image_name, list):
-                if len(image_name) != len(data):
+                if len(image_name) != num_images:
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeTiffWriter received a list of arrays to use as scenes "
                         f"but the provided list of image_names is of different "
                         f"length. "
-                        f"Number of provided scenes: {len(data)}, "
+                        f"Number of provided scenes: {num_images}, "
                         f"Number of provided known dimension strings: {len(image_name)}"
                     )
             if isinstance(pixels_physical_size, list):
-                if len(pixels_physical_size) != len(data):
+                if len(pixels_physical_size) != num_images:
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeTiffWriter received a list of arrays to use as scenes "
                         f"but the provided list of image_names is of different "
                         f"length. "
-                        f"Number of provided scenes: {len(data)}, "
+                        f"Number of provided scenes: {num_images}, "
                         f"Number of provided known dimension strings: "
                         f"{len(pixels_physical_size)}"
                     )
 
             if channel_names is not None:
                 if isinstance(channel_names[0], list):
-                    if len(channel_names) != len(data):
+                    if len(channel_names) != num_images:
                         raise exceptions.ConflictingArgumentsError(
                             f"OmeTiffWriter received a list of arrays to use as scenes "
                             f"but the provided list of channel_names is of different "
                             f"length. "
-                            f"Number of provided scenes: {len(data)}, "
+                            f"Number of provided scenes: {num_images}, "
                             f"Number of provided known dimension strings: "
                             f"{len(channel_names)}"
                         )
             if channel_colors is not None:
                 if isinstance(channel_colors[0], list):
-                    if len(channel_colors) != len(data):
+                    if len(channel_colors) != num_images:
                         raise exceptions.ConflictingArgumentsError(
                             f"OmeTiffWriter received a list of arrays to use as scenes "
                             f"but the provided list of channel_colors is of different "
                             f"length. "
-                            f"Number of provided scenes: {len(data)}, "
+                            f"Number of provided scenes: {num_images}, "
                             f"Number of provided known dimension strings: "
                             f"{len(channel_colors)}"
                         )
@@ -180,21 +176,21 @@ class OmeTiffWriter(Writer):
         # make sure data is a list
         if not isinstance(data, list):
             data = [data]
-        num_scenes = len(data)
+        num_images = len(data)
 
         # If metadata is attached as singles, expand to lists to match data
         if dim_order is None or isinstance(dim_order, str):
-            dim_order = [dim_order] * num_scenes
+            dim_order = [dim_order] * num_images
         if image_name is None or isinstance(image_name, str):
-            image_name = [image_name] * num_scenes
+            image_name = [image_name] * num_images
         if isinstance(pixels_physical_size, tuple):
-            pixels_physical_size = [pixels_physical_size] * num_scenes
+            pixels_physical_size = [pixels_physical_size] * num_images
         elif pixels_physical_size is None:
-            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_scenes
+            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_images
         if channel_names is None or isinstance(channel_names[0], int):
-            channel_names = [channel_names] * num_scenes  # type: ignore
+            channel_names = [channel_names] * num_images  # type: ignore
         if channel_colors is None or isinstance(channel_colors[0], int):
-            channel_colors = [channel_colors] * num_scenes  # type: ignore
+            channel_colors = [channel_colors] * num_images  # type: ignore
 
         xml = ""
         # try to construct OME from params
@@ -214,13 +210,13 @@ class OmeTiffWriter(Writer):
 
         # if we do not have an OME object now, something is wrong
         if not isinstance(ome_xml, OME):
-            raise ValueError(
+            raise TypeError(
                 "Unknown OME-XML metadata passed in. Use OME object, or xml string or \
                 None"
             )
 
         # vaidate ome
-        for scene_index in range(len(data)):
+        for scene_index in range(num_images):
             OmeTiffWriter._check_ome_dims(
                 ome_xml, scene_index, data[scene_index].shape, data[scene_index].dtype
             )
@@ -228,20 +224,19 @@ class OmeTiffWriter(Writer):
         # convert to string for writing
         xml = to_xml(ome_xml).encode()
 
-        # now the heavy lifting. assemble the raw data and write it
-
-        for scene_index in range(len(data)):
-            # Assumption: if provided a dask array to save, it can fit into memory
-            if isinstance(data[scene_index], da.core.Array):
-                data[scene_index].compute()  # type: ignore
-
         # Save image to tiff!
         tif = tifffile.TiffWriter(
             path,
             bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
         )
 
-        for scene_index in range(len(data)):
+        # now the heavy lifting. assemble the raw data and write it
+        for scene_index in range(num_images):
+            image_data = data[scene_index]
+            # Assumption: if provided a dask array to save, it can fit into memory
+            if isinstance(image_data, da.core.Array):
+                image_data = data[scene_index].compute()  # type: ignore
+
             description = xml if scene_index == 0 else None
             # assume if first channel is rgb then all of it is
             is_rgb = (
@@ -252,7 +247,7 @@ class OmeTiffWriter(Writer):
             )
             planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
             tif.write(
-                data[scene_index],
+                image_data,
                 description=description,
                 photometric=photometric,
                 metadata=None,
@@ -311,20 +306,10 @@ class OmeTiffWriter(Writer):
         else:
             is_rgb = dimension_order[-1] == "S" and (shape[-1] == 3 or shape[-1] == 4)
 
-        # select last 5 (or 6 if rgb) dims
-        max_dims = 6 if is_rgb else 5
-        if ndims > max_dims:
+        if (ndims > 5 and not is_rgb) or ndims > 6 or ndims < 2:
             raise ValueError(
-                f"Data array should be less than 7D: is_rgb = {is_rgb} and {shape}"
+                f"Data array has unexpected number of dimensions: is_rgb = {is_rgb} and shape is {shape}"
             )
-        #     slc = [0] * (ndims - max_dims)
-        #     slc += [slice(None)] * max_dims
-        #     data = data[slc]
-
-        ndims = len(shape)
-        assert (
-            ndims == 6 or ndims == 5 or ndims == 4 or ndims == 3 or ndims == 2
-        ), "Expected no more than 6 dimensions in data array"
 
         # assert valid characters in dimension_order
         if not (
@@ -460,9 +445,10 @@ class OmeTiffWriter(Writer):
             size_x=dim_or_1("X"),
             interleaved=True if samples_per_pixel > 1 else None,
         )
-        pixels.physical_size_x = pixels_physical_size[0]
+        # expected in ZYX order
+        pixels.physical_size_z = pixels_physical_size[0]
         pixels.physical_size_y = pixels_physical_size[1]
-        pixels.physical_size_z = pixels_physical_size[2]
+        pixels.physical_size_x = pixels_physical_size[2]
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
@@ -591,13 +577,13 @@ class OmeTiffWriter(Writer):
             )
             images.append(img)
 
-        ox = OME(creator=f"aicsimageio {get_module_version()}", images=images)
+        ome_object = OME(creator=f"aicsimageio {get_module_version()}", images=images)
 
-        # validate????
-        test = to_xml(ox)
+        # validate! (TODO: Is there a better api in ome-types for this?)
+        test = to_xml(ome_object)
         from_xml(test)
 
-        return ox
+        return ome_object
 
     @staticmethod
     def _check_ome_dims(

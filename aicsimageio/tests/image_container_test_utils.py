@@ -110,32 +110,27 @@ def run_image_container_checks(
 
 
 def run_image_container_mosaic_checks(
-    image_container: Reader,
-    set_scene: str,
-    expected_shape: Tuple[int, ...],
-    expected_dims_order: str,
-) -> Reader:
+    tiles_image_container: Reader,
+    stitched_image_container: Reader,
+    tiles_set_scene: str,
+    stitched_set_scene: str,
+) -> None:
     """
     A general suite of tests to run against readers that can stitch mosaic tiles.
+
+    This tests uses in-memory numpy to compare. Test mosaics should be small enough to
+    fit into memory.
     """
+    # Set scenes
+    tiles_image_container.set_scene(tiles_set_scene)
+    stitched_image_container.set_scene(stitched_set_scene)
 
-    # Check serdes
-    check_can_serialize_image_container(image_container)
+    # Get data subset
+    from_tiles_stitched_data = tiles_image_container.mosaic_data
+    already_stitched_data = stitched_image_container.data
 
-    # Set scene
-    image_container.set_scene(set_scene)
-
-    # Check basics
-    assert image_container.mosaic_xarray_dask_data.shape == expected_shape
-    assert (
-        "".join(image_container.mosaic_xarray_dask_data.dims)  # type: ignore
-        == expected_dims_order
-    )
-
-    # Check serdes
-    check_can_serialize_image_container(image_container)
-
-    return image_container
+    # Compare
+    np.testing.assert_array_equal(from_tiles_stitched_data, already_stitched_data)
 
 
 def run_image_file_checks(

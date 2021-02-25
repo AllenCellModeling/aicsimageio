@@ -171,7 +171,7 @@ from .image_container_test_utils import (
             "tiled.lif",
             "TileScan_002",
             ("TileScan_002",),
-            (1, 4, 1, 5632, 7680),
+            (1, 4, 1, 5622, 7666),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray", "Red", "Green", "Cyan"],

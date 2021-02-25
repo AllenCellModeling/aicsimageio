@@ -33,9 +33,9 @@ from ..image_container_test_utils import (
             "s_1_t_1_c_2_z_1.lif",
             "PEI_laminin_35k",
             ("PEI_laminin_35k",),
-            (1, 1, 2, 1, 2048, 2048),
+            (1, 2, 1, 2048, 2048),
             np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"],
             (1.0, 3.076923076923077, 3.076923076923077),
         ),
@@ -43,9 +43,9 @@ from ..image_container_test_utils import (
             "s_1_t_4_c_2_z_1.lif",
             "b2_001_Crop001_Resize001",
             ("b2_001_Crop001_Resize001",),
-            (1, 4, 2, 1, 614, 614),
+            (4, 2, 1, 614, 614),
             np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
             (1.0, 2.9485556406398508, 2.9485556406398508),
         ),
@@ -150,39 +150,44 @@ def test_sanity_check_correct_indexing(
 
 
 @pytest.mark.parametrize(
-    "filename, set_scene, expected_shape, expected_dims_order",
+    "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
     [
         (
             "tiled.lif",
+            "merged-tiles.lif",
             "TileScan_002",
-            (1, 4, 1, 5632, 7680),
-            "TCZYX",
+            "TileScan_002_Merging",
         ),
-        # Doesn't error because LIFs always have a tile
-        (
-            "s_1_t_1_c_2_z_1.lif",
-            "PEI_laminin_35k",
-            (1, 2, 1, 2048, 2048),
-            "TCZYX",
+        # s_1_t_4_c_2_z_1.lif has no mosaic tiles
+        pytest.param(
+            "s_1_t_4_c_2_z_1.lif",
+            "merged-tiles.lif",
+            "b2_001_Crop001_Resize001",
+            "TileScan_002_Merging",
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
         ),
     ],
 )
 def test_lif_reader_mosaic_stitching(
-    filename: str,
-    set_scene: str,
-    expected_shape: Tuple[int, ...],
-    expected_dims_order: str,
+    tiles_filename: str,
+    stitched_filename: str,
+    tiles_set_scene: str,
+    stitched_set_scene: str,
 ) -> None:
     # Construct full filepath
-    uri = get_resource_full_path(filename, LOCAL)
+    tiles_uri = get_resource_full_path(tiles_filename, LOCAL)
+    stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri)
+    tiles_reader = LifReader(tiles_uri)
+    stitched_reader = LifReader(stitched_uri)
 
     # Run checks
     run_image_container_mosaic_checks(
-        image_container=reader,
-        set_scene=set_scene,
-        expected_shape=expected_shape,
-        expected_dims_order=expected_dims_order,
+        tiles_image_container=tiles_reader,
+        stitched_image_container=stitched_reader,
+        tiles_set_scene=tiles_set_scene,
+        stitched_set_scene=stitched_set_scene,
     )

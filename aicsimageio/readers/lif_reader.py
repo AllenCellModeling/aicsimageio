@@ -15,6 +15,7 @@ from readlif.reader import LifFile
 from .. import constants, exceptions, transforms, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
+    DEFAULT_DIMENSION_ORDER_LIST,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES,
     REQUIRED_CHUNK_BY_DIMS,
     DimensionNames,
@@ -156,14 +157,15 @@ class LifReader(Reader):
                 plane_indices: Dict[str, int] = {}
 
                 # Handle MosaicTile
-                if use_selected_or_np_map[DimensionNames.MosaicTile] is None:
-                    plane_indices["m"] = np_index[
-                        retrieve_dims.index(DimensionNames.MosaicTile)
-                    ]
-                else:
-                    plane_indices["m"] = use_selected_or_np_map[  # type: ignore
-                        DimensionNames.MosaicTile
-                    ]
+                if DimensionNames.MosaicTile in use_selected_or_np_map:
+                    if use_selected_or_np_map[DimensionNames.MosaicTile] is None:
+                        plane_indices["m"] = np_index[
+                            retrieve_dims.index(DimensionNames.MosaicTile)
+                        ]
+                    else:
+                        plane_indices["m"] = use_selected_or_np_map[  # type: ignore
+                            DimensionNames.MosaicTile
+                        ]
 
                 # Handle Time
                 if use_selected_or_np_map[DimensionNames.Time] is None:
@@ -419,9 +421,19 @@ class LifReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
+            selected_scene = lif.get_image(self.current_scene_index)
+            scene_short_info = selected_scene.info
 
-            # Dims are always the same
-            dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+            # Check for mosaic tiles
+            tile_positions = scene_short_info["mosaic_position"]
+
+            # If there are tiles in the image use mosaic dims
+            if len(tile_positions) > 0:
+                dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+
+            # Otherwise use standard dims
+            else:
+                dims = DEFAULT_DIMENSION_ORDER_LIST
 
             # Get image data
             image_data = self._create_dask_array(lif, dims)
@@ -432,7 +444,7 @@ class LifReader(Reader):
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
-                image_short_info=lif.get_image(self.current_scene_index).info,
+                image_short_info=scene_short_info,
                 scene_index=self.current_scene_index,
             )
 
@@ -463,9 +475,19 @@ class LifReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
+            selected_scene = lif.get_image(self.current_scene_index)
+            scene_short_info = selected_scene.info
 
-            # Dims are always the same
-            dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+            # Check for mosaic tiles
+            tile_positions = scene_short_info["mosaic_position"]
+
+            # If there are tiles in the image use mosaic dims
+            if len(tile_positions) > 0:
+                dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+
+            # Otherwise use standard dims
+            else:
+                dims = DEFAULT_DIMENSION_ORDER_LIST
 
             # Get image data
             image_data = self._get_image_data(
@@ -482,7 +504,7 @@ class LifReader(Reader):
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
-                image_short_info=lif.get_image(self.current_scene_index).info,
+                image_short_info=scene_short_info,
                 scene_index=self.current_scene_index,
             )
 
@@ -518,7 +540,7 @@ class LifReader(Reader):
                 arr_shape_list.append(size * nx)
 
         # Fill all tiles
-        tile_grid: List[List[np.ndarray]] = []
+        rows: List[np.ndarray] = []
         for row_i in range(ny):
             row: List[np.ndarray] = []
             for col_i in range(nx):
@@ -532,13 +554,26 @@ class LifReader(Reader):
                     return_dims=dims.replace(DimensionNames.MosaicTile, ""),
                     M=m_index,
                 )
-                row.insert(0, tile)
 
-            tile_grid.insert(0, row)
+                # LIF image stitching has a 1 pixel overlap
+                # Take all pixels except the first _except_ if this is the last tile
+                # in the row (the X dimension)
+                if col_i + 1 < nx:
+                    row.insert(0, tile[:, :, :, :, 1:])
+                else:
+                    row.insert(0, tile)
+
+            # Concat row and append
+            # Take all pixels except the first Y dimension pixel _except_ if this is the
+            # last row
+            np_row = np.concatenate(row, axis=-1)
+            if row_i + 1 < ny:
+                rows.insert(0, np_row[:, :, :, 1:, :])
+            else:
+                rows.insert(0, np_row)
 
         # Concatenate
-        mosaic_rows = [np.concatenate(row, axis=-1) for row in tile_grid]
-        mosaic = np.concatenate(mosaic_rows, axis=-2)
+        mosaic = np.concatenate(rows, axis=-2)
 
         return mosaic
 
@@ -547,13 +582,7 @@ class LifReader(Reader):
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            # LIFs always have a tile but not always have mosaic positions in the case
-            # of a single tiled LIF
-            # catch the index error and return (0, 0) for the indices of the mosaic grid
-            try:
-                last_tile_position = selected_scene.info["mosaic_position"][-1]
-            except IndexError:
-                last_tile_position = (0, 0)
+            last_tile_position = selected_scene.info["mosaic_position"][-1]
 
         # Stitch
         stitched = self._stitch_tiles(

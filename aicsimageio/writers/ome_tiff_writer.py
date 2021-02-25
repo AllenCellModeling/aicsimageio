@@ -34,7 +34,7 @@ class OmeTiffWriter(Writer):
         ome_xml: Union[str, OME, None] = None,
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
         image_name: Union[str, List[Union[str, None]], None] = None,
-        pixels_physical_size: Union[
+        physical_pixel_sizes: Union[
             Tuple[float, float, float], List[Tuple[float, float, float]], None
         ] = None,
         channel_colors: Union[List[int], List[List[int]], None] = None,
@@ -81,7 +81,7 @@ class OmeTiffWriter(Writer):
             Default: None
             If None is given, the list will be generated as a 0-indexed list of strings
             of the form "Image:image_index"
-        pixels_physical_size: Union[Tuple[float, float, float],
+        physical_pixel_sizes: Union[Tuple[float, float, float],
                 List[Tuple[float, float, float]], None]
             List of numbers representing the physical pixel sizes in z,y,x in microns
             Default: None
@@ -139,15 +139,15 @@ class OmeTiffWriter(Writer):
                         f"Number of provided scenes: {num_images}, "
                         f"Number of provided known dimension strings: {len(image_name)}"
                     )
-            if isinstance(pixels_physical_size, list):
-                if len(pixels_physical_size) != num_images:
+            if isinstance(physical_pixel_sizes, list):
+                if len(physical_pixel_sizes) != num_images:
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeTiffWriter received a list of arrays to use as scenes "
                         f"but the provided list of image_names is of different "
                         f"length. "
                         f"Number of provided scenes: {num_images}, "
                         f"Number of provided known dimension strings: "
-                        f"{len(pixels_physical_size)}"
+                        f"{len(physical_pixel_sizes)}"
                     )
 
             if channel_names is not None:
@@ -183,10 +183,10 @@ class OmeTiffWriter(Writer):
             dim_order = [dim_order] * num_images
         if image_name is None or isinstance(image_name, str):
             image_name = [image_name] * num_images
-        if isinstance(pixels_physical_size, tuple):
-            pixels_physical_size = [pixels_physical_size] * num_images
-        elif pixels_physical_size is None:
-            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_images
+        if isinstance(physical_pixel_sizes, tuple):
+            physical_pixel_sizes = [physical_pixel_sizes] * num_images
+        elif physical_pixel_sizes is None:
+            physical_pixel_sizes = [(1.0, 1.0, 1.0)] * num_images
         if channel_names is None or isinstance(channel_names[0], int):
             channel_names = [channel_names] * num_images  # type: ignore
         if channel_colors is None or isinstance(channel_colors[0], int):
@@ -200,7 +200,7 @@ class OmeTiffWriter(Writer):
                 [i.dtype for i in data],
                 channel_names=channel_names,  # type: ignore
                 image_name=image_name,
-                pixels_physical_size=pixels_physical_size,
+                physical_pixel_sizes=physical_pixel_sizes,
                 channel_colors=channel_colors,  # type: ignore
                 dimension_order=dim_order,
             )
@@ -396,7 +396,7 @@ class OmeTiffWriter(Writer):
         is_rgb: bool = False,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         image_name: Optional[str] = "I0",
-        pixels_physical_size: Tuple[float, float, float] = (1.0, 1.0, 1.0),
+        physical_pixel_sizes: Tuple[float, float, float] = (1.0, 1.0, 1.0),
         channel_names: List[str] = None,
         channel_colors: List[int] = None,
     ) -> Image:
@@ -447,9 +447,9 @@ class OmeTiffWriter(Writer):
             interleaved=True if samples_per_pixel > 1 else None,
         )
         # expected in ZYX order
-        pixels.physical_size_z = pixels_physical_size[0]
-        pixels.physical_size_y = pixels_physical_size[1]
-        pixels.physical_size_x = pixels_physical_size[2]
+        pixels.physical_size_z = physical_pixel_sizes[0]
+        pixels.physical_size_y = physical_pixel_sizes[1]
+        pixels.physical_size_x = physical_pixel_sizes[2]
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
@@ -495,7 +495,7 @@ class OmeTiffWriter(Writer):
         dimension_order: Optional[List[Optional[str]]] = None,
         channel_names: Optional[List[Optional[List[str]]]] = None,
         image_name: List[Optional[str]] = None,
-        pixels_physical_size: List[Tuple[float, float, float]] = None,
+        physical_pixel_sizes: List[Tuple[float, float, float]] = None,
         channel_colors: List[Optional[List[int]]] = None,
     ) -> OME:
         """
@@ -515,8 +515,8 @@ class OmeTiffWriter(Writer):
             The names for each channel to be put into the OME metadata
         image_name:
             The name of the image to be put into the OME metadata
-        pixels_physical_size:
-            X,Y, and Z physical dimensions of each pixel,
+        physical_pixel_sizes:
+            Z,Y, and X physical dimensions of each pixel,
             defaulting to microns
         channel_colors:
             The channel colors to be put into the OME metadata
@@ -537,8 +537,8 @@ class OmeTiffWriter(Writer):
             channel_names = [None] * num_images
         if image_name is None:
             image_name = [None] * num_images
-        if pixels_physical_size is None:
-            pixels_physical_size = [(1.0, 1.0, 1.0)] * num_images
+        if physical_pixel_sizes is None:
+            physical_pixel_sizes = [(1.0, 1.0, 1.0)] * num_images
         if channel_colors is None:
             channel_colors = [None] * num_images
 
@@ -548,7 +548,7 @@ class OmeTiffWriter(Writer):
             or num_images != len(dimension_order)
             or num_images != len(channel_names)
             or num_images != len(image_name)
-            or num_images != len(pixels_physical_size)
+            or num_images != len(physical_pixel_sizes)
             or num_images != len(channel_colors)
         ):
             raise ValueError("Mismatched array counts in parameters to build_ome")
@@ -568,7 +568,7 @@ class OmeTiffWriter(Writer):
                 is_rgb,
                 ome_dimension_order,
                 image_name[image_index],
-                pixels_physical_size[image_index],
+                physical_pixel_sizes[image_index],
                 channel_names[image_index],
                 channel_colors[image_index],
             )

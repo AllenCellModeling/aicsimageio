@@ -83,7 +83,7 @@ class OmeTiffWriter(Writer):
             of the form "Image:image_index"
         pixels_physical_size: Union[Tuple[float, float, float],
                 List[Tuple[float, float, float]], None]
-            List of numbers representing the physical pixel sizes in x,y,z in microns
+            List of numbers representing the physical pixel sizes in z,y,x in microns
             Default: None
             If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Union[List[int], List[List[int]], None]

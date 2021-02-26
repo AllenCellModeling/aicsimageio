@@ -9,6 +9,7 @@ from tifffile import TIFF
 
 from .. import exceptions, get_module_version, types
 from ..dimensions import (
+    DimensionNames,
     DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
@@ -309,7 +310,9 @@ class OmeTiffWriter(Writer):
                 else DEFAULT_DIMENSION_ORDER
             )
         else:
-            is_rgb = dimension_order[-1] == "S" and (shape[-1] == 3 or shape[-1] == 4)
+            is_rgb = dimension_order[-1] == DimensionNames.Samples and (
+                shape[-1] == 3 or shape[-1] == 4
+            )
 
         if (ndims > 5 and not is_rgb) or ndims > 6 or ndims < 2:
             raise ValueError(
@@ -324,7 +327,7 @@ class OmeTiffWriter(Writer):
             raise InvalidDimensionOrderingError(
                 f"Invalid dimension_order {dimension_order}"
             )
-        if dimension_order.find("S") > -1 and not is_rgb:
+        if dimension_order.find(DimensionNames.Samples) > -1 and not is_rgb:
             raise InvalidDimensionOrderingError(
                 "Samples must be last dimension if present, and only S=3 or 4 is \
                 supported."
@@ -347,11 +350,11 @@ class OmeTiffWriter(Writer):
         # expand to 5D and add appropriate dimensions
         elif len(dimension_order) == 3:
             # prepend either TC, TZ or CZ
-            if dimension_order[0] == "T":
+            if dimension_order[0] == DimensionNames.Time:
                 dimension_order = "CZ" + dimension_order
-            elif dimension_order[0] == "C":
+            elif dimension_order[0] == DimensionNames.Channel:
                 dimension_order = "TZ" + dimension_order
-            elif dimension_order[0] == "Z":
+            elif dimension_order[0] == DimensionNames.SpatialZ:
                 dimension_order = "TC" + dimension_order
 
         # expand to 5D and add appropriate dimensions
@@ -359,11 +362,11 @@ class OmeTiffWriter(Writer):
             # prepend either T, C, or Z
             first2 = dimension_order[:2]
             if first2 == "TC" or first2 == "CT":
-                dimension_order = "Z" + dimension_order
+                dimension_order = DimensionNames.SpatialZ + dimension_order
             elif first2 == "TZ" or first2 == "ZT":
-                dimension_order = "C" + dimension_order
+                dimension_order = DimensionNames.Channel + dimension_order
             elif first2 == "CZ" or first2 == "ZC":
-                dimension_order = "T" + dimension_order
+                dimension_order = DimensionNames.Time + dimension_order
 
         return dimension_order, is_rgb
 
@@ -424,7 +427,7 @@ class OmeTiffWriter(Writer):
             idx = dimension_order.find(dim)
             return 1 if idx == -1 else data_shape[idx]
 
-        channel_count = dim_or_1("C")
+        channel_count = dim_or_1(DimensionNames.Channel)
 
         if len(dimension_order) != 5:
             raise ValueError(f"Unrecognized OME TIFF dimension order {dimension_order}")
@@ -446,11 +449,11 @@ class OmeTiffWriter(Writer):
             id=f"Pixels:{image_index}:0",
             dimension_order=dimension_order[::-1],
             type=utils.dtype_to_ome_type(data_dtype),
-            size_t=dim_or_1("T"),
+            size_t=dim_or_1(DimensionNames.Time),
             size_c=channel_count * samples_per_pixel,
-            size_z=dim_or_1("Z"),
-            size_y=dim_or_1("Y"),
-            size_x=dim_or_1("X"),
+            size_z=dim_or_1(DimensionNames.SpatialZ),
+            size_y=dim_or_1(DimensionNames.SpatialY),
+            size_x=dim_or_1(DimensionNames.SpatialX),
             interleaved=True if samples_per_pixel > 1 else None,
         )
         # expected in ZYX order
@@ -608,16 +611,18 @@ class OmeTiffWriter(Writer):
         # reverse the OME dimension order to compare against numpy shape
         dimension_order = ome_xml.images[image_index].pixels.dimension_order.value[::-1]
         dims = {
-            "T": ome_xml.images[image_index].pixels.size_t,
-            "C": ome_xml.images[image_index].pixels.size_c,
-            "Z": ome_xml.images[image_index].pixels.size_z,
-            "Y": ome_xml.images[image_index].pixels.size_y,
-            "X": ome_xml.images[image_index].pixels.size_x,
+            DimensionNames.Time: ome_xml.images[image_index].pixels.size_t,
+            DimensionNames.Channel: ome_xml.images[image_index].pixels.size_c,
+            DimensionNames.SpatialZ: ome_xml.images[image_index].pixels.size_z,
+            DimensionNames.SpatialY: ome_xml.images[image_index].pixels.size_y,
+            DimensionNames.SpatialX: ome_xml.images[image_index].pixels.size_x,
         }
         if samples > 1:
-            dims["C"] = len(ome_xml.images[image_index].pixels.channels)
-            dims["S"] = samples
-            dimension_order += "S"
+            dims[DimensionNames.Channel] = len(
+                ome_xml.images[image_index].pixels.channels
+            )
+            dims[DimensionNames.Samples] = samples
+            dimension_order += DimensionNames.Samples
 
         expected_shape = tuple(dims[i] for i in dimension_order)
         data_shape = OmeTiffWriter._extend_data_shape(data_shape, len(dimension_order))

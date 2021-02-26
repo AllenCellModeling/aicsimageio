@@ -297,7 +297,7 @@ def test_ome_tiff_writer_multiscene(
         (
             [np.random.rand(5, 16, 16)],
             None,
-            [(1.0, 2.0, 3.0)],
+            [types.PhysicalPixelSizes(1.0, 2.0, 3.0)],
             ["C0"],
             None,
             [(1, 1, 5, 16, 16)],
@@ -307,7 +307,10 @@ def test_ome_tiff_writer_multiscene(
         (
             [np.random.rand(2, 16, 16), np.random.rand(2, 12, 12)],
             "CYX",
-            [(1.0, 2.0, 3.0), (4.0, 5.0, 6.0)],
+            [
+                types.PhysicalPixelSizes(1.0, 2.0, 3.0),
+                types.PhysicalPixelSizes(4.0, 5.0, 6.0),
+            ],
             [["C0", "C1"], None],
             None,
             [(1, 2, 1, 16, 16), (1, 2, 1, 12, 12)],

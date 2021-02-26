@@ -55,7 +55,7 @@ class OmeTiffWriter(Writer):
             length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
-        dim_order: Union[str, list[str], None]
+        dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
             Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
             Dimension strings must be same length as number of dimensions in the data.
@@ -64,7 +64,7 @@ class OmeTiffWriter(Writer):
             If None is provided for any data array, we will guess dimensions based on a
             TCZYX ordering.
             In the None case, data will be assumed to be scalar, not RGB.
-        ome_xml: Union[str, OME, None]
+        ome_xml: Optional[Union[str, OME]]
             Provided OME metadata. The metadata can be an xml string or an OME object
             from ome-types.  A provided ome_xml will override any other provided
             metadata arguments.
@@ -79,17 +79,17 @@ class OmeTiffWriter(Writer):
             Default: None
             If None is given, the list will be generated as a 0-indexed list of strings
             of the form "Channel:image_index:channel_index"
-        image_names: Union[str, List[str], None]
+        image_names: Optional[Union[str, List[Union[str, None]]]]
             List of strings representing the names of the images
             Default: None
             If None is given, the list will be generated as a 0-indexed list of strings
             of the form "Image:image_index"
-        physical_pixel_sizes: Union[Tuple[float, float, float],
-                List[Tuple[float, float, float]], None]
+        physical_pixel_sizes: Optional[Union[types.PhysicalPixelSizes,
+                List[types.PhysicalPixelSizes]]]
             List of numbers representing the physical pixel sizes in z,y,x in microns
             Default: None
             If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
-        channel_colors: Union[List[int], List[List[int]], None]
+        channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]
             List of rgb color values per channel.  These must be values compatible with
             the OME spec.
             Default: None
@@ -401,7 +401,9 @@ class OmeTiffWriter(Writer):
         is_rgb: bool = False,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         image_name: Optional[str] = "I0",
-        physical_pixel_sizes: Tuple[float, float, float] = (1.0, 1.0, 1.0),
+        physical_pixel_sizes: types.PhysicalPixelSizes = types.PhysicalPixelSizes(
+            1.0, 1.0, 1.0
+        ),
         channel_names: List[str] = None,
         channel_colors: List[int] = None,
     ) -> Image:
@@ -452,9 +454,9 @@ class OmeTiffWriter(Writer):
             interleaved=True if samples_per_pixel > 1 else None,
         )
         # expected in ZYX order
-        pixels.physical_size_z = physical_pixel_sizes[0]
-        pixels.physical_size_y = physical_pixel_sizes[1]
-        pixels.physical_size_x = physical_pixel_sizes[2]
+        pixels.physical_size_z = physical_pixel_sizes.Z
+        pixels.physical_size_y = physical_pixel_sizes.Y
+        pixels.physical_size_x = physical_pixel_sizes.X
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [

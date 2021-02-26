@@ -9,10 +9,10 @@ from tifffile import TIFF
 
 from .. import exceptions, get_module_version, types
 from ..dimensions import (
-    DimensionNames,
     DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+    DimensionNames,
 )
 from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils

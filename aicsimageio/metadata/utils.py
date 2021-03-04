@@ -5,7 +5,10 @@ import logging
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Optional, Union
+from typing import Dict, Optional, Union
+
+import numpy as np
+from ome_types.model.simple_types import PixelType
 
 ###############################################################################
 
@@ -422,3 +425,67 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
         )
 
     return xml
+
+
+def dtype_to_ome_type(npdtype: np.dtype) -> PixelType:
+    """
+    Convert numpy dtype to OME PixelType
+
+    Parameters
+    ----------
+    npdtype: numpy.dtype
+        A numpy datatype.
+
+    Returns
+    -------
+    ome_type: PixelType
+        One of the supported OME Pixels types
+    """
+    ometypedict = {
+        np.dtype(np.int8): PixelType.INT8,
+        np.dtype(np.int16): PixelType.INT16,
+        np.dtype(np.int32): PixelType.INT32,
+        np.dtype(np.uint8): PixelType.UINT8,
+        np.dtype(np.uint16): PixelType.UINT16,
+        np.dtype(np.uint32): PixelType.UINT32,
+        np.dtype(np.float32): PixelType.FLOAT,
+        np.dtype(np.float64): PixelType.DOUBLE,
+        np.dtype(np.complex64): PixelType.COMPLEXFLOAT,
+        np.dtype(np.complex128): PixelType.COMPLEXDOUBLE,
+    }
+    ptype = ometypedict.get(npdtype)
+    if ptype is None:
+        raise ValueError(f"Ome utils can't resolve pixel type: {npdtype.name}")
+    return ptype
+
+
+def ome_to_numpy_dtype(ome_type: PixelType) -> np.dtype:
+    """
+    Convert OME PixelType to numpy dtype
+
+    Parameters
+    ----------
+    ome_type: PixelType
+        One of the supported OME Pixels types
+
+    Returns
+    -------
+    npdtype: numpy.dtype
+        A numpy datatype.
+    """
+    ometypedict: Dict[PixelType, np.dtype] = {
+        PixelType.INT8: np.dtype(np.int8),
+        PixelType.INT16: np.dtype(np.int16),
+        PixelType.INT32: np.dtype(np.int32),
+        PixelType.UINT8: np.dtype(np.uint8),
+        PixelType.UINT16: np.dtype(np.uint16),
+        PixelType.UINT32: np.dtype(np.uint32),
+        PixelType.FLOAT: np.dtype(np.float32),
+        PixelType.DOUBLE: np.dtype(np.float64),
+        PixelType.COMPLEXFLOAT: np.dtype(np.complex64),
+        PixelType.COMPLEXDOUBLE: np.dtype(np.complex128),
+    }
+    nptype = ometypedict.get(ome_type)
+    if nptype is None:
+        raise ValueError(f"Ome utils can't resolve pixel type: {ome_type.value}")
+    return nptype

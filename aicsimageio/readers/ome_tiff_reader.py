@@ -131,7 +131,7 @@ class OmeTiffReader(TiffReader):
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
                 if tiff.is_micromanager:
-                    log.warn(
+                    log.warning(
                         "Multi-image (or scene) OME-TIFFs created by MicroManager "
                         "have limited support for scene API. "
                         "It is recommended to use independent AICSImage or Reader "
@@ -205,10 +205,17 @@ class OmeTiffReader(TiffReader):
         # If non global linear timescale, we need to create an array of every plane
         # time value
         elif scene_meta.pixels.size_t > 1:
-            t_index_to_delta_map = {
-                p.the_t: p.delta_t for p in scene_meta.pixels.planes
-            }
-            coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
+            if len(scene_meta.pixels.planes) > 0:
+                t_index_to_delta_map = {
+                    p.the_t: p.delta_t for p in scene_meta.pixels.planes
+                }
+                coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
+            else:
+                coords[DimensionNames.Time] = np.linspace(
+                    0,
+                    scene_meta.pixels.size_t - 1,
+                    scene_meta.pixels.size_t,
+                )
 
         # Handle Spatial Dimensions
         if scene_meta.pixels.physical_size_z is not None:
@@ -243,13 +250,17 @@ class OmeTiffReader(TiffReader):
     ) -> types.ArrayLike:
         # Expand image_data for empty dimensions
         ome_shape = []
+
+        # need to correct channel count if this is a RGB image
+        n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         for d in dims:
-            ome_shape.append(
-                getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
-            )
+            if d == "C" and n_samples > 1:
+                count = len(ome.images[scene_index].pixels.channels)
+            else:
+                count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
+            ome_shape.append(count)
 
         # Check for num samples and expand dims if greater than 1
-        n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         if n_samples > 1:
             # Append to the end, i.e. the last dimension
             dims.append("S")

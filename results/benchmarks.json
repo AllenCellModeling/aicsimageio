@@ -7,24 +7,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "timeout": 60.0,
@@ -40,24 +44,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "timeout": 60.0,
@@ -73,24 +81,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "timeout": 60.0,
@@ -108,24 +120,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "processes": 2,
@@ -147,24 +163,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "processes": 2,
@@ -186,24 +206,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "processes": 2,
@@ -225,24 +249,28 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_10_z_1.ome.tiff'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_3_z_1_RGB.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_6_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pipeline-4.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_10_c_3_z_1.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1_RGB.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/3d-cell-viewer.ome.tiff'"
             ]
         ],
         "processes": 2,
@@ -402,6 +430,163 @@
         "type": "time",
         "unit": "seconds",
         "version": "c1150a28313339726722f6a97fdea2edc219d94efef45814df200ccc1f7f440a",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.LifReaderSuite.peakmem_cached_array": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_cached_array(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for the whole image container once the\n        current scene is read into memory.\n    \n        Serves as a comparison against the delayed construct and as a sanity check.\n        Estimate: `r.data.size * r.data.itemsize` + some metadata and object overhead.\n        \"\"\"\n        r = self.ImageContainer(img_path)\n        r.data\n        return r\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "name": "benchmark_image_containers.LifReaderSuite.peakmem_cached_array",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "921b385dd89b3219e9effe2552e0b1d3d1426a36f507ddc5e8694ffedbb148b2"
+    },
+    "benchmark_image_containers.LifReaderSuite.peakmem_delayed_array": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_delayed_array(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for the image container once the\n        delayed dask array is constructed.\n    \n        Serves as a comparison against the init.\n        Metadata should account for most of the memory difference.\n        \"\"\"\n        r = self.ImageContainer(img_path)\n        r.dask_data\n        return r\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "name": "benchmark_image_containers.LifReaderSuite.peakmem_delayed_array",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "461fb4aa314f285cb19347e6de3a32fe260e0995ee7a6b2d1395cea3586216c9"
+    },
+    "benchmark_image_containers.LifReaderSuite.peakmem_init": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_init(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for just the initialized image container.\n        \"\"\"\n        return self.ImageContainer(img_path)\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "name": "benchmark_image_containers.LifReaderSuite.peakmem_init",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "788a2e9a0f2bee5752657c04bf6faedacecddad5bd40e6059d52e3d8506c1bc3"
+    },
+    "benchmark_image_containers.LifReaderSuite.time_delayed_array_construct": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_delayed_array_construct(self, img_path):\n        \"\"\"\n        Benchmark how long it takes to construct the delayed dask array for a file.\n        \"\"\"\n        self.ImageContainer(img_path).dask_data\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.LifReaderSuite.time_delayed_array_construct",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "processes": 2,
+        "repeat": 0,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "12789a892c5bf5179c4042f06dbea6bdf8e001cd82ead6c36af4fedc2b239b8c",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.LifReaderSuite.time_init": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_init(self, img_path):\n        \"\"\"\n        Benchmark how long it takes to validate a file and finish general setup.\n        \"\"\"\n        self.ImageContainer(img_path)\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.LifReaderSuite.time_init",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "processes": 2,
+        "repeat": 0,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "e2db50f77576d6e5fad783fc0561c2abaf9f24e30009412f32f259c3e2cacbcb",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.LifReaderSuite.time_random_many_chunk_read": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_random_many_chunk_read(self, img_path):\n        \"\"\"\n        Open a file, get many chunks out of the file at once.\n    \n        I.E. \"Pull the DNA and Nucleus channel z-stacks, for the middle 50% timepoints\".\n        \"\"\"\n        r = self.ImageContainer(img_path)\n    \n        random_index_selections = {}\n        for dim, size in zip(r.dims.order, r.dims.shape):\n            if dim not in self.DEFAULT_CHUNK_DIMS:\n                a = random.randint(0, size - 1)\n                b = random.randint(0, size - 1)\n                lower = min(a, b)\n                upper = max(a, b)\n                random_index_selections[dim] = slice(lower, upper, 1)\n    \n        r.get_image_dask_data(r.dims.order, **random_index_selections).compute()\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.LifReaderSuite.time_random_many_chunk_read",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "processes": 2,
+        "repeat": 0,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "7b225feb5010d57c78cff5b71e2a1f7794526e118d70321bf533fe3448afe707",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.LifReaderSuite.time_random_single_chunk_read": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_random_single_chunk_read(self, img_path):\n        \"\"\"\n        Benchmark how long it takes to read a single chunk out of a file.\n    \n        I.E. \"Pull just the Brightfield channel z-stack.\n        \"\"\"\n        r = self.ImageContainer(img_path)\n    \n        random_index_selections = {}\n        for dim, size in zip(r.dims.order, r.dims.shape):\n            if dim not in self.DEFAULT_CHUNK_DIMS:\n                random_index_selections[dim] = random.randint(0, size - 1)\n    \n        valid_dims_to_return = \"\".join(\n            [d for d in r.dims.order if d in self.DEFAULT_CHUNK_DIMS]\n        )\n        r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()\n\nclass LifReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.LifReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.LifReaderSuite.time_random_single_chunk_read",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'"
+            ]
+        ],
+        "processes": 2,
+        "repeat": 0,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "399a2998b1b47819e475176acc36c25bf872d197bf5ba4092e4d9d008689eaea",
         "warmup_time": -1
     },
     "benchmark_image_containers.OmeTiffReaderSuite.peakmem_cached_array": {

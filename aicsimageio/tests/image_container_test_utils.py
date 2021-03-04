@@ -109,6 +109,30 @@ def run_image_container_checks(
     return image_container
 
 
+def run_image_container_mosaic_checks(
+    tiles_image_container: Reader,
+    stitched_image_container: Reader,
+    tiles_set_scene: str,
+    stitched_set_scene: str,
+) -> None:
+    """
+    A general suite of tests to run against readers that can stitch mosaic tiles.
+
+    This tests uses in-memory numpy to compare. Test mosaics should be small enough to
+    fit into memory.
+    """
+    # Set scenes
+    tiles_image_container.set_scene(tiles_set_scene)
+    stitched_image_container.set_scene(stitched_set_scene)
+
+    # Get data subset
+    from_tiles_stitched_data = tiles_image_container.mosaic_data
+    already_stitched_data = stitched_image_container.data
+
+    # Compare
+    np.testing.assert_array_equal(from_tiles_stitched_data, already_stitched_data)
+
+
 def run_image_file_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import xml.etree.ElementTree as ET
 from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -152,6 +153,30 @@ from .image_container_test_utils import (
             ],
             (0.29, 0.29, 0.29),
             OME,
+        ),
+        #######################################################################
+        # LifReader
+        (
+            "s_1_t_4_c_2_z_1.lif",
+            "b2_001_Crop001_Resize001",
+            ("b2_001_Crop001_Resize001",),
+            (4, 2, 1, 614, 614),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
+            (1.0, 2.9485556406398508, 2.9485556406398508),
+            ET.Element,
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            ("TileScan_002",),
+            (1, 4, 1, 5622, 7666),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Gray", "Red", "Green", "Cyan"],
+            (1.0, 4.984719055966396, 4.984719055966396),
+            ET.Element,
         ),
         #######################################################################
         # Errors

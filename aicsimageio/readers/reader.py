@@ -10,7 +10,7 @@ import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
 
-from .. import constants, transforms, types
+from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -36,6 +36,8 @@ class Reader(ABC):
 
     _xarray_dask_data: Optional[xr.DataArray] = None
     _xarray_data: Optional[xr.DataArray] = None
+    _mosaic_xarray_dask_data: Optional[xr.DataArray] = None
+    _mosaic_xarray_data: Optional[xr.DataArray] = None
     _dims: Optional[Dimensions] = None
     _metadata: Optional[Any] = None
     _scenes: Optional[Tuple[str, ...]] = None
@@ -203,6 +205,8 @@ class Reader(ABC):
             # Reset the data stored in the Reader object
             self._xarray_dask_data = None
             self._xarray_data = None
+            self._mosaic_xarray_dask_data = None
+            self._mosaic_xarray_data = None
             self._dims = None
             self._metadata = None
 
@@ -244,6 +248,37 @@ class Reader(ABC):
         * Must have the `dims` populated.
         * If a channel dimension is present, please populate the channel dimensions
         coordinate array the respective channel coordinate values.
+        """
+        pass
+
+    def _get_stitched_dask_mosaic(self) -> xr.DataArray:
+        """
+        Stitch all mosaic tiles back together and return as a single xr.DataArray with
+        a delayed dask array for backing data.
+
+        Returns
+        -------
+        mosaic: xr.DataArray
+            The fully stitched together image. Contains all the dimensions of the image
+            with the YX expanded to the full mosaic.
+
+        Notes
+        -----
+        Implementers can determine how to chunk the array.
+        Most common is to chunk by tile.
+        """
+        pass
+
+    def _get_stitched_mosaic(self) -> xr.DataArray:
+        """
+        Stitch all mosaic tiles back together and return as a single xr.DataArray with
+        an in-memory numpy array for backing data.
+
+        Returns
+        -------
+        mosaic: np.ndarray
+            The fully stitched together image. Contains all the dimensions of the image
+            with the YX expanded to the full mosaic.
         """
         pass
 
@@ -301,6 +336,104 @@ class Reader(ABC):
             The image as a numpy array with native dimension ordering.
         """
         return self.xarray_data.data
+
+    @property
+    def mosaic_xarray_dask_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_dask_data: xr.DataArray
+            The delayed mosaic image and metadata as an annotated data array.
+
+        Raises
+        ------
+        InvalidDimensionOrderingError
+            No MosaicTile dimension available to reader.
+
+        Notes
+        -----
+        Each reader can implement mosaic tile stitching differently but it is common
+        that each tile is a dask array chunk.
+        """
+        # Catch non-mosaic images
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.InvalidDimensionOrderingError(
+                "Cannot create stitched mosaic image for array without tiles available."
+            )
+
+        # Stitch, store, and return
+        if self._mosaic_xarray_dask_data is None:
+            self._mosaic_xarray_dask_data = self._get_stitched_dask_mosaic()
+
+        return self._mosaic_xarray_dask_data
+
+    @property
+    def mosaic_xarray_data(self) -> xr.DataArray:
+        """
+        Returns
+        -------
+        xarray_dask_data: xr.DataArray
+            The in-memory mosaic image and metadata as an annotated data array.
+
+        Raises
+        ------
+        InvalidDimensionOrderingError
+            No MosaicTile dimension available to reader.
+
+        Notes
+        -----
+        Very large images should use `mosaic_xarray_dask_data` to avoid seg-faults.
+        """
+        # Catch non-mosaic images
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.InvalidDimensionOrderingError(
+                "Cannot create stitched mosaic image for array without tiles available."
+            )
+
+        # Stitch, store, and return
+        if self._mosaic_xarray_data is None:
+            self._mosaic_xarray_data = self._get_stitched_mosaic()
+
+        return self._mosaic_xarray_data
+
+    @property
+    def mosaic_dask_data(self) -> da.Array:
+        """
+        Returns
+        -------
+        dask_data: da.Array
+            The stitched together mosaic image as a dask array.
+
+        Raises
+        ------
+        InvalidDimensionOrderingError
+            No MosaicTile dimension available to reader.
+
+        Notes
+        -----
+        Each reader can implement mosaic tile stitching differently but it is common
+        that each tile is a dask array chunk.
+        """
+        return self.mosaic_xarray_dask_data.data
+
+    @property
+    def mosaic_data(self) -> np.ndarray:
+        """
+        Returns
+        -------
+        data: np.ndarray
+            The stitched together mosaic image as a numpy array.
+
+        Raises
+        ------
+        InvalidDimensionOrderingError
+            No MosaicTile dimension available to reader.
+
+        Notes
+        -----
+        Very large images should use `mosaic_dask_data` to avoid seg-faults.
+        """
+        return self.mosaic_xarray_data.data
 
     @property
     def dtype(self) -> np.dtype:

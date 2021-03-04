@@ -108,7 +108,7 @@ class OmeTiffReader(TiffReader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
         clean_metadata: bool = True,
         **kwargs: Any,
     ):
@@ -116,6 +116,9 @@ class OmeTiffReader(TiffReader):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
+        if isinstance(chunk_by_dims, str):
+            chunk_by_dims = list(chunk_by_dims)
+
         self.chunk_by_dims = chunk_by_dims
         self.clean_metadata = clean_metadata
 
@@ -197,10 +200,10 @@ class OmeTiffReader(TiffReader):
         # Time
         # If global linear timescale we can np.linspace with metadata
         if scene_meta.pixels.time_increment is not None:
-            coords[DimensionNames.Time] = np.linspace(
+            coords[DimensionNames.Time] = np.arange(
                 0,
-                scene_meta.pixels.time_increment_quantity,
-                scene_meta.pixels.size_t,
+                scene_meta.pixels.size_t * scene_meta.pixels.time_increment,
+                scene_meta.pixels.time_increment,
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value

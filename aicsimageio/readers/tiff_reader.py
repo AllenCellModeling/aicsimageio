@@ -41,7 +41,7 @@ class TiffReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: List[str] = DEFAULT_CHUNK_BY_DIMS,
+        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
         **kwargs: Any,
     ):
         """
@@ -52,7 +52,7 @@ class TiffReader(Reader):
         ----------
         image: types.PathLike
             Path to image file to construct Reader for.
-        chunk_by_dims: List[str]
+        chunk_by_dims: Union[str, List[str]]
             Which dimensions to create chunks for.
             Default: DEFAULT_CHUNK_BY_DIMS
             Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
@@ -63,6 +63,9 @@ class TiffReader(Reader):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
+        if isinstance(chunk_by_dims, str):
+            chunk_by_dims = list(chunk_by_dims)
+
         self.chunk_by_dims = chunk_by_dims
 
         # Enforce valid image
@@ -252,7 +255,7 @@ class TiffReader(Reader):
 
         # Make ndarray for lazy arrays to fill
         lazy_arrays = np.ndarray(blocked_shape, dtype=object)
-        for plane_index, (np_index, _) in enumerate(np.ndenumerate(lazy_arrays)):
+        for np_index, _ in np.ndenumerate(lazy_arrays):
             # All dimensions get their normal index except for chunk dims
             # which get filled with "full" slices
             indices_with_slices = np_index[: len(non_chunk_shape)] + (

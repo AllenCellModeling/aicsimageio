@@ -25,7 +25,7 @@ class AICSImage:
     SUPPORTED_READERS = (
         readers.ArrayLikeReader,
         # readers.CziReader,
-        # readers.LifReader,
+        readers.LifReader,
         readers.OmeTiffReader,
         readers.TiffReader,
         readers.DefaultReader,
@@ -110,10 +110,7 @@ class AICSImage:
 
         Notes
         -----
-        Constructor for AICSImage class intended for providing a unified interface for
-        dealing with microscopy images. To extend support to a new reader simply add a
-        new reader child class of Reader ([readers/reader.py]) and add the class to the
-        SUPPORTED_READERS variable.
+        If your image is a mosaic tiled image, the tiles will be stitched together.
         """
         # Determine reader class and create dask delayed array
         ReaderClass = self.determine_reader(image, **kwargs)
@@ -223,7 +220,7 @@ class AICSImage:
         # Pull the data with the appropriate dimensions
         data = transforms.reshape_data(
             data=arr.data,
-            given_dims=self.reader.dims.order,
+            given_dims="".join(arr.dims),  # type: ignore
             return_dims=return_dims,
         )
 
@@ -256,11 +253,25 @@ class AICSImage:
         -------
         xarray_dask_data: xr.DataArray
             The delayed image and metadata as an annotated data array.
+
+        Notes
+        -----
+        If the image contains mosaic tiles, data is returned already stitched together.
         """
         if self._xarray_dask_data is None:
-            self._xarray_dask_data = self._transform_data_array_to_aics_image_standard(
-                self.reader.xarray_dask_data
-            )
+            if dimensions.DimensionNames.MosaicTile in self.reader.dims.order:
+                self._xarray_dask_data = (
+                    self._transform_data_array_to_aics_image_standard(
+                        self.reader.mosaic_xarray_dask_data
+                    )
+                )
+
+            else:
+                self._xarray_dask_data = (
+                    self._transform_data_array_to_aics_image_standard(
+                        self.reader.xarray_dask_data
+                    )
+                )
 
         return self._xarray_dask_data
 
@@ -271,11 +282,22 @@ class AICSImage:
         -------
         xarray_data: xr.DataArray
             The fully read image and metadata as an annotated data array.
+
+        Notes
+        -----
+        If the image contains mosaic tiles, data is returned already stitched together.
+        Recommended to use `xarray_dask_data` for large mosaic images.
         """
         if self._xarray_data is None:
-            self._xarray_data = self._transform_data_array_to_aics_image_standard(
-                self.reader.xarray_data
-            )
+            if dimensions.DimensionNames.MosaicTile in self.reader.dims.order:
+                self._xarray_data = self._transform_data_array_to_aics_image_standard(
+                    self.reader.mosaic_xarray_data
+                )
+
+            else:
+                self._xarray_data = self._transform_data_array_to_aics_image_standard(
+                    self.reader.xarray_data
+                )
 
             # Remake the delayed xarray dataarray object using a rechunked dask array
             # from the just retrieved in-memory xarray dataarray
@@ -295,6 +317,10 @@ class AICSImage:
         -------
         dask_data: da.Array
             The image as a dask array with standard dimension ordering.
+
+        Notes
+        -----
+        If the image contains mosaic tiles, data is returned already stitched together.
         """
         return self.xarray_dask_data.data
 
@@ -305,6 +331,11 @@ class AICSImage:
         -------
         data: np.ndarray
             The image as a numpy array with standard dimension ordering.
+
+        Notes
+        -----
+        If the image contains mosaic tiles, data is returned already stitched together.
+        Recommended to use `dask_data` for large mosaic images.
         """
         return self.xarray_data.data
 

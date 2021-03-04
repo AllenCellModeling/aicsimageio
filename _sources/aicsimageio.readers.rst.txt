@@ -20,6 +20,14 @@ aicsimageio.readers.default\_reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.lif\_reader module
+--------------------------------------
+
+.. automodule:: aicsimageio.readers.lif_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.ome\_tiff\_reader module
 --------------------------------------------
 

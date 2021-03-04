@@ -1,0 +1,1007 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.writers.ome_tiff_writer &mdash; AICSImageIO 4.0.0.dev2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.0.0.dev2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id24">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id27">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id29">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id32">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id34">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id36">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id38">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id40">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id42">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id45">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id47">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id51">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id54">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id60">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id62">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id64">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id66">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id68">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id71">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id74">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id77">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id79">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id83">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id85">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id88">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id89">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+        
+      <li>aicsimageio.writers.ome_tiff_writer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.writers.ome_tiff_writer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tifffile</span>
+<span class="kn">from</span> <span class="nn">ome_types</span> <span class="kn">import</span> <span class="n">from_xml</span><span class="p">,</span> <span class="n">to_xml</span>
+<span class="kn">from</span> <span class="nn">ome_types.model</span> <span class="kn">import</span> <span class="n">OME</span><span class="p">,</span> <span class="n">Channel</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Pixels</span><span class="p">,</span> <span class="n">TiffData</span>
+<span class="kn">from</span> <span class="nn">tifffile</span> <span class="kn">import</span> <span class="n">TIFF</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">get_module_version</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">,</span>
+    <span class="n">DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES</span><span class="p">,</span>
+    <span class="n">DEFAULT_DIMENSION_ORDER_WITH_SAMPLES</span><span class="p">,</span>
+    <span class="n">DimensionNames</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">.writer</span> <span class="kn">import</span> <span class="n">Writer</span>
+
+<span class="c1"># This is the threshold to use BigTiff, if it&#39;s the 4GB boundary it should be 2**22 but</span>
+<span class="c1"># the libtiff writer was unable to handle a 2GB numpy array.</span>
+<span class="c1"># It would be great if we better understood exactly what this threshold is and how to</span>
+<span class="c1"># calculate it but for now this is a stopgap working value</span>
+<span class="n">BIGTIFF_BYTE_LIMIT</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span>
+
+
+<div class="viewcode-block" id="OmeTiffWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffWriter</span><span class="p">(</span><span class="n">Writer</span><span class="p">):</span>
+<div class="viewcode-block" id="OmeTiffWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">],</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">],</span>
+        <span class="n">uri</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ome_xml</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">OME</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">physical_pixel_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span>
+                <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">,</span>
+                <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">],</span>
+            <span class="p">]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a data array to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: Union[List[types.ArrayLike], types.ArrayLike]</span>
+<span class="sd">            The array of data to store. Data arrays must have 2 to 6 dimensions.  If a</span>
+<span class="sd">            list is provided, then it is understood to be multiple images written to the</span>
+<span class="sd">            ome-tiff file. All following metadata parameters will be expanded to the</span>
+<span class="sd">            length of this list.</span>
+<span class="sd">        uri: types.PathLike</span>
+<span class="sd">            The URI or local path for where to save the data.</span>
+<span class="sd">        dim_order: Optional[Union[str, List[Union[str, None]]]]</span>
+<span class="sd">            The dimension order of the provided data.</span>
+<span class="sd">            Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).</span>
+<span class="sd">            Dimension strings must be same length as number of dimensions in the data.</span>
+<span class="sd">            If S is present it must be last and its data count must be 3 or 4.</span>
+<span class="sd">            Default: None.</span>
+<span class="sd">            If None is provided for any data array, we will guess dimensions based on a</span>
+<span class="sd">            TCZYX ordering.</span>
+<span class="sd">            In the None case, data will be assumed to be scalar, not RGB.</span>
+<span class="sd">        ome_xml: Optional[Union[str, OME]]</span>
+<span class="sd">            Provided OME metadata. The metadata can be an xml string or an OME object</span>
+<span class="sd">            from ome-types.  A provided ome_xml will override any other provided</span>
+<span class="sd">            metadata arguments.</span>
+<span class="sd">            Default: None</span>
+<span class="sd">            The passed-in metadata will be validated against current OME_XML schema and</span>
+<span class="sd">            raise exception if invalid.</span>
+<span class="sd">            The ome_xml will also be compared against the dimensions of the input data.</span>
+<span class="sd">            If None is given, then OME-XML metadata will be generated from the data</span>
+<span class="sd">            array and any of the following metadata arguments.</span>
+<span class="sd">        channel_names: Optional[Union[List[str], List[Optional[List[str]]]]]</span>
+<span class="sd">            Lists of strings representing the names of the data channels</span>
+<span class="sd">            Default: None</span>
+<span class="sd">            If None is given, the list will be generated as a 0-indexed list of strings</span>
+<span class="sd">            of the form &quot;Channel:image_index:channel_index&quot;</span>
+<span class="sd">        image_names: Optional[Union[str, List[Union[str, None]]]]</span>
+<span class="sd">            List of strings representing the names of the images</span>
+<span class="sd">            Default: None</span>
+<span class="sd">            If None is given, the list will be generated as a 0-indexed list of strings</span>
+<span class="sd">            of the form &quot;Image:image_index&quot;</span>
+<span class="sd">        physical_pixel_sizes: Optional[Union[types.PhysicalPixelSizes,</span>
+<span class="sd">                List[types.PhysicalPixelSizes]]]</span>
+<span class="sd">            List of numbers representing the physical pixel sizes in z,y,x in microns</span>
+<span class="sd">            Default: None</span>
+<span class="sd">            If None is given, pixel size will be (1.0, 1.0, 1.0) for all images</span>
+<span class="sd">        channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]</span>
+<span class="sd">            List of rgb color values per channel.  These must be values compatible with</span>
+<span class="sd">            the OME spec.</span>
+<span class="sd">            Default: None</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Write a TCZYX data set to OME-Tiff</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
+<span class="sd">        ... OmeTiffWriter.save(image, &quot;file.ome.tif&quot;)</span>
+
+<span class="sd">        Write data with a known dimension order into OME-Tiff</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([10, 3, 1024, 2048])</span>
+<span class="sd">        ... OmeTiffWriter.save(image, &quot;file.ome.tif&quot;, dim_order=&quot;ZCYX&quot;)</span>
+
+<span class="sd">        Write multi-scene data to OME-Tiff, specifying channel names</span>
+
+<span class="sd">        &gt;&gt;&gt; image0 = numpy.ndarray([3, 10, 1024, 2048])</span>
+<span class="sd">        ... image1 = numpy.ndarray([3, 10, 512, 512])</span>
+<span class="sd">        ... OmeTiffWriter.save(</span>
+<span class="sd">        ...     [image0, image1],</span>
+<span class="sd">        ...     &quot;file.ome.tif&quot;,</span>
+<span class="sd">        ...     dim_order=&quot;CZYX&quot;,  # this single value will be repeated to each image</span>
+<span class="sd">        ...     channel_names=[[&quot;C00&quot;,&quot;C01&quot;,&quot;C02&quot;],[&quot;C10&quot;,&quot;C11&quot;,&quot;C12&quot;]]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Resolve final destination</span>
+        <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+
+        <span class="c1"># If metadata is attached as lists, enforce matching shape</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">num_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_order</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim_order</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_images</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;OmeTiffWriter received a list of arrays to use as scenes &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;but the provided list of dimension_order is of different &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="n">num_images</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dim_order</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_images</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;OmeTiffWriter received a list of arrays to use as scenes &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;but the provided list of image_names is of different &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="n">num_images</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">physical_pixel_sizes</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">physical_pixel_sizes</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_images</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;OmeTiffWriter received a list of arrays to use as scenes &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;but the provided list of image_names is of different &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="n">num_images</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">physical_pixel_sizes</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_images</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;OmeTiffWriter received a list of arrays to use as scenes &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;but the provided list of channel_names is of different &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="n">num_images</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+            <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_images</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;OmeTiffWriter received a list of arrays to use as scenes &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;but the provided list of channel_colors is of different &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="n">num_images</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># make sure data is a list</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+        <span class="n">num_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># If metadata is attached as singles, expand to lists to match data</span>
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_order</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">dim_order</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim_order</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">image_name</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">image_name</span> <span class="o">=</span> <span class="p">[</span><span class="n">image_name</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">physical_pixel_sizes</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">physical_pixel_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">physical_pixel_sizes</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">elif</span> <span class="n">physical_pixel_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">physical_pixel_sizes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">channel_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">channel_names</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">channel_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">channel_colors</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>  <span class="c1"># type: ignore</span>
+
+        <span class="n">xml</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="c1"># try to construct OME from params</span>
+        <span class="k">if</span> <span class="n">ome_xml</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ome_xml</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">build_ome</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">shape</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">dtype</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">data</span><span class="p">],</span>
+                <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="n">image_name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span>
+                <span class="n">physical_pixel_sizes</span><span class="o">=</span><span class="n">physical_pixel_sizes</span><span class="p">,</span>
+                <span class="n">channel_colors</span><span class="o">=</span><span class="n">channel_colors</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                <span class="n">dimension_order</span><span class="o">=</span><span class="n">dim_order</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># else if string, then construct OME from string</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">ome_xml</span> <span class="o">=</span> <span class="n">from_xml</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">)</span>
+
+        <span class="c1"># if we do not have an OME object now, something is wrong</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">,</span> <span class="n">OME</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Unknown OME-XML metadata passed in. Use OME object, or xml string or </span><span class="se">\</span>
+<span class="s2">                None&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># vaidate ome</span>
+        <span class="k">for</span> <span class="n">scene_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_images</span><span class="p">):</span>
+            <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_check_ome_dims</span><span class="p">(</span>
+                <span class="n">ome_xml</span><span class="p">,</span> <span class="n">scene_index</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
+
+        <span class="c1"># convert to string for writing</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="n">to_xml</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+        <span class="c1"># Save image to tiff!</span>
+        <span class="n">tif</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffWriter</span><span class="p">(</span>
+            <span class="n">path</span><span class="p">,</span>
+            <span class="n">bigtiff</span><span class="o">=</span><span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">BIGTIFF_BYTE_LIMIT</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># now the heavy lifting. assemble the raw data and write it</span>
+        <span class="k">for</span> <span class="n">scene_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_images</span><span class="p">):</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scene_index</span><span class="p">]</span>
+            <span class="c1"># Assumption: if provided a dask array to save, it can fit into memory</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+                <span class="n">image_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>  <span class="c1"># type: ignore</span>
+
+            <span class="n">description</span> <span class="o">=</span> <span class="n">xml</span> <span class="k">if</span> <span class="n">scene_index</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="c1"># assume if first channel is rgb then all of it is</span>
+            <span class="n">is_rgb</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples_per_pixel</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="n">photometric</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">TIFF</span><span class="o">.</span><span class="n">PHOTOMETRIC</span><span class="o">.</span><span class="n">RGB</span> <span class="k">if</span> <span class="n">is_rgb</span> <span class="k">else</span> <span class="n">TIFF</span><span class="o">.</span><span class="n">PHOTOMETRIC</span><span class="o">.</span><span class="n">MINISBLACK</span>
+            <span class="p">)</span>
+            <span class="n">planarconfig</span> <span class="o">=</span> <span class="n">TIFF</span><span class="o">.</span><span class="n">PLANARCONFIG</span><span class="o">.</span><span class="n">CONTIG</span> <span class="k">if</span> <span class="n">is_rgb</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">tif</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">image_data</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+                <span class="n">photometric</span><span class="o">=</span><span class="n">photometric</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">planarconfig</span><span class="o">=</span><span class="n">planarconfig</span><span class="p">,</span>
+                <span class="n">compression</span><span class="o">=</span><span class="n">TIFF</span><span class="o">.</span><span class="n">COMPRESSION</span><span class="o">.</span><span class="n">ADOBE_DEFLATE</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">tif</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_resolve_OME_dimension_order</span><span class="p">(</span>
+        <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">dimension_order</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Do some dimension validation and return an ome-compatible 5D dimension order</span>
+<span class="sd">        and whether the data is rgb multisample</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shape: Tuple[int, ...]</span>
+<span class="sd">            A data array shape</span>
+<span class="sd">        dimension_order: Union[str, None]</span>
+<span class="sd">            A dimension order string, composed of some subset of TCZYXS</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tuple[str, bool]</span>
+<span class="sd">            An OME-compatible 5D dimension_order string and a boolean for whether the</span>
+<span class="sd">            data shape had rgb samples</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Passed in greater than 5D data but last dimension is not 3 or 4: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dimension_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ndims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension order string has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span><span class="si">}</span><span class="s2"> dims but data &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;shape has </span><span class="si">{</span><span class="n">ndims</span><span class="si">}</span><span class="s2"> dims&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># data is rgb if last dimension is S and its size is 3 or 4</span>
+        <span class="n">is_rgb</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">dimension_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># we will only guess rgb here if ndims &gt; 5</span>
+            <span class="c1"># I could make a better guess if I look at any ome-xml passed in</span>
+            <span class="n">is_rgb</span> <span class="o">=</span> <span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">DEFAULT_DIMENSION_ORDER_WITH_SAMPLES</span>
+                <span class="k">if</span> <span class="n">is_rgb</span>
+                <span class="k">else</span> <span class="n">DEFAULT_DIMENSION_ORDER</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_rgb</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">5</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_rgb</span><span class="p">)</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">6</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Data array has unexpected number of dimensions: is_rgb = </span><span class="si">{</span><span class="n">is_rgb</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;and shape is </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># assert valid characters in dimension_order</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+            <span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_rgb</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="s2">&quot;Samples must be last dimension if present, and only S=3 or 4 is </span><span class="se">\</span>
+<span class="s2">                supported.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span> <span class="ow">and</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YXS&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Last characters of dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> expected to </span><span class="se">\</span>
+<span class="s2">                be YX or YXS.  Please transpose your data.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># remember whether S was a dim or not, and remove it for now</span>
+        <span class="k">if</span> <span class="n">is_rgb</span><span class="p">:</span>
+            <span class="n">ndims</span> <span class="o">=</span> <span class="n">ndims</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># expand to 5D and add appropriate dimensions</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TCZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+
+        <span class="c1"># expand to 5D and add appropriate dimensions</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># prepend either TC, TZ or CZ</span>
+            <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;CZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TC&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+
+        <span class="c1"># expand to 5D and add appropriate dimensions</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="c1"># prepend either T, C, or Z</span>
+            <span class="n">first2</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;TC&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;CT&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;TZ&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;ZT&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;CZ&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;ZC&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span> <span class="o">+</span> <span class="n">dimension_order</span>
+
+        <span class="k">return</span> <span class="n">dimension_order</span><span class="p">,</span> <span class="n">is_rgb</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the size of data to determine if we require bigtiff</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: list of data arrays, one per image to be saved to tiff</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the total size of data in bytes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="n">size</span> <span class="o">+=</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">itemsize</span>
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_extend_data_shape</span><span class="p">(</span><span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">num_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="c1"># extend data shape to be same len as dimension_order</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_dims</span><span class="p">:</span>
+            <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">num_dims</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)))</span> <span class="o">+</span> <span class="n">shape</span>
+        <span class="k">return</span> <span class="n">shape</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_ome_image</span><span class="p">(</span>
+        <span class="n">image_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">tiff_plane_offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">data_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="n">data_dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+        <span class="n">is_rgb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;I0&quot;</span><span class="p">,</span>
+        <span class="n">physical_pixel_sizes</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">(</span>
+            <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span>
+        <span class="p">),</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Bad OME image shape length: </span><span class="si">{</span><span class="n">data_shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># extend data shape to be same len as dimension_order, accounting for rgb</span>
+        <span class="k">if</span> <span class="n">is_rgb</span><span class="p">:</span>
+            <span class="n">data_shape</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_extend_data_shape</span><span class="p">(</span>
+                <span class="n">data_shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_shape</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_extend_data_shape</span><span class="p">(</span>
+                <span class="n">data_shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">dim_or_1</span><span class="p">(</span><span class="n">dim</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">data_shape</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">channel_count</span> <span class="o">=</span> <span class="n">dim_or_1</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized OME TIFF dimension order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized OME TIFF dimension </span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_names</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">channel_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong number of channel names </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span> <span class="o">!=</span> <span class="n">channel_count</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrong number of channel colors </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">samples_per_pixel</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">is_rgb</span><span class="p">:</span>
+            <span class="n">samples_per_pixel</span> <span class="o">=</span> <span class="n">data_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># dimension_order must be set to the *reverse* of what dimensionality</span>
+        <span class="c1"># the ome tif file is saved as</span>
+        <span class="n">pixels</span> <span class="o">=</span> <span class="n">Pixels</span><span class="p">(</span>
+            <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Pixels:</span><span class="si">{</span><span class="n">image_index</span><span class="si">}</span><span class="s2">:0&quot;</span><span class="p">,</span>
+            <span class="n">dimension_order</span><span class="o">=</span><span class="n">dimension_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+            <span class="nb">type</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">dtype_to_ome_type</span><span class="p">(</span><span class="n">data_dtype</span><span class="p">),</span>
+            <span class="n">size_t</span><span class="o">=</span><span class="n">dim_or_1</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">),</span>
+            <span class="n">size_c</span><span class="o">=</span><span class="n">channel_count</span> <span class="o">*</span> <span class="n">samples_per_pixel</span><span class="p">,</span>
+            <span class="n">size_z</span><span class="o">=</span><span class="n">dim_or_1</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">),</span>
+            <span class="n">size_y</span><span class="o">=</span><span class="n">dim_or_1</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">),</span>
+            <span class="n">size_x</span><span class="o">=</span><span class="n">dim_or_1</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">),</span>
+            <span class="n">interleaved</span><span class="o">=</span><span class="kc">True</span> <span class="k">if</span> <span class="n">samples_per_pixel</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># expected in ZYX order</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">physical_size_z</span> <span class="o">=</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Z</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">physical_size_y</span> <span class="o">=</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Y</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">physical_size_x</span> <span class="o">=</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span>
+
+        <span class="c1"># one single tiffdata indicating sequential tiff IFDs based on dimension_order</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">tiff_data_blocks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">TiffData</span><span class="p">(</span>
+                <span class="n">plane_count</span><span class="o">=</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_t</span> <span class="o">*</span> <span class="n">channel_count</span> <span class="o">*</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size_z</span><span class="p">,</span>
+                <span class="n">ifd</span><span class="o">=</span><span class="n">tiff_plane_offset</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Channel</span><span class="p">(</span><span class="n">samples_per_pixel</span><span class="o">=</span><span class="n">samples_per_pixel</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">channel_count</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">channel_count</span><span class="p">):</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">image_index</span><span class="p">),</span> <span class="n">i</span>
+                <span class="p">)</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;C:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">channel_count</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">channel_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">image_index</span><span class="p">),</span> <span class="n">i</span>
+                <span class="p">)</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">size_c</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">channel_count</span><span class="p">):</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">channel_colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span>
+            <span class="nb">id</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">image_index</span><span class="p">)),</span>
+            <span class="n">pixels</span><span class="o">=</span><span class="n">pixels</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+<div class="viewcode-block" id="OmeTiffWriter.build_ome"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.build_ome">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_ome</span><span class="p">(</span>
+        <span class="n">data_shapes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]],</span>
+        <span class="n">data_types</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">],</span>
+        <span class="n">dimension_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">physical_pixel_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OME</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        Create the necessary metadata for an OME tiff image</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data_shapes:</span>
+<span class="sd">            A list of 5- or 6-d tuples</span>
+<span class="sd">        data_types:</span>
+<span class="sd">            A list of data types</span>
+<span class="sd">        dimension_order:</span>
+<span class="sd">            The order of dimensions in the data array, using</span>
+<span class="sd">            T,C,Z,Y,X and optionally S</span>
+<span class="sd">        channel_names:</span>
+<span class="sd">            The names for each channel to be put into the OME metadata</span>
+<span class="sd">        image_name:</span>
+<span class="sd">            The name of the image to be put into the OME metadata</span>
+<span class="sd">        physical_pixel_sizes:</span>
+<span class="sd">            Z,Y, and X physical dimensions of each pixel,</span>
+<span class="sd">            defaulting to microns</span>
+<span class="sd">        channel_colors:</span>
+<span class="sd">            The channel colors to be put into the OME metadata</span>
+<span class="sd">        is_rgb:</span>
+<span class="sd">            is a S dimension present?  S is expected to be the last dim in</span>
+<span class="sd">            the data shape</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        OME</span>
+<span class="sd">            An OME object that can be converted to a valid OME-XML string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_images</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_shapes</span><span class="p">)</span>
+        <span class="c1"># resolve defaults that are None</span>
+        <span class="k">if</span> <span class="n">dimension_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">channel_names</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">image_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">image_name</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">physical_pixel_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">physical_pixel_sizes</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+        <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">channel_colors</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_images</span>
+
+        <span class="c1"># assert all lists are same length</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_types</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">physical_pixel_sizes</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="n">num_images</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mismatched array counts in parameters to build_ome&quot;</span><span class="p">)</span>
+
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">tiff_plane_offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">image_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data_shapes</span><span class="p">)):</span>
+            <span class="c1"># correct the dimension_order for ome</span>
+            <span class="n">ome_dimension_order</span><span class="p">,</span> <span class="n">is_rgb</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_resolve_OME_dimension_order</span><span class="p">(</span>
+                <span class="n">data_shapes</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span> <span class="n">dimension_order</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_build_ome_image</span><span class="p">(</span>
+                <span class="n">image_index</span><span class="p">,</span>
+                <span class="n">tiff_plane_offset</span><span class="p">,</span>
+                <span class="n">data_shapes</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+                <span class="n">data_types</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+                <span class="n">is_rgb</span><span class="p">,</span>
+                <span class="n">ome_dimension_order</span><span class="p">,</span>
+                <span class="n">image_name</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+                <span class="n">physical_pixel_sizes</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+                <span class="n">channel_names</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+                <span class="n">channel_colors</span><span class="p">[</span><span class="n">image_index</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="c1"># increment tiff_plane_offset for next image</span>
+            <span class="n">tiff_plane_offset</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="n">img</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_z</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_t</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">images</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="n">ome_object</span> <span class="o">=</span> <span class="n">OME</span><span class="p">(</span><span class="n">creator</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;aicsimageio </span><span class="si">{</span><span class="n">get_module_version</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">images</span><span class="o">=</span><span class="n">images</span><span class="p">)</span>
+
+        <span class="c1"># validate! (TODO: Is there a better api in ome-types for this?)</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="n">to_xml</span><span class="p">(</span><span class="n">ome_object</span><span class="p">)</span>
+        <span class="n">from_xml</span><span class="p">(</span><span class="n">test</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ome_object</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_check_ome_dims</span><span class="p">(</span>
+        <span class="n">ome_xml</span><span class="p">:</span> <span class="n">OME</span><span class="p">,</span> <span class="n">image_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">data_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">data_dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;OME has no images&quot;</span><span class="p">)</span>
+
+        <span class="c1"># look at number of samples from first channel only (possible bad assumption)</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">samples_per_pixel</span>
+
+        <span class="c1"># reverse the OME dimension order to compare against numpy shape</span>
+        <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">dimension_order</span><span class="o">.</span><span class="n">value</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">:</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_t</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">:</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_c</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">:</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_z</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">:</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_y</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">:</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">size_x</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">samples</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">dims</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">channels</span>
+            <span class="p">)</span>
+            <span class="n">dims</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span><span class="p">]</span> <span class="o">=</span> <span class="n">samples</span>
+            <span class="n">dimension_order</span> <span class="o">+=</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Samples</span>
+
+        <span class="n">expected_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">dims</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)</span>
+        <span class="n">data_shape</span> <span class="o">=</span> <span class="n">OmeTiffWriter</span><span class="o">.</span><span class="n">_extend_data_shape</span><span class="p">(</span><span class="n">data_shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">expected_shape</span> <span class="o">!=</span> <span class="n">data_shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;OME shape </span><span class="si">{</span><span class="n">expected_shape</span><span class="si">}</span><span class="s2"> is not the same as data array shape: </span><span class="se">\</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">data_shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">expected_type</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ome_to_numpy_dtype</span><span class="p">(</span>
+            <span class="n">ome_xml</span><span class="o">.</span><span class="n">images</span><span class="p">[</span><span class="n">image_index</span><span class="p">]</span><span class="o">.</span><span class="n">pixels</span><span class="o">.</span><span class="n">type</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">expected_type</span> <span class="o">!=</span> <span class="n">data_dtype</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;OME pixel type </span><span class="si">{</span><span class="n">expected_type</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is not the same as data array type: </span><span class="se">\</span>
+<span class="s2">                </span><span class="si">{</span><span class="n">data_dtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

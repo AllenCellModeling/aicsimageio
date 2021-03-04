@@ -4,6 +4,14 @@ aicsimageio.writers package
 Submodules
 ----------
 
+aicsimageio.writers.ome\_tiff\_writer module
+--------------------------------------------
+
+.. automodule:: aicsimageio.writers.ome_tiff_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.writers.timeseries\_writer module
 ---------------------------------------------
 

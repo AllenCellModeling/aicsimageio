@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/ome-tiff-writer-4  (`#211
+  <https://github.com/AllenCellModeling/aicsimageio/pull/211>`_)
+  [JacksonMaxfield, toloudis]
 - feature/array-like-reader  (`#197
   <https://github.com/AllenCellModeling/aicsimageio/pull/197>`_)
   [Jackson Maxfield Brown]

@@ -6,6 +6,15 @@ Changelog
 
 New
 ~~~
+- feature/lif-reader  (`#212
+  <https://github.com/AllenCellModeling/aicsimageio/pull/212>`_)
+  [Jackson Maxfield Brown]
+- feature/ome-tiff-writer-4  (`#211
+  <https://github.com/AllenCellModeling/aicsimageio/pull/211>`_)
+  [JacksonMaxfield, toloudis]
+- feature/array-like-reader  (`#197
+  <https://github.com/AllenCellModeling/aicsimageio/pull/197>`_)
+  [Jackson Maxfield Brown]
 - feature/writers  (`#198
   <https://github.com/AllenCellModeling/aicsimageio/pull/198>`_)
   [Jackson Maxfield Brown]

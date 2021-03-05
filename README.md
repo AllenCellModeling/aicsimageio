@@ -114,6 +114,35 @@ function will not load any piece of the imaging data into memory until you speci
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected chunk in-memory.
 
+### Xarray Coordinate Plane Attachment
+
+If `aicsimageio` finds coordinate information for the spatial-temporal dimensions of
+the image in metadata, you can use
+[xarray](http://xarray.pydata.org/en/stable/index.html) for indexing by coordinates.
+
+```python
+from aicsimageio import AICSImage
+
+# Get an AICSImage object
+img = AICSImage("my_file.ome.tiff")
+
+# Get the first ten seconds (not frames)
+first_ten_seconds = img.xarray_data[:10]  # returns an xarray.DataArray
+
+# Get the first ten major units (usually micrometers, not indices) in Z
+first_ten_mm_in_z = img.xarray_data[:, :, :10]
+
+# Get the first ten major units (usually micrometers, not indices) in Y
+first_ten_mm_in_y = img.xarray_data[:, :, :, :10]
+
+# Get the first ten major units (usually micrometers, not indices) in X
+first_ten_mm_in_x = img.xarray_data[:, :, :, :, :10]
+```
+
+See
+[xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
+for more details.
+
 ### Remote Image Reading
 
 ```python
@@ -149,34 +178,13 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
-### Xarray Coordinate Plane Attachment
-
-If `aicsimageio` finds coordinate information for the spatial-temporal dimensions of
-the image in metadata, you can use
-[xarray](http://xarray.pydata.org/en/stable/index.html) for indexing by coordinates.
+### Format Conversion to OME-TIFF
 
 ```python
 from aicsimageio import AICSImage
 
-# Get an AICSImage object
-img = AICSImage("my_file.ome.tiff")
-
-# Get the first ten seconds (not frames)
-first_ten_seconds = img.xarray_data[:10]  # returns an xarray.DataArray
-
-# Get the first ten micrometers (not indices) in Z
-first_ten_mm_in_z = img.xarray_data[:, :, :10]
-
-# Get the first ten micrometers (not indices) in Y
-first_ten_mm_in_y = img.xarray_data[:, :, :, :10]
-
-# Get the first ten micrometers (not indices) in X
-first_ten_mm_in_x = img.xarray_data[:, :, :, :, :10]
+AICSImage("my_file.czi").save("my_file.ome.tiff")
 ```
-
-See
-[xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
-for more details.
 
 ### Base Reader Specification
 

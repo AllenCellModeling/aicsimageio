@@ -16,10 +16,12 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   `TIFF`
     -   `LIF`
     -   Any additional format supported by [imageio](https://github.com/imageio/imageio)
+        (`PNG`, `GIF`, etc.)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
--   Supports reading from and writing to any
-    [fsspec](https://github.com/intake/filesystem_spec) supported file system:
+-   Supports reading and writing to
+    [fsspec](https://github.com/intake/filesystem_spec) supported file systems
+    wherever possible:
 
     -   Local paths (i.e. `my-file.png`)
     -   HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
@@ -43,7 +45,7 @@ For full package documentation please visit
 ### Full Image Reading
 
 ```python
-from aicsimageio import AICSImage, imread
+from aicsimageio import AICSImage
 
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
@@ -64,29 +66,20 @@ img.scenes
 # Change scene
 img.set_scene("Image:1")
 
-# Same operations on a different scene
-img.data  # returns 5D TCZYX numpy array
-img.xarray_data  # returns 5D TCZYX xarray data array backed by numpy
-img.dims  # returns a Dimensions object
-img.dims.order  # returns string "TCZYX"
-img.dims.X  # returns size of X dimension
-img.shape  # returns tuple of dimension sizes in TCZYX order
-img.get_image_data("CZYX", T=0)  # returns 4D CZYX numpy array
-
-# Get 5D TCZYX numpy array
-data = imread("my_file.tiff")  # optionally provide a scene id, default first
+# Use the same operations on a different scene
+# ...
 ```
 
 #### Full Image Reading Notes
 
 The `.data` and `.xarray_data` properties will load the whole image into memory.
 The `.get_image_data` function will load the whole image into memory and then retrieve
-the specific chunk.
+the specified chunk.
 
 ### Delayed Image Reading
 
 ```python
-from aicsimageio import AICSImage, imread_dask
+from aicsimageio import AICSImage
 
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
@@ -96,7 +89,10 @@ img.dims  # returns a Dimensions object
 img.dims.order  # returns string "TCZYX"
 img.dims.X  # returns size of X dimension
 img.shape  # returns tuple of dimension sizes in TCZYX order
-img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
+
+# Pull only a specific chunk in-memory
+lazy_t0 = img.get_image_dask_data("CZYX", T=0)  # returns out-of-memory 4D dask array
+t0 = lazy_t0.compute()  # returns in-memory 4D numpy array
 
 # Get the id of the current operating scene
 img.current_scene
@@ -107,31 +103,16 @@ img.scenes
 # Change scene
 img.set_scene("Image:1")
 
-# Same operations on a different scene
-img.dask_data  # returns 5D TCZYX dask array
-img.xarray_dask_data  # returns 5D TCZYX xarray data array backed by dask array
-img.dims  # returns a Dimensions object
-img.dims.order  # returns string "TCZYX"
-img.dims.X  # returns size of X dimension
-img.shape  # returns tuple of dimension sizes in TCZYX order
-img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
-
-# Read a specified portion of dask array
-lazy_t0 = img.get_image_dask_data("CZYX", T=0)  # returns 4D CZYX dask array
-t0 = lazy_t0.compute()  # returns 4D CZYX numpy array
-
-# Get a 5D TCZYX dask array
-lazy_data = imread_dask("my_file.tiff")  # optionally provide a scene id, default first
-lazy_t0 = lazy_data[0, :]
-t0 = lazy_t0.compute()
+# Use the same operations on a different scene
+# ...
 ```
 
 #### Delayed Image Reading Notes
 
 The `.dask_data` and `.xarray_dask_data` properties and the `.get_image_dask_data`
-function will not load any piece of the pixel data into memory until you specifically
+function will not load any piece of the imaging data into memory until you specifically
 call `.compute` on the returned Dask array. In doing so, you will only then load the
-selected data in-memory.
+selected chunk in-memory.
 
 ### Remote Image Reading
 
@@ -161,21 +142,50 @@ from aicsimageio import AICSImage
 
 # Get an AICSImage object
 img = AICSImage("my_file.tiff")  # selects the first scene found
-img.metadata  # returns the metadata object for this image type
+img.metadata  # returns the metadata object for this file format (XML, JSON, etc.)
 img.channel_names  # returns a list of string channel names found in the metadata
 img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata
 img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
+### Xarray Coordinate Plane Attachment
+
+If `aicsimageio` finds coordinate information for the spatial-temporal dimensions of
+the image in metadata, you can use
+[xarray](http://xarray.pydata.org/en/stable/index.html) for indexing by coordinates.
+
+```python
+from aicsimageio import AICSImage
+
+# Get an AICSImage object
+img = AICSImage("my_file.ome.tiff")
+
+# Get the first ten seconds (not frames)
+first_ten_seconds = img.xarray_data[:10]  # returns an xarray.DataArray
+
+# Get the first ten micrometers (not indices) in Z
+first_ten_mm_in_z = img.xarray_data[:, :, :10]
+
+# Get the first ten micrometers (not indices) in Y
+first_ten_mm_in_y = img.xarray_data[:, :, :, :10]
+
+# Get the first ten micrometers (not indices) in X
+first_ten_mm_in_x = img.xarray_data[:, :, :, :, :10]
+```
+
+See
+[xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
+for more details.
+
 ### Base Reader Specification
 
 All base readers (`TiffReader`, `OmeTiffReader`, `DefaultReader`, etc.) all follow the
 same base specification. Each reader will have documentation for functions and properties
-specific to themselves while
+specific to itself while
 [the base Reader documentation](./aicsimageio.readers.html#module-aicsimageio.readers.reader)
 is the best place to get an overview of all functions and properties available to all
-base reading classes.
+base Reader classes.
 
 ## Performance Considerations
 

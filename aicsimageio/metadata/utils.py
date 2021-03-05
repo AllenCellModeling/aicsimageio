@@ -113,7 +113,7 @@ def generate_ome_detector_id(detector_id: Union[str, int]) -> str:
     Parameters
     ----------
     detector_id: Union[str, int]
-        A string or int representing the ID for an detector.
+        A string or int representing the ID for a detector.
 
     Returns
     -------
@@ -133,7 +133,7 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     releases.
 
     The result of this function should be an OME XML string that is relatively the
-    same (no major pieces missing) but that validates against the references OME
+    same (no major pieces missing) but that validates against the reference OME
     XSD.
 
     Parameters
@@ -145,6 +145,11 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     -------
     cleaned_xml: str
         The cleaned OME XML string.
+
+    Raises
+    ------
+    ValueError
+        Provided XML does not contain a namespace.
     """
     # Store list of changes to print out with warning
     metadata_changes = []
@@ -440,6 +445,11 @@ def dtype_to_ome_type(npdtype: np.dtype) -> PixelType:
     -------
     ome_type: PixelType
         One of the supported OME Pixels types
+
+    Raises
+    ------
+    ValueError
+        No matching pixel type for provided numpy type.
     """
     ometypedict = {
         np.dtype(np.int8): PixelType.INT8,
@@ -472,6 +482,11 @@ def ome_to_numpy_dtype(ome_type: PixelType) -> np.dtype:
     -------
     npdtype: numpy.dtype
         A numpy datatype.
+
+    Raises
+    ------
+    ValueError
+        No matching numpy type for the provided pixel type.
     """
     ometypedict: Dict[PixelType, np.dtype] = {
         PixelType.INT8: np.dtype(np.int8),

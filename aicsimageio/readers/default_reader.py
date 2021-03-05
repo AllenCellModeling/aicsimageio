@@ -295,8 +295,8 @@ class DefaultReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
             with imageio.get_reader(
@@ -388,8 +388,8 @@ class DefaultReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         # Read image
         with self._fs.open(self._path) as open_resource:

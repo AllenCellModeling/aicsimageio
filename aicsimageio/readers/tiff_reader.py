@@ -308,8 +308,8 @@ class TiffReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
@@ -351,8 +351,8 @@ class TiffReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:

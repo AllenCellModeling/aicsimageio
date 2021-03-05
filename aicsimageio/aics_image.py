@@ -186,7 +186,8 @@ class AICSImage:
 
         Raises
         ------
-        IndexError: the provided scene id is not found in the available scene id list
+        IndexError
+            The provided scene id is not found in the available scene id list
         """
         # Only need to run when the scene id is different from current scene
         if scene_id != self.reader.current_scene:

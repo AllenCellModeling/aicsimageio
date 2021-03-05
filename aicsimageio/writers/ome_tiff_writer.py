@@ -3,11 +3,12 @@ from typing import Any, List, Optional, Tuple, Union
 import dask.array as da
 import numpy as np
 import tifffile
+from fsspec.implementations.local import LocalFileSystem
 from ome_types import from_xml, to_xml
 from ome_types.model import OME, Channel, Image, Pixels, TiffData
 from tifffile import TIFF
 
-from .. import exceptions, get_module_version, types
+from .. import exceptions, types
 from ..dimensions import (
     DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
@@ -56,6 +57,7 @@ class OmeTiffWriter(Writer):
             length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
+            Note: OmeTiffWriter can only write to local file systems.
         dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
             Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
@@ -95,6 +97,11 @@ class OmeTiffWriter(Writer):
             the OME spec.
             Default: None
 
+        Raises
+        ------
+        ValueError:
+            Non-local file system URI provided.
+
         Examples
         --------
         Write a TCZYX data set to OME-Tiff
@@ -120,6 +127,13 @@ class OmeTiffWriter(Writer):
         """
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
+
+        # Catch non-local file system
+        if not isinstance(fs, LocalFileSystem):
+            raise ValueError(
+                f"Cannot write to non-local file system. "
+                f"Received URI: {uri}, which points to {type(fs)}."
+            )
 
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
@@ -231,37 +245,38 @@ class OmeTiffWriter(Writer):
         xml = to_xml(ome_xml).encode()
 
         # Save image to tiff!
-        tif = tifffile.TiffWriter(
-            path,
-            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
-        )
-
-        # now the heavy lifting. assemble the raw data and write it
-        for scene_index in range(num_images):
-            image_data = data[scene_index]
-            # Assumption: if provided a dask array to save, it can fit into memory
-            if isinstance(image_data, da.core.Array):
-                image_data = data[scene_index].compute()  # type: ignore
-
-            description = xml if scene_index == 0 else None
-            # assume if first channel is rgb then all of it is
-            is_rgb = (
-                ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
-            )
-            photometric = (
-                TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
-            )
-            planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
-            tif.write(
-                image_data,
-                description=description,
-                photometric=photometric,
-                metadata=None,
-                planarconfig=planarconfig,
-                compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+        with fs.open(path, "wb") as open_resource:
+            tif = tifffile.TiffWriter(
+                open_resource,
+                bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
             )
 
-        tif.close()
+            # now the heavy lifting. assemble the raw data and write it
+            for scene_index in range(num_images):
+                image_data = data[scene_index]
+                # Assumption: if provided a dask array to save, it can fit into memory
+                if isinstance(image_data, da.core.Array):
+                    image_data = data[scene_index].compute()  # type: ignore
+
+                description = xml if scene_index == 0 else None
+                # assume if first channel is rgb then all of it is
+                is_rgb = (
+                    ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
+                )
+                photometric = (
+                    TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
+                )
+                planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
+                tif.write(
+                    image_data,
+                    description=description,
+                    photometric=photometric,
+                    metadata=None,
+                    planarconfig=planarconfig,
+                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+                )
+
+            tif.close()
 
     @staticmethod
     def _resolve_OME_dimension_order(
@@ -590,7 +605,11 @@ class OmeTiffWriter(Writer):
             )
             images.append(img)
 
-        ome_object = OME(creator=f"aicsimageio {get_module_version()}", images=images)
+        # NOTE:
+        # This version is updates as a part of bumpversion
+        # Do not change this manually
+        # We have to do this to avoid circular imports
+        ome_object = OME(creator="aicsimageio 4.0.0.dev3", images=images)
 
         # validate! (TODO: Is there a better api in ome-types for this?)
         test = to_xml(ome_object)

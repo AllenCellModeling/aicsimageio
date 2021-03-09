@@ -178,14 +178,6 @@ img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the 
 img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
 ```
 
-### Format Conversion to OME-TIFF
-
-```python
-from aicsimageio import AICSImage
-
-AICSImage("my_file.czi").save("my_file.ome.tiff")
-```
-
 ### Base Reader Specification
 
 All base readers (`TiffReader`, `OmeTiffReader`, `DefaultReader`, etc.) all follow the
@@ -194,6 +186,24 @@ specific to itself while
 [the base Reader documentation](./aicsimageio.readers.html#module-aicsimageio.readers.reader)
 is the best place to get an overview of all functions and properties available to all
 base Reader classes.
+
+### Saving to OME-TIFF
+
+```python
+from aicsimageio import AICSImage
+
+AICSImage("my_file.czi").save("my_file.ome.tiff")
+```
+
+**Note:** By default `aicsimageio` will generate only a portiosn of metadata to pass
+along from the reader to the OME model. This function currently does not do a full
+metadata translation.
+
+#### Other Writers
+
+In most cases, `AICSImage.save` is usually a good default but there are other image
+writers available. For more information, please refer to
+[our writers documentation](https://allencellmodeling.github.io/aicsimageio/aicsimageio.writers.html).
 
 ## Performance Considerations
 
@@ -228,5 +238,11 @@ default viewer itself.
 See our
 [developer resources](https://allencellmodeling.github.io/aicsimageio/developer_resources)
 for information related to developing the code.
+
+## Citation
+
+If you find `aicsimageio` useful, please cite this repository as:
+
+> AICSImageIO Contributors (2021). AICSImageIO: Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python [Computer software]. GitHub. https://github.com/AllenCellModeling/aicsimageio
 
 _Free software: BSD-3-Clause_

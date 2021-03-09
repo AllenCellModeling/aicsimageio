@@ -8,14 +8,13 @@ from ome_types import from_xml, to_xml
 from ome_types.model import OME, Channel, Image, Pixels, TiffData
 from tifffile import TIFF
 
-from .. import exceptions, types
+from .. import exceptions, get_module_version, types
 from ..dimensions import (
     DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
     DimensionNames,
 )
-from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils
 from ..utils import io_utils
 from .writer import Writer
@@ -308,7 +307,7 @@ class OmeTiffWriter(Writer):
             )
 
         if dimension_order is not None and len(dimension_order) != ndims:
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Dimension order string has {len(dimension_order)} dims but data "
                 f"shape has {ndims} dims"
             )
@@ -339,16 +338,16 @@ class OmeTiffWriter(Writer):
         if not (
             all(d in DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES for d in dimension_order)
         ):
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Invalid dimension_order {dimension_order}"
             )
         if dimension_order.find(DimensionNames.Samples) > -1 and not is_rgb:
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 "Samples must be last dimension if present, and only S=3 or 4 is \
                 supported."
             )
         if dimension_order[-2:] != "YX" and dimension_order[-3:] != "YXS":
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Last characters of dimension_order {dimension_order} expected to \
                 be YX or YXS.  Please transpose your data."
             )
@@ -605,11 +604,7 @@ class OmeTiffWriter(Writer):
             )
             images.append(img)
 
-        # NOTE:
-        # This version is updates as a part of bumpversion
-        # Do not change this manually
-        # We have to do this to avoid circular imports
-        ome_object = OME(creator="aicsimageio 4.0.0.dev3", images=images)
+        ome_object = OME(creator=f"aicsimageio {get_module_version()}", images=images)
 
         # validate! (TODO: Is there a better api in ome-types for this?)
         test = to_xml(ome_object)

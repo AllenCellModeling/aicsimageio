@@ -12,7 +12,6 @@ from . import dimensions, exceptions, readers, transforms, types
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes, ReaderType
-from .writers import OmeTiffWriter
 
 ###############################################################################
 
@@ -598,6 +597,8 @@ class AICSImage:
         ids in each Image's name attribute but IDs will be generated. The order of the
         scenes will be the same (or whatever order was specified / provided).
         """
+        from .writers import OmeTiffWriter
+
         # Get all parameters as dict of lists, or static because of unchanging values
         datas: List[types.ArrayLike] = []
         dim_orders: List[Optional[str]] = []

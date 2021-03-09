@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/aicsimage-save  (`#215
+  <https://github.com/AllenCellModeling/aicsimageio/pull/215>`_)
+  [Jackson Maxfield Brown]
 - feature/lif-reader  (`#212
   <https://github.com/AllenCellModeling/aicsimageio/pull/212>`_)
   [Jackson Maxfield Brown]

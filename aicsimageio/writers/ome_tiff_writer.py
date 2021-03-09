@@ -3,6 +3,7 @@ from typing import Any, List, Optional, Tuple, Union
 import dask.array as da
 import numpy as np
 import tifffile
+from fsspec.implementations.local import LocalFileSystem
 from ome_types import from_xml, to_xml
 from ome_types.model import OME, Channel, Image, Pixels, TiffData
 from tifffile import TIFF
@@ -14,7 +15,6 @@ from ..dimensions import (
     DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
     DimensionNames,
 )
-from ..exceptions import InvalidDimensionOrderingError
 from ..metadata import utils
 from ..utils import io_utils
 from .writer import Writer
@@ -56,6 +56,7 @@ class OmeTiffWriter(Writer):
             length of this list.
         uri: types.PathLike
             The URI or local path for where to save the data.
+            Note: OmeTiffWriter can only write to local file systems.
         dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
             Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
@@ -95,6 +96,11 @@ class OmeTiffWriter(Writer):
             the OME spec.
             Default: None
 
+        Raises
+        ------
+        ValueError:
+            Non-local file system URI provided.
+
         Examples
         --------
         Write a TCZYX data set to OME-Tiff
@@ -120,6 +126,13 @@ class OmeTiffWriter(Writer):
         """
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
+
+        # Catch non-local file system
+        if not isinstance(fs, LocalFileSystem):
+            raise ValueError(
+                f"Cannot write to non-local file system. "
+                f"Received URI: {uri}, which points to {type(fs)}."
+            )
 
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
@@ -231,37 +244,38 @@ class OmeTiffWriter(Writer):
         xml = to_xml(ome_xml).encode()
 
         # Save image to tiff!
-        tif = tifffile.TiffWriter(
-            path,
-            bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
-        )
-
-        # now the heavy lifting. assemble the raw data and write it
-        for scene_index in range(num_images):
-            image_data = data[scene_index]
-            # Assumption: if provided a dask array to save, it can fit into memory
-            if isinstance(image_data, da.core.Array):
-                image_data = data[scene_index].compute()  # type: ignore
-
-            description = xml if scene_index == 0 else None
-            # assume if first channel is rgb then all of it is
-            is_rgb = (
-                ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
-            )
-            photometric = (
-                TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
-            )
-            planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
-            tif.write(
-                image_data,
-                description=description,
-                photometric=photometric,
-                metadata=None,
-                planarconfig=planarconfig,
-                compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+        with fs.open(path, "wb") as open_resource:
+            tif = tifffile.TiffWriter(
+                open_resource,
+                bigtiff=OmeTiffWriter._size_of_ndarray(data=data) > BIGTIFF_BYTE_LIMIT,
             )
 
-        tif.close()
+            # now the heavy lifting. assemble the raw data and write it
+            for scene_index in range(num_images):
+                image_data = data[scene_index]
+                # Assumption: if provided a dask array to save, it can fit into memory
+                if isinstance(image_data, da.core.Array):
+                    image_data = data[scene_index].compute()  # type: ignore
+
+                description = xml if scene_index == 0 else None
+                # assume if first channel is rgb then all of it is
+                is_rgb = (
+                    ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
+                )
+                photometric = (
+                    TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
+                )
+                planarconfig = TIFF.PLANARCONFIG.CONTIG if is_rgb else None
+                tif.write(
+                    image_data,
+                    description=description,
+                    photometric=photometric,
+                    metadata=None,
+                    planarconfig=planarconfig,
+                    compression=TIFF.COMPRESSION.ADOBE_DEFLATE,
+                )
+
+            tif.close()
 
     @staticmethod
     def _resolve_OME_dimension_order(
@@ -293,7 +307,7 @@ class OmeTiffWriter(Writer):
             )
 
         if dimension_order is not None and len(dimension_order) != ndims:
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Dimension order string has {len(dimension_order)} dims but data "
                 f"shape has {ndims} dims"
             )
@@ -324,16 +338,16 @@ class OmeTiffWriter(Writer):
         if not (
             all(d in DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES for d in dimension_order)
         ):
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Invalid dimension_order {dimension_order}"
             )
         if dimension_order.find(DimensionNames.Samples) > -1 and not is_rgb:
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 "Samples must be last dimension if present, and only S=3 or 4 is \
                 supported."
             )
         if dimension_order[-2:] != "YX" and dimension_order[-3:] != "YXS":
-            raise InvalidDimensionOrderingError(
+            raise exceptions.InvalidDimensionOrderingError(
                 f"Last characters of dimension_order {dimension_order} expected to \
                 be YX or YXS.  Please transpose your data."
             )

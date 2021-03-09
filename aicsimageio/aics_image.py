@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -567,6 +567,69 @@ class AICSImage:
         metadata for unit information.
         """
         return self.reader.physical_pixel_sizes
+
+    def save(
+        self,
+        uri: types.PathLike,
+        select_scenes: Optional[Union[List[str], Tuple[str, ...]]] = None,
+    ) -> None:
+        """
+        Saves the file data to OME-TIFF format with general naive best practices.
+
+        Parameters
+        ----------
+        uri: types.PathLike
+            The URI or local path for where to save the data.
+            Note: Can only write to local file systems.
+        select_scenes: Optional[Union[List[str], Tuple[str, ...]]]
+            Which scenes in the image to save to the file.
+            Default: None (save all scenes)
+
+        Notes
+        -----
+        See `aicsimageio.writers.OmeTiffWriter` for more in-depth specification
+        and the `aicsimageio.writers` module as a whole for list of all available
+        file writers.
+
+        When reading in the produced OME-TIFF file, scenes IDs may have changed.
+        This is due to how certain file and metadata formats do or do-not have IDs
+        and simply names. In converting to OME-TIFF we will always store the scene
+        ids in each Image's name attribute but IDs will be generated. The order of the
+        scenes will be the same (or whatever order was specified / provided).
+        """
+        from .writers import OmeTiffWriter
+
+        # Get all parameters as dict of lists, or static because of unchanging values
+        datas: List[types.ArrayLike] = []
+        dim_orders: List[Optional[str]] = []
+        channel_names: List[Optional[List[str]]] = []
+        image_names: List[Optional[str]] = []
+        physical_pixel_sizes: List[PhysicalPixelSizes] = []
+
+        # Get selected scenes / handle None scenes
+        if select_scenes is None:
+            select_scenes = self.scenes
+
+        # Iter through scenes to get data
+        for scene in select_scenes:
+            self.set_scene(scene)
+
+            # Append this scene details
+            datas.append(self.dask_data)
+            dim_orders.append(self.dims.order)
+            channel_names.append(self.channel_names)
+            image_names.append(self.current_scene)
+            physical_pixel_sizes.append(self.physical_pixel_sizes)
+
+        # Save all selected scenes
+        OmeTiffWriter.save(
+            data=datas,
+            uri=uri,
+            dim_order=dim_orders,
+            channel_names=channel_names,
+            image_name=image_names,
+            physical_pixel_sizes=physical_pixel_sizes,
+        )
 
     def __str__(self) -> str:
         return (

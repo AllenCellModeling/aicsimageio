@@ -11,10 +11,19 @@ from imageio import get_writer
 from .. import types
 from ..dimensions import DimensionNames
 from ..exceptions import InvalidDimensionOrderingError, UnexpectedShapeError
-from ..readers import DefaultReader
 from ..transforms import reshape_data
 from ..utils import io_utils
 from .writer import Writer
+
+try:
+    from ..readers.default_reader import DefaultReader
+
+except ImportError:
+    raise ImportError(
+        "Base imageio is required for this writer. "
+        "Install with `pip install aicsimageio[base-imageio]`"
+    )
+
 
 ###############################################################################
 

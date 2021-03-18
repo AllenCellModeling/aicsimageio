@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Optional
+
 
 class ConflictingArgumentsError(Exception):
     """
@@ -34,10 +36,16 @@ class UnsupportedFileFormatError(Exception):
     the supported file types and cannot be parsed with AICSImage.
     """
 
-    def __init__(self, reader_name: str, path: str):
+    def __init__(self, reader_name: str, path: str, msg_extra: Optional[str] = None):
         super().__init__()
         self.reader_name = reader_name
         self.path = path
+        self.msg_extra = msg_extra
 
     def __str__(self) -> str:
-        return f"{self.reader_name} does not support the image: '{self.path}'."
+        msg = f"{self.reader_name} does not support the image: '{self.path}'."
+
+        if self.msg_extra is not None:
+            msg = f"{msg} {self.msg_extra}"
+
+        return msg

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import importlib
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -8,7 +9,7 @@ import dask.array as da
 import numpy as np
 import xarray as xr
 
-from . import dimensions, exceptions, readers, transforms, types
+from . import dimensions, exceptions, transforms, types
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes, ReaderType
@@ -17,19 +18,30 @@ from .types import PhysicalPixelSizes, ReaderType
 
 
 class AICSImage:
-
-    # The order of the readers in this list is important.
+    # The order of the readers in this impl dict is important.
+    #
     # Example:
     # if TiffReader was placed before OmeTiffReader,
     # we would never hit the OmeTiffReader
-    SUPPORTED_READERS = (
-        readers.ArrayLikeReader,
-        # readers.CziReader,
-        readers.LifReader,
-        readers.OmeTiffReader,
-        readers.TiffReader,
-        readers.DefaultReader,
-    )
+    FORMAT_IMPLEMENTATIONS: Dict[str, str] = {
+        "array-like": "aicsimageio.readers.array_like_reader.ArrayLikeReader",
+        "czi": "aicsimageio.readers.czi_reader.CziReader",
+        "lif": "aicsimageio.readers.lif_reader.LifReader",
+        "ome.tiff": "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
+        "tiff": "aicsimageio.readers.tiff_reader.TiffReader",
+        "base-imageio": "aicsimageio.readers.default_reader.DefaultReader",
+    }
+
+    # Construct SUPPORTED_READERS as we parse FORMAT_IMPLEMENTATIONS
+    SUPPORTED_READERS: List[ReaderType] = []
+    for reader_path in FORMAT_IMPLEMENTATIONS.values():
+        module_path, reader_name = reader_path.rsplit(".", 1)
+        try:
+            loaded_mod = importlib.import_module(module_path)
+            SUPPORTED_READERS.append(getattr(loaded_mod, reader_name))
+
+        except ImportError:
+            pass
 
     @staticmethod
     def determine_reader(image: types.ImageLike, **kwargs: Any) -> ReaderType:
@@ -55,10 +67,40 @@ class AICSImage:
         # numpy, dask, etc.
         if isinstance(image, (str, Path)):
             path = str(image)
+
+            # Check for extension in FORMAT_IMPLEMENTATIONS
+            # We do a reverse string match, i.e. match from the back
+            # of the path.
+            # It is unfortunately pretty common for microscopy images to be labeled
+            # "some-file.czi.ome.tiff" where the file _was_ a CZI
+            # but was converted to OME-TIFF.
+            for format_ext in AICSImage.FORMAT_IMPLEMENTATIONS.keys():
+                if path[(len(format_ext) * -1) :] == format_ext:
+                    raise exceptions.UnsupportedFileFormatError(
+                        "AICSImage",
+                        path,
+                        msg_extra=(
+                            f"File extension suggests format: '{format_ext}'. "
+                            f"Install extra format dependency with: "
+                            f"`pip install aicsimageio[{format_ext}]`. "
+                            f"See all known format extensions and their extra install "
+                            f"name with `AICSImage.FORMAT_IMPLEMENTATIONS`."
+                        ),
+                    )
+
         else:
             path = str(type(image))
 
-        raise exceptions.UnsupportedFileFormatError("AICSImage", path)
+        # Unsupported extension
+        raise exceptions.UnsupportedFileFormatError(
+            "AICSImage",
+            path,
+            msg_extra=(
+                "You may need to install an extra format dependency. "
+                "See all known format extensions and their extra install "
+                "name with `AICSImage.FORMAT_IMPLEMENTATIONS`."
+            ),
+        )
 
     def __init__(self, image: types.ImageLike, **kwargs: Any):
         """

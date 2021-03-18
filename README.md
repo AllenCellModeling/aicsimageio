@@ -11,12 +11,11 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
 ## Features
 
 -   Supports reading metadata and imaging data for:
-    -   `CZI`
     -   `OME-TIFF`
     -   `TIFF`
-    -   `LIF`
-    -   Any additional format supported by [imageio](https://github.com/imageio/imageio)
-        (`PNG`, `GIF`, etc.)
+    -   `CZI` -- (`pip install aicsimageio[czi]`)
+    -   `LIF` -- (`pip install aicsimageio[lif]`)
+    -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
 -   Supports reading and writing to
@@ -34,6 +33,12 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
 
 **Stable Release:** `pip install aicsimageio`<br>
 **Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
+
+#### Extra Format Installation
+
+-   For a single additional supported format (i.e. CZI): `pip install aicsimageio[czi]`
+-   For multiple additional supported formats: `pip install aicsimageio[czi,lif]`
+-   For all additional supported formats: `pip install aicsimageio[all]`
 
 ## Documentation
 

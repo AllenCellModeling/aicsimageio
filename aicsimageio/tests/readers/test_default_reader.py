@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from aicsimageio import exceptions
-from aicsimageio.readers import DefaultReader
+from aicsimageio.readers.default_reader import DefaultReader
 
 from ..conftest import get_resource_full_path, host
 from ..image_container_test_utils import run_image_file_checks

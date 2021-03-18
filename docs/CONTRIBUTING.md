@@ -15,13 +15,12 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     git clone git@github.com:{your_name_here}/aicsimageio.git
     ```
 
-3.  Install the project in editable mode.
-    (It is also recommended to work in a virtualenv or anaconda environment):
+3.  Install the project in editable mode (and preferably in a virtual environment):
 
-        ```bash
-        cd aicsimageio/
-        pip install -e .[dev]
-        ```
+    ```bash
+    cd aicsimageio/
+    pip install -e .[dev]
+    ```
 
 4.  Download the test resources:
 
@@ -42,7 +41,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     Now you can make your changes locally.
 
 6.  When you're done making changes, check that your changes pass linting and
-    tests, including testing other Python versions with make:
+    tests, including testing other Python versions with make (!! Important !!):
 
     ```bash
     make build
@@ -79,9 +78,9 @@ Then run:
 make prepare-release
 git push
 git push --tags
-git branch -D stable
-git checkout -b stable
-git push --set-upstream origin stable -f
 ```
 
-This will release a new package version on Git + GitHub and publish to PyPI.
+After all builds pass, GitHub Actions will automatically publish to PyPI.
+
+**Note:** `make prepare-release` by default only bumps the patch number and
+not a minor or major version.

@@ -28,7 +28,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
     -   [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
 
-    See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
+    See [Remote Image Reading](#remote-image-reading) for more details.
 
 ## Installation
 
@@ -43,6 +43,8 @@ For full package documentation please visit
 ## Quickstart
 
 ### Full Image Reading
+
+If your image fits in memory:
 
 ```python
 from aicsimageio import AICSImage
@@ -63,8 +65,10 @@ img.current_scene
 # Get a list valid scene ids
 img.scenes
 
-# Change scene
+# Change scene using name
 img.set_scene("Image:1")
+# Or by scene index
+img.set_scene(img.scenes[1])
 
 # Use the same operations on a different scene
 # ...
@@ -72,11 +76,13 @@ img.set_scene("Image:1")
 
 #### Full Image Reading Notes
 
-The `.data` and `.xarray_data` properties will load the whole image into memory.
-The `.get_image_data` function will load the whole image into memory and then retrieve
+The `.data` and `.xarray_data` properties will load the whole scene into memory.
+The `.get_image_data` function will load the whole scene into memory and then retrieve
 the specified chunk.
 
 ### Delayed Image Reading
+
+If your image doesn't fit in memory:
 
 ```python
 from aicsimageio import AICSImage
@@ -100,8 +106,10 @@ img.current_scene
 # Get a list valid scene ids
 img.scenes
 
-# Change scene
+# Change scene using name
 img.set_scene("Image:1")
+# Or by scene index
+img.set_scene(img.scenes[1])
 
 # Use the same operations on a different scene
 # ...
@@ -113,6 +121,20 @@ The `.dask_data` and `.xarray_dask_data` properties and the `.get_image_dask_dat
 function will not load any piece of the imaging data into memory until you specifically
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected chunk in-memory.
+
+### Metadata Reading
+
+```python
+from aicsimageio import AICSImage
+
+# Get an AICSImage object
+img = AICSImage("my_file.tiff")  # selects the first scene found
+img.metadata  # returns the metadata object for this file format (XML, JSON, etc.)
+img.channel_names  # returns a list of string channel names found in the metadata
+img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata
+img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
+img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
+```
 
 ### Xarray Coordinate Plane Attachment
 
@@ -143,7 +165,18 @@ See
 [xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
 for more details.
 
+**Note:** As a reminder, the `.data` and `.dask_data` attributes, and the
+`.get_image_data` and `.get_image_dask_data` functions only allow indexing
+by plane index. If you want to retrieve data by spatial-temporal coordinates you
+must use `xarray`.
+
 ### Remote Image Reading
+
+[File-System Specification (fsspec)](https://github.com/intake/filesystem_spec) allows
+for common object storage services (S3, GCS, etc.) to act like normal filesystems by
+following the same base specification across them all. AICSImageIO utilizes this
+standard specification to make it possible to read directly from remote resources when
+the specification is installed.
 
 ```python
 from aicsimageio import AICSImage
@@ -164,30 +197,10 @@ target backend is installed.
 
 See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 
-### Metadata Reading
-
-```python
-from aicsimageio import AICSImage
-
-# Get an AICSImage object
-img = AICSImage("my_file.tiff")  # selects the first scene found
-img.metadata  # returns the metadata object for this file format (XML, JSON, etc.)
-img.channel_names  # returns a list of string channel names found in the metadata
-img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata
-img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
-img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
-```
-
-### Base Reader Specification
-
-All base readers (`TiffReader`, `OmeTiffReader`, `DefaultReader`, etc.) all follow the
-same base specification. Each reader will have documentation for functions and properties
-specific to itself while
-[the base Reader documentation](./aicsimageio.readers.html#module-aicsimageio.readers.reader)
-is the best place to get an overview of all functions and properties available to all
-base Reader classes.
-
 ### Saving to OME-TIFF
+
+The simpliest method to save your image as an OME-TIFF file with key pieces of
+metadata is to use the `save` function.
 
 ```python
 from aicsimageio import AICSImage
@@ -195,9 +208,24 @@ from aicsimageio import AICSImage
 AICSImage("my_file.czi").save("my_file.ome.tiff")
 ```
 
-**Note:** By default `aicsimageio` will generate only a portiosn of metadata to pass
+**Note:** By default `aicsimageio` will generate only a portion of metadata to pass
 along from the reader to the OME model. This function currently does not do a full
 metadata translation.
+
+For finer grain customization of the metadata, scenes, or if you want to save an array
+as an OME-TIFF, the writer class can also be used to customize as needed.
+
+```python
+import numpy as np
+from aicsimageio.writers import OmeTiffWriter
+
+image = np.random.rand(10, 3, 1024, 2048)
+OmeTiffWriter.save(image, "file.ome.tif", dim_order="ZCYX")
+```
+
+See
+[OmeTiffWriter documentation](./aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save)
+for more details.
 
 #### Other Writers
 
@@ -205,33 +233,12 @@ In most cases, `AICSImage.save` is usually a good default but there are other im
 writers available. For more information, please refer to
 [our writers documentation](https://allencellmodeling.github.io/aicsimageio/aicsimageio.writers.html).
 
-## Performance Considerations
-
--   **If your image fits in memory:** use `AICSImage.data`, `AICSImage.xarray_data`,
-    `AICSImage.get_image_data`, or `Reader` equivalents.
--   **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
-    `AICSImage.xarray_dask_data`, `AICSImage.get_image_dask_data`, or `Reader` equivalents.
--   **If your image does not support native chunk reading:** it may not be best to read
-    chunks from a remote source. While possible, the format of the image matters a lot for
-    chunked read performance.
-
 ## Benchmarks
 
 AICSImageIO is benchmarked using [asv](https://asv.readthedocs.io/en/stable/).
 You can find the benchmark results for every commit to `main` starting at the 4.0
 release on our
 [benchmarks page](https://AllenCellModeling.github.io/aicsimageio/_benchmarks/index.html).
-
-## Napari Interactive Viewer
-
-[napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
-image viewer for python and it is pretty useful for imaging data that this package
-tends to interact with.
-
-We have also released
-[napari-aicsimageio](https://github.com/AllenCellModeling/napari-aicsimageio), a plugin
-that allows use of all the functionality described in this library, but in the `napari`
-default viewer itself.
 
 ## Development
 

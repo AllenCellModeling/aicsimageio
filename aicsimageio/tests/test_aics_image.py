@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -569,3 +571,51 @@ def test_aicsimage_from_array(
             dict,
         ),
     )
+
+
+@pytest.mark.parametrize(
+    "filename, select_scenes",
+    [
+        ("s_1_t_10_c_3_z_1.tiff", None),
+        ("s_3_t_1_c_3_z_5.ome.tiff", None),
+        ("s_3_t_1_c_3_z_5.ome.tiff", ["Image:2", "Image:1"]),
+        ("s_1_t_4_c_2_z_1.lif", None),
+        ("tiled.lif", None),
+    ],
+)
+def test_roundtrip_save_all_scenes(
+    filename: str, select_scenes: Optional[List[str]]
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Read initial
+    original = AICSImage(uri)
+
+    # Save to temp and compare
+    with TemporaryDirectory() as tmpdir:
+        save_path = Path(tmpdir) / f"converted-{filename}.ome.tiff"
+        original.save(save_path, select_scenes=select_scenes)
+
+        # Re-read
+        result = AICSImage(save_path)
+
+        # Compare all scenes
+        # They may not have the same scene ids as some readers use scene names as the
+        # id, see LifReader for example
+        if select_scenes is None:
+            select_original_scenes = list(original.scenes)
+        else:
+            select_original_scenes = select_scenes
+
+        assert len(select_original_scenes) == len(result.scenes)
+        for original_scene_id, result_scene_id in zip(
+            select_original_scenes, result.scenes
+        ):
+            # Compare
+            original.set_scene(original_scene_id)
+            result.set_scene(result_scene_id)
+
+            np.testing.assert_array_equal(original.data, result.data)
+            assert original.dims.order == result.dims.order
+            assert original.channel_names == result.channel_names

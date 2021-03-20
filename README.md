@@ -18,6 +18,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
+    -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
 -   Supports reading and writing to
     [fsspec](https://github.com/intake/filesystem_spec) supported file systems
     wherever possible:

@@ -10,6 +10,7 @@ import numpy as np
 import xarray as xr
 
 from . import dimensions, exceptions, transforms, types
+from .formats import FORMAT_IMPLEMENTATIONS
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes, ReaderType
@@ -18,19 +19,6 @@ from .types import PhysicalPixelSizes, ReaderType
 
 
 class AICSImage:
-    # The order of the readers in this impl dict is important.
-    #
-    # Example:
-    # if TiffReader was placed before OmeTiffReader,
-    # we would never hit the OmeTiffReader
-    FORMAT_IMPLEMENTATIONS: Dict[str, str] = {
-        "array-like": "aicsimageio.readers.array_like_reader.ArrayLikeReader",
-        "czi": "aicsimageio.readers.czi_reader.CziReader",
-        "lif": "aicsimageio.readers.lif_reader.LifReader",
-        "ome.tiff": "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
-        "tiff": "aicsimageio.readers.tiff_reader.TiffReader",
-        "base-imageio": "aicsimageio.readers.default_reader.DefaultReader",
-    }
 
     # Construct SUPPORTED_READERS as we parse FORMAT_IMPLEMENTATIONS
     SUPPORTED_READERS: List[ReaderType] = []
@@ -38,7 +26,9 @@ class AICSImage:
         module_path, reader_name = reader_path.rsplit(".", 1)
         try:
             loaded_mod = importlib.import_module(module_path)
-            SUPPORTED_READERS.append(getattr(loaded_mod, reader_name))
+            ReaderClass = getattr(loaded_mod, reader_name)
+            if ReaderClass not in SUPPORTED_READERS:
+                SUPPORTED_READERS.append(ReaderClass)
 
         except ImportError:
             pass
@@ -74,7 +64,7 @@ class AICSImage:
             # It is unfortunately pretty common for microscopy images to be labeled
             # "some-file.czi.ome.tiff" where the file _was_ a CZI
             # but was converted to OME-TIFF.
-            for format_ext in AICSImage.FORMAT_IMPLEMENTATIONS.keys():
+            for format_ext in FORMAT_IMPLEMENTATIONS.keys():
                 if path[(len(format_ext) * -1) :] == format_ext:
                     raise exceptions.UnsupportedFileFormatError(
                         "AICSImage",
@@ -84,7 +74,7 @@ class AICSImage:
                             f"Install extra format dependency with: "
                             f"`pip install aicsimageio[{format_ext}]`. "
                             f"See all known format extensions and their extra install "
-                            f"name with `AICSImage.FORMAT_IMPLEMENTATIONS`."
+                            f"name with `aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
                         ),
                     )
 
@@ -98,7 +88,7 @@ class AICSImage:
             msg_extra=(
                 "You may need to install an extra format dependency. "
                 "See all known format extensions and their extra install "
-                "name with `AICSImage.FORMAT_IMPLEMENTATIONS`."
+                "name with `aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
             ),
         )
 

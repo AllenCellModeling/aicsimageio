@@ -35,7 +35,14 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
 **Stable Release:** `pip install aicsimageio`<br>
 **Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
 
+AICSImageIO is supported on Windows, Mac, and Ubuntu.
+For other platforms, you will likely need to build from source.
+
 #### Extra Format Installation
+
+TIFF and OME-TIFF reading and writing is always available after
+installing `aicsimageio`, but extra supported formats can be
+optionally installed using `[...]` syntax.
 
 -   For a single additional supported format (i.e. CZI): `pip install aicsimageio[czi]`
 -   For multiple additional supported formats: `pip install aicsimageio[czi,lif]`

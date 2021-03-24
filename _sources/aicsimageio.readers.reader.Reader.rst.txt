@@ -1,0 +1,48 @@
+aicsimageio.readers.reader.Reader
+=================================
+
+.. currentmodule:: aicsimageio.readers.reader
+
+.. autoclass:: Reader
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Reader.__init__
+      ~Reader.get_image_dask_data
+      ~Reader.get_image_data
+      ~Reader.is_supported_image
+      ~Reader.set_scene
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Reader.channel_names
+      ~Reader.current_scene
+      ~Reader.current_scene_index
+      ~Reader.dask_data
+      ~Reader.data
+      ~Reader.dims
+      ~Reader.dtype
+      ~Reader.metadata
+      ~Reader.mosaic_dask_data
+      ~Reader.mosaic_data
+      ~Reader.mosaic_xarray_dask_data
+      ~Reader.mosaic_xarray_data
+      ~Reader.physical_pixel_sizes
+      ~Reader.scenes
+      ~Reader.shape
+      ~Reader.xarray_dask_data
+      ~Reader.xarray_data
+   
+   

@@ -28,6 +28,22 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 
 class TiffReader(Reader):
+    """
+    Wraps the tifffile API to provide the same aicsimageio Reader API but for
+    volumetric Tiff (and other tifffile supported) images.
+
+    Parameters
+    ----------
+    image: types.PathLike
+        Path to image file to construct Reader for.
+    chunk_by_dims: Union[str, List[str]]
+        Which dimensions to create chunks for.
+        Default: DEFAULT_CHUNK_BY_DIMS
+        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+        will always be added to the list if not present during dask array
+        construction.
+    """
+
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
@@ -44,21 +60,6 @@ class TiffReader(Reader):
         chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
         **kwargs: Any,
     ):
-        """
-        Wraps the tifffile API to provide the same aicsimageio Reader API but for
-        volumetric Tiff (and other tifffile supported) images.
-
-        Parameters
-        ----------
-        image: types.PathLike
-            Path to image file to construct Reader for.
-        chunk_by_dims: Union[str, List[str]]
-            Which dimensions to create chunks for.
-            Default: DEFAULT_CHUNK_BY_DIMS
-            Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-            will always be added to the list if not present during dask array
-            construction.
-        """
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
@@ -308,8 +309,8 @@ class TiffReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
@@ -351,8 +352,8 @@ class TiffReader(Reader):
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError: The file could not be read or is not
-            supported.
+        exceptions.UnsupportedFileFormatError
+            The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:

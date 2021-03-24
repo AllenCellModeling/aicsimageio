@@ -89,7 +89,8 @@ class Reader(ABC):
 
         Raises
         ------
-        TypeError: Invalid type provided to image parameter.
+        TypeError
+            Invalid type provided to image parameter.
         """
         # Check path
         if isinstance(image, (str, Path)):
@@ -187,7 +188,8 @@ class Reader(ABC):
 
         Raises
         ------
-        IndexError: the provided scene id is not found in the available scene id list
+        IndexError
+            The provided scene id is not found in the available scene id list
         """
         # Only need to run when the scene id is different from current scene
         if scene_id != self.current_scene:

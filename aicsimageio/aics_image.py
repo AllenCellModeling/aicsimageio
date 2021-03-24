@@ -17,6 +17,61 @@ from .types import PhysicalPixelSizes, ReaderType
 
 
 class AICSImage:
+    """
+    AICSImage takes microscopy image data types (files or arrays) of varying
+    dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
+    ("Time-Channel-Z-Y-X") ordered array(s). The data and metadata are lazy
+    loaded and can be accessed as needed.
+
+    Parameters
+    ----------
+    image: types.ImageLike
+        A string, Path, fsspec supported URI, or arraylike to read.
+    kwargs: Any
+        Extra keyword arguments that will be passed down to the reader subclass.
+
+    Examples
+    --------
+    Initialize an image then read the file and return specified slices as a numpy
+    array.
+
+    >>> img = AICSImage("my_file.tiff")
+    ... zstack_t8 = img.get_image_data("ZYX", T=8, C=0)
+
+    Initialize an image, construct a delayed dask array for certain slices, then
+    read only the specified chunk of data.
+
+    >>> img = AICSImage("my_file.czi")
+    ... zstack_t8 = img.get_image_dask_data("ZYX", T=8, C=0)
+    ... zstack_t8_data = zstack_t8.compute()
+
+    Initialize an image with a dask or numpy array.
+
+    >>> data = np.random.rand(100, 100)
+    ... img = AICSImage(data)
+
+    Initialize an image from S3 with s3fs.
+
+    >>> img = AICSImage("s3://my_bucket/my_file.tiff")
+
+    Initialize an image and pass arguments to the reader using kwargs.
+
+    >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
+
+    Initialize an image, change scene, read data to numpy.
+
+    >>> img = AICSImage("my_many_scene.czi")
+    ... img.set_scene("Image:3")
+    ... img.data
+
+    Notes
+    -----
+    If your image is made up of mosaic tiles, data and dimension information returned
+    from this object will be from the tiles already stitched together.
+
+    If you do not want the image pre-stitched together, you can use the base reader
+    by either instantiating the reader independently or using the `.reader` property.
+    """
 
     # The order of the readers in this list is important.
     # Example:
@@ -61,57 +116,6 @@ class AICSImage:
         raise exceptions.UnsupportedFileFormatError("AICSImage", path)
 
     def __init__(self, image: types.ImageLike, **kwargs: Any):
-        """
-        AICSImage takes microscopy image data types (files or arrays) of varying
-        dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
-        ("Time-Channel-Z-Y-X") ordered array(s). The data and metadata are lazy
-        loaded and can be accessed as needed.
-
-        Parameters
-        ----------
-        image: types.ImageLike
-            A string, Path, fsspec supported URI, or arraylike to read.
-        kwargs: Any
-            Extra keyword arguments that will be passed down to the reader subclass.
-
-        Examples
-        --------
-        Initialize an image then read the file and return specified slices as a numpy
-        array.
-
-        >>> img = AICSImage("my_file.tiff")
-        ... zstack_t8 = img.get_image_data("ZYX", T=8, C=0)
-
-        Initialize an image, construct a delayed dask array for certain slices, then
-        read only the specified chunk of data.
-
-        >>> img = AICSImage("my_file.czi")
-        ... zstack_t8 = img.get_image_dask_data("ZYX", T=8, C=0)
-        ... zstack_t8_data = zstack_t8.compute()
-
-        Initialize an image with a dask or numpy array.
-
-        >>> data = np.random.rand(100, 100)
-        ... img = AICSImage(data)
-
-        Initialize an image from S3 with s3fs.
-
-        >>> img = AICSImage("s3://my_bucket/my_file.tiff")
-
-        Initialize an image and pass arguments to the reader using kwargs.
-
-        >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
-
-        Initialize an image, change scene, read data to numpy.
-
-        >>> img = AICSImage("my_many_scene.czi")
-        ... img.set_scene("Image:3")
-        ... img.data
-
-        Notes
-        -----
-        If your image is a mosaic tiled image, the tiles will be stitched together.
-        """
         # Determine reader class and create dask delayed array
         ReaderClass = self.determine_reader(image, **kwargs)
         self._reader = ReaderClass(image, **kwargs)
@@ -186,7 +190,8 @@ class AICSImage:
 
         Raises
         ------
-        IndexError: the provided scene id is not found in the available scene id list
+        IndexError
+            The provided scene id is not found in the available scene id list
         """
         # Only need to run when the scene id is different from current scene
         if scene_id != self.reader.current_scene:

@@ -50,7 +50,7 @@ class OmeTiffWriter(Writer):
         Parameters
         ----------
         data: Union[List[types.ArrayLike], types.ArrayLike]
-            The array of data to store. Data arrays must have 2 to 6 dimensions.  If a
+            The array of data to store. Data arrays must have 2 to 6 dimensions. If a
             list is provided, then it is understood to be multiple images written to the
             ome-tiff file. All following metadata parameters will be expanded to the
             length of this list.
@@ -59,7 +59,7 @@ class OmeTiffWriter(Writer):
             Note: OmeTiffWriter can only write to local file systems.
         dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
-            Dimensions must be a list of T,C,Z,Y,Z,S (S=samples for rgb data).
+            Dimensions must be a list of T, C, Z, Y, Z, and S (S=samples for rgb data).
             Dimension strings must be same length as number of dimensions in the data.
             If S is present it must be last and its data count must be 3 or 4.
             Default: None.
@@ -68,7 +68,7 @@ class OmeTiffWriter(Writer):
             In the None case, data will be assumed to be scalar, not RGB.
         ome_xml: Optional[Union[str, OME]]
             Provided OME metadata. The metadata can be an xml string or an OME object
-            from ome-types.  A provided ome_xml will override any other provided
+            from ome-types. A provided ome_xml will override any other provided
             metadata arguments.
             Default: None
             The passed-in metadata will be validated against current OME_XML schema and
@@ -88,11 +88,11 @@ class OmeTiffWriter(Writer):
             of the form "Image:image_index"
         physical_pixel_sizes: Optional[Union[types.PhysicalPixelSizes,
                 List[types.PhysicalPixelSizes]]]
-            List of numbers representing the physical pixel sizes in z,y,x in microns
+            List of numbers representing the physical pixel sizes in Z, Y, X in microns
             Default: None
             If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]
-            List of rgb color values per channel.  These must be values compatible with
+            List of rgb color values per channel. These must be values compatible with
             the OME spec.
             Default: None
 

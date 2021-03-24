@@ -72,7 +72,7 @@ jobs:
     - name: Install Dependencies
       run: |
         pip install --upgrade pip
-        pip install .[all]
+        pip install .[dev]
     - name: Generate Docs
       run: |
         gitchangelog

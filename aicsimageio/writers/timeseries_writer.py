@@ -11,10 +11,19 @@ from imageio import get_writer
 from .. import types
 from ..dimensions import DimensionNames
 from ..exceptions import InvalidDimensionOrderingError, UnexpectedShapeError
-from ..readers import DefaultReader
 from ..transforms import reshape_data
 from ..utils import io_utils
 from .writer import Writer
+
+try:
+    from ..readers.default_reader import DefaultReader
+
+except ImportError:
+    raise ImportError(
+        "Base imageio is required for this writer. "
+        "Install with `pip install aicsimageio[base-imageio]`"
+    )
+
 
 ###############################################################################
 
@@ -23,6 +32,10 @@ class TimeseriesWriter(Writer):
     """
     A writer for timeseries Greyscale, RGB, or RGBA image data.
     Primarily directed at formats: "gif", "mp4", "mkv", etc.
+
+    Notes
+    -----
+    To use this writer, install with: `pip install aicsimageio[base-imageio]`.
     """
 
     _TIMEPOINT_DIMENSIONS = [

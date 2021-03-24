@@ -9,10 +9,18 @@ from imageio import get_writer
 from .. import types
 from ..dimensions import DimensionNames
 from ..exceptions import InvalidDimensionOrderingError, UnexpectedShapeError
-from ..readers import DefaultReader
 from ..transforms import reshape_data
 from ..utils import io_utils
 from .writer import Writer
+
+try:
+    from ..readers.default_reader import DefaultReader
+
+except ImportError:
+    raise ImportError(
+        "Base imageio is required for this writer. "
+        "Install with `pip install aicsimageio[base-imageio]`"
+    )
 
 ###############################################################################
 
@@ -23,6 +31,10 @@ class TwoDWriter(Writer):
     Primarily directed at formats: "png", "jpg", etc.
 
     This is primarily a passthrough to imageio.imwrite.
+
+    Notes
+    -----
+    To use this writer, install with: `pip install aicsimageio[base-imageio]`.
     """
 
     _PLANE_DIMENSIONS = [
@@ -55,7 +67,8 @@ class TwoDWriter(Writer):
         dim_order: str
             The dimension order of the provided data.
             Default: None. Based off the number of dimensions, will assume
-            the dimensions similar to how aicsimageio.readers.DefaultReader reads in
+            the dimensions similar to how
+            aicsimageio.readers.default_reader.DefaultReader reads in
             data. That is, two dimensions: YX and three dimensions: YXS.
 
         Examples

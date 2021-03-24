@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 
 from aicsimageio import exceptions
-from aicsimageio.readers import DefaultReader
-from aicsimageio.writers import TimeseriesWriter
+from aicsimageio.readers.default_reader import DefaultReader
+from aicsimageio.writers.timeseries_writer import TimeseriesWriter
 
 from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
 

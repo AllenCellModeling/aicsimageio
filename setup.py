@@ -8,11 +8,19 @@ from setuptools import find_packages, setup
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
+format_libs = {
+    "base-imageio": "imageio[ffmpeg]~=2.9.0",
+    "lif": "readlif~=0.5.1",
+}
+
+all_formats = [v for v in format_libs.values()]
+
 setup_requirements = [
     "pytest-runner>=5.2",
 ]
 
 test_requirements = [
+    *all_formats,
     "black>=19.10b0",
     "codecov>=2.1.4",
     "distributed~=2.9.0",
@@ -46,14 +54,11 @@ dev_requirements = [
 ]
 
 requirements = [
-    "aicspylibczi~=2.8.0",
     "dask[array]>=2021.1.0",
     "fsspec~=0.8.4",
     "imagecodecs>=2020.5.30",
-    "imageio[ffmpeg]~=2.9.0",
     "numpy~=1.16",
     "ome-types~=0.2.4",
-    "readlif~=0.5.1",
     "tifffile>=2021.2.1",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
@@ -65,10 +70,8 @@ extra_requirements = {
     "setup": setup_requirements,
     "test": test_requirements,
     "dev": dev_requirements,
-    "all": [
-        *requirements,
-        *dev_requirements,
-    ],
+    **format_libs,
+    "all": all_formats,
 }
 
 setup(

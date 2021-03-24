@@ -9,7 +9,7 @@ import pytest
 from readlif.reader import LifFile
 
 from aicsimageio import dimensions, exceptions
-from aicsimageio.readers import LifReader
+from aicsimageio.readers.lif_reader import LifReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (

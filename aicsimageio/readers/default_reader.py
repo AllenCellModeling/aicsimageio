@@ -4,7 +4,6 @@
 from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
-import imageio
 import numpy as np
 import xarray as xr
 from dask import delayed
@@ -15,6 +14,15 @@ from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
+
+try:
+    import imageio
+
+except ImportError:
+    raise ImportError(
+        "Base imageio is required for this reader. "
+        "Install with `pip install aicsimageio[base-imageio]`"
+    )
 
 ###############################################################################
 
@@ -27,6 +35,19 @@ REMOTE_READ_FAIL_MESSAGE = (
 
 
 class DefaultReader(Reader):
+    """
+    A catch all for image file reading that defaults to using imageio
+    implementations.
+
+    Parameters
+    ----------
+    image: types.PathLike
+        Path to image file to construct Reader for.
+
+    Notes
+    -----
+    To use this reader, install with: `pip install aicsimageio[base-imageio]`.
+    """
 
     FFMPEG_FORMATS = ["mov", "avi", "mpg", "mpeg", "mp4", "mkv", "wmv", "ogg"]
 
@@ -92,15 +113,6 @@ class DefaultReader(Reader):
             raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
     def __init__(self, image: types.PathLike, **kwargs: Any):
-        """
-        A catch all for image file reading that defaults to using imageio
-        implementations.
-
-        Parameters
-        ----------
-        image: types.PathLike
-            Path to image file to construct Reader for.
-        """
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension, self.imageio_read_mode = self._get_extension_and_mode(

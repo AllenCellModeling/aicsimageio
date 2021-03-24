@@ -41,6 +41,10 @@ class LifReader(Reader):
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
+
+    Notes
+    -----
+    To use this reader, install with: `pip install aicsimageio[lif]`.
     """
 
     @staticmethod

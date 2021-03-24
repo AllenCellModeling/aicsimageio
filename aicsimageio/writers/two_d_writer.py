@@ -31,6 +31,10 @@ class TwoDWriter(Writer):
     Primarily directed at formats: "png", "jpg", etc.
 
     This is primarily a passthrough to imageio.imwrite.
+
+    Notes
+    -----
+    To use this writer, install with: `pip install aicsimageio[base-imageio]`.
     """
 
     _PLANE_DIMENSIONS = [

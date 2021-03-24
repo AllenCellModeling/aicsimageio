@@ -32,6 +32,10 @@ class TimeseriesWriter(Writer):
     """
     A writer for timeseries Greyscale, RGB, or RGBA image data.
     Primarily directed at formats: "gif", "mp4", "mkv", etc.
+
+    Notes
+    -----
+    To use this writer, install with: `pip install aicsimageio[base-imageio]`.
     """
 
     _TIMEPOINT_DIMENSIONS = [

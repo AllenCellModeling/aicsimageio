@@ -28,7 +28,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
     -   [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
 
-    See [Remote Image Reading](#remote-image-reading) for more details.
+    See [Cloud IO Support](#cloud-io-support) for more details.
 
 ## Installation
 
@@ -183,7 +183,13 @@ for more details.
 by plane index. If you want to retrieve data by spatial-temporal coordinates you
 must use `xarray`.
 
-### Remote Image Reading
+### Cloud IO Support
+
+[File-System Specification (fsspec)](https://github.com/intake/filesystem_spec) allows
+for common object storage services (S3, GCS, etc.) to act like normal filesystems by
+following the same base specification across them all. AICSImageIO utilizes this
+standard specification to make it possible to read directly from remote resources when
+the specification is installed.
 
 [File-System Specification (fsspec)](https://github.com/intake/filesystem_spec) allows
 for common object storage services (S3, GCS, etc.) to act like normal filesystems by

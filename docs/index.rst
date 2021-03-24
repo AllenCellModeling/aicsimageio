@@ -18,11 +18,11 @@ Specific Doc Pages
    :toctree:
    :caption: Important Classes:
 
-   aicsimageio.AICSImage
-   aicsimageio.readers.Reader
-   aicsimageio.readers.OmeTiffReader
-   aicsimageio.readers.TiffReader
-   aicsimageio.writers.OmeTiffWriter
+   aicsimageio.aics_image.AICSImage
+   aicsimageio.readers.reader.Reader
+   aicsimageio.readers.ome_tiff_reader.OmeTiffReader
+   aicsimageio.readers.tiff_reader.TiffReader
+   aicsimageio.writers.ome_tiff_writer.OmeTiffWriter
 
 Indices and tables
 ==================

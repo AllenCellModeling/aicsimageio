@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/aicsimage-save  (`#215
+  <https://github.com/AllenCellModeling/aicsimageio/pull/215>`_)
+  [Jackson Maxfield Brown]
 - feature/lif-reader  (`#212
   <https://github.com/AllenCellModeling/aicsimageio/pull/212>`_)
   [Jackson Maxfield Brown]
@@ -68,6 +71,12 @@ Fix
 
 Other
 ~~~~~
+- admin/split-reader-deps  (`#221
+  <https://github.com/AllenCellModeling/aicsimageio/pull/221>`_)
+  [Jackson Maxfield Brown]
+- admin/doc-updates  (`#216
+  <https://github.com/AllenCellModeling/aicsimageio/pull/216>`_)
+  [Jackson Maxfield Brown]
 - admin/adopt-mypy-and-stricter-linting  (`#208
   <https://github.com/AllenCellModeling/aicsimageio/pull/208>`_)
   [Jackson Maxfield Brown]

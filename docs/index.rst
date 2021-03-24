@@ -16,10 +16,13 @@ Specific Doc Pages
 
 .. autosummary::
    :toctree:
+   :caption: Important Classes:
 
-   aicsimageio.aics_image.AICSImage
-   aicsimageio.readers.reader.Reader
-   aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save
+   aicsimageio.AICSImage
+   aicsimageio.readers.Reader
+   aicsimageio.readers.OmeTiffReader
+   aicsimageio.readers.TiffReader
+   aicsimageio.writers.OmeTiffWriter
 
 Indices and tables
 ==================

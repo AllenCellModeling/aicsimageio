@@ -4,7 +4,6 @@
 from typing import Any, Dict, List, Tuple, Union
 
 import dask.array as da
-import imageio
 import numpy as np
 import xarray as xr
 from dask import delayed
@@ -15,6 +14,15 @@ from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
+
+try:
+    import imageio
+
+except ImportError:
+    raise ImportError(
+        "Base imageio is required for this reader. "
+        "Install with `pip install aicsimageio[base-imageio]`"
+    )
 
 ###############################################################################
 

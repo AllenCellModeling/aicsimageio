@@ -10,7 +10,6 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from readlif.reader import LifFile
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import (
@@ -22,6 +21,15 @@ from ..dimensions import (
 )
 from ..utils import io_utils
 from .reader import Reader
+
+try:
+    from readlif.reader import LifFile
+
+except ImportError:
+    raise ImportError(
+        "readlif is required for this reader. "
+        "Install with `pip install aicsimageio[lif]`"
+    )
 
 ###############################################################################
 

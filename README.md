@@ -191,12 +191,6 @@ following the same base specification across them all. AICSImageIO utilizes this
 standard specification to make it possible to read directly from remote resources when
 the specification is installed.
 
-[File-System Specification (fsspec)](https://github.com/intake/filesystem_spec) allows
-for common object storage services (S3, GCS, etc.) to act like normal filesystems by
-following the same base specification across them all. AICSImageIO utilizes this
-standard specification to make it possible to read directly from remote resources when
-the specification is installed.
-
 ```python
 from aicsimageio import AICSImage
 

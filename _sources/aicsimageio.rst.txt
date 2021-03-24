@@ -47,6 +47,14 @@ aicsimageio.exceptions module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.formats module
+--------------------------
+
+.. automodule:: aicsimageio.formats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.transforms module
 -----------------------------
 

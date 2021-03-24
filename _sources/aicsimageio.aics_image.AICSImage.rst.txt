@@ -37,8 +37,11 @@ aicsimageio.aics\_image.AICSImage
       ~AICSImage.dims
       ~AICSImage.dtype
       ~AICSImage.metadata
+      ~AICSImage.module_path
       ~AICSImage.physical_pixel_sizes
       ~AICSImage.reader
+      ~AICSImage.reader_name
+      ~AICSImage.reader_path
       ~AICSImage.scenes
       ~AICSImage.shape
       ~AICSImage.xarray_dask_data

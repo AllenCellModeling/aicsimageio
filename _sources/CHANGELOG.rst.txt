@@ -71,6 +71,9 @@ Fix
 
 Other
 ~~~~~
+- admin/split-reader-deps  (`#221
+  <https://github.com/AllenCellModeling/aicsimageio/pull/221>`_)
+  [Jackson Maxfield Brown]
 - admin/doc-updates  (`#216
   <https://github.com/AllenCellModeling/aicsimageio/pull/216>`_)
   [Jackson Maxfield Brown]

@@ -66,7 +66,11 @@ class AICSImage:
 
     Notes
     -----
-    If your image is a mosaic tiled image, the tiles will be stitched together.
+    If your image is made up of mosaic tiles, data and dimension information returned
+    from this object will be from the tiles already stitched together.
+
+    If you do not want the image pre-stitched together, you can use the base reader
+    by either instantiating the reader independently or using the `.reader` property.
     """
 
     # The order of the readers in this list is important.

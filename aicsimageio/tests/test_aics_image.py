@@ -619,3 +619,115 @@ def test_roundtrip_save_all_scenes(
             np.testing.assert_array_equal(original.data, result.data)
             assert original.dims.order == result.dims.order
             assert original.channel_names == result.channel_names
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "set_dims, "
+    "set_channel_names, "
+    "expected_dims, "
+    "expected_channel_names, "
+    "expected_shape",
+    [
+        # First check to show nothing changes
+        (
+            "example.gif",
+            "Image:0",
+            None,
+            None,
+            "TCZYXS",
+            ["Channel:0:0"],
+            (72, 1, 1, 268, 268, 4),
+        ),
+        # Check just dims to see default channel name creation
+        (
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            None,
+            "TCZYX",
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
+            (1, 4, 72, 268, 268),
+        ),
+        # Check setting both as simple definitions
+        (
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            ["Red", "Green", "Blue", "Alpha"],
+            "TCZYX",
+            ["Red", "Green", "Blue", "Alpha"],
+            (1, 4, 72, 268, 268),
+        ),
+        # Check setting both with list of dims
+        (
+            "example.gif",
+            "Image:0",
+            ["Z", "Y", "X", "C"],
+            ["Red", "Green", "Blue", "Alpha"],
+            "TCZYX",
+            ["Red", "Green", "Blue", "Alpha"],
+            (1, 4, 72, 268, 268),
+        ),
+        # Check providing too many dims
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            "ABCDEFG",
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=ValueError),
+        ),
+        # Check providing too many channels
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=ValueError),
+        ),
+        # Check providing channels but no channel dim
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            None,
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=ValueError),
+        ),
+    ],
+)
+def test_set_known_coords(
+    filename: str,
+    set_scene: str,
+    set_dims: Optional[Union[str, List[str]]],
+    set_channel_names: Optional[Union[List[str], List[List[str]]]],
+    expected_dims: str,
+    expected_channel_names: List[str],
+    expected_shape: Tuple[int],
+) -> None:
+    # As a reminder, AICSImage always has certain dimensions
+    # If you provide a dimension that isn't one of those,
+    # it will only be available on the reader, not the AICSImage object.
+
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, known_dims=set_dims, known_channel_names=set_channel_names)
+
+    # Set scene
+    img.set_scene(set_scene)
+
+    # Compare AICSImage results
+    assert img.dims.order == expected_dims
+    assert img.channel_names == expected_channel_names
+    assert img.shape == expected_shape

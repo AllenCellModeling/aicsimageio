@@ -630,6 +630,7 @@ def test_roundtrip_save_all_scenes(
     "expected_channel_names, "
     "expected_shape",
     [
+        # DefaultReader
         # First check to show nothing changes
         (
             "example.gif",
@@ -660,16 +661,6 @@ def test_roundtrip_save_all_scenes(
             ["Red", "Green", "Blue", "Alpha"],
             (1, 4, 72, 268, 268),
         ),
-        # Check setting both with list of dims
-        (
-            "example.gif",
-            "Image:0",
-            ["Z", "Y", "X", "C"],
-            ["Red", "Green", "Blue", "Alpha"],
-            "TCZYX",
-            ["Red", "Green", "Blue", "Alpha"],
-            (1, 4, 72, 268, 268),
-        ),
         # Check providing too many dims
         pytest.param(
             "example.gif",
@@ -679,7 +670,7 @@ def test_roundtrip_save_all_scenes(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
         ),
         # Check providing too many channels
         pytest.param(
@@ -690,7 +681,7 @@ def test_roundtrip_save_all_scenes(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
         ),
         # Check providing channels but no channel dim
         pytest.param(
@@ -701,7 +692,124 @@ def test_roundtrip_save_all_scenes(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        ######################################
+        # TiffReader
+        # First check to show nothing changes
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            None,
+            "TCZYX",
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (10, 3, 1, 325, 475),
+        ),
+        # Check just dims to see default channel name creation
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            None,
+            "TCZYX",
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting both as simple definitions
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            ["A", "B", "C"],
+            "TCZYX",
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting channels as a list of lists definitions
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            [["A", "B", "C"]],
+            "TCZYX",
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting dims as list of dims
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            ["ZCYX"],
+            ["A", "B", "C"],
+            "TCZYX",
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting dims as list of None (scene has unknown dims)
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            [None],
+            ["A", "B", "C"],
+            "TCZYX",
+            ["A", "B", "C"],
+            (10, 3, 1, 325, 475),
+        ),
+        # Check providing too many dims
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ABCDEFG",
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing too many channels
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            ["A", "B", "C", "D"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing channels but no channel dim
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "TZYX",
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check number of scenes dims list matches n scenes
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            ["ABC", "DEF", "GHI"],
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check number of scenes channels list matches n scenes
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            [["A", "B", "C"], ["D", "E", "F"]],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
         ),
     ],
 )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -42,6 +42,16 @@ class TiffReader(Reader):
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
+    known_dims: Optional[Union[List[str], str]]
+        A string of known dimensions to be applied to all array(s) or a
+        list of string dimension names to be mapped onto the list of arrays
+        provided to image. I.E. "TYX".
+        Default: None (guess dimensions for single array or multiple arrays)
+    known_channel_names: Optional[Union[List[str], List[List[str]]]]
+        A list of string channel names to be applied to all array(s) or a
+        list of lists of string channel names to be mapped onto the list of arrays
+        provided to image.
+        Default: None (create OME channel IDs for names for single or multiple arrays)
     """
 
     @staticmethod
@@ -58,6 +68,8 @@ class TiffReader(Reader):
         self,
         image: types.PathLike,
         chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
+        known_dims: Optional[Union[List[str], str]] = None,
+        known_channel_names: Optional[Union[List[str], List[List[str]]]] = None,
         **kwargs: Any,
     ):
         # Expand details of provided image
@@ -67,7 +79,33 @@ class TiffReader(Reader):
         if isinstance(chunk_by_dims, str):
             chunk_by_dims = list(chunk_by_dims)
 
+        # Run basic checks on dims and channel names
+        if isinstance(known_dims, list):
+            if len(known_dims) != len(self.scenes):
+                raise exceptions.ConflictingArgumentsError(
+                    f"Number of dimension strings provided does not match the "
+                    f"number of scenes found in the file. "
+                    f"Number of scenes: {len(self.scenes)}, "
+                    f"Number of provided known dimension strings: {len(known_dims)}"
+                )
+        # If provided a list
+        if isinstance(known_channel_names, list):
+            # If provided a list of lists
+            if len(known_channel_names) > 0 and isinstance(
+                known_channel_names[0], list
+            ):
+                # Ensure that the outer list is the number of scenes
+                if len(known_channel_names) != len(self.scenes):
+                    raise exceptions.ConflictingArgumentsError(
+                        f"Number of channel name lists provided does not match the "
+                        f"number of scenes found in the file. "
+                        f"Number of scenes: {len(self.scenes)}, "
+                        f"Provided known channel name lists: {known_dims}"
+                    )
+
         self.chunk_by_dims = chunk_by_dims
+        self.known_dims = known_dims
+        self.known_channel_names = known_channel_names
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -173,24 +211,83 @@ class TiffReader(Reader):
             guessed_dims = Reader._guess_dim_order(scene.shape)
             return [d for d in self._merge_dim_guesses(dims_from_meta, guessed_dims)]
 
+    def _get_dims_for_scene(self, tiff: TiffFile) -> List[str]:
+        # Get / guess dims
+        if self.known_dims is None:
+            return self._guess_tiff_dim_order(tiff)
+
+        # Provided list get or guess based
+        if isinstance(self.known_dims, list):
+            # This list index has a value, use it
+            if self.known_dims[self.current_scene_index] is not None:
+                return list(self.known_dims[self.current_scene_index])
+
+            # Otherwise guess
+            return self._guess_tiff_dim_order(tiff)
+
+        # Provided the same string for all, use
+        return list(self.known_dims)
+
+    def _get_channel_names_for_scene(
+        self, image_shape: Tuple[int], dims: List[str]
+    ) -> Optional[List[str]]:
+        # Fast return in None case
+        if self.known_channel_names is None:
+            return None
+
+        # If channels was provided as a list of lists
+        if isinstance(self.known_channel_names[0], list):
+            scene_channels = self.known_channel_names[self.current_scene_index]
+        elif all(isinstance(c, str) for c in self.known_channel_names):
+            scene_channels = self.known_channel_names
+        else:
+            return None
+
+        # If scene channels isn't None and no channel dimension raise error
+        if DimensionNames.Channel not in dims:
+            raise exceptions.ConflictingArgumentsError(
+                f"Provided channel names for scene with no channel dimension. "
+                f"Scene dims: {dims}, "
+                f"Provided channel names: {scene_channels}"
+            )
+
+        # If scene channels isn't the same length as the size of channel dim
+        if len(scene_channels) != image_shape[dims.index(DimensionNames.Channel)]:
+            raise exceptions.ConflictingArgumentsError(
+                f"Number of channel names provided does not match the "
+                f"size of the channel dimension for this scene. "
+                f"Scene shape: {image_shape}, "
+                f"Dims: {dims}, "
+                f"Provided known channel names: "
+                f"{self.known_channel_names}",
+            )
+
+        return scene_channels
+
     @staticmethod
     def _get_coords(
         dims: List[str],
         shape: Tuple[int, ...],
         scene_index: int,
+        known_channel_names: Optional[List[str]],
     ) -> Dict[str, Any]:
         # Use dims for coord determination
         coords: Dict[str, Any] = {}
 
-        # Get ImageId for channel naming
-        image_id = metadata_utils.generate_ome_image_id(scene_index)
+        if known_channel_names is None:
+            # Get ImageId for channel naming
+            image_id = metadata_utils.generate_ome_image_id(scene_index)
 
-        # Use range for channel indices
-        if DimensionNames.Channel in dims:
-            coords[DimensionNames.Channel] = [
-                metadata_utils.generate_ome_channel_id(image_id=image_id, channel_id=i)
-                for i in range(shape[dims.index(DimensionNames.Channel)])
-            ]
+            # Use range for channel indices
+            if DimensionNames.Channel in dims:
+                coords[DimensionNames.Channel] = [
+                    metadata_utils.generate_ome_channel_id(
+                        image_id=image_id, channel_id=i
+                    )
+                    for i in range(shape[dims.index(DimensionNames.Channel)])
+                ]
+        else:
+            coords[DimensionNames.Channel] = known_channel_names
 
         return coords
 
@@ -224,6 +321,15 @@ class TiffReader(Reader):
         # Construct delayed dask array
         selected_scene = tiff.series[self.current_scene_index]
         selected_scene_dims = "".join(selected_scene_dims_list)
+
+        # Raise invalid dims error
+        if len(selected_scene.shape) != len(selected_scene_dims):
+            raise exceptions.ConflictingArgumentsError(
+                f"Dimension string provided does not match the "
+                f"number of dimensions found for this scene. "
+                f"This scene shape: {selected_scene.shape}, "
+                f"Provided dims string: {selected_scene_dims}"
+            )
 
         # Constuct the chunk and non-chunk shapes one dim at a time
         # We also collect the chunk and non-chunk dimension order so that
@@ -314,8 +420,8 @@ class TiffReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                # Get / guess dims
-                dims = self._guess_tiff_dim_order(tiff)
+                # Get dims from known or guess
+                dims = self._get_dims_for_scene(tiff)
 
                 # Create the delayed dask array
                 image_data = self._create_dask_array(tiff, dims)
@@ -323,9 +429,15 @@ class TiffReader(Reader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
+                # Get channel names for this scene or generate
+                channels = self._get_channel_names_for_scene(image_data.shape, dims)
+
                 # Create coords
                 coords = self._get_coords(
-                    dims, image_data.shape, scene_index=self.current_scene_index
+                    dims,
+                    image_data.shape,
+                    scene_index=self.current_scene_index,
+                    known_channel_names=channels,
                 )
 
                 return xr.DataArray(
@@ -357,8 +469,8 @@ class TiffReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
-                # Get / guess dims
-                dims = self._guess_tiff_dim_order(tiff)
+                # Get dims from known or guess
+                dims = self._get_dims_for_scene(tiff)
 
                 # Read image into memory
                 image_data = tiff.series[self.current_scene_index].asarray()
@@ -366,9 +478,15 @@ class TiffReader(Reader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
+                # Get channel names for this scene or generate
+                channels = self._get_channel_names_for_scene(image_data.shape, dims)
+
                 # Create dims and coords
                 coords = self._get_coords(
-                    dims, image_data.shape, scene_index=self.current_scene_index
+                    dims,
+                    image_data.shape,
+                    scene_index=self.current_scene_index,
+                    known_channel_names=channels,
                 )
 
                 return xr.DataArray(

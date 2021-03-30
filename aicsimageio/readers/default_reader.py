@@ -43,13 +43,11 @@ class DefaultReader(Reader):
     ----------
     image: types.PathLike
         Path to image file to construct Reader for.
-
-    known_dims: Optional[Union[List[str], str]]
-            Optional list (or string) of dimension short names for the image to use
+    known_dims: Optional[str]
+            Optional string of dimension short names for the image to use
             instead of guess.
             Must provide the same number of dimensions as read.
             Default: None (guess)
-
     known_channel_names: Optional[List[str]]
         Optional list of channel names.
         Must provide the same number of channels as the read channel dimension.
@@ -126,7 +124,7 @@ class DefaultReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        known_dims: Optional[Union[List[str], str]] = None,
+        known_dims: Optional[str] = None,
         known_channel_names: Optional[List[str]] = None,
         **kwargs: Any,
     ):
@@ -135,10 +133,6 @@ class DefaultReader(Reader):
         self.extension, self.imageio_read_mode = self._get_extension_and_mode(
             self._path
         )
-
-        # Cast to list to standardize usage
-        if isinstance(known_dims, str):
-            known_dims = list(known_dims)
 
         # Store extras
         self.known_dims = known_dims
@@ -284,7 +278,7 @@ class DefaultReader(Reader):
         image_data: types.ArrayLike,
         metadata: Dict,
         scene_id: str,
-        known_dims: Optional[List[str]],
+        known_dims: Optional[str],
         known_channel_names: Optional[List[str]],
     ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
@@ -294,20 +288,16 @@ class DefaultReader(Reader):
         ----------
         image_data: types.ArrayLike
             The image data to unpack dims and coords for.
-
         metadata: Dict
             The EXIF, XMP, etc metadata dictionary.
-
         scene_id: str
             The scene id for this image.
             For this reader this is always the same but we need this to create
             channel names.
-
-        known_dims: Optional[List[str]]
-            Optional list of known dimensions to use instead of guess.
+        known_dims: Optional[str]
+            Optional string of known dimensions to use instead of guess.
             Unlike other readers, this reader doesn't have any idea as to many-scene
-            so we can just have a single List[str] instead of a List[List[str]].
-
+            so we can just have a single string instead of a List[str].
         known_channel_names: Optional[List[str]]
             Optional list of known channel names to use instead of None.
             Unlike other readers, this reader doesn't pull metadata so it would
@@ -323,14 +313,14 @@ class DefaultReader(Reader):
         # Guess dims or use provided dims
         if known_dims is not None:
             if len(known_dims) != len(image_data.shape):
-                raise ValueError(
+                raise exceptions.ConflictingArgumentsError(
                     f"Provided dimension string does not have the same amount of "
                     f"dimensions as the read image. "
                     f"Read image shape: {image_data.shape}, "
                     f"Provided dimension string: {known_dims}"
                 )
 
-            dims = known_dims
+            dims = list(known_dims)
 
         else:
             dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
@@ -342,7 +332,7 @@ class DefaultReader(Reader):
         if known_channel_names:
             # Provided channel names but no channel dim
             if DimensionNames.Channel not in dims:
-                raise ValueError(
+                raise exceptions.ConflictingArgumentsError(
                     f"Received channel names for array without channel dimension. "
                     f"Read image shape: {image_data.shape}, "
                     f"Provided (or guessed) dimensions: {dims}, "
@@ -354,12 +344,11 @@ class DefaultReader(Reader):
                 len(known_channel_names)
                 != image_data.shape[dims.index(DimensionNames.Channel)]
             ):
-                raise ValueError(
+                raise exceptions.ConflictingArgumentsError(
                     f"Provided channel names list does not match the size of "
                     f"channel dimension for the provided array. "
                     f"Read image shape: {image_data.shape}, "
-                    f"Channel dimension size: "
-                    f"{image_data.shape[dims.index[DimensionNames.Channel]]}, "
+                    f"Dims: {dims}, "
                     f"Provided channel names: {known_channel_names}"
                 )
 

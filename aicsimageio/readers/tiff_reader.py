@@ -239,7 +239,7 @@ class TiffReader(Reader):
         if isinstance(self.known_channel_names[0], list):
             scene_channels = self.known_channel_names[self.current_scene_index]
         elif all(isinstance(c, str) for c in self.known_channel_names):
-            scene_channels = self.known_channel_names
+            scene_channels = self.known_channel_names  # type: ignore
         else:
             return None
 
@@ -262,7 +262,7 @@ class TiffReader(Reader):
                 f"{self.known_channel_names}",
             )
 
-        return scene_channels
+        return scene_channels  # type: ignore
 
     @staticmethod
     def _get_coords(

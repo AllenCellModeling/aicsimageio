@@ -29,6 +29,9 @@ class AICSImage:
     ----------
     image: types.ImageLike
         A string, Path, fsspec supported URI, or arraylike to read.
+    known_reader: Optional[types.ReaderType]
+        The Reader class to specifically use for reading the provided image.
+        Default: None (find matching reader)
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -65,6 +68,10 @@ class AICSImage:
     >>> img = AICSImage("my_many_scene.czi")
     ... img.set_scene("Image:3")
     ... img.data
+
+    Initialize an image with a specific reader.
+
+    >>> img = AICSImage("malformed_metadata.ome.tiff", known_reader=readers.TiffReader)
 
     Notes
     -----

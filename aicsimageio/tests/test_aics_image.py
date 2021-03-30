@@ -884,7 +884,7 @@ def test_set_known_reader(
     extra_kwargs: Dict[str, Any],
     expected_dims: str,
     expected_shape: Tuple[int, ...],
-):
+) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
 

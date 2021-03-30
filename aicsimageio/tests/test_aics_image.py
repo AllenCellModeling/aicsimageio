@@ -4,7 +4,7 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -12,7 +12,7 @@ import pytest
 import xarray as xr
 from ome_types import OME
 
-from aicsimageio import AICSImage, dimensions, exceptions, types
+from aicsimageio import AICSImage, dimensions, exceptions, readers, types
 
 from .conftest import LOCAL, get_resource_full_path
 from .image_container_test_utils import (
@@ -637,7 +637,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             None,
             None,
-            "TCZYXS",
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
             (72, 1, 1, 268, 268, 4),
         ),
@@ -647,7 +647,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             "ZYXC",
             None,
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
             (1, 4, 72, 268, 268),
         ),
@@ -657,7 +657,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             "ZYXC",
             ["Red", "Green", "Blue", "Alpha"],
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Red", "Green", "Blue", "Alpha"],
             (1, 4, 72, 268, 268),
         ),
@@ -702,7 +702,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             None,
             None,
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
             (10, 3, 1, 325, 475),
         ),
@@ -712,7 +712,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             "ZCYX",
             None,
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
             (1, 3, 10, 325, 475),
         ),
@@ -722,7 +722,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             "ZCYX",
             ["A", "B", "C"],
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["A", "B", "C"],
             (1, 3, 10, 325, 475),
         ),
@@ -732,7 +732,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             "ZCYX",
             [["A", "B", "C"]],
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["A", "B", "C"],
             (1, 3, 10, 325, 475),
         ),
@@ -742,7 +742,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             ["ZCYX"],
             ["A", "B", "C"],
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["A", "B", "C"],
             (1, 3, 10, 325, 475),
         ),
@@ -752,7 +752,7 @@ def test_roundtrip_save_all_scenes(
             "Image:0",
             [None],
             ["A", "B", "C"],
-            "TCZYX",
+            dimensions.DEFAULT_DIMENSION_ORDER,
             ["A", "B", "C"],
             (10, 3, 1, 325, 475),
         ),
@@ -820,7 +820,7 @@ def test_set_known_coords(
     set_channel_names: Optional[Union[List[str], List[List[str]]]],
     expected_dims: str,
     expected_channel_names: List[str],
-    expected_shape: Tuple[int],
+    expected_shape: Tuple[int, ...],
 ) -> None:
     # As a reminder, AICSImage always has certain dimensions
     # If you provide a dimension that isn't one of those,
@@ -838,4 +838,59 @@ def test_set_known_coords(
     # Compare AICSImage results
     assert img.dims.order == expected_dims
     assert img.channel_names == expected_channel_names
+    assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
+    "filename, known_reader, extra_kwargs, expected_dims, expected_shape",
+    [
+        (
+            "actk.ome.tiff",
+            readers.TiffReader,
+            {},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (1, 6, 65, 233, 345),
+        ),
+        # See shape to see why you should use TiffReader :)
+        (
+            "actk.ome.tiff",
+            readers.default_reader.DefaultReader,
+            {},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (390, 1, 1, 233, 345),
+        ),
+        # Test good reader but also allows extra kwargs
+        (
+            "actk.ome.tiff",
+            readers.TiffReader,
+            {"known_dims": "CTYX"},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (65, 6, 1, 233, 345),
+        ),
+        # Test incompatible reader
+        pytest.param(
+            "actk.ome.tiff",
+            readers.lif_reader.LifReader,
+            {},
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
+        ),
+    ],
+)
+def test_set_known_reader(
+    filename: str,
+    known_reader: types.ReaderType,
+    extra_kwargs: Dict[str, Any],
+    expected_dims: str,
+    expected_shape: Tuple[int, ...],
+):
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, known_reader=known_reader, **extra_kwargs)
+
+    # Assert basics
+    assert img.dims.order == expected_dims
     assert img.shape == expected_shape

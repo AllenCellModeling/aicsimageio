@@ -147,9 +147,20 @@ class AICSImage:
             ),
         )
 
-    def __init__(self, image: types.ImageLike, **kwargs: Any):
-        # Determine reader class and create dask delayed array
-        ReaderClass = self.determine_reader(image, **kwargs)
+    def __init__(
+        self,
+        image: types.ImageLike,
+        known_reader: Optional[ReaderType] = None,
+        **kwargs: Any,
+    ):
+        if known_reader is None:
+            # Determine reader class and create dask delayed array
+            ReaderClass = self.determine_reader(image, **kwargs)
+        else:
+            # Init known reader
+            ReaderClass = known_reader
+
+        # Init and store reader
         self._reader = ReaderClass(image, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions

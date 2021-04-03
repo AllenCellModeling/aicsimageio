@@ -537,24 +537,10 @@ class LifReader(Reader):
         ny: int,
         nx: int,
     ) -> types.ArrayLike:
-        # Create empty array
-        arr_shape_list = []
-        for dim, size in zip(dims, data.shape):
-            if dim not in [
-                DimensionNames.MosaicTile,
-                DimensionNames.SpatialY,
-                DimensionNames.SpatialX,
-            ]:
-                arr_shape_list.append(size)
-            elif dim == DimensionNames.SpatialY:
-                arr_shape_list.append(size * ny)
-            elif dim == DimensionNames.SpatialX:
-                arr_shape_list.append(size * nx)
-
         # Fill all tiles
-        rows: List[np.ndarray] = []
+        rows: List[types.ArrayLike] = []
         for row_i in range(ny):
-            row: List[np.ndarray] = []
+            row: List[types.ArrayLike] = []
             for col_i in range(nx):
                 # Calc m_index
                 m_index = (row_i * nx) + col_i

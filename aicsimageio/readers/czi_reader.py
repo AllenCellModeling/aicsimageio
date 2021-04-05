@@ -32,6 +32,7 @@ except ImportError:
         "Install with `pip install aicsimageio[czi]`"
     )
 
+
 ###############################################################################
 
 
@@ -73,6 +74,8 @@ class CziReader(Reader):
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+
+        self._real_dims = None
 
         # Store params
         if isinstance(chunk_by_dims, str):
@@ -434,7 +437,7 @@ class CziReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource)
-            selected_scene = czi.read_image(S=self.current_scene_index)
+            selected_scene, self._real_dims = czi.read_image(S=self.current_scene_index)
             scene_short_info = selected_scene.info
 
             # Check for mosaic tiles
@@ -534,61 +537,81 @@ class CziReader(Reader):
     @staticmethod
     def _stitch_tiles(
         data: types.ArrayLike,
-        dims: str,
+        data_dims_shape: List[Tuple],
         bboxes: Dict,
         mosaic_bbox: BBox,
     ) -> types.ArrayLike:
+        # Assumptions: 1) docs for ZEISSRAW(CZI) say:
+        #   Scene – for clustering items in X/Y direction (data belonging to
+        #   contiguous regions of interests in a mosaic image).
+
+        # 'S' in czi is Scene not Samples, 'A' is sAmples
+
         # Create empty array
         arr_shape_list = []
-        for dim, size in zip(dims, data.shape):
+        for dim in DEFAULT_DIMENSION_ORDER_LIST:
             if dim not in [
-                DimensionNames.MosaicTile,
+                DimensionNames.Samples,
                 DimensionNames.SpatialY,
                 DimensionNames.SpatialX,
             ]:
-                arr_shape_list.append(size)
-            elif dim == DimensionNames.SpatialY:
-                arr_shape_list.append(mosaic_bbox.h)
-            elif dim == DimensionNames.SpatialX:
-                arr_shape_list.append(mosaic_bbox.w)
-
-        # Fill all tiles
-        rows: List[np.ndarray] = []
-        for row_i in range(ny):
-            row: List[np.ndarray] = []
-            for col_i in range(nx):
-                # Calc m_index
-                m_index = (row_i * nx) + col_i
-
-                # Get tile by getting all data for specific M
-                tile = transforms.reshape_data(
-                    data,
-                    given_dims=dims,
-                    return_dims=dims.replace(DimensionNames.MosaicTile, ""),
-                    M=m_index,
-                )
-
-                # LIF image stitching has a 1 pixel overlap
-                # Take all pixels except the first _except_ if this is the last tile
-                # in the row (the X dimension)
-                if col_i + 1 < nx:
-                    row.insert(0, tile[:, :, :, :, 1:])
+                dim_value = [item[1] for item in data_dims_shape if item[0] == dim]
+                if not dim_value:
+                    arr_shape_list.append(1)
                 else:
-                    row.insert(0, tile)
+                    arr_shape_list.append(dim_value[0])
+            if dim is DimensionNames.SpatialY:
+                arr_shape_list.append(mosaic_bbox.h)
+            if dim is DimensionNames.SpatialX:
+                arr_shape_list.append(mosaic_bbox.w)
+            if dim is DimensionNames.Samples:
+                samples = [item[1] for item in data_dims_shape if item[0] == 'A']
+                if samples:
+                    arr_shape_list.append(samples[0])
 
-            # Concat row and append
-            # Take all pixels except the first Y dimension pixel _except_ if this is the
-            # last row
-            np_row = np.concatenate(row, axis=-1)
-            if row_i + 1 < ny:
-                rows.insert(0, np_row[:, :, :, 1:, :])
-            else:
-                rows.insert(0, np_row)
+        ans = None
+        if type(data) is da.Array:
+            ans = da.zeros(arr_shape_list, chunks=data.chunks, dtype=data.dtype)
+        else:
+            ans = np.zeros(arr_shape_list, dtype=data.dtype)
 
-        # Concatenate
-        mosaic = np.concatenate(rows, axis=-2)
+        for (tile_info, box) in bboxes.items():
+            # construct data indexes to use
+            tile_dims = tile_info.dimension_coordinates
+            data_indexes = [tile_dims[dim] for (dim, dmax) in data_dims_shape if
+                            dim in tile_dims.keys() and dim != 'A']
+            # add Y and X
+            data_indexes.append(slice(None))  # Y ":"
+            data_indexes.append(slice(None))  # X ":"
+            if 'A' in tile_dims.keys():
+                data_indexes.append(slice(None))
 
-        return mosaic
+            # construct data indexes for ans
+            ans_indexes = []
+            for dim in DEFAULT_DIMENSION_ORDER_LIST:
+                if dim not in [
+                    'S',
+                    DimensionNames.MosaicTile,
+                    DimensionNames.SpatialY,
+                    DimensionNames.SpatialX,
+                ]:
+                    if dim in tile_dims.keys:
+                        ans_indexes.append(tile_dims[dim])
+                    else:
+                        ans_indexes.append(0)
+                if dim is DimensionNames.SpatialY:
+                    start = box.y - mosaic_bbox.y
+                    ans_indexes.append(slice(start, start + box.h, 1))
+                if dim is DimensionNames.SpatialX:
+                    start = box.x - mosaic_bbox.x
+                    ans_indexes.append(slice(start, start + box.w, 1))
+                if dim is 'A':
+                    ans_indexes.append(slice(None))
+
+            # assign the tiles into ans
+            ans[ans_indexes] = data[data_indexes]
+
+        return ans
 
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
         # Get max of mosaic positions from lif
@@ -600,10 +623,10 @@ class CziReader(Reader):
 
         # Stitch
         stitched = self._stitch_tiles(
-            data=data,
-            dims=self.dims.order,
-            ny=last_tile_position[0] + 1,
-            nx=last_tile_position[1] + 1,
+            data=data,  # the ndarray
+            data_dims_shape=self.data_dims_shape,
+            bboxes=None,
+            mosaic_bbox=None,
         )
 
         # Copy metadata
@@ -614,11 +637,11 @@ class CziReader(Reader):
             d: v
             for d, v in self.xarray_dask_data.coords.items()
             if d
-            not in [
-                DimensionNames.MosaicTile,
-                DimensionNames.SpatialY,
-                DimensionNames.SpatialX,
-            ]
+               not in [
+                   DimensionNames.MosaicTile,
+                   DimensionNames.SpatialY,
+                   DimensionNames.SpatialX,
+               ]
         }
         attrs = copy(self.xarray_dask_data.attrs)
 

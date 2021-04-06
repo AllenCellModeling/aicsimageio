@@ -29,7 +29,7 @@ class AICSImage:
     ----------
     image: types.ImageLike
         A string, Path, fsspec supported URI, or arraylike to read.
-    known_reader: Optional[types.ReaderType]
+    reader: Optional[types.ReaderType]
         The Reader class to specifically use for reading the provided image.
         Default: None (find matching reader)
     kwargs: Any
@@ -71,7 +71,7 @@ class AICSImage:
 
     Initialize an image with a specific reader.
 
-    >>> img = AICSImage("malformed_metadata.ome.tiff", known_reader=readers.TiffReader)
+    >>> img = AICSImage("malformed_metadata.ome.tiff", reader=readers.TiffReader)
 
     Notes
     -----
@@ -157,15 +157,15 @@ class AICSImage:
     def __init__(
         self,
         image: types.ImageLike,
-        known_reader: Optional[ReaderType] = None,
+        reader: Optional[ReaderType] = None,
         **kwargs: Any,
     ):
-        if known_reader is None:
+        if reader is None:
             # Determine reader class and create dask delayed array
             ReaderClass = self.determine_reader(image, **kwargs)
         else:
-            # Init known reader
-            ReaderClass = known_reader
+            # Init reader
+            ReaderClass = reader
 
         # Init and store reader
         self._reader = ReaderClass(image, **kwargs)

@@ -840,7 +840,7 @@ def test_set_coords(
 
 
 @pytest.mark.parametrize(
-    "filename, known_reader, extra_kwargs, expected_dims, expected_shape",
+    "filename, set_reader, extra_kwargs, expected_dims, expected_shape",
     [
         (
             "actk.ome.tiff",
@@ -876,9 +876,9 @@ def test_set_coords(
         ),
     ],
 )
-def test_set_known_reader(
+def test_set_reader(
     filename: str,
-    known_reader: types.ReaderType,
+    set_reader: types.ReaderType,
     extra_kwargs: Dict[str, Any],
     expected_dims: str,
     expected_shape: Tuple[int, ...],
@@ -887,7 +887,7 @@ def test_set_known_reader(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Init
-    img = AICSImage(uri, known_reader=known_reader, **extra_kwargs)
+    img = AICSImage(uri, reader=set_reader, **extra_kwargs)
 
     # Assert basics
     assert img.dims.order == expected_dims

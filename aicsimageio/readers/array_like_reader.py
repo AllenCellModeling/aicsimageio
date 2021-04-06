@@ -245,7 +245,9 @@ class ArrayLikeReader(Reader):
 
         # Validate and store channel_names
         self._scene_channel_names = []
-        for s_index, channel_names in enumerate(channel_names):  # type: ignore
+        for s_index, this_scene_channel_names in enumerate(
+            channel_names  # type: ignore
+        ):
             this_scene = self._all_scenes[s_index]
             this_scene_dims = self._scene_dims_list[s_index]
 
@@ -257,8 +259,10 @@ class ArrayLikeReader(Reader):
                 if isinstance(this_scene, xr.DataArray):
                     if DimensionNames.Channel not in this_scene.coords:
                         # Use provided
-                        if channel_names is not None:
-                            this_scene.coords[DimensionNames.Channel] = channel_names
+                        if this_scene_channel_names is not None:
+                            this_scene.coords[
+                                DimensionNames.Channel
+                            ] = this_scene_channel_names
 
                         # Generate
                         else:
@@ -276,7 +280,7 @@ class ArrayLikeReader(Reader):
                             ] = set_channel_names
 
                 # Provided None, generate
-                if channel_names is None:
+                if this_scene_channel_names is None:
                     this_scene_channels = []
                     for c_index in range(this_scene.shape[channel_dim_index]):
                         image_id = metadata_utils.generate_ome_image_id(s_index)
@@ -290,34 +294,37 @@ class ArrayLikeReader(Reader):
 
                 # Provided Some, validate
                 else:
-                    if len(channel_names) != this_scene.shape[channel_dim_index]:
+                    if (
+                        len(this_scene_channel_names)
+                        != this_scene.shape[channel_dim_index]
+                    ):
                         raise ValueError(
                             f"Provided channel names list does not match the size of "
                             f"channel dimension for the provided array. "
                             f"Provided array shape: {this_scene.shape}, "
                             f"Channel dimension size: "
                             f"{this_scene.shape[channel_dim_index]}, "
-                            f"Provided channel names: {channel_names}"
+                            f"Provided channel names: {this_scene_channel_names}"
                         )
                     else:
-                        self._scene_channel_names.append(channel_names)
+                        self._scene_channel_names.append(this_scene_channel_names)
 
             # Raise error when channel names were provided when they shouldn't have been
             else:
-                if channel_names is not None:
+                if this_scene_channel_names is not None:
                     raise ValueError(
                         f"Received channel names for array without channel dimension. "
                         f"Provided array shape: {this_scene.shape}, "
                         f"Provided (or guessed) dimensions: {this_scene_dims}, "
-                        f"Provided channel names: {channel_names}"
+                        f"Provided channel names: {this_scene_channel_names}"
                     )
                 else:
-                    self._scene_channel_names.append(channel_names)
+                    self._scene_channel_names.append(this_scene_channel_names)
 
         # Construct full xarrays
         # All data arrays in this list are dask Arrays
         self._xr_darrays = []
-        for scene_data, dims, channel_names in zip(
+        for scene_data, dims, this_scene_channel_names in zip(
             self._all_scenes, self._scene_dims_list, self._scene_channel_names
         ):
             # Handle simple case of provided a DataArray
@@ -342,7 +349,7 @@ class ArrayLikeReader(Reader):
                 dims_list = list(dims)
                 coords = {}
                 if DimensionNames.Channel in dims_list:
-                    coords[DimensionNames.Channel] = channel_names
+                    coords[DimensionNames.Channel] = this_scene_channel_names
 
                 # Handle dask
                 if isinstance(scene_data, np.ndarray):

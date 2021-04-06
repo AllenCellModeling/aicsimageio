@@ -61,7 +61,7 @@ class AICSImage:
 
     Initialize an image and pass arguments to the reader using kwargs.
 
-    >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
+    >>> img = AICSImage("my_file.czi", chunk_dims=["T", "Y", "X"])
 
     Initialize an image, change scene, read data to numpy.
 

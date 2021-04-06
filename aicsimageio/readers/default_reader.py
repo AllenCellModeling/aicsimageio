@@ -43,12 +43,12 @@ class DefaultReader(Reader):
     ----------
     image: types.PathLike
         Path to image file to construct Reader for.
-    known_dims: Optional[str]
+    dim_order: Optional[str]
             Optional string of dimension short names for the image to use
             instead of guess.
             Must provide the same number of dimensions as read.
             Default: None (guess)
-    known_channel_names: Optional[List[str]]
+    channel_names: Optional[List[str]]
         Optional list of channel names.
         Must provide the same number of channels as the read channel dimension.
         Default: None (generate standard names)
@@ -124,8 +124,8 @@ class DefaultReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        known_dims: Optional[str] = None,
-        known_channel_names: Optional[List[str]] = None,
+        dim_order: Optional[str] = None,
+        channel_names: Optional[List[str]] = None,
         **kwargs: Any,
     ):
         # Expand details of provided image
@@ -135,8 +135,8 @@ class DefaultReader(Reader):
         )
 
         # Store extras
-        self.known_dims = known_dims
-        self.known_channel_names = known_channel_names
+        self._dim_order = dim_order
+        self._channel_names = channel_names
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -278,8 +278,8 @@ class DefaultReader(Reader):
         image_data: types.ArrayLike,
         metadata: Dict,
         scene_id: str,
-        known_dims: Optional[str],
-        known_channel_names: Optional[List[str]],
+        dim_order: Optional[str],
+        channel_names: Optional[List[str]],
     ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
         Unpack image data into assumed dims and coords.
@@ -294,12 +294,12 @@ class DefaultReader(Reader):
             The scene id for this image.
             For this reader this is always the same but we need this to create
             channel names.
-        known_dims: Optional[str]
-            Optional string of known dimensions to use instead of guess.
+        dim_order: Optional[str]
+            Optional string of dimension order to use instead of guess.
             Unlike other readers, this reader doesn't have any idea as to many-scene
             so we can just have a single string instead of a List[str].
-        known_channel_names: Optional[List[str]]
-            Optional list of known channel names to use instead of None.
+        channel_names: Optional[List[str]]
+            Optional list of channel names to use instead of None.
             Unlike other readers, this reader doesn't pull metadata so it would
             normally generate OME channel names.
 
@@ -311,16 +311,16 @@ class DefaultReader(Reader):
             If possible, the coordinates for dimensions in the image data.
         """
         # Guess dims or use provided dims
-        if known_dims is not None:
-            if len(known_dims) != len(image_data.shape):
+        if dim_order is not None:
+            if len(dim_order) != len(image_data.shape):
                 raise exceptions.ConflictingArgumentsError(
                     f"Provided dimension string does not have the same amount of "
                     f"dimensions as the read image. "
                     f"Read image shape: {image_data.shape}, "
-                    f"Provided dimension string: {known_dims}"
+                    f"Provided dimension string: {dim_order}"
                 )
 
-            dims = list(known_dims)
+            dims = list(dim_order)
 
         else:
             dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
@@ -329,19 +329,19 @@ class DefaultReader(Reader):
         coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
         # Create or use channel names
-        if known_channel_names:
+        if channel_names:
             # Provided channel names but no channel dim
             if DimensionNames.Channel not in dims:
                 raise exceptions.ConflictingArgumentsError(
                     f"Received channel names for array without channel dimension. "
                     f"Read image shape: {image_data.shape}, "
                     f"Provided (or guessed) dimensions: {dims}, "
-                    f"Provided channel names: {known_channel_names}"
+                    f"Provided channel names: {channel_names}"
                 )
 
             # Provided different length channel names and
             if (
-                len(known_channel_names)
+                len(channel_names)
                 != image_data.shape[dims.index(DimensionNames.Channel)]
             ):
                 raise exceptions.ConflictingArgumentsError(
@@ -349,11 +349,11 @@ class DefaultReader(Reader):
                     f"channel dimension for the provided array. "
                     f"Read image shape: {image_data.shape}, "
                     f"Dims: {dims}, "
-                    f"Provided channel names: {known_channel_names}"
+                    f"Provided channel names: {channel_names}"
                 )
 
             # Passed all checks, use the channel names
-            coords[DimensionNames.Channel] = known_channel_names
+            coords[DimensionNames.Channel] = channel_names
 
         # Otherwise simply generate OME default
         else:
@@ -471,8 +471,8 @@ class DefaultReader(Reader):
                     image_data=image_data,
                     metadata=metadata,
                     scene_id=self.current_scene,
-                    known_dims=self.known_dims,
-                    known_channel_names=self.known_channel_names,
+                    dim_order=self._dim_order,
+                    channel_names=self._channel_names,
                 )
 
                 return xr.DataArray(
@@ -532,8 +532,8 @@ class DefaultReader(Reader):
                 image_data=image_data,
                 metadata=metadata,
                 scene_id=self.current_scene,
-                known_dims=self.known_dims,
-                known_channel_names=self.known_channel_names,
+                dim_order=self._dim_order,
+                channel_names=self._channel_names,
             )
 
             return xr.DataArray(

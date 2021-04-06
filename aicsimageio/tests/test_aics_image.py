@@ -298,8 +298,8 @@ def test_multi_scene_aicsimage(
 
 @pytest.mark.parametrize(
     "image, "
-    "known_dims, "
-    "known_channel_names, "
+    "dim_order, "
+    "channel_names, "
     "set_scene, "
     "expected_scenes, "
     "expected_shape, "
@@ -351,7 +351,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0"],
         ),
-        # Test many scene, same known_dims, second scene
+        # Test many scene, same dim_order, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             "CYX",
@@ -375,7 +375,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0", "Channel:1:1"],
         ),
-        # Test many scene, different known_dims, different channel_names, second scene
+        # Test many scene, different dim_order, different channel_names, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -474,7 +474,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0"],
         ),
-        # Test that we can support many dimensions if known dims is provided
+        # Test that we can support many dimensions if dims is provided
         (
             np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
             "ABCDEFGH",
@@ -511,7 +511,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0", "Channel:1:1", "Channel:1:2", "Channel:1:3"],
         ),
-        # Test that without known dims and with more than five dims, it raises an error
+        # Test that without dims and with more than five dims, it raises an error
         # Our guess dim order only support up to five dims
         pytest.param(
             np.random.rand(1, 2, 3, 4, 5, 6),
@@ -541,8 +541,8 @@ def test_multi_scene_aicsimage(
 )
 def test_aicsimage_from_array(
     image: Union[types.MetaArrayLike, List[types.MetaArrayLike]],
-    known_dims: Optional[str],
-    known_channel_names: Optional[List[str]],
+    dim_order: Optional[str],
+    channel_names: Optional[List[str]],
     set_scene: str,
     expected_scenes: Tuple[str, ...],
     expected_shape: Tuple[int, ...],
@@ -550,9 +550,7 @@ def test_aicsimage_from_array(
     expected_channel_names: List[str],
 ) -> None:
     # Init
-    image_container = AICSImage(
-        image, known_dims=known_dims, known_channel_names=known_channel_names
-    )
+    image_container = AICSImage(image, dim_order=dim_order, channel_names=channel_names)
 
     run_image_container_checks(
         image_container=image_container,
@@ -813,7 +811,7 @@ def test_roundtrip_save_all_scenes(
         ),
     ],
 )
-def test_set_known_coords(
+def test_set_coords(
     filename: str,
     set_scene: str,
     set_dims: Optional[Union[str, List[str]]],
@@ -830,7 +828,7 @@ def test_set_known_coords(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Init
-    img = AICSImage(uri, known_dims=set_dims, known_channel_names=set_channel_names)
+    img = AICSImage(uri, dim_order=set_dims, channel_names=set_channel_names)
 
     # Set scene
     img.set_scene(set_scene)
@@ -863,7 +861,7 @@ def test_set_known_coords(
         (
             "actk.ome.tiff",
             readers.TiffReader,
-            {"known_dims": "CTYX"},
+            {"dim_order": "CTYX"},
             dimensions.DEFAULT_DIMENSION_ORDER,
             (65, 6, 1, 233, 345),
         ),

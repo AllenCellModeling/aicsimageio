@@ -146,7 +146,7 @@ Readers that support mosaic tile stitching:
 #### AICSImage
 
 If the file format reader supports stitching mosaic tiles together, the
-`AICSImage` object will pull and use that data.
+`AICSImage` object will use the stitched image data.
 
 ```python
 img = AICSImage("very-large-mosaic.lif")

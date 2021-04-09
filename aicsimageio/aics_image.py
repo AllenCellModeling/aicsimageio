@@ -69,7 +69,9 @@ class AICSImage:
     ... img.set_scene("Image:3")
     ... img.data
 
-    Initialize an image with a specific reader.
+    Initialize an image with a specific reader. This is useful if you know the file
+    type in advance or would like to skip a few of the file format checks we do
+    internally. Useful when reading from remote sources to reduce network round trips.
 
     >>> img = AICSImage("malformed_metadata.ome.tiff", reader=readers.TiffReader)
 

@@ -137,10 +137,10 @@ class ArrayLikeReader(Reader):
                 if len(dim_order) != len(image):
                     raise exceptions.ConflictingArgumentsError(
                         f"ArrayLikeReader received a list of arrays to use as scenes "
-                        f"but the provided list of dimension orderingsensions is of "
+                        f"but the provided list of dimension order strings is of "
                         f"different length. "
                         f"Number of provided scenes: {len(image)}, "
-                        f"Number of provided dimension orderingsension strings: "
+                        f"Number of provided dimension order strings: "
                         f"{len(dim_order)}"
                     )
 

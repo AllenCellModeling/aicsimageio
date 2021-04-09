@@ -135,6 +135,39 @@ function will not load any piece of the imaging data into memory until you speci
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected chunk in-memory.
 
+### Mosaic Image Reading
+
+Read stitched data or single tiles as a dimension.
+
+Readers that support mosaic tile stitching:
+
+-   `LifReader`
+
+#### AICSImage
+
+If the file format reader supports stitching mosaic tiles together, the
+`AICSImage` object will pull and use that data.
+
+```python
+img = AICSImage("very-large-mosaic.lif")
+img.dims.order  # T, C, Z, big Y, big X, (S optional)
+img.dask_data  # Dask chunks fall on tile boundaries, pull YX chunks out of the image
+```
+
+#### Reader
+
+If the file format reader detects mosaic tiles in the image, the `Reader` object
+will store the tiles as a dimension.
+
+If implemented, the `Reader` can also return the stitched image.
+
+```python
+reader = LifReader("ver-large-mosaic.lif")
+reader.dims.order  # M, T, C, Z, tile size Y, tile size X, (S optional)
+reader.dask_data  # normal operations, can use M dimension to select individual tiles
+reader.mosaic_dask_data  # returns stitched mosaic - T, C, Z, big Y, big, X, (S optional)
+```
+
 ### Metadata Reading
 
 ```python

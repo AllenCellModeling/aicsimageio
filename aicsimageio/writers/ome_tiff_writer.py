@@ -108,7 +108,7 @@ class OmeTiffWriter(Writer):
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
         ... OmeTiffWriter.save(image, "file.ome.tif")
 
-        Write data with a known dimension order into OME-Tiff
+        Write data with a dimension order into OME-Tiff
 
         >>> image = numpy.ndarray([10, 3, 1024, 2048])
         ... OmeTiffWriter.save(image, "file.ome.tif", dim_order="ZCYX")
@@ -144,7 +144,7 @@ class OmeTiffWriter(Writer):
                         f"but the provided list of dimension_order is of different "
                         f"length. "
                         f"Number of provided scenes: {num_images}, "
-                        f"Number of provided known dimension strings: "
+                        f"Number of provided dimension strings: "
                         f"{len(dim_order)}"
                     )
             if isinstance(image_name, list):
@@ -154,7 +154,7 @@ class OmeTiffWriter(Writer):
                         f"but the provided list of image_names is of different "
                         f"length. "
                         f"Number of provided scenes: {num_images}, "
-                        f"Number of provided known dimension strings: {len(image_name)}"
+                        f"Number of provided dimension strings: {len(image_name)}"
                     )
             if isinstance(physical_pixel_sizes, list):
                 if len(physical_pixel_sizes) != num_images:
@@ -163,7 +163,7 @@ class OmeTiffWriter(Writer):
                         f"but the provided list of image_names is of different "
                         f"length. "
                         f"Number of provided scenes: {num_images}, "
-                        f"Number of provided known dimension strings: "
+                        f"Number of provided dimension strings: "
                         f"{len(physical_pixel_sizes)}"
                     )
 
@@ -175,7 +175,7 @@ class OmeTiffWriter(Writer):
                             f"but the provided list of channel_names is of different "
                             f"length. "
                             f"Number of provided scenes: {num_images}, "
-                            f"Number of provided known dimension strings: "
+                            f"Number of provided dimension strings: "
                             f"{len(channel_names)}"
                         )
             if channel_colors is not None:
@@ -186,7 +186,7 @@ class OmeTiffWriter(Writer):
                             f"but the provided list of channel_colors is of different "
                             f"length. "
                             f"Number of provided scenes: {num_images}, "
-                            f"Number of provided known dimension strings: "
+                            f"Number of provided dimension strings: "
                             f"{len(channel_colors)}"
                         )
 

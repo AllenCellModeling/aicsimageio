@@ -13,10 +13,10 @@ from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import (
-    DEFAULT_CHUNK_BY_DIMS,
+    DEFAULT_CHUNK_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES,
-    REQUIRED_CHUNK_BY_DIMS,
+    REQUIRED_CHUNK_DIMS,
     DimensionNames,
 )
 from ..utils import io_utils
@@ -43,9 +43,9 @@ class LifReader(Reader):
     ----------
     image: types.PathLike
         Path to image file to construct Reader for.
-    chunk_by_dims: Union[str, List[str]]
+    chunk_dims: Union[str, List[str]]
         Which dimensions to create chunks for.
-        Default: DEFAULT_CHUNK_BY_DIMS
+        Default: DEFAULT_CHUNK_DIMS
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
@@ -68,16 +68,16 @@ class LifReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
+        chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         # Store params
-        if isinstance(chunk_by_dims, str):
-            chunk_by_dims = list(chunk_by_dims)
+        if isinstance(chunk_dims, str):
+            chunk_dims = list(chunk_dims)
 
-        self.chunk_by_dims = chunk_by_dims
+        self.chunk_dims = chunk_dims
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
@@ -250,12 +250,12 @@ class LifReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         # Always add the plane dimensions if not present already
-        for dim in REQUIRED_CHUNK_BY_DIMS:
-            if dim not in self.chunk_by_dims:
-                self.chunk_by_dims.append(dim)
+        for dim in REQUIRED_CHUNK_DIMS:
+            if dim not in self.chunk_dims:
+                self.chunk_dims.append(dim)
 
         # Safety measure / "feature"
-        self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
+        self.chunk_dims = [d.upper() for d in self.chunk_dims]
 
         # Construct the delayed dask array
         selected_scene = lif.get_image(self.current_scene_index)
@@ -285,7 +285,7 @@ class LifReader(Reader):
         chunk_dim_order = []
         chunk_shape = []
         for dim, size in zip(selected_scene_dims, selected_scene_shape):
-            if dim in self.chunk_by_dims:
+            if dim in self.chunk_dims:
                 chunk_dim_order.append(dim)
                 chunk_shape.append(size)
 

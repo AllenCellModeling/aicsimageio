@@ -46,14 +46,14 @@ DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES_AND_SAMPLES = "".join(
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
 )
 
-DEFAULT_CHUNK_BY_DIMS = [
+DEFAULT_CHUNK_DIMS = [
     DimensionNames.SpatialZ,
     DimensionNames.SpatialY,
     DimensionNames.SpatialX,
     DimensionNames.Samples,
 ]
 
-REQUIRED_CHUNK_BY_DIMS = [
+REQUIRED_CHUNK_DIMS = [
     DimensionNames.SpatialY,
     DimensionNames.SpatialX,
     DimensionNames.Samples,

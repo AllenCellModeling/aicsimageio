@@ -44,10 +44,10 @@ class DefaultReader(Reader):
     image: types.PathLike
         Path to image file to construct Reader for.
     dim_order: Optional[str]
-            Optional string of dimension short names for the image to use
-            instead of guess.
-            Must provide the same number of dimensions as read.
-            Default: None (guess)
+        Optional string of dimension short names for the image to use
+        instead of guess.
+        Must provide the same number of dimensions as read.
+        Default: None (guess)
     channel_names: Optional[List[str]]
         Optional list of channel names.
         Must provide the same number of channels as the read channel dimension.

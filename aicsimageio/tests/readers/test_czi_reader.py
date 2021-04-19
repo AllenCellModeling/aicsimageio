@@ -62,16 +62,38 @@ from ..image_container_test_utils import (
              "Channel:2--PGC--Phase"],
             (1.0, 9.082107048835329e-07, 9.082107048835329e-07),
         ),
-        # (
-        #     "RGB-8bit.czi",
-        #     "Scene:0",
-        #     ("Scene:0",),
-        #     (1, 624, 924, 3),
-        #     np.uint8,
-        #     "TYXS",
-        #     None,
-        #     (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
-        # ),
+        (
+            "RGB-8bit.czi",
+            "Scene:0",
+            ("Scene:0",),
+            (1, 624, 924, 3),
+            np.uint8,
+            "TYXS",
+            None,
+            (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
+        ),
+        pytest.param(
+            "example.txt",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
+        pytest.param(
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+        ),
     ],
 )
 def test_czi_reader(
@@ -101,4 +123,48 @@ def test_czi_reader(
         expected_channel_names=expected_channel_names,
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=ET.Element,
+    )
+
+
+@pytest.mark.parametrize(
+    "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
+    [
+        (
+            "tiled.lif",
+            "merged-tiles.lif",
+            "TileScan_002",
+            "TileScan_002_Merging",
+        ),
+        # s_1_t_4_c_2_z_1.lif has no mosaic tiles
+        pytest.param(
+            "s_1_t_4_c_2_z_1.lif",
+            "merged-tiles.lif",
+            "b2_001_Crop001_Resize001",
+            "TileScan_002_Merging",
+            marks=pytest.mark.raises(
+                exception=exceptions.InvalidDimensionOrderingError
+            ),
+        ),
+    ],
+)
+def test_czi_reader_mosaic_stitching(
+    tiles_filename: str,
+    stitched_filename: str,
+    tiles_set_scene: str,
+    stitched_set_scene: str,
+) -> None:
+    # Construct full filepath
+    tiles_uri = get_resource_full_path(tiles_filename, LOCAL)
+    stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
+
+    # Construct reader
+    tiles_reader = CziReader(tiles_uri)
+    stitched_reader = LifReader(stitched_uri)
+
+    # Run checks
+    run_image_container_mosaic_checks(
+        tiles_image_container=tiles_reader,
+        stitched_image_container=stitched_reader,
+        tiles_set_scene=tiles_set_scene,
+        stitched_set_scene=stitched_set_scene,
     )

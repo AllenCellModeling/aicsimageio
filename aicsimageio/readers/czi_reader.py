@@ -15,8 +15,8 @@ from fsspec.spec import AbstractFileSystem
 from .. import constants, exceptions, transforms, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
-    DEFAULT_DIMENSION_ORDER_LIST,
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES,
+    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
+    DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
     REQUIRED_CHUNK_BY_DIMS,
     DimensionNames,
 )
@@ -33,6 +33,20 @@ except ImportError:
         "Install with `pip install aicsimageio[czi]`"
     )
 
+DEFAULT_CZI_CHUNK_BY_DIMS = [
+    dim if dim != DimensionNames.Samples else "A" for dim in DEFAULT_CHUNK_BY_DIMS
+]
+REQUIRED_CZI_CHUNK_BY_DIMS = [
+    dim if dim != DimensionNames.Samples else "A" for dim in REQUIRED_CHUNK_BY_DIMS
+]
+DEFAULT_CZI_DIMENSION_ORDER_LIST = [
+    dim if dim != DimensionNames.Samples else "A"
+    for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
+]
+DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = [
+    dim if dim != DimensionNames.Samples else "A"
+    for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
+]
 
 ###############################################################################
 
@@ -65,7 +79,7 @@ class CziReader(Reader):
                 CziFile(open_resource)
                 return True
 
-        except ValueError:
+        except RuntimeError:
             return False
 
     def __init__(
@@ -143,26 +157,33 @@ class CziReader(Reader):
             dims_shape = czi.get_dims_shape()
             dims_shape_index = 0 if czi.shape_is_consistent else scene
             dims_shape = dims_shape[dims_shape_index]
-            dims_shape.pop('S', None)
+            dims_shape.pop("S", None)
 
             # Create the fill array shape
             # Drop the YX as we will be pulling the individual YX planes
             retrieve_shape: List[int] = []
             use_selected_or_np_map: Dict[str, Optional[int]] = {}
             for dim, index_op in zip(retrieve_dims, retrieve_indices):
-                if dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX] and dim in dims_shape.keys():
+                if (
+                    dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX, "A"]
+                    and dim in dims_shape.keys()
+                ):
                     # Handle slices
                     if index_op is None:
                         # Store the dim for later to inform to use the np index
                         use_selected_or_np_map[dim] = None
                         if dim == DimensionNames.MosaicTile:
-                            retrieve_shape.append(dims_shape[DimensionNames.MosaicTile][1])
+                            retrieve_shape.append(
+                                dims_shape[DimensionNames.MosaicTile][1]
+                            )
                         elif dim == DimensionNames.Time:
                             retrieve_shape.append(dims_shape[DimensionNames.Time][1])
                         elif dim == DimensionNames.Channel:
                             retrieve_shape.append(dims_shape[DimensionNames.Channel][1])
                         elif dim == DimensionNames.SpatialZ:
-                            retrieve_shape.append(dims_shape[DimensionNames.SpatialZ][1])
+                            retrieve_shape.append(
+                                dims_shape[DimensionNames.SpatialZ][1]
+                            )
 
                     # Handle non-chunk dimensions (specific indices / ints)
                     else:
@@ -170,7 +191,6 @@ class CziReader(Reader):
                         use_selected_or_np_map[dim] = index_op
                         retrieve_shape.append(1)
 
-            print(retrieve_shape)
             # Create list of planes that we will add each plane to, later we reshape
             # Create empty arr with the desired shape to enumerate over the np index
             planes: List[np.ndarray] = []
@@ -179,7 +199,7 @@ class CziReader(Reader):
                 # Get each plane's index selection operations
                 # If the dimension is None, use the enumerated np index
                 # If the dimension is not None, use the provided value
-                plane_indices: Dict[str, int] = {'S': scene}
+                plane_indices: Dict[str, int] = {"S": scene}
 
                 # Handle MosaicTile
                 if DimensionNames.MosaicTile in use_selected_or_np_map:
@@ -194,8 +214,10 @@ class CziReader(Reader):
 
                 # Handle Time
                 if DimensionNames.Time in use_selected_or_np_map:
-                    if (DimensionNames.Time in retrieve_dims and
-                        use_selected_or_np_map[DimensionNames.Time] is None):
+                    if (
+                        DimensionNames.Time in retrieve_dims
+                        and use_selected_or_np_map[DimensionNames.Time] is None
+                    ):
                         plane_indices["T"] = np_index[
                             retrieve_dims.index(DimensionNames.Time)
                         ]
@@ -206,8 +228,10 @@ class CziReader(Reader):
 
                 # Handle Channels
                 if DimensionNames.Channel in use_selected_or_np_map:
-                    if (DimensionNames.Channel in retrieve_dims and
-                        use_selected_or_np_map[DimensionNames.Channel] is None):
+                    if (
+                        DimensionNames.Channel in retrieve_dims
+                        and use_selected_or_np_map[DimensionNames.Channel] is None
+                    ):
                         plane_indices["C"] = np_index[
                             retrieve_dims.index(DimensionNames.Channel)
                         ]
@@ -233,9 +257,18 @@ class CziReader(Reader):
                 planes.append(plane)
 
             # Stack and reshape to get rid of the array of arrays
+            new_chunk_shape = (
+                scene_dims_dict[DimensionNames.SpatialY],
+                scene_dims_dict[DimensionNames.SpatialX],
+            )
+            if "A" in scene_dims_dict.keys():
+                new_chunk_shape = (
+                    scene_dims_dict[DimensionNames.SpatialY],
+                    scene_dims_dict[DimensionNames.SpatialX],
+                    scene_dims_dict["A"],
+                )
             retrieved_chunk = np.stack(planes).reshape(
-                np_array_for_indices.shape + (scene_dims_dict[DimensionNames.SpatialY],
-                                              scene_dims_dict[DimensionNames.SpatialX])
+                np_array_for_indices.shape + new_chunk_shape
             )
 
             # Remove extra dimensions if they were not requested
@@ -270,21 +303,18 @@ class CziReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         # Always add the plane dimensions if not present already
-        for dim in REQUIRED_CHUNK_BY_DIMS:
+        for dim in REQUIRED_CZI_CHUNK_BY_DIMS:
             if dim not in self.chunk_by_dims:
                 self.chunk_by_dims.append(dim)
 
         # Safety measure / "feature"
         self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
 
-        # Remap DimensionNames.Samples from 'S' to 'A' internally
-        self.chunk_by_dims = [d if d != 'S' else 'A' for d in self.chunk_by_dims]
-
         # Construct the delayed dask array
         dims_shape = czi.get_dims_shape()
         dims_shape_index = 0 if czi.shape_is_consistent else self.current_scene_index
         dims_shape = dims_shape[dims_shape_index]
-        dims_shape.pop('S', None)
+        dims_shape.pop("S", None)
 
         valid_dims = []
         selected_scene_shape: List[int] = []
@@ -292,7 +322,9 @@ class CziReader(Reader):
             if dim in dims_shape.keys():
                 valid_dims.append(dim)
                 if dim == DimensionNames.MosaicTile:
-                    selected_scene_shape.append(dims_shape[DimensionNames.MosaicTile][1])
+                    selected_scene_shape.append(
+                        dims_shape[DimensionNames.MosaicTile][1]
+                    )
                 elif dim == DimensionNames.Time:
                     selected_scene_shape.append(dims_shape[DimensionNames.Time][1])
                 elif dim == DimensionNames.Channel:
@@ -303,8 +335,8 @@ class CziReader(Reader):
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialY][1])
                 elif dim == DimensionNames.SpatialX:
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialX][1])
-                elif dim == 'A': #  sAmples from aicspylibczi3
-                    selected_scene_shape.append(dims_shape['A'][1])
+                elif dim == "A":  #  sAmples from aicspylibczi3
+                    selected_scene_shape.append(dims_shape["A"][1])
 
         # Constuct the chunk and non-chunk shapes one dim at a time
         # We also collect the chunk and non-chunk dimension order so that
@@ -313,7 +345,9 @@ class CziReader(Reader):
         non_chunk_shape = []
         chunk_dim_order = []
         chunk_shape = []
-        for dim, size in zip(valid_dims, selected_scene_shape):  # zip(selected_scene_dims, selected_scene_shape):
+        for dim, size in zip(
+            valid_dims, selected_scene_shape
+        ):  # zip(selected_scene_dims, selected_scene_shape):
             if dim in self.chunk_by_dims:
                 chunk_dim_order.append(dim)
                 chunk_shape.append(size)
@@ -325,19 +359,19 @@ class CziReader(Reader):
         czi_pixel_type = czi.pixel_type
         pixel_type = None
 
-        if czi_pixel_type == 'gray8':
+        if czi_pixel_type == "gray8":
             pixel_type = np.uint8
-        elif czi_pixel_type == 'gray16':
+        elif czi_pixel_type == "gray16":
             pixel_type = np.uint16
-        elif czi_pixel_type == 'gray32':
+        elif czi_pixel_type == "gray32":
             pixel_type = np.uint32
-        elif czi_pixel_type == 'bgr24':
+        elif czi_pixel_type == "bgr24":
             pixel_type = np.uint8
-        elif czi_pixel_type == 'bgr48':
+        elif czi_pixel_type == "bgr48":
             pixel_type = np.uint16
 
         if pixel_type is None:
-            print("change this to exception")
+            raise TypeError(f"Pixel Type: {czi_pixel_type} not supported!")
 
         # Fill out the rest of the blocked shape with dimension sizes of 1 to
         # match the length of the sample chunk
@@ -411,12 +445,8 @@ class CziReader(Reader):
                 channel_id = channel.attrib["Id"]
                 channel_contrast = channel.find("./ContrastMethod").text
                 scene_channel_list.append(
-                        (
-                            f"{channel_id}"
-                            f"--{channel_name}"
-                            f"--{channel_contrast}"
-                        )
-                    )
+                    (f"{channel_id}" f"--{channel_name}" f"--{channel_contrast}")
+                )
 
             # Attach channel names to coords
             coords[DimensionNames.Channel] = scene_channel_list
@@ -432,36 +462,27 @@ class CziReader(Reader):
         scale_z = None if len(list_zs) == 0 else list_zs[0].find("./Value").text
         scale_t = None
 
-
         # Handle Spatial Dimensions
         if scale_z is not None:
             scale_z = float(scale_z)
             coords[DimensionNames.SpatialZ] = np.arange(
-                0,
-                image_short_info[DimensionNames.SpatialZ][1] * scale_z,
-                scale_z,
+                0, image_short_info[DimensionNames.SpatialZ][1] * scale_z, scale_z,
             )
         if scale_y is not None:
             scale_y = float(scale_y)
             coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                image_short_info[DimensionNames.SpatialY][1] * scale_y,
-                scale_y,
+                0, image_short_info[DimensionNames.SpatialY][1] * scale_y, scale_y,
             )
         if scale_x is not None:
             scale_x = float(scale_x)
             coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                image_short_info[DimensionNames.SpatialX][1] * scale_x,
-                scale_x,
+                0, image_short_info[DimensionNames.SpatialX][1] * scale_x, scale_x,
             )
 
         # Time
         if scale_t is not None:
             coords[DimensionNames.Time] = np.arange(
-                0,
-                image_short_info["dims"].t * scale_t,
-                scale_t,
+                0, image_short_info["dims"].t * scale_t, scale_t,
             )
 
         # Create physical pixal sizes
@@ -492,25 +513,25 @@ class CziReader(Reader):
             czi = CziFile(open_resource)
 
             dims_shape = czi.get_dims_shape()
-            dims_shape_index = 0 if czi.shape_is_consistent else self.current_scene_index
+            dims_shape_index = (
+                0 if czi.shape_is_consistent else self.current_scene_index
+            )
             dims_shape = dims_shape[dims_shape_index]
-            dims_shape.pop('S', None)
+            dims_shape.pop("S", None)
 
             # selected_scene, self._real_dims = czi.read_image(S=self.current_scene_index)
-            #scene_short_info = selected_scene.info
+            # scene_short_info = selected_scene.info
 
             # Check for mosaic tiles
             # tile_positions = scene_short_info["mosaic_position"]
 
             # If there are tiles in the image use mosaic dims
             if czi.is_mosaic():
-                ref_dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
 
             # Otherwise use standard dims
             else:
-                ref_dims = DEFAULT_DIMENSION_ORDER_LIST
-
-            ref_dims.append('A')  # for images with sAmples
+                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST
 
             dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
             # Get image data
@@ -523,15 +544,14 @@ class CziReader(Reader):
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
                 scene_index=self.current_scene_index,
-                image_short_info=dims_shape
+                image_short_info=dims_shape,
             )
 
             # Store pixel sizes
             self._px_sizes = px_sizes
 
             # Map A (aicspylibczi sAmples) back to aicsimageio Samples
-            dims = [d if d != 'A' else DimensionNames.Samples for d in dims]
-            print(dims)
+            dims = [d if d != "A" else DimensionNames.Samples for d in dims]
 
             return xr.DataArray(
                 image_data,
@@ -560,19 +580,22 @@ class CziReader(Reader):
             selected_scene, real_dims = czi.read_image(S=self.current_scene_index)
 
             dims_shape = czi.get_dims_shape()
-            dims_shape_index = 0 if czi.shape_is_consistent else self.current_scene_index
+            dims_shape_index = (
+                0 if czi.shape_is_consistent else self.current_scene_index
+            )
             dims_shape = dims_shape[dims_shape_index]
-            dims_shape.pop('S', None)
+            dims_shape.pop("S", None)
 
             # If there are tiles in the image use mosaic dims
             if czi.is_mosaic():
-                ref_dims = DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
 
             # Otherwise use standard dims
             else:
-                ref_dims = DEFAULT_DIMENSION_ORDER_LIST
+                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST
 
-            ref_dims.append('A')  # for images with sAmples
+            # if "A" not in ref_dims:
+            #     ref_dims.append("A")  # for images with sAmples
 
             dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
 
@@ -586,13 +609,13 @@ class CziReader(Reader):
             )
 
             # Get metadata
-            meta = CziReader._lxml_to_xml( czi.meta )
+            meta = CziReader._lxml_to_xml(czi.meta)
 
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
                 scene_index=self.current_scene_index,
-                image_short_info=dims_shape
+                image_short_info=dims_shape,
             )
 
             # Store pixel sizes
@@ -607,11 +630,11 @@ class CziReader(Reader):
 
     @staticmethod
     def _dims_list_to_dict(list_in: List) -> Dict:
-        return {x[0]:x[1] for x in list_in}
+        return {x[0]: x[1] for x in list_in}
 
     @staticmethod
     def _lxml_to_xml(meta_lxml: lxml.etree._Element) -> ET.Element:
-         return ET.fromstring(lxml.etree.tostring(meta_lxml))
+        return ET.fromstring(lxml.etree.tostring(meta_lxml))
 
     @staticmethod
     def _stitch_tiles(
@@ -628,12 +651,8 @@ class CziReader(Reader):
 
         # Create empty array
         arr_shape_list = []
-        for dim in DEFAULT_DIMENSION_ORDER_LIST:
-            if dim not in [
-                DimensionNames.Samples,
-                DimensionNames.SpatialY,
-                DimensionNames.SpatialX,
-            ]:
+        for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST:
+            if dim not in REQUIRED_CZI_CHUNK_BY_DIMS:
                 dim_value = [item[1] for item in data_dims_shape if item[0] == dim]
                 if not dim_value:
                     arr_shape_list.append(1)
@@ -643,8 +662,8 @@ class CziReader(Reader):
                 arr_shape_list.append(mosaic_bbox.h)
             if dim is DimensionNames.SpatialX:
                 arr_shape_list.append(mosaic_bbox.w)
-            if dim is DimensionNames.Samples:
-                samples = [item[1] for item in data_dims_shape if item[0] == 'A']
+            if dim is 'A':
+                samples = [item[1] for item in data_dims_shape if item[0] == "A"]
                 if samples:
                     arr_shape_list.append(samples[0])
 
@@ -657,19 +676,22 @@ class CziReader(Reader):
         for (tile_info, box) in bboxes.items():
             # construct data indexes to use
             tile_dims = tile_info.dimension_coordinates
-            data_indexes = [tile_dims[dim] for (dim, dmax) in data_dims_shape if
-                            dim in tile_dims.keys() and dim != 'A']
+            data_indexes = [
+                tile_dims[dim]
+                for (dim, dmax) in data_dims_shape
+                if dim in tile_dims.keys() and dim != "A"
+            ]
             # add Y and X
             data_indexes.append(slice(None))  # Y ":"
             data_indexes.append(slice(None))  # X ":"
-            if 'A' in tile_dims.keys():
-                data_indexes.append(slice(None))
+            # if "A" in tile_dims.keys():
+            #     data_indexes.append(slice(None))
 
             # construct data indexes for ans
             ans_indexes = []
-            for dim in DEFAULT_DIMENSION_ORDER_LIST:
+            for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST:
                 if dim not in [
-                    'S',
+                    "S",
                     DimensionNames.MosaicTile,
                     DimensionNames.SpatialY,
                     DimensionNames.SpatialX,
@@ -684,7 +706,7 @@ class CziReader(Reader):
                 if dim is DimensionNames.SpatialX:
                     start = box.x - mosaic_bbox.x
                     ans_indexes.append(slice(start, start + box.w, 1))
-                if dim == 'A':
+                if dim == "A":
                     ans_indexes.append(slice(None))
 
             # assign the tiles into ans
@@ -716,20 +738,15 @@ class CziReader(Reader):
             d: v
             for d, v in self.xarray_dask_data.coords.items()
             if d
-               not in [
-                   DimensionNames.MosaicTile,
-                   DimensionNames.SpatialY,
-                   DimensionNames.SpatialX,
-               ]
+            not in [
+                DimensionNames.MosaicTile,
+                DimensionNames.SpatialY,
+                DimensionNames.SpatialX,
+            ]
         }
         attrs = copy(self.xarray_dask_data.attrs)
 
-        return xr.DataArray(
-            data=stitched,
-            dims=dims,
-            coords=coords,
-            attrs=attrs,
-        )
+        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs,)
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)

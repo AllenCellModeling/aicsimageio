@@ -12,7 +12,7 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .. import constants, exceptions, transforms, types
+from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
@@ -25,7 +25,7 @@ from .reader import Reader
 
 try:
     from aicspylibczi import CziFile
-    from _aicspylibczi import TileInfo, BBox
+    from _aicspylibczi import BBox
 
 except ImportError:
     raise ImportError(
@@ -155,9 +155,9 @@ class CziReader(Reader):
         with fs.open(path) as open_resource:
             czi = CziFile(open_resource)
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
-                                    dims_shape=czi.get_dims_shape(),
-                                    scene_index=scene,
-                                    consistent=czi.shape_is_consistent
+                dims_shape=czi.get_dims_shape(),
+                scene_index=scene,
+                consistent=czi.shape_is_consistent,
             )
 
             # Create the fill array shape
@@ -315,7 +315,7 @@ class CziReader(Reader):
         dims_shape = CziReader._dims_shape_to_scene_dims_shape(
             czi.get_dims_shape(),
             scene_index=self.current_scene_index,
-            consistent=czi.shape_is_consistent
+            consistent=czi.shape_is_consistent,
         )
 
         valid_dims = []
@@ -337,7 +337,7 @@ class CziReader(Reader):
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialY][1])
                 elif dim == DimensionNames.SpatialX:
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialX][1])
-                elif dim == "A":  #  sAmples from aicspylibczi3
+                elif dim == "A":  # sAmples from aicspylibczi3
                     selected_scene_shape.append(dims_shape["A"][1])
 
         # Constuct the chunk and non-chunk shapes one dim at a time
@@ -517,7 +517,7 @@ class CziReader(Reader):
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
                 scene_index=self.current_scene_index,
-                consistent=czi.shape_is_consistent
+                consistent=czi.shape_is_consistent,
             )
 
             # If there are tiles in the image use mosaic dims
@@ -572,12 +572,12 @@ class CziReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource)
-            #selected_scene, real_dims = czi.read_image(S=self.current_scene_index)
+            # selected_scene, real_dims = czi.read_image(S=self.current_scene_index)
 
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
                 scene_index=self.current_scene_index,
-                consistent=czi.shape_is_consistent
+                consistent=czi.shape_is_consistent,
             )
 
             # If there are tiles in the image use mosaic dims
@@ -628,20 +628,17 @@ class CziReader(Reader):
         return ET.fromstring(lxml.etree.tostring(meta_lxml))
 
     @staticmethod
-    def _dims_shape_to_scene_dims_shape(dims_shape: List, scene_index: int, consistent: bool) -> Dict:
-        dims_shape_index = (
-            0 if consistent else scene_index
-        )
+    def _dims_shape_to_scene_dims_shape(
+        dims_shape: List, scene_index: int, consistent: bool
+    ) -> Dict:
+        dims_shape_index = 0 if consistent else scene_index
         dims_shape = dims_shape[dims_shape_index]
         dims_shape.pop("S", None)
         return dims_shape
 
     @staticmethod
     def _stitch_tiles(
-        data: types.ArrayLike,
-        data_dims_shape: Dict,
-        bboxes: Dict,
-        mosaic_bbox: BBox,
+        data: types.ArrayLike, data_dims_shape: Dict, bboxes: Dict, mosaic_bbox: BBox,
     ) -> types.ArrayLike:
         # Assumptions: 1) docs for ZEISSRAW(CZI) say:
         #   Scene – for clustering items in X/Y direction (data belonging to
@@ -652,7 +649,9 @@ class CziReader(Reader):
         # Create empty array
         arr_shape_list = []
 
-        ordered_dims_present = [dim for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST if dim in data_dims_shape]
+        ordered_dims_present = [
+            dim for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST if dim in data_dims_shape
+        ]
         for dim in ordered_dims_present:
             if dim not in REQUIRED_CZI_CHUNK_BY_DIMS:
                 arr_shape_list.append(data_dims_shape[dim][1])
@@ -660,7 +659,7 @@ class CziReader(Reader):
                 arr_shape_list.append(mosaic_bbox.h)
             if dim is DimensionNames.SpatialX:
                 arr_shape_list.append(mosaic_bbox.w)
-            if dim == 'A':
+            if dim == "A":
                 arr_shape_list.append(data_dims_shape[dim][1])
 
         ans = None
@@ -717,11 +716,13 @@ class CziReader(Reader):
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
                 scene_index=self.current_scene_index,
-                consistent=czi.shape_is_consistent
+                consistent=czi.shape_is_consistent,
             )
 
         bboxes = czi.get_all_mosaic_tile_bounding_boxes(S=self.current_scene_index)
-        mosaic_scene_bbox = czi.get_mosaic_scene_bounding_box(index=self.current_scene_index)
+        mosaic_scene_bbox = czi.get_mosaic_scene_bounding_box(
+            index=self.current_scene_index
+        )
 
         # Stitch
         stitched = self._stitch_tiles(

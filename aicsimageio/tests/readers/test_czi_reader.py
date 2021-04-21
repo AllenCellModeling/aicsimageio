@@ -6,14 +6,13 @@ from typing import List, Tuple
 import numpy as np
 import pytest
 
-from aicsimageio import exceptions, dimensions
+from aicsimageio import exceptions
 from aicsimageio.readers import CziReader, ArrayLikeReader
 import xml.etree.ElementTree as ET
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,
-    run_multi_scene_image_read_checks,
     run_image_container_mosaic_checks,
 )
 

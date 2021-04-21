@@ -7,13 +7,14 @@ import numpy as np
 import pytest
 
 from aicsimageio import exceptions, dimensions
-from aicsimageio.readers import CziReader
+from aicsimageio.readers import CziReader, ArrayLikeReader
 import xml.etree.ElementTree as ET
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
+    run_image_container_mosaic_checks,
 )
 
 
@@ -130,20 +131,10 @@ def test_czi_reader(
     "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
     [
         (
-            "tiled.lif",
-            "merged-tiles.lif",
-            "TileScan_002",
-            "TileScan_002_Merging",
-        ),
-        # s_1_t_4_c_2_z_1.lif has no mosaic tiles
-        pytest.param(
-            "s_1_t_4_c_2_z_1.lif",
-            "merged-tiles.lif",
-            "b2_001_Crop001_Resize001",
-            "TileScan_002_Merging",
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            "OverViewScan.czi",
+            "OverView.npy",
+            "TR1",
+            "Image:0",
         ),
     ],
 )
@@ -159,7 +150,8 @@ def test_czi_reader_mosaic_stitching(
 
     # Construct reader
     tiles_reader = CziReader(tiles_uri)
-    stitched_reader = LifReader(stitched_uri)
+    stitched_np = np.load(stitched_uri)
+    stitched_reader = ArrayLikeReader(image=stitched_np)
 
     # Run checks
     run_image_container_mosaic_checks(

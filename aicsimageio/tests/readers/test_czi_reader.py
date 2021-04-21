@@ -45,9 +45,11 @@ from ..image_container_test_utils import (
             (3, 5, 325, 475),
             np.uint16,
             "CZYX",  # dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0--EGFP--Fluorescence",
-             "Channel:1--TaRFP--Fluorescence",
-             "Channel:2--Bright--Brightfield"],
+            [
+                "Channel:0--EGFP--Fluorescence",
+                "Channel:1--TaRFP--Fluorescence",
+                "Channel:2--Bright--Brightfield",
+            ],
             (1e-06, 1.0833333333333333e-06, 1.0833333333333333e-06),
         ),
         (
@@ -57,9 +59,11 @@ from ..image_container_test_utils import (
             (9, 3, 2208, 2752),
             np.uint16,
             "MCYX",  # dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0--EGFP--Fluorescence",
-             "Channel:1--mCher--Fluorescence",
-             "Channel:2--PGC--Phase"],
+            [
+                "Channel:0--EGFP--Fluorescence",
+                "Channel:1--mCher--Fluorescence",
+                "Channel:2--PGC--Phase",
+            ],
             (1.0, 9.082107048835329e-07, 9.082107048835329e-07),
         ),
         (
@@ -128,14 +132,7 @@ def test_czi_reader(
 
 @pytest.mark.parametrize(
     "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
-    [
-        (
-            "OverViewScan.czi",
-            "OverView.npy",
-            "TR1",
-            "Image:0",
-        ),
-    ],
+    [("OverViewScan.czi", "OverView.npy", "TR1", "Image:0",),],
 )
 def test_czi_reader_mosaic_stitching(
     tiles_filename: str,

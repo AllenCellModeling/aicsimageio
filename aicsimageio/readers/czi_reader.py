@@ -6,12 +6,13 @@ from copy import copy
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
-import lxml
 import numpy as np
+import lxml
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
+from .reader import Reader
 from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
@@ -21,7 +22,6 @@ from ..dimensions import (
     DimensionNames,
 )
 from ..utils import io_utils
-from .reader import Reader
 
 try:
     from aicspylibczi import CziFile
@@ -47,6 +47,7 @@ DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = [
     dim if dim != DimensionNames.Samples else "A"
     for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
 ]
+
 
 ###############################################################################
 
@@ -87,6 +88,9 @@ class CziReader(Reader):
         image: types.PathLike,
         chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
     ):
+        # doesn't do anything in this case but here for completeness
+        super(CziReader, self).__init__(image=image)
+
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
@@ -739,8 +743,7 @@ class CziReader(Reader):
         coords = {
             d: v
             for d, v in self.xarray_dask_data.coords.items()
-            if d
-            not in [
+            if d not in [
                 DimensionNames.MosaicTile,
                 DimensionNames.SpatialY,
                 DimensionNames.SpatialX,
@@ -748,7 +751,7 @@ class CziReader(Reader):
         }
         attrs = copy(self.xarray_dask_data.attrs)
 
-        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs,)
+        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs, )
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)

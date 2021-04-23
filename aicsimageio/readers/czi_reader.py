@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
-import lxml
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
@@ -537,7 +536,7 @@ class CziReader(Reader):
             image_data = self._create_dask_array(czi, dims)
 
             # Get metadata
-            meta = CziReader._lxml_to_xml(czi.meta)
+            meta = czi.meta
 
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
@@ -604,7 +603,7 @@ class CziReader(Reader):
             )
 
             # Get metadata
-            meta = CziReader._lxml_to_xml(czi.meta)
+            meta = czi.meta
 
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
@@ -626,10 +625,6 @@ class CziReader(Reader):
     @staticmethod
     def _dims_list_to_dict(list_in: List) -> Dict:
         return {x[0]: x[1] for x in list_in}
-
-    @staticmethod
-    def _lxml_to_xml(meta_lxml: lxml.etree._Element) -> ET.Element:
-        return ET.fromstring(lxml.etree.tostring(meta_lxml))
 
     @staticmethod
     def _dims_shape_to_scene_dims_shape(

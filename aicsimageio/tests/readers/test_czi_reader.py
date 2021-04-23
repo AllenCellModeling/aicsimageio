@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import xml.etree.ElementTree as ET
 from typing import List, Tuple
 
 import numpy as np
@@ -8,8 +9,6 @@ import pytest
 
 from aicsimageio import exceptions
 from aicsimageio.readers import CziReader, ArrayLikeReader
-import xml.etree.ElementTree as ET
-
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,

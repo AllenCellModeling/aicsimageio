@@ -8,11 +8,12 @@ import numpy as np
 import pytest
 
 from aicsimageio import exceptions
-from aicsimageio.readers import CziReader, ArrayLikeReader
+from aicsimageio.readers import ArrayLikeReader, CziReader
+
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
-    run_image_file_checks,
     run_image_container_mosaic_checks,
+    run_image_file_checks,
 )
 
 

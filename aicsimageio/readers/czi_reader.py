@@ -11,20 +11,20 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .reader import Reader
 from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_BY_DIMS,
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
+    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     REQUIRED_CHUNK_BY_DIMS,
     DimensionNames,
 )
 from ..utils import io_utils
+from .reader import Reader
 
 try:
-    from aicspylibczi import CziFile
     from _aicspylibczi import BBox
+    from aicspylibczi import CziFile
 
 except ImportError:
     raise ImportError(
@@ -261,18 +261,12 @@ class CziReader(Reader):
                 planes.append(plane)
 
             # Stack and reshape to get rid of the array of arrays
-            new_chunk_shape = (
-                scene_dims_dict[DimensionNames.SpatialY],
-                scene_dims_dict[DimensionNames.SpatialX],
-            )
-            if "A" in scene_dims_dict.keys():
-                new_chunk_shape = (
-                    scene_dims_dict[DimensionNames.SpatialY],
-                    scene_dims_dict[DimensionNames.SpatialX],
-                    scene_dims_dict["A"],
-                )
+            new_chunk_shape = [
+                scene_dims_dict[dim] for dim in REQUIRED_CZI_CHUNK_BY_DIMS if
+                dim in scene_dims_dict
+            ]
             retrieved_chunk = np.stack(planes).reshape(
-                np_array_for_indices.shape + new_chunk_shape
+                np_array_for_indices.shape + tuple(new_chunk_shape)
             )
 
             # Remove extra dimensions if they were not requested
@@ -362,7 +356,7 @@ class CziReader(Reader):
 
         # Get sample for dtype
         czi_pixel_type = czi.pixel_type
-        pixel_type = None
+        pixel_type: Union[type(np.uint8), type(None)] = None
 
         if czi_pixel_type == "gray8":
             pixel_type = np.uint8

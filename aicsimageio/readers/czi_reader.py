@@ -354,23 +354,17 @@ class CziReader(Reader):
                 non_chunk_dim_order.append(dim)
                 non_chunk_shape.append(size)
 
-        # Get sample for dtype
-        czi_pixel_type = czi.pixel_type
-        pixel_type: Union[type(np.uint8), type(None)] = None
+        pixel_dict = {"gray8": np.uint8,
+                      "gray16": np.uint16,
+                      "gray32": np.uint32,
+                      "bgr24": np.uint8,
+                      "bgr48": np.uint16,
+                      }
 
-        if czi_pixel_type == "gray8":
-            pixel_type = np.uint8
-        elif czi_pixel_type == "gray16":
-            pixel_type = np.uint16
-        elif czi_pixel_type == "gray32":
-            pixel_type = np.uint32
-        elif czi_pixel_type == "bgr24":
-            pixel_type = np.uint8
-        elif czi_pixel_type == "bgr48":
-            pixel_type = np.uint16
+        pixel_type = pixel_dict[czi.pixel_type]
 
         if pixel_type is None:
-            raise TypeError(f"Pixel Type: {czi_pixel_type} not supported!")
+            raise TypeError(f"Pixel Type: {czi.pixel_type} not supported!")
 
         # Fill out the rest of the blocked shape with dimension sizes of 1 to
         # match the length of the sample chunk
@@ -424,7 +418,7 @@ class CziReader(Reader):
 
     @staticmethod
     def _get_coords_and_physical_px_sizes(
-        xml: ET.Element, scene_index: int, image_short_info: Dict[str, Any] = None
+        xml: ET.Element, scene_index: int, image_short_info: Dict[str, Any]
     ) -> Tuple[Dict[str, Any], types.PhysicalPixelSizes]:
         # Create coord dict
         coords = {}
@@ -442,7 +436,8 @@ class CziReader(Reader):
             for i, channel in enumerate(channels):
                 channel_name = channel.attrib["Name"]
                 channel_id = channel.attrib["Id"]
-                channel_contrast = channel.find("./ContrastMethod").text
+                channel_ce = channel.find("./ContrastMethod")
+                channel_contrast = channel_ce.text if channel_ce else ""
                 scene_channel_list.append(
                     (f"{channel_id}" f"--{channel_name}" f"--{channel_contrast}")
                 )
@@ -456,9 +451,12 @@ class CziReader(Reader):
         list_zs = xml.findall(".//Distance[@Id='Z']")
 
         # scale_x, scale_y, scale_z, scale_t = image_short_info["scale"]
-        scale_x = list_xs[0].find("./Value").text
-        scale_y = list_ys[0].find("./Value").text
-        scale_z = None if len(list_zs) == 0 else list_zs[0].find("./Value").text
+        scale_xe = list_xs[0].find("./Value")
+        scale_ye = list_ys[0].find("./Value")
+        scale_ze = None if len(list_zs) == 0 else list_zs[0].find("./Value")
+        scale_x = float(str(scale_xe.text)) if scale_xe else 1.0
+        scale_y = float(str(scale_ye.text)) if scale_ye else 1.0
+        scale_z = float(str(scale_ze.text)) if scale_ze else 1.0
         scale_t = None
 
         # Handle Spatial Dimensions
@@ -484,12 +482,8 @@ class CziReader(Reader):
                 0, image_short_info["dims"].t * scale_t, scale_t,
             )
 
-        # Create physical pixal sizes
-        px_sizes = types.PhysicalPixelSizes(
-            scale_z if scale_z is not None else 1.0,
-            scale_y if scale_y is not None else 1.0,
-            scale_x if scale_x is not None else 1.0,
-        )
+        # Create physical pixel sizes
+        px_sizes = types.PhysicalPixelSizes(scale_z, scale_y, scale_x)
 
         return coords, px_sizes
 
@@ -622,12 +616,12 @@ class CziReader(Reader):
 
     @staticmethod
     def _dims_shape_to_scene_dims_shape(
-        dims_shape: List, scene_index: int, consistent: bool
+        dims_shape: List[Dict], scene_index: int, consistent: bool
     ) -> Dict:
         dims_shape_index = 0 if consistent else scene_index
-        dims_shape = dims_shape[dims_shape_index]
-        dims_shape.pop("S", None)
-        return dims_shape
+        dims_shape_dict = dims_shape[dims_shape_index]
+        dims_shape_dict.pop("S", None)
+        return dims_shape_dict
 
     @staticmethod
     def _stitch_tiles(
@@ -657,7 +651,9 @@ class CziReader(Reader):
 
         ans = None
         if type(data) is da.Array:
-            ans = da.zeros(arr_shape_list, chunks=data.chunks, dtype=data.dtype)
+            ans = da.zeros(arr_shape_list,
+                           chunks=data.chunks,  # type: ignore
+                           dtype=data.dtype)
         else:
             ans = np.zeros(arr_shape_list, dtype=data.dtype)
 

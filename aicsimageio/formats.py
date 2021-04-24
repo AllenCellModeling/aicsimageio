@@ -21,12 +21,12 @@ from typing import Dict
 
 FORMAT_IMPLEMENTATIONS: Dict[str, str] = {
     "array-like": "aicsimageio.readers.array_like_reader.ArrayLikeReader",
-    "czi": "aicsimageio.readers.czi_reader.CziReader",
-    "lif": "aicsimageio.readers.lif_reader.LifReader",
     "ome.tiff": "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
     "ome.tif": "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
     "tiff": "aicsimageio.readers.tiff_reader.TiffReader",
     "tif": "aicsimageio.readers.tiff_reader.TiffReader",
+    "czi": "aicsimageio.readers.czi_reader.CziReader",
+    "lif": "aicsimageio.readers.lif_reader.LifReader",
     # BASE-IMAGEIO FORMATS (with tifffile + non-existant removals)
     #
     # Pulled using:

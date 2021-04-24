@@ -16,8 +16,8 @@ from ..image_container_test_utils import run_image_container_checks
 
 @pytest.mark.parametrize(
     "image, "
-    "known_dims, "
-    "known_channel_names, "
+    "dim_order, "
+    "channel_names, "
     "set_scene, "
     "expected_scenes, "
     "expected_shape, "
@@ -142,7 +142,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CZYX",
             ["Channel:0:0"],
         ),
-        # Check no channel names provided 3D but known dims forces channel dim
+        # Check no channel names provided 3D but dim_order forces channel dim
         # these check that channel names are created for all
         # and specifically for xr that channel names are overwritten
         (
@@ -185,7 +185,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CYX",
             ["Channel:0:0"],
         ),
-        # Test many scene, same known_dims, first scene
+        # Test many scene, same dim_order, first scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             "CYX",
@@ -232,7 +232,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CYX",
             ["Channel:0:0"],
         ),
-        # Test many scene, same known_dims, second scene
+        # Test many scene, same dim_order, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             "CYX",
@@ -279,7 +279,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CYX",
             ["Channel:1:0", "Channel:1:1"],
         ),
-        # Test many scene, same known_channels, first scene
+        # Test many scene, same channel_names, first scene
         (
             [np.random.rand(2, 1, 1, 1), np.random.rand(2, 2, 2, 2)],
             None,
@@ -326,7 +326,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CZYX",
             ["A", "B"],
         ),
-        # Test many scene, same known_channels, second scene
+        # Test many scene, same channel_names, second scene
         (
             [np.random.rand(2, 1, 1, 1), np.random.rand(2, 2, 2, 2)],
             None,
@@ -373,7 +373,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CZYX",
             ["A", "B"],
         ),
-        # Test many scene, different known_dims, first scene
+        # Test many scene, different dim_order, first scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -420,7 +420,7 @@ from ..image_container_test_utils import run_image_container_checks
             "ZYX",
             None,
         ),
-        # Test many scene, different known_dims, second scene
+        # Test many scene, different dim_order, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -467,7 +467,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CYX",
             ["Channel:1:0", "Channel:1:1"],
         ),
-        # Test many scene, different known_dims, different channel_names, first scene
+        # Test many scene, different dim_order, different channel_names, first scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -514,7 +514,7 @@ from ..image_container_test_utils import run_image_container_checks
             "ZYX",
             None,
         ),
-        # Test many scene, different known_dims, different channel_names, second scene
+        # Test many scene, different dim_order, different channel_names, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -656,7 +656,7 @@ from ..image_container_test_utils import run_image_container_checks
             "ABD",
             None,
         ),
-        # Test that we can support many dimensions if known dims is provided
+        # Test that we can support many dimensions if dim_order is provided
         (
             np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
             "ABCDEFGH",
@@ -715,7 +715,7 @@ from ..image_container_test_utils import run_image_container_checks
             "CZYX",
             ["A"],
         ),
-        # Test mismatching mapping of arrays to known dims
+        # Test mismatching mapping of arrays to dim_order
         pytest.param(
             [np.random.rand(1, 1)],
             ["YX", "BAD"],
@@ -738,7 +738,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
         ),
-        # Test mismatching mapping of arrays to known channel names
+        # Test mismatching mapping of arrays to channel_names
         pytest.param(
             [np.random.rand(1, 1, 1, 1)],
             None,
@@ -797,7 +797,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             marks=pytest.mark.raises(exceptions=ValueError),
         ),
-        # Test that without known dims and with more than five dims, it raises an error
+        # Test that without dim_order and with more than five dims, it raises an error
         # Our guess dim order only support up to five dims
         pytest.param(
             np.random.rand(1, 2, 3, 4, 5, 6),
@@ -827,8 +827,8 @@ from ..image_container_test_utils import run_image_container_checks
 )
 def test_arraylike_reader(
     image: Union[types.MetaArrayLike, List[types.MetaArrayLike]],
-    known_dims: Optional[Union[str, List[str]]],
-    known_channel_names: Optional[Union[List[str], List[List[str]]]],
+    dim_order: Optional[Union[str, List[str]]],
+    channel_names: Optional[Union[List[str], List[List[str]]]],
     set_scene: str,
     expected_scenes: Tuple[str, ...],
     expected_shape: Tuple[int, ...],
@@ -837,7 +837,7 @@ def test_arraylike_reader(
 ) -> None:
     # Init
     image_container = ArrayLikeReader(
-        image, known_dims=known_dims, known_channel_names=known_channel_names
+        image, dim_order=dim_order, channel_names=channel_names
     )
 
     run_image_container_checks(

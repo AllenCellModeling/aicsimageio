@@ -29,6 +29,9 @@ class AICSImage:
     ----------
     image: types.ImageLike
         A string, Path, fsspec supported URI, or arraylike to read.
+    reader: Optional[types.ReaderType]
+        The Reader class to specifically use for reading the provided image.
+        Default: None (find matching reader)
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -58,13 +61,19 @@ class AICSImage:
 
     Initialize an image and pass arguments to the reader using kwargs.
 
-    >>> img = AICSImage("my_file.czi", chunk_by_dims=["T", "Y", "X"])
+    >>> img = AICSImage("my_file.czi", chunk_dims=["T", "Y", "X"])
 
     Initialize an image, change scene, read data to numpy.
 
     >>> img = AICSImage("my_many_scene.czi")
     ... img.set_scene("Image:3")
     ... img.data
+
+    Initialize an image with a specific reader. This is useful if you know the file
+    type in advance or would like to skip a few of the file format checks we do
+    internally. Useful when reading from remote sources to reduce network round trips.
+
+    >>> img = AICSImage("malformed_metadata.ome.tiff", reader=readers.TiffReader)
 
     Notes
     -----
@@ -147,9 +156,20 @@ class AICSImage:
             ),
         )
 
-    def __init__(self, image: types.ImageLike, **kwargs: Any):
-        # Determine reader class and create dask delayed array
-        ReaderClass = self.determine_reader(image, **kwargs)
+    def __init__(
+        self,
+        image: types.ImageLike,
+        reader: Optional[ReaderType] = None,
+        **kwargs: Any,
+    ):
+        if reader is None:
+            # Determine reader class and create dask delayed array
+            ReaderClass = self.determine_reader(image, **kwargs)
+        else:
+            # Init reader
+            ReaderClass = reader
+
+        # Init and store reader
         self._reader = ReaderClass(image, **kwargs)
 
         # Lazy load data from reader and reformat to standard dimensions

@@ -37,19 +37,19 @@ class ArrayLikeReader(Reader):
         A single, numpy ndarray, dask Array, or xarray DataArray, or list of many.
         If provided a list, each item in the list will be exposed through the scene API.
         If provided an xarray DataArray alone or as an element of the list, the
-        known_dims and known_channel_names kwargs are ignored if there non-xarray
+        dim_order and channel_names kwargs are ignored if there non-xarray
         default dimension (or channel coordinate) information attached the xarray
         object. The channel and dimension information are updated independent of the
         other. If either is using xarray default values, they will be replaced by
         AICSImageIO defaults will be added.
 
-    known_dims: Optional[Union[List[str], str]]
-        A string of known dimensions to be applied to all array(s) or a
+    dim_order: Optional[Union[List[str], str]]
+        A string of dimensions to be applied to all array(s) or a
         list of string dimension names to be mapped onto the list of arrays
         provided to image. I.E. "TYX".
         Default: None (guess dimensions for single array or multiple arrays)
 
-    known_channel_names: Optional[Union[List[str], List[List[str]]]]
+    channel_names: Optional[Union[List[str], List[List[str]]]]
         A list of string channel names to be applied to all array(s) or a
         list of lists of string channel names to be mapped onto the list of arrays
         provided to image.
@@ -62,11 +62,11 @@ class ArrayLikeReader(Reader):
         provided to the metadata parameters if as a list.
 
     exceptions.ConflictingArgumentsError
-        Raised when known_channel_names is provided but the channel dimension was
-        either not guessed or not provided in known_dims.
+        Raised when channel_names is provided but the channel dimension was
+        either not guessed or not provided in dim_order.
 
     ValueError
-        Provided known_dims string or known_channel_names are not the same length as
+        Provided dim_order string or channel_names are not the same length as
         the number of dimensions or the size of the channel dimensions for the array at
         the matching index.
 
@@ -84,8 +84,8 @@ class ArrayLikeReader(Reader):
     ... some_dask = ...
     ... reader = ArrayLikeReader(
     ...     image=[some_metadata_attached_xr, some_np, some_dask],
-    ...     known_dims=[None, "CTYX", "ZTYX"],
-    ...     known_channel_names=[None, ["A", "B", C"], None],
+    ...     dim_order=[None, "CTYX", "ZTYX"],
+    ...     channel_names=[None, ["A", "B", C"], None],
     ... )
 
     Will create a three scene ArrayLikeReader with the metadata and coordinate
@@ -109,8 +109,8 @@ class ArrayLikeReader(Reader):
     def __init__(
         self,
         image: Union[List[MetaArrayLike], MetaArrayLike],
-        known_dims: Optional[Union[List[str], str]] = None,
-        known_channel_names: Optional[Union[List[str], List[List[str]]]] = None,
+        dim_order: Optional[Union[List[str], str]] = None,
+        channel_names: Optional[Union[List[str], List[List[str]]]] = None,
         **kwargs: Any,
     ):
         # Enforce valid image
@@ -120,7 +120,7 @@ class ArrayLikeReader(Reader):
             )
 
         # General note
-        # Any time we do a `known_channel_names[0]` it's because the type check for
+        # Any time we do a `channel_names[0]` it's because the type check for
         # channel names is a List[List[str]], so by checking the first element we should
         # be getting back a list or a string. Anything else will error.
 
@@ -132,58 +132,59 @@ class ArrayLikeReader(Reader):
         # If metadata is attached as lists
         # Enforcing matching shape
         if isinstance(image, list):
-            if isinstance(known_dims, list):
-                # Check known dims
-                if len(known_dims) != len(image):
+            if isinstance(dim_order, list):
+                # Check dim order
+                if len(dim_order) != len(image):
                     raise exceptions.ConflictingArgumentsError(
                         f"ArrayLikeReader received a list of arrays to use as scenes "
-                        f"but the provided list of known dimensions is of different "
-                        f"length. "
+                        f"but the provided list of dimension order strings is of "
+                        f"different length. "
                         f"Number of provided scenes: {len(image)}, "
-                        f"Number of provided known dimension strings: {len(known_dims)}"
+                        f"Number of provided dimension order strings: "
+                        f"{len(dim_order)}"
                     )
 
-            # Check known channel names
-            if known_channel_names is not None:
-                if isinstance(known_channel_names[0], list):
-                    if len(known_channel_names) != len(image):
+            # Check channel names
+            if channel_names is not None:
+                if isinstance(channel_names[0], list):
+                    if len(channel_names) != len(image):
                         raise exceptions.ConflictingArgumentsError(
                             f"ArrayLikeReader received a list of arrays to use as "
-                            f"scenes but the provided list of known channel names is "
+                            f"scenes but the provided list of channel names is "
                             f"of different length. "
                             f"Number of provided scenes: {len(image)}, "
-                            f"Number of provided known channel names: "
-                            f"{len(known_channel_names)}"
+                            f"Number of provided channel names: "
+                            f"{len(channel_names)}"
                         )
 
         # If metadata is attached as singles
         # but many scenes provided, expand
         if isinstance(image, list):
-            if known_dims is None or isinstance(known_dims, str):
-                known_dims = [known_dims for i in range(len(image))]  # type: ignore
-            if known_channel_names is None or isinstance(known_channel_names[0], str):
-                known_channel_names = [  # type: ignore
-                    known_channel_names for i in range(len(image))
+            if dim_order is None or isinstance(dim_order, str):
+                dim_order = [dim_order for i in range(len(image))]  # type: ignore
+            if channel_names is None or isinstance(channel_names[0], str):
+                channel_names = [  # type: ignore
+                    channel_names for i in range(len(image))
                 ]
 
         # Set all kwargs to lists for standard interface
         if not isinstance(image, list):
             image = [image]
-        if not isinstance(known_dims, list):
-            known_dims = [known_dims]  # type: ignore
-        if known_channel_names is None:
-            known_channel_names = [known_channel_names]  # type: ignore
+        if not isinstance(dim_order, list):
+            dim_order = [dim_order]  # type: ignore
+        if channel_names is None:
+            channel_names = [channel_names]  # type: ignore
         # Also wrap the channel names list if they were provided
         # but only a single scene was
-        elif len(image) == 1 and not isinstance(known_channel_names[0], list):
-            known_channel_names = [known_channel_names]  # type: ignore
+        elif len(image) == 1 and not isinstance(channel_names[0], list):
+            channel_names = [channel_names]  # type: ignore
 
         # Store image(s)
         self._all_scenes = image
 
         # Validate and store dims
         self._scene_dims_list = []
-        for i, dims_string in enumerate(known_dims):
+        for i, dims_string in enumerate(dim_order):
             this_scene = self._all_scenes[i]
             # Provided None, guess
             if dims_string is None:
@@ -244,7 +245,9 @@ class ArrayLikeReader(Reader):
 
         # Validate and store channel_names
         self._scene_channel_names = []
-        for s_index, channel_names in enumerate(known_channel_names):  # type: ignore
+        for s_index, this_scene_channel_names in enumerate(
+            channel_names  # type: ignore
+        ):
             this_scene = self._all_scenes[s_index]
             this_scene_dims = self._scene_dims_list[s_index]
 
@@ -256,8 +259,10 @@ class ArrayLikeReader(Reader):
                 if isinstance(this_scene, xr.DataArray):
                     if DimensionNames.Channel not in this_scene.coords:
                         # Use provided
-                        if channel_names is not None:
-                            this_scene.coords[DimensionNames.Channel] = channel_names
+                        if this_scene_channel_names is not None:
+                            this_scene.coords[
+                                DimensionNames.Channel
+                            ] = this_scene_channel_names
 
                         # Generate
                         else:
@@ -275,7 +280,7 @@ class ArrayLikeReader(Reader):
                             ] = set_channel_names
 
                 # Provided None, generate
-                if channel_names is None:
+                if this_scene_channel_names is None:
                     this_scene_channels = []
                     for c_index in range(this_scene.shape[channel_dim_index]):
                         image_id = metadata_utils.generate_ome_image_id(s_index)
@@ -289,34 +294,37 @@ class ArrayLikeReader(Reader):
 
                 # Provided Some, validate
                 else:
-                    if len(channel_names) != this_scene.shape[channel_dim_index]:
+                    if (
+                        len(this_scene_channel_names)
+                        != this_scene.shape[channel_dim_index]
+                    ):
                         raise ValueError(
                             f"Provided channel names list does not match the size of "
                             f"channel dimension for the provided array. "
                             f"Provided array shape: {this_scene.shape}, "
                             f"Channel dimension size: "
                             f"{this_scene.shape[channel_dim_index]}, "
-                            f"Provided channel names: {channel_names}"
+                            f"Provided channel names: {this_scene_channel_names}"
                         )
                     else:
-                        self._scene_channel_names.append(channel_names)
+                        self._scene_channel_names.append(this_scene_channel_names)
 
             # Raise error when channel names were provided when they shouldn't have been
             else:
-                if channel_names is not None:
+                if this_scene_channel_names is not None:
                     raise ValueError(
                         f"Received channel names for array without channel dimension. "
                         f"Provided array shape: {this_scene.shape}, "
                         f"Provided (or guessed) dimensions: {this_scene_dims}, "
-                        f"Provided channel names: {channel_names}"
+                        f"Provided channel names: {this_scene_channel_names}"
                     )
                 else:
-                    self._scene_channel_names.append(channel_names)
+                    self._scene_channel_names.append(this_scene_channel_names)
 
         # Construct full xarrays
         # All data arrays in this list are dask Arrays
         self._xr_darrays = []
-        for scene_data, dims, channel_names in zip(
+        for scene_data, dims, this_scene_channel_names in zip(
             self._all_scenes, self._scene_dims_list, self._scene_channel_names
         ):
             # Handle simple case of provided a DataArray
@@ -341,7 +349,7 @@ class ArrayLikeReader(Reader):
                 dims_list = list(dims)
                 coords = {}
                 if DimensionNames.Channel in dims_list:
-                    coords[DimensionNames.Channel] = channel_names
+                    coords[DimensionNames.Channel] = this_scene_channel_names
 
                 # Handle dask
                 if isinstance(scene_data, np.ndarray):

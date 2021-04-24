@@ -114,18 +114,18 @@ def test_lif_reader(
 
 
 @pytest.mark.parametrize("filename", ["s_1_t_1_c_2_z_1.lif", "s_1_t_4_c_2_z_1.lif"])
-@pytest.mark.parametrize("chunk_by_dims", ["ZYX", "TYX", "CYX"])
+@pytest.mark.parametrize("chunk_dims", ["ZYX", "TYX", "CYX"])
 @pytest.mark.parametrize("get_dims", ["ZYX", "TYX"])
 def test_sanity_check_correct_indexing(
     filename: str,
-    chunk_by_dims: str,
+    chunk_dims: str,
     get_dims: str,
 ) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri, chunk_by_dims=chunk_by_dims)
+    reader = LifReader(uri, chunk_dims=chunk_dims)
     lif_img = LifFile(uri).get_image(0)
 
     # Pull a chunk from LifReader

@@ -4,7 +4,7 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -12,7 +12,7 @@ import pytest
 import xarray as xr
 from ome_types import OME
 
-from aicsimageio import AICSImage, dimensions, exceptions, types
+from aicsimageio import AICSImage, dimensions, exceptions, readers, types
 
 from .conftest import LOCAL, get_resource_full_path
 from .image_container_test_utils import (
@@ -298,8 +298,8 @@ def test_multi_scene_aicsimage(
 
 @pytest.mark.parametrize(
     "image, "
-    "known_dims, "
-    "known_channel_names, "
+    "dim_order, "
+    "channel_names, "
     "set_scene, "
     "expected_scenes, "
     "expected_shape, "
@@ -351,7 +351,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0"],
         ),
-        # Test many scene, same known_dims, second scene
+        # Test many scene, same dim_order, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             "CYX",
@@ -375,7 +375,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0", "Channel:1:1"],
         ),
-        # Test many scene, different known_dims, different channel_names, second scene
+        # Test many scene, different dim_order, different channel_names, second scene
         (
             [np.random.rand(1, 1, 1), np.random.rand(2, 2, 2)],
             [None, "CYX"],
@@ -474,7 +474,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0"],
         ),
-        # Test that we can support many dimensions if known dims is provided
+        # Test that we can support many dimensions if dims is provided
         (
             np.random.rand(1, 2, 3, 4, 5, 6, 7, 8),
             "ABCDEFGH",
@@ -511,7 +511,7 @@ def test_multi_scene_aicsimage(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0", "Channel:1:1", "Channel:1:2", "Channel:1:3"],
         ),
-        # Test that without known dims and with more than five dims, it raises an error
+        # Test that without dims and with more than five dims, it raises an error
         # Our guess dim order only support up to five dims
         pytest.param(
             np.random.rand(1, 2, 3, 4, 5, 6),
@@ -541,8 +541,8 @@ def test_multi_scene_aicsimage(
 )
 def test_aicsimage_from_array(
     image: Union[types.MetaArrayLike, List[types.MetaArrayLike]],
-    known_dims: Optional[str],
-    known_channel_names: Optional[List[str]],
+    dim_order: Optional[str],
+    channel_names: Optional[List[str]],
     set_scene: str,
     expected_scenes: Tuple[str, ...],
     expected_shape: Tuple[int, ...],
@@ -550,9 +550,7 @@ def test_aicsimage_from_array(
     expected_channel_names: List[str],
 ) -> None:
     # Init
-    image_container = AICSImage(
-        image, known_dims=known_dims, known_channel_names=known_channel_names
-    )
+    image_container = AICSImage(image, dim_order=dim_order, channel_names=channel_names)
 
     run_image_container_checks(
         image_container=image_container,
@@ -619,3 +617,278 @@ def test_roundtrip_save_all_scenes(
             np.testing.assert_array_equal(original.data, result.data)
             assert original.dims.order == result.dims.order
             assert original.channel_names == result.channel_names
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "set_dims, "
+    "set_channel_names, "
+    "expected_dims, "
+    "expected_channel_names, "
+    "expected_shape",
+    [
+        # DefaultReader
+        # First check to show nothing changes
+        (
+            "example.gif",
+            "Image:0",
+            None,
+            None,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+            ["Channel:0:0"],
+            (72, 1, 1, 268, 268, 4),
+        ),
+        # Check just dims to see default channel name creation
+        (
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            None,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
+            (1, 4, 72, 268, 268),
+        ),
+        # Check setting both as simple definitions
+        (
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            ["Red", "Green", "Blue", "Alpha"],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Red", "Green", "Blue", "Alpha"],
+            (1, 4, 72, 268, 268),
+        ),
+        # Check providing too many dims
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            "ABCDEFG",
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing too many channels
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            "ZYXC",
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing channels but no channel dim
+        pytest.param(
+            "example.gif",
+            "Image:0",
+            None,
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        ######################################
+        # TiffReader
+        # First check to show nothing changes
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            None,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (10, 3, 1, 325, 475),
+        ),
+        # Check just dims to see default channel name creation
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            None,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting both as simple definitions
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            ["A", "B", "C"],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting channels as a list of lists definitions
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ZCYX",
+            [["A", "B", "C"]],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting dims as list of dims
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            ["ZCYX"],
+            ["A", "B", "C"],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B", "C"],
+            (1, 3, 10, 325, 475),
+        ),
+        # Check setting dims as list of None (scene has unknown dims)
+        (
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            [None],
+            ["A", "B", "C"],
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["A", "B", "C"],
+            (10, 3, 1, 325, 475),
+        ),
+        # Check providing too many dims
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "ABCDEFG",
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing too many channels
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            ["A", "B", "C", "D"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check providing channels but no channel dim
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            "TZYX",
+            ["A", "B", "C"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check number of scenes dims list matches n scenes
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            ["ABC", "DEF", "GHI"],
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+        # Check number of scenes channels list matches n scenes
+        pytest.param(
+            "s_1_t_10_c_3_z_1.tiff",
+            "Image:0",
+            None,
+            [["A", "B", "C"], ["D", "E", "F"]],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+        ),
+    ],
+)
+def test_set_coords(
+    filename: str,
+    set_scene: str,
+    set_dims: Optional[Union[str, List[str]]],
+    set_channel_names: Optional[Union[List[str], List[List[str]]]],
+    expected_dims: str,
+    expected_channel_names: List[str],
+    expected_shape: Tuple[int, ...],
+) -> None:
+    # As a reminder, AICSImage always has certain dimensions
+    # If you provide a dimension that isn't one of those,
+    # it will only be available on the reader, not the AICSImage object.
+
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, dim_order=set_dims, channel_names=set_channel_names)
+
+    # Set scene
+    img.set_scene(set_scene)
+
+    # Compare AICSImage results
+    assert img.dims.order == expected_dims
+    assert img.channel_names == expected_channel_names
+    assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
+    "filename, set_reader, extra_kwargs, expected_dims, expected_shape",
+    [
+        (
+            "actk.ome.tiff",
+            readers.TiffReader,
+            {},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (1, 6, 65, 233, 345),
+        ),
+        # See shape to see why you should use TiffReader :)
+        (
+            "actk.ome.tiff",
+            readers.default_reader.DefaultReader,
+            {},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (390, 1, 1, 233, 345),
+        ),
+        # Test good reader but also allows extra kwargs
+        (
+            "actk.ome.tiff",
+            readers.TiffReader,
+            {"dim_order": "CTYX"},
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (65, 6, 1, 233, 345),
+        ),
+        # Test incompatible reader
+        pytest.param(
+            "actk.ome.tiff",
+            readers.lif_reader.LifReader,
+            {},
+            None,
+            None,
+            marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
+        ),
+    ],
+)
+def test_set_reader(
+    filename: str,
+    set_reader: types.ReaderType,
+    extra_kwargs: Dict[str, Any],
+    expected_dims: str,
+    expected_shape: Tuple[int, ...],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, reader=set_reader, **extra_kwargs)
+
+    # Assert basics
+    assert img.dims.order == expected_dims
+    assert img.shape == expected_shape

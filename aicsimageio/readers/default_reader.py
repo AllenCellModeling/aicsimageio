@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -43,6 +43,15 @@ class DefaultReader(Reader):
     ----------
     image: types.PathLike
         Path to image file to construct Reader for.
+    dim_order: Optional[str]
+        Optional string of dimension short names for the image to use
+        instead of guess.
+        Must provide the same number of dimensions as read.
+        Default: None (guess)
+    channel_names: Optional[List[str]]
+        Optional list of channel names.
+        Must provide the same number of channels as the read channel dimension.
+        Default: None (generate standard names)
 
     Notes
     -----
@@ -112,12 +121,22 @@ class DefaultReader(Reader):
         except OSError:
             raise IOError(REMOTE_READ_FAIL_MESSAGE.format(path=path))
 
-    def __init__(self, image: types.PathLike, **kwargs: Any):
+    def __init__(
+        self,
+        image: types.PathLike,
+        dim_order: Optional[str] = None,
+        channel_names: Optional[List[str]] = None,
+        **kwargs: Any,
+    ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         self.extension, self.imageio_read_mode = self._get_extension_and_mode(
             self._path
         )
+
+        # Store extras
+        self._dim_order = dim_order
+        self._channel_names = channel_names
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -160,7 +179,7 @@ class DefaultReader(Reader):
 
     @staticmethod
     def _get_image_data(
-        fs: AbstractFileSystem, path: str, format: str, mode: str, index: int
+        fs: AbstractFileSystem, path: str, extension: str, mode: str, index: int
     ) -> np.ndarray:
         """
         Open a file for reading, seek to plane index and read as numpy.
@@ -171,8 +190,8 @@ class DefaultReader(Reader):
             The file system to use for reading.
         path: str
             The path to file to read.
-        format: str
-            The format to use to read the file.
+        extension: str
+            The file extension naively indicating format to use to read the file.
             For our use case this is primarily the file extension.
         mode: str
             The read mode to use for opening and reading.
@@ -187,14 +206,16 @@ class DefaultReader(Reader):
             The image plane as a numpy array.
         """
         with fs.open(path) as open_resource:
-            with imageio.get_reader(open_resource, format=format, mode=mode) as reader:
+            with imageio.get_reader(
+                open_resource, format=extension, mode=mode
+            ) as reader:
                 return np.asarray(reader.get_data(index))
 
     @staticmethod
     def _get_image_length(
         fs: AbstractFileSystem,
         path: str,
-        format: str,
+        extension: str,
         mode: str,
     ) -> int:
         """
@@ -207,7 +228,7 @@ class DefaultReader(Reader):
             The file system to use for reading.
         path: str
             The path to file to read.
-        format: str
+        extension: str
             The format to use to read the file.
             For our use case this is primarily the file extension.
         mode: str
@@ -230,9 +251,11 @@ class DefaultReader(Reader):
         See here for more details: https://github.com/imageio/imageio/issues/168
         """
         with fs.open(path) as open_resource:
-            with imageio.get_reader(open_resource, format=format, mode=mode) as reader:
+            with imageio.get_reader(
+                open_resource, format=extension, mode=mode
+            ) as reader:
                 # Handle FFMPEG formats
-                if format in DefaultReader.FFMPEG_FORMATS:
+                if extension in DefaultReader.FFMPEG_FORMATS:
                     # A reminder, this is the _total_ frame count, not the last index
                     reported_frames = reader.count_frames()
 
@@ -252,7 +275,11 @@ class DefaultReader(Reader):
 
     @staticmethod
     def _unpack_dims_and_coords(
-        image_data: types.ArrayLike, metadata: Dict
+        image_data: types.ArrayLike,
+        metadata: Dict,
+        scene_id: str,
+        dim_order: Optional[str],
+        channel_names: Optional[List[str]],
     ) -> Tuple[List[str], Dict[str, Union[List[str], types.ArrayLike]]]:
         """
         Unpack image data into assumed dims and coords.
@@ -263,6 +290,18 @@ class DefaultReader(Reader):
             The image data to unpack dims and coords for.
         metadata: Dict
             The EXIF, XMP, etc metadata dictionary.
+        scene_id: str
+            The scene id for this image.
+            For this reader this is always the same but we need this to create
+            channel names.
+        dim_order: Optional[str]
+            Optional string of dimension order to use instead of guess.
+            Unlike other readers, this reader doesn't have any idea as to many-scene
+            so we can just have a single string instead of a List[str].
+        channel_names: Optional[List[str]]
+            Optional list of channel names to use instead of None.
+            Unlike other readers, this reader doesn't pull metadata so it would
+            normally generate OME channel names.
 
         Returns
         -------
@@ -271,11 +310,60 @@ class DefaultReader(Reader):
         coords: Dict[str, Union[List[str], types.ArrayLike]]
             If possible, the coordinates for dimensions in the image data.
         """
-        # Guess dims
-        dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
+        # Guess dims or use provided dims
+        if dim_order is not None:
+            if len(dim_order) != len(image_data.shape):
+                raise exceptions.ConflictingArgumentsError(
+                    f"Provided dimension string does not have the same amount of "
+                    f"dimensions as the read image. "
+                    f"Read image shape: {image_data.shape}, "
+                    f"Provided dimension string: {dim_order}"
+                )
+
+            dims = list(dim_order)
+
+        else:
+            dims = [c for c in DefaultReader._guess_dim_order(image_data.shape)]
 
         # Use dims for coord determination
         coords: Dict[str, Union[List[str], np.ndarray]] = {}
+
+        # Create or use channel names
+        if channel_names:
+            # Provided channel names but no channel dim
+            if DimensionNames.Channel not in dims:
+                raise exceptions.ConflictingArgumentsError(
+                    f"Received channel names for array without channel dimension. "
+                    f"Read image shape: {image_data.shape}, "
+                    f"Provided (or guessed) dimensions: {dims}, "
+                    f"Provided channel names: {channel_names}"
+                )
+
+            # Provided different length channel names and
+            if (
+                len(channel_names)
+                != image_data.shape[dims.index(DimensionNames.Channel)]
+            ):
+                raise exceptions.ConflictingArgumentsError(
+                    f"Provided channel names list does not match the size of "
+                    f"channel dimension for the provided array. "
+                    f"Read image shape: {image_data.shape}, "
+                    f"Dims: {dims}, "
+                    f"Provided channel names: {channel_names}"
+                )
+
+            # Passed all checks, use the channel names
+            coords[DimensionNames.Channel] = channel_names
+
+        # Otherwise simply generate OME default
+        else:
+            if DimensionNames.Channel in dims:
+                coords[DimensionNames.Channel] = [
+                    metadata_utils.generate_ome_channel_id(
+                        image_id=scene_id, channel_id=i
+                    )
+                    for i in range(image_data.shape[dims.index(DimensionNames.Channel)])
+                ]
 
         # Handle typical RGB and RGBA from Samples
         if DimensionNames.Samples in dims:
@@ -318,7 +406,7 @@ class DefaultReader(Reader):
                 image_length = self._get_image_length(
                     fs=self._fs,
                     path=self._path,
-                    format=self.extension,
+                    extension=self.extension,
                     mode=self.imageio_read_mode,
                 )
 
@@ -328,7 +416,7 @@ class DefaultReader(Reader):
                         self._get_image_data(
                             fs=self._fs,
                             path=self._path,
-                            format=self.extension,
+                            extension=self.extension,
                             mode=self.imageio_read_mode,
                             index=0,
                         )
@@ -340,7 +428,7 @@ class DefaultReader(Reader):
                     sample = self._get_image_data(
                         fs=self._fs,
                         path=self._path,
-                        format=self.extension,
+                        extension=self.extension,
                         mode=self.imageio_read_mode,
                         index=0,
                     )
@@ -357,7 +445,7 @@ class DefaultReader(Reader):
                             delayed(self._get_image_data)(
                                 fs=self._fs,
                                 path=self._path,
-                                format=self.extension,
+                                extension=self.extension,
                                 mode=self.imageio_read_mode,
                                 index=indices[0],
                             ),
@@ -379,7 +467,13 @@ class DefaultReader(Reader):
                 metadata = reader.get_meta_data()
 
                 # Create extra metadata from assumptions based off image data
-                dims, coords = self._unpack_dims_and_coords(image_data, metadata)
+                dims, coords = self._unpack_dims_and_coords(
+                    image_data=image_data,
+                    metadata=metadata,
+                    scene_id=self.current_scene,
+                    dim_order=self._dim_order,
+                    channel_names=self._channel_names,
+                )
 
                 return xr.DataArray(
                     image_data,
@@ -413,7 +507,7 @@ class DefaultReader(Reader):
             image_length = self._get_image_length(
                 fs=self._fs,
                 path=self._path,
-                format=self.extension,
+                extension=self.extension,
                 mode=self.imageio_read_mode,
             )
 
@@ -434,7 +528,13 @@ class DefaultReader(Reader):
             metadata = reader.get_meta_data()
 
             # Create extra metadata from assumptions based off image data
-            dims, coords = self._unpack_dims_and_coords(image_data, metadata)
+            dims, coords = self._unpack_dims_and_coords(
+                image_data=image_data,
+                metadata=metadata,
+                scene_id=self.current_scene,
+                dim_order=self._dim_order,
+                channel_names=self._channel_names,
+            )
 
             return xr.DataArray(
                 image_data,

@@ -10,7 +10,7 @@ with open("README.md") as readme_file:
 
 format_libs = {
     "base-imageio": "imageio[ffmpeg]~=2.9.0",
-    "lif": "readlif~=0.5.1",
+    "lif": "readlif~=0.6.1",
 }
 
 all_formats = [v for v in format_libs.values()]

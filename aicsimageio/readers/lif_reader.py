@@ -80,6 +80,7 @@ class LifReader(Reader):
         self.chunk_dims = chunk_dims
 
         # Delayed storage
+        self._scene_short_info: Optional[Dict[str, Any]] = None
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
 
         # Enforce valid image
@@ -434,10 +435,10 @@ class LifReader(Reader):
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            scene_short_info = selected_scene.info
+            self._scene_short_info = selected_scene.info
 
             # Check for mosaic tiles
-            tile_positions = scene_short_info["mosaic_position"]
+            tile_positions = self._scene_short_info["mosaic_position"]
 
             # If there are tiles in the image use mosaic dims
             if len(tile_positions) > 0:
@@ -456,7 +457,7 @@ class LifReader(Reader):
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
-                image_short_info=scene_short_info,
+                image_short_info=self._scene_short_info,
                 scene_index=self.current_scene_index,
             )
 
@@ -488,10 +489,10 @@ class LifReader(Reader):
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            scene_short_info = selected_scene.info
+            self._scene_short_info = selected_scene.info
 
             # Check for mosaic tiles
-            tile_positions = scene_short_info["mosaic_position"]
+            tile_positions = self._scene_short_info["mosaic_position"]
 
             # If there are tiles in the image use mosaic dims
             if len(tile_positions) > 0:
@@ -516,7 +517,7 @@ class LifReader(Reader):
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
                 xml=meta,
-                image_short_info=scene_short_info,
+                image_short_info=self._scene_short_info,
                 scene_index=self.current_scene_index,
             )
 
@@ -639,3 +640,34 @@ class LifReader(Reader):
             self.dask_data
 
         return self._px_sizes  # type: ignore
+
+    def get_mosaic_tile_position(self, M: int) -> Tuple[int, int]:
+        """
+        Get the top left point for a single mosaic tile relative to the whole mosaic.
+
+        Parameters
+        ----------
+        M: int
+            The index for the mosaic tile to retrieve position information for.
+
+        Returns
+        -------
+        top: int
+            The Y coordinate for the tile position.
+        left: int
+            The X coordinate for the tile position.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        IndexError
+            No matching mosaic tile index found.
+        """
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        # Unpack the target mosaic position
+        index_x, index_y, _, _ = self._scene_short_info["mosaic_position"][M]
+
+        return index_y * self.dims.Y, index_x * self.dims.X

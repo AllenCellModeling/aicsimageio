@@ -464,21 +464,29 @@ class CziReader(Reader):
         # Handle Spatial Dimensions
         if scale_ze is not None:
             coords[DimensionNames.SpatialZ] = np.arange(
-                0, image_short_info[DimensionNames.SpatialZ][1] * scale_z, scale_z,
+                0,
+                image_short_info[DimensionNames.SpatialZ][1] * scale_z,
+                scale_z,
             )
         if scale_y is not None:
             coords[DimensionNames.SpatialY] = np.arange(
-                0, image_short_info[DimensionNames.SpatialY][1] * scale_y, scale_y,
+                0,
+                image_short_info[DimensionNames.SpatialY][1] * scale_y,
+                scale_y,
             )
         if scale_x is not None:
             coords[DimensionNames.SpatialX] = np.arange(
-                0, image_short_info[DimensionNames.SpatialX][1] * scale_x, scale_x,
+                0,
+                image_short_info[DimensionNames.SpatialX][1] * scale_x,
+                scale_x,
             )
 
         # Time
         if scale_t is not None:
             coords[DimensionNames.Time] = np.arange(
-                0, image_short_info["dims"].t * scale_t, scale_t,
+                0,
+                image_short_info["dims"].t * scale_t,
+                scale_t,
             )
 
         # Create physical pixel sizes
@@ -624,7 +632,10 @@ class CziReader(Reader):
 
     @staticmethod
     def _stitch_tiles(
-        data: types.ArrayLike, data_dims_shape: Dict, bboxes: Dict, mosaic_bbox: BBox,
+        data: types.ArrayLike,
+        data_dims_shape: Dict,
+        bboxes: Dict,
+        mosaic_bbox: BBox,
     ) -> types.ArrayLike:
         # Assumptions: 1) docs for ZEISSRAW(CZI) say:
         #   Scene – for clustering items in X/Y direction (data belonging to
@@ -738,7 +749,12 @@ class CziReader(Reader):
         }
         attrs = copy(self.xarray_dask_data.attrs)
 
-        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs,)
+        return xr.DataArray(
+            data=stitched,
+            dims=dims,
+            coords=coords,
+            attrs=attrs,
+        )
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)

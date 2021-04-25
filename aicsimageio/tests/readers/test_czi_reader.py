@@ -133,7 +133,12 @@ def test_czi_reader(
 @pytest.mark.parametrize(
     "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
     [
-        ("OverViewScan.czi", "OverView.npy", "TR1", "Image:0",),
+        (
+            "OverViewScan.czi",
+            "OverView.npy",
+            "TR1",
+            "Image:0",
+        ),
     ],
 )
 def test_czi_reader_mosaic_stitching(

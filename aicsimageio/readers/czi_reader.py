@@ -13,10 +13,10 @@ from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, types
 from ..dimensions import (
-    DEFAULT_CHUNK_BY_DIMS,
+    DEFAULT_CHUNK_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
-    REQUIRED_CHUNK_BY_DIMS,
+    REQUIRED_CHUNK_DIMS,
     DimensionNames,
 )
 from ..utils import io_utils
@@ -32,11 +32,11 @@ except ImportError:
         "Install with `pip install aicsimageio[czi]`"
     )
 
-DEFAULT_CZI_CHUNK_BY_DIMS = [
-    dim if dim != DimensionNames.Samples else "A" for dim in DEFAULT_CHUNK_BY_DIMS
+DEFAULT_CZI_CHUNK_DIMS = [
+    dim if dim != DimensionNames.Samples else "A" for dim in DEFAULT_CHUNK_DIMS
 ]
-REQUIRED_CZI_CHUNK_BY_DIMS = [
-    dim if dim != DimensionNames.Samples else "A" for dim in REQUIRED_CHUNK_BY_DIMS
+REQUIRED_CZI_CHUNK_DIMS = [
+    dim if dim != DimensionNames.Samples else "A" for dim in REQUIRED_CHUNK_DIMS
 ]
 DEFAULT_CZI_DIMENSION_ORDER_LIST = [
     dim if dim != DimensionNames.Samples else "A"
@@ -62,7 +62,7 @@ class CziReader(Reader):
         Path to image file to construct Reader for.
     chunk_by_dims: Union[str, List[str]]
         Which dimensions to create chunks for.
-        Default: DEFAULT_CHUNK_BY_DIMS
+        Default: DEFAULT_CHUNK_DIMS
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
@@ -85,7 +85,7 @@ class CziReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_BY_DIMS,
+        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
     ):
         # doesn't do anything in this case but here for completeness
         super(CziReader, self).__init__(image=image)
@@ -263,7 +263,7 @@ class CziReader(Reader):
             # Stack and reshape to get rid of the array of arrays
             new_chunk_shape = [
                 scene_dims_dict[dim]
-                for dim in REQUIRED_CZI_CHUNK_BY_DIMS
+                for dim in REQUIRED_CZI_CHUNK_DIMS
                 if dim in scene_dims_dict
             ]
             retrieved_chunk = np.stack(planes).reshape(
@@ -302,7 +302,7 @@ class CziReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         # Always add the plane dimensions if not present already
-        for dim in REQUIRED_CZI_CHUNK_BY_DIMS:
+        for dim in REQUIRED_CZI_CHUNK_DIMS:
             if dim not in self.chunk_by_dims:
                 self.chunk_by_dims.append(dim)
 
@@ -650,7 +650,7 @@ class CziReader(Reader):
             dim for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST if dim in data_dims_shape
         ]
         for dim in ordered_dims_present:
-            if dim not in REQUIRED_CZI_CHUNK_BY_DIMS:
+            if dim not in REQUIRED_CZI_CHUNK_DIMS:
                 arr_shape_list.append(data_dims_shape[dim][1])
             if dim is DimensionNames.SpatialY:
                 arr_shape_list.append(mosaic_bbox.h)
@@ -677,7 +677,7 @@ class CziReader(Reader):
             data_indexes = [
                 tile_dims[t_dim]
                 for t_dim in DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
-                if t_dim in tile_dims.keys() and t_dim not in REQUIRED_CZI_CHUNK_BY_DIMS
+                if t_dim in tile_dims.keys() and t_dim not in REQUIRED_CZI_CHUNK_DIMS
             ]
             # add Y and X
             data_indexes.append(slice(None))  # Y ":"

@@ -13,9 +13,9 @@ from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, types
 from ..dimensions import (
+    DEFAULT_CHUNK_BY_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
-    DEFAULT_CHUNK_BY_DIMS,
     REQUIRED_CHUNK_BY_DIMS,
     DimensionNames,
 )

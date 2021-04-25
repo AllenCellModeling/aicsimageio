@@ -262,8 +262,9 @@ class CziReader(Reader):
 
             # Stack and reshape to get rid of the array of arrays
             new_chunk_shape = [
-                scene_dims_dict[dim] for dim in REQUIRED_CZI_CHUNK_BY_DIMS if
-                dim in scene_dims_dict
+                scene_dims_dict[dim]
+                for dim in REQUIRED_CZI_CHUNK_BY_DIMS
+                if dim in scene_dims_dict
             ]
             retrieved_chunk = np.stack(planes).reshape(
                 np_array_for_indices.shape + tuple(new_chunk_shape)
@@ -354,12 +355,13 @@ class CziReader(Reader):
                 non_chunk_dim_order.append(dim)
                 non_chunk_shape.append(size)
 
-        pixel_dict = {"gray8": np.uint8,
-                      "gray16": np.uint16,
-                      "gray32": np.uint32,
-                      "bgr24": np.uint8,
-                      "bgr48": np.uint16,
-                      }
+        pixel_dict = {
+            "gray8": np.uint8,
+            "gray16": np.uint16,
+            "gray32": np.uint32,
+            "bgr24": np.uint8,
+            "bgr48": np.uint16,
+        }
 
         pixel_type = pixel_dict[czi.pixel_type]
 
@@ -437,7 +439,7 @@ class CziReader(Reader):
                 channel_name = channel.attrib["Name"]
                 channel_id = channel.attrib["Id"]
                 channel_ce = channel.find("./ContrastMethod")
-                channel_contrast = channel_ce.text if channel_ce else ""
+                channel_contrast = channel_ce.text if channel_ce is not None else ""
                 scene_channel_list.append(
                     (f"{channel_id}" f"--{channel_name}" f"--{channel_contrast}")
                 )
@@ -454,24 +456,21 @@ class CziReader(Reader):
         scale_xe = list_xs[0].find("./Value")
         scale_ye = list_ys[0].find("./Value")
         scale_ze = None if len(list_zs) == 0 else list_zs[0].find("./Value")
-        scale_x = float(str(scale_xe.text)) if scale_xe else 1.0
-        scale_y = float(str(scale_ye.text)) if scale_ye else 1.0
-        scale_z = float(str(scale_ze.text)) if scale_ze else 1.0
+        scale_x = float(str(scale_xe.text)) if scale_xe is not None else 1.0
+        scale_y = float(str(scale_ye.text)) if scale_ye is not None else 1.0
+        scale_z = float(str(scale_ze.text)) if scale_ze is not None else 1.0
         scale_t = None
 
         # Handle Spatial Dimensions
-        if scale_z is not None:
-            scale_z = float(scale_z)
+        if scale_ze is not None:
             coords[DimensionNames.SpatialZ] = np.arange(
                 0, image_short_info[DimensionNames.SpatialZ][1] * scale_z, scale_z,
             )
         if scale_y is not None:
-            scale_y = float(scale_y)
             coords[DimensionNames.SpatialY] = np.arange(
                 0, image_short_info[DimensionNames.SpatialY][1] * scale_y, scale_y,
             )
         if scale_x is not None:
-            scale_x = float(scale_x)
             coords[DimensionNames.SpatialX] = np.arange(
                 0, image_short_info[DimensionNames.SpatialX][1] * scale_x, scale_x,
             )
@@ -651,9 +650,11 @@ class CziReader(Reader):
 
         ans = None
         if type(data) is da.Array:
-            ans = da.zeros(arr_shape_list,
-                           chunks=data.chunks,  # type: ignore
-                           dtype=data.dtype)
+            ans = da.zeros(
+                arr_shape_list,
+                chunks=data.chunks,  # type: ignore
+                dtype=data.dtype,
+            )
         else:
             ans = np.zeros(arr_shape_list, dtype=data.dtype)
 
@@ -728,7 +729,8 @@ class CziReader(Reader):
         coords = {
             d: v
             for d, v in self.xarray_dask_data.coords.items()
-            if d not in [
+            if d
+            not in [
                 DimensionNames.MosaicTile,
                 DimensionNames.SpatialY,
                 DimensionNames.SpatialX,
@@ -736,7 +738,7 @@ class CziReader(Reader):
         }
         attrs = copy(self.xarray_dask_data.attrs)
 
-        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs, )
+        return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs,)
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)

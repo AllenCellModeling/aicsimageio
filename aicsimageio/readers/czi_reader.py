@@ -32,18 +32,20 @@ except ImportError:
         "Install with `pip install aicsimageio[czi]`"
     )
 
+CZI_SAMPLES_DIM_CHAR = "A"
+
 DEFAULT_CZI_CHUNK_DIMS = [
-    dim if dim != DimensionNames.Samples else "A" for dim in DEFAULT_CHUNK_DIMS
+    dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR for dim in DEFAULT_CHUNK_DIMS
 ]
 REQUIRED_CZI_CHUNK_DIMS = [
-    dim if dim != DimensionNames.Samples else "A" for dim in REQUIRED_CHUNK_DIMS
+    dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR for dim in REQUIRED_CHUNK_DIMS
 ]
 DEFAULT_CZI_DIMENSION_ORDER_LIST = [
-    dim if dim != DimensionNames.Samples else "A"
+    dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR
     for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
 ]
 DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = [
-    dim if dim != DimensionNames.Samples else "A"
+    dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR
     for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
 ]
 
@@ -169,7 +171,7 @@ class CziReader(Reader):
             use_selected_or_np_map: Dict[str, Optional[int]] = {}
             for dim, index_op in zip(retrieve_dims, retrieve_indices):
                 if (
-                    dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX, "A"]
+                    dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX, CZI_SAMPLES_DIM_CHAR]
                     and dim in dims_shape.keys()
                 ):
                     # Handle slices
@@ -335,8 +337,8 @@ class CziReader(Reader):
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialY][1])
                 elif dim == DimensionNames.SpatialX:
                     selected_scene_shape.append(dims_shape[DimensionNames.SpatialX][1])
-                elif dim == "A":  # sAmples from aicspylibczi3
-                    selected_scene_shape.append(dims_shape["A"][1])
+                elif dim == CZI_SAMPLES_DIM_CHAR:  # sAmples from aicspylibczi3
+                    selected_scene_shape.append(dims_shape[CZI_SAMPLES_DIM_CHAR][1])
 
         # Constuct the chunk and non-chunk shapes one dim at a time
         # We also collect the chunk and non-chunk dimension order so that
@@ -544,7 +546,7 @@ class CziReader(Reader):
             self._px_sizes = px_sizes
 
             # Map A (aicspylibczi sAmples) back to aicsimageio Samples
-            dims = [d if d != "A" else DimensionNames.Samples for d in dims]
+            dims = [d if d != CZI_SAMPLES_DIM_CHAR else DimensionNames.Samples for d in dims]
 
             return xr.DataArray(
                 image_data,
@@ -656,7 +658,7 @@ class CziReader(Reader):
                 arr_shape_list.append(mosaic_bbox.h)
             if dim is DimensionNames.SpatialX:
                 arr_shape_list.append(mosaic_bbox.w)
-            if dim == "A":
+            if dim == CZI_SAMPLES_DIM_CHAR:
                 arr_shape_list.append(data_dims_shape[dim][1])
 
         ans = None
@@ -682,7 +684,7 @@ class CziReader(Reader):
             # add Y and X
             data_indexes.append(slice(None))  # Y ":"
             data_indexes.append(slice(None))  # X ":"
-            # if "A" in tile_dims.keys():
+            # if CZI_SAMPLES_DIM_CHAR in tile_dims.keys():
             #     data_indexes.append(slice(None))
 
             # construct data indexes for ans
@@ -702,7 +704,7 @@ class CziReader(Reader):
                 if dim is DimensionNames.SpatialX:
                     start = box.x - mosaic_bbox.x
                     ans_indexes.append(slice(start, start + box.w, 1))
-                if dim == "A":
+                if dim == CZI_SAMPLES_DIM_CHAR:
                     ans_indexes.append(slice(None))
 
             # assign the tiles into ans

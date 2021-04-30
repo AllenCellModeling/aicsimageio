@@ -11,7 +11,7 @@ import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .. import constants, exceptions, types
+from .. import constants, exceptions, types, metadata
 from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
@@ -120,7 +120,7 @@ class CziReader(Reader):
                 scene_names = [x.get("Name") for x in meta_scenes]
                 # if the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
-                    scene_names = ["Scene:0"]
+                    scene_names = metadata.utils.generate_ome_image_id(0)
                 self._scenes = tuple(scene_names)
 
         return self._scenes

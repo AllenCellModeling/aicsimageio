@@ -10,14 +10,15 @@ import pytest
 from aicsimageio import exceptions
 from aicsimageio.readers import ArrayLikeReader, CziReader
 
-from ..conftest import LOCAL, get_resource_full_path, host
+from ..conftest import LOCAL, get_resource_full_path
 from ..image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
 )
 
+# from aicsimageio.readers.default_reader import DefaultReader
 
-@host
+
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "
@@ -102,7 +103,6 @@ from ..image_container_test_utils import (
 )
 def test_czi_reader(
     filename: str,
-    host: str,
     set_scene: str,
     expected_scenes: Tuple[str, ...],
     expected_shape: Tuple[int, ...],
@@ -112,7 +112,7 @@ def test_czi_reader(
     expected_physical_pixel_sizes: Tuple[float, float, float],
 ) -> None:
     # Construct full filepath
-    uri = get_resource_full_path(filename, host)
+    uri = get_resource_full_path(filename, LOCAL)
 
     # Run checks
     run_image_file_checks(
@@ -163,3 +163,39 @@ def test_czi_reader_mosaic_stitching(
         tiles_set_scene=tiles_set_scene,
         stitched_set_scene=stitched_set_scene,
     )
+
+# @pytest.mark.parametrize(
+#     "tiles_filename, "
+#     "stitched_filename, "
+#     "tiles_set_scene, "
+#     "stitched_set_scene, ",
+#     [
+#         (
+#             "Multiscene_CZI_3Scenes.czi",
+#             "Multiscene_CZI_3Scenes.png",
+#             "TR1",
+#             "Image:0"
+#         ),
+#     ],
+# )
+# def test_czi_reader_mosaic_stitching(
+#     tiles_filename: str,
+#     stitched_filename: str,
+#     tiles_set_scene: str,
+#     stitched_set_scene: str,
+# ) -> None:
+#     # Construct full filepath
+#     tiles_uri = get_resource_full_path(tiles_filename, LOCAL)
+#     stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
+#
+#     # Construct reader
+#     tiles_reader = CziReader(tiles_uri)
+#     stitched_reader = DefaultReader(image=stitched_uri)
+#
+#     # Run checks
+#     run_image_container_mosaic_checks(
+#         tiles_image_container=tiles_reader,
+#         stitched_image_container=stitched_reader,
+#         tiles_set_scene=tiles_set_scene,
+#         stitched_set_scene=stitched_set_scene,
+#     )

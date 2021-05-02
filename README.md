@@ -226,26 +226,21 @@ from aicsimageio import AICSImage
 img = AICSImage("my_file.ome.tiff")
 
 # Get the first ten seconds (not frames)
-first_ten_seconds = img.xarray_data[:10]  # returns an xarray.DataArray
+first_ten_seconds = img.xarray_data.loc[:10]  # returns an xarray.DataArray
 
 # Get the first ten major units (usually micrometers, not indices) in Z
-first_ten_mm_in_z = img.xarray_data[:, :, :10]
+first_ten_mm_in_z = img.xarray_data.loc[:, :, :10]
 
 # Get the first ten major units (usually micrometers, not indices) in Y
-first_ten_mm_in_y = img.xarray_data[:, :, :, :10]
+first_ten_mm_in_y = img.xarray_data.loc[:, :, :, :10]
 
 # Get the first ten major units (usually micrometers, not indices) in X
-first_ten_mm_in_x = img.xarray_data[:, :, :, :, :10]
+first_ten_mm_in_x = img.xarray_data.loc[:, :, :, :, :10]
 ```
 
-See
-[xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
-for more details.
-
-**Note:** As a reminder, the `.data` and `.dask_data` attributes, and the
-`.get_image_data` and `.get_image_dask_data` functions only allow indexing
-by plane index. If you want to retrieve data by spatial-temporal coordinates you
-must use `xarray`.
+See `xarray`
+["Indexing and Selecting Data" Documentation](http://xarray.pydata.org/en/stable/indexing.html)
+for more information.
 
 ### Cloud IO Support
 

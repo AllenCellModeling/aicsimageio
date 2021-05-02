@@ -732,7 +732,7 @@ class Reader(ABC):
             If the image is not a mosaic image, returns None.
         """
         if DimensionNames.MosaicTile in self.dims.order:
-            return Dimensions("YX", (self.dims.Y, self.dims.X))
+            return Dimensions("YX", (self.dims.Y, self.dims.X))  # type: ignore
 
         return None
 

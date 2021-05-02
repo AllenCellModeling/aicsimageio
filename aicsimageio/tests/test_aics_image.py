@@ -959,8 +959,8 @@ def test_mosaic_passthrough(
 
     # Assert basics
     assert img.shape == expected_shape
-    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]
-    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]
+    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]  # type: ignore
+    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]  # type: ignore
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)

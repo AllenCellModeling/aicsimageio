@@ -264,8 +264,8 @@ def test_lif_reader_mosaic_tile_inspection(
     reader.set_scene(set_scene)
 
     # Check basics
-    assert reader.mosaic_tile_dims.Y == expected_tile_dims[0]
-    assert reader.mosaic_tile_dims.X == expected_tile_dims[1]
+    assert reader.mosaic_tile_dims.Y == expected_tile_dims[0]  # type: ignore
+    assert reader.mosaic_tile_dims.X == expected_tile_dims[1]  # type: ignore
 
     # Pull tile info for compare
     tile_y_pos, tile_x_pos = reader.get_mosaic_tile_position(select_tile_index)
@@ -281,8 +281,8 @@ def test_lif_reader_mosaic_tile_inspection(
         :,
         :,
         :,
-        tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),
-        tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),
+        tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),  # type: ignore
+        tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),  # type: ignore
     ].compute()
 
     # Remove the first Y and X pixels

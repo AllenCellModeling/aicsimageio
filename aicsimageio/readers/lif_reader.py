@@ -80,7 +80,7 @@ class LifReader(Reader):
         self.chunk_dims = chunk_dims
 
         # Delayed storage
-        self._scene_short_info: Optional[Dict[str, Any]] = None
+        self._scene_short_info: Dict[str, Any] = {}
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
 
         # Enforce valid image
@@ -672,6 +672,6 @@ class LifReader(Reader):
         index_y, index_x, _, _ = self._scene_short_info["mosaic_position"][-(M + 1)]
 
         return (
-            (index_y * self.dims.Y) - index_y,
-            (index_x * self.dims.X) - index_x,
+            (index_y * self.dims.Y) - index_y,  # type: ignore
+            (index_x * self.dims.X) - index_x,  # type: ignore
         )

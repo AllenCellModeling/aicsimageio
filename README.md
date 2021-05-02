@@ -146,12 +146,29 @@ Readers that support mosaic tile stitching:
 #### AICSImage
 
 If the file format reader supports stitching mosaic tiles together, the
-`AICSImage` object will use the stitched image data.
+`AICSImage` object will default to stitching the tiles back together.
 
 ```python
 img = AICSImage("very-large-mosaic.lif")
 img.dims.order  # T, C, Z, big Y, big X, (S optional)
 img.dask_data  # Dask chunks fall on tile boundaries, pull YX chunks out of the image
+```
+
+This behavior can be manually turned off:
+
+```python
+img = AICSImage("very-large-mosaic.lif", reconstruct_mosaic=False)
+img.dims.order  # M (tile index), T, C, Z, small Y, small X, (S optional)
+img.dask_data  # Chunks use normal ZYX
+```
+
+If the reader does not support stitching tiles together the M tile index will be
+available on the `AICSImage` object:
+
+```python
+img = AICSImage("some-unsupport-mosaic-stitching-format.ext")
+img.dims.order  # M (tile index), T, C, Z, small Y, small X, (S optional)
+img.dask_data  # Chunks use normal ZYX
 ```
 
 #### Reader
@@ -166,6 +183,20 @@ reader = LifReader("ver-large-mosaic.lif")
 reader.dims.order  # M, T, C, Z, tile size Y, tile size X, (S optional)
 reader.dask_data  # normal operations, can use M dimension to select individual tiles
 reader.mosaic_dask_data  # returns stitched mosaic - T, C, Z, big Y, big, X, (S optional)
+```
+
+#### Single Tile Absolute Positioning
+
+There are functions available on both the `AICSImage` and `Reader` objects
+to help with single tile positioning:
+
+```python
+img = AICSImage("very-large-mosaic.lif")
+img.mosaic_tile_dims  # Returns a Dimensions object with just Y and X dim sizes
+img.mosaic_tile_dims.Y  # 512 (for example)
+
+# Get the tile start indices (top left corner of tile)
+y_start_index, x_start_index = img.get_mosaic_tile_position(12)
 ```
 
 ### Metadata Reading

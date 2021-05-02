@@ -698,7 +698,7 @@ class AICSImage:
 
     def get_mosaic_tile_position(self, M: int) -> Optional[Tuple[int, int]]:
         """
-        Get the top left point for a single mosaic tile relative to the whole mosaic.
+        Get the absolute position of the top left point for a single mosaic tile.
         Returns None if the image is not a mosaic.
 
         Parameters

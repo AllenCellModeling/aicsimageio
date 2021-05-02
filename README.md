@@ -166,7 +166,7 @@ If the reader does not support stitching tiles together the M tile index will be
 available on the `AICSImage` object:
 
 ```python
-img = AICSImage("some-unsupport-mosaic-stitching-format.ext")
+img = AICSImage("some-unsupported-mosaic-stitching-format.ext")
 img.dims.order  # M (tile index), T, C, Z, small Y, small X, (S optional)
 img.dask_data  # Chunks use normal ZYX
 ```
@@ -176,7 +176,7 @@ img.dask_data  # Chunks use normal ZYX
 If the file format reader detects mosaic tiles in the image, the `Reader` object
 will store the tiles as a dimension.
 
-If implemented, the `Reader` can also return the stitched image.
+If tile stitching is implemented, the `Reader` can also return the stitched image.
 
 ```python
 reader = LifReader("ver-large-mosaic.lif")

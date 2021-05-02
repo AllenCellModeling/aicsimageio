@@ -643,7 +643,7 @@ class LifReader(Reader):
 
     def get_mosaic_tile_position(self, M: int) -> Tuple[int, int]:
         """
-        Get the top left point for a single mosaic tile relative to the whole mosaic.
+        Get the absolute position of the top left point for a single mosaic tile.
 
         Parameters
         ----------

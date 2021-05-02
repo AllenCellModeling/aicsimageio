@@ -362,14 +362,21 @@ class AICSImage:
                 self._reconstruct_mosaic
                 # Does the data have a tile dim
                 and dimensions.DimensionNames.MosaicTile in self.reader.dims.order
-                # Does the reader support stitching
-                and self.reader.mosaic_xarray_dask_data is not None
             ):
-                self._xarray_dask_data = (
-                    self._transform_data_array_to_aics_image_standard(
-                        self.reader.mosaic_xarray_dask_data
+                try:
+                    self._xarray_dask_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.mosaic_xarray_dask_data
+                        )
                     )
-                )
+
+                # Catch reader does not support tile stitching
+                except NotImplementedError:
+                    self._xarray_dask_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.xarray_dask_data
+                        )
+                    )
 
             else:
                 self._xarray_dask_data = (
@@ -399,12 +406,21 @@ class AICSImage:
                 self._reconstruct_mosaic
                 # Does the data have a tile dim
                 and dimensions.DimensionNames.MosaicTile in self.reader.dims.order
-                # Does the reader support stitching
-                and self.reader.mosaic_xarray_dask_data is not None
             ):
-                self._xarray_data = self._transform_data_array_to_aics_image_standard(
-                    self.reader.mosaic_xarray_data
-                )
+                try:
+                    self._xarray_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.mosaic_xarray_data
+                        )
+                    )
+
+                # Catch reader does not support tile stitching
+                except NotImplementedError:
+                    self._xarray_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.xarray_data
+                        )
+                    )
 
             else:
                 self._xarray_data = self._transform_data_array_to_aics_image_standard(
@@ -680,9 +696,10 @@ class AICSImage:
         """
         return self.reader.physical_pixel_sizes
 
-    def get_mosaic_tile_position(self, M: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(self, M: int) -> Optional[Tuple[int, int]]:
         """
         Get the top left point for a single mosaic tile relative to the whole mosaic.
+        Returns None if the image is not a mosaic.
 
         Parameters
         ----------

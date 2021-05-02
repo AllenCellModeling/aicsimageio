@@ -667,7 +667,11 @@ class LifReader(Reader):
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
 
-        # Unpack the target mosaic position
-        index_x, index_y, _, _ = self._scene_short_info["mosaic_position"][M]
+        # LIFs are packed from bottom right to top left
+        # To counter: subtract 1 + M from list index to get from back of list
+        index_y, index_x, _, _ = self._scene_short_info["mosaic_position"][-(M + 1)]
 
-        return index_y * self.dims.Y, index_x * self.dims.X
+        return (
+            (index_y * self.dims.Y) - index_y,
+            (index_x * self.dims.X) - index_x,
+        )

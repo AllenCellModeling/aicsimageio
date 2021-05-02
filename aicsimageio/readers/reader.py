@@ -696,9 +696,10 @@ class Reader(ABC):
         """
         return PhysicalPixelSizes(1.0, 1.0, 1.0)
 
-    def get_mosaic_tile_position(self, M: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(self, M: int) -> Optional[Tuple[int, int]]:
         """
         Get the top left point for a single mosaic tile relative to the whole mosaic.
+        Returns None if the image is not a mosaic.
 
         Parameters
         ----------
@@ -719,7 +720,7 @@ class Reader(ABC):
         IndexError
             No matching mosaic tile index found.
         """
-        return NotImplementedError()
+        raise NotImplementedError()
 
     @property
     def mosaic_tile_dims(self) -> Optional[Dimensions]:

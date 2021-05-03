@@ -53,6 +53,8 @@ optionally installed using `[...]` syntax.
 For full package documentation please visit
 [allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
+[Version 3 Documentation](https://allencellmodeling.github.io/aicsimageio/_static/v3/index.html).
+
 ## Quickstart
 
 ### Full Image Reading

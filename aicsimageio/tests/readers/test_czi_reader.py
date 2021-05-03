@@ -8,15 +8,14 @@ import numpy as np
 import pytest
 
 from aicsimageio import exceptions
-from aicsimageio.readers import ArrayLikeReader, CziReader
+from aicsimageio.readers import ArrayLikeReader
+from aicsimageio.readers.czi_reader import CziReader
 
 from ..conftest import LOCAL, get_resource_full_path
 from ..image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
 )
-
-# from aicsimageio.readers.default_reader import DefaultReader
 
 
 @pytest.mark.parametrize(
@@ -31,8 +30,8 @@ from ..image_container_test_utils import (
     [
         (
             "s_1_t_1_c_1_z_1.czi",
-            "Scene:0",
-            ("Scene:0",),
+            "Image:0",
+            ("Image:0",),
             (1, 325, 475),
             np.uint16,
             "CYX",
@@ -45,7 +44,7 @@ from ..image_container_test_utils import (
             ("P2", "P3", "P1"),
             (3, 5, 325, 475),
             np.uint16,
-            "CZYX",  # dimensions.DEFAULT_DIMENSION_ORDER,
+            "CZYX",
             [
                 "Channel:0--EGFP--Fluorescence",
                 "Channel:1--TaRFP--Fluorescence",
@@ -59,7 +58,7 @@ from ..image_container_test_utils import (
             ("A1",),
             (9, 3, 2208, 2752),
             np.uint16,
-            "MCYX",  # dimensions.DEFAULT_DIMENSION_ORDER,
+            "MCYX",
             [
                 "Channel:0--EGFP--Fluorescence",
                 "Channel:1--mCher--Fluorescence",
@@ -69,8 +68,8 @@ from ..image_container_test_utils import (
         ),
         (
             "RGB-8bit.czi",
-            "Scene:0",
-            ("Scene:0",),
+            "Image:0",
+            ("Image:0",),
             (1, 624, 924, 3),
             np.uint8,
             "TYXS",

@@ -1,0 +1,21 @@
+aicsimageio.metadata package
+============================
+
+Submodules
+----------
+
+aicsimageio.metadata.utils module
+---------------------------------
+
+.. automodule:: aicsimageio.metadata.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aicsimageio.metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:

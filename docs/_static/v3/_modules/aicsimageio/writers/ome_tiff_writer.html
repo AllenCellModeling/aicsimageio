@@ -1,0 +1,656 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.writers.ome_tiff_writer &mdash; aicsimageio 3.3.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarks.html">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../benchmarks.html#configs">Configs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#running-the-tests">Running the Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id3">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id16">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id19">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id28">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id38">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id40">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id42">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id45">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id48">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id51">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id53">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id57">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id59">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id62">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id63">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.writers.ome_tiff_writer</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.writers.ome_tiff_writer</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tifffile</span>
+
+<span class="kn">from</span> <span class="nn">aicsimageio.exceptions</span> <span class="kn">import</span> <span class="n">InvalidDimensionOrderingError</span>
+<span class="kn">from</span> <span class="nn">aicsimageio.vendor</span> <span class="kn">import</span> <span class="n">omexml</span>
+
+<span class="n">BYTE_BOUNDARY</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="mi">21</span>
+
+<span class="c1"># This is the threshold to use BigTiff, if it&#39;s the 4GB boundary it should be 2**22 but</span>
+<span class="c1"># the libtiff writer was unable to handle a 2GB numpy array.</span>
+<span class="c1"># It would be great if we better understood exactly what this threshold is and how to</span>
+<span class="c1"># calculate it but for now this is a stopgap working value</span>
+
+
+<div class="viewcode-block" id="OmeTiffWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffWriter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This class can take arrays of pixel values and do the necessary metadata</span>
+<span class="sd">        creation to write them properly in OME xml format.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path</span>
+<span class="sd">            Path to image output location</span>
+<span class="sd">        overwrite_file</span>
+<span class="sd">            Flag to overwrite image or pass over image if it already exists.</span>
+<span class="sd">            None: (default) throw IOError if file exists</span>
+<span class="sd">            True: overwrite existing file if file exists</span>
+<span class="sd">            False: silently perform no write actions if file exists</span>
+
+<span class="sd">        Example</span>
+<span class="sd">        -------</span>
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
+<span class="sd">        ... writer = ome_tiff_writer.OmeTiffWriter(&quot;file.ome.tif&quot;)</span>
+<span class="sd">        ... writer.save(image)</span>
+
+<span class="sd">        Using the context manager to close the write once done.</span>
+
+<span class="sd">        &gt;&gt;&gt; image2 = numpy.ndarray([5, 486, 210])</span>
+<span class="sd">        ... with ome_tiff_writer.OmeTiffWriter(&quot;file2.ome.tif&quot;) as writer2:</span>
+<span class="sd">        ...     writer2.save(image2)</span>
+
+<span class="sd">        Convert a CZI file into OME-Tiff</span>
+
+<span class="sd">        &gt;&gt;&gt; reader = cziReader.CziReader(&quot;file3.czi&quot;)</span>
+<span class="sd">        ... with ome_tiff_writer.OmeTiffWriter(&quot;file3.ome.tif&quot;) as writer3:</span>
+<span class="sd">        ...     writer.save(reader.load())</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span> <span class="o">=</span> <span class="n">file_path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">overwrite_file</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span>
+                    <span class="s2">&quot;File </span><span class="si">{}</span><span class="s2"> exists but user has chosen not to overwrite it&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">overwrite_file</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="OmeTiffWriter.close"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">ome_xml</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span>
+        <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save an image with the proper OME XML metadata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data: An array of 3, 4, or 5 dimensions to be written out to a file.</span>
+<span class="sd">        ome_xml: A premade omexml.OMEXML object to use for metadata.</span>
+<span class="sd">        channel_names: The names for each channel to be put into the OME metadata</span>
+<span class="sd">        image_name: The name of the image to be put into the OME metadata</span>
+<span class="sd">        pixels_physical_size: The physical size of each pixel in the image</span>
+<span class="sd">        channel_colors: The channel colors to be put into the OME metadata</span>
+<span class="sd">        dimension_order: The dimension ordering in the data array. Will be assumed</span>
+<span class="sd">        STZCYX if not specified</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">ndims</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span>
+        <span class="p">),</span> <span class="s2">&quot;Expected 3, 4, or 5 dimensions in data array&quot;</span>
+
+        <span class="c1"># assert valid characters in dimension_order</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="s2">&quot;STCZYX&quot;</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Invalid dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="o">!=</span> <span class="s2">&quot;YX&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Last two characters of dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> expected to </span><span class="se">\</span>
+<span class="s2">                be YX.  Please transpose your data.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ndims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> must have at least as many </span><span class="se">\</span>
+<span class="s2">                dimensions as data shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;S&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;S must be the leading dim in dimension_order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="c1"># todo ensure no letter appears more than once?</span>
+
+        <span class="c1"># ensure dimension_order is same len as shape</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ndims</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[</span><span class="o">-</span><span class="n">ndims</span><span class="p">:]</span>
+
+        <span class="c1"># if this is 3d data, then expand to 5D and add appropriate dimensions</span>
+        <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># prepend either TC, TZ or CZ</span>
+            <span class="k">if</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;T&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;CZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;C&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TZ&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">dimension_order</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TC&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+
+        <span class="c1"># if this is 4d data, then expand to 5D and add appropriate dimensions</span>
+        <span class="k">elif</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># prepend either T, C, or Z</span>
+            <span class="n">first2</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;TC&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;CT&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;Z&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;TZ&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;ZT&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;C&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+            <span class="k">elif</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;CZ&quot;</span> <span class="ow">or</span> <span class="n">first2</span> <span class="o">==</span> <span class="s2">&quot;ZC&quot;</span><span class="p">:</span>
+                <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;T&quot;</span> <span class="o">+</span> <span class="n">dimension_order</span>
+
+        <span class="k">if</span> <span class="n">ome_xml</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_make_meta</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>
+                <span class="n">image_name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span>
+                <span class="n">pixels_physical_size</span><span class="o">=</span><span class="n">pixels_physical_size</span><span class="p">,</span>
+                <span class="n">channel_colors</span><span class="o">=</span><span class="n">channel_colors</span><span class="p">,</span>
+                <span class="n">dimension_order</span><span class="o">=</span><span class="n">dimension_order</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># if the xml passed in is a string,</span>
+            <span class="c1"># then just pass it straight through to the writer.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">omexml</span><span class="o">.</span><span class="n">OMEXML</span><span class="p">(</span><span class="n">ome_xml</span><span class="p">)</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pixels</span> <span class="o">=</span> <span class="n">ome_xml</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">populate_TiffData</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">ome_xml</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">to_xml</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+
+        <span class="n">tif</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffWriter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">,</span> <span class="n">bigtiff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">BYTE_BOUNDARY</span>
+        <span class="p">)</span>
+
+        <span class="c1"># check data shape for TZCYX or ZCYX or ZYX</span>
+        <span class="k">if</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="c1"># minisblack instructs TiffWriter to not try to infer rgb color within the</span>
+            <span class="c1"># data array metadata param fixes the double image description bug</span>
+            <span class="n">tif</span><span class="o">.</span><span class="n">save</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">,</span>
+                <span class="n">compress</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+                <span class="n">description</span><span class="o">=</span><span class="n">xml</span><span class="p">,</span>
+                <span class="n">photometric</span><span class="o">=</span><span class="s2">&quot;minisblack&quot;</span><span class="p">,</span>
+                <span class="n">metadata</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">tif</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.save_slice"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice">[docs]</a>    <span class="k">def</span> <span class="nf">save_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;this doesn&#39;t do the necessary functionality at this point</span>
+
+<span class="sd">        TODO:</span>
+<span class="sd">            * make this insert a YX slice in between two other slices inside a full</span>
+<span class="sd">              image</span>
+<span class="sd">            * data should be a 5 dim array</span>
+
+<span class="sd">        :param data:</span>
+<span class="sd">        :param z:</span>
+<span class="sd">        :param c:</span>
+<span class="sd">        :param t:</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">silent_pass</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_y</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">size_x</span><span class="p">()</span>
+        <span class="n">tif</span> <span class="o">=</span> <span class="n">tifffile</span><span class="o">.</span><span class="n">TiffWriter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">tif</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">compress</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+        <span class="n">tif</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.set_metadata"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.set_metadata">[docs]</a>    <span class="k">def</span> <span class="nf">set_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ome_metadata</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span> <span class="o">=</span> <span class="n">ome_metadata</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.size_z"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_z">[docs]</a>    <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeZ</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.size_c"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_c">[docs]</a>    <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeC</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.size_t"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_t">[docs]</a>    <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeT</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.size_x"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_x">[docs]</a>    <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeX</span></div>
+
+<div class="viewcode-block" id="OmeTiffWriter.size_y"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_y">[docs]</a>    <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span><span class="o">.</span><span class="n">SizeY</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the size of data to determine if we require bigtiff</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        the size of data in bytes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="n">data</span><span class="o">.</span><span class="n">itemsize</span>
+        <span class="k">return</span> <span class="n">size</span>
+
+    <span class="c1"># set up some sensible defaults from provided info</span>
+    <span class="k">def</span> <span class="nf">_make_meta</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="o">=</span><span class="s2">&quot;IMAGE0&quot;</span><span class="p">,</span>
+        <span class="n">pixels_physical_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates the necessary metadata for an OME tiff image</span>
+
+<span class="sd">        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a</span>
+<span class="sd">        file.</span>
+<span class="sd">        :param channel_names: The names for each channel to be put into the OME metadata</span>
+<span class="sd">        :param image_name: The name of the image to be put into the OME metadata</span>
+<span class="sd">        :param pixels_physical_size: The physical size of each pixel in the image</span>
+<span class="sd">        :param channel_colors: The channel colors to be put into the OME metadata</span>
+<span class="sd">        :param dimension_order: The order of dimensions in the data array, using</span>
+<span class="sd">        T,C,Z,Y and X</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ox</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">omeMetadata</span>
+
+        <span class="n">ox</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">set_Name</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+        <span class="n">ox</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">set_ID</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="n">pixels</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">image</span><span class="p">()</span><span class="o">.</span><span class="n">Pixels</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">ome_uuid</span> <span class="o">=</span> <span class="n">ox</span><span class="o">.</span><span class="n">uuidStr</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_ID</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pixels_physical_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">set_PhysicalSizeX</span><span class="p">(</span><span class="n">pixels_physical_size</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">set_PhysicalSizeY</span><span class="p">(</span><span class="n">pixels_physical_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">set_PhysicalSizeZ</span><span class="p">(</span><span class="n">pixels_physical_size</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">def</span> <span class="nf">dim_or_1</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="n">shape</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">pixels</span><span class="o">.</span><span class="n">channel_count</span> <span class="o">=</span> <span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeT</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">))</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeC</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">))</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeZ</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">))</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeY</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">))</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_SizeX</span><span class="p">(</span><span class="n">dim_or_1</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">))</span>
+
+        <span class="c1"># this must be set to the *reverse* of what dimensionality</span>
+        <span class="c1"># the ome tif file is saved as</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_DimensionOrder</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># convert our numpy dtype to a ome compatible pixeltype</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">set_PixelType</span><span class="p">(</span><span class="n">omexml</span><span class="o">.</span><span class="n">get_pixel_type</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">SizeC</span><span class="p">):</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_ID</span><span class="p">(</span><span class="s2">&quot;Channel:0:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_Name</span><span class="p">(</span><span class="s2">&quot;C:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">SizeC</span><span class="p">):</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">channel_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_ID</span><span class="p">(</span><span class="s2">&quot;Channel:0:&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_Name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">get_SizeC</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">SizeC</span><span class="p">):</span>
+                <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_Color</span><span class="p">(</span><span class="n">channel_colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># assume 1 sample per channel</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pixels</span><span class="o">.</span><span class="n">SizeC</span><span class="p">):</span>
+            <span class="n">pixels</span><span class="o">.</span><span class="n">Channel</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">set_SamplesPerPixel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># many assumptions in here: one file per image, one plane per tiffdata, etc.</span>
+        <span class="n">pixels</span><span class="o">.</span><span class="n">populate_TiffData</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">ox</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

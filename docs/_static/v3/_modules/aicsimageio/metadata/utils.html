@@ -1,0 +1,880 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.metadata.utils &mdash; AICSImageIO 4.0.0.dev3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.0.0.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id25">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id28">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id30">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id33">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id35">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id37">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id39">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id46">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id48">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id52">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id55">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id59">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id61">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id65">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id67">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id69">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id72">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id75">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id78">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id80">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id84">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id86">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id89">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id90">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+        
+      <li>aicsimageio.metadata.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.metadata.utils</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">xml.etree.ElementTree</span> <span class="k">as</span> <span class="nn">ET</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">ome_types.model.simple_types</span> <span class="kn">import</span> <span class="n">PixelType</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;[</span><span class="si">%(levelname)4s</span><span class="s2">: </span><span class="si">%(module)s</span><span class="s2">:</span><span class="si">%(lineno)4s</span><span class="s2"> </span><span class="si">%(asctime)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="c1"># This is a known issue that could have been caused by prior versions of aicsimageio</span>
+<span class="c1"># due to our old OMEXML.py file.</span>
+<span class="c1">#</span>
+<span class="c1"># You can see the PR that updated this exact line here:</span>
+<span class="c1"># https://github.com/AllenCellModeling/aicsimageio/pull/116/commits/e3f9cde7f680edeef3ef3586a67fd8106e746167#diff-46a483e94af833f7eaa1106921191fed5e7c77f33a5c0c47a8f5a2d35ad3ba96L47</span>
+<span class="c1">#</span>
+<span class="c1"># Notably why this is invalid is that the 2012-03 schema _doesn&#39;t exist_</span>
+<span class="c1">#</span>
+<span class="c1"># Don&#39;t know how this wasn&#39;t ever caught before that PR but to ensure that we don&#39;t</span>
+<span class="c1"># error in reading the OME in aicsimageio&gt;=4.0.0, we manually find and replace this</span>
+<span class="c1"># line in OME xml prior to creating the OME object.</span>
+<span class="n">KNOWN_INVALID_OME_XSD_REFERENCES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;www.openmicroscopy.org/Schemas/ome/2013-06&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;www.openmicroscopy.org/Schemas/OME/2012-03&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">REPLACEMENT_OME_XSD_REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;www.openmicroscopy.org/Schemas/OME/2016-06&quot;</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="generate_ome_image_id"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.generate_ome_image_id">[docs]</a><span class="k">def</span> <span class="nf">generate_ome_image_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Naively generates the standard OME image ID using a provided ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image_id: Union[str, int]</span>
+<span class="sd">        A string or int representing the ID for an image.</span>
+<span class="sd">        In the context of the usage of this function, this is usually used with the</span>
+<span class="sd">        index of the scene / image.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ome_image_id: str</span>
+<span class="sd">        The OME standard for image IDs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Image:</span><span class="si">{</span><span class="n">image_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="generate_ome_channel_id"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.generate_ome_channel_id">[docs]</a><span class="k">def</span> <span class="nf">generate_ome_channel_id</span><span class="p">(</span><span class="n">image_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Naively generates the standard OME channel ID using a provided ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image_id: str</span>
+<span class="sd">        An image id to pull the image specific index from.</span>
+<span class="sd">        See: `generate_ome_image_id` for more details.</span>
+<span class="sd">    channel_id: Union[str, int]</span>
+<span class="sd">        A string or int representing the ID for a channel.</span>
+<span class="sd">        In the context of the usage of this function, this is usually used with the</span>
+<span class="sd">        index of the channel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ome_channel_id: str</span>
+<span class="sd">        The OME standard for channel IDs.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    ImageIds are usually: &quot;Image:0&quot;, &quot;Image:1&quot;, or &quot;Image:N&quot;,</span>
+<span class="sd">    ChannelIds are usually the combination of image index + channel index --</span>
+<span class="sd">    &quot;Channel:0:0&quot; for the first channel of the first image for example.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Remove the prefix &#39;Image:&#39; to get just the index</span>
+    <span class="n">image_index</span> <span class="o">=</span> <span class="n">image_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;Image:&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Channel:</span><span class="si">{</span><span class="n">image_index</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">channel_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="generate_ome_instrument_id"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.generate_ome_instrument_id">[docs]</a><span class="k">def</span> <span class="nf">generate_ome_instrument_id</span><span class="p">(</span><span class="n">instrument_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Naively generates the standard OME instrument ID using a provided ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    instrument_id: Union[str, int]</span>
+<span class="sd">        A string or int representing the ID for an instrument.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ome_instrument_id: str</span>
+<span class="sd">        The OME standard for instrument IDs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Instrument:</span><span class="si">{</span><span class="n">instrument_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="generate_ome_detector_id"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.generate_ome_detector_id">[docs]</a><span class="k">def</span> <span class="nf">generate_ome_detector_id</span><span class="p">(</span><span class="n">detector_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Naively generates the standard OME detector ID using a provided ID.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    detector_id: Union[str, int]</span>
+<span class="sd">        A string or int representing the ID for a detector.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ome_detector_id: str</span>
+<span class="sd">        The OME standard for detector IDs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Detector:</span><span class="si">{</span><span class="n">detector_id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+<div class="viewcode-block" id="clean_ome_xml_for_known_issues"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.clean_ome_xml_for_known_issues">[docs]</a><span class="k">def</span> <span class="nf">clean_ome_xml_for_known_issues</span><span class="p">(</span><span class="n">xml</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean an OME XML string for known issues created by AICS or MicroManager</span>
+<span class="sd">    systems and tools.</span>
+
+<span class="sd">    Commonly this is used for cleaning a file produced by AICS prior to noticing the</span>
+<span class="sd">    issue (2021), or for other users of aicsimageio as a whole prior to 4.x series of</span>
+<span class="sd">    releases.</span>
+
+<span class="sd">    The result of this function should be an OME XML string that is relatively the</span>
+<span class="sd">    same (no major pieces missing) but that validates against the reference OME</span>
+<span class="sd">    XSD.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    xml: str</span>
+<span class="sd">        The OME XML string to clean for errors.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cleaned_xml: str</span>
+<span class="sd">        The cleaned OME XML string.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        Provided XML does not contain a namespace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Store list of changes to print out with warning</span>
+    <span class="n">metadata_changes</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Fix xsd reference</span>
+    <span class="c1"># This is from OMEXML object just having invalid reference</span>
+    <span class="k">for</span> <span class="n">known_invalid_ref</span> <span class="ow">in</span> <span class="n">KNOWN_INVALID_OME_XSD_REFERENCES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">known_invalid_ref</span> <span class="ow">in</span> <span class="n">xml</span><span class="p">:</span>
+            <span class="n">xml</span> <span class="o">=</span> <span class="n">xml</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">known_invalid_ref</span><span class="p">,</span>
+                <span class="n">REPLACEMENT_OME_XSD_REFERENCE</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Replaced &#39;</span><span class="si">{</span><span class="n">known_invalid_ref</span><span class="si">}</span><span class="s2">&#39; with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">REPLACEMENT_OME_XSD_REFERENCE</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Read in XML</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+
+    <span class="c1"># Get the namespace</span>
+    <span class="c1"># In XML etree this looks like</span>
+    <span class="c1"># &quot;{http://www.openmicroscopy.org/Schemas/OME/2016-06}&quot;</span>
+    <span class="c1"># and must prepend any etree finds</span>
+    <span class="n">namespace_matches</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\{.*\}&quot;</span><span class="p">,</span> <span class="n">root</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">namespace_matches</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">namespace</span> <span class="o">=</span> <span class="n">namespace_matches</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;XML does not contain a namespace&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fix MicroManager Instrument and Detector</span>
+    <span class="n">instrument</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Instrument&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">instrument</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">instrument_id</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">instrument_id</span> <span class="o">==</span> <span class="s2">&quot;Microscope&quot;</span><span class="p">:</span>
+            <span class="n">ome_instrument_id</span> <span class="o">=</span> <span class="n">generate_ome_instrument_id</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">instrument</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">ome_instrument_id</span><span class="p">)</span>
+            <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Updated attribute &#39;ID&#39; from &#39;</span><span class="si">{</span><span class="n">instrument_id</span><span class="si">}</span><span class="s2">&#39; to &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">ome_instrument_id</span><span class="si">}</span><span class="s2">&#39; on Instrument element.&quot;</span>
+            <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">detector_index</span><span class="p">,</span> <span class="n">detector</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                <span class="n">instrument</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Detector&quot;</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">detector_id</span> <span class="o">=</span> <span class="n">detector</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">detector_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="c1"># Create ome detector id if needed</span>
+                    <span class="n">ome_detector_id</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">if</span> <span class="n">detector_id</span> <span class="o">==</span> <span class="s2">&quot;Camera&quot;</span><span class="p">:</span>
+                        <span class="n">ome_detector_id</span> <span class="o">=</span> <span class="n">generate_ome_detector_id</span><span class="p">(</span><span class="n">detector_index</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="ow">not</span> <span class="n">detector_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Detector:&quot;</span><span class="p">):</span>
+                        <span class="n">ome_detector_id</span> <span class="o">=</span> <span class="n">generate_ome_detector_id</span><span class="p">(</span><span class="n">detector_id</span><span class="p">)</span>
+
+                    <span class="c1"># Apply ome detector id if replaced</span>
+                    <span class="k">if</span> <span class="n">ome_detector_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">detector</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">ome_detector_id</span><span class="p">)</span>
+                        <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Updated attribute &#39;ID&#39; from &#39;</span><span class="si">{</span><span class="n">detector_id</span><span class="si">}</span><span class="s2">&#39; to &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">ome_detector_id</span><span class="si">}</span><span class="s2">&#39; on Detector element at &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;position </span><span class="si">{</span><span class="n">detector_index</span><span class="si">}</span><span class="s2">.&quot;</span>
+                        <span class="p">)</span>
+
+    <span class="c1"># Find all Image elements and fix IDs and refs to fixed instruments</span>
+    <span class="c1"># This is for certain for test files of o.urs and ACTK files</span>
+    <span class="k">for</span> <span class="n">image_index</span><span class="p">,</span> <span class="n">image</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Image&quot;</span><span class="p">)):</span>
+        <span class="n">image_id</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">image_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">found_image_id</span> <span class="o">=</span> <span class="n">image_id</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found_image_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Image&quot;</span><span class="p">):</span>
+                <span class="n">ome_image_id</span> <span class="o">=</span> <span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">found_image_id</span><span class="p">)</span>
+                <span class="n">image</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">ome_image_id</span><span class="p">)</span>
+                <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Updated attribute &#39;ID&#39; from &#39;</span><span class="si">{</span><span class="n">image_id</span><span class="si">}</span><span class="s2">&#39; to &#39;</span><span class="si">{</span><span class="n">ome_image_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;on Image element at position </span><span class="si">{</span><span class="n">image_index</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Fix MicroManager bad instrument refs</span>
+        <span class="n">instrument_ref</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">InstrumentRef&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">instrument_ref</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">instrument_ref_id</span> <span class="o">=</span> <span class="n">instrument_ref</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">instrument_ref_id</span> <span class="o">==</span> <span class="s2">&quot;Microscope&quot;</span><span class="p">:</span>
+                <span class="n">instrument_ref</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="n">ome_instrument_id</span><span class="p">)</span>
+
+        <span class="c1"># Find all Pixels elements and fix IDs</span>
+        <span class="k">for</span> <span class="n">pixels_index</span><span class="p">,</span> <span class="n">pixels</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Pixels&quot;</span><span class="p">)):</span>
+            <span class="n">pixels_id</span> <span class="o">=</span> <span class="n">pixels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pixels_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">found_pixels_id</span> <span class="o">=</span> <span class="n">pixels_id</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">found_pixels_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Pixels&quot;</span><span class="p">):</span>
+                    <span class="n">pixels</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Pixels:</span><span class="si">{</span><span class="n">found_pixels_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Updated attribute &#39;ID&#39; from &#39;</span><span class="si">{</span><span class="n">found_pixels_id</span><span class="si">}</span><span class="s2">&#39; to &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Pixels:</span><span class="si">{</span><span class="n">found_pixels_id</span><span class="si">}</span><span class="s2">&#39; on Pixels element at &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;position </span><span class="si">{</span><span class="n">pixels_index</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Determine if there is an out-of-order channel / plane elem</span>
+            <span class="c1"># This is due to OMEXML &quot;add channel&quot; function</span>
+            <span class="c1"># That added Channels and appropriate Planes to the XML</span>
+            <span class="c1"># But, placed them in:</span>
+            <span class="c1"># Channel</span>
+            <span class="c1"># Plane</span>
+            <span class="c1"># Plane</span>
+            <span class="c1"># ...</span>
+            <span class="c1"># Channel</span>
+            <span class="c1"># Plane</span>
+            <span class="c1"># Plane</span>
+            <span class="c1">#</span>
+            <span class="c1"># Instead of grouped together:</span>
+            <span class="c1"># Channel</span>
+            <span class="c1"># Channel</span>
+            <span class="c1"># ...</span>
+            <span class="c1"># Plane</span>
+            <span class="c1"># Plane</span>
+            <span class="c1"># ...</span>
+            <span class="c1">#</span>
+            <span class="c1"># This effects all CFE files (new and old) but for different reasons</span>
+            <span class="n">pixels_children_out_of_order</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">encountered_something_besides_channel</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">pixels</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Channel&quot;</span><span class="p">:</span>
+                    <span class="n">encountered_something_besides_channel</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">encountered_something_besides_channel</span>
+                    <span class="ow">and</span> <span class="n">child</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Channel&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">pixels_children_out_of_order</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+
+            <span class="c1"># Ensure order of:</span>
+            <span class="c1"># channels -&gt; bindata | tiffdata | metadataonly -&gt; planes</span>
+            <span class="k">if</span> <span class="n">pixels_children_out_of_order</span><span class="p">:</span>
+                <span class="c1"># Get all relevant elems</span>
+                <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pixels</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Channel&quot;</span><span class="p">)]</span>
+                <span class="n">bin_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">pixels</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">BinData&quot;</span><span class="p">)]</span>
+                <span class="n">tiff_data</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">pixels</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">TiffData&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="c1"># There should only be one metadata only element but to standardize</span>
+                <span class="c1"># list comprehensions later we findall</span>
+                <span class="n">metadata_only</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">pixels</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">MetadataOnly&quot;</span><span class="p">)</span>
+                <span class="p">]</span>
+                <span class="n">planes</span> <span class="o">=</span> <span class="p">[</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pixels</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Plane&quot;</span><span class="p">)]</span>
+
+                <span class="c1"># Old (2018 ish) cell feature explorer files sometimes contain both</span>
+                <span class="c1"># an empty metadata only element and filled tiffdata elements</span>
+                <span class="c1"># Since the metadata only elements are empty we can check this and</span>
+                <span class="c1"># choose the tiff data elements instead</span>
+                <span class="c1">#</span>
+                <span class="c1"># First check if there are any metadata only elements</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_only</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="c1"># Now check if _one of_ of the other two choices are filled</span>
+                    <span class="c1"># ^ in Python is XOR</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bin_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tiff_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                        <span class="n">metadata_children</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">metadata_only</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="c1"># Now check if the metadata only elem has no children</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_children</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="c1"># If so, just &quot;purge&quot; by creating empty list</span>
+                            <span class="n">metadata_only</span> <span class="o">=</span> <span class="p">[]</span>
+
+                        <span class="c1"># If there are children elements</span>
+                        <span class="c1"># Return XML and let XMLSchema Validation show error</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">return</span> <span class="n">xml</span>
+
+                <span class="c1"># After cleaning metadata only, validate the normal behaviors of</span>
+                <span class="c1"># OME schema</span>
+                <span class="c1">#</span>
+                <span class="c1"># Validate that there is only one of bindata, tiffdata, or metadata</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_only</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">selected_choice</span> <span class="o">=</span> <span class="n">bin_data</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Return XML and let XMLSchema Validation show error</span>
+                        <span class="k">return</span> <span class="n">xml</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_only</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">selected_choice</span> <span class="o">=</span> <span class="n">tiff_data</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Return XML and let XMLSchema Validation show error</span>
+                        <span class="k">return</span> <span class="n">xml</span>
+                <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_only</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bin_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">selected_choice</span> <span class="o">=</span> <span class="n">metadata_only</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Return XML and let XMLSchema Validation show error</span>
+                        <span class="k">return</span> <span class="n">xml</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Return XML and let XMLSchema Validation show error</span>
+                    <span class="k">return</span> <span class="n">xml</span>
+
+                <span class="c1"># Remove all children from element to be replaced</span>
+                <span class="c1"># with ordered elements</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">pixels</span><span class="p">):</span>
+                    <span class="n">pixels</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+
+                <span class="c1"># Re-attach elements</span>
+                <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+                    <span class="n">pixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">selected_choice</span><span class="p">:</span>
+                    <span class="n">pixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">planes</span><span class="p">:</span>
+                    <span class="n">pixels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">plane</span><span class="p">)</span>
+
+                <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Reordered children of Pixels element at &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;position </span><span class="si">{</span><span class="n">pixels_index</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+
+    <span class="c1"># This is a result of dumping basically all experiement metadata</span>
+    <span class="c1"># into &quot;StructuredAnnotation&quot; blocks</span>
+    <span class="c1">#</span>
+    <span class="c1"># This affects new (2020) Cell Feature Explorer files</span>
+    <span class="c1">#</span>
+    <span class="c1"># Because these are structured annotations we don&#39;t want to mess with anyones</span>
+    <span class="c1"># besides the AICS generated bad structured annotations</span>
+    <span class="n">aics_anno_removed_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">sa</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">StructuredAnnotations&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">xml_anno</span> <span class="ow">in</span> <span class="n">sa</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">XMLAnnotation&quot;</span><span class="p">):</span>
+            <span class="c1"># At least these are namespaced</span>
+            <span class="k">if</span> <span class="n">xml_anno</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Namespace&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;alleninstitute.org/CZIMetadata&quot;</span><span class="p">:</span>
+                <span class="c1"># Get ID because some elements have annotation refs</span>
+                <span class="c1"># in both the base Image element and all plane elements</span>
+                <span class="n">aics_anno_id</span> <span class="o">=</span> <span class="n">xml_anno</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="n">root</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Image&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">anno_ref</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">AnnotationRef&quot;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">anno_ref</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">aics_anno_id</span><span class="p">:</span>
+                            <span class="n">image</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">anno_ref</span><span class="p">)</span>
+
+                    <span class="c1"># Clean planes</span>
+                    <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">found_image</span> <span class="o">=</span> <span class="n">image</span>
+
+                        <span class="n">pixels_planes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">]</span> <span class="o">=</span> <span class="n">found_image</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Pixels&quot;</span>
+                        <span class="p">)</span>
+                        <span class="k">if</span> <span class="n">pixels_planes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="k">for</span> <span class="n">plane</span> <span class="ow">in</span> <span class="n">pixels_planes</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">Plane&quot;</span><span class="p">):</span>
+                                <span class="k">for</span> <span class="n">anno_ref</span> <span class="ow">in</span> <span class="n">plane</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+                                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">AnnotationRef&quot;</span>
+                                <span class="p">):</span>
+                                    <span class="k">if</span> <span class="n">anno_ref</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ID&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">aics_anno_id</span><span class="p">:</span>
+                                        <span class="n">plane</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">anno_ref</span><span class="p">)</span>
+
+                <span class="c1"># Remove the whole etree</span>
+                <span class="n">sa</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">xml_anno</span><span class="p">)</span>
+                <span class="n">aics_anno_removed_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Log changes</span>
+    <span class="k">if</span> <span class="n">aics_anno_removed_count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">metadata_changes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Removed </span><span class="si">{</span><span class="n">aics_anno_removed_count</span><span class="si">}</span><span class="s2"> AICS generated XMLAnnotations.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># If there are no annotations in StructuredAnnotations, remove it</span>
+    <span class="k">if</span> <span class="n">sa</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">sa</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">root</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">sa</span><span class="p">)</span>
+
+    <span class="c1"># If any piece of metadata was changed alert and rewrite</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">metadata_changes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;OME metadata was cleaned for known AICSImageIO 3.x OMEXML errors.&quot;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Full list of OME cleaning changes: </span><span class="si">{</span><span class="n">metadata_changes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Register namespace</span>
+        <span class="n">ET</span><span class="o">.</span><span class="n">register_namespace</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;http://</span><span class="si">{</span><span class="n">REPLACEMENT_OME_XSD_REFERENCE</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Write out cleaned XML to string</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span>
+            <span class="n">root</span><span class="p">,</span>
+            <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;unicode&quot;</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;xml&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xml</span></div>
+
+
+<div class="viewcode-block" id="dtype_to_ome_type"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.dtype_to_ome_type">[docs]</a><span class="k">def</span> <span class="nf">dtype_to_ome_type</span><span class="p">(</span><span class="n">npdtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PixelType</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert numpy dtype to OME PixelType</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    npdtype: numpy.dtype</span>
+<span class="sd">        A numpy datatype.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ome_type: PixelType</span>
+<span class="sd">        One of the supported OME Pixels types</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        No matching pixel type for provided numpy type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ometypedict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">INT8</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">INT16</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">INT32</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT8</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT16</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT32</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">COMPLEXFLOAT</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">):</span> <span class="n">PixelType</span><span class="o">.</span><span class="n">COMPLEXDOUBLE</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">ptype</span> <span class="o">=</span> <span class="n">ometypedict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">npdtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ptype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ome utils can&#39;t resolve pixel type: </span><span class="si">{</span><span class="n">npdtype</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ptype</span></div>
+
+
+<div class="viewcode-block" id="ome_to_numpy_dtype"><a class="viewcode-back" href="../../../aicsimageio.metadata.html#aicsimageio.metadata.utils.ome_to_numpy_dtype">[docs]</a><span class="k">def</span> <span class="nf">ome_to_numpy_dtype</span><span class="p">(</span><span class="n">ome_type</span><span class="p">:</span> <span class="n">PixelType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert OME PixelType to numpy dtype</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ome_type: PixelType</span>
+<span class="sd">        One of the supported OME Pixels types</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    npdtype: numpy.dtype</span>
+<span class="sd">        A numpy datatype.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        No matching numpy type for the provided pixel type.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ometypedict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">PixelType</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">INT8</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">INT16</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">INT32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT8</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT16</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">UINT32</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">COMPLEXFLOAT</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">),</span>
+        <span class="n">PixelType</span><span class="o">.</span><span class="n">COMPLEXDOUBLE</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">complex128</span><span class="p">),</span>
+    <span class="p">}</span>
+    <span class="n">nptype</span> <span class="o">=</span> <span class="n">ometypedict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ome_type</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nptype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ome utils can&#39;t resolve pixel type: </span><span class="si">{</span><span class="n">ome_type</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">nptype</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,853 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.readers.czi_reader &mdash; aicsimageio 3.3.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../benchmarks.html">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../benchmarks.html#configs">Configs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../benchmarks.html#running-the-tests">Running the Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#fix">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id3">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id9">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#new">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id12">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id14">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id16">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id19">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id21">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id25">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id28">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id32">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id34">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id38">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id40">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id42">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id45">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id48">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id51">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id53">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id57">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id59">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id62">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id63">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.readers.czi_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.readers.czi_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">aicspylibczi</span> <span class="kn">import</span> <span class="n">CziFile</span>
+<span class="kn">from</span> <span class="nn">dask</span> <span class="kn">import</span> <span class="n">delayed</span>
+<span class="kn">from</span> <span class="nn">lxml.etree</span> <span class="kn">import</span> <span class="n">_Element</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..buffer_reader</span> <span class="kn">import</span> <span class="n">BufferReader</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="CziReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader">[docs]</a><span class="k">class</span> <span class="nc">CziReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CziReader wraps aicspylibczi to provide the same reading capabilities but abstracts</span>
+<span class="sd">    the specifics of using the backend library to create a unified interface. This</span>
+<span class="sd">    enables higher level functions to duck type the File Readers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: types.FileLike</span>
+<span class="sd">        A string or path to the CZI file to be read.</span>
+<span class="sd">    chunk_by_dims: List[str]</span>
+<span class="sd">        The dimensions to use as the for mapping the chunks / blocks.</span>
+<span class="sd">        Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]</span>
+<span class="sd">        Note: SpatialY and SpatialX will always be added to the list if not present.</span>
+<span class="sd">    S: int</span>
+<span class="sd">        If the image has different dimensions on any scene from another, the dask array</span>
+<span class="sd">        construction will fail. In that case, use this parameter to specify a specific</span>
+<span class="sd">        scene to construct a dask array for.</span>
+<span class="sd">        Default: 0 (select the first scene)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ZEISS_2BYTE</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;ZI&quot;</span>  <span class="c1"># First two characters of a czi file according to Zeiss docs</span>
+    <span class="n">ZEISS_10BYTE</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;ZISRAWFILE&quot;</span>  <span class="c1"># First 10 characters of a well formatted czi file.</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FileLike</span><span class="p">,</span>
+        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Run super init to check filepath provided</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Store parameters needed for _daread</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_by_dims</span> <span class="o">=</span> <span class="n">chunk_by_dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span> <span class="o">=</span> <span class="n">S</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">BufferReader</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span> <span class="k">as</span> <span class="n">buffer_reader</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="o">!=</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">ZEISS_2BYTE</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">endianness</span> <span class="o">+</span> <span class="n">buffer_reader</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">header</span> <span class="o">==</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">ZEISS_10BYTE</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_read_image</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read and return the squeezed image data requested along with the dimension info</span>
+<span class="sd">        that was read.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        img: Path</span>
+<span class="sd">            Path to the CZI file to read.</span>
+<span class="sd">        read_dims: Optional[Dict[str, int]]</span>
+<span class="sd">            The dimensions to read from the file as a dictionary of string to integer.</span>
+<span class="sd">            Default: None (Read all data from the image)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data: np.ndarray</span>
+<span class="sd">            The data read for the dimensions provided.</span>
+<span class="sd">        read_dimensions: List[Tuple[str, int]]]</span>
+<span class="sd">            The dimension sizes that were returned from the read.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Catch optional read dim</span>
+        <span class="k">if</span> <span class="n">read_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">read_dims</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Init czi</span>
+        <span class="n">czi</span> <span class="o">=</span> <span class="n">CziFile</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="c1"># Read image</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reading dimensions: </span><span class="si">{</span><span class="n">read_dims</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="o">**</span><span class="n">read_dims</span><span class="p">)</span>
+
+        <span class="c1"># Drop dims that shouldn&#39;t be provided back</span>
+        <span class="n">ops</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">real_dims</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dims</span><span class="p">):</span>
+            <span class="c1"># Expand dimension info</span>
+            <span class="n">dim</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">dim_info</span>
+
+            <span class="c1"># If the dim was provided in the read dims we know a single plane for that</span>
+            <span class="c1"># dimension was requested so remove it</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">read_dims</span><span class="p">:</span>
+                <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># Otherwise just read the full slice</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+                <span class="n">real_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_info</span><span class="p">)</span>
+
+        <span class="c1"># Convert ops and run getitem</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">ops</span><span class="p">)],</span> <span class="n">real_dims</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_imread</span><span class="p">(</span><span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">dims</span> <span class="o">=</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">_read_image</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">read_dims</span><span class="o">=</span><span class="n">read_dims</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_daread</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+        <span class="n">czi</span><span class="p">:</span> <span class="n">CziFile</span><span class="p">,</span>
+        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read a CZI image file as a delayed dask array where certain dimensions act as</span>
+<span class="sd">        the chunk size.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        img: Path</span>
+<span class="sd">            The filepath to read.</span>
+<span class="sd">        czi: CziFile</span>
+<span class="sd">            The loaded CziFile object created from reading the filepath.</span>
+<span class="sd">        chunk_by_dims: List[str]</span>
+<span class="sd">            The dimensions to use as the for mapping the chunks / blocks.</span>
+<span class="sd">            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]</span>
+<span class="sd">            Note: SpatialY and SpatialX will always be added to the list if not present.</span>
+<span class="sd">        S: int</span>
+<span class="sd">            If the image has different dimensions on any scene from another, the dask</span>
+<span class="sd">            array construction will fail. In that case, use this parameter to specify a</span>
+<span class="sd">            specific scene to construct a dask array for.</span>
+<span class="sd">            Default: 0 (select the first scene)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        img: dask.array.core.Array</span>
+<span class="sd">            The constructed dask array where certain dimensions are chunked.</span>
+<span class="sd">        dims: str</span>
+<span class="sd">            The dimension order as a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get image dims indicies</span>
+        <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">dims_shape</span><span class="p">()</span>
+
+        <span class="c1"># Catch inconsistent scene dimension sizes</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Choose the provided scene</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">S</span><span class="p">]</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentShapeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;The CZI image provided has variable dimensions per scene. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Please provide a valid index to the &#39;S&#39; parameter to create a &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;dask array for the index provided. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{</span><span class="n">S</span><span class="si">}</span><span class="s2">. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Scene index range: 0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># If the list is length one that means that all the scenes in the image</span>
+            <span class="c1"># have the same dimensions</span>
+            <span class="c1"># Just select the first dictionary in the list</span>
+            <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Uppercase dimensions provided to chunk by dims</span>
+        <span class="n">chunk_by_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">]</span>
+
+        <span class="c1"># Always add Y and X dims to chunk by dims because that is how CZI files work</span>
+        <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Adding the Spatial Y dimension to chunk by dimensions as it was not &quot;</span>
+                <span class="s2">&quot;found.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">chunk_by_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Adding the Spatial X dimension to chunk by dimensions as it was not &quot;</span>
+                <span class="s2">&quot;found.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">chunk_by_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">)</span>
+
+        <span class="c1"># Setup read dimensions for an example chunk</span>
+        <span class="n">first_chunk_read_dims</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">dim</span><span class="p">,</span> <span class="p">(</span><span class="n">dim_begin_index</span><span class="p">,</span> <span class="n">dim_end_index</span><span class="p">)</span> <span class="ow">in</span> <span class="n">image_dim_indices</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Only add the dimension if the dimension isn&#39;t a part of the chunk</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
+                <span class="c1"># Add to read dims</span>
+                <span class="n">first_chunk_read_dims</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="n">dim_begin_index</span>
+
+        <span class="c1"># Read first chunk for information used by dask.array.from_delayed</span>
+        <span class="n">sample</span><span class="p">,</span> <span class="n">sample_dims</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span><span class="o">**</span><span class="n">first_chunk_read_dims</span><span class="p">)</span>
+
+        <span class="c1"># Get the shape for the chunk and operating shape for the dask array</span>
+        <span class="c1"># We also collect the chunk and non chunk dimension ordering so that we can</span>
+        <span class="c1"># swap the dimensions after we</span>
+        <span class="c1"># block the dask array together.</span>
+        <span class="n">sample_chunk_shape</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">operating_shape</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">non_chunk_dimension_ordering</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">chunk_dimension_ordering</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim_info</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample_dims</span><span class="p">):</span>
+            <span class="c1"># Unpack dim info</span>
+            <span class="n">dim</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">dim_info</span>
+
+            <span class="c1"># If the dim is part of the specified chunk dims then append it to the</span>
+            <span class="c1"># sample, and, append the dimension</span>
+            <span class="c1"># to the chunk dimension ordering</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
+                <span class="n">sample_chunk_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+                <span class="n">chunk_dimension_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+            <span class="c1"># Otherwise, append the dimension to the non chunk dimension ordering, and,</span>
+            <span class="c1"># append the true size of the</span>
+            <span class="c1"># image at that dimension</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">non_chunk_dimension_ordering</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="n">operating_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">image_dim_indices</span><span class="p">[</span><span class="n">dim</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Convert shapes to tuples and combine the non and chunked dimension orders as</span>
+        <span class="c1"># that is the order the data will</span>
+        <span class="c1"># actually come out of the read data as</span>
+        <span class="n">sample_chunk_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">sample_chunk_shape</span><span class="p">)</span>
+        <span class="n">blocked_dimension_order</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">non_chunk_dimension_ordering</span> <span class="o">+</span> <span class="n">chunk_dimension_ordering</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Fill out the rest of the operating shape with dimension sizes of 1 to match</span>
+        <span class="c1"># the length of the sample chunk</span>
+        <span class="c1"># When dask.block happens it fills the dimensions from inner-most to outer-most</span>
+        <span class="c1"># with the chunks as long as the dimension is size 1</span>
+        <span class="c1"># Basically, we are adding empty dimensions to the operating shape that will be</span>
+        <span class="c1"># filled by the chunks from dask</span>
+        <span class="n">operating_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample_chunk_shape</span><span class="p">)</span>
+
+        <span class="c1"># Create empty numpy array with the operating shape so that we can iter through</span>
+        <span class="c1"># and use the multi_index to create the readers.</span>
+        <span class="n">lazy_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">operating_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+
+        <span class="c1"># We can enumerate over the multi-indexed array and construct read_dims</span>
+        <span class="c1"># dictionaries by simply zipping together the ordered dims list and the current</span>
+        <span class="c1"># multi-index plus the begin index for that plane. We then set the value of the</span>
+        <span class="c1"># array at the same multi-index to the delayed reader using the constructed</span>
+        <span class="c1"># read_dims dictionary.</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">czi</span><span class="o">.</span><span class="n">dims</span><span class="p">]</span>
+        <span class="n">begin_indicies</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">ndenumerate</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="p">):</span>
+            <span class="c1"># Add the czi file begin index for each dimension to the array dimension</span>
+            <span class="c1"># index</span>
+            <span class="n">this_chunk_read_indicies</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">current_dim_begin_index</span> <span class="o">+</span> <span class="n">curr_dim_index</span>
+                <span class="k">for</span> <span class="n">current_dim_begin_index</span><span class="p">,</span> <span class="n">curr_dim_index</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">begin_indicies</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Zip the dims with the read indices</span>
+            <span class="n">this_chunk_read_dims</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="n">blocked_dimension_order</span><span class="p">,</span> <span class="n">this_chunk_read_indicies</span><span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Remove the dimensions that we want to chunk by from the read dims</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_by_dims</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">this_chunk_read_dims</span><span class="p">:</span>
+                    <span class="n">this_chunk_read_dims</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+            <span class="c1"># Add delayed array to lazy arrays at index</span>
+            <span class="n">lazy_arrays</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_delayed</span><span class="p">(</span>
+                <span class="n">delayed</span><span class="p">(</span><span class="n">CziReader</span><span class="o">.</span><span class="n">_imread</span><span class="p">)(</span><span class="n">img</span><span class="p">,</span> <span class="n">this_chunk_read_dims</span><span class="p">),</span>
+                <span class="n">shape</span><span class="o">=</span><span class="n">sample_chunk_shape</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">sample</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Convert the numpy array of lazy readers into a dask array and fill the inner</span>
+        <span class="c1"># most empty dimensions with chunks</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">lazy_arrays</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+
+        <span class="c1"># Because we have set certain dimensions to be chunked and others not</span>
+        <span class="c1"># we will need to transpose back to original dimension ordering</span>
+        <span class="c1"># Example being, if the original dimension ordering was &quot;SZYX&quot; and we want to</span>
+        <span class="c1"># chunk by &quot;S&quot;, &quot;Y&quot;, and &quot;X&quot; we created an array with dimensions ordering &quot;ZSYX&quot;</span>
+        <span class="n">transpose_indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">transpose_required</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">czi</span><span class="o">.</span><span class="n">dims</span><span class="p">):</span>
+            <span class="n">new_index</span> <span class="o">=</span> <span class="n">blocked_dimension_order</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_index</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">transpose_required</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">transpose_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">transpose_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># Only run if the transpose is actually required</span>
+        <span class="c1"># The default case is &quot;Z&quot;, &quot;Y&quot;, &quot;X&quot;, which _usually_ doesn&#39;t need to be</span>
+        <span class="c1"># transposed because that is _usually_ the normal dimension order of the CZI</span>
+        <span class="c1"># file anyway</span>
+        <span class="k">if</span> <span class="n">transpose_required</span><span class="p">:</span>
+            <span class="n">merged</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">transpose_indices</span><span class="p">))</span>
+
+        <span class="c1"># Because dimensions outside of Y and X can be in any order and present or not</span>
+        <span class="c1"># we also return the dimension order string.</span>
+        <span class="k">return</span> <span class="n">merged</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_daread_safe</span><span class="p">(</span>
+        <span class="n">img</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+        <span class="n">chunk_by_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Safely read a CZI image file as a delayed dask array where certain dimensions</span>
+<span class="sd">        act as the chunk size.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        img: Union[str, Path]</span>
+<span class="sd">            The filepath to read.</span>
+<span class="sd">        chunk_by_dims: List[str]</span>
+<span class="sd">            The dimensions to use as the for mapping the chunks / blocks.</span>
+<span class="sd">            Default: [Dimensions.SpatialZ, Dimensions.SpatialY, Dimensions.SpatialX]</span>
+<span class="sd">            Note: SpatialY and SpatialX will always be added to the list if not present.</span>
+<span class="sd">        S: int</span>
+<span class="sd">            If the image has different dimensions on any scene from another, the dask</span>
+<span class="sd">            array construction will fail.</span>
+<span class="sd">            In that case, use this parameter to specify a specific scene to construct a</span>
+<span class="sd">            dask array for.</span>
+<span class="sd">            Default: 0 (select the first scene)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        img: dask.array.core.Array</span>
+<span class="sd">            The constructed dask array where certain dimensions are chunked.</span>
+<span class="sd">        dims: str</span>
+<span class="sd">            The dimension order as a string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Resolve image path</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">_resolve_image_path</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="c1"># Init temp czi</span>
+        <span class="n">czi</span> <span class="o">=</span> <span class="n">CziFile</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+        <span class="c1"># Safely construct the dask array or catch any exception</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">_daread</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">czi</span><span class="o">=</span><span class="n">czi</span><span class="p">,</span> <span class="n">chunk_by_dims</span><span class="o">=</span><span class="n">chunk_by_dims</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="n">S</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># A really bad way to close any connection to the CZI object</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">_bytes</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Constructed dask array where each chunk is a delayed read from the CZI file.</span>
+<span class="sd">        Places dimensions in the native order (i.e. &quot;TZCYX&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dask_array</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">CziReader</span><span class="o">.</span><span class="n">_daread_safe</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span> <span class="n">chunk_by_dims</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_by_dims</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">dask_array</span>
+
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
+        <span class="c1"># Init temp czi</span>
+        <span class="n">czi</span> <span class="o">=</span> <span class="n">CziFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+
+        <span class="c1"># Safely construct the numpy array or catch any exception</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Get image dims indicies</span>
+            <span class="n">image_dim_indices</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">dims_shape</span><span class="p">()</span>
+
+            <span class="c1"># Catch inconsistent scene dimension sizes</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c1"># Choose the provided scene</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;File contains variable dimensions per scene, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;selected scene: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="si">}</span><span class="s2"> for data retrieval.&quot;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Get the specific scene</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">):</span>
+                    <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">read_image</span><span class="p">(</span>
+                        <span class="o">**</span><span class="p">{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="p">}</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InconsistentShapeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The CZI image provided has variable dimensions per scene. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Please provide a valid index to the &#39;S&#39; parameter to create &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;a dask array for the index provided. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided scene index: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">specific_s_index</span><span class="si">}</span><span class="s2">. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Scene index range: 0-</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image_dim_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If the list is length one that means that all the scenes in the image</span>
+                <span class="c1"># have the same dimensions</span>
+                <span class="c1"># Read all data in the image</span>
+                <span class="n">data</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">czi</span><span class="o">.</span><span class="n">read_image</span><span class="p">()</span>
+
+                <span class="c1"># A really bad way to close any connection to the CZI object</span>
+                <span class="n">czi</span><span class="o">.</span><span class="n">_bytes</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">czi</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># A really bad way to close any connection to the CZI object</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">_bytes</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">czi</span><span class="o">.</span><span class="n">reader</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">raise</span> <span class="n">e</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span> <span class="o">=</span> <span class="n">CziFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span><span class="o">.</span><span class="n">dims</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dims</span>
+
+<div class="viewcode-block" id="CziReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">dtype</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Element</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load and return the metadata from the CZI file</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        The lxml Element Tree of the metadata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We can&#39;t serialize lxml element trees so don&#39;t save the tree to the object</span>
+        <span class="c1"># state</span>
+        <span class="k">return</span> <span class="n">CziFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span><span class="o">.</span><span class="n">meta</span>
+
+    <span class="k">def</span> <span class="nf">_size_of_dimension</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dask_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dim</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="CziReader.size_s"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_s">[docs]</a>    <span class="k">def</span> <span class="nf">size_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Scene</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_t"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_t">[docs]</a>    <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_c"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_c">[docs]</a>    <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_z"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_z">[docs]</a>    <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_y"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_y">[docs]</a>    <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.size_x"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.size_x">[docs]</a>    <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CziReader.get_channel_names"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">chelem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span>
+            <span class="s2">&quot;./Metadata/Information/Image/Dimensions/Channels/Channel&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ch</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Name&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">chelem</span><span class="p">]</span></div>
+
+    <span class="c1"># TODO refactor this utility function into a metadata wrapper class</span>
+    <span class="k">def</span> <span class="nf">_getmetadataxmltext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">findpath</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">findpath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ref</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">default</span>
+        <span class="k">return</span> <span class="n">ref</span><span class="o">.</span><span class="n">text</span>
+
+<div class="viewcode-block" id="CziReader.get_physical_pixel_size"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="n">px</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span>
+                <span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;X&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">py</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span>
+                <span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;Y&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">pz</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_getmetadataxmltext</span><span class="p">(</span>
+                <span class="s2">&quot;./Metadata/Scaling/Items/Distance[@Id=&#39;Z&#39;]/Value&quot;</span><span class="p">,</span> <span class="s2">&quot;1.0&quot;</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">pz</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

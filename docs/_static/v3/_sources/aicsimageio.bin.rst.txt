@@ -1,0 +1,10 @@
+aicsimageio.bin package
+=======================
+
+Module contents
+---------------
+
+.. automodule:: aicsimageio.bin
+   :members:
+   :undoc-members:
+   :show-inheritance:

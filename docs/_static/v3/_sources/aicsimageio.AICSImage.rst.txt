@@ -1,0 +1,47 @@
+aicsimageio.AICSImage
+=====================
+
+.. currentmodule:: aicsimageio
+
+.. autoclass:: AICSImage
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AICSImage.__init__
+      ~AICSImage.determine_reader
+      ~AICSImage.get_image_dask_data
+      ~AICSImage.get_image_data
+      ~AICSImage.save
+      ~AICSImage.set_scene
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AICSImage.SUPPORTED_READERS
+      ~AICSImage.channel_names
+      ~AICSImage.current_scene
+      ~AICSImage.current_scene_index
+      ~AICSImage.dask_data
+      ~AICSImage.data
+      ~AICSImage.dims
+      ~AICSImage.dtype
+      ~AICSImage.metadata
+      ~AICSImage.physical_pixel_sizes
+      ~AICSImage.reader
+      ~AICSImage.scenes
+      ~AICSImage.shape
+      ~AICSImage.xarray_dask_data
+      ~AICSImage.xarray_data
+   
+   

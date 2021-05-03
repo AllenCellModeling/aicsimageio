@@ -1,0 +1,750 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.readers.array_like_reader &mdash; AICSImageIO 4.0.0.dev3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.0.0.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id25">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id28">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id30">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id33">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id35">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id37">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id39">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id46">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id48">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id52">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id55">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id59">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id61">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id65">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id67">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id69">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id72">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id75">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id78">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id80">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id84">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id86">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id89">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id90">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+        
+      <li>aicsimageio.readers.array_like_reader</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.readers.array_like_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="n">DimensionNames</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span> <span class="nn">..types</span> <span class="kn">import</span> <span class="n">MetaArrayLike</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+    <span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;[</span><span class="si">%(levelname)4s</span><span class="s2">: </span><span class="si">%(module)s</span><span class="s2">:</span><span class="si">%(lineno)4s</span><span class="s2"> </span><span class="si">%(asctime)s</span><span class="s2">] </span><span class="si">%(message)s</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="ArrayLikeReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.array_like_reader.ArrayLikeReader">[docs]</a><span class="k">class</span> <span class="nc">ArrayLikeReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A catch all for numpy, dask, or xarray to Reader interface.</span>
+
+<span class="sd">    See Notes for more details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image: Union[List[MetaArrayLike], MetaArrayLike]</span>
+<span class="sd">        A single, numpy ndarray, dask Array, or xarray DataArray, or list of many.</span>
+<span class="sd">        If provided a list, each item in the list will be exposed through the scene API.</span>
+<span class="sd">        If provided an xarray DataArray alone or as an element of the list, the</span>
+<span class="sd">        known_dims and known_channel_names kwargs are ignored if there non-xarray</span>
+<span class="sd">        default dimension (or channel coordinate) information attached the xarray</span>
+<span class="sd">        object. The channel and dimension information are updated independent of the</span>
+<span class="sd">        other. If either is using xarray default values, they will be replaced by</span>
+<span class="sd">        AICSImageIO defaults will be added.</span>
+
+<span class="sd">    known_dims: Optional[Union[List[str], str]]</span>
+<span class="sd">        A string of known dimensions to be applied to all array(s) or a</span>
+<span class="sd">        list of string dimension names to be mapped onto the list of arrays</span>
+<span class="sd">        provided to image. I.E. &quot;TYX&quot;.</span>
+<span class="sd">        Default: None (guess dimensions for single array or multiple arrays)</span>
+
+<span class="sd">    known_channel_names: Optional[Union[List[str], List[List[str]]]]</span>
+<span class="sd">        A list of string channel names to be applied to all array(s) or a</span>
+<span class="sd">        list of lists of string channel names to be mapped onto the list of arrays</span>
+<span class="sd">        provided to image.</span>
+<span class="sd">        Default: None (create OME channel IDs for names for single or multiple arrays)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    exceptions.ConflictingArgumentsError</span>
+<span class="sd">        Raised when the number of scenes provided is different from the number of items</span>
+<span class="sd">        provided to the metadata parameters if as a list.</span>
+
+<span class="sd">    exceptions.ConflictingArgumentsError</span>
+<span class="sd">        Raised when known_channel_names is provided but the channel dimension was</span>
+<span class="sd">        either not guessed or not provided in known_dims.</span>
+
+<span class="sd">    ValueError</span>
+<span class="sd">        Provided known_dims string or known_channel_names are not the same length as</span>
+<span class="sd">        the number of dimensions or the size of the channel dimensions for the array at</span>
+<span class="sd">        the matching index.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If you want to combine multiple numpy ndarrays or dask arrays with xarray DataArrays</span>
+<span class="sd">    and attach metadata to all non-xarray.DataArrays, you can do so, the metadata for</span>
+<span class="sd">    the xarray DataArray scenes will simply be ignored if it the non-xarray defaults.</span>
+
+<span class="sd">    In such cases, it is recommended that you provide metadata for those scenes as</span>
+<span class="sd">    None. I.E.</span>
+
+<span class="sd">    &gt;&gt;&gt; some_metadata_attached_xr = ...</span>
+<span class="sd">    ... some_np = ...</span>
+<span class="sd">    ... some_dask = ...</span>
+<span class="sd">    ... reader = ArrayLikeReader(</span>
+<span class="sd">    ...     image=[some_metadata_attached_xr, some_np, some_dask],</span>
+<span class="sd">    ...     known_dims=[None, &quot;CTYX&quot;, &quot;ZTYX&quot;],</span>
+<span class="sd">    ...     known_channel_names=[None, [&quot;A&quot;, &quot;B&quot;, C&quot;], None],</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Will create a three scene ArrayLikeReader with the metadata and coordinate</span>
+<span class="sd">    information filled xarray DataArray as the first scene, a numpy array with CTYX as</span>
+<span class="sd">    the dimensions and [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;] as the channel names, and a dask array with ZTYX</span>
+<span class="sd">    as the dimensions and no channel names (as there is no channel dimension).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MetaArrayLike</span><span class="p">],</span> <span class="n">MetaArrayLike</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">scene</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">image</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">MetaArrayLike</span><span class="p">],</span> <span class="n">MetaArrayLike</span><span class="p">],</span>
+        <span class="n">known_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">known_channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Enforce valid image</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_supported_image</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="c1"># General note</span>
+        <span class="c1"># Any time we do a `known_channel_names[0]` it&#39;s because the type check for</span>
+        <span class="c1"># channel names is a List[List[str]], so by checking the first element we should</span>
+        <span class="c1"># be getting back a list or a string. Anything else will error.</span>
+
+        <span class="c1"># The result of all of this validation and pre-compute work is that at the end</span>
+        <span class="c1"># of this init, we should have n-number of constructed xarray objects created</span>
+        <span class="c1"># from the parameters provided that we then just pass-through to for all other</span>
+        <span class="c1"># standard Reader operations</span>
+
+        <span class="c1"># If metadata is attached as lists</span>
+        <span class="c1"># Enforcing matching shape</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_dims</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Check known dims</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">known_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;ArrayLikeReader received a list of arrays to use as scenes &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;but the provided list of known dimensions is of different &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;length. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of provided known dimension strings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">known_dims</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Check known channel names</span>
+            <span class="k">if</span> <span class="n">known_channel_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">):</span>
+                        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;ArrayLikeReader received a list of arrays to use as &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;scenes but the provided list of known channel names is &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;of different length. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided scenes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Number of provided known channel names: &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+
+        <span class="c1"># If metadata is attached as singles</span>
+        <span class="c1"># but many scenes provided, expand</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">known_dims</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_dims</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">known_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">known_dims</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">))]</span>  <span class="c1"># type: ignore</span>
+            <span class="k">if</span> <span class="n">known_channel_names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">known_channel_names</span> <span class="o">=</span> <span class="p">[</span>  <span class="c1"># type: ignore</span>
+                    <span class="n">known_channel_names</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+                <span class="p">]</span>
+
+        <span class="c1"># Set all kwargs to lists for standard interface</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="p">[</span><span class="n">image</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_dims</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">known_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">known_dims</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="k">if</span> <span class="n">known_channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">known_channel_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">known_channel_names</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+        <span class="c1"># Also wrap the channel names list if they were provided</span>
+        <span class="c1"># but only a single scene was</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">known_channel_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">known_channel_names</span><span class="p">]</span>  <span class="c1"># type: ignore</span>
+
+        <span class="c1"># Store image(s)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span> <span class="o">=</span> <span class="n">image</span>
+
+        <span class="c1"># Validate and store dims</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene_dims_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dims_string</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">known_dims</span><span class="p">):</span>
+            <span class="n">this_scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="c1"># Provided None, guess</span>
+            <span class="k">if</span> <span class="n">dims_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Get dims from xarray</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_scene</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+                    <span class="c1"># Guess for xarray when they guessed</span>
+                    <span class="c1"># http://xarray.pydata.org/en/stable/data-structures.html?highlight=dim_n#creating-a-dataarray</span>
+                    <span class="c1"># See &quot;dim_N&quot;</span>
+                    <span class="k">if</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dim_0&quot;</span><span class="p">:</span>
+                        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                            <span class="s2">&quot;Overrode the default xarray dimensions for AICSImage &quot;</span>
+                            <span class="s2">&quot;guessed dimensions.&quot;</span>
+                        <span class="p">)</span>
+                        <span class="c1"># Rename the dimensions from &quot;dim_N&quot; to just the guess dim</span>
+                        <span class="c1"># Update scene list in place</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>  <span class="c1"># type: ignore</span>
+                            <span class="p">{</span>
+                                <span class="sa">f</span><span class="s2">&quot;dim_</span><span class="si">{</span><span class="n">d_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">d</span>
+                                <span class="k">for</span> <span class="n">d_index</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">_guess_dim_order</span><span class="p">(</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                                <span class="p">)</span>
+                            <span class="p">}</span>
+                        <span class="p">)</span>
+
+                <span class="c1"># Guess for non xarray data</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scene_dims_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_guess_dim_order</span><span class="p">(</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+            <span class="c1"># Provided Some, validate</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dims_string</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+                    <span class="c1"># Update dims for xarray</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_scene</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+                        <span class="c1"># Guess for xarray when they guessed</span>
+                        <span class="c1"># http://xarray.pydata.org/en/stable/data-structures.html?highlight=dim_n#creating-a-dataarray</span>
+                        <span class="c1"># See &quot;dim_N&quot;</span>
+                        <span class="k">if</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">dims</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;dim_0&quot;</span><span class="p">:</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                                <span class="s2">&quot;Overrode the default xarray dimensions for AICSImage &quot;</span>
+                                <span class="s2">&quot;provided dimensions.&quot;</span>
+                            <span class="p">)</span>
+                            <span class="c1"># Rename the dimensions from &quot;dim_N&quot; to just the guess dim</span>
+                            <span class="c1"># Update scene list in place</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                                <span class="p">{</span>  <span class="c1"># type: ignore</span>
+                                    <span class="sa">f</span><span class="s2">&quot;dim_</span><span class="si">{</span><span class="n">d_index</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">d</span>
+                                    <span class="k">for</span> <span class="n">d_index</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dims_string</span><span class="p">)</span>
+                                <span class="p">}</span>
+                            <span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_dims_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dims_string</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided dimension string does not have the same amount of &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;dimensions as the matching provided array. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided array shape: </span><span class="si">{</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided dimension string: </span><span class="si">{</span><span class="n">dims_string</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># Validate and store channel_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scene_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s_index</span><span class="p">,</span> <span class="n">channel_names</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">known_channel_names</span><span class="p">):</span>  <span class="c1"># type: ignore</span>
+            <span class="n">this_scene</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">[</span><span class="n">s_index</span><span class="p">]</span>
+            <span class="n">this_scene_dims</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_dims_list</span><span class="p">[</span><span class="n">s_index</span><span class="p">]</span>
+
+            <span class="c1"># Create channel names is needed</span>
+            <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">this_scene_dims</span><span class="p">:</span>
+                <span class="n">channel_dim_index</span> <span class="o">=</span> <span class="n">this_scene_dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">)</span>
+
+                <span class="c1"># Handle xarray missing channel names</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">this_scene</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">coords</span><span class="p">:</span>
+                        <span class="c1"># Use provided</span>
+                        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">this_scene</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+                        <span class="c1"># Generate</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">set_channel_names</span> <span class="o">=</span> <span class="p">[]</span>
+                            <span class="k">for</span> <span class="n">c_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">channel_dim_index</span><span class="p">]):</span>
+                                <span class="n">image_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">s_index</span><span class="p">)</span>
+                                <span class="n">set_channel_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                                    <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span>
+                                        <span class="n">image_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="n">c_index</span>
+                                    <span class="p">)</span>
+                                <span class="p">)</span>
+
+                            <span class="n">this_scene</span><span class="o">.</span><span class="n">coords</span><span class="p">[</span>
+                                <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span>
+                            <span class="p">]</span> <span class="o">=</span> <span class="n">set_channel_names</span>
+
+                <span class="c1"># Provided None, generate</span>
+                <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">this_scene_channels</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">c_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">channel_dim_index</span><span class="p">]):</span>
+                        <span class="n">image_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">s_index</span><span class="p">)</span>
+                        <span class="n">this_scene_channels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                            <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span>
+                                <span class="n">image_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="n">c_index</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_channel_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_scene_channels</span><span class="p">)</span>
+
+                <span class="c1"># Provided Some, validate</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">channel_dim_index</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="sa">f</span><span class="s2">&quot;Provided channel names list does not match the size of &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;channel dimension for the provided array. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Provided array shape: </span><span class="si">{</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Channel dimension size: &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">channel_dim_index</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Provided channel names: </span><span class="si">{</span><span class="n">channel_names</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_scene_channel_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span>
+
+            <span class="c1"># Raise error when channel names were provided when they shouldn&#39;t have been</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Received channel names for array without channel dimension. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided array shape: </span><span class="si">{</span><span class="n">this_scene</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided (or guessed) dimensions: </span><span class="si">{</span><span class="n">this_scene_dims</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided channel names: </span><span class="si">{</span><span class="n">channel_names</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_scene_channel_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span>
+
+        <span class="c1"># Construct full xarrays</span>
+        <span class="c1"># All data arrays in this list are dask Arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">scene_data</span><span class="p">,</span> <span class="n">dims</span><span class="p">,</span> <span class="n">channel_names</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_dims_list</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scene_channel_names</span>
+        <span class="p">):</span>
+            <span class="c1"># Handle simple case of provided a DataArray</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scene_data</span><span class="p">,</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">):</span>
+                <span class="c1"># Set metadata to point at existing attrs</span>
+                <span class="n">scene_data</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">]</span> <span class="o">=</span> <span class="n">scene_data</span><span class="o">.</span><span class="n">attrs</span>
+
+                <span class="c1"># If the data backing the xarray is dask</span>
+                <span class="c1"># just append</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scene_data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scene_data</span><span class="p">)</span>
+
+                <span class="c1"># If the data backing the xarray is numpy</span>
+                <span class="c1"># copy the array but use dask from numpy</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                        <span class="n">scene_data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">scene_data</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+            <span class="c1"># Handle non-xarray cases</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dims_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims_list</span><span class="p">:</span>
+                    <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+                <span class="c1"># Handle dask</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scene_data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                    <span class="n">scene_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">scene_data</span><span class="p">)</span>
+
+                <span class="c1"># Append the dask backed array</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+                        <span class="n">data</span><span class="o">=</span><span class="n">scene_data</span><span class="p">,</span>
+                        <span class="n">dims</span><span class="o">=</span><span class="n">dims_list</span><span class="p">,</span>
+                        <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+                        <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_scenes</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span>
+
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_xr_darrays</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,823 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Changelog &mdash; AICSImageIO 4.0.0.dev3 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aicsimageio.aics_image.AICSImage" href="aicsimageio.aics_image.AICSImage.html" />
+    <link rel="prev" title="AICSImageIO Roadmap" href="ROADMAP.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> AICSImageIO
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.0.0.dev3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id25">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id28">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id33">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id37">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id39">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id46">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id48">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id52">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id55">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id59">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id61">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id65">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id67">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id69">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id72">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id75">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id78">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id80">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id84">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id86">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id89">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id90">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">AICSImageIO</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Changelog</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/CHANGELOG.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="aicsimageio.aics_image.AICSImage.html" class="btn btn-neutral float-right" title="aicsimageio.aics_image.AICSImage" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="ROADMAP.html" class="btn btn-neutral float-left" title="AICSImageIO Roadmap" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="unreleased">
+<h2>(unreleased)<a class="headerlink" href="#unreleased" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="new">
+<h3>New<a class="headerlink" href="#new" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/lif-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/212">#212</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/ome-tiff-writer-4  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/211">#211</a>)
+[JacksonMaxfield, toloudis]</p></li>
+<li><p>feature/array-like-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/197">#197</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/writers  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/198">#198</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/add-aicsimage-obj  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/185">#185</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/optimize-tiff-reader-and-add-benchmarks  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/183">#183</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/ome-tiff-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/176">#176</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/add-tiff-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/160">#160</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/add-default-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/157">#157</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/add-timeseries-writer  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/137">#137</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>feature/add-rgb-writer  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/134">#134</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/centralize-reader-tests  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/135">#135</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/writer-base-class-proposal  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/98">#98</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/deprecate-context-manager-cluster-spawning  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/97">#97</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/deprecate-napari-functionality  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/96">#96</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="fix">
+<h3>Fix<a class="headerlink" href="#fix" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/catch-all-errors-in-ome-tiff  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/207">#207</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>bugfix/provide-correct-indices-to-data-select-in-tiff-chunked-reads
+(<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/201">#201</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>Fix benchmarks links and remove old files [JacksonMaxfield]</p></li>
+<li><p>bugfix/adopt-samples-as-rgb-default  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/165">#165</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>Fix guess tiff dims, lint, and format [JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="other">
+<h3>Other<a class="headerlink" href="#other" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/adopt-mypy-and-stricter-linting  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/208">#208</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>admin/move-test-resources-hash-to-text-file  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/202">#202</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>admin/temp-bump-aicspylibczi  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/194">#194</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>Remove macOS11 and fix prepare-release [JacksonMaxfield]</p></li>
+<li><p>Attach dev0 to all references of version number [JacksonMaxfield]</p></li>
+<li><p>Configure dev_release bumpversion [JacksonMaxfield]</p></li>
+<li><p>Turn on doc building [JacksonMaxfield]</p></li>
+<li><p>Replace all references of master w/ main [JacksonMaxfield]</p></li>
+<li><p>Do not push docs on main yet [JacksonMaxfield]</p></li>
+<li><p>Second run of cookiecutter to ensure [JacksonMaxfield]</p></li>
+<li><p>Updates from cookiecutter [JacksonMaxfield]</p></li>
+<li><p>Force remove extra files [JacksonMaxfield]</p></li>
+<li><p>admin/fix-deadlink-in-documentation [JacksonMaxfield]</p></li>
+<li><p>admin/developer-documentation  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/150">#150</a>)
+[Jackson Maxfield Brown, Josh Moore]</p></li>
+<li><p>Upgrade dependency versions [JacksonMaxfield]</p></li>
+<li><p>Working for small files [JacksonMaxfield]</p></li>
+<li><p>admin/proposed-api  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/145">#145</a>)
+[Jackson Maxfield Brown]</p></li>
+<li><p>Remove everything [JacksonMaxfield]</p></li>
+<li><p>Remove dims setting entirely [JacksonMaxfield]</p></li>
+<li><p>Read dims, shape, and dtype from Tiff metadata in single shot
+[JacksonMaxfield]</p></li>
+<li><p>Change all self.dask_data.shape calls to self.shape in reader
+subclasses [JacksonMaxfield]</p></li>
+<li><p>Linting and formatting [JacksonMaxfield]</p></li>
+<li><p>Readers API stabilization, verbs -&gt; functions, nouns -&gt; properties
+[JacksonMaxfield]</p></li>
+<li><p>admin/update-from-cookiecutter  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/136">#136</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-3-5-2021-01-25">
+<h2>v3.3.5 (2021-01-25)<a class="headerlink" href="#v3-3-5-2021-01-25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id25">
+<h3>Fix<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/pin-readlif  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/187">#187</a>)
+[Jackson Maxfield Brown]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-3-4-2021-01-13">
+<h2>v3.3.4 (2021-01-13)<a class="headerlink" href="#v3-3-4-2021-01-13" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>ome-xml as string to ome tiff writer  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/180">#180</a>)
+[toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-3-3-2020-12-14">
+<h2>v3.3.3 (2020-12-14)<a class="headerlink" href="#v3-3-3-2020-12-14" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id28">
+<h3>Fix<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/replace-napari-is-pyramid-with-multiscale  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/172">#172</a>)
+[Dimitri Hürlimann, dimi-huer]</p></li>
+</ul>
+</div>
+<div class="section" id="id30">
+<h3>Other<a class="headerlink" href="#id30" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/support-py39  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/169">#169</a>)
+[Jackson Maxfield Brown]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-3-2-2020-11-17">
+<h2>v3.3.2 (2020-11-17)<a class="headerlink" href="#v3-3-2-2020-11-17" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>admin/update-base-reader-dep-versions  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/156">#156</a>) [Jamie
+Sherman]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-3-1-2020-09-23">
+<h2>v3.3.1 (2020-09-23)<a class="headerlink" href="#v3-3-1-2020-09-23" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id33">
+<h3>Fix<a class="headerlink" href="#id33" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/tiff-rgb  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/153">#153</a>) [Jamie
+Sherman]</p></li>
+</ul>
+</div>
+<div class="section" id="id35">
+<h3>Other<a class="headerlink" href="#id35" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/cleanup-readme  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/149">#149</a>)
+[Jackson Maxfield Brown]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-3-0-2020-09-09">
+<h2>v3.3.0 (2020-09-09)<a class="headerlink" href="#v3-3-0-2020-09-09" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id37">
+<h3>New<a class="headerlink" href="#id37" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/use-in-memory-data-for-non-dask-calls  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/148">#148</a>)
+[Jackson Maxfield Brown]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-2-3-2020-06-23">
+<h2>v3.2.3 (2020-06-23)<a class="headerlink" href="#v3-2-3-2020-06-23" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id39">
+<h3>New<a class="headerlink" href="#id39" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/reader-additions  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/126">#126</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-2-2-2020-06-11">
+<h2>v3.2.2 (2020-06-11)<a class="headerlink" href="#v3-2-2-2020-06-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id41">
+<h3>New<a class="headerlink" href="#id41" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/enable-disable-dask  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/124">#124</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id43">
+<h3>Other<a class="headerlink" href="#id43" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/update-build-tooling  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/123">#123</a>)
+[JacksonMaxfield]</p></li>
+<li><p>admin/switch-log-warning-to-warnings-warn  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/122">#122</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-2-1-2020-05-26">
+<h2>v3.2.1 (2020-05-26)<a class="headerlink" href="#v3-2-1-2020-05-26" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id46">
+<h3>Fix<a class="headerlink" href="#id46" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/add-imagecodecs-dep  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/120">#120</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-2-0-2020-05-13">
+<h2>v3.2.0 (2020-05-13)<a class="headerlink" href="#v3-2-0-2020-05-13" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id48">
+<h3>New<a class="headerlink" href="#id48" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/optimize-readers  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/113">#113</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/allow-sequence-in-get-data  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/109">#109</a>)
+[JacksonMaxfield]</p></li>
+<li><p>feature/read-leica-lif-files  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/99">#99</a>) [Jamie
+Sherman]</p></li>
+</ul>
+</div>
+<div class="section" id="id52">
+<h3>Fix<a class="headerlink" href="#id52" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/update-ome-spec  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/116">#116</a>)
+[JacksonMaxfield]</p></li>
+<li><p>bugfix/set-sphinx-dep-upper-bound  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/95">#95</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id55">
+<h3>Other<a class="headerlink" href="#id55" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/benchmarks  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/112">#112</a>)
+[JacksonMaxfield]</p></li>
+<li><p>admin/use-black-formatting  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/108">#108</a>)
+[JacksonMaxfield]</p></li>
+<li><p>Update PR Template [Madison Bowden]</p></li>
+<li><p>admin/move-test-resources-to-s3  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/94">#94</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-4-2020-03-21">
+<h2>v3.1.4 (2020-03-21)<a class="headerlink" href="#v3-1-4-2020-03-21" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id59">
+<h3>New<a class="headerlink" href="#id59" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/add-get-channel-names-to-base-reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/88">#88</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id61">
+<h3>Fix<a class="headerlink" href="#id61" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/reader-context-manager-top-level-import-error  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/85">#85</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-3-2020-03-11">
+<h2>v3.1.3 (2020-03-11)<a class="headerlink" href="#v3-1-3-2020-03-11" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id63">
+<h3>Fix<a class="headerlink" href="#id63" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/delay-import-of-distributed-module  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/83">#83</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id65">
+<h3>Other<a class="headerlink" href="#id65" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/standardize-flake8-settings  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/84">#84</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-2-2020-03-06">
+<h2>v3.1.2 (2020-03-06)<a class="headerlink" href="#v3-1-2-2020-03-06" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id67">
+<h3>New<a class="headerlink" href="#id67" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/get-physical-pixel-size  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/80">#80</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id69">
+<h3>Other<a class="headerlink" href="#id69" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/add-back-codecov  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/81">#81</a>)
+[JacksonMaxfield]</p></li>
+<li><p>admin/changelog-link-to-prs  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/77">#77</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-1-2020-02-21">
+<h2>v3.1.1 (2020-02-21)<a class="headerlink" href="#v3-1-1-2020-02-21" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id72">
+<h3>Fix<a class="headerlink" href="#id72" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>bugfix/make-aicsimage-serializable (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/74">#74</a>)
+[JacksonMaxfield]</p></li>
+<li><p>bugfix/return-none-cluster  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/73">#73</a>) [Jamie
+Sherman]</p></li>
+</ul>
+</div>
+<div class="section" id="id75">
+<h3>Other<a class="headerlink" href="#id75" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>admin/auto-changelog  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/75">#75</a>)
+[JacksonMaxfield]</p></li>
+<li><p>admin/test-py38  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/76">#76</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-1-0-2020-02-03">
+<h2>v3.1.0 (2020-02-03)<a class="headerlink" href="#v3-1-0-2020-02-03" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id78">
+<h3>New<a class="headerlink" href="#id78" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>feature/use-dask  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/63">#63</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+<div class="section" id="id80">
+<h3>Fix<a class="headerlink" href="#id80" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Fix pypi publish action [Jackson Brown]</p></li>
+<li><p>bugfix/auto-doc-gen  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/70">#70</a>)
+[JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-7-2019-11-05">
+<h2>v3.0.7 (2019-11-05)<a class="headerlink" href="#v3-0-7-2019-11-05" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Remove make clean command from make docs call  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/49">#49</a>)
+[JacksonMaxfield]</p></li>
+<li><p>populate_tiffdata should respect dimension order  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/48">#48</a>)
+[toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-6-2019-10-31">
+<h2>v3.0.6 (2019-10-31)<a class="headerlink" href="#v3-0-6-2019-10-31" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id84">
+<h3>New<a class="headerlink" href="#id84" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Feature/physical pixel size  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/43">#43</a>)
+[toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="id86">
+<h3>Fix<a class="headerlink" href="#id86" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>fix imread bug and allow AICSImage class to close its reader  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/44">#44</a>)
+[toloudis]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-5-2019-10-30">
+<h2>v3.0.5 (2019-10-30)<a class="headerlink" href="#v3-0-5-2019-10-30" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>clean up from PR comments [Daniel Toloudis]</p></li>
+<li><p>add get_channel_names to AICSImage class [Daniel Toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-4-2019-10-28">
+<h2>v3.0.4 (2019-10-28)<a class="headerlink" href="#v3-0-4-2019-10-28" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>add size getters to the AICSImage class  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/38">#38</a>)
+[toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-3-2019-10-25">
+<h2>v3.0.3 (2019-10-25)<a class="headerlink" href="#v3-0-3-2019-10-25" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id89">
+<h3>Fix<a class="headerlink" href="#id89" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>fix linting [Daniel Toloudis]</p></li>
+<li><p>fix png writer and tests [Daniel Toloudis]</p></li>
+<li><p>fix linter [Daniel Toloudis]</p></li>
+<li><p>fix png writer and tests [Daniel Toloudis]</p></li>
+</ul>
+</div>
+<div class="section" id="id90">
+<h3>Other<a class="headerlink" href="#id90" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Remove patch coverage check  (<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/pull/36">#36</a>)
+[JacksonMaxfield]</p></li>
+<li><p>pull request code review revisions [Dan Toloudis]</p></li>
+<li><p>Revert “fix png writer and tests” [Daniel Toloudis]</p></li>
+<li><p>use old default for dimension_order so that existing code does not
+break [Daniel Toloudis]</p></li>
+<li><p>add a unit test for dimension_order and refactor test_ome_tiff_writer
+[Daniel Toloudis]</p></li>
+<li><p>allow dimension order in ome-tiff writer [Daniel Toloudis]</p></li>
+<li><p>remove accidentally added file [Daniel Toloudis]</p></li>
+<li><p>Remove CRON from doc build workflow [Jackson Brown]</p></li>
+<li><p>Remove double builds from github actions [Jackson Brown]</p></li>
+<li><p>Wrap CRON string in quotes [Jackson Brown]</p></li>
+<li><p>Update CRON strings [Jackson Brown]</p></li>
+<li><p>Do not build documentation for tests module [Jackson Brown]</p></li>
+<li><p>Update makefile to remove all generated rst’s on doc gen [Jackson
+Brown]</p></li>
+<li><p>Update czireader import so that it doesn’t fail on etree [Jackson
+Brown]</p></li>
+<li><p>Move documentation badge to before codecov [JacksonMaxfield]</p></li>
+<li><p>Update readme to have doc badge [JacksonMaxfield]</p></li>
+<li><p>Add doc generation workflow [JacksonMaxfield]</p></li>
+<li><p>Add required documentation files and update requirements
+[JacksonMaxfield]</p></li>
+<li><p>Update task version pins to point at master / latest [JacksonMaxfield]</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="v3-0-2-2019-10-11">
+<h2>v3.0.2 (2019-10-11)<a class="headerlink" href="#v3-0-2-2019-10-11" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Pull in feedback from team [Jackson Brown]</p></li>
+<li><p>Update README to include known_dim functionality [Jackson Brown]</p></li>
+<li><p>Add test for invalid dim names [Jackson Brown]</p></li>
+<li><p>Resolves [gh-22], allow passing of known dim order to AICSImage
+[Jackson Brown]</p></li>
+<li><p>Resolves [gh-23], use OME-Tiff metadata to parse dim sizes and order
+[Jackson Brown]</p></li>
+</ul>
+</div>
+<div class="section" id="v3-0-1-2019-10-04">
+<h2>v3.0.1 (2019-10-04)<a class="headerlink" href="#v3-0-1-2019-10-04" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Label Quickstart code block as python [Jackson Brown]</p></li>
+<li><p>Update setup.cfg to properly bumpversion [Jackson Brown]</p></li>
+<li><p>Rename build workflow to build master [Jackson Brown]</p></li>
+<li><p>Update to new cookiecutter gh templates after matts feedback [Jackson
+Brown]</p></li>
+<li><p>Remove cov report html from actions as not needed on remote [Jackson
+Brown]</p></li>
+<li><p>Add PR to test and lint action triggers [Jackson Brown]</p></li>
+<li><p>Remove references to quilt3distribute that were copied over [Jackson
+Brown]</p></li>
+<li><p>Update CI/CD, README badge, local developement, and contributing docs
+[Jackson Brown]</p></li>
+<li><p>CODE_OF_CONDUCT.md [Jamie Sherman]</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

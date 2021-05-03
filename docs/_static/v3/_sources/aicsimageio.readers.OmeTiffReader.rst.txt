@@ -1,0 +1,48 @@
+aicsimageio.readers.OmeTiffReader
+=================================
+
+.. currentmodule:: aicsimageio.readers
+
+.. autoclass:: OmeTiffReader
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OmeTiffReader.__init__
+      ~OmeTiffReader.get_image_dask_data
+      ~OmeTiffReader.get_image_data
+      ~OmeTiffReader.is_supported_image
+      ~OmeTiffReader.set_scene
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~OmeTiffReader.channel_names
+      ~OmeTiffReader.current_scene
+      ~OmeTiffReader.current_scene_index
+      ~OmeTiffReader.dask_data
+      ~OmeTiffReader.data
+      ~OmeTiffReader.dims
+      ~OmeTiffReader.dtype
+      ~OmeTiffReader.metadata
+      ~OmeTiffReader.mosaic_dask_data
+      ~OmeTiffReader.mosaic_data
+      ~OmeTiffReader.mosaic_xarray_dask_data
+      ~OmeTiffReader.mosaic_xarray_data
+      ~OmeTiffReader.physical_pixel_sizes
+      ~OmeTiffReader.scenes
+      ~OmeTiffReader.shape
+      ~OmeTiffReader.xarray_dask_data
+      ~OmeTiffReader.xarray_data
+   
+   

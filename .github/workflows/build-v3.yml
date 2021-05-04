@@ -1,14 +1,9 @@
-name: Build Master
+name: Build V3
 
 on:
   push:
     branches:
-      - master
-  schedule:
-    # <minute [0,59]> <hour [0,23]> <day of the month [1,31]> <month of the year [1,12]> <day of the week [0,6]>
-    # https://pubs.opengroup.org/onlinepubs/9699919799/utilities/crontab.html#tag_20_25_07
-    # Run every Monday at 18:00:00 UTC (Monday at 10:00:00 PST)
-    - cron: "0 18 * * 1"
+      - v3
 
 jobs:
   test:
@@ -35,7 +30,6 @@ jobs:
       - name: Test with pytest
         run: |
           pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/
-          codecov -t ${{ secrets.CODECOV_TOKEN }}
 
   lint:
     runs-on: ubuntu-latest
@@ -54,3 +48,27 @@ jobs:
         run: |
           flake8 aicsimageio --count --verbose --show-source --statistics
           black --check --exclude vendor aicsimageio
+
+  publish:
+    if: "contains(github.event.head_commit.message, 'Bump version')"
+    needs: [test, lint]
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.9
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel
+    - name: Build Package
+      run: |
+        python setup.py sdist bdist_wheel
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: aicspypi
+        password: ${{ secrets.PYPI_TOKEN }}

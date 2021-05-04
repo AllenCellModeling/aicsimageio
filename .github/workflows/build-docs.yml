@@ -23,14 +23,18 @@ jobs:
       with:
         fetch-depth: 0
         ref: v3
-        path: ../aicsimageio-v3/
+        path: .aicsimageio-v3/
     - name: Generate v3 Docs
       run: |
-        cd ../aicsimageio-v3/
+        cd .aicsimageio-v3/
         pip install -e .[dev]
         gitchangelog
         make docs
-        cp -r docs/_build/html/ ../aicsimageio/docs/_static/v3/
+        mkdir -p ../docs/_static/v3/
+        cp -r docs/_build/html/* ../docs/_static/v3/
+    - name: Cleanup v3 Resources
+      run: |
+        rm -Rf .aicsimageio-v3/
   
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1

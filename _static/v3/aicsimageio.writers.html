@@ -1,0 +1,585 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.writers package &mdash; aicsimageio 3.3.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Benchmarks" href="benchmarks.html" />
+    <link rel="prev" title="aicsimageio.vendor package" href="aicsimageio.vendor.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Package modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="benchmarks.html#configs">Configs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="benchmarks.html#running-the-tests">Running the Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#unreleased">(unreleased)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#fix">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id8">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id13">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id15">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id17">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id20">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id22">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id29">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id33">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id35">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id37">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id39">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id46">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id49">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id52">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id54">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id60">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id64">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">aicsimageio</a> &raquo;</li>
+        
+          <li><a href="aicsimageio.html">aicsimageio package</a> &raquo;</li>
+        
+      <li>aicsimageio.writers package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/aicsimageio.writers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="benchmarks.html" class="btn btn-neutral float-right" title="Benchmarks" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="aicsimageio.vendor.html" class="btn btn-neutral float-left" title="aicsimageio.vendor package" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="aicsimageio-writers-package">
+<h1>aicsimageio.writers package<a class="headerlink" href="#aicsimageio-writers-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-aicsimageio.writers.ome_tiff_writer">
+<span id="aicsimageio-writers-ome-tiff-writer-module"></span><h2>aicsimageio.writers.ome_tiff_writer module<a class="headerlink" href="#module-aicsimageio.writers.ome_tiff_writer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.ome_tiff_writer.</code><code class="sig-name descname">OmeTiffWriter</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">overwrite_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class can take arrays of pixel values and do the necessary metadata
+creation to write them properly in OME xml format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – Path to image output location</p></li>
+<li><p><strong>overwrite_file</strong> – Flag to overwrite image or pass over image if it already exists.
+None: (default) throw IOError if file exists
+True: overwrite existing file if file exists
+False: silently perform no write actions if file exists</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file.ome.tif&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the context manager to close the write once done.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">486</span><span class="p">,</span> <span class="mi">210</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file2.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Convert a CZI file into OME-Tiff</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reader</span> <span class="o">=</span> <span class="n">cziReader</span><span class="o">.</span><span class="n">CziReader</span><span class="p">(</span><span class="s2">&quot;file3.czi&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">ome_tiff_writer</span><span class="o">.</span><span class="n">OmeTiffWriter</span><span class="p">(</span><span class="s2">&quot;file3.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer3</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">reader</span><span class="o">.</span><span class="n">load</span><span class="p">())</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">ome_xml=None</em>, <em class="sig-param">channel_names=None</em>, <em class="sig-param">image_name='IMAGE0'</em>, <em class="sig-param">pixels_physical_size=None</em>, <em class="sig-param">channel_colors=None</em>, <em class="sig-param">dimension_order='STZCYX'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an image with the proper OME XML metadata.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>An array of 3, 4, or 5 dimensions to be written out to a file.</em>)</p></li>
+<li><p><strong>ome_xml</strong> (<em>A premade omexml.OMEXML object to use for metadata.</em>)</p></li>
+<li><p><strong>channel_names</strong> (<em>The names for each channel to be put into the OME metadata</em>)</p></li>
+<li><p><strong>image_name</strong> (<em>The name of the image to be put into the OME metadata</em>)</p></li>
+<li><p><strong>pixels_physical_size</strong> (<em>The physical size of each pixel in the image</em>)</p></li>
+<li><p><strong>channel_colors</strong> (<em>The channel colors to be put into the OME metadata</em>)</p></li>
+<li><p><strong>dimension_order</strong> (<em>The dimension ordering in the data array. Will be assumed</em>)</p></li>
+<li><p><strong>STZCYX if not specified</strong></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice">
+<code class="sig-name descname">save_slice</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">z=0</em>, <em class="sig-param">c=0</em>, <em class="sig-param">t=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.save_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>this doesn’t do the necessary functionality at this point</p>
+<dl class="simple">
+<dt>TODO:</dt><dd><ul class="simple">
+<li><p>make this insert a YX slice in between two other slices inside a full
+image</p></li>
+<li><p>data should be a 5 dim array</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – </p></li>
+<li><p><strong>z</strong> – </p></li>
+<li><p><strong>c</strong> – </p></li>
+<li><p><strong>t</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.set_metadata">
+<code class="sig-name descname">set_metadata</code><span class="sig-paren">(</span><em class="sig-param">ome_metadata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.set_metadata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.set_metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_c">
+<code class="sig-name descname">size_c</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.size_c"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_c" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_t">
+<code class="sig-name descname">size_t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.size_t"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_t" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_x">
+<code class="sig-name descname">size_x</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.size_x"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_y">
+<code class="sig-name descname">size_y</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.size_y"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_y" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_z">
+<code class="sig-name descname">size_z</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/ome_tiff_writer.html#OmeTiffWriter.size_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.size_z" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.writers.png_writer">
+<span id="aicsimageio-writers-png-writer-module"></span><h2>aicsimageio.writers.png_writer module<a class="headerlink" href="#module-aicsimageio.writers.png_writer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.writers.png_writer.PngWriter">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.png_writer.</code><code class="sig-name descname">PngWriter</code><span class="sig-paren">(</span><em class="sig-param">file_path</em>, <em class="sig-param">overwrite_file=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class can take 3D arrays of CYX pixel values and writes them to a PNG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> – Path to image output location</p></li>
+<li><p><strong>overwrite_file</strong> – Flag to overwrite image or pass over image if it already exists.
+None : (default) throw IOError if file exists.
+True : overwrite existing file if file exists.
+False: silently perform no write actions if file exists.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Construct and use as object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">png_writer</span><span class="o">.</span><span class="n">PngWriter</span><span class="p">(</span><span class="s2">&quot;file.png&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Construct within a context manager</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">png_writer</span><span class="o">.</span><span class="n">PngWriter</span><span class="p">(</span><span class="s2">&quot;file2.png&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="aicsimageio.writers.png_writer.PngWriter.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.png_writer.PngWriter.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes in an array of CYX pixel values and writes them to a PNG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> – A CYX or YX array with C being the rgb channels for each pixel value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.png_writer.PngWriter.save_slice">
+<code class="sig-name descname">save_slice</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">z=0</em>, <em class="sig-param">c=0</em>, <em class="sig-param">t=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/png_writer.html#PngWriter.save_slice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.png_writer.PngWriter.save_slice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly the same functionality as save() but allows the interface to be the
+same as OmeTiffWriter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A CYX or YX array with C being the rgb channels for each pixel value.</p></li>
+<li><p><strong>z</strong> – An arbitrary Z index that does nothing.</p></li>
+<li><p><strong>c</strong> – An arbitrary C index that does nothing.</p></li>
+<li><p><strong>t</strong> – An arbitrary T index that does nothing.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.writers.writer">
+<span id="aicsimageio-writers-writer-module"></span><h2>aicsimageio.writers.writer module<a class="headerlink" href="#module-aicsimageio.writers.writer" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="aicsimageio.writers.writer.Writer">
+<em class="property">class </em><code class="sig-prename descclassname">aicsimageio.writers.writer.</code><code class="sig-name descname">Writer</code><span class="sig-paren">(</span><em class="sig-param">file_path: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Write STCZYX data arrays to file, with accompanying metadata
+Will overwrite existing files of same name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>types.PathLike</em>) – Path to image output location</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Construct and use as object</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="mi">2048</span><span class="p">])</span>
+<span class="gp">... </span><span class="n">writer</span> <span class="o">=</span> <span class="n">DerivedWriter</span><span class="p">(</span><span class="s2">&quot;file.ome.tif&quot;</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="gp">... </span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Construct with a context manager</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">image2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ndarray</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span> <span class="mi">486</span><span class="p">,</span> <span class="mi">210</span><span class="p">])</span>
+<span class="gp">... </span><span class="k">with</span> <span class="n">DerivedWriter</span><span class="p">(</span><span class="s2">&quot;file2.ome.tif&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer2</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="n">myMetaData</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">writer2</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="aicsimageio.writers.writer.Writer.close">
+<em class="property">abstract </em><code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close file objects</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="aicsimageio.writers.writer.Writer.save">
+<em class="property">abstract </em><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">dims='STCZYX'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/aicsimageio/writers/writer.html#Writer.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#aicsimageio.writers.writer.Writer.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write to open file</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsimageio.writers">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio.writers" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

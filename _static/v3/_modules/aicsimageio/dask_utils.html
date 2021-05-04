@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.dask_utils &mdash; aicsimageio 3.3.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarks.html#configs">Configs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#running-the-tests">Running the Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id17">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id20">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id29">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id33">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id37">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id39">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id46">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id49">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id52">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id54">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id60">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id64">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.dask_utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.dask_utils</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">distributed</span> <span class="kn">import</span> <span class="n">Client</span><span class="p">,</span> <span class="n">LocalCluster</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="spawn_cluster_and_client"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.dask_utils.spawn_cluster_and_client">[docs]</a><span class="k">def</span> <span class="nf">spawn_cluster_and_client</span><span class="p">(</span>
+    <span class="n">address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If provided an address, create a Dask Client connection.</span>
+<span class="sd">    If not provided an address, create a LocalCluster and Client connection.</span>
+<span class="sd">    If not provided an address, other Dask kwargs are accepted and passed down to the</span>
+<span class="sd">    LocalCluster object.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this function, the processing machine or container must have networking</span>
+<span class="sd">    capabilities enabled to function properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">address</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">address</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to Remote Dask Cluster: </span><span class="si">{</span><span class="n">client</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cluster</span> <span class="o">=</span> <span class="n">LocalCluster</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">client</span> <span class="o">=</span> <span class="n">Client</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Connected to Local Dask Cluster: </span><span class="si">{</span><span class="n">client</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="shutdown_cluster_and_client"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.dask_utils.shutdown_cluster_and_client">[docs]</a><span class="k">def</span> <span class="nf">shutdown_cluster_and_client</span><span class="p">(</span>
+    <span class="n">cluster</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">],</span> <span class="n">client</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">LocalCluster</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Client</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shutdown a cluster and client.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this function, the processing machine or container must have networking</span>
+<span class="sd">    capabilities enabled to function properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cluster</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cluster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">client</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_client"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.dask_utils.cluster_and_client">[docs]</a><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">cluster_and_client</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If provided an address, create a Dask Client connection.</span>
+<span class="sd">    If not provided an address, create a LocalCluster and Client connection.</span>
+<span class="sd">    If not provided an address, other Dask kwargs are accepted and passed down to the</span>
+<span class="sd">    LocalCluster object.</span>
+
+<span class="sd">    These objects will only live for the duration of this context manager.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; with cluster_and_client() as (cluster, client):</span>
+<span class="sd">    ...     img1 = AICSImage(&quot;1.tiff&quot;)</span>
+<span class="sd">    ...     img2 = AICSImage(&quot;2.czi&quot;)</span>
+<span class="sd">    ...     other processing</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When using this context manager, the processing machine or container must have</span>
+<span class="sd">    networking capabilities enabled to function properly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cluster</span><span class="p">,</span> <span class="n">client</span> <span class="o">=</span> <span class="n">spawn_cluster_and_client</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">client</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">shutdown_cluster_and_client</span><span class="p">(</span><span class="n">cluster</span><span class="o">=</span><span class="n">cluster</span><span class="p">,</span> <span class="n">client</span><span class="o">=</span><span class="n">client</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

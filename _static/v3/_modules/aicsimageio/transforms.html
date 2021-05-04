@@ -1,0 +1,583 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsimageio.transforms &mdash; aicsimageio 3.3.5 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> aicsimageio
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.3.5
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Package modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.vendor.html">aicsimageio.vendor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.buffer_reader">aicsimageio.buffer_reader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.dask_utils">aicsimageio.dask_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">Benchmarks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#results">Results</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../benchmarks.html#configs">Configs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#discussion">Discussion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#historical-benchmarks">Historical Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../benchmarks.html#running-the-tests">Running the Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#unreleased">(unreleased)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#fix">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id17">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id20">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id29">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id33">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id35">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id37">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id39">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id46">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id49">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id52">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id54">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id58">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id60">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id64">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">aicsimageio</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>aicsimageio.transforms</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for aicsimageio.transforms</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">Dimensions</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">ConflictingArgumentsError</span>
+
+<span class="c1">###############################################################################</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="reshape_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.reshape_data">[docs]</a><span class="k">def</span> <span class="nf">reshape_data</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reshape the data into return_dims, pad missing dimensions, and prune extra</span>
+<span class="sd">    dimensions. Warns the user to use the base reader if the depth of the Dimension</span>
+<span class="sd">    being removed is not 1.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions</span>
+<span class="sd">        specified in given_dims</span>
+<span class="sd">    given_dims: str</span>
+<span class="sd">        The dimension ordering of data, &quot;CZYX&quot;, &quot;VBTCXZY&quot; etc</span>
+<span class="sd">    return_dims: str</span>
+<span class="sd">        The dimension ordering of the return data</span>
+<span class="sd">    kwargs:</span>
+<span class="sd">        * C=1 =&gt; desired specific channel, if C in the input data has depth 3 then C=1</span>
+<span class="sd">          returns the 2nd slice (0 indexed)</span>
+<span class="sd">        * Z=10 =&gt; desired specific channel, if Z in the input data has depth 20 then</span>
+<span class="sd">          Z=10 returns the 11th slice</span>
+<span class="sd">        * T=[0, 1] =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=[0, 1] returns the 1st and 2nd slice (0 indexed)</span>
+<span class="sd">        * T=(0, 1) =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=(0, 1) returns the 1st and 2nd slice (0 indexed)</span>
+<span class="sd">        * T=(0, -1) =&gt; desired specific timepoints, if T in the input data has depth 100</span>
+<span class="sd">          then T=(0, -1) returns the first and last slice</span>
+<span class="sd">        * T=range(10) =&gt; desired specific timepoints, if T in the input data has depth</span>
+<span class="sd">          100 then T=range(10) returns the first ten slices</span>
+<span class="sd">        * T=slice(0, -1, 5) =&gt; desired specific timepoints, T=slice(0, -1, 5) returns</span>
+<span class="sd">          every fifth timepoint</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        An array in return_dims order, if return_dims=DEFAULT_DIMS then the return</span>
+<span class="sd">        would have order &quot;STCZYX&quot;</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Specific index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... z1 = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=1)</span>
+
+<span class="sd">    List of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_and_second = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=[0, 1])</span>
+
+<span class="sd">    Tuple of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_and_last = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=(0, -1))</span>
+
+<span class="sd">    Range of index selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... first_three = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=range(3))</span>
+
+<span class="sd">    Slice selection</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... every_other = reshape_data(data, &quot;ZYX&quot;, &quot;YX&quot;, Z=slice(0, -1, 2))</span>
+
+<span class="sd">    Empty dimension expansion</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... with_time = reshape_data(data, &quot;ZYX&quot;, &quot;TZYX&quot;)</span>
+
+<span class="sd">    Dimension order shuffle</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... as_zx_base = reshape_data(data, &quot;ZYX&quot;, &quot;YZX&quot;)</span>
+
+<span class="sd">    Selections, empty dimension expansions, and dimension order shuffle</span>
+
+<span class="sd">    &gt;&gt;&gt; data = np.random.rand((10, 100, 100))</span>
+<span class="sd">    ... example = reshape_data(data, &quot;CYX&quot;, &quot;BSTCZYX&quot;, C=slice(0, -1, 3))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check for parameter conflicts</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrderList</span><span class="p">:</span>
+        <span class="c1"># return_dims=&#39;TCZYX&#39; and fixed dimensions &#39;C=1&#39;</span>
+        <span class="c1"># Dimension is in kwargs</span>
+        <span class="c1"># Dimension is an integer</span>
+        <span class="c1"># Dimension is in return dimensions</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;When selecting a single dimension index, the specified dimension can &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;not be provided in return_dims. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2">, dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># return_dims=&#39;CZYX&#39; and iterable dimensions &#39;T=range(10)&#39;</span>
+        <span class="c1"># Dimension is in kwargs</span>
+        <span class="c1"># Dimension is an iterable</span>
+        <span class="c1"># Dimension is not in return dimensions</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">range</span><span class="p">,</span> <span class="nb">slice</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">return_dims</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;When selecting a multiple dimension indicies, the specified &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;dimension must be provided in return_dims. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2">, dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># Process each dimension available</span>
+    <span class="n">new_dims</span> <span class="o">=</span> <span class="n">given_dims</span>
+    <span class="n">dim_specs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">:</span>
+        <span class="c1"># Store index of the dim as it is in given data</span>
+        <span class="n">dim_index</span> <span class="o">=</span> <span class="n">given_dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Handle dim in return dims which means that it is</span>
+        <span class="c1"># an iterable or None selection</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
+            <span class="c1"># Specific iterable requested</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="c1"># Actual dim specification</span>
+                <span class="c1"># The specification provided for this dimension in the kwargs</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># Convert operator to standard list or slice</span>
+                <span class="c1"># dask.Array and numpy.ndarray both natively support</span>
+                <span class="c1"># List[int] and slices being passed to getitem so no need to cast them</span>
+                <span class="c1"># to anything different</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">range</span><span class="p">)):</span>
+                    <span class="n">dim_spec</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)</span>
+
+                <span class="c1"># Get the largest absolute value index in the list using min and max</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">check_selection_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)),</span> <span class="nb">max</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)])</span>
+
+                <span class="c1"># Get the largest absolute value index from start and stop of slice</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">,</span> <span class="nb">slice</span><span class="p">):</span>
+                    <span class="n">check_selection_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">dim_spec</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dim_spec</span><span class="o">.</span><span class="n">start</span><span class="p">)])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Nothing was requested from this dimension</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># No op means that it doesn&#39;t matter how much data is in this dimension</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Not in given dims means that it is a fixed integer selection</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="c1"># Integer requested</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+
+                <span class="c1"># Check that integer</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="n">dim_spec</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Dimension wasn&#39;t included in kwargs, default to zero</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Data has dimension </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2"> with depth </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;assuming </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=0 is the desired value, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;if not the case specify </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=x where &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;x is an integer, list, tuple, range, or slice.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">dim_spec</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">display_dim_spec</span> <span class="o">=</span> <span class="n">dim_spec</span>
+                <span class="n">check_selection_max</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="c1"># Remove dim from new dims as it is fixed size</span>
+            <span class="n">new_dims</span> <span class="o">=</span> <span class="n">new_dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check that fixed integer request isn&#39;t outside of request</span>
+        <span class="k">if</span> <span class="n">check_selection_max</span> <span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension specified with </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">display_dim_spec</span><span class="si">}</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but Dimension shape is </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dim_index</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># All checks and operations passed, append dim operation to getitem ops</span>
+        <span class="n">dim_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim_spec</span><span class="p">)</span>
+
+    <span class="c1"># Run getitems</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">dim_specs</span><span class="p">)]</span>
+
+    <span class="c1"># Add empty dims where dimensions were requested but data doesn&#39;t exist</span>
+    <span class="c1"># Add dimensions to new dims where empty dims are added</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">return_dims</span><span class="p">):</span>
+        <span class="c1"># This dimension wasn&#39;t processed</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">:</span>
+            <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">new_dims</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span><span class="si">}{</span><span class="n">dim</span><span class="si">}{</span><span class="n">new_dims</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">:])</span>
+
+    <span class="c1"># Any extra dimensions have been removed, only a problem if the depth is &gt; 1</span>
+    <span class="k">return</span> <span class="n">transpose_to_dims</span><span class="p">(</span>
+        <span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">new_dims</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">return_dims</span>
+    <span class="p">)</span>  <span class="c1"># don&#39;t pass kwargs or 2 copies</span></div>
+
+
+<div class="viewcode-block" id="transpose_to_dims"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.transpose_to_dims">[docs]</a><span class="k">def</span> <span class="nf">transpose_to_dims</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
+    <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This shuffles the data dimensions from given_dims to return_dims. Each dimension</span>
+<span class="sd">    must be present in given_dims must be used in return_dims</span>
+
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        Either a dask array or numpy.ndarray of arbitrary shape but with the dimensions</span>
+<span class="sd">        specified in given_dims</span>
+<span class="sd">    given_dims: str</span>
+<span class="sd">        The dimension ordering of data, &quot;CZYX&quot;, &quot;VBTCXZY&quot; etc</span>
+<span class="sd">    return_dims: str</span>
+<span class="sd">        The dimension ordering of the return data</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    data: types.ArrayLike</span>
+<span class="sd">        An array in return_dims order, if return_dims=DEFAULT_DIMS then the return</span>
+<span class="sd">        would have order &quot;STCZYX&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use a counter to track that the contents are composed of the same letters</span>
+    <span class="c1"># and that no letter is repeated</span>
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="n">Counter</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">return_dims</span><span class="p">)</span>
+        <span class="ow">or</span> <span class="nb">max</span><span class="p">(</span><span class="n">Counter</span><span class="p">(</span><span class="n">given_dims</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span>
+    <span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;given_dims=</span><span class="si">{</span><span class="n">given_dims</span><span class="si">}</span><span class="s2"> and return_dims=</span><span class="si">{</span><span class="n">return_dims</span><span class="si">}</span><span class="s2"> are incompatible.&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># Resort the data into return_dims order</span>
+    <span class="n">match_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">dim</span><span class="p">:</span> <span class="n">given_dims</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span> <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">given_dims</span><span class="p">}</span>
+    <span class="n">transposer</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">return_dims</span><span class="p">:</span>
+        <span class="n">transposer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match_map</span><span class="p">[</span><span class="n">dim</span><span class="p">])</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">transposer</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2020, Allen Institute for Cell Science.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

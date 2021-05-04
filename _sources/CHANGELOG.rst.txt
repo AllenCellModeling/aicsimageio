@@ -80,6 +80,9 @@ Fix
 
 Other
 ~~~~~
+- admin/copy-v3 docs-to-static  (`#233
+  <https://github.com/AllenCellModeling/aicsimageio/pull/233>`_)
+  [Jackson Maxfield Brown]
 - admin/split-reader-deps  (`#221
   <https://github.com/AllenCellModeling/aicsimageio/pull/221>`_)
   [Jackson Maxfield Brown]

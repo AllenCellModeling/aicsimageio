@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://AllenCellModeling.github.io/aicsimageio/)
-[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
+[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AllenCellModeling/aicsimageio/branch/main)
 
 Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python
 
@@ -10,25 +10,25 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
 
 ## Features
 
--   Supports reading metadata and imaging data for:
-    -   `OME-TIFF`
-    -   `TIFF`
-    -   `CZI` -- (`pip install aicsimageio[czi]`)
-    -   `LIF` -- (`pip install aicsimageio[lif]`)
-    -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
--   Supports writing metadata and imaging data for:
-    -   `OME-TIFF`
-    -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
--   Supports reading and writing to
-    [fsspec](https://github.com/intake/filesystem_spec) supported file systems
-    wherever possible:
+- Supports reading metadata and imaging data for:
+  - `OME-TIFF`
+  - `TIFF`
+  - `CZI` -- (`pip install aicsimageio[czi]`)
+  - `LIF` -- (`pip install aicsimageio[lif]`)
+  - `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
+- Supports writing metadata and imaging data for:
+  - `OME-TIFF`
+  - `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
+- Supports reading and writing to
+  [fsspec](https://github.com/intake/filesystem_spec) supported file systems
+  wherever possible:
 
-    -   Local paths (i.e. `my-file.png`)
-    -   HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
-    -   [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
-    -   [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
+  - Local paths (i.e. `my-file.png`)
+  - HTTP URLs (i.e. `https://my-domain.com/my-file.png`)
+  - [s3fs](https://github.com/dask/s3fs) (i.e. `s3://my-bucket/my-file.png`)
+  - [gcsfs](https://github.com/dask/gcsfs) (i.e. `gcs://my-bucket/my-file.png`)
 
-    See [Cloud IO Support](#cloud-io-support) for more details.
+  See [Cloud IO Support](#cloud-io-support) for more details.
 
 ## Installation
 
@@ -44,9 +44,9 @@ TIFF and OME-TIFF reading and writing is always available after
 installing `aicsimageio`, but extra supported formats can be
 optionally installed using `[...]` syntax.
 
--   For a single additional supported format (i.e. CZI): `pip install aicsimageio[czi]`
--   For multiple additional supported formats: `pip install aicsimageio[czi,lif]`
--   For all additional supported formats: `pip install aicsimageio[all]`
+- For a single additional supported format (i.e. CZI): `pip install aicsimageio[czi]`
+- For multiple additional supported formats: `pip install aicsimageio[czi,lif]`
+- For all additional supported formats: `pip install aicsimageio[all]`
 
 ## Documentation
 
@@ -205,8 +205,8 @@ img = AICSImage("gcs://my-bucket/my_file.tiff")
 Remote reading requires that the file-system specification implementation for the
 target backend is installed.
 
--   For `s3`: `pip install s3fs`
--   For `gs`: `pip install gcsfs`
+- For `s3`: `pip install s3fs`
+- For `gs`: `pip install gcsfs`
 
 See the [list of known implementations](https://filesystem-spec.readthedocs.io/en/latest/?badge=latest#implementations).
 

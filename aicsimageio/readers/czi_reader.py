@@ -269,42 +269,20 @@ class CziReader(Reader):
                 # If the dimension is not None, use the provided value
                 plane_indices: Dict[str, int] = {"S": scene}
 
-                # Handle MosaicTile
-                indexes = CziReader._dim_helper(
+                for dim in [
                     DimensionNames.MosaicTile,
-                    use_selected_or_np_map,
-                    np_index,
-                    retrieve_dims,
-                )
-                if indexes is not None:
-                    plane_indices[DimensionNames.MosaicTile] = indexes
-
-                # Handle Time
-                indexes = CziReader._dim_helper(
-                    DimensionNames.Time, use_selected_or_np_map, np_index, retrieve_dims
-                )
-                if indexes is not None:
-                    plane_indices[DimensionNames.Time] = indexes
-
-                # Handle Channels
-                indexes = CziReader._dim_helper(
+                    DimensionNames.Time,
                     DimensionNames.Channel,
-                    use_selected_or_np_map,
-                    np_index,
-                    retrieve_dims,
-                )
-                if indexes is not None:
-                    plane_indices[DimensionNames.Channel] = indexes
-
-                # Handle SpatialZ
-                indexes = CziReader._dim_helper(
                     DimensionNames.SpatialZ,
-                    use_selected_or_np_map,
-                    np_index,
-                    retrieve_dims,
-                )
-                if indexes is not None:
-                    plane_indices[DimensionNames.SpatialZ] = indexes
+                ]:
+                    indexes = CziReader._dim_helper(
+                        dim,
+                        use_selected_or_np_map,
+                        np_index,
+                        retrieve_dims,
+                    )
+                    if indexes is not None:
+                        plane_indices[dim] = indexes
 
                 # Append the retrieved plane as a numpy array
                 plane, scene_dims = czi.read_image(**plane_indices)

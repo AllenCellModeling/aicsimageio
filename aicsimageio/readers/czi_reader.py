@@ -404,7 +404,7 @@ class CziReader(Reader):
                 non_chunk_dim_order.append(dim)
                 non_chunk_shape.append(size)
 
-        pixel_type = PIXEL_DICT[czi.pixel_type]
+        pixel_type = PIXEL_DICT.get(czi.pixel_type)
 
         if pixel_type is None:
             raise TypeError(f"Pixel Type: {czi.pixel_type} not supported!")

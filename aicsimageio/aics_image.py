@@ -32,6 +32,18 @@ class AICSImage:
     reader: Optional[types.ReaderType]
         The Reader class to specifically use for reading the provided image.
         Default: None (find matching reader)
+    reconstruct_mosaic: bool
+        Boolean for setting that data for this object to the reconstructed / stitched
+        mosaic image.
+        Default: True (reconstruct the mosaic image from tiles)
+        Notes: If True and image is a mosaic, data will be fully reconstructed and
+        stitched array.
+        If True and base reader doesn't support tile stitching, data won't be stitched
+        and instead will have an `M` dimension for tiles.
+        If False and image is a mosaic, data won't be stitched and instead will have an
+        `M` dimension for tiles.
+        If image is not a mosaic, data won't be stitched or have an `M` dimension for
+        tiles.
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -74,6 +86,23 @@ class AICSImage:
     internally. Useful when reading from remote sources to reduce network round trips.
 
     >>> img = AICSImage("malformed_metadata.ome.tiff", reader=readers.TiffReader)
+
+    Data for a mosaic file is returned pre-stitched (if the base reader supports it).
+
+    >>> img = AICSImage("big_mosaic.czi")
+    ... img.dims  # <Dimensions [T: 40, C: 3, Z: 1, Y: 30000, X: 45000]>
+
+    Data for mosaic file can be explicitly returned as tiles.
+    This is the same data as a reconstructed mosaic except that the tiles are
+    stored in their own dimension (M).
+
+    >>> img = AICSImage("big_mosaic.czi", reconstruct_mosaic=False)
+    ... img.dims  # <Dimensions [M: 150, T: 40, C: 3, Z: 1, Y: 200, X: 300]>
+
+    Data is mosaic file but reader doesn't support tile stitching.
+
+    >>> img = AICSImage("unsupported_mosaic.ext")
+    ... img.dims  # <Dimensions [M: 100, T: 1, C: 2, Z: 1, Y: 400, X: 400]>
 
     Notes
     -----
@@ -160,6 +189,7 @@ class AICSImage:
         self,
         image: types.ImageLike,
         reader: Optional[ReaderType] = None,
+        reconstruct_mosaic: bool = True,
         **kwargs: Any,
     ):
         if reader is None:
@@ -171,6 +201,9 @@ class AICSImage:
 
         # Init and store reader
         self._reader = ReaderClass(image, **kwargs)
+
+        # Store delayed modifiers
+        self._reconstruct_mosaic = reconstruct_mosaic
 
         # Lazy load data from reader and reformat to standard dimensions
         self._xarray_dask_data: Optional[xr.DataArray] = None
@@ -268,9 +301,18 @@ class AICSImage:
         self,
         arr: xr.DataArray,
     ) -> xr.DataArray:
-        # Determine if we include Samples dim or not
-        if dimensions.DimensionNames.Samples in arr.dims:
+        # Determine if we need to add optionally-standard dims
+        if (
+            dimensions.DimensionNames.Samples in arr.dims
+            and dimensions.DimensionNames.MosaicTile in arr.dims
+        ):
+            return_dims = (
+                dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES_AND_SAMPLES
+            )
+        elif dimensions.DimensionNames.Samples in arr.dims:
             return_dims = dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
+        elif dimensions.DimensionNames.MosaicTile in arr.dims:
+            return_dims = dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES
         else:
             return_dims = dimensions.DEFAULT_DIMENSION_ORDER
 
@@ -316,12 +358,26 @@ class AICSImage:
         If the image contains mosaic tiles, data is returned already stitched together.
         """
         if self._xarray_dask_data is None:
-            if dimensions.DimensionNames.MosaicTile in self.reader.dims.order:
-                self._xarray_dask_data = (
-                    self._transform_data_array_to_aics_image_standard(
-                        self.reader.mosaic_xarray_dask_data
+            if (
+                # Does the user want to get stitched mosaic
+                self._reconstruct_mosaic
+                # Does the data have a tile dim
+                and dimensions.DimensionNames.MosaicTile in self.reader.dims.order
+            ):
+                try:
+                    self._xarray_dask_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.mosaic_xarray_dask_data
+                        )
                     )
-                )
+
+                # Catch reader does not support tile stitching
+                except NotImplementedError:
+                    self._xarray_dask_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.xarray_dask_data
+                        )
+                    )
 
             else:
                 self._xarray_dask_data = (
@@ -346,10 +402,26 @@ class AICSImage:
         Recommended to use `xarray_dask_data` for large mosaic images.
         """
         if self._xarray_data is None:
-            if dimensions.DimensionNames.MosaicTile in self.reader.dims.order:
-                self._xarray_data = self._transform_data_array_to_aics_image_standard(
-                    self.reader.mosaic_xarray_data
-                )
+            if (
+                # Does the user want to get stitched mosaic
+                self._reconstruct_mosaic
+                # Does the data have a tile dim
+                and dimensions.DimensionNames.MosaicTile in self.reader.dims.order
+            ):
+                try:
+                    self._xarray_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.mosaic_xarray_data
+                        )
+                    )
+
+                # Catch reader does not support tile stitching
+                except NotImplementedError:
+                    self._xarray_data = (
+                        self._transform_data_array_to_aics_image_standard(
+                            self.reader.xarray_data
+                        )
+                    )
 
             else:
                 self._xarray_data = self._transform_data_array_to_aics_image_standard(
@@ -624,6 +696,38 @@ class AICSImage:
         metadata for unit information.
         """
         return self.reader.physical_pixel_sizes
+
+    def get_mosaic_tile_position(
+        self, mosaic_tile_index: int
+    ) -> Optional[Tuple[int, int]]:
+        """
+        Get the absolute position of the top left point for a single mosaic tile.
+        Returns None if the image is not a mosaic.
+
+        Parameters
+        ----------
+        mosaic_tile_index: int
+            The index for the mosaic tile to retrieve position information for.
+
+        Returns
+        -------
+        top: int
+            The Y coordinate for the tile position.
+        left: int
+            The X coordinate for the tile position.
+        """
+        return self.reader.get_mosaic_tile_position(mosaic_tile_index)
+
+    @property
+    def mosaic_tile_dims(self) -> Optional[dimensions.Dimensions]:
+        """
+        Returns
+        -------
+        tile_dims: Optional[Dimensions]
+            The dimensions for each tile in the mosaic image.
+            If the image is not a mosaic image, returns None.
+        """
+        return self.reader.mosaic_tile_dims
 
     def save(
         self,

@@ -10,7 +10,7 @@ with open("README.md") as readme_file:
 
 format_libs = {
     "base-imageio": "imageio[ffmpeg]~=2.9.0",
-    "lif": "readlif~=0.5.1",
+    "lif": "readlif~=0.6.1",
 }
 
 all_formats = [v for v in format_libs.values()]
@@ -23,7 +23,7 @@ test_requirements = [
     *all_formats,
     "black>=19.10b0",
     "codecov>=2.1.4",
-    "distributed~=2.9.0",
+    "distributed>=2021.4.1",
     "docutils>=0.10,<0.16",
     "flake8>=3.8.3",
     "flake8-debugger>=3.2.1",
@@ -33,7 +33,7 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "s3fs~=0.5.1",
+    "s3fs>=2021.4.0",
 ]
 
 dev_requirements = [
@@ -54,8 +54,8 @@ dev_requirements = [
 ]
 
 requirements = [
-    "dask[array]>=2021.1.0",
-    "fsspec~=0.8.4",
+    "dask[array]>=2021.4.1",
+    "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",
     "numpy~=1.16",
     "ome-types~=0.2.4",

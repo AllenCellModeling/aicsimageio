@@ -169,8 +169,12 @@ class CziReader(Reader):
         return dims_shape_dict
 
     @staticmethod
-    def _dim_helper(dim: str, selected: Dict[str, Optional[int]],
-                    np_index: Tuple, retrieve_dims: List) -> Optional[int]:
+    def _dim_helper(
+        dim: str,
+        selected: Dict[str, Optional[int]],
+        np_index: Tuple,
+        retrieve_dims: List,
+    ) -> Optional[int]:
         indices = None
         if dim in selected:
             indices = selected[dim]
@@ -266,34 +270,39 @@ class CziReader(Reader):
                 plane_indices: Dict[str, int] = {"S": scene}
 
                 # Handle MosaicTile
-                indexes = CziReader._dim_helper(DimensionNames.MosaicTile,
-                                                use_selected_or_np_map,
-                                                np_index,
-                                                retrieve_dims)
+                indexes = CziReader._dim_helper(
+                    DimensionNames.MosaicTile,
+                    use_selected_or_np_map,
+                    np_index,
+                    retrieve_dims,
+                )
                 if indexes is not None:
                     plane_indices[DimensionNames.MosaicTile] = indexes
 
                 # Handle Time
-                indexes = CziReader._dim_helper(DimensionNames.Time,
-                                                use_selected_or_np_map,
-                                                np_index,
-                                                retrieve_dims)
+                indexes = CziReader._dim_helper(
+                    DimensionNames.Time, use_selected_or_np_map, np_index, retrieve_dims
+                )
                 if indexes is not None:
                     plane_indices[DimensionNames.Time] = indexes
 
                 # Handle Channels
-                indexes = CziReader._dim_helper(DimensionNames.Channel,
-                                                use_selected_or_np_map,
-                                                np_index,
-                                                retrieve_dims)
+                indexes = CziReader._dim_helper(
+                    DimensionNames.Channel,
+                    use_selected_or_np_map,
+                    np_index,
+                    retrieve_dims,
+                )
                 if indexes is not None:
                     plane_indices[DimensionNames.Channel] = indexes
 
                 # Handle SpatialZ
-                indexes = CziReader._dim_helper(DimensionNames.SpatialZ,
-                                                use_selected_or_np_map,
-                                                np_index,
-                                                retrieve_dims)
+                indexes = CziReader._dim_helper(
+                    DimensionNames.SpatialZ,
+                    use_selected_or_np_map,
+                    np_index,
+                    retrieve_dims,
+                )
                 if indexes is not None:
                     plane_indices[DimensionNames.SpatialZ] = indexes
 

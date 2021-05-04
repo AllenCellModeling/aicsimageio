@@ -1,34 +1,42 @@
 # AICSImageIO
 
-[![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Master/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
-[![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio)
-[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/master/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
+[![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20V3/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
+[![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio/_static/v3/)
+[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/v3/graph/badge.svg)](https://app.codecov.io/gh/AllenCellModeling/aicsimageio/branch/v3)
 
 Delayed Parallel Image Reading for Microscopy Images in Python
 
 ---
 
-## Features
-* Supports reading metadata and imaging data for:
-    * `CZI`
-    * `OME-TIFF`
-    * `TIFF`
-    * `LIF`
-    * Any additional format supported by [imageio](https://github.com/imageio/imageio)
-* Supports writing metadata and imaging data for:
-    * `OME-TIFF`
+## 🚧 This is Version 3 🚧
 
-## Installation
-**Stable Release:** `pip install aicsimageio`<br>
-**Development Head:** `pip install git+https://github.com/AllenCellModeling/aicsimageio.git`
+This branch stores version 3 of `aicsimageio`.
+
+We highly recommend updating to our latest version when possible.
+
+## Features
+
+- Supports reading metadata and imaging data for:
+  - `CZI`
+  - `OME-TIFF`
+  - `TIFF`
+  - `LIF`
+  - Any additional format supported by [imageio](https://github.com/imageio/imageio)
+- Supports writing metadata and imaging data for:
+  - `OME-TIFF`
 
 ## Documentation
-For full package documentation please visit
-[allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
+
+For full **version 3** package documentation please visit
+[allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/_static/v3/).
+
+For the **latest** release documentation please visit
+[allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/).
 
 ## Quick Start
 
 ### Full Image Reading
+
 ```python
 from aicsimageio import AICSImage, imread
 
@@ -44,6 +52,7 @@ data = imread("my_file.tiff")
 ```
 
 ### Delayed Image Reading
+
 ```python
 from aicsimageio import AICSImage, imread_dask
 
@@ -66,6 +75,7 @@ s0t0 = lazy_s0t0.compute()
 ```
 
 #### Quick Start Notes
+
 In short, if the word "dask" appears in the function or property name, the function
 utilizes delayed reading. If not, the requested image will be loaded immediately and
 the internal implementation may result in loading the entire image even if only a small
@@ -76,6 +86,7 @@ until the user calls `compute` on the `dask.Array` object and only the requested
 will be loaded into memory instead of the entire image.
 
 ### Metadata Reading
+
 ```python
 from aicsimageio import AICSImage
 
@@ -86,12 +97,14 @@ img.get_channel_names()  # returns a list of string channel names found in the m
 ```
 
 ## Performance Considerations
-* **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
-or `Reader` equivalents.
-* **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
-`AICSImage.get_image_dask_data`, or `Reader` equivalents.
+
+- **If your image fits in memory:** use `AICSImage.data`, `AICSImage.get_image_data`,
+  or `Reader` equivalents.
+- **If your image is too large to fit in memory:** use `AICSImage.dask_data`,
+  `AICSImage.get_image_dask_data`, or `Reader` equivalents.
 
 ## Napari Interactive Viewer
+
 [napari](https://github.com/Napari/napari) is a fast, interactive, multi-dimensional
 image viewer for python and it is pretty useful for imaging data that this package
 tends to interact with.
@@ -102,19 +115,21 @@ that allows use of all the functionality described in this library, but in the `
 default viewer itself.
 
 ## Notes
-* Image `data` and `dask_data` are always returned as six dimensional in dimension
-order `STCZYX` or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
-* Each file format may use a different metadata parser it is dependent on the reader's
-implementation.
-* The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
-dimensions from the reader.
-If your file has dimensions outside of those, use the base reader classes `CziReader`,
-`OmeTiffReader`, `TiffReader`, or `DefaultReader`.
-* We make some choices for the user based off the image data during `img.view_napari`.
-If you don't want this behavior, simply pass the `img.dask_data` into
-`napari.view_image` instead.
+
+- Image `data` and `dask_data` are always returned as six dimensional in dimension
+  order `STCZYX` or `Scene`, `Time`, `Channel`, `Z`, `Y`, and `X`.
+- Each file format may use a different metadata parser it is dependent on the reader's
+  implementation.
+- The `AICSImage` object will only pull the `Scene`, `Time`, `Channel`, `Z`, `Y`, `X`
+  dimensions from the reader.
+  If your file has dimensions outside of those, use the base reader classes `CziReader`,
+  `OmeTiffReader`, `TiffReader`, or `DefaultReader`.
+- We make some choices for the user based off the image data during `img.view_napari`.
+  If you don't want this behavior, simply pass the `img.dask_data` into
+  `napari.view_image` instead.
 
 ## Development
+
 See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the code.
 
 _Free software: BSD-3-Clause_

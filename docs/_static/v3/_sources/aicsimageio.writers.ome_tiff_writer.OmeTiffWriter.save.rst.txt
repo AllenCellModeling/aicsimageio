@@ -1,6 +1,0 @@
-aicsimageio.writers.ome\_tiff\_writer.OmeTiffWriter.save
-========================================================
-
-.. currentmodule:: aicsimageio.writers.ome_tiff_writer
-
-.. automethod:: OmeTiffWriter.save

@@ -5,14 +5,13 @@ import xml.etree.ElementTree as ET
 from copy import copy
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import _aicspylibczi
 import dask.array as da
 import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
-from .. import constants, exceptions, types, metadata
+from .. import constants, exceptions, metadata, types
 from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
@@ -24,7 +23,7 @@ from ..utils import io_utils
 from .reader import Reader
 
 try:
-    from _aicspylibczi import TileInfo, BBox
+    from _aicspylibczi import BBox, TileInfo
     from aicspylibczi import CziFile
 
 except ImportError:
@@ -40,8 +39,11 @@ CZI_SCENE_DIM_CHAR = "S"
 
 ###############################################################################
 
+
 def _replace_sample_dim(dims: List[str]) -> List[str]:
-    return [dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR for dim in dims]
+    return [
+        dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR for dim in dims
+    ]
 
 
 ###############################################################################
@@ -49,9 +51,12 @@ def _replace_sample_dim(dims: List[str]) -> List[str]:
 
 DEFAULT_CZI_CHUNK_DIMS = _replace_sample_dim(DEFAULT_CHUNK_DIMS)
 REQUIRED_CZI_CHUNK_DIMS = _replace_sample_dim(REQUIRED_CHUNK_DIMS)
-DEFAULT_CZI_DIMENSION_ORDER_LIST = _replace_sample_dim(DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES)
-DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = \
-    _replace_sample_dim(DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES)
+DEFAULT_CZI_DIMENSION_ORDER_LIST = _replace_sample_dim(
+    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
+)
+DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = _replace_sample_dim(
+    DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
+)
 
 
 PIXEL_DICT = {
@@ -61,7 +66,6 @@ PIXEL_DICT = {
     "bgr24": np.uint8,
     "bgr48": np.uint16,
 }
-
 
 
 ###############################################################################
@@ -136,13 +140,13 @@ class CziReader(Reader):
 
         return self._scenes
 
-
     @staticmethod
     def _dims_shape_to_scene_dims_shape(
         dims_shape: List[Dict], scene_index: int, consistent: bool
     ) -> Dict:
         """
-        This function takes the output of `get_dims_shape()` and returns a dictionary of dimensions for the selected scene
+        This function takes the output of `get_dims_shape()` and returns a
+        dictionary of dimensions for the selected scene
 
         Parameters
         ----------
@@ -151,17 +155,18 @@ class CziReader(Reader):
         scene_index: int
             the index of the scene being used
         consistent: bool
-            true if the dictionaries are consistent could be represented compactly (dims_shape with length 1)
+            true if the dictionaries are consistent could be represented
+            compactly (dims_shape with length 1)
 
         Returns
         -------
-        A dictionary of dimensions, ie {"T": (0, 1), "C": (0, 3), "Y": (0, 256), "X":(0, 256)}.
+        A dictionary of dimensions, ie
+        {"T": (0, 1), "C": (0, 3), "Y": (0, 256), "X":(0, 256)}.
         """
         dims_shape_index = 0 if consistent else scene_index
         dims_shape_dict = dims_shape[dims_shape_index]
         dims_shape_dict.pop(CZI_SCENE_DIM_CHAR, None)
         return dims_shape_dict
-
 
     @staticmethod
     def _get_image_data(
@@ -209,7 +214,12 @@ class CziReader(Reader):
             use_selected_or_np_map: Dict[str, Optional[int]] = {}
             for dim, index_op in zip(retrieve_dims, retrieve_indices):
                 if (
-                    dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX, CZI_SAMPLES_DIM_CHAR]
+                    dim
+                    not in [
+                        DimensionNames.SpatialY,
+                        DimensionNames.SpatialX,
+                        CZI_SAMPLES_DIM_CHAR,
+                    ]
                     and dim in dims_shape.keys()
                 ):
                     # Handle slices
@@ -385,9 +395,7 @@ class CziReader(Reader):
         non_chunk_shape = []
         chunk_dim_order = []
         chunk_shape = []
-        for dim, size in zip(
-            valid_dims, selected_scene_shape
-        ):
+        for dim, size in zip(valid_dims, selected_scene_shape):
             if dim in self.chunk_by_dims:
                 chunk_dim_order.append(dim)
                 chunk_shape.append(size)
@@ -575,7 +583,9 @@ class CziReader(Reader):
             self._px_sizes = px_sizes
 
             # Map A (aicspylibczi sAmples) back to aicsimageio Samples
-            dims = [d if d != CZI_SAMPLES_DIM_CHAR else DimensionNames.Samples for d in dims]
+            dims = [
+                d if d != CZI_SAMPLES_DIM_CHAR else DimensionNames.Samples for d in dims
+            ]
 
             return xr.DataArray(
                 image_data,
@@ -763,11 +773,11 @@ class CziReader(Reader):
             d: v
             for d, v in self.xarray_dask_data.coords.items()
             if d
-               not in [
-                   DimensionNames.MosaicTile,
-                   DimensionNames.SpatialY,
-                   DimensionNames.SpatialX,
-               ]
+            not in [
+                DimensionNames.MosaicTile,
+                DimensionNames.SpatialY,
+                DimensionNames.SpatialX,
+            ]
         }
         attrs = copy(self.xarray_dask_data.attrs)
 

@@ -93,7 +93,8 @@ class AICSImage:
     ... img.dims  # <Dimensions [T: 40, C: 3, Z: 1, Y: 30000, X: 45000]>
 
     Data for mosaic file can be explicitly returned as tiles.
-    This is the same data just each tile is it's
+    This is the same data as a reconstructed mosaic except that the tiles are
+    stored in their own dimension (M).
 
     >>> img = AICSImage("big_mosaic.czi", reconstruct_mosaic=False)
     ... img.dims  # <Dimensions [M: 150, T: 40, C: 3, Z: 1, Y: 200, X: 300]>
@@ -696,14 +697,16 @@ class AICSImage:
         """
         return self.reader.physical_pixel_sizes
 
-    def get_mosaic_tile_position(self, M: int) -> Optional[Tuple[int, int]]:
+    def get_mosaic_tile_position(
+        self, mosaic_tile_index: int
+    ) -> Optional[Tuple[int, int]]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
         Returns None if the image is not a mosaic.
 
         Parameters
         ----------
-        M: int
+        mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
 
         Returns
@@ -713,7 +716,7 @@ class AICSImage:
         left: int
             The X coordinate for the tile position.
         """
-        return self.reader.get_mosaic_tile_position(M)
+        return self.reader.get_mosaic_tile_position(mosaic_tile_index)
 
     @property
     def mosaic_tile_dims(self) -> Optional[dimensions.Dimensions]:

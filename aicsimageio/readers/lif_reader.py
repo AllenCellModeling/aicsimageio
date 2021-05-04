@@ -641,13 +641,13 @@ class LifReader(Reader):
 
         return self._px_sizes  # type: ignore
 
-    def get_mosaic_tile_position(self, M: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
 
         Parameters
         ----------
-        M: int
+        mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
 
         Returns
@@ -669,7 +669,9 @@ class LifReader(Reader):
 
         # LIFs are packed from bottom right to top left
         # To counter: subtract 1 + M from list index to get from back of list
-        index_y, index_x, _, _ = self._scene_short_info["mosaic_position"][-(M + 1)]
+        index_y, index_x, _, _ = self._scene_short_info["mosaic_position"][
+            -(mosaic_tile_index + 1)
+        ]
 
         return (
             (index_y * self.dims.Y) - index_y,  # type: ignore

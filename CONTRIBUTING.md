@@ -68,4 +68,5 @@ git push origin v3
 git push origin v3 --tags
 ```
 
-GitHub Actions will test and lint the code and the publish the new version if everything passes.
+GitHub Actions will test and lint the code
+and then publish the new version if everything passes.

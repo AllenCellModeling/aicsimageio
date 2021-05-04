@@ -16,6 +16,7 @@ aicsimageio.readers.ome\_tiff\_reader.OmeTiffReader
       ~OmeTiffReader.__init__
       ~OmeTiffReader.get_image_dask_data
       ~OmeTiffReader.get_image_data
+      ~OmeTiffReader.get_mosaic_tile_position
       ~OmeTiffReader.is_supported_image
       ~OmeTiffReader.set_scene
    
@@ -37,6 +38,7 @@ aicsimageio.readers.ome\_tiff\_reader.OmeTiffReader
       ~OmeTiffReader.metadata
       ~OmeTiffReader.mosaic_dask_data
       ~OmeTiffReader.mosaic_data
+      ~OmeTiffReader.mosaic_tile_dims
       ~OmeTiffReader.mosaic_xarray_dask_data
       ~OmeTiffReader.mosaic_xarray_data
       ~OmeTiffReader.physical_pixel_sizes

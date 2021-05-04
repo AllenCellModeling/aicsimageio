@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/mosaic-tile-single-position-request-and-docs  (`#229
+  <https://github.com/AllenCellModeling/aicsimageio/pull/229>`_)
+  [Jackson Maxfield Brown]
 - feature/set-known-coords  (`#224
   <https://github.com/AllenCellModeling/aicsimageio/pull/224>`_)
   [Jackson Maxfield Brown]

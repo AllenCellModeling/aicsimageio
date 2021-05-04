@@ -16,6 +16,7 @@ aicsimageio.readers.reader.Reader
       ~Reader.__init__
       ~Reader.get_image_dask_data
       ~Reader.get_image_data
+      ~Reader.get_mosaic_tile_position
       ~Reader.is_supported_image
       ~Reader.set_scene
    
@@ -37,6 +38,7 @@ aicsimageio.readers.reader.Reader
       ~Reader.metadata
       ~Reader.mosaic_dask_data
       ~Reader.mosaic_data
+      ~Reader.mosaic_tile_dims
       ~Reader.mosaic_xarray_dask_data
       ~Reader.mosaic_xarray_data
       ~Reader.physical_pixel_sizes

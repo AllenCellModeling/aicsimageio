@@ -264,12 +264,19 @@ class Reader(ABC):
             The fully stitched together image. Contains all the dimensions of the image
             with the YX expanded to the full mosaic.
 
+        Raises
+        ------
+        NotImplementedError
+            Reader or format doesn't support reconstructing mosaic tiles.
+
         Notes
         -----
         Implementers can determine how to chunk the array.
         Most common is to chunk by tile.
         """
-        pass
+        raise NotImplementedError(
+            "This reader does not support reconstructing mosaic images."
+        )
 
     def _get_stitched_mosaic(self) -> xr.DataArray:
         """
@@ -281,8 +288,15 @@ class Reader(ABC):
         mosaic: np.ndarray
             The fully stitched together image. Contains all the dimensions of the image
             with the YX expanded to the full mosaic.
+
+        Raises
+        ------
+        NotImplementedError
+            Reader or format doesn't support reconstructing mosaic tiles.
         """
-        pass
+        raise NotImplementedError(
+            "This reader does not support reconstructing mosaic images."
+        )
 
     @property
     def xarray_dask_data(self) -> xr.DataArray:
@@ -681,6 +695,48 @@ class Reader(ABC):
         metadata for unit information.
         """
         return PhysicalPixelSizes(1.0, 1.0, 1.0)
+
+    def get_mosaic_tile_position(
+        self, mosaic_tile_index: int
+    ) -> Optional[Tuple[int, int]]:
+        """
+        Get the absolute position of the top left point for a single mosaic tile.
+        Returns None if the image is not a mosaic.
+
+        Parameters
+        ----------
+        mosaic_tile_index: int
+            The index for the mosaic tile to retrieve position information for.
+
+        Returns
+        -------
+        top: int
+            The Y coordinate for the tile position.
+        left: int
+            The X coordinate for the tile position.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        IndexError
+            No matching mosaic tile index found.
+        """
+        raise NotImplementedError()
+
+    @property
+    def mosaic_tile_dims(self) -> Optional[Dimensions]:
+        """
+        Returns
+        -------
+        tile_dims: Optional[Dimensions]
+            The dimensions for each tile in the mosaic image.
+            If the image is not a mosaic image, returns None.
+        """
+        if DimensionNames.MosaicTile in self.dims.order:
+            return Dimensions("YX", (self.dims.Y, self.dims.X))  # type: ignore
+
+        return None
 
     def __str__(self) -> str:
         return (

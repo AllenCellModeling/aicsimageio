@@ -892,3 +892,75 @@ def test_set_reader(
     # Assert basics
     assert img.dims.order == expected_dims
     assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "reconstruct_mosaic, "
+    "set_scene, "
+    "expected_shape, "
+    "expected_mosaic_tile_dims, "
+    "specific_tile_index",
+    [
+        (
+            "tiled.lif",
+            True,
+            "TileScan_002",
+            (1, 4, 1, 5622, 7666),
+            (512, 512),
+            0,
+        ),
+        (
+            "tiled.lif",
+            False,
+            "TileScan_002",
+            (165, 1, 4, 1, 512, 512),
+            (512, 512),
+            0,
+        ),
+        pytest.param(
+            "tiled.lif",
+            False,
+            "TileScan_002",
+            (165, 1, 4, 1, 512, 512),
+            (512, 512),
+            999,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+        pytest.param(
+            "actk.ome.tiff",
+            True,
+            "Image:0",
+            (1, 6, 65, 233, 345),
+            None,
+            0,
+            # AttributeError raises not because of error in rollback
+            # but because cannot access Y or X from
+            # None return from `mosaic_tile_dims` because
+            # image is not a mosaic tiled image
+            marks=pytest.mark.raises(exception=AttributeError),
+        ),
+    ],
+)
+def test_mosaic_passthrough(
+    filename: str,
+    reconstruct_mosaic: bool,
+    set_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_mosaic_tile_dims: Tuple[int, int],
+    specific_tile_index: int,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, reconstruct_mosaic=reconstruct_mosaic)
+    img.set_scene(set_scene)
+
+    # Assert basics
+    assert img.shape == expected_shape
+    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]  # type: ignore
+    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]  # type: ignore
+
+    # Ensure that regardless of stitched or not, we can get tile position
+    img.get_mosaic_tile_position(specific_tile_index)

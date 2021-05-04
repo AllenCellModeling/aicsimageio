@@ -191,3 +191,105 @@ def test_lif_reader_mosaic_stitching(
         tiles_set_scene=tiles_set_scene,
         stitched_set_scene=stitched_set_scene,
     )
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "expected_tile_dims, "
+    "select_tile_index, "
+    "expected_tile_top_left",
+    [
+        (
+            "tiled.lif",
+            "TileScan_002",
+            (512, 512),
+            0,
+            (5110, 7154),
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            (512, 512),
+            50,
+            (3577, 4599),
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            (512, 512),
+            3,
+            (5110, 5621),
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            (512, 512),
+            164,
+            (0, 0),
+        ),
+        pytest.param(
+            "tiled.lif",
+            "TileScan_002",
+            (512, 512),
+            999,
+            None,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+        pytest.param(
+            "merged-tiles.lif",
+            "TileScan_002_Merging",
+            None,
+            None,
+            None,
+            # The value returned from all of the calls is None
+            # Which when trying to operate on will raise an AttributeError
+            # Because None doesn't have a Y or X attribute for example
+            marks=pytest.mark.raises(exception=AttributeError),
+        ),
+    ],
+)
+def test_lif_reader_mosaic_tile_inspection(
+    filename: str,
+    set_scene: str,
+    expected_tile_dims: Tuple[int, int],
+    select_tile_index: int,
+    expected_tile_top_left: Tuple[int, int],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct reader
+    reader = LifReader(uri)
+    reader.set_scene(set_scene)
+
+    # Check basics
+    assert reader.mosaic_tile_dims.Y == expected_tile_dims[0]  # type: ignore
+    assert reader.mosaic_tile_dims.X == expected_tile_dims[1]  # type: ignore
+
+    # Pull tile info for compare
+    tile_y_pos, tile_x_pos = reader.get_mosaic_tile_position(select_tile_index)
+    assert tile_y_pos == expected_tile_top_left[0]
+    assert tile_x_pos == expected_tile_top_left[1]
+
+    # Pull actual pixel data to compare
+    tile_from_m_index = reader.get_image_dask_data(
+        reader.dims.order.replace(dimensions.DimensionNames.MosaicTile, ""),
+        M=select_tile_index,
+    ).compute()
+    tile_from_position = reader.mosaic_xarray_dask_data[
+        :,
+        :,
+        :,
+        tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),  # type: ignore
+        tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),  # type: ignore
+    ].compute()
+
+    # Remove the first Y and X pixels
+    # The stitched tiles overlap each other by 1px each so this is just
+    # ignoring what would be overlap / cleaned up
+    tile_from_m_index = tile_from_m_index[:, :, :, 1:, 1:]
+    tile_from_position = tile_from_position[:, :, :, 1:, 1:]
+
+    # Assert equal
+    np.testing.assert_array_equal(tile_from_m_index, tile_from_position)

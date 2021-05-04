@@ -135,6 +135,70 @@ function will not load any piece of the imaging data into memory until you speci
 call `.compute` on the returned Dask array. In doing so, you will only then load the
 selected chunk in-memory.
 
+### Mosaic Image Reading
+
+Read stitched data or single tiles as a dimension.
+
+Readers that support mosaic tile stitching:
+
+-   `LifReader`
+
+#### AICSImage
+
+If the file format reader supports stitching mosaic tiles together, the
+`AICSImage` object will default to stitching the tiles back together.
+
+```python
+img = AICSImage("very-large-mosaic.lif")
+img.dims.order  # T, C, Z, big Y, big X, (S optional)
+img.dask_data  # Dask chunks fall on tile boundaries, pull YX chunks out of the image
+```
+
+This behavior can be manually turned off:
+
+```python
+img = AICSImage("very-large-mosaic.lif", reconstruct_mosaic=False)
+img.dims.order  # M (tile index), T, C, Z, small Y, small X, (S optional)
+img.dask_data  # Chunks use normal ZYX
+```
+
+If the reader does not support stitching tiles together the M tile index will be
+available on the `AICSImage` object:
+
+```python
+img = AICSImage("some-unsupported-mosaic-stitching-format.ext")
+img.dims.order  # M (tile index), T, C, Z, small Y, small X, (S optional)
+img.dask_data  # Chunks use normal ZYX
+```
+
+#### Reader
+
+If the file format reader detects mosaic tiles in the image, the `Reader` object
+will store the tiles as a dimension.
+
+If tile stitching is implemented, the `Reader` can also return the stitched image.
+
+```python
+reader = LifReader("ver-large-mosaic.lif")
+reader.dims.order  # M, T, C, Z, tile size Y, tile size X, (S optional)
+reader.dask_data  # normal operations, can use M dimension to select individual tiles
+reader.mosaic_dask_data  # returns stitched mosaic - T, C, Z, big Y, big, X, (S optional)
+```
+
+#### Single Tile Absolute Positioning
+
+There are functions available on both the `AICSImage` and `Reader` objects
+to help with single tile positioning:
+
+```python
+img = AICSImage("very-large-mosaic.lif")
+img.mosaic_tile_dims  # Returns a Dimensions object with just Y and X dim sizes
+img.mosaic_tile_dims.Y  # 512 (for example)
+
+# Get the tile start indices (top left corner of tile)
+y_start_index, x_start_index = img.get_mosaic_tile_position(12)
+```
+
 ### Metadata Reading
 
 ```python
@@ -162,26 +226,21 @@ from aicsimageio import AICSImage
 img = AICSImage("my_file.ome.tiff")
 
 # Get the first ten seconds (not frames)
-first_ten_seconds = img.xarray_data[:10]  # returns an xarray.DataArray
+first_ten_seconds = img.xarray_data.loc[:10]  # returns an xarray.DataArray
 
 # Get the first ten major units (usually micrometers, not indices) in Z
-first_ten_mm_in_z = img.xarray_data[:, :, :10]
+first_ten_mm_in_z = img.xarray_data.loc[:, :, :10]
 
 # Get the first ten major units (usually micrometers, not indices) in Y
-first_ten_mm_in_y = img.xarray_data[:, :, :, :10]
+first_ten_mm_in_y = img.xarray_data.loc[:, :, :, :10]
 
 # Get the first ten major units (usually micrometers, not indices) in X
-first_ten_mm_in_x = img.xarray_data[:, :, :, :, :10]
+first_ten_mm_in_x = img.xarray_data.loc[:, :, :, :, :10]
 ```
 
-See
-[xarray.DataArray documentation](http://xarray.pydata.org/en/stable/generated/xarray.DataArray.html#xarray.DataArray)
-for more details.
-
-**Note:** As a reminder, the `.data` and `.dask_data` attributes, and the
-`.get_image_data` and `.get_image_dask_data` functions only allow indexing
-by plane index. If you want to retrieve data by spatial-temporal coordinates you
-must use `xarray`.
+See `xarray`
+["Indexing and Selecting Data" Documentation](http://xarray.pydata.org/en/stable/indexing.html)
+for more information.
 
 ### Cloud IO Support
 

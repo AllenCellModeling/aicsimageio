@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20V3/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://allencellmodeling.github.io/aicsimageio/_static/v3/)
+[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/v3/graph/badge.svg)](https://app.codecov.io/gh/AllenCellModeling/aicsimageio/branch/v3)
 
 Delayed Parallel Image Reading for Microscopy Images in Python
 

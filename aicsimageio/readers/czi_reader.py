@@ -143,7 +143,7 @@ class CziReader(Reader):
     @staticmethod
     def _dims_shape_to_scene_dims_shape(
         dims_shape: List[Dict], scene_index: int, consistent: bool
-    ) -> Dict:
+    ) -> Dict[str, Tuple[int, int]]:
         """
         This function takes the output of `get_dims_shape()` and returns a
         dictionary of dimensions for the selected scene
@@ -665,7 +665,7 @@ class CziReader(Reader):
     @staticmethod
     def _stitch_tiles(
         data: types.ArrayLike,
-        data_dims_shape: Dict[str, int],
+        data_dims_shape: Dict[str, Tuple[int, int]],
         bboxes: Dict[TileInfo, BBox],
         mosaic_bbox: BBox,
     ) -> types.ArrayLike:

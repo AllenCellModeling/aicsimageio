@@ -50,7 +50,7 @@ optionally installed using `[...]` syntax.
 
 ## Documentation
 
-For the full package documentation please visit
+For full package documentation please visit
 [allencellmodeling.github.io/aicsimageio](https://allencellmodeling.github.io/aicsimageio/index.html).
 
 ## Quickstart

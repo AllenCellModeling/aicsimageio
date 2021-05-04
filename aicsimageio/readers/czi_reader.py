@@ -449,7 +449,9 @@ class CziReader(Reader):
 
         if len(img_sets) != 0:
             # Select the current scene
-            img = img_sets[scene_index]
+            img = img_sets[0]
+            if scene_index < len(img_sets):
+                img = img_sets[scene_index]
 
             # Construct channel list
             scene_channel_list = []

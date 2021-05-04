@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://AllenCellModeling.github.io/aicsimageio/)
-[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg)](https://codecov.io/gh/AllenCellModeling/aicsimageio)
+[![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AllenCellModeling/aicsimageio/branch/main)
 
 Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python
 

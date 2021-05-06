@@ -189,7 +189,7 @@ class CziReader(Reader):
         scene: int,
         read_dims: Optional[Dict[str, int]] = None
     ) -> np.ndarray:
-     return CziReader._get_image_data(fs=fs, path=path, scene=scene, read_dims=read_dims)[0]
+        return CziReader._get_image_data(fs=fs, path=path, scene=scene, read_dims=read_dims)[0]
 
     @staticmethod
     def _get_image_data(
@@ -227,7 +227,6 @@ class CziReader(Reader):
         czi = CziFile(path)
 
         # Read image
-        #log.debug(f"Reading dimensions: {read_dims}")
         data, dims = czi.read_image(**read_dims)
 
         dstr = "".join([d[0] for d in dims])

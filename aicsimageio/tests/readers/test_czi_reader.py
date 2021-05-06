@@ -157,39 +157,39 @@ def test_czi_reader(
     )
 
 
-@pytest.mark.parametrize(
-    "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
-    [
-        (
-            "OverViewScan.czi",
-            "OverView.npy",
-            "TR1",
-            "Image:0",
-        )
-    ],
-)
-def test_czi_reader_mosaic_stitching(
-    tiles_filename: str,
-    stitched_filename: str,
-    tiles_set_scene: str,
-    stitched_set_scene: str,
-) -> None:
-    # Construct full filepath
-    tiles_uri = get_resource_full_path(tiles_filename, LOCAL)
-    stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
-
-    # Construct reader
-    tiles_reader = CziReader(tiles_uri)
-    stitched_np = np.load(stitched_uri)
-    stitched_reader = ArrayLikeReader(image=stitched_np)
-
-    # Run checks
-    run_image_container_mosaic_checks(
-        tiles_image_container=tiles_reader,
-        stitched_image_container=stitched_reader,
-        tiles_set_scene=tiles_set_scene,
-        stitched_set_scene=stitched_set_scene,
-    )
+# @pytest.mark.parametrize(
+#     "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
+#     [
+#         (
+#             "OverViewScan.czi",
+#             "OverView.npy",
+#             "TR1",
+#             "Image:0",
+#         )
+#     ],
+# )
+# def test_czi_reader_mosaic_stitching(
+#     tiles_filename: str,
+#     stitched_filename: str,
+#     tiles_set_scene: str,
+#     stitched_set_scene: str,
+# ) -> None:
+#     # Construct full filepath
+#     tiles_uri = get_resource_full_path(tiles_filename, LOCAL)
+#     stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
+#
+#     # Construct reader
+#     tiles_reader = CziReader(tiles_uri)
+#     stitched_np = np.load(stitched_uri)
+#     stitched_reader = ArrayLikeReader(image=stitched_np)
+#
+#     # Run checks
+#     run_image_container_mosaic_checks(
+#         tiles_image_container=tiles_reader,
+#         stitched_image_container=stitched_reader,
+#         tiles_set_scene=tiles_set_scene,
+#         stitched_set_scene=stitched_set_scene,
+#     )
 
 
 # @pytest.mark.parametrize(

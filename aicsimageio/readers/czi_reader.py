@@ -105,7 +105,7 @@ class CziReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
+        chunk_by_dims: Union[str, List[str]] = DEFAULT_CZI_CHUNK_DIMS,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
@@ -183,137 +183,81 @@ class CziReader(Reader):
         return indices
 
     @staticmethod
+    def _get_just_image_data(
+        fs: AbstractFileSystem,
+        path: str,
+        scene: int,
+        read_dims: Optional[Dict[str, int]] = None
+    ) -> np.ndarray:
+     return CziReader._get_image_data(fs=fs, path=path, scene=scene, read_dims=read_dims)[0]
+
+    @staticmethod
     def _get_image_data(
         fs: AbstractFileSystem,
         path: str,
         scene: int,
-        retrieve_dims: List[str],
-        retrieve_indices: List[Optional[int]],
-    ) -> np.ndarray:
+        read_dims: Optional[Dict[str, int]] = None
+    ) -> Tuple[np.ndarray, List[Tuple[str, int]]]:
         """
-        Open a file for reading, select data, and compute to
-        numpy.
-
+        Read and return the squeezed image data requested along with the dimension info
+        that was read.
         Parameters
         ----------
-        fs: AbstractFileSystem
-            The file system to use for reading.
-        path: str
-            The path to file to read.
-        scene: int
-            The scene index to pull the chunk from.
-        retrieve_dims: List[str]
-            The order of the retrieve indicies operations
-        retrieve_indices: List[Optional[int]],
-            The image index operations to retrieve.
-            If None, retrieve the whole dimension.
-
+        img: Path
+            Path to the CZI file to read.
+        read_dims: Optional[Dict[str, int]]
+            The dimensions to read from the file as a dictionary of string to integer.
+            Default: None (Read all data from the image)
         Returns
         -------
-        chunk: np.ndarray
-            The image chunk as a numpy array.
+        data: np.ndarray
+            The data read for the dimensions provided.
+        read_dimensions: List[Tuple[str, int]]]
+            The dimension sizes that were returned from the read.
         """
-        # Open and select the target image
-        with fs.open(path) as open_resource:
-            czi = CziFile(open_resource)
-            dims_shape = CziReader._dims_shape_to_scene_dims_shape(
-                dims_shape=czi.get_dims_shape(),
-                scene_index=scene,
-                consistent=czi.shape_is_consistent,
-            )
+        # Catch optional read dim
 
-            # Create the fill array shape
-            # Drop the YX as we will be pulling the individual YX planes
-            retrieve_shape: List[int] = []
-            use_selected_or_np_map: Dict[str, Optional[int]] = {}
-            for dim, index_op in zip(retrieve_dims, retrieve_indices):
-                if (
-                    dim
-                    not in [
-                        DimensionNames.SpatialY,
-                        DimensionNames.SpatialX,
-                        CZI_SAMPLES_DIM_CHAR,
-                    ]
-                    and dim in dims_shape.keys()
-                ):
-                    # Handle slices
-                    if index_op is None:
-                        # Store the dim for later to inform to use the np index
-                        use_selected_or_np_map[dim] = None
-                        if dim == DimensionNames.MosaicTile:
-                            retrieve_shape.append(
-                                dims_shape[DimensionNames.MosaicTile][1]
-                            )
-                        elif dim == DimensionNames.Time:
-                            retrieve_shape.append(dims_shape[DimensionNames.Time][1])
-                        elif dim == DimensionNames.Channel:
-                            retrieve_shape.append(dims_shape[DimensionNames.Channel][1])
-                        elif dim == DimensionNames.SpatialZ:
-                            retrieve_shape.append(
-                                dims_shape[DimensionNames.SpatialZ][1]
-                            )
+        if read_dims is None:
+            read_dims = {}
 
-                    # Handle non-chunk dimensions (specific indices / ints)
-                    else:
-                        # Store the dim for later to inform to use the provided index
-                        use_selected_or_np_map[dim] = index_op
-                        retrieve_shape.append(1)
+        read_dims["S"] = scene
 
-            # Create list of planes that we will add each plane to, later we reshape
-            # Create empty arr with the desired shape to enumerate over the np index
-            planes: List[np.ndarray] = []
-            np_array_for_indices = np.empty(tuple(retrieve_shape), dtype=object)
-            for np_index, _ in np.ndenumerate(np_array_for_indices):
-                # Get each plane's index selection operations
-                # If the dimension is None, use the enumerated np index
-                # If the dimension is not None, use the provided value
-                plane_indices: Dict[str, int] = {"S": scene}
+        # Init czi
+        # resource = fs.open(path)
+        czi = CziFile(path)
 
-                for dim in [
-                    DimensionNames.MosaicTile,
-                    DimensionNames.Time,
-                    DimensionNames.Channel,
-                    DimensionNames.SpatialZ,
-                ]:
-                    indexes = CziReader._dim_helper(
-                        dim,
-                        use_selected_or_np_map,
-                        np_index,
-                        retrieve_dims,
-                    )
-                    if indexes is not None:
-                        plane_indices[dim] = indexes
+        # Read image
+        #log.debug(f"Reading dimensions: {read_dims}")
+        data, dims = czi.read_image(**read_dims)
 
-                # Append the retrieved plane as a numpy array
-                plane, scene_dims = czi.read_image(**plane_indices)
-                scene_dims_dict = CziReader._dims_list_to_dict(scene_dims)
-                planes.append(plane)
+        dstr = "".join([d[0] for d in dims])
+        if "B" in dstr:
+            data = np.squeeze(data, axis=0)
+            dims = [item for item in dims if item[0]!="B"]
 
-            # Stack and reshape to get rid of the array of arrays
-            new_chunk_shape = [
-                scene_dims_dict[dim]
-                for dim in REQUIRED_CZI_CHUNK_DIMS
-                if dim in scene_dims_dict
-            ]
-            retrieved_chunk = np.stack(planes).reshape(
-                np_array_for_indices.shape + tuple(new_chunk_shape)
-            )
+        # Drop dims that shouldn't be provided back
+        ops = []
+        real_dims = []
+        for i, dim_info in enumerate(dims):
+            # Expand dimension info
+            dim, size = dim_info
 
-            # Remove extra dimensions if they were not requested
-            remove_dim_ops_list: List[Union[int, slice]] = []
-            for index in retrieve_indices:
-                if isinstance(index, int):
-                    remove_dim_ops_list.append(0)
-                else:
-                    remove_dim_ops_list.append(slice(None, None, None))
+            # If the dim was provided in the read dims we know a single plane for that
+            # dimension was requested so remove it
+            if dim in read_dims:
+                ops.append(0)
+            # Otherwise just read the full slice
+            else:
+                ops.append(slice(None, None, None))
+                real_dims.append(dim_info)
 
-            # Remove extra dimensions by using dim ops
-            retrieved_chunk = retrieved_chunk[tuple(remove_dim_ops_list)]
-
-            return retrieved_chunk
+        # Convert ops and run getitem
+        return data[tuple(ops)] , real_dims
 
     def _create_dask_array(
-        self, czi: CziFile, selected_scene_dims: List[str]
+        self,
+        czi: CziFile,
+        selected_scene_dims: List[str]
     ) -> xr.DataArray:
         """
         Creates a delayed dask array for the file.
@@ -345,97 +289,201 @@ class CziReader(Reader):
             consistent=czi.shape_is_consistent,
         )
 
-        valid_dims = []
-        selected_scene_shape: List[int] = []
-        for dim in selected_scene_dims:
-            if dim in dims_shape.keys():
-                valid_dims.append(dim)
-                if dim == DimensionNames.MosaicTile:
-                    selected_scene_shape.append(
-                        dims_shape[DimensionNames.MosaicTile][1]
-                    )
-                elif dim == DimensionNames.Time:
-                    selected_scene_shape.append(dims_shape[DimensionNames.Time][1])
-                elif dim == DimensionNames.Channel:
-                    selected_scene_shape.append(dims_shape[DimensionNames.Channel][1])
-                elif dim == DimensionNames.SpatialZ:
-                    selected_scene_shape.append(dims_shape[DimensionNames.SpatialZ][1])
-                elif dim == DimensionNames.SpatialY:
-                    selected_scene_shape.append(dims_shape[DimensionNames.SpatialY][1])
-                elif dim == DimensionNames.SpatialX:
-                    selected_scene_shape.append(dims_shape[DimensionNames.SpatialX][1])
-                elif dim == CZI_SAMPLES_DIM_CHAR:  # sAmples from aicspylibczi3
-                    selected_scene_shape.append(dims_shape[CZI_SAMPLES_DIM_CHAR][1])
+        if "B" in dims_shape:
+            dims_shape.pop("B", None)
 
-        # Constuct the chunk and non-chunk shapes one dim at a time
-        # We also collect the chunk and non-chunk dimension order so that
-        # we can swap the dimensions after we block out the array
-        non_chunk_dim_order = []
-        non_chunk_shape = []
-        chunk_dim_order = []
-        chunk_shape = []
-        for dim, size in zip(valid_dims, selected_scene_shape):
+        dims_str = czi.dims.replace('B', '').replace('S','')
+        if DimensionNames.MosaicTile in dims_str:
+            ordered_dims_string = DimensionNames.MosaicTile + dims_str.replace(DimensionNames.MosaicTile, '')
+            dims_str = ordered_dims_string
+        # Get the shape for the chunk and operating shape for the dask array
+        # We also collect the chunk and non chunk dimension ordering so that we can
+        # swap the dimensions after we
+        # block the dask array together.
+        sample_chunk_shape = []
+        operating_shape = []
+        non_chunk_dimension_ordering = []
+        chunk_dimension_ordering = []
+        for i, dim in enumerate(dims_str):
+            # Unpack dim info
+            dim_idx_start, dim_size = dims_shape[dim]
+
+            # If the dim is part of the specified chunk dims then append it to the
+            # sample, and, append the dimension
+            # to the chunk dimension ordering
             if dim in self.chunk_by_dims:
-                chunk_dim_order.append(dim)
-                chunk_shape.append(size)
+                sample_chunk_shape.append(dim_size)
+                chunk_dimension_ordering.append(dim)
+
+            # Otherwise, append the dimension to the non chunk dimension ordering, and,
+            # append the true size of the
+            # image at that dimension
             else:
-                non_chunk_dim_order.append(dim)
-                non_chunk_shape.append(size)
+                non_chunk_dimension_ordering.append(dim)
+                operating_shape.append( dim_size )
 
-        pixel_type = PIXEL_DICT.get(czi.pixel_type)
+        # Convert shapes to tuples and combine the non and chunked dimension orders as
+        # that is the order the data will
+        # actually come out of the read data as
+        sample_chunk_shape = tuple(sample_chunk_shape)
+        blocked_dimension_order = (
+            non_chunk_dimension_ordering + chunk_dimension_ordering
+        )
 
-        if pixel_type is None:
-            raise TypeError(f"Pixel Type: {czi.pixel_type} not supported!")
+        # Fill out the rest of the operating shape with dimension sizes of 1 to match
+        # the length of the sample chunk
+        # When dask.block happens it fills the dimensions from inner-most to outer-most
+        # with the chunks as long as the dimension is size 1
+        # Basically, we are adding empty dimensions to the operating shape that will be
+        # filled by the chunks from dask
+        operating_shape = tuple(operating_shape) + (1,) * len(sample_chunk_shape)
 
-        # Fill out the rest of the blocked shape with dimension sizes of 1 to
-        # match the length of the sample chunk
-        # When dask.block happens it fills the dimensions from inner-most to
-        # outer-most with the chunks as long as the dimension is size 1
-        blocked_dim_order = non_chunk_dim_order + chunk_dim_order
-        blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
+        # Create empty numpy array with the operating shape so that we can iter through
+        # and use the multi_index to create the readers.
+        lazy_arrays = np.ndarray(operating_shape, dtype=object)
 
-        # Make ndarray for lazy arrays to fill
-        lazy_arrays = np.ndarray(blocked_shape, dtype=object)
-        for np_index, _ in np.ndenumerate(lazy_arrays):
-            # All dimensions get their normal index except for chunk dims
-            # which get None, which tell the get data func to pull the whole dim
-            retrieve_indices = np_index[: len(non_chunk_shape)] + (
-                (None,) * len(chunk_shape)
+        # We can enumerate over the multi-indexed array and construct read_dims
+        # dictionaries by simply zipping together the ordered dims list and the current
+        # multi-index plus the begin index for that plane. We then set the value of the
+        # array at the same multi-index to the delayed reader using the constructed
+        # read_dims dictionary.
+        dims = [d for d in czi.dims if d not in ['B', 'S']]
+        begin_indicies = tuple(dims_shape[d][0] for d in dims)
+        for i, _ in np.ndenumerate(lazy_arrays):
+            # Add the czi file begin index for each dimension to the array dimension
+            # index
+            this_chunk_read_indicies = (
+                current_dim_begin_index + curr_dim_index
+                for current_dim_begin_index, curr_dim_index in zip(begin_indicies, i)
             )
 
-            # Fill the numpy array with the delayed arrays
-            lazy_arrays[np_index] = da.from_delayed(
-                delayed(CziReader._get_image_data)(
+            # Zip the dims with the read indices
+            this_chunk_read_dims = dict(
+                zip(blocked_dimension_order, this_chunk_read_indicies)
+            )
+
+            # Remove the dimensions that we want to chunk by from the read dims
+            for d in self.chunk_by_dims:
+                if d in this_chunk_read_dims:
+                    this_chunk_read_dims.pop(d)
+
+            pixel_type = PIXEL_DICT.get(czi.pixel_type)
+
+            # Add delayed array to lazy arrays at index
+            lazy_arrays[i] = da.from_delayed(
+                delayed(CziReader._get_just_image_data)(
                     fs=self._fs,
                     path=self._path,
                     scene=self.current_scene_index,
-                    retrieve_dims=blocked_dim_order,
-                    retrieve_indices=retrieve_indices,
-                ),
-                shape=chunk_shape,
+                    read_dims=this_chunk_read_dims),
+                shape=sample_chunk_shape,
                 dtype=pixel_type,
             )
 
-        # Convert the numpy array of lazy readers into a dask array
-        image_data = da.block(lazy_arrays.tolist())
+        # Convert the numpy array of lazy readers into a dask array and fill the inner
+        # most empty dimensions with chunks
+        merged = da.block(lazy_arrays.tolist())
 
         # Because we have set certain dimensions to be chunked and others not
         # we will need to transpose back to original dimension ordering
-        # Example, if the original dimension ordering was "TZYX" and we
-        # chunked by "T", "Y", and "X"
-        # we created an array with dimensions ordering "ZTYX"
+        # Example being, if the original dimension ordering was "SZYX" and we want to
+        # chunk by "S", "Y", and "X" we created an array with dimensions ordering "ZSYX"
         transpose_indices = []
-        for i, d in enumerate(valid_dims):  # selected_scene_dims):
-            new_index = blocked_dim_order.index(d)
+        transpose_required = False
+        for i, d in enumerate(dims_str):
+            new_index = blocked_dimension_order.index(d)
             if new_index != i:
+                transpose_required = True
                 transpose_indices.append(new_index)
             else:
                 transpose_indices.append(i)
 
         # Only run if the transpose is actually required
-        image_data = da.transpose(image_data, tuple(transpose_indices))
+        # The default case is "Z", "Y", "X", which _usually_ doesn't need to be
+        # transposed because that is _usually_ the normal dimension order of the CZI
+        # file anyway
+        if transpose_required:
+            merged = da.transpose(merged, tuple(transpose_indices))
 
-        return image_data
+        # Because dimensions outside of Y and X can be in any order and present or not
+        # we also return the dimension order string.
+        return merged  # , "".join(dims)
+
+        # # Constuct the chunk and non-chunk shapes one dim at a time
+        # # We also collect the chunk and non-chunk dimension order so that
+        # # we can swap the dimensions after we block out the array
+        # non_chunk_dim_order = []
+        # non_chunk_shape = []
+        # chunk_dim_order = []
+        # chunk_shape = []
+        # for dim, size in zip(selected_scene_dims_str, selected_scene_shape):
+        #     if dim in self.chunk_by_dims:
+        #         chunk_dim_order.append(dim)
+        #         chunk_shape.append(size)
+        #     else:
+        #         non_chunk_dim_order.append(dim)
+        #         non_chunk_shape.append(size)
+        #
+        # pixel_type = PIXEL_DICT.get(czi.pixel_type)
+        #
+        # if pixel_type is None:
+        #     raise TypeError(f"Pixel Type: {czi.pixel_type} not supported!")
+        #
+        # # Fill out the rest of the blocked shape with dimension sizes of 1 to
+        # # match the length of the sample chunk
+        # # When dask.block happens it fills the dimensions from inner-most to
+        # # outer-most with the chunks as long as the dimension is size 1
+        # blocked_dim_order = non_chunk_dim_order + chunk_dim_order
+        # blocked_shape = tuple(non_chunk_shape) + ((1,) * len(chunk_shape))
+        #
+        # # Construct the transpose indices that will be used to
+        # # transpose the array prior to pulling the chunk dims
+        # match_map = {dim: selected_scene_dims_str.find(dim) for dim in selected_scene_dims_str}
+        # transposer = []
+        # for dim in blocked_dim_order:
+        #     transposer.append(match_map[dim])
+        #
+        # # Make ndarray for lazy arrays to fill
+        # lazy_arrays = np.ndarray(blocked_shape, dtype=object)
+        # for np_index, _ in np.ndenumerate(lazy_arrays):
+        #     # All dimensions get their normal index except for chunk dims
+        #     # which get None, which tell the get data func to pull the whole dim
+        #     indices_with_slices = np_index[: len(non_chunk_shape)] + (
+        #         (None,) * len(chunk_shape)
+        #     )
+        #
+        #     # Fill the numpy array with the delayed arrays
+        #     lazy_arrays[np_index] = da.from_delayed(
+        #         delayed(CziReader._get_image_data)(
+        #             fs=self._fs,
+        #             path=self._path,
+        #             scene=self.current_scene_index,
+        #             get_dims_dict={},
+        #         ),
+        #         shape=chunk_shape,
+        #         dtype=pixel_type,
+        #     )
+        #
+        # # Convert the numpy array of lazy readers into a dask array
+        # image_data = da.block(lazy_arrays.tolist())
+        #
+        # # Because we have set certain dimensions to be chunked and others not
+        # # we will need to transpose back to original dimension ordering
+        # # Example, if the original dimension ordering was "TZYX" and we
+        # # chunked by "T", "Y", and "X"
+        # # we created an array with dimensions ordering "ZTYX"
+        # transpose_indices = []
+        # for i, d in enumerate(selected_scene_dims_str):
+        #     new_index = blocked_dim_order.index(d)
+        #     if new_index != i:
+        #         transpose_indices.append(new_index)
+        #     else:
+        #         transpose_indices.append(i)
+        #
+        # # Only run if the transpose is actually required
+        # image_data = da.transpose(image_data, tuple(transpose_indices))
+        #
+        # return image_data
 
     @staticmethod
     def _get_coords_and_physical_px_sizes(
@@ -549,7 +597,6 @@ class CziReader(Reader):
             dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
             # Get image data
             image_data = self._create_dask_array(czi, dims)
-
             # Get metadata
             meta = czi.meta
 
@@ -611,13 +658,17 @@ class CziReader(Reader):
             dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
 
             # Get image data
-            image_data = self._get_image_data(
+            image_data, real_dims = self._get_image_data(
                 fs=self._fs,
                 path=self._path,
                 scene=self.current_scene_index,
-                retrieve_dims=dims,
-                retrieve_indices=[None] * len(dims),  # Get all planes
             )
+
+            read_dims_key_list = [k[0] for k in real_dims]
+            if dims != read_dims_key_list:
+                new_dim_order = [read_dims_key_list.index(d) for d in dims]
+                image_data = np.transpose(image_data, new_dim_order)
+
 
             # Get metadata
             meta = czi.meta

@@ -6,6 +6,12 @@ Changelog
 
 New
 ~~~
+- feature/mosaic-tile-single-position-request-and-docs  (`#229
+  <https://github.com/AllenCellModeling/aicsimageio/pull/229>`_)
+  [Jackson Maxfield Brown]
+- feature/set-known-coords  (`#224
+  <https://github.com/AllenCellModeling/aicsimageio/pull/224>`_)
+  [Jackson Maxfield Brown]
 - feature/aicsimage-save  (`#215
   <https://github.com/AllenCellModeling/aicsimageio/pull/215>`_)
   [Jackson Maxfield Brown]
@@ -57,6 +63,9 @@ New
 
 Fix
 ~~~
+- bugfix/remove-unused-lif-code  (`#226
+  <https://github.com/AllenCellModeling/aicsimageio/pull/226>`_)
+  [Jackson Maxfield Brown]
 - bugfix/catch-all-errors-in-ome-tiff  (`#207
   <https://github.com/AllenCellModeling/aicsimageio/pull/207>`_)
   [Jackson Maxfield Brown]
@@ -71,6 +80,9 @@ Fix
 
 Other
 ~~~~~
+- admin/copy-v3 docs-to-static  (`#233
+  <https://github.com/AllenCellModeling/aicsimageio/pull/233>`_)
+  [Jackson Maxfield Brown]
 - admin/split-reader-deps  (`#221
   <https://github.com/AllenCellModeling/aicsimageio/pull/221>`_)
   [Jackson Maxfield Brown]

@@ -84,9 +84,9 @@ from ..image_container_test_utils import (
             "variable_scene_shape_first_scene_pyramid.czi",
             "A1",
             ("A1",),
-            (9, 3, 2208, 2752),
+            (3, 9, 2208, 2752),
             np.uint16,
-            "MCYX",
+            "CMYX",
             [
                 "Channel:0--EGFP--Fluorescence",
                 "Channel:1--mCher--Fluorescence",

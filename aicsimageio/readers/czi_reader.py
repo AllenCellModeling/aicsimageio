@@ -14,8 +14,6 @@ from fsspec.spec import AbstractFileSystem
 from .. import constants, exceptions, metadata, types
 from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES,
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
     REQUIRED_CHUNK_DIMS,
     DimensionNames,
 )
@@ -38,26 +36,6 @@ CZI_SCENE_DIM_CHAR = "S"
 
 
 ###############################################################################
-
-
-def _replace_sample_dim(dims: List[str]) -> List[str]:
-    return [
-        dim if dim != DimensionNames.Samples else CZI_SAMPLES_DIM_CHAR for dim in dims
-    ]
-
-
-###############################################################################
-
-
-DEFAULT_CZI_CHUNK_DIMS = _replace_sample_dim(DEFAULT_CHUNK_DIMS)
-REQUIRED_CZI_CHUNK_DIMS = _replace_sample_dim(REQUIRED_CHUNK_DIMS)
-DEFAULT_CZI_DIMENSION_ORDER_LIST = _replace_sample_dim(
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
-)
-DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES = _replace_sample_dim(
-    DEFAULT_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES_AND_SAMPLES
-)
-
 
 PIXEL_DICT = {
     "gray8": np.uint8,
@@ -92,6 +70,8 @@ class CziReader(Reader):
     To use this reader, install with: `pip install aicsimageio[czi]`.
     """
 
+    _mapped_dims : Optional[str] = None
+
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
@@ -105,7 +85,7 @@ class CziReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: Union[str, List[str]] = DEFAULT_CZI_CHUNK_DIMS,
+        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
@@ -114,7 +94,7 @@ class CziReader(Reader):
         if isinstance(chunk_by_dims, str):
             chunk_by_dims = list(chunk_by_dims)
 
-        self.chunk_by_dims = chunk_by_dims
+        self.chunk_by_dims : Union[str, List[str]] = chunk_by_dims
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
@@ -124,6 +104,20 @@ class CziReader(Reader):
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
             )
+
+    @property
+    def mapped_dims(self) -> str:
+        if self._mapped_dims is None:
+            with self._fs.open(self._path) as open_resource:
+                czi = CziFile(open_resource)
+                self._mapped_dims : str = CziReader.fix_czi_dims(czi.dims)
+
+        return self._mapped_dims
+
+    @staticmethod
+    def fix_czi_dims(dims: str) -> str:
+        return (dims.replace(CZI_BLOCK_DIM_CHAR,'').replace(CZI_SCENE_DIM_CHAR,'')
+                .replace(CZI_SAMPLES_DIM_CHAR, DimensionNames.Samples))
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -167,6 +161,8 @@ class CziReader(Reader):
         dims_shape_dict = dims_shape[dims_shape_index]
         dims_shape_dict.pop(CZI_SCENE_DIM_CHAR, None)
         return dims_shape_dict
+
+
 
     @staticmethod
     def _dim_helper(
@@ -274,7 +270,7 @@ class CziReader(Reader):
             The fully constructed and fully delayed image as a Dask Array object.
         """
         # Always add the plane dimensions if not present already
-        for dim in REQUIRED_CZI_CHUNK_DIMS:
+        for dim in REQUIRED_CHUNK_DIMS:
             if dim not in self.chunk_by_dims:
                 self.chunk_by_dims.append(dim)
 
@@ -291,12 +287,9 @@ class CziReader(Reader):
         if "B" in dims_shape:
             dims_shape.pop("B", None)
 
+
         dims_str = czi.dims.replace("B", "").replace("S", "")
-        if DimensionNames.MosaicTile in dims_str:
-            ordered_dims_string = DimensionNames.MosaicTile + dims_str.replace(
-                DimensionNames.MosaicTile, ""
-            )
-            dims_str = ordered_dims_string
+
         # Get the shape for the chunk and operating shape for the dask array
         # We also collect the chunk and non chunk dimension ordering so that we can
         # swap the dimensions after we
@@ -516,17 +509,10 @@ class CziReader(Reader):
                 consistent=czi.shape_is_consistent,
             )
 
-            # If there are tiles in the image use mosaic dims
-            if czi.is_mosaic():
-                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
+            img_dims_list = [letter for letter in  self.mapped_dims]
 
-            # Otherwise use standard dims
-            else:
-                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST
-
-            dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
             # Get image data
-            image_data = self._create_dask_array(czi, dims)
+            image_data = self._create_dask_array(czi, img_dims_list)
             # Get metadata
             meta = czi.meta
 
@@ -540,14 +526,9 @@ class CziReader(Reader):
             # Store pixel sizes
             self._px_sizes = px_sizes
 
-            # Map A (aicspylibczi sAmples) back to aicsimageio Samples
-            dims = [
-                d if d != CZI_SAMPLES_DIM_CHAR else DimensionNames.Samples for d in dims
-            ]
-
             return xr.DataArray(
                 image_data,
-                dims=dims,
+                dims=img_dims_list,
                 coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
@@ -577,16 +558,6 @@ class CziReader(Reader):
                 consistent=czi.shape_is_consistent,
             )
 
-            # If there are tiles in the image use mosaic dims
-            if czi.is_mosaic():
-                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
-
-            # Otherwise use standard dims
-            else:
-                ref_dims = DEFAULT_CZI_DIMENSION_ORDER_LIST
-
-            dims = [dim for dim in ref_dims if dim in dims_shape.keys()]
-
             # Get image data
             image_data, real_dims = self._get_image_data(
                 fs=self._fs,
@@ -594,10 +565,6 @@ class CziReader(Reader):
                 scene=self.current_scene_index,
             )
 
-            read_dims_key_list = [k[0] for k in real_dims]
-            if dims != read_dims_key_list:
-                new_dim_order = [read_dims_key_list.index(d) for d in dims]
-                image_data = np.transpose(image_data, new_dim_order)
 
             # Get metadata
             meta = czi.meta
@@ -614,7 +581,7 @@ class CziReader(Reader):
 
             return xr.DataArray(
                 image_data,
-                dims=dims,
+                dims=[d for d in self.mapped_dims],
                 coords=coords,  # type: ignore
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
@@ -626,6 +593,7 @@ class CziReader(Reader):
     @staticmethod
     def _stitch_tiles(
         data: types.ArrayLike,
+        data_dims: str,
         data_dims_shape: Dict[str, Tuple[int, int]],
         bboxes: Dict[TileInfo, BBox],
         mosaic_bbox: BBox,
@@ -634,22 +602,20 @@ class CziReader(Reader):
         #   Scene – for clustering items in X/Y direction (data belonging to
         #   contiguous regions of interests in a mosaic image).
 
-        # 'S' in czi is Scene not Samples, 'A' is sAmples
-
         # Create empty array
         arr_shape_list = []
 
         ordered_dims_present = [
-            dim for dim in DEFAULT_CZI_DIMENSION_ORDER_LIST if dim in data_dims_shape
+            dim for dim in data_dims if dim not in [CZI_BLOCK_DIM_CHAR, 'M']
         ]
         for dim in ordered_dims_present:
-            if dim not in REQUIRED_CZI_CHUNK_DIMS:
+            if dim not in REQUIRED_CHUNK_DIMS:
                 arr_shape_list.append(data_dims_shape[dim][1])
             if dim is DimensionNames.SpatialY:
                 arr_shape_list.append(mosaic_bbox.h)
             if dim is DimensionNames.SpatialX:
                 arr_shape_list.append(mosaic_bbox.w)
-            if dim == CZI_SAMPLES_DIM_CHAR:
+            if dim == DimensionNames.Samples:
                 arr_shape_list.append(data_dims_shape[dim][1])
 
         ans = None
@@ -667,10 +633,11 @@ class CziReader(Reader):
             tile_dims = tile_info.dimension_coordinates
             tile_dims.pop(CZI_SCENE_DIM_CHAR, None)
             tile_dims.pop(CZI_BLOCK_DIM_CHAR, None)
+            # *** Need to map A to S here too
             data_indexes = [
                 tile_dims[t_dim]
-                for t_dim in DEFAULT_CZI_DIMENSION_ORDER_LIST_WITH_MOSAIC_TILES
-                if t_dim in tile_dims.keys() and t_dim not in REQUIRED_CZI_CHUNK_DIMS
+                for t_dim in tile_dims.keys()
+                if t_dim not in REQUIRED_CHUNK_DIMS
             ]
             # add Y and X
             data_indexes.append(slice(None))  # Y ":"
@@ -695,7 +662,7 @@ class CziReader(Reader):
                 if dim is DimensionNames.SpatialX:
                     start = box.x - mosaic_bbox.x
                     ans_indexes.append(slice(start, start + box.w, 1))
-                if dim == CZI_SAMPLES_DIM_CHAR:
+                if dim == DimensionNames.Samples:
                     ans_indexes.append(slice(None))
 
             # assign the tiles into ans
@@ -721,6 +688,7 @@ class CziReader(Reader):
         # Stitch
         stitched = self._stitch_tiles(
             data=self.data,  # the ndarray
+            data_dims=self.mapped_dims,
             data_dims_shape=dims_shape,
             bboxes=bboxes,
             mosaic_bbox=mosaic_scene_bbox,

@@ -66,7 +66,7 @@ class CziReader(Reader):
     To use this reader, install with: `pip install aicsimageio[czi]`.
     """
 
-    _mapped_dims : Optional[str] = None
+    _mapped_dims: Optional[str] = None
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
@@ -90,7 +90,7 @@ class CziReader(Reader):
         if isinstance(chunk_by_dims, str):
             chunk_by_dims = list(chunk_by_dims)
 
-        self.chunk_by_dims : Union[str, List[str]] = chunk_by_dims
+        self.chunk_by_dims: Union[str, List[str]] = chunk_by_dims
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
@@ -106,14 +106,17 @@ class CziReader(Reader):
         if self._mapped_dims is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource)
-                self._mapped_dims : str = CziReader.fix_czi_dims(czi.dims)
+                self._mapped_dims: str = CziReader.fix_czi_dims(czi.dims)
 
         return self._mapped_dims
 
     @staticmethod
     def fix_czi_dims(dims: str) -> str:
-        return (dims.replace(CZI_BLOCK_DIM_CHAR, '').replace(CZI_SCENE_DIM_CHAR, '')
-                .replace(CZI_SAMPLES_DIM_CHAR, DimensionNames.Samples))
+        return (
+            dims.replace(CZI_BLOCK_DIM_CHAR, "")
+            .replace(CZI_SCENE_DIM_CHAR, "")
+            .replace(CZI_SAMPLES_DIM_CHAR, DimensionNames.Samples)
+        )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -598,7 +601,7 @@ class CziReader(Reader):
         arr_shape_list = []
 
         ordered_dims_present = [
-            dim for dim in data_dims if dim not in [CZI_BLOCK_DIM_CHAR, 'M']
+            dim for dim in data_dims if dim not in [CZI_BLOCK_DIM_CHAR, "M"]
         ]
         for dim in ordered_dims_present:
             if dim not in REQUIRED_CHUNK_DIMS:

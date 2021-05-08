@@ -12,11 +12,7 @@ from dask import delayed
 from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, metadata, types
-from ..dimensions import (
-    DEFAULT_CHUNK_DIMS,
-    REQUIRED_CHUNK_DIMS,
-    DimensionNames,
-)
+from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
 from ..utils import io_utils
 from .reader import Reader
 
@@ -116,7 +112,7 @@ class CziReader(Reader):
 
     @staticmethod
     def fix_czi_dims(dims: str) -> str:
-        return (dims.replace(CZI_BLOCK_DIM_CHAR,'').replace(CZI_SCENE_DIM_CHAR,'')
+        return (dims.replace(CZI_BLOCK_DIM_CHAR, '').replace(CZI_SCENE_DIM_CHAR, '')
                 .replace(CZI_SAMPLES_DIM_CHAR, DimensionNames.Samples))
 
     @property
@@ -161,8 +157,6 @@ class CziReader(Reader):
         dims_shape_dict = dims_shape[dims_shape_index]
         dims_shape_dict.pop(CZI_SCENE_DIM_CHAR, None)
         return dims_shape_dict
-
-
 
     @staticmethod
     def _dim_helper(
@@ -272,7 +266,7 @@ class CziReader(Reader):
         # Always add the plane dimensions if not present already
         for dim in REQUIRED_CHUNK_DIMS:
             if dim not in self.chunk_by_dims:
-                self.chunk_by_dims.append(dim)
+                self.chunk_by_dims.append(dim)  # type: ignore
 
         # Safety measure / "feature"
         self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
@@ -286,7 +280,6 @@ class CziReader(Reader):
 
         if "B" in dims_shape:
             dims_shape.pop("B", None)
-
 
         dims_str = czi.dims.replace("B", "").replace("S", "")
 
@@ -509,7 +502,7 @@ class CziReader(Reader):
                 consistent=czi.shape_is_consistent,
             )
 
-            img_dims_list = [letter for letter in  self.mapped_dims]
+            img_dims_list = [letter for letter in self.mapped_dims]
 
             # Get image data
             image_data = self._create_dask_array(czi, img_dims_list)
@@ -564,7 +557,6 @@ class CziReader(Reader):
                 path=self._path,
                 scene=self.current_scene_index,
             )
-
 
             # Get metadata
             meta = czi.meta

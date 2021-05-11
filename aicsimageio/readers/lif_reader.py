@@ -605,6 +605,22 @@ class LifReader(Reader):
                 DimensionNames.SpatialX,
             ]
         }
+
+        # Add expanded Y and X coords
+        scale_x, scale_y, _, _ = selected_scene.info["scale"]
+        if scale_y is not None:
+            coords[DimensionNames.SpatialY] = np.arange(
+                0,
+                stitched.shape[-2] * scale_y,
+                scale_y,
+            )
+        if scale_x is not None:
+            coords[DimensionNames.SpatialX] = np.arange(
+                0,
+                stitched.shape[-1] * scale_x,
+                scale_x,
+            )
+
         attrs = copy(self.xarray_dask_data.attrs)
 
         return xr.DataArray(

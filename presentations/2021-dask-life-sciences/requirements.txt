@@ -1,7 +1,0 @@
-aicsimageio~=4.0.0.dev5
-dask-image==0.6.0
-jupyterlab
-bokeh
-nbconvert
-jupyter_contrib_nbextensions
-matplotlib

@@ -161,6 +161,13 @@ class TiffReader(Reader):
                 )
             )
             arr = arr.transpose(transpose_indices)
+
+            # By setting the compute call to always use a "synchronous" scheduler,
+            # it informs Dask not to look for an existing scheduler / client
+            # and instead simply read the data using the current thread / process.
+            #
+            # In doing so, we shouldn't run into any worker data transfer and handoff
+            # _during_ a read.
             return arr[retrieve_indices].compute(scheduler="synchronous")
 
     def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:

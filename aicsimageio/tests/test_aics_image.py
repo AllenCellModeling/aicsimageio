@@ -1033,5 +1033,6 @@ def test_parallel_read(
     assert out.shape == expected_shape
 
     # Shutdown and then safety measure timeout
-    client.shutdown()
+    cluster.close()
+    client.close()
     time.sleep(5)

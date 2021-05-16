@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import time
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
-from distributed import Client, LocalCluster
 import numpy as np
 import pytest
 import xarray as xr
+from distributed import Client, LocalCluster
 from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions, readers, types

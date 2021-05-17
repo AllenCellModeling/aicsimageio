@@ -1,0 +1,15 @@
+name: aicsimageio-dask-summit
+channels:
+  - defaults
+dependencies:
+  - graphviz
+  - pip:
+    - aicsimageio==4.0.0.dev6
+    - dask==2021.4.1
+    - dask-image==0.6.0
+    - distributed==2021.4.1
+    - graphviz==0.16
+    - jupyter-contrib-nbextensions==0.5.1
+    - jupyterlab==3.0.14
+    - matplotlib==3.4.2
+    - nbconvert==6.0.7

@@ -293,3 +293,53 @@ def test_lif_reader_mosaic_tile_inspection(
 
     # Assert equal
     np.testing.assert_array_equal(tile_from_m_index, tile_from_position)
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "expected_tile_y_coords, "
+    "expected_tile_x_coords, "
+    "expected_mosaic_y_coords, "
+    "expected_mosaic_x_coords",
+    [
+        (
+            "tiled.lif",
+            np.arange(0, 2552.176156654795, 4.984719055966396),
+            np.arange(0, 2552.176156654795, 4.984719055966396),
+            np.arange(0, 28024.09053264308, 4.984719055966396),
+            np.arange(0, 38212.85628303839, 4.984719055966396),
+        ),
+    ],
+)
+def test_lif_reader_mosaic_coords(
+    filename: str,
+    expected_tile_y_coords: np.ndarray,
+    expected_tile_x_coords: np.ndarray,
+    expected_mosaic_y_coords: np.ndarray,
+    expected_mosaic_x_coords: np.ndarray,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct reader
+    reader = LifReader(uri)
+
+    # Check tile y and x min max
+    np.testing.assert_array_equal(
+        reader.xarray_dask_data.coords[dimensions.DimensionNames.SpatialY].data,
+        expected_tile_y_coords,
+    )
+    np.testing.assert_array_equal(
+        reader.xarray_dask_data.coords[dimensions.DimensionNames.SpatialX].data,
+        expected_tile_x_coords,
+    )
+
+    # Check mosaic y and x min max
+    np.testing.assert_array_equal(
+        reader.mosaic_xarray_dask_data.coords[dimensions.DimensionNames.SpatialY].data,
+        expected_mosaic_y_coords,
+    )
+    np.testing.assert_array_equal(
+        reader.mosaic_xarray_dask_data.coords[dimensions.DimensionNames.SpatialX].data,
+        expected_mosaic_x_coords,
+    )

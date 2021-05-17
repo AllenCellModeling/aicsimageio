@@ -63,6 +63,12 @@ New
 
 Fix
 ~~~
+- bugfix/always-use-synch-for-tiff-zarr-compute  (`#235
+  <https://github.com/AllenCellModeling/aicsimageio/pull/235>`_)
+  [Jackson Maxfield Brown]
+- bugfix/setup-coords-for-stitched-lifs  (`#234
+  <https://github.com/AllenCellModeling/aicsimageio/pull/234>`_)
+  [Jackson Maxfield Brown]
 - bugfix/remove-unused-lif-code  (`#226
   <https://github.com/AllenCellModeling/aicsimageio/pull/226>`_)
   [Jackson Maxfield Brown]

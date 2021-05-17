@@ -4,7 +4,7 @@ channels:
 dependencies:
   - graphviz
   - pip:
-    - aicsimageio==4.0.0.dev5
+    - aicsimageio==4.0.0.dev6
     - dask==2021.4.1
     - dask-image==0.6.0
     - distributed==2021.4.1

@@ -63,6 +63,9 @@ New
 
 Fix
 ~~~
+- bugfix/setup-coords-for-stitched-lifs  (`#234
+  <https://github.com/AllenCellModeling/aicsimageio/pull/234>`_)
+  [Jackson Maxfield Brown]
 - bugfix/remove-unused-lif-code  (`#226
   <https://github.com/AllenCellModeling/aicsimageio/pull/226>`_)
   [Jackson Maxfield Brown]

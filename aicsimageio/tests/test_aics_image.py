@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -10,6 +11,7 @@ import dask.array as da
 import numpy as np
 import pytest
 import xarray as xr
+from distributed import Client, LocalCluster
 from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions, readers, types
@@ -964,3 +966,73 @@ def test_mosaic_passthrough(
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename, set_scene, get_dims, get_specific_dims, expected_shape",
+    [
+        # Check normal volumetric data
+        (
+            "3d-cell-viewer.ome.tiff",
+            "Image:0",
+            "CZYX",
+            {"C": [0, 1, 2, 3]},
+            (4, 74, 1024, 1024),
+        ),
+        (
+            "s_1_t_1_c_2_z_1_RGB.tiff",
+            "Image:0",
+            "CYXS",
+            {},
+            (2, 32, 32, 3),
+        ),
+        (
+            "s_1_t_4_c_2_z_1.lif",
+            "b2_001_Crop001_Resize001",
+            "TYX",
+            {},
+            (4, 614, 614),
+        ),
+        # Check mosaic chunk handling
+        (
+            "tiled.lif",
+            "TileScan_002",
+            "CYX",
+            {"Y": slice(0, 2000), "X": slice(0, 2000)},
+            (4, 2000, 2000),
+        ),
+    ],
+)
+@pytest.mark.parametrize("chunk_dims", ["YX", "ZYX"])
+@pytest.mark.parametrize("processes", [True, False])
+def test_parallel_read(
+    filename: str,
+    set_scene: str,
+    chunk_dims: str,
+    processes: bool,
+    get_dims: str,
+    get_specific_dims: Dict[str, Union[int, slice, range, Tuple[int, ...], List[int]]],
+    expected_shape: Tuple[int, ...],
+) -> None:
+    """
+    This test ensures that our produced dask array can be read in parallel.
+    """
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init image
+    img = AICSImage(uri, chunk_dims=chunk_dims)
+    img.set_scene(set_scene)
+
+    # Init cluster
+    cluster = LocalCluster(processes=processes)
+    client = Client(cluster)
+
+    # Select data
+    out = img.get_image_dask_data(get_dims, **get_specific_dims).compute()
+    assert out.shape == expected_shape
+
+    # Shutdown and then safety measure timeout
+    cluster.close()
+    client.close()
+    time.sleep(5)

@@ -86,6 +86,9 @@ Fix
 
 Other
 ~~~~~
+- admin/2021-dask-summit-presentation  (`#236
+  <https://github.com/AllenCellModeling/aicsimageio/pull/236>`_)
+  [Jackson Maxfield Brown]
 - admin/copy-v3 docs-to-static  (`#233
   <https://github.com/AllenCellModeling/aicsimageio/pull/233>`_)
   [Jackson Maxfield Brown]

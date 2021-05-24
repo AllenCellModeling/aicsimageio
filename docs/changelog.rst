@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v3.3.6 (2021-05-24)
+-------------------
+- admin/pin-imagecodecs  (`#237
+  <https://github.com/AllenCellModeling/aicsimageio/pull/237>`_)
+  [Sylvain Slaton]
+- admin/prep-for-v4-release  (`#232
+  <https://github.com/AllenCellModeling/aicsimageio/pull/232>`_)
+  [Jackson Maxfield Brown]
+
+
 v3.3.5 (2021-01-25)
 -------------------
 

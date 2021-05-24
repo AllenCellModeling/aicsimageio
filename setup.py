@@ -13,7 +13,7 @@ requirements = [
     "dask>=2.9.0",
     "distributed>=2.9.3",
     "numpy>=1.16",
-    "imagecodecs>=2020.5.30",
+    "imagecodecs==2021.4.28",
     "imageio>=2.3.0",
     "readlif==0.3.1",
     "lxml>=4.4.2",

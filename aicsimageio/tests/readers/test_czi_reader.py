@@ -35,7 +35,7 @@ from ..image_container_test_utils import (
             (1, 325, 475),
             np.uint16,
             "CYX",
-            ["Channel:0--Bright--Brightfield"],
+            ["Bright"],
             (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
         ),
         (
@@ -46,9 +46,9 @@ from ..image_container_test_utils import (
             np.uint16,
             "CZYX",
             [
-                "Channel:0--EGFP--Fluorescence",
-                "Channel:1--TaRFP--Fluorescence",
-                "Channel:2--Bright--Brightfield",
+                "EGFP",
+                "TaRFP",
+                "Bright",
             ],
             (1e-06, 1.0833333333333333e-06, 1.0833333333333333e-06),
         ),
@@ -60,9 +60,9 @@ from ..image_container_test_utils import (
             np.uint16,
             "CZYX",
             [
-                "Channel:0--EGFP--Fluorescence",
-                "Channel:1--TaRFP--Fluorescence",
-                "Channel:2--Bright--Brightfield",
+                "EGFP",
+                "TaRFP",
+                "Bright",
             ],
             (1e-06, 1.0833333333333333e-06, 1.0833333333333333e-06),
         ),
@@ -74,25 +74,11 @@ from ..image_container_test_utils import (
             np.uint16,
             "CZYX",
             [
-                "Channel:0--EGFP--Fluorescence",
-                "Channel:1--TaRFP--Fluorescence",
-                "Channel:2--Bright--Brightfield",
+                "EGFP",
+                "TaRFP",
+                "Bright",
             ],
             (1e-06, 1.0833333333333333e-06, 1.0833333333333333e-06),
-        ),
-        (
-            "variable_scene_shape_first_scene_pyramid.czi",
-            "A1",
-            ("A1",),
-            (3, 9, 2208, 2752),
-            np.uint16,
-            "CMYX",
-            [
-                "Channel:0--EGFP--Fluorescence",
-                "Channel:1--mCher--Fluorescence",
-                "Channel:2--PGC--Phase",
-            ],
-            (1.0, 9.082107048835329e-07, 9.082107048835329e-07),
         ),
         (
             "RGB-8bit.czi",
@@ -103,6 +89,21 @@ from ..image_container_test_utils import (
             "TYXS",
             None,
             (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
+        ),
+        pytest.param(
+            "variable_scene_shape_first_scene_pyramid.czi",
+            "A1",
+            ("A1", "A2"),
+            (3, 9, 2208, 2752),
+            np.uint16,
+            "CMYX",
+            [
+                "EGFP",
+                "mCher",
+                "PGC",
+            ],
+            (1.0, 9.082107048835329e-07, 9.082107048835329e-07),
+            marks=pytest.mark.xfail(reason="Missing scenes"),
         ),
         pytest.param(
             "example.txt",
@@ -158,7 +159,7 @@ def test_czi_reader(
 
 
 @pytest.mark.parametrize(
-    "tiles_filename, " "stitched_filename, " "tiles_set_scene, " "stitched_set_scene, ",
+    "tiles_filename, stitched_filename, tiles_set_scene, stitched_set_scene",
     [
         (
             "OverViewScan.czi",

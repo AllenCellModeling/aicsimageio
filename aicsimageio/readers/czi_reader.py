@@ -9,6 +9,7 @@ import dask.array as da
 import numpy as np
 import xarray as xr
 from dask import delayed
+from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, metadata, types
@@ -66,8 +67,6 @@ class CziReader(Reader):
     To use this reader, install with: `pip install aicsimageio[czi]`.
     """
 
-    _mapped_dims: Optional[str] = None
-
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
@@ -86,6 +85,13 @@ class CziReader(Reader):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
+        # Catch non-local file system
+        if not isinstance(self._fs, LocalFileSystem):
+            raise ValueError(
+                f"Cannot read CZIs from non-local file system. "
+                f"Received URI: {self._path}, which points to {type(self._fs)}."
+            )
+
         # Store params
         if isinstance(chunk_by_dims, str):
             chunk_by_dims = list(chunk_by_dims)
@@ -94,6 +100,7 @@ class CziReader(Reader):
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
+        self._mapped_dims: Optional[str] = None
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -106,7 +113,7 @@ class CziReader(Reader):
         if self._mapped_dims is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource)
-                self._mapped_dims: str = CziReader.fix_czi_dims(czi.dims)
+                self._mapped_dims = CziReader.fix_czi_dims(czi.dims)
 
         return self._mapped_dims
 
@@ -162,20 +169,6 @@ class CziReader(Reader):
         return dims_shape_dict
 
     @staticmethod
-    def _dim_helper(
-        dim: str,
-        selected: Dict[str, Optional[int]],
-        np_index: Tuple,
-        retrieve_dims: List,
-    ) -> Optional[int]:
-        indices = None
-        if dim in selected:
-            indices = selected[dim]
-            if indices is None:
-                indices = np_index[retrieve_dims.index(dim)]
-        return indices
-
-    @staticmethod
     def _get_just_image_data(
         fs: AbstractFileSystem,
         path: str,
@@ -196,57 +189,59 @@ class CziReader(Reader):
         """
         Read and return the squeezed image data requested along with the dimension info
         that was read.
+
         Parameters
         ----------
-        img: Path
-            Path to the CZI file to read.
+        fs: AbstractFileSystem
+            The file system to use for reading.
+        path: str
+            The path to the file to read.
+        scene: int
+            The scene index to pull the chunk from.
         read_dims: Optional[Dict[str, int]]
             The dimensions to read from the file as a dictionary of string to integer.
             Default: None (Read all data from the image)
+
         Returns
         -------
-        data: np.ndarray
-            The data read for the dimensions provided.
+        chunk: np.ndarray
+            The image chunk read as a numpy array.
         read_dimensions: List[Tuple[str, int]]]
             The dimension sizes that were returned from the read.
         """
         # Catch optional read dim
-
         if read_dims is None:
             read_dims = {}
 
-        read_dims["S"] = scene
+        # Get current scene read dims
+        read_dims[CZI_SCENE_DIM_CHAR] = scene
 
         # Init czi
-        # resource = fs.open(path)
-        czi = CziFile(path)
+        with fs.open(path) as open_resource:
+            czi = CziFile(open_resource)
 
-        # Read image
-        data, dims = czi.read_image(**read_dims)
+            # Read image
+            data, dims = czi.read_image(**read_dims)
 
-        dstr = "".join([d[0] for d in dims])
-        if "B" in dstr:
-            data = np.squeeze(data, axis=0)
-            dims = [item for item in dims if item[0] != "B"]
+            # Drop dims that shouldn't be provided back
+            ops: List[Union[int, slice]] = []
+            real_dims = []
+            for dim_info in dims:
+                # Expand dimension info
+                dim, _ = dim_info
 
-        # Drop dims that shouldn't be provided back
-        ops: List[Union[int, slice]] = []
-        real_dims = []
-        for i, dim_info in enumerate(dims):
-            # Expand dimension info
-            dim, size = dim_info
+                # If the dim was provided in the read dims
+                # we know a single plane for that dimension was requested so remove it
+                if dim in read_dims or dim is CZI_BLOCK_DIM_CHAR:
+                    ops.append(0)
 
-            # If the dim was provided in the read dims we know a single plane for that
-            # dimension was requested so remove it
-            if dim in read_dims:
-                ops.append(0)
-            # Otherwise just read the full slice
-            else:
-                ops.append(slice(None, None, None))
-                real_dims.append(dim_info)
+                # Otherwise just read the full slice
+                else:
+                    ops.append(slice(None, None, None))
+                    real_dims.append(dim_info)
 
-        # Convert ops and run getitem
-        return data[tuple(ops)], real_dims
+            # Convert ops and run getitem
+            return data[tuple(ops)], real_dims
 
     def _create_dask_array(
         self, czi: CziFile, selected_scene_dims: List[str]
@@ -281,10 +276,12 @@ class CziReader(Reader):
             consistent=czi.shape_is_consistent,
         )
 
-        if "B" in dims_shape:
-            dims_shape.pop("B", None)
+        if CZI_BLOCK_DIM_CHAR in dims_shape:
+            dims_shape.pop(CZI_BLOCK_DIM_CHAR, None)
 
-        dims_str = czi.dims.replace("B", "").replace("S", "")
+        dims_str = czi.dims
+        for remove_dim_char in [CZI_BLOCK_DIM_CHAR, CZI_SCENE_DIM_CHAR]:
+            dims_str = dims_str.replace(remove_dim_char, "")
 
         # Get the shape for the chunk and operating shape for the dask array
         # We also collect the chunk and non chunk dimension ordering so that we can
@@ -339,7 +336,9 @@ class CziReader(Reader):
         # multi-index plus the begin index for that plane. We then set the value of the
         # array at the same multi-index to the delayed reader using the constructed
         # read_dims dictionary.
-        dims = [d for d in czi.dims if d not in ["B", "S"]]
+        dims = [
+            d for d in czi.dims if d not in [CZI_BLOCK_DIM_CHAR, CZI_SCENE_DIM_CHAR]
+        ]
         begin_indicies = tuple(dims_shape[d][0] for d in dims)
         for i, _ in np.ndenumerate(lazy_arrays):
             # Add the czi file begin index for each dimension to the array dimension
@@ -361,7 +360,10 @@ class CziReader(Reader):
                 if d in this_chunk_read_dims:
                     this_chunk_read_dims.pop(d)
 
-            pixel_type = PIXEL_DICT.get(czi.pixel_type)
+            # Get pixel type and catch unsupported
+            pixel_type = PIXEL_DICT.get(czi.pixel_type, None)
+            if pixel_type is None:
+                raise TypeError(f"Pixel type: {pixel_type} is not supported.")
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[i] = da.from_delayed(
@@ -402,7 +404,7 @@ class CziReader(Reader):
 
         # Because dimensions outside of Y and X can be in any order and present or not
         # we also return the dimension order string.
-        return merged  # , "".join(dims)
+        return merged
 
     @staticmethod
     def _get_coords_and_physical_px_sizes(
@@ -425,12 +427,7 @@ class CziReader(Reader):
             channels = img.findall("./Channel")
             for i, channel in enumerate(channels):
                 channel_name = channel.attrib["Name"]
-                channel_id = channel.attrib["Id"]
-                channel_ce = channel.find("./ContrastMethod")
-                channel_contrast = channel_ce.text if channel_ce is not None else ""
-                scene_channel_list.append(
-                    (f"{channel_id}" f"--{channel_name}" f"--{channel_contrast}")
-                )
+                scene_channel_list.append(channel_name)
 
             # Attach channel names to coords
             coords[DimensionNames.Channel] = scene_channel_list
@@ -505,7 +502,8 @@ class CziReader(Reader):
                 consistent=czi.shape_is_consistent,
             )
 
-            img_dims_list = [letter for letter in self.mapped_dims]
+            # Get dims as list for xarray
+            img_dims_list = list(self.mapped_dims)
 
             # Get image data
             image_data = self._create_dask_array(czi, img_dims_list)
@@ -546,7 +544,6 @@ class CziReader(Reader):
         """
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource)
-            # selected_scene, real_dims = czi.read_image(S=self.current_scene_index)
 
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
@@ -601,7 +598,9 @@ class CziReader(Reader):
         arr_shape_list = []
 
         ordered_dims_present = [
-            dim for dim in data_dims if dim not in [CZI_BLOCK_DIM_CHAR, "M"]
+            dim
+            for dim in data_dims
+            if dim not in [CZI_BLOCK_DIM_CHAR, DimensionNames.MosaicTile]
         ]
         for dim in ordered_dims_present:
             if dim not in REQUIRED_CHUNK_DIMS:
@@ -614,7 +613,7 @@ class CziReader(Reader):
                 arr_shape_list.append(data_dims_shape[dim][1])
 
         ans = None
-        if type(data) is da.Array:
+        if isinstance(data, da.Array):
             ans = da.zeros(
                 arr_shape_list,
                 chunks=data.chunks,  # type: ignore
@@ -661,7 +660,7 @@ class CziReader(Reader):
                     ans_indexes.append(slice(None))
 
             # assign the tiles into ans
-            ans[ans_indexes] = data[data_indexes]
+            ans[tuple(ans_indexes)] = data[tuple(data_indexes)]
 
         return ans
 

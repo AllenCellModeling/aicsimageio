@@ -86,6 +86,9 @@ Fix
 
 Other
 ~~~~~
+- admin/add-install-from-git-to-readme  (`#240
+  <https://github.com/AllenCellModeling/aicsimageio/pull/240>`_) [Ramón
+  Casero]
 - admin/2021-dask-summit-presentation  (`#236
   <https://github.com/AllenCellModeling/aicsimageio/pull/236>`_)
   [Jackson Maxfield Brown]

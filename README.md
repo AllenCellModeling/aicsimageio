@@ -44,7 +44,9 @@ TIFF and OME-TIFF reading and writing is always available after
 installing `aicsimageio`, but extra supported formats can be
 optionally installed using `[...]` syntax.
 
--   For a single additional supported format (i.e. CZI): `pip install aicsimageio[czi]`
+-   For a single additional supported format (e.g. CZI): `pip install aicsimageio[czi]`
+-   For a single additional supported format (e.g. CZI), development head: `pip install "aicsimageio[czi] @ git+https://github.com/AllenCellModeling/aicsimageio.git"`
+-   For a single additional supported format (e.g. CZI), specific tag (e.g. `v4.0.0.dev6`): `pip install "aicsimageio[czi] @ git+https://github.com/AllenCellModeling/aicsimageio.git@v4.0.0.dev6"`
 -   For multiple additional supported formats: `pip install aicsimageio[czi,lif]`
 -   For all additional supported formats: `pip install aicsimageio[all]`
 

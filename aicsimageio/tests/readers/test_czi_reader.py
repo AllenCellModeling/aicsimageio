@@ -11,7 +11,7 @@ from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import ArrayLikeReader
 from aicsimageio.readers.czi_reader import CziReader
 
-from ..conftest import LOCAL, get_resource_full_path
+from ..conftest import LOCAL, REMOTE, get_resource_full_path
 from ..image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
@@ -156,6 +156,13 @@ def test_czi_reader(
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=ET.Element,
     )
+
+
+@pytest.mark.xfail(reason="Do no support remote CZI reading yet")
+def test_czi_reader_remote_xfail() -> None:
+    # Construct full filepath
+    uri = get_resource_full_path("s_1_t_1_c_1_z_1.czi", REMOTE)
+    CziReader(uri)
 
 
 @pytest.mark.parametrize(

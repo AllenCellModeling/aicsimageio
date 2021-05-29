@@ -192,7 +192,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Bright"],
-            (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
+            (None, 1.0833333333333333, 1.0833333333333333),
             ET.Element,
         ),
         (
@@ -202,8 +202,8 @@ from .image_container_test_utils import (
             (1, 1, 1, 624, 924, 3),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
-            None,
-            (1.0, 1.0833333333333333e-06, 1.0833333333333333e-06),
+            ["Channel:0:0"],
+            (None, 1.0833333333333333, 1.0833333333333333),
             ET.Element,
         ),
         #######################################################################
@@ -620,7 +620,7 @@ def test_aicsimage_from_array(
         ("s_1_t_4_c_2_z_1.lif", None),
         ("tiled.lif", None),
         ("s_1_t_1_c_1_z_1.czi", None),
-        ("s_1_t_1_c_1_z_1.czi", ["P2", "P1"]),
+        ("s_3_t_1_c_3_z_5.czi", ["P2", "P1"]),
     ],
 )
 def test_roundtrip_save_all_scenes(
@@ -972,7 +972,7 @@ def test_set_reader(
             "OverViewScan.czi",
             False,
             "TR1",
-            (120, 1, 1, 1, 3212, 7398),
+            (120, 1, 1, 1, 440, 544),
             (440, 544),
             0,
         ),

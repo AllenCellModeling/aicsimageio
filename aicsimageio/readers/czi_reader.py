@@ -593,10 +593,6 @@ class CziReader(Reader):
             )
 
     @staticmethod
-    def _dims_list_to_dict(list_in: List[Tuple[str, int]]) -> Dict[str, int]:
-        return {x[0]: x[1] for x in list_in}
-
-    @staticmethod
     def _stitch_tiles(
         data: types.ArrayLike,
         data_dims: str,

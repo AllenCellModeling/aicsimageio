@@ -173,7 +173,7 @@ class CziReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
     def setup(self, img_path):
         random.seed(42)
-        self.ImageContainer = readers.CziReader
+        self.ImageContainer = readers.czi_reader.CziReader
 
 
 class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):

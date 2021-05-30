@@ -33,8 +33,6 @@ class ChunkSuite(_ImageContainerTimeSuite):
 
     params = (
         [
-            str(LOCAL_RESOURCES_DIR / "actk.ome.tiff"),
-            str(LOCAL_RESOURCES_DIR / "pipeline-4.ome.tiff"),
             str(LOCAL_RESOURCES_DIR / "pre-variance-cfe.ome.tiff"),
             str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
         ],

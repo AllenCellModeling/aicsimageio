@@ -25,7 +25,7 @@ class ChunkSuite(_ImageContainerTimeSuite):
     # has on the duration of various reads.
     # We would expect that processing speed can be optimized based off of the
     # dimensions of the file and what the user is trying to do with said file.
-    # i.e. If the user wants to nrmalize each channel and make a max projection
+    # i.e. If the user wants to normalize each channel and make a max projection
     # through Z, then the default of 'ZYX' is preferred over just 'YX'.
     # During this suite we not only benchmark the above example but also
     # file reading under the various chunk configurations as a monitor

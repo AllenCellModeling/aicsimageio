@@ -169,7 +169,7 @@ class CziReader(Reader):
         return dims_shape_dict
 
     @staticmethod
-    def _get_just_image_data(
+    def _read_chunk_from_image(
         fs: AbstractFileSystem,
         path: str,
         scene: int,
@@ -272,8 +272,8 @@ class CziReader(Reader):
             consistent=czi.shape_is_consistent,
         )
 
-        if CZI_BLOCK_DIM_CHAR in dims_shape:
-            dims_shape.pop(CZI_BLOCK_DIM_CHAR, None)
+        # Remove block dim as not useful
+        dims_shape.pop(CZI_BLOCK_DIM_CHAR, None)
 
         dims_str = czi.dims
         for remove_dim_char in [CZI_BLOCK_DIM_CHAR, CZI_SCENE_DIM_CHAR]:
@@ -353,17 +353,16 @@ class CziReader(Reader):
 
             # Remove the dimensions that we want to chunk by from the read dims
             for d in self.chunk_by_dims:
-                if d in this_chunk_read_dims:
-                    this_chunk_read_dims.pop(d)
+                this_chunk_read_dims.pop(d, None)
 
             # Get pixel type and catch unsupported
-            pixel_type = PIXEL_DICT.get(czi.pixel_type, None)
+            pixel_type = PIXEL_DICT.get(czi.pixel_type)
             if pixel_type is None:
                 raise TypeError(f"Pixel type: {pixel_type} is not supported.")
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[np_index] = da.from_delayed(
-                delayed(CziReader._get_just_image_data)(
+                delayed(CziReader._read_chunk_from_image)(
                     fs=self._fs,
                     path=self._path,
                     scene=self.current_scene_index,
@@ -436,53 +435,34 @@ class CziReader(Reader):
         scale_ye = list_ys[0].find("./Value")
         scale_ze = None if len(list_zs) == 0 else list_zs[0].find("./Value")
 
+        # Set default scales
+        scale_x = None
+        scale_y = None
+        scale_z = None
+
         # Unpack the string value to a float
         # Split by "E" and take the first part because the values are stored
         # with E-06 for micrometers, even though the unit is also present in metadata
         # 🤷
-        if scale_xe is not None:
-            if scale_xe.text is None:
-                scale_x = None
-            else:
-                scale_x = float(scale_xe.text.split("E")[0])
-        else:
-            scale_x = None
-
-        if scale_ye is not None:
-            if scale_ye.text is None:
-                scale_y = None
-            else:
-                scale_y = float(scale_ye.text.split("E")[0])
-        else:
-            scale_y = None
-
-        if scale_ze is not None:
-            if scale_ze.text is None:
-                scale_z = None
-            else:
-                scale_z = float(scale_ze.text.split("E")[0])
-        else:
-            scale_z = None
+        if scale_xe is not None and scale_xe.text is not None:
+            scale_x = float(scale_xe.text.split("E")[0])
+        if scale_ye is not None and scale_ye.text is not None:
+            scale_y = float(scale_ye.text.split("E")[0])
+        if scale_ze is not None and scale_ze.text is not None:
+            scale_z = float(scale_ze.text.split("E")[0])
 
         # Handle Spatial Dimensions
-        if scale_z is not None and DimensionNames.SpatialZ in dims_shape:
-            coords[DimensionNames.SpatialZ] = np.arange(
-                0,
-                dims_shape[DimensionNames.SpatialZ][1] * scale_z,
-                scale_z,
-            )
-        if scale_y is not None and DimensionNames.SpatialY in dims_shape:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                dims_shape[DimensionNames.SpatialY][1] * scale_y,
-                scale_y,
-            )
-        if scale_x is not None and DimensionNames.SpatialX in dims_shape:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                dims_shape[DimensionNames.SpatialX][1] * scale_x,
-                scale_x,
-            )
+        for scale, dim_name in [
+            (scale_z, DimensionNames.SpatialZ),
+            (scale_y, DimensionNames.SpatialY),
+            (scale_x, DimensionNames.SpatialX),
+        ]:
+            if scale is not None and dim_name in dims_shape:
+                coords[dim_name] = np.arange(
+                    0,
+                    dims_shape[dim_name][1] * scale,
+                    scale,
+                )
 
         # Time
         # TODO: unpack "TimeSpan" elements

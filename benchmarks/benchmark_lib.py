@@ -8,9 +8,7 @@ Benchmarks for general library operations and comparisons against other librarie
 from functools import partial
 
 from aicsimageio import imread_dask as aicsimageio_imread
-from dask.array.image import imread as dask_array_imread
 from dask_image.imread import imread as dask_image_imread
-import pims
 
 from .benchmark_image_containers import LOCAL_RESOURCES_DIR
 
@@ -21,7 +19,7 @@ ACTK_OME_TIFF = str(LOCAL_RESOURCES_DIR / "actk.ome.tiff")
 ###############################################################################
 
 
-class LibSuite:
+class LibInitSuite:
     def time_base_import(self):
         """
         Benchmark how long it takes to import the library as a whole.
@@ -37,15 +35,12 @@ class LibCompareSuite:
     FUNC_LOOKUP = {
         "aicsimageio-default-chunks": partial(aicsimageio_imread, chunk_dims="ZYX"),
         "aicsimageio-plane-chunks": partial(aicsimageio_imread, chunk_dims="YX"),
-        "dask-array-imread-default": dask_array_imread,
         "dask-image-imread-default": dask_image_imread,
     }
 
     params = [
         "aicsimageio-default-chunks",
         "aicsimageio-plane-chunks",
-        "dask-array-imread-default",
-        "dask-array-imread-pims",
         "dask-image-imread-default",
     ]
 

@@ -59,7 +59,7 @@ class ChunkSuite(_ImageContainerTimeSuite):
         # Store all delayed projections
         projs = []
 
-        # Only run the first
+        # Only run a random sample of two channels instead of all
         selected_channels = random.sample(r.channel_names, 2)
         for i, channel_name in enumerate(r.channel_names):
             if channel_name in selected_channels:

@@ -12,7 +12,7 @@ from .benchmark_image_containers import LOCAL_RESOURCES_DIR
 
 ###############################################################################
 
-PIPELINE_4_OME_TIFF = str(LOCAL_RESOURCES_DIR / "pipeline-4.ome.tiff")
+VARIANCE_CFE_OME_TIFF = str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff")
 
 ###############################################################################
 
@@ -31,10 +31,10 @@ class LibCompareSuite:
     """
 
     def time_aicsimageio_chunk_zyx(self):
-        imread_dask(PIPELINE_4_OME_TIFF, chunk_dims="ZYX").compute()
+        imread_dask(VARIANCE_CFE_OME_TIFF, chunk_dims="ZYX").compute()
 
     def time_aicsimageio_chunk_yx(self):
-        imread_dask(PIPELINE_4_OME_TIFF, chunk_dims="YX").compute()
+        imread_dask(VARIANCE_CFE_OME_TIFF, chunk_dims="YX").compute()
 
     def time_dask_image(self):
-        imread(PIPELINE_4_OME_TIFF).compute()
+        imread(VARIANCE_CFE_OME_TIFF).compute()

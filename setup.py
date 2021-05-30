@@ -53,6 +53,11 @@ dev_requirements = [
     "wheel>=0.34.2",
 ]
 
+benchmark_requirements = [
+    *dev_requirements,
+    "dask-image~=0.6.0",
+]
+
 requirements = [
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
@@ -70,6 +75,7 @@ extra_requirements = {
     "setup": setup_requirements,
     "test": test_requirements,
     "dev": dev_requirements,
+    "benchmark": benchmark_requirements,
     **format_libs,
     "all": all_formats,
 }

@@ -150,11 +150,13 @@ class DefaultReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
 class TiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
-        str(
-            LOCAL_RESOURCES_DIR
-            / "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif"
-        ),
-        str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        [
+            str(
+                LOCAL_RESOURCES_DIR
+                / "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif"
+            ),
+            str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        ]
     ]
 
     def setup(self, img_path):
@@ -164,9 +166,11 @@ class TiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
 class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
-        str(LOCAL_RESOURCES_DIR / "actk.ome.tiff"),
-        str(LOCAL_RESOURCES_DIR / "pre-variance-cfe.ome.tiff"),
-        str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        [
+            str(LOCAL_RESOURCES_DIR / "actk.ome.tiff"),
+            str(LOCAL_RESOURCES_DIR / "pre-variance-cfe.ome.tiff"),
+            str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        ]
     ]
 
     def setup(self, img_path):

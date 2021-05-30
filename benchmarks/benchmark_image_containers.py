@@ -5,7 +5,7 @@ import random
 from pathlib import Path
 
 from aicsimageio import AICSImage, readers
-from aicsimageio.dimensions import DimensionNames
+from aicsimageio.dimensions import DEFAULT_CHUNK_DIMS, DimensionNames
 
 ###############################################################################
 
@@ -61,25 +61,34 @@ class _ImageContainerTimeSuite:
         DimensionNames.Samples,
     ]
 
-    def time_init(self, img_path):
+    def time_init(self, img_path, chunk_dims=None):
         """
         Benchmark how long it takes to validate a file and finish general setup.
         """
-        self.ImageContainer(img_path)
+        if chunk_dims is None:
+            chunk_dims = DEFAULT_CHUNK_DIMS
 
-    def time_delayed_array_construct(self, img_path):
+        self.ImageContainer(img_path, chunk_dims=chunk_dims)
+
+    def time_delayed_array_construct(self, img_path, chunk_dims=None):
         """
         Benchmark how long it takes to construct the delayed dask array for a file.
         """
-        self.ImageContainer(img_path).dask_data
+        if chunk_dims is None:
+            chunk_dims = DEFAULT_CHUNK_DIMS
 
-    def time_random_single_chunk_read(self, img_path):
+        self.ImageContainer(img_path, chunk_dims=chunk_dims).dask_data
+
+    def time_random_single_chunk_read(self, img_path, chunk_dims=None):
         """
         Benchmark how long it takes to read a single chunk out of a file.
 
         I.E. "Pull just the Brightfield channel z-stack.
         """
-        r = self.ImageContainer(img_path)
+        if chunk_dims is None:
+            chunk_dims = DEFAULT_CHUNK_DIMS
+
+        r = self.ImageContainer(img_path, chunk_dims=chunk_dims)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
@@ -91,13 +100,16 @@ class _ImageContainerTimeSuite:
         )
         r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()
 
-    def time_random_many_chunk_read(self, img_path):
+    def time_random_many_chunk_read(self, img_path, chunk_dims=None):
         """
         Open a file, get many chunks out of the file at once.
 
         I.E. "Pull the DNA and Nucleus channel z-stacks, for the middle 50% timepoints".
         """
-        r = self.ImageContainer(img_path)
+        if chunk_dims is None:
+            chunk_dims = DEFAULT_CHUNK_DIMS
+
+        r = self.ImageContainer(img_path, chunk_dims=chunk_dims)
 
         random_index_selections = {}
         for dim, size in zip(r.dims.order, r.dims.shape):
@@ -133,27 +145,37 @@ class DefaultReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
     def setup(self, img_path):
         random.seed(42)
-        self.ImageContainer = readers.DefaultReader
+        self.ImageContainer = readers.default_reader.DefaultReader
 
 
 class TiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
-        sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.tiff")]),
+        [
+            str(
+                LOCAL_RESOURCES_DIR
+                / "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif"
+            ),
+            str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        ]
     ]
 
     def setup(self, img_path):
         random.seed(42)
-        self.ImageContainer = readers.TiffReader
+        self.ImageContainer = readers.tiff_reader.TiffReader
 
 
 class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
-        sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.ome.tiff")]),
+        [
+            str(LOCAL_RESOURCES_DIR / "actk.ome.tiff"),
+            str(LOCAL_RESOURCES_DIR / "pre-variance-cfe.ome.tiff"),
+            str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff"),
+        ]
     ]
 
     def setup(self, img_path):
         random.seed(42)
-        self.ImageContainer = readers.OmeTiffReader
+        self.ImageContainer = readers.ome_tiff_reader.OmeTiffReader
 
 
 class LifReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
@@ -163,7 +185,7 @@ class LifReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
 
     def setup(self, img_path):
         random.seed(42)
-        self.ImageContainer = readers.LifReader
+        self.ImageContainer = readers.lif_reader.LifReader
 
 
 class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):

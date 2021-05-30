@@ -5,14 +5,18 @@
 Benchmarks for general library operations and comparisons against other libraries.
 """
 
-from dask_image.imread import imread
-from aicsimageio import imread_dask
+from functools import partial
+
+from aicsimageio import imread_dask as aicsimageio_imread
+from dask.array.image import imread as dask_array_imread
+from dask_image.imread import imread as dask_image_imread
+import pims
 
 from .benchmark_image_containers import LOCAL_RESOURCES_DIR
 
 ###############################################################################
 
-VARIANCE_CFE_OME_TIFF = str(LOCAL_RESOURCES_DIR / "variance-cfe.ome.tiff")
+ACTK_OME_TIFF = str(LOCAL_RESOURCES_DIR / "actk.ome.tiff")
 
 ###############################################################################
 
@@ -30,11 +34,21 @@ class LibCompareSuite:
     Compare aicsimageio against other "just-in-time" image reading libs.
     """
 
-    def time_aicsimageio_chunk_zyx(self):
-        imread_dask(VARIANCE_CFE_OME_TIFF, chunk_dims="ZYX").compute()
+    FUNC_LOOKUP = {
+        "aicsimageio-default-chunks": partial(aicsimageio_imread, chunk_dims="ZYX"),
+        "aicsimageio-plane-chunks": partial(aicsimageio_imread, chunk_dims="YX"),
+        "dask-array-imread-default": dask_array_imread,
+        "dask-image-imread-default": dask_image_imread,
+    }
 
-    def time_aicsimageio_chunk_yx(self):
-        imread_dask(VARIANCE_CFE_OME_TIFF, chunk_dims="YX").compute()
+    params = [
+        "aicsimageio-default-chunks",
+        "aicsimageio-plane-chunks",
+        "dask-array-imread-default",
+        "dask-array-imread-pims",
+        "dask-image-imread-default",
+    ]
 
-    def time_dask_image(self):
-        imread(VARIANCE_CFE_OME_TIFF).compute()
+    def time_lib_config(self, func_name):
+        func = self.FUNC_LOOKUP[func_name]
+        func(ACTK_OME_TIFF).compute()

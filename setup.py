@@ -56,6 +56,8 @@ dev_requirements = [
 benchmark_requirements = [
     *dev_requirements,
     "dask-image~=0.6.0",
+    "pims",  # no pin because it's pulled from dask-image
+    "scikit-image~=0.18.1",
 ]
 
 requirements = [

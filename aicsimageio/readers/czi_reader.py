@@ -113,12 +113,12 @@ class CziReader(Reader):
         if self._mapped_dims is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource)
-                self._mapped_dims = CziReader.fix_czi_dims(czi.dims)
+                self._mapped_dims = CziReader._fix_czi_dims(czi.dims)
 
         return self._mapped_dims
 
     @staticmethod
-    def fix_czi_dims(dims: str) -> str:
+    def _fix_czi_dims(dims: str) -> str:
         return (
             dims.replace(CZI_BLOCK_DIM_CHAR, "")
             .replace(CZI_SCENE_DIM_CHAR, "")

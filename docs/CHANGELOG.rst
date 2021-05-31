@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/czi-reader  (`#231
+  <https://github.com/AllenCellModeling/aicsimageio/pull/231>`_)
+  [JacksonMaxfield, Jamie Sherman]
 - feature/mosaic-tile-single-position-request-and-docs  (`#229
   <https://github.com/AllenCellModeling/aicsimageio/pull/229>`_)
   [Jackson Maxfield Brown]
@@ -86,6 +89,15 @@ Fix
 
 Other
 ~~~~~
+- admin/4.0-release-prep-and-benchmark-upgrades  (`#244
+  <https://github.com/AllenCellModeling/aicsimageio/pull/244>`_)
+  [Jackson Maxfield Brown]
+- admin/add-install-from-git-to-readme  (`#240
+  <https://github.com/AllenCellModeling/aicsimageio/pull/240>`_) [Ramón
+  Casero]
+- admin/2021-dask-summit-presentation  (`#236
+  <https://github.com/AllenCellModeling/aicsimageio/pull/236>`_)
+  [Jackson Maxfield Brown]
 - admin/copy-v3 docs-to-static  (`#233
   <https://github.com/AllenCellModeling/aicsimageio/pull/233>`_)
   [Jackson Maxfield Brown]

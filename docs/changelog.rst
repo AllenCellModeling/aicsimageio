@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v3.3.7 (2021-05-31)
+-------------------
+
+Fix
+~~~
+- bugfix/fiff-tiff-no-description-offset  (`#245
+  <https://github.com/AllenCellModeling/aicsimageio/pull/245>`_)
+  [Mustafa Al Ibrahim]
+
+
 v3.3.6 (2021-05-24)
 -------------------
 - admin/pin-imagecodecs  (`#237

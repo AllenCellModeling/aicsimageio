@@ -183,6 +183,30 @@ from .image_container_test_utils import (
             ET.Element,
         ),
         #######################################################################
+        # CziReader
+        (
+            "s_1_t_1_c_1_z_1.czi",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 325, 475),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Bright"],
+            (None, 1.0833333333333333, 1.0833333333333333),
+            ET.Element,
+        ),
+        (
+            "RGB-8bit.czi",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 624, 924, 3),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+            ["Channel:0:0"],
+            (None, 1.0833333333333333, 1.0833333333333333),
+            ET.Element,
+        ),
+        #######################################################################
         # Errors
         pytest.param(
             "example.txt",
@@ -271,6 +295,20 @@ def test_aicsimage(
             "Image:1",
             (1, 3, 5, 325, 475),
             "Image:2",
+            (1, 3, 5, 325, 475),
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            "P2",
+            (1, 3, 5, 325, 475),
+            "P3",
+            (1, 3, 5, 325, 475),
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            "P3",
+            (1, 3, 5, 325, 475),
+            "P1",
             (1, 3, 5, 325, 475),
         ),
     ],
@@ -581,6 +619,8 @@ def test_aicsimage_from_array(
         ("s_3_t_1_c_3_z_5.ome.tiff", ["Image:2", "Image:1"]),
         ("s_1_t_4_c_2_z_1.lif", None),
         ("tiled.lif", None),
+        ("s_1_t_1_c_1_z_1.czi", None),
+        ("s_3_t_1_c_3_z_5.czi", ["P2", "P1"]),
     ],
 )
 def test_roundtrip_save_all_scenes(
@@ -918,6 +958,22 @@ def test_set_reader(
             "TileScan_002",
             (165, 1, 4, 1, 512, 512),
             (512, 512),
+            0,
+        ),
+        (
+            "OverViewScan.czi",
+            True,
+            "TR1",
+            (1, 1, 1, 3212, 7398),
+            (440, 544),
+            0,
+        ),
+        (
+            "OverViewScan.czi",
+            False,
+            "TR1",
+            (120, 1, 1, 1, 440, 544),
+            (440, 544),
             0,
         ),
         pytest.param(

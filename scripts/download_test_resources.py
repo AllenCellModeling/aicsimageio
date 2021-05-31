@@ -72,7 +72,7 @@ def download_test_resources(args: Args):
         # Use or read top hash
         if args.top_hash is None:
             with open(Path(__file__).parent / "TEST_RESOURCES_HASH.txt", "r") as f:
-                top_hash = f.readline()
+                top_hash = f.readline().rstrip()
         else:
             top_hash = args.top_hash
 

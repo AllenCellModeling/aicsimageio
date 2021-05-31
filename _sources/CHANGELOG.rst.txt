@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/czi-reader  (`#231
+  <https://github.com/AllenCellModeling/aicsimageio/pull/231>`_)
+  [JacksonMaxfield, Jamie Sherman]
 - feature/mosaic-tile-single-position-request-and-docs  (`#229
   <https://github.com/AllenCellModeling/aicsimageio/pull/229>`_)
   [Jackson Maxfield Brown]

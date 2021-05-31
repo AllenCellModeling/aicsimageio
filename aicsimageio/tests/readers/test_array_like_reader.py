@@ -849,7 +849,7 @@ def test_arraylike_reader(
         expected_dtype=np.dtype(np.float64),
         expected_dims_order=expected_dims,
         expected_channel_names=expected_channel_names,
-        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_physical_pixel_sizes=(None, None, None),
         # we allow both None and Dict because the user can pass an already initialized
         # xarray DataArray which has metadata as a dict
         expected_metadata_type=(

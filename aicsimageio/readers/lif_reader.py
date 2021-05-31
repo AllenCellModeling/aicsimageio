@@ -409,11 +409,7 @@ class LifReader(Reader):
             )
 
         # Create physical pixal sizes
-        px_sizes = types.PhysicalPixelSizes(
-            scale_z if scale_z is not None else 1.0,
-            scale_y if scale_y is not None else 1.0,
-            scale_x if scale_x is not None else 1.0,
-        )
+        px_sizes = types.PhysicalPixelSizes(scale_z, scale_y, scale_x)
 
         return coords, px_sizes
 

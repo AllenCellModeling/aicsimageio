@@ -52,7 +52,9 @@ def run_image_container_checks(
     expected_dtype: np.dtype,
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
-    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_physical_pixel_sizes: Tuple[
+        Optional[float], Optional[float], Optional[float]
+    ],
     expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     """
@@ -143,7 +145,9 @@ def run_image_file_checks(
     expected_dtype: np.dtype,
     expected_dims_order: str,
     expected_channel_names: Optional[List[str]],
-    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_physical_pixel_sizes: Tuple[
+        Optional[float], Optional[float], Optional[float]
+    ],
     expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     # Init container

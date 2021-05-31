@@ -174,7 +174,7 @@ def test_tiff_reader(
         expected_dtype=expected_dtype,
         expected_dims_order=expected_dims_order,
         expected_channel_names=expected_channel_names,
-        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_physical_pixel_sizes=(None, None, None),
         expected_metadata_type=str,
     )
 
@@ -273,6 +273,6 @@ def test_micromanager_ome_tiff_binary_file() -> None:
         # because we swap the dimensions into "standard" order
         expected_dims_order="TZCYX",
         expected_channel_names=["Channel:0:0", "Channel:0:1", "Channel:0:2"],
-        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_physical_pixel_sizes=(None, None, None),
         expected_metadata_type=str,
     )

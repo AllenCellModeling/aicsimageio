@@ -469,8 +469,7 @@ class CziReader(Reader):
         # I can find a single "TimeSpan" in our data but unsure how multi-scene handles
 
         # Create physical pixel sizes
-        # TODO: fix typing as part of GH#238
-        px_sizes = types.PhysicalPixelSizes(scale_z, scale_y, scale_x)  # type: ignore
+        px_sizes = types.PhysicalPixelSizes(scale_z, scale_y, scale_x)
 
         return coords, px_sizes
 

@@ -53,7 +53,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             dict,
         ),
         (
@@ -64,7 +64,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             dict,
         ),
         (
@@ -75,7 +75,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             dict,
         ),
         #######################################################################
@@ -88,7 +88,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             str,
         ),
         (
@@ -99,7 +99,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             str,
         ),
         #######################################################################
@@ -112,7 +112,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             [f"C:{i}" for i in range(10)],  # This is the actual metadata
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             OME,
         ),
         (
@@ -126,7 +126,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0", "Channel:0:1"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
             OME,
         ),
         (
@@ -168,7 +168,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
-            (1.0, 2.9485556406398508, 2.9485556406398508),
+            (None, 2.9485556406398508, 2.9485556406398508),
             ET.Element,
         ),
         (
@@ -179,7 +179,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray", "Red", "Green", "Cyan"],
-            (1.0, 4.984719055966396, 4.984719055966396),
+            (None, 4.984719055966396, 4.984719055966396),
             ET.Element,
         ),
         #######################################################################
@@ -601,7 +601,7 @@ def test_aicsimage_from_array(
         expected_dtype=np.dtype(np.float64),
         expected_dims_order=expected_dims,
         expected_channel_names=expected_channel_names,
-        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_physical_pixel_sizes=(None, None, None),
         # we allow both None and Dict because the user can pass an already initialized
         # xarray DataArray which has metadata as a dict
         expected_metadata_type=(

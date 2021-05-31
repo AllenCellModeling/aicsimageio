@@ -421,8 +421,4 @@ class OmeTiffReader(TiffReader):
         y = self.metadata.images[self.current_scene_index].pixels.physical_size_y
         x = self.metadata.images[self.current_scene_index].pixels.physical_size_x
 
-        return PhysicalPixelSizes(
-            z if z is not None else 1.0,
-            y if y is not None else 1.0,
-            x if x is not None else 1.0,
-        )
+        return PhysicalPixelSizes(z, y, x)

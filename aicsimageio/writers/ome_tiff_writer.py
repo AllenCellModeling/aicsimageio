@@ -204,7 +204,7 @@ class OmeTiffWriter(Writer):
             physical_pixel_sizes = [physical_pixel_sizes] * num_images
         elif physical_pixel_sizes is None:
             physical_pixel_sizes = [
-                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+                types.PhysicalPixelSizes(None, None, None)
             ] * num_images
         if channel_names is None or isinstance(channel_names[0], int):
             channel_names = [channel_names] * num_images  # type: ignore
@@ -419,7 +419,7 @@ class OmeTiffWriter(Writer):
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         image_name: Optional[str] = "I0",
         physical_pixel_sizes: types.PhysicalPixelSizes = types.PhysicalPixelSizes(
-            1.0, 1.0, 1.0
+            None, None, None
         ),
         channel_names: List[str] = None,
         channel_colors: List[int] = None,
@@ -563,7 +563,7 @@ class OmeTiffWriter(Writer):
             image_name = [None] * num_images
         if physical_pixel_sizes is None:
             physical_pixel_sizes = [
-                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+                types.PhysicalPixelSizes(None, None, None)
             ] * num_images
         if channel_colors is None:
             channel_colors = [None] * num_images

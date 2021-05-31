@@ -37,7 +37,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Bright"],
-            (1.0, 1.0833333333333333, 1.0833333333333333),
+            (None, 1.0833333333333333, 1.0833333333333333),
         ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
@@ -47,7 +47,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             [f"C:{i}" for i in range(10)],  # This is the actual metadata
-            (1.0, 1.0, 1.0),
+            (None, None, None),
         ),
         (
             # This is actually an OME-TIFF file
@@ -60,7 +60,7 @@ from ..image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0", "Channel:0:1"],
-            (1.0, 1.0, 1.0),
+            (None, None, None),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -335,7 +335,7 @@ def test_multi_scene_ome_tiff_reader(
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["EGFP", "mCher", "PGC"],
-            (1.0, 0.9082107048835328, 0.9082107048835328),
+            (None, 0.9082107048835328, 0.9082107048835328),
         ),
         (
             "variable_scene_shape_first_scene_pyramid.ome.tiff",
@@ -345,7 +345,7 @@ def test_multi_scene_ome_tiff_reader(
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0"],
-            (1.0, 0.9082107048835328, 0.9082107048835328),
+            (None, 0.9082107048835328, 0.9082107048835328),
         ),
     ],
 )

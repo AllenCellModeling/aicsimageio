@@ -70,7 +70,7 @@ def test_default_reader(
         expected_dtype=np.dtype(np.uint8),
         expected_dims_order=expected_dims_order,
         expected_channel_names=None,
-        expected_physical_pixel_sizes=(1.0, 1.0, 1.0),
+        expected_physical_pixel_sizes=(None, None, None),
         expected_metadata_type=dict,
     )
 

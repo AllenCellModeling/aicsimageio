@@ -86,6 +86,9 @@ Fix
 
 Other
 ~~~~~
+- admin/4.0-release-prep-and-benchmark-upgrades  (`#244
+  <https://github.com/AllenCellModeling/aicsimageio/pull/244>`_)
+  [Jackson Maxfield Brown]
 - admin/add-install-from-git-to-readme  (`#240
   <https://github.com/AllenCellModeling/aicsimageio/pull/240>`_) [Ramón
   Casero]

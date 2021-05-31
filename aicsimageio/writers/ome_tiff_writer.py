@@ -90,7 +90,6 @@ class OmeTiffWriter(Writer):
                 List[types.PhysicalPixelSizes]]]
             List of numbers representing the physical pixel sizes in Z, Y, X in microns
             Default: None
-            If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]
             List of rgb color values per channel. These must be values compatible with
             the OME spec.

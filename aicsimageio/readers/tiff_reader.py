@@ -334,7 +334,7 @@ class TiffReader(Reader):
 
             if description_offset == 0:
                 # Nothing was found
-                return bytearray("")
+                return bytearray("", "utf8")
             else:
                 buffer_reader.buffer.seek(description_offset, 0)
                 return bytearray(buffer_reader.buffer.read(description_length))

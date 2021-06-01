@@ -3,7 +3,7 @@
 
 from abc import ABCMeta
 from pathlib import Path
-from typing import List, NamedTuple, Union
+from typing import List, NamedTuple, Optional, Union
 
 import dask.array as da
 import numpy as np
@@ -23,6 +23,6 @@ ReaderType = ABCMeta
 
 # Image Utility Types
 class PhysicalPixelSizes(NamedTuple):
-    Z: float
-    Y: float
-    X: float
+    Z: Optional[float]
+    Y: Optional[float]
+    X: Optional[float]

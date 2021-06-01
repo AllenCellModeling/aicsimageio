@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 import pytest
@@ -37,7 +37,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"],
-            (1.0, 3.076923076923077, 3.076923076923077),
+            (None, 3.076923076923077, 3.076923076923077),
         ),
         (
             "s_1_t_4_c_2_z_1.lif",
@@ -47,7 +47,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
-            (1.0, 2.9485556406398508, 2.9485556406398508),
+            (None, 2.9485556406398508, 2.9485556406398508),
         ),
         (
             "tiled.lif",
@@ -57,7 +57,7 @@ from ..image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
             ["Gray", "Red", "Green", "Cyan"],
-            (1.0, 4.984719055966396, 4.984719055966396),
+            (None, 4.984719055966396, 4.984719055966396),
         ),
         pytest.param(
             "example.txt",
@@ -92,7 +92,9 @@ def test_lif_reader(
     expected_dtype: np.dtype,
     expected_dims_order: str,
     expected_channel_names: List[str],
-    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_physical_pixel_sizes: Tuple[
+        Optional[float], Optional[float], Optional[float]
+    ],
 ) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)

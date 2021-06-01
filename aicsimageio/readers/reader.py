@@ -694,7 +694,7 @@ class Reader(ABC):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        return PhysicalPixelSizes(1.0, 1.0, 1.0)
+        return PhysicalPixelSizes(None, None, None)
 
     def get_mosaic_tile_position(
         self, mosaic_tile_index: int

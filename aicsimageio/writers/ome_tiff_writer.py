@@ -90,7 +90,6 @@ class OmeTiffWriter(Writer):
                 List[types.PhysicalPixelSizes]]]
             List of numbers representing the physical pixel sizes in Z, Y, X in microns
             Default: None
-            If None is given, pixel size will be (1.0, 1.0, 1.0) for all images
         channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]
             List of rgb color values per channel. These must be values compatible with
             the OME spec.
@@ -204,7 +203,7 @@ class OmeTiffWriter(Writer):
             physical_pixel_sizes = [physical_pixel_sizes] * num_images
         elif physical_pixel_sizes is None:
             physical_pixel_sizes = [
-                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+                types.PhysicalPixelSizes(None, None, None)
             ] * num_images
         if channel_names is None or isinstance(channel_names[0], int):
             channel_names = [channel_names] * num_images  # type: ignore
@@ -419,7 +418,7 @@ class OmeTiffWriter(Writer):
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
         image_name: Optional[str] = "I0",
         physical_pixel_sizes: types.PhysicalPixelSizes = types.PhysicalPixelSizes(
-            1.0, 1.0, 1.0
+            None, None, None
         ),
         channel_names: List[str] = None,
         channel_colors: List[int] = None,
@@ -563,7 +562,7 @@ class OmeTiffWriter(Writer):
             image_name = [None] * num_images
         if physical_pixel_sizes is None:
             physical_pixel_sizes = [
-                types.PhysicalPixelSizes(1.0, 1.0, 1.0)
+                types.PhysicalPixelSizes(None, None, None)
             ] * num_images
         if channel_colors is None:
             channel_colors = [None] * num_images

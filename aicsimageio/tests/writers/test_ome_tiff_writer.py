@@ -291,8 +291,14 @@ def test_ome_tiff_writer_multiscene(
 
 
 @pytest.mark.parametrize(
-    "array_data, write_dim_order, pixel_size, channel_names, channel_colors, "
-    "read_shapes, read_dim_order, expected_pixel_size",
+    "array_data, "
+    "write_dim_order, "
+    "pixel_size, "
+    "channel_names, "
+    "channel_colors, "
+    "read_shapes, "
+    "read_dim_order, "
+    "expected_pixel_size",
     [
         (
             [np.random.rand(5, 16, 16)],
@@ -303,6 +309,16 @@ def test_ome_tiff_writer_multiscene(
             [(1, 1, 5, 16, 16)],
             ["TCZYX"],
             [(1.0, 2.0, 3.0)],
+        ),
+        (
+            [np.random.rand(5, 16, 16)],
+            None,
+            [types.PhysicalPixelSizes(None, 2.0, 3.0)],
+            ["C0"],
+            None,
+            [(1, 1, 5, 16, 16)],
+            ["TCZYX"],
+            [(None, 2.0, 3.0)],
         ),
         (
             [np.random.rand(2, 16, 16), np.random.rand(2, 12, 12)],
@@ -320,7 +336,7 @@ def test_ome_tiff_writer_multiscene(
     ],
 )
 @pytest.mark.parametrize("filename", ["e.ome.tiff"])
-def test_ome_tiff_writer_channel_names(
+def test_ome_tiff_writer_common_metadata(
     array_data: List[types.ArrayLike],
     write_dim_order: List[Optional[str]],
     pixel_size: List[types.PhysicalPixelSizes],

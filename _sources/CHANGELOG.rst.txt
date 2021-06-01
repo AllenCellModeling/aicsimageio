@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/default-to-pixel-size-none  (`#246
+  <https://github.com/AllenCellModeling/aicsimageio/pull/246>`_)
+  [Jackson Maxfield Brown]
 - feature/czi-reader  (`#231
   <https://github.com/AllenCellModeling/aicsimageio/pull/231>`_)
   [JacksonMaxfield, Jamie Sherman]

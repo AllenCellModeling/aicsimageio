@@ -584,7 +584,6 @@ class CziReader(Reader):
         #   contiguous regions of interests in a mosaic image).
 
         # Store the mosaic array shape
-        # Store the chunk shape
         arr_shape_list = []
 
         ordered_dims_present = [
@@ -600,11 +599,11 @@ class CziReader(Reader):
             if dim is DimensionNames.SpatialX:
                 arr_shape_list.append(mosaic_bbox.w)
             if dim is DimensionNames.Samples:
-                arr_shape_list.append(data_dims_shape[dim][1])
+                arr_shape_list.append(data_dims_shape[CZI_SAMPLES_DIM_CHAR][1])
 
         ans = None
         if isinstance(data, da.Array):
-            ans = da.empty(
+            ans = da.zeros(
                 shape=tuple(arr_shape_list),
                 dtype=data.dtype,
             )
@@ -616,7 +615,6 @@ class CziReader(Reader):
             tile_dims = tile_info.dimension_coordinates
             tile_dims.pop(CZI_SCENE_DIM_CHAR, None)
             tile_dims.pop(CZI_BLOCK_DIM_CHAR, None)
-            # *** TODO: Need to map A to S here too
             data_indexes = [
                 tile_dims[t_dim]
                 for t_dim in tile_dims.keys()
@@ -696,15 +694,17 @@ class CziReader(Reader):
 
             # Add expanded Y and X coords
             if self.physical_pixel_sizes.Y is not None:
+                dim_y_index = dims.index(DimensionNames.SpatialY)
                 coords[DimensionNames.SpatialY] = np.arange(
                     0,
-                    stitched.shape[-2] * self.physical_pixel_sizes.Y,
+                    stitched.shape[dim_y_index] * self.physical_pixel_sizes.Y,
                     self.physical_pixel_sizes.Y,
                 )
             if self.physical_pixel_sizes.X is not None:
+                dim_x_index = dims.index(DimensionNames.SpatialX)
                 coords[DimensionNames.SpatialX] = np.arange(
                     0,
-                    stitched.shape[-1] * self.physical_pixel_sizes.X,
+                    stitched.shape[dim_x_index] * self.physical_pixel_sizes.X,
                     self.physical_pixel_sizes.X,
                 )
 

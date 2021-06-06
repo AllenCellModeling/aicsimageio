@@ -69,8 +69,8 @@ The steering council is currently fixed to only include members directly from Al
 Institute for Cell Science. This may be changed in the future, but this results in the
 steering council currently consisting of:
 
+- [Jackson Brown](https://github.com/JacksonMaxfield)
 - [Daniel Toloudis](https://github.com/toloudis)
-- [Jamie Sherman](https://github.com/heeler)
 
 New members are added by nomination by a core developer. Nominees should have
 demonstrated long-term, continued commitment to the project and its

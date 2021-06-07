@@ -69,6 +69,9 @@ New
 
 Fix
 ~~~
+- bugfix/support-rgb-mosaic-czi  (`#247
+  <https://github.com/AllenCellModeling/aicsimageio/pull/247>`_)
+  [Jackson Maxfield Brown]
 - bugfix/always-use-synch-for-tiff-zarr-compute  (`#235
   <https://github.com/AllenCellModeling/aicsimageio/pull/235>`_)
   [Jackson Maxfield Brown]
@@ -92,6 +95,9 @@ Fix
 
 Other
 ~~~~~
+- admin/remove-dev-release-infra  (`#248
+  <https://github.com/AllenCellModeling/aicsimageio/pull/248>`_)
+  [Jackson Maxfield Brown]
 - admin/4.0-release-prep-and-benchmark-upgrades  (`#244
   <https://github.com/AllenCellModeling/aicsimageio/pull/244>`_)
   [Jackson Maxfield Brown]

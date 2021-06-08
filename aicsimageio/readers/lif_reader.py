@@ -381,6 +381,11 @@ class LifReader(Reader):
         scale_x, scale_y, scale_z, scale_t = image_short_info["scale"]
 
         # Handle Spatial Dimensions
+        # In general, we have learned that floating point math is hard....
+        # This block of code used to use `np.arange` with floats as parameters and
+        # it was causing errors. To solve, we generate the range with ints and then
+        # multiply by a float across the entire range to get the proper coords.
+        # See: https://github.com/AllenCellModeling/aicsimageio/issues/249
         if scale_z is not None:
             coords[DimensionNames.SpatialZ] = (
                 np.arange(

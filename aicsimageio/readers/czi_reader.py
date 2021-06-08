@@ -463,6 +463,11 @@ class CziReader(Reader):
             scale_z = float(scale_ze.text.split("E")[0])
 
         # Handle Spatial Dimensions
+        # In general, we have learned that floating point math is hard....
+        # This block of code used to use `np.arange` with floats as parameters and
+        # it was causing errors. To solve, we generate the range with ints and then
+        # multiply by a float across the entire range to get the proper coords.
+        # See: https://github.com/AllenCellModeling/aicsimageio/issues/249
         for scale, dim_name in [
             (scale_z, DimensionNames.SpatialZ),
             (scale_y, DimensionNames.SpatialY),

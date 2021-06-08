@@ -133,6 +133,16 @@ class CziReader(Reader):
                 xpath_str = "./Metadata/Information/Image/Dimensions/S/Scenes/Scene"
                 meta_scenes = czi.meta.findall(xpath_str)
                 scene_names: List[str] = []
+
+                # Some "scenes" may have the same name but each scene has a sub-scene
+                # "Shape" with a name.
+                #
+                # An example of this is where someone images a 96 well plate with each 
+                # well being it's own scene but they name every scene the samevalue.
+                # The sub-scene "Shape" elements have actual names of each well.
+                #
+                # If we didn't do this, the produced list would have 96 of the same
+                # string name making it impossible to switch scenes.
                 for meta_scene in meta_scenes:
                     shape = meta_scene.find("Shape")
                     if shape is not None:

@@ -1,8 +1,18 @@
 Changelog
 =========
 
-(unreleased)
-------------
+v4.0.1 (2021-06-08)
+-------------------
+
+Fix
+~~~
+- bugfix/coords-and-floating-point-math-and-czi-scene-naming  (`#250
+  <https://github.com/AllenCellModeling/aicsimageio/pull/250>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.0.0 (2021-06-07)
+-------------------
 
 New
 ~~~

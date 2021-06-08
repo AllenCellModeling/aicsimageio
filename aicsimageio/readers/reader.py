@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -679,6 +679,37 @@ class Reader(ABC):
             return list(self.xarray_dask_data[DimensionNames.Channel].values)
 
         return None
+
+    @staticmethod
+    def _generate_coord_array(
+        start: Union[int, float], stop: Union[int, float], step_size: Union[int, float]
+    ) -> np.ndarray:
+        """
+        Generate an np.ndarray for coordinate values.
+
+        Parameters
+        ----------
+        start: Union[int, float]
+            The start value.
+        stop: Union[int, float]
+            The stop value.
+        step_size: Union[int, float]
+            How large each step should be.
+
+        Returns
+        -------
+        coords: np.ndarray
+            The coordinate array.
+
+        Notes
+        -----
+        In general, we have learned that floating point math is hard....
+        This block of code used to use `np.arange` with floats as parameters and
+        it was causing errors. To solve, we generate the range with ints and then
+        multiply by a float across the entire range to get the proper coords.
+        See: https://github.com/AllenCellModeling/aicsimageio/issues/249
+        """
+        return np.arange(start, stop) * step_size
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:

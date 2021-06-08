@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ET
 from copy import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -138,7 +138,7 @@ class CziReader(Reader):
                 # "Shape" with a name.
                 #
                 # An example of this is where someone images a 96 well plate with each
-                # well being it's own scene but they name every scene the samevalue.
+                # well being it's own scene but they name every scene the same value.
                 # The sub-scene "Shape" elements have actual names of each well.
                 #
                 # If we didn't do this, the produced list would have 96 of the same
@@ -427,7 +427,7 @@ class CziReader(Reader):
         xml: ET.Element, scene_index: int, dims_shape: Dict[str, Any]
     ) -> Tuple[Dict[str, Any], types.PhysicalPixelSizes]:
         # Create coord dict
-        coords = {}
+        coords: Dict[str, Any] = {}
 
         # Get all images
         img_sets = xml.findall(".//Image/Dimensions/Channels")
@@ -473,11 +473,6 @@ class CziReader(Reader):
             scale_z = float(scale_ze.text.split("E")[0])
 
         # Handle Spatial Dimensions
-        # In general, we have learned that floating point math is hard....
-        # This block of code used to use `np.arange` with floats as parameters and
-        # it was causing errors. To solve, we generate the range with ints and then
-        # multiply by a float across the entire range to get the proper coords.
-        # See: https://github.com/AllenCellModeling/aicsimageio/issues/249
         for scale, dim_name in [
             (scale_z, DimensionNames.SpatialZ),
             (scale_y, DimensionNames.SpatialY),
@@ -485,13 +480,7 @@ class CziReader(Reader):
         ]:
             if scale is not None and dim_name in dims_shape:
                 dim_size = dims_shape[dim_name][1] - dims_shape[dim_name][0]
-                coords[dim_name] = (
-                    np.arange(
-                        0,
-                        dim_size,
-                    )
-                    * scale
-                )
+                coords[dim_name] = Reader._generate_coord_array(0, dim_size, scale)
 
         # Time
         # TODO: unpack "TimeSpan" elements
@@ -710,7 +699,7 @@ class CziReader(Reader):
                 for d in self.xarray_dask_data.dims
                 if d is not DimensionNames.MosaicTile
             ]
-            coords = {
+            coords: Dict[Hashable, Any] = {
                 d: v
                 for d, v in self.xarray_dask_data.coords.items()
                 if d
@@ -724,21 +713,13 @@ class CziReader(Reader):
             # Add expanded Y and X coords
             if self.physical_pixel_sizes.Y is not None:
                 dim_y_index = dims.index(DimensionNames.SpatialY)
-                coords[DimensionNames.SpatialY] = (
-                    np.arange(
-                        0,
-                        stitched.shape[dim_y_index],
-                    )
-                    * self.physical_pixel_sizes.Y
+                coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
+                    0, stitched.shape[dim_y_index], self.physical_pixel_sizes.Y
                 )
             if self.physical_pixel_sizes.X is not None:
                 dim_x_index = dims.index(DimensionNames.SpatialX)
-                coords[DimensionNames.SpatialX] = (
-                    np.arange(
-                        0,
-                        stitched.shape[dim_x_index],
-                    )
-                    * self.physical_pixel_sizes.X
+                coords[DimensionNames.SpatialX] = Reader._generate_coord_array(
+                    0, stitched.shape[dim_x_index], self.physical_pixel_sizes.X
                 )
 
             attrs = copy(self.xarray_dask_data.attrs)

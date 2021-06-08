@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import xml.etree.ElementTree as ET
 from copy import copy
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
-import logging
 
 import dask.array as da
 import numpy as np
@@ -71,7 +71,7 @@ class CziReader(Reader):
         Default: DEFAULT_CHUNK_DIMS
         Note: DimensionNames.SpatialY, DimensionNames.SpatialX, and
         DimensionNames.Samples, will always be added to the list if not present during
-        dask array constructure.
+        dask array construction.
 
     Notes
     -----

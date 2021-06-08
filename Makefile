@@ -48,6 +48,9 @@ clean:  ## clean all build, python, and testing files
 build: ## run tox / run tests and lint
 	tox
 
+test-local: ## run tests but only against local files
+	pytest aicsimageio -k "not REMOTE"
+
 gen-docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/aicsimageio*.rst
 	rm -f docs/modules.rst

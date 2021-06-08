@@ -200,10 +200,8 @@ class OmeTiffReader(TiffReader):
         # Time
         # If global linear timescale we can np.linspace with metadata
         if scene_meta.pixels.time_increment is not None:
-            coords[DimensionNames.Time] = np.arange(
-                0,
-                scene_meta.pixels.size_t * scene_meta.pixels.time_increment,
-                scene_meta.pixels.time_increment,
+            coords[DimensionNames.Time] = TiffReader._generate_coord_array(
+                0, scene_meta.pixels.size_t, scene_meta.pixels.time_increment
             )
         # If non global linear timescale, we need to create an array of every plane
         # time value
@@ -222,24 +220,16 @@ class OmeTiffReader(TiffReader):
 
         # Handle Spatial Dimensions
         if scene_meta.pixels.physical_size_z is not None:
-            coords[DimensionNames.SpatialZ] = np.arange(
-                0,
-                scene_meta.pixels.size_z * scene_meta.pixels.physical_size_z,
-                scene_meta.pixels.physical_size_z,
+            coords[DimensionNames.SpatialZ] = TiffReader._generate_coord_array(
+                0, scene_meta.pixels.size_z, scene_meta.pixels.physical_size_z
             )
-
         if scene_meta.pixels.physical_size_y is not None:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                scene_meta.pixels.size_y * scene_meta.pixels.physical_size_y,
-                scene_meta.pixels.physical_size_y,
+            coords[DimensionNames.SpatialY] = TiffReader._generate_coord_array(
+                0, scene_meta.pixels.size_y, scene_meta.pixels.physical_size_y
             )
-
         if scene_meta.pixels.physical_size_x is not None:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                scene_meta.pixels.size_x * scene_meta.pixels.physical_size_x,
-                scene_meta.pixels.physical_size_x,
+            coords[DimensionNames.SpatialX] = TiffReader._generate_coord_array(
+                0, scene_meta.pixels.size_x, scene_meta.pixels.physical_size_x
             )
 
         return dims, coords

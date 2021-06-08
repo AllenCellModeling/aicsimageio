@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ET
 from copy import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -349,7 +349,7 @@ class LifReader(Reader):
         xml: ET.Element, image_short_info: Dict[str, Any], scene_index: int
     ) -> Tuple[Dict[str, Any], types.PhysicalPixelSizes]:
         # Create coord dict
-        coords = {}
+        coords: Dict[str, Any] = {}
 
         # Get all images
         img_sets = xml.findall(".//Image")
@@ -382,30 +382,22 @@ class LifReader(Reader):
 
         # Handle Spatial Dimensions
         if scale_z is not None:
-            coords[DimensionNames.SpatialZ] = np.arange(
-                0,
-                image_short_info["dims"].z * scale_z,
-                scale_z,
+            coords[DimensionNames.SpatialZ] = Reader._generate_coord_array(
+                0, image_short_info["dims"].z, scale_z
             )
         if scale_y is not None:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                image_short_info["dims"].y * scale_y,
-                scale_y,
+            coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
+                0, image_short_info["dims"].y, scale_y
             )
         if scale_x is not None:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                image_short_info["dims"].x * scale_x,
-                scale_x,
+            coords[DimensionNames.SpatialX] = Reader._generate_coord_array(
+                0, image_short_info["dims"].x, scale_x
             )
 
         # Time
         if scale_t is not None:
-            coords[DimensionNames.Time] = np.arange(
-                0,
-                image_short_info["dims"].t * scale_t,
-                scale_t,
+            coords[DimensionNames.Time] = Reader._generate_coord_array(
+                0, image_short_info["dims"].t, scale_t
             )
 
         # Create physical pixal sizes
@@ -591,7 +583,7 @@ class LifReader(Reader):
         dims = [
             d for d in self.xarray_dask_data.dims if d is not DimensionNames.MosaicTile
         ]
-        coords = {
+        coords: Dict[Hashable, Any] = {
             d: v
             for d, v in self.xarray_dask_data.coords.items()
             if d
@@ -605,16 +597,12 @@ class LifReader(Reader):
         # Add expanded Y and X coords
         scale_x, scale_y, _, _ = selected_scene.info["scale"]
         if scale_y is not None:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                stitched.shape[-2] * scale_y,
-                scale_y,
+            coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
+                0, stitched.shape[-2], scale_y
             )
         if scale_x is not None:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                stitched.shape[-1] * scale_x,
-                scale_x,
+            coords[DimensionNames.SpatialX] = Reader._generate_coord_array(
+                0, stitched.shape[-1], scale_x
             )
 
         attrs = copy(self.xarray_dask_data.attrs)

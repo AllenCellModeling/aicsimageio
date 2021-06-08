@@ -3,7 +3,7 @@
 
 import xml.etree.ElementTree as ET
 from copy import copy
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -132,7 +132,28 @@ class CziReader(Reader):
                 czi = CziFile(open_resource)
                 xpath_str = "./Metadata/Information/Image/Dimensions/S/Scenes/Scene"
                 meta_scenes = czi.meta.findall(xpath_str)
-                scene_names = [x.get("Name") for x in meta_scenes]
+                scene_names: List[str] = []
+
+                # Some "scenes" may have the same name but each scene has a sub-scene
+                # "Shape" with a name.
+                #
+                # An example of this is where someone images a 96 well plate with each
+                # well being it's own scene but they name every scene the same value.
+                # The sub-scene "Shape" elements have actual names of each well.
+                #
+                # If we didn't do this, the produced list would have 96 of the same
+                # string name making it impossible to switch scenes.
+                for meta_scene in meta_scenes:
+                    shape = meta_scene.find("Shape")
+                    if shape is not None:
+                        shape_name = shape.get("Name")
+                        scene_name = meta_scene.get("Name")
+                        combined_scene_name = f"{scene_name}-{shape_name}"
+                    else:
+                        combined_scene_name = meta_scene.get("Name")
+
+                    scene_names.append(combined_scene_name)
+
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
                     scene_names = [metadata.utils.generate_ome_image_id(0)]
@@ -406,7 +427,7 @@ class CziReader(Reader):
         xml: ET.Element, scene_index: int, dims_shape: Dict[str, Any]
     ) -> Tuple[Dict[str, Any], types.PhysicalPixelSizes]:
         # Create coord dict
-        coords = {}
+        coords: Dict[str, Any] = {}
 
         # Get all images
         img_sets = xml.findall(".//Image/Dimensions/Channels")
@@ -458,11 +479,8 @@ class CziReader(Reader):
             (scale_x, DimensionNames.SpatialX),
         ]:
             if scale is not None and dim_name in dims_shape:
-                coords[dim_name] = np.arange(
-                    0,
-                    dims_shape[dim_name][1] * scale,
-                    scale,
-                )
+                dim_size = dims_shape[dim_name][1] - dims_shape[dim_name][0]
+                coords[dim_name] = Reader._generate_coord_array(0, dim_size, scale)
 
         # Time
         # TODO: unpack "TimeSpan" elements
@@ -681,7 +699,7 @@ class CziReader(Reader):
                 for d in self.xarray_dask_data.dims
                 if d is not DimensionNames.MosaicTile
             ]
-            coords = {
+            coords: Dict[Hashable, Any] = {
                 d: v
                 for d, v in self.xarray_dask_data.coords.items()
                 if d
@@ -695,17 +713,13 @@ class CziReader(Reader):
             # Add expanded Y and X coords
             if self.physical_pixel_sizes.Y is not None:
                 dim_y_index = dims.index(DimensionNames.SpatialY)
-                coords[DimensionNames.SpatialY] = np.arange(
-                    0,
-                    stitched.shape[dim_y_index] * self.physical_pixel_sizes.Y,
-                    self.physical_pixel_sizes.Y,
+                coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
+                    0, stitched.shape[dim_y_index], self.physical_pixel_sizes.Y
                 )
             if self.physical_pixel_sizes.X is not None:
                 dim_x_index = dims.index(DimensionNames.SpatialX)
-                coords[DimensionNames.SpatialX] = np.arange(
-                    0,
-                    stitched.shape[dim_x_index] * self.physical_pixel_sizes.X,
-                    self.physical_pixel_sizes.X,
+                coords[DimensionNames.SpatialX] = Reader._generate_coord_array(
+                    0, stitched.shape[dim_x_index], self.physical_pixel_sizes.X
                 )
 
             attrs = copy(self.xarray_dask_data.attrs)

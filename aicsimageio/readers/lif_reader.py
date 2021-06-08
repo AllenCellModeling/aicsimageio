@@ -382,30 +382,38 @@ class LifReader(Reader):
 
         # Handle Spatial Dimensions
         if scale_z is not None:
-            coords[DimensionNames.SpatialZ] = np.arange(
-                0,
-                image_short_info["dims"].z * scale_z,
-                scale_z,
+            coords[DimensionNames.SpatialZ] = (
+                np.arange(
+                    0,
+                    image_short_info["dims"].z,
+                )
+                * scale_z
             )
         if scale_y is not None:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                image_short_info["dims"].y * scale_y,
-                scale_y,
+            coords[DimensionNames.SpatialY] = (
+                np.arange(
+                    0,
+                    image_short_info["dims"].y,
+                )
+                * scale_y
             )
         if scale_x is not None:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                image_short_info["dims"].x * scale_x,
-                scale_x,
+            coords[DimensionNames.SpatialX] = (
+                np.arange(
+                    0,
+                    image_short_info["dims"].x,
+                )
+                * scale_x
             )
 
         # Time
         if scale_t is not None:
-            coords[DimensionNames.Time] = np.arange(
-                0,
-                image_short_info["dims"].t * scale_t,
-                scale_t,
+            coords[DimensionNames.Time] = (
+                np.arange(
+                    0,
+                    image_short_info["dims"].t,
+                )
+                * scale_t
             )
 
         # Create physical pixal sizes
@@ -605,16 +613,20 @@ class LifReader(Reader):
         # Add expanded Y and X coords
         scale_x, scale_y, _, _ = selected_scene.info["scale"]
         if scale_y is not None:
-            coords[DimensionNames.SpatialY] = np.arange(
-                0,
-                stitched.shape[-2] * scale_y,
-                scale_y,
+            coords[DimensionNames.SpatialY] = (
+                np.arange(
+                    0,
+                    stitched.shape[-2],
+                )
+                * scale_y
             )
         if scale_x is not None:
-            coords[DimensionNames.SpatialX] = np.arange(
-                0,
-                stitched.shape[-1] * scale_x,
-                scale_x,
+            coords[DimensionNames.SpatialX] = (
+                np.arange(
+                    0,
+                    stitched.shape[-1],
+                )
+                * scale_x
             )
 
         attrs = copy(self.xarray_dask_data.attrs)

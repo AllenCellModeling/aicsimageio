@@ -458,10 +458,13 @@ class CziReader(Reader):
             (scale_x, DimensionNames.SpatialX),
         ]:
             if scale is not None and dim_name in dims_shape:
-                coords[dim_name] = np.arange(
-                    0,
-                    dims_shape[dim_name][1] * scale,
-                    scale,
+                dim_size = dims_shape[dim_name][1] - dims_shape[dim_name][0]
+                coords[dim_name] = (
+                    np.arange(
+                        0,
+                        dim_size,
+                    )
+                    * scale
                 )
 
         # Time
@@ -695,17 +698,21 @@ class CziReader(Reader):
             # Add expanded Y and X coords
             if self.physical_pixel_sizes.Y is not None:
                 dim_y_index = dims.index(DimensionNames.SpatialY)
-                coords[DimensionNames.SpatialY] = np.arange(
-                    0,
-                    stitched.shape[dim_y_index] * self.physical_pixel_sizes.Y,
-                    self.physical_pixel_sizes.Y,
+                coords[DimensionNames.SpatialY] = (
+                    np.arange(
+                        0,
+                        stitched.shape[dim_y_index],
+                    )
+                    * self.physical_pixel_sizes.Y
                 )
             if self.physical_pixel_sizes.X is not None:
                 dim_x_index = dims.index(DimensionNames.SpatialX)
-                coords[DimensionNames.SpatialX] = np.arange(
-                    0,
-                    stitched.shape[dim_x_index] * self.physical_pixel_sizes.X,
-                    self.physical_pixel_sizes.X,
+                coords[DimensionNames.SpatialX] = (
+                    np.arange(
+                        0,
+                        stitched.shape[dim_x_index],
+                    )
+                    * self.physical_pixel_sizes.X
                 )
 
             attrs = copy(self.xarray_dask_data.attrs)

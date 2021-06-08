@@ -137,7 +137,7 @@ class CziReader(Reader):
                 # Some "scenes" may have the same name but each scene has a sub-scene
                 # "Shape" with a name.
                 #
-                # An example of this is where someone images a 96 well plate with each 
+                # An example of this is where someone images a 96 well plate with each
                 # well being it's own scene but they name every scene the samevalue.
                 # The sub-scene "Shape" elements have actual names of each well.
                 #

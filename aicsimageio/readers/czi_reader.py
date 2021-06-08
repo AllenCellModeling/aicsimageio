@@ -132,7 +132,18 @@ class CziReader(Reader):
                 czi = CziFile(open_resource)
                 xpath_str = "./Metadata/Information/Image/Dimensions/S/Scenes/Scene"
                 meta_scenes = czi.meta.findall(xpath_str)
-                scene_names = [x.get("Name") for x in meta_scenes]
+                scene_names: List[str] = []
+                for meta_scene in meta_scenes:
+                    shape = meta_scene.find("Shape")
+                    if shape is not None:
+                        shape_name = shape.get("Name")
+                        scene_name = meta_scene.get("Name")
+                        combined_scene_name = f"{scene_name}-{shape_name}"
+                    else:
+                        combined_scene_name = meta_scene.get("Name")
+
+                    scene_names.append(combined_scene_name)
+
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
                     scene_names = [metadata.utils.generate_ome_image_id(0)]

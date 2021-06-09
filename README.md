@@ -144,6 +144,7 @@ Read stitched data or single tiles as a dimension.
 Readers that support mosaic tile stitching:
 
 -   `LifReader`
+-   `CziReader`
 
 #### AICSImage
 

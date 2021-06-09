@@ -3,6 +3,9 @@ Changelog
 
 (unreleased)
 ------------
+- docs/add-missing-czi-reading-to-mosaic-support  (`#256
+  <https://github.com/AllenCellModeling/aicsimageio/pull/256>`_)
+  [Jackson Maxfield Brown]
 - docs/fix-physical-pixel-sizes-typo  (`#253
   <https://github.com/AllenCellModeling/aicsimageio/pull/253>`_)
   [Jackson Maxfield Brown]

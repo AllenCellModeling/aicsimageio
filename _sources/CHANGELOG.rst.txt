@@ -3,6 +3,9 @@ Changelog
 
 (unreleased)
 ------------
+- admin/add-doi  (`#258
+  <https://github.com/AllenCellModeling/aicsimageio/pull/258>`_)
+  [Jackson Maxfield Brown]
 - docs/add-missing-czi-reading-to-mosaic-support  (`#256
   <https://github.com/AllenCellModeling/aicsimageio/pull/256>`_)
   [Jackson Maxfield Brown]

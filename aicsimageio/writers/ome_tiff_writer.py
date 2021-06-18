@@ -36,10 +36,7 @@ class OmeTiffWriter(Writer):
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
         image_name: Optional[Union[str, List[Union[str, None]]]] = None,
         physical_pixel_sizes: Optional[
-            Union[
-                types.PhysicalPixelSizes,
-                List[types.PhysicalPixelSizes],
-            ]
+            Union[types.PhysicalPixelSizes, List[types.PhysicalPixelSizes]]
         ] = None,
         channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]] = None,
         **kwargs: Any,

@@ -524,7 +524,9 @@ class CziReader(Reader):
             # Create coordinate planes
             meta = czi.meta
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
-                xml=meta, scene_index=self.current_scene_index, dims_shape=dims_shape,
+                xml=meta,
+                scene_index=self.current_scene_index,
+                dims_shape=dims_shape,
             )
 
             # Store pixel sizes
@@ -562,7 +564,9 @@ class CziReader(Reader):
 
             # Get image data
             image_data, _ = self._get_image_data(
-                fs=self._fs, path=self._path, scene=self.current_scene_index,
+                fs=self._fs,
+                path=self._path,
+                scene=self.current_scene_index,
             )
 
             # Get metadata
@@ -570,7 +574,9 @@ class CziReader(Reader):
 
             # Create coordinate planes
             coords, px_sizes = self._get_coords_and_physical_px_sizes(
-                xml=meta, scene_index=self.current_scene_index, dims_shape=dims_shape,
+                xml=meta,
+                scene_index=self.current_scene_index,
+                dims_shape=dims_shape,
             )
 
             # Store pixel sizes
@@ -615,7 +621,10 @@ class CziReader(Reader):
 
         ans = None
         if isinstance(data, da.Array):
-            ans = da.zeros(shape=tuple(arr_shape_list), dtype=data.dtype,)
+            ans = da.zeros(
+                shape=tuple(arr_shape_list),
+                dtype=data.dtype,
+            )
         else:
             ans = np.zeros(arr_shape_list, dtype=data.dtype)
 
@@ -716,7 +725,12 @@ class CziReader(Reader):
 
             attrs = copy(self.xarray_dask_data.attrs)
 
-            return xr.DataArray(data=stitched, dims=dims, coords=coords, attrs=attrs,)
+            return xr.DataArray(
+                data=stitched,
+                dims=dims,
+                coords=coords,
+                attrs=attrs,
+            )
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)

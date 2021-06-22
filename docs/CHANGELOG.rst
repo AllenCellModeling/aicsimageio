@@ -1,6 +1,31 @@
 Changelog
 =========
 
+v4.0.2 (2021-06-22)
+-------------------
+
+Fix
+~~~
+- bugfix/mosaic-tile-reconstruction-for-multi-scene-mosaics  (`#260
+  <https://github.com/AllenCellModeling/aicsimageio/pull/260>`_)
+  [toloudis]
+
+Other
+~~~~~
+- admin/bump-aicspylibczi-dep-version  (`#261
+  <https://github.com/AllenCellModeling/aicsimageio/pull/261>`_)
+  [Jackson Maxfield Brown]
+- admin/add-doi  (`#258
+  <https://github.com/AllenCellModeling/aicsimageio/pull/258>`_)
+  [Jackson Maxfield Brown]
+- docs/add-missing-czi-reading-to-mosaic-support  (`#256
+  <https://github.com/AllenCellModeling/aicsimageio/pull/256>`_)
+  [Jackson Maxfield Brown]
+- docs/fix-physical-pixel-sizes-typo  (`#253
+  <https://github.com/AllenCellModeling/aicsimageio/pull/253>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.1 (2021-06-08)
 -------------------
 

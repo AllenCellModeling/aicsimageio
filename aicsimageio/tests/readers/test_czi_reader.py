@@ -29,6 +29,16 @@ from ..image_container_test_utils import (
     "expected_physical_pixel_sizes",
     [
         (
+            "S=2_4x2_T=2=Z=3_CH=2.czi",
+            "TR1",
+            ("TR1", "TR2"),
+            (1, 2, 2, 3, 8, 256, 256),
+            np.uint16,
+            "HTCZMYX",
+            ["DAPI", "EGFP"],
+            (1.0, 4.0, 4.0),
+        ),
+        (
             "s_1_t_1_c_1_z_1.czi",
             "Image:0",
             ("Image:0",),

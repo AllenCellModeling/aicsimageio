@@ -6,6 +6,7 @@ import tifffile
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import from_xml, to_xml
 from ome_types.model import OME, Channel, Image, Pixels, TiffData
+from ome_types.model.simple_types import ChannelID, Color, PositiveFloat, PositiveInt
 from tifffile import TIFF
 
 from .. import exceptions, get_module_version, types
@@ -36,10 +37,7 @@ class OmeTiffWriter(Writer):
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
         image_name: Optional[Union[str, List[Union[str, None]]]] = None,
         physical_pixel_sizes: Optional[
-            Union[
-                types.PhysicalPixelSizes,
-                List[types.PhysicalPixelSizes],
-            ]
+            Union[types.PhysicalPixelSizes, List[types.PhysicalPixelSizes]]
         ] = None,
         channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]] = None,
         **kwargs: Any,
@@ -210,7 +208,7 @@ class OmeTiffWriter(Writer):
         if channel_colors is None or isinstance(channel_colors[0], int):
             channel_colors = [channel_colors] * num_images  # type: ignore
 
-        xml = ""
+        xml = b""
         # try to construct OME from params
         if ome_xml is None:
             ome_xml = OmeTiffWriter.build_ome(
@@ -258,9 +256,8 @@ class OmeTiffWriter(Writer):
 
                 description = xml if scene_index == 0 else None
                 # assume if first channel is rgb then all of it is
-                is_rgb = (
-                    ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel > 1
-                )
+                spp = ome_xml.images[scene_index].pixels.channels[0].samples_per_pixel
+                is_rgb = spp is not None and spp > 1
                 photometric = (
                     TIFF.PHOTOMETRIC.RGB if is_rgb else TIFF.PHOTOMETRIC.MINISBLACK
                 )
@@ -469,10 +466,18 @@ class OmeTiffWriter(Writer):
             size_x=dim_or_1(DimensionNames.SpatialX),
             interleaved=True if samples_per_pixel > 1 else None,
         )
-        # expected in ZYX order
-        pixels.physical_size_z = physical_pixel_sizes.Z
-        pixels.physical_size_y = physical_pixel_sizes.Y
-        pixels.physical_size_x = physical_pixel_sizes.X
+        if physical_pixel_sizes.Z is None or physical_pixel_sizes.Z == 0:
+            pixels.physical_size_z = None
+        else:
+            pixels.physical_size_z = PositiveFloat(physical_pixel_sizes.Z)
+        if physical_pixel_sizes.Y is None or physical_pixel_sizes.Y == 0:
+            pixels.physical_size_y = None
+        else:
+            pixels.physical_size_y = PositiveFloat(physical_pixel_sizes.Y)
+        if physical_pixel_sizes.X is None or physical_pixel_sizes.X == 0:
+            pixels.physical_size_x = None
+        else:
+            pixels.physical_size_x = PositiveFloat(physical_pixel_sizes.X)
 
         # one single tiffdata indicating sequential tiff IFDs based on dimension_order
         pixels.tiff_data_blocks = [
@@ -487,22 +492,22 @@ class OmeTiffWriter(Writer):
         ]
         if channel_names is None:
             for i in range(channel_count):
-                pixels.channels[i].id = utils.generate_ome_channel_id(
-                    str(image_index), i
+                pixels.channels[i].id = ChannelID(
+                    utils.generate_ome_channel_id(str(image_index), i)
                 )
                 pixels.channels[i].name = "C:" + str(i)
         else:
             for i in range(channel_count):
                 name = channel_names[i]
-                pixels.channels[i].id = utils.generate_ome_channel_id(
-                    str(image_index), i
+                pixels.channels[i].id = ChannelID(
+                    utils.generate_ome_channel_id(str(image_index), i)
                 )
                 pixels.channels[i].name = name
 
         if channel_colors is not None:
             assert len(channel_colors) >= pixels.size_c
             for i in range(channel_count):
-                pixels.channels[i].color = channel_colors[i]
+                pixels.channels[i].color = Color(channel_colors[i])
 
         img = Image(
             name=image_name,
@@ -630,9 +635,9 @@ class OmeTiffWriter(Writer):
             DimensionNames.SpatialY: ome_xml.images[image_index].pixels.size_y,
             DimensionNames.SpatialX: ome_xml.images[image_index].pixels.size_x,
         }
-        if samples > 1:
-            dims[DimensionNames.Channel] = len(
-                ome_xml.images[image_index].pixels.channels
+        if samples is not None and samples > 1:
+            dims[DimensionNames.Channel] = PositiveInt(
+                len(ome_xml.images[image_index].pixels.channels)
             )
             dims[DimensionNames.Samples] = samples
             dimension_order += DimensionNames.Samples

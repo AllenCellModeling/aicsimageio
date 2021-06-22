@@ -594,8 +594,8 @@ class CziReader(Reader):
         data: types.ArrayLike,
         data_dims: str,
         data_dims_shape: Dict[str, Tuple[int, int]],
-        bboxes: Dict[TileInfo, BBox],
-        mosaic_bbox: BBox,
+        tile_bboxes: Dict[TileInfo, BBox],
+        final_bbox: BBox,
     ) -> types.ArrayLike:
         # Assumptions: 1) docs for ZEISSRAW(CZI) say:
         #   Scene – for clustering items in X/Y direction (data belonging to
@@ -613,9 +613,9 @@ class CziReader(Reader):
             if dim not in REQUIRED_CHUNK_DIMS:
                 arr_shape_list.append(data_dims_shape[dim][1])
             if dim is DimensionNames.SpatialY:
-                arr_shape_list.append(mosaic_bbox.h)
+                arr_shape_list.append(final_bbox.h)
             if dim is DimensionNames.SpatialX:
-                arr_shape_list.append(mosaic_bbox.w)
+                arr_shape_list.append(final_bbox.w)
             if dim is DimensionNames.Samples:
                 arr_shape_list.append(data_dims_shape[CZI_SAMPLES_DIM_CHAR][1])
 
@@ -628,14 +628,14 @@ class CziReader(Reader):
         else:
             ans = np.zeros(arr_shape_list, dtype=data.dtype)
 
-        for (tile_info, box) in bboxes.items():
+        for (tile_info, box) in tile_bboxes.items():
             # Construct data indexes to use
             tile_dims = tile_info.dimension_coordinates
             tile_dims.pop(CZI_SCENE_DIM_CHAR, None)
             tile_dims.pop(CZI_BLOCK_DIM_CHAR, None)
             data_indexes = [
                 tile_dims[t_dim]
-                for t_dim in tile_dims.keys()
+                for t_dim in data_dims
                 if t_dim not in REQUIRED_CHUNK_DIMS
             ]
             # Add Y and X
@@ -649,6 +649,7 @@ class CziReader(Reader):
             for dim in ordered_dims_present:
                 if dim not in [
                     DimensionNames.MosaicTile,
+                    DimensionNames.Samples,
                     DimensionNames.SpatialY,
                     DimensionNames.SpatialX,
                 ]:
@@ -656,10 +657,10 @@ class CziReader(Reader):
                         ans_indexes.append(tile_dims[dim])
 
                 if dim is DimensionNames.SpatialY:
-                    start = box.y - mosaic_bbox.y
+                    start = box.y - final_bbox.y
                     ans_indexes.append(slice(start, start + box.h, 1))
                 if dim is DimensionNames.SpatialX:
-                    start = box.x - mosaic_bbox.x
+                    start = box.x - final_bbox.x
                     ans_indexes.append(slice(start, start + box.w, 1))
                 if dim is DimensionNames.Samples:
                     ans_indexes.append(slice(None))
@@ -689,8 +690,8 @@ class CziReader(Reader):
                 data=data,
                 data_dims=self.mapped_dims,
                 data_dims_shape=dims_shape,
-                bboxes=bboxes,
-                mosaic_bbox=mosaic_scene_bbox,
+                tile_bboxes=bboxes,
+                final_bbox=mosaic_scene_bbox,
             )
 
             # Copy metadata

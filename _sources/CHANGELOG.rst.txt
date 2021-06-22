@@ -12,6 +12,9 @@ Fix
 
 Other
 ~~~~~
+- admin/bump-aicspylibczi-dep-version  (`#261
+  <https://github.com/AllenCellModeling/aicsimageio/pull/261>`_)
+  [Jackson Maxfield Brown]
 - admin/add-doi  (`#258
   <https://github.com/AllenCellModeling/aicsimageio/pull/258>`_)
   [Jackson Maxfield Brown]

@@ -365,7 +365,7 @@ class TiffReader(Reader):
             transposer.append(match_map[dim])
 
         # Make ndarray for lazy arrays to fill
-        lazy_arrays = np.ndarray(blocked_shape, dtype=object)
+        lazy_arrays: np.ndarray = np.ndarray(blocked_shape, dtype=object)
         for np_index, _ in np.ndenumerate(lazy_arrays):
             # All dimensions get their normal index except for chunk dims
             # which get filled with "full" slices

@@ -346,7 +346,7 @@ class CziReader(Reader):
 
         # Create empty numpy array with the operating shape so that we can iter through
         # and use the multi_index to create the readers.
-        lazy_arrays = np.ndarray(operating_shape_tuple, dtype=object)
+        lazy_arrays: np.ndarray = np.ndarray(operating_shape_tuple, dtype=object)
 
         # We can enumerate over the multi-indexed array and construct read_dims
         # dictionaries by simply zipping together the ordered dims list and the current

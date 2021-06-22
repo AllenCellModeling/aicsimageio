@@ -439,7 +439,7 @@ class DefaultReader(Reader):
                     operating_shape = (image_length,) + ((1,) * len(sample.shape))
                     # Create numpy array of empty arrays for delayed get data
                     # functions
-                    lazy_arrays = np.ndarray(operating_shape, dtype=object)
+                    lazy_arrays: np.ndarray = np.ndarray(operating_shape, dtype=object)
                     for indices, _ in np.ndenumerate(lazy_arrays):
                         lazy_arrays[indices] = da.from_delayed(
                             delayed(self._get_image_data)(

@@ -301,6 +301,26 @@ def test_ome_tiff_writer_multiscene(
     "expected_pixel_size",
     [
         (
+            np.random.rand(1, 2, 5, 16, 16),
+            "TCZYX",
+            None,
+            ["C0", "C1"],
+            None,
+            [(1, 2, 5, 16, 16)],
+            ["TCZYX"],
+            [(None, None, None)],
+        ),
+        (
+            [np.random.rand(1, 2, 5, 16, 16), np.random.rand(1, 2, 4, 15, 15)],
+            "TCZYX",
+            None,
+            ["C0", "C1"],
+            None,
+            [(1, 2, 5, 16, 16), (1, 2, 4, 15, 15)],
+            ["TCZYX", "TCZYX"],
+            [(None, None, None), (None, None, None)],
+        ),
+        (
             [np.random.rand(5, 16, 16)],
             None,
             [types.PhysicalPixelSizes(1.0, 2.0, 3.0)],

@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/channel-names-array-expansion  (`#265
+  <https://github.com/AllenCellModeling/aicsimageio/pull/265>`_)
+  [toloudis]
+
+
 v4.0.2 (2021-06-22)
 -------------------
 

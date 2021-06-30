@@ -203,7 +203,7 @@ class OmeTiffWriter(Writer):
             physical_pixel_sizes = [
                 types.PhysicalPixelSizes(None, None, None)
             ] * num_images
-        if channel_names is None or isinstance(channel_names[0], int):
+        if channel_names is None or isinstance(channel_names[0], str):
             channel_names = [channel_names] * num_images  # type: ignore
         if channel_colors is None or isinstance(channel_colors[0], int):
             channel_colors = [channel_colors] * num_images  # type: ignore

@@ -34,7 +34,8 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "s3fs>=2021.4.0",
+    "s3fs[boto3]>=2021.4.0",
+    "quilt3>=3.4.0",
 ]
 
 dev_requirements = [

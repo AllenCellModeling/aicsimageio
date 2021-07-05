@@ -1,6 +1,25 @@
 Changelog
 =========
 
+v4.0.3 (2021-07-05)
+-------------------
+
+Fix
+~~~
+- bugfix/missing-tiff-description-tag  (`#271
+  <https://github.com/AllenCellModeling/aicsimageio/pull/271>`_)
+  [Jackson Maxfield Brown]
+- bugfix/channel-names-array-expansion  (`#265
+  <https://github.com/AllenCellModeling/aicsimageio/pull/265>`_)
+  [toloudis]
+
+Other
+~~~~~
+- @rcasero-feature/add-python-3.7-support  (`#270
+  <https://github.com/AllenCellModeling/aicsimageio/pull/270>`_)
+  [Jackson Maxfield Brown, Ramón Casero]
+
+
 v4.0.2 (2021-06-22)
 -------------------
 

@@ -42,14 +42,13 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-2
-    - name: Download Test Resources
-      run: |
-        pip install quilt3~=3.1.12
-        python scripts/download_test_resources.py --debug
     - name: Install Dependencies
       run: |
         pip install --upgrade pip
         pip install .[dev] --no-cache-dir --force-reinstall
+    - name: Download Test Resources
+      run: |
+        python scripts/download_test_resources.py --debug
     - name: Get Prior Benchmark Results
       uses: actions/checkout@v2
       with:

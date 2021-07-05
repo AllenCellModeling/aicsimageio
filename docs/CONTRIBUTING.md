@@ -46,6 +46,13 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     make build
     ```
 
+    If you have any AWS credentials configured and would like to run the full
+    remote IO test suite:
+
+    ```bash
+    make build-with-remote
+    ```
+
 7.  Commit your changes and push your branch to GitHub:
 
     ```bash

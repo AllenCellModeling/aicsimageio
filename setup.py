@@ -4,17 +4,21 @@
 """The setup script."""
 
 from setuptools import find_packages, setup
+from typing import Dict, List
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-format_libs = {
-    "base-imageio": "imageio[ffmpeg]~=2.9.0",
-    "lif": "readlif~=0.6.1",
-    "czi": "aicspylibczi~=3.0.2",
+format_libs: Dict[str, List[str]] = {
+    "base-imageio": ["imageio[ffmpeg]~=2.9.0", "Pillow~=8.2.0,!=8.3.0"],
+    "lif": ["readlif~=0.6.1"],
+    "czi": ["aicspylibczi~=3.0.2"],
 }
 
-all_formats = [v for v in format_libs.values()]
+all_formats: List[str] = []
+for deps in format_libs.values():
+    for dep in deps:
+        all_formats.append(dep)
 
 setup_requirements = [
     "pytest-runner>=5.2",
@@ -34,7 +38,8 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
-    "s3fs>=2021.4.0",
+    "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
+    "s3fs[boto3]>=0.4.2",
 ]
 
 dev_requirements = [
@@ -91,6 +96,7 @@ setup(
         "Intended Audience :: Education",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
@@ -107,7 +113,7 @@ setup(
     keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
-    python_requires=">=3.8",
+    python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,

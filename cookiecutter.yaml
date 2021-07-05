@@ -6,5 +6,5 @@ default_context:
     project_slug: "aicsimageio"
     project_short_description: "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python"
     pypi_username: "aicspypi"
-    version: "4.0.2"
+    version: "4.0.3"
     open_source_license: "BSD license"

@@ -4,17 +4,21 @@
 """The setup script."""
 
 from setuptools import find_packages, setup
+from typing import Dict, List
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
 
-format_libs = {
-    "base-imageio": "imageio[ffmpeg]~=2.9.0",
-    "lif": "readlif~=0.6.1",
-    "czi": "aicspylibczi~=3.0.2",
+format_libs: Dict[str, List[str]] = {
+    "base-imageio": ["imageio[ffmpeg]~=2.9.0", "Pillow~=8.2.0,!=8.3.0"],
+    "lif": ["readlif~=0.6.1"],
+    "czi": ["aicspylibczi~=3.0.2"],
 }
 
-all_formats = [v for v in format_libs.values()]
+all_formats: List[str] = []
+for deps in format_libs.values():
+    for dep in deps:
+        all_formats.append(dep)
 
 setup_requirements = [
     "pytest-runner>=5.2",
@@ -34,8 +38,8 @@ test_requirements = [
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
+    "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
-    "quilt3",
 ]
 
 dev_requirements = [

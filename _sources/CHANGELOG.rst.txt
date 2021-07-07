@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- admin/finalizing-contributor-pr-process  (`#276
+  <https://github.com/AllenCellModeling/aicsimageio/pull/276>`_)
+  [Jackson Maxfield Brown]
 - admin/local-tests-by-default  (`#273
   <https://github.com/AllenCellModeling/aicsimageio/pull/273>`_)
   [Jackson Maxfield Brown]

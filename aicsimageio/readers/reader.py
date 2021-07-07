@@ -215,7 +215,7 @@ class Reader(ABC):
                 # Update current scene
                 self._current_scene_index = self.scenes.index(scene_id)
 
-                # Reset set for future read
+                # Reset self for future read
                 self._reset_self()
 
         # Handle index

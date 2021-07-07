@@ -10,6 +10,12 @@ New
   <https://github.com/AllenCellModeling/aicsimageio/pull/272>`_)
   [Jackson Maxfield Brown]
 
+Other
+~~~~~
+- admin/local-tests-by-default  (`#273
+  <https://github.com/AllenCellModeling/aicsimageio/pull/273>`_)
+  [Jackson Maxfield Brown]
+
 
 v4.0.3 (2021-07-05)
 -------------------

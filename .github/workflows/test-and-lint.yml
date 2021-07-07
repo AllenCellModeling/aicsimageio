@@ -37,7 +37,7 @@ jobs:
         python scripts/download_test_resources.py --debug
     - name: Test with pytest
       run: |
-        pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/
+        pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/ -k "not REMOTE"
     - name: Upload codecov
       uses: codecov/codecov-action@v1
 

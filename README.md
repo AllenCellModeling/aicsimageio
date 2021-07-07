@@ -84,7 +84,7 @@ img.scenes
 # Change scene using name
 img.set_scene("Image:1")
 # Or by scene index
-img.set_scene(img.scenes[1])
+img.set_scene(1)
 
 # Use the same operations on a different scene
 # ...
@@ -125,7 +125,7 @@ img.scenes
 # Change scene using name
 img.set_scene("Image:1")
 # Or by scene index
-img.set_scene(img.scenes[1])
+img.set_scene(1)
 
 # Use the same operations on a different scene
 # ...

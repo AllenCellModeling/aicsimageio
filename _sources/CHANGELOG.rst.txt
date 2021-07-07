@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/allow-set-scene-by-index  (`#272
+  <https://github.com/AllenCellModeling/aicsimageio/pull/272>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.3 (2021-07-05)
 -------------------
 

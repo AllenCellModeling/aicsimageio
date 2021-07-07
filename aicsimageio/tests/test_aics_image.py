@@ -311,6 +311,21 @@ def test_aicsimage(
             "P1",
             (1, 3, 5, 325, 475),
         ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            1,
+            (1, 3, 5, 325, 475),
+            2,
+            (1, 3, 5, 325, 475),
+        ),
+        pytest.param(
+            "s_3_t_1_c_3_z_5.czi",
+            ["this is not a scene id"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=TypeError),
+        ),
     ],
 )
 def test_multi_scene_aicsimage(

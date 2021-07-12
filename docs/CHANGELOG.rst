@@ -1,6 +1,25 @@
 Changelog
 =========
 
+v4.0.4 (2021-07-12)
+-------------------
+
+New
+~~~
+- feature/allow-set-scene-by-index  (`#272
+  <https://github.com/AllenCellModeling/aicsimageio/pull/272>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/finalizing-contributor-pr-process  (`#276
+  <https://github.com/AllenCellModeling/aicsimageio/pull/276>`_)
+  [Jackson Maxfield Brown]
+- admin/local-tests-by-default  (`#273
+  <https://github.com/AllenCellModeling/aicsimageio/pull/273>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.3 (2021-07-05)
 -------------------
 

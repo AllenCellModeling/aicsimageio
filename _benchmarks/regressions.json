@@ -1,1 +1,1 @@
-{"regressions": []}
+{"regressions": [["benchmark_image_containers.AICSImageSuite.time_random_many_chunk_read('/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi')", "graphs/branch-main/machine-github-ci/python-3.9/benchmark_image_containers.AICSImageSuite.time_random_many_chunk_read.json", {}, 6, 6.087165918000011, 0.019080356499983964, [[null, 622, 0.019080356499983964, 6.087165918000011]]]]}

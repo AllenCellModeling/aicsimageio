@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>aicsimageio.aics_image.AICSImage &mdash; AICSImageIO 4.0.3 documentation</title>
+  <title>aicsimageio.aics_image.AICSImage &mdash; AICSImageIO 4.0.4 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                4.0.3
+                4.0.4
               </div>
             
           
@@ -91,7 +91,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a><ul>
@@ -168,7 +168,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
@@ -275,7 +275,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Important Classes:</span></p>
+<p class="caption" role="heading"><span class="caption-text">Important Classes:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">aicsimageio.aics_image.AICSImage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
@@ -452,8 +452,7 @@ by either instantiating the reader independently or using the <cite>.reader</cit
 <dl class="py method">
 <dt class="sig sig-object py" id="aicsimageio.aics_image.AICSImage.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">,</span> </span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">dask.array.core.Array</span><span class="p"><span class="pre">,</span> </span><span class="pre">xarray.core.dataarray.DataArray</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">,</span> </span><span class="pre">dask.array.core.Array</span><span class="p"><span class="pre">,</span> </span><span class="pre">xarray.core.dataarray.DataArray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reader</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">abc.ABCMeta</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstruct_mosaic</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/aics_image.html#AICSImage.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.aics_image.AICSImage.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
+<dd></dd></dl>
 
 <p class="rubric">Methods</p>
 <table class="longtable docutils align-default">
@@ -463,7 +462,7 @@ by either instantiating the reader independently or using the <cite>.reader</cit
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#aicsimageio.aics_image.AICSImage.__init__" title="aicsimageio.aics_image.AICSImage.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(image[, reader, reconstruct_mosaic])</p></td>
-<td><p>Initialize self.</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.AICSImage.determine_reader" title="aicsimageio.aics_image.AICSImage.determine_reader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">determine_reader</span></code></a>(image, **kwargs)</p></td>
 <td><p>Cheaply check to see if a given file is a recognized type and return the appropriate reader for the image.</p></td>

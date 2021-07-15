@@ -284,7 +284,7 @@ def test_aicsimage(
         ("s_1_t_1_c_10_z_1.ome.tiff", (1, 10, 1, 1736, 1776)),
         ("s_1_t_4_c_2_z_1.lif", (4, 2, 1, 614, 614)),
         ("RGB-8bit.czi", (1, 1, 1, 624, 924, 3)),
-    ]
+    ],
 )
 def test_no_scene_prop_access(
     filename: str,

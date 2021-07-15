@@ -137,7 +137,9 @@ class OmeTiffReader(TiffReader):
                 )
 
                 # Get and store scenes
-                self._scenes = tuple(image_meta.id for image_meta in self._ome.images)
+                self._scenes: Tuple[str, ...] = tuple(
+                    image_meta.id for image_meta in self._ome.images
+                )
 
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series

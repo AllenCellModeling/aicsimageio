@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import xml.etree.ElementTree as ET
 from copy import copy
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
-import warnings
 
 import dask.array as da
 import numpy as np

@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
+from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
@@ -143,12 +144,13 @@ class OmeTiffReader(TiffReader):
 
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
-                if tiff.is_micromanager:
+                if tiff.is_micromanager and not isinstance(self._fs, LocalFileSystem):
                     log.warning(
-                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
-                        "have limited support for scene API. "
+                        "**Remote reading** (S3, GCS, HTTPS, etc.) of multi-image "
+                        "(or scene) OME-TIFFs created by MicroManager has limited "
+                        "support with the scene API. "
                         "It is recommended to use independent AICSImage or Reader "
-                        "objects for each file instead of the `set_scene` API. "
+                        "objects for each remote file instead of the `set_scene` API. "
                         "Track progress on support here: "
                         "https://github.com/AllenCellModeling/aicsimageio/issues/196"
                     )

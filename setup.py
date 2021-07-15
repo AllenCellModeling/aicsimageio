@@ -70,7 +70,7 @@ requirements = [
     "imagecodecs>=2020.5.30",
     "numpy~=1.16",
     "ome-types~=0.2.4",
-    "tifffile>=2021.2.1",
+    "tifffile>=2021.6.6",
     "toolz~=0.11.0",
     "xarray~=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types

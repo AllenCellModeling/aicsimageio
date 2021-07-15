@@ -3,6 +3,7 @@
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/workflows/Build%20Main/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://AllenCellModeling.github.io/aicsimageio/)
 [![Code Coverage](https://codecov.io/gh/AllenCellModeling/aicsimageio/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AllenCellModeling/aicsimageio/branch/main)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4906608.svg)](https://doi.org/10.5281/zenodo.4906608)
 
 Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python
 
@@ -83,7 +84,7 @@ img.scenes
 # Change scene using name
 img.set_scene("Image:1")
 # Or by scene index
-img.set_scene(img.scenes[1])
+img.set_scene(1)
 
 # Use the same operations on a different scene
 # ...
@@ -124,7 +125,7 @@ img.scenes
 # Change scene using name
 img.set_scene("Image:1")
 # Or by scene index
-img.set_scene(img.scenes[1])
+img.set_scene(1)
 
 # Use the same operations on a different scene
 # ...
@@ -144,6 +145,7 @@ Read stitched data or single tiles as a dimension.
 Readers that support mosaic tile stitching:
 
 -   `LifReader`
+-   `CziReader`
 
 #### AICSImage
 
@@ -210,9 +212,9 @@ from aicsimageio import AICSImage
 img = AICSImage("my_file.tiff")  # selects the first scene found
 img.metadata  # returns the metadata object for this file format (XML, JSON, etc.)
 img.channel_names  # returns a list of string channel names found in the metadata
-img.physical_pixel_size.Z  # returns the Z dimension pixel size as found in the metadata
-img.physical_pixel_size.Y  # returns the Y dimension pixel size as found in the metadata
-img.physical_pixel_size.X  # returns the X dimension pixel size as found in the metadata
+img.physical_pixel_sizes.Z  # returns the Z dimension pixel size as found in the metadata
+img.physical_pixel_sizes.Y  # returns the Y dimension pixel size as found in the metadata
+img.physical_pixel_sizes.X  # returns the X dimension pixel size as found in the metadata
 ```
 
 ### Xarray Coordinate Plane Attachment

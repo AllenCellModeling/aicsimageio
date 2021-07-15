@@ -365,7 +365,7 @@ class TiffReader(Reader):
             transposer.append(match_map[dim])
 
         # Make ndarray for lazy arrays to fill
-        lazy_arrays = np.ndarray(blocked_shape, dtype=object)
+        lazy_arrays: np.ndarray = np.ndarray(blocked_shape, dtype=object)
         for np_index, _ in np.ndenumerate(lazy_arrays):
             # All dimensions get their normal index except for chunk dims
             # which get filled with "full" slices
@@ -444,16 +444,22 @@ class TiffReader(Reader):
                     channel_names=channels,
                 )
 
-                return xr.DataArray(
-                    image_data,
-                    dims=dims,
-                    coords=coords,  # type: ignore
-                    attrs={
+                # Try accepted processed metadata
+                try:
+                    attrs = {
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[
                             TIFF_IMAGE_DESCRIPTION_TAG_INDEX
                         ].value,
-                    },
+                    }
+                except KeyError:
+                    attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
+
+                return xr.DataArray(
+                    image_data,
+                    dims=dims,
+                    coords=coords,  # type: ignore
+                    attrs=attrs,
                 )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -493,14 +499,20 @@ class TiffReader(Reader):
                     channel_names=channels,
                 )
 
-                return xr.DataArray(
-                    image_data,
-                    dims=dims,
-                    coords=coords,  # type: ignore
-                    attrs={
+                # Try accepted processed metadata
+                try:
+                    attrs = {
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[
                             TIFF_IMAGE_DESCRIPTION_TAG_INDEX
                         ].value,
-                    },
+                    }
+                except KeyError:
+                    attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
+
+                return xr.DataArray(
+                    image_data,
+                    dims=dims,
+                    coords=coords,  # type: ignore
+                    attrs=attrs,
                 )

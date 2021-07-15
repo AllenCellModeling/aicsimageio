@@ -1,8 +1,81 @@
 Changelog
 =========
 
-(unreleased)
-------------
+v4.0.4 (2021-07-12)
+-------------------
+
+New
+~~~
+- feature/allow-set-scene-by-index  (`#272
+  <https://github.com/AllenCellModeling/aicsimageio/pull/272>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/finalizing-contributor-pr-process  (`#276
+  <https://github.com/AllenCellModeling/aicsimageio/pull/276>`_)
+  [Jackson Maxfield Brown]
+- admin/local-tests-by-default  (`#273
+  <https://github.com/AllenCellModeling/aicsimageio/pull/273>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.0.3 (2021-07-05)
+-------------------
+
+Fix
+~~~
+- bugfix/missing-tiff-description-tag  (`#271
+  <https://github.com/AllenCellModeling/aicsimageio/pull/271>`_)
+  [Jackson Maxfield Brown]
+- bugfix/channel-names-array-expansion  (`#265
+  <https://github.com/AllenCellModeling/aicsimageio/pull/265>`_)
+  [toloudis]
+
+Other
+~~~~~
+- @rcasero-feature/add-python-3.7-support  (`#270
+  <https://github.com/AllenCellModeling/aicsimageio/pull/270>`_)
+  [Jackson Maxfield Brown, Ramón Casero]
+
+
+v4.0.2 (2021-06-22)
+-------------------
+
+Fix
+~~~
+- bugfix/mosaic-tile-reconstruction-for-multi-scene-mosaics  (`#260
+  <https://github.com/AllenCellModeling/aicsimageio/pull/260>`_)
+  [toloudis]
+
+Other
+~~~~~
+- admin/bump-aicspylibczi-dep-version  (`#261
+  <https://github.com/AllenCellModeling/aicsimageio/pull/261>`_)
+  [Jackson Maxfield Brown]
+- admin/add-doi  (`#258
+  <https://github.com/AllenCellModeling/aicsimageio/pull/258>`_)
+  [Jackson Maxfield Brown]
+- docs/add-missing-czi-reading-to-mosaic-support  (`#256
+  <https://github.com/AllenCellModeling/aicsimageio/pull/256>`_)
+  [Jackson Maxfield Brown]
+- docs/fix-physical-pixel-sizes-typo  (`#253
+  <https://github.com/AllenCellModeling/aicsimageio/pull/253>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.0.1 (2021-06-08)
+-------------------
+
+Fix
+~~~
+- bugfix/coords-and-floating-point-math-and-czi-scene-naming  (`#250
+  <https://github.com/AllenCellModeling/aicsimageio/pull/250>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.0.0 (2021-06-07)
+-------------------
 
 New
 ~~~

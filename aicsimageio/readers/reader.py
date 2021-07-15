@@ -41,7 +41,7 @@ class Reader(ABC):
     _dims: Optional[Dimensions] = None
     _metadata: Optional[Any] = None
     _scenes: Optional[Tuple[str, ...]] = None
-    _current_scene: Optional[str] = None
+    _current_scene_index: int = 0
     # Do not default because they aren't used by all readers
     _fs: AbstractFileSystem
     _path: str
@@ -162,10 +162,7 @@ class Reader(ABC):
         scene: str
             The current operating scene.
         """
-        if self._current_scene is None:
-            self._current_scene = self.scenes[0]
-
-        return self._current_scene
+        return self.scenes[self._current_scene_index]
 
     @property
     def current_scene_index(self) -> int:
@@ -175,42 +172,76 @@ class Reader(ABC):
         scene_index: int
             The current operating scene index in the file.
         """
-        return self.scenes.index(self.current_scene)
+        return self._current_scene_index
 
-    def set_scene(self, scene_id: str) -> None:
+    def _reset_self(self) -> None:
+        # Reset the data stored in the Reader object
+        self._xarray_dask_data = None
+        self._xarray_data = None
+        self._mosaic_xarray_dask_data = None
+        self._mosaic_xarray_data = None
+        self._dims = None
+        self._metadata = None
+
+    def set_scene(self, scene_id: Union[str, int]) -> None:
         """
         Set the operating scene.
 
         Parameters
         ----------
-        scene_id: str
-            The scene id to set as the operating scene.
+        scene_id: Union[str, int]
+            The scene id (if string) or scene index (if integer)
+            to set as the operating scene.
 
         Raises
         ------
         IndexError
-            The provided scene id is not found in the available scene id list
+            The provided scene id or index is not found in the available scene id list.
+        TypeError
+            The provided value wasn't a string (scene id) or integer (scene index).
         """
-        # Only need to run when the scene id is different from current scene
-        if scene_id != self.current_scene:
+        # Route to int or str setting
+        if isinstance(scene_id, str):
+            # Only need to run when the scene id is different from current scene
+            if scene_id != self.current_scene:
 
-            # Validate scene id
-            if scene_id not in self.scenes:
-                raise IndexError(
-                    f"Scene id: {scene_id} "
-                    f"is not present in available image scenes: {self.scenes}"
-                )
+                # Validate scene id
+                if scene_id not in self.scenes:
+                    raise IndexError(
+                        f"Scene id: '{scene_id}' "
+                        f"is not present in available image scenes: {self.scenes}"
+                    )
 
-            # Update current scene
-            self._current_scene = scene_id
+                # Update current scene
+                self._current_scene_index = self.scenes.index(scene_id)
 
-            # Reset the data stored in the Reader object
-            self._xarray_dask_data = None
-            self._xarray_data = None
-            self._mosaic_xarray_dask_data = None
-            self._mosaic_xarray_data = None
-            self._dims = None
-            self._metadata = None
+                # Reset self for future read
+                self._reset_self()
+
+        # Handle index
+        elif isinstance(scene_id, int):
+            # Only need to run when scene index is different from current scene
+            if scene_id != self.current_scene_index:
+
+                # Validate scene index
+                if scene_id >= len(self.scenes):
+                    raise IndexError(
+                        f"Scene index: {scene_id} "
+                        f"is greater than the number of available scenes "
+                        f"present in the file."
+                    )
+
+                # Update current scene
+                self._current_scene_index = scene_id
+
+                # Reset set for future read
+                self._reset_self()
+
+        else:
+            raise TypeError(
+                f"Must provide either a string (for scene id) "
+                f"or integer (for scene index). Provided: {scene_id} ({type(scene_id)}."
+            )
 
     @abstractmethod
     def _read_delayed(self) -> xr.DataArray:

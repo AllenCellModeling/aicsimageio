@@ -264,38 +264,31 @@ class AICSImage:
         """
         return self.scenes.index(self.current_scene)
 
-    def set_scene(self, scene_id: str) -> None:
+    def set_scene(self, scene_id: Union[str, int]) -> None:
         """
         Set the operating scene.
 
         Parameters
         ----------
-        scene_id: str
-            The scene id to set as the operating scene.
+        scene_id: Union[str, int]
+            The scene id (if string) or scene index (if integer)
+            to set as the operating scene.
 
         Raises
         ------
         IndexError
-            The provided scene id is not found in the available scene id list
+            The provided scene id or index is not found in the available scene id list.
+        TypeError
+            The provided value wasn't a string (scene id) or integer (scene index).
         """
-        # Only need to run when the scene id is different from current scene
-        if scene_id != self.reader.current_scene:
+        # Update current scene on the base Reader
+        # This clears the base Reader's cache
+        self.reader.set_scene(scene_id)
 
-            # Validate scene id
-            if scene_id not in self.scenes:
-                raise IndexError(
-                    f"Scene id: {scene_id} "
-                    f"is not present in available image scenes: {self.scenes}"
-                )
-
-            # Update current scene on the base Reader
-            # This clears the base Reader's cache
-            self.reader.set_scene(scene_id)
-
-            # Reset the data stored in the AICSImage object
-            self._xarray_dask_data = None
-            self._xarray_data = None
-            self._dims = None
+        # Reset the data stored in the AICSImage object
+        self._xarray_dask_data = None
+        self._xarray_data = None
+        self._dims = None
 
     def _transform_data_array_to_aics_image_standard(
         self,

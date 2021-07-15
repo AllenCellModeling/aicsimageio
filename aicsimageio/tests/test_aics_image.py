@@ -16,7 +16,7 @@ from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions, readers, types
 
-from .conftest import LOCAL, get_resource_full_path
+from .conftest import LOCAL, REMOTE, get_resource_full_path
 from .image_container_test_utils import (
     run_image_container_checks,
     run_image_file_checks,
@@ -277,6 +277,28 @@ def test_aicsimage(
 
 
 @pytest.mark.parametrize(
+    "filename, expected_shape",
+    [
+        ("example.png", (1, 1, 1, 800, 537, 4)),
+        ("s_1_t_10_c_3_z_1.tiff", (10, 3, 1, 325, 475)),
+        ("s_1_t_1_c_10_z_1.ome.tiff", (1, 10, 1, 1736, 1776)),
+        ("s_1_t_4_c_2_z_1.lif", (4, 2, 1, 614, 614)),
+        ("RGB-8bit.czi", (1, 1, 1, 624, 924, 3)),
+    ],
+)
+def test_no_scene_prop_access(
+    filename: str,
+    expected_shape: Tuple[int, ...],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct image and check no scene call with property access
+    img = AICSImage(uri)
+    assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
     "filename, "
     "first_scene_id, "
     "first_scene_shape, "
@@ -310,6 +332,21 @@ def test_aicsimage(
             (1, 3, 5, 325, 475),
             "P1",
             (1, 3, 5, 325, 475),
+        ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            1,
+            (1, 3, 5, 325, 475),
+            2,
+            (1, 3, 5, 325, 475),
+        ),
+        pytest.param(
+            "s_3_t_1_c_3_z_5.czi",
+            ["this is not a scene id"],
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=TypeError),
         ),
     ],
 )
@@ -1087,6 +1124,84 @@ def test_parallel_read(
     # Select data
     out = img.get_image_dask_data(get_dims, **get_specific_dims).compute()
     assert out.shape == expected_shape
+
+    # Shutdown and then safety measure timeout
+    cluster.close()
+    client.close()
+    time.sleep(5)
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "host, "
+    "first_scene, "
+    "expected_first_chunk_shape, "
+    "second_scene, "
+    "expected_second_chunk_shape",
+    [
+        (
+            "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
+            LOCAL,
+            0,
+            (50, 5, 256, 256),
+            1,
+            (50, 5, 256, 256),
+        ),
+        (
+            "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
+            LOCAL,
+            1,
+            (50, 5, 256, 256),
+            0,
+            (50, 5, 256, 256),
+        ),
+        pytest.param(
+            "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
+            REMOTE,
+            1,  # Start with second scene to trigger error faster
+            (50, 5, 256, 256),
+            0,
+            (50, 5, 256, 256),
+            marks=pytest.mark.raises(exceptions=IndexError),
+        ),
+    ],
+)
+@pytest.mark.parametrize("processes", [True, False])
+def test_parallel_multifile_tiff_read(
+    filename: str,
+    host: str,
+    first_scene: int,
+    expected_first_chunk_shape: Tuple[int, ...],
+    second_scene: int,
+    expected_second_chunk_shape: Tuple[int, ...],
+    processes: bool,
+) -> None:
+    """
+    This test ensures that we can serialize and read 'multi-file multi-scene' formats.
+    See: https://github.com/AllenCellModeling/aicsimageio/issues/196
+
+    We specifically test with a Distributed cluster to ensure that we serialize and
+    read properly from each file.
+    """
+    # Construct full filepath
+    uri = get_resource_full_path(filename, host)
+
+    # Init image
+    img = AICSImage(uri)
+
+    # Init cluster
+    cluster = LocalCluster(processes=processes)
+    client = Client(cluster)
+
+    # Select data
+    img.set_scene(first_scene)
+    first_out = img.get_image_dask_data("TZYX").compute()
+    assert first_out.shape == expected_first_chunk_shape
+
+    # Update scene and select data
+    img.set_scene(second_scene)
+    second_out = img.get_image_dask_data("TZYX").compute()
+    assert second_out.shape == expected_second_chunk_shape
 
     # Shutdown and then safety measure timeout
     cluster.close()

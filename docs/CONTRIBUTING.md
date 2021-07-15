@@ -12,7 +12,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 2.  Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/aicsimageio.git
+    git clone https://{your_name_here}@github.com/aicsimageio.git
     ```
 
 3.  Install the project in editable mode (and preferably in a virtual environment):
@@ -25,7 +25,6 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 4.  Download the test resources:
 
     ```bash
-    pip install quilt3
     python scripts/download_test_resources.py
     ```
 
@@ -45,6 +44,13 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
     ```bash
     make build
+    ```
+
+    If you have any AWS credentials configured and would like to run the full
+    remote IO test suite:
+
+    ```bash
+    make build-with-remote
     ```
 
 7.  Commit your changes and push your branch to GitHub:

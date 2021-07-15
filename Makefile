@@ -45,11 +45,11 @@ clean:  ## clean all build, python, and testing files
 	rm -fr htmlcov/
 	rm -fr .pytest_cache
 
-build: ## run tox / run tests and lint
-	tox
+build: ## run tox / run tests and lint for local IO only
+	tox -- -k "not REMOTE"
 
-test-local: ## run tests but only against local files
-	pytest aicsimageio -k "not REMOTE"
+build-with-remote: ## run full tox / test and lint suite, including remote IO
+	tox
 
 gen-docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/aicsimageio*.rst

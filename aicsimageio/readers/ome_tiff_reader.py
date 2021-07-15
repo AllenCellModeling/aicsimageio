@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
+from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
@@ -128,33 +129,34 @@ class OmeTiffReader(TiffReader):
                 self.__class__.__name__, self._path
             )
 
-        # Warn of other behaviors
+        # Get ome-types object and warn of other behaviors
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
+                # Get and store OME
+                self._ome = self._get_ome(
+                    tiff.pages[0].description, self.clean_metadata
+                )
+
+                # Get and store scenes
+                self._scenes: Tuple[str, ...] = tuple(
+                    image_meta.id for image_meta in self._ome.images
+                )
+
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
-                if tiff.is_micromanager:
+                if tiff.is_micromanager and not isinstance(self._fs, LocalFileSystem):
                     log.warning(
-                        "Multi-image (or scene) OME-TIFFs created by MicroManager "
-                        "have limited support for scene API. "
+                        "**Remote reading** (S3, GCS, HTTPS, etc.) of multi-image "
+                        "(or scene) OME-TIFFs created by MicroManager has limited "
+                        "support with the scene API. "
                         "It is recommended to use independent AICSImage or Reader "
-                        "objects for each file instead of the `set_scene` API. "
+                        "objects for each remote file instead of the `set_scene` API. "
                         "Track progress on support here: "
                         "https://github.com/AllenCellModeling/aicsimageio/issues/196"
                     )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        if self._scenes is None:
-            with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
-                    self._ome = self._get_ome(
-                        tiff.pages[0].description, self.clean_metadata
-                    )
-                    self._scenes = tuple(
-                        image_meta.id for image_meta in self._ome.images
-                    )
-
         return self._scenes
 
     @staticmethod
@@ -247,14 +249,14 @@ class OmeTiffReader(TiffReader):
         # need to correct channel count if this is a RGB image
         n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         for d in dims:
-            if d == "C" and n_samples > 1:
+            if d == "C" and n_samples is not None and n_samples > 1:
                 count = len(ome.images[scene_index].pixels.channels)
             else:
                 count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             ome_shape.append(count)
 
         # Check for num samples and expand dims if greater than 1
-        if n_samples > 1:
+        if n_samples is not None and n_samples > 1:
             # Append to the end, i.e. the last dimension
             dims.append("S")
             ome_shape.append(n_samples)

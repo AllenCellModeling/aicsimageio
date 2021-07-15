@@ -5,6 +5,7 @@ import logging
 import xml.etree.ElementTree as ET
 from copy import copy
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
+import warnings
 
 import dask.array as da
 import numpy as np
@@ -106,9 +107,10 @@ class CziReader(Reader):
 
         # Handle deprecated parameter
         if chunk_by_dims is not None:
-            log.warning(
-                "CziReader parameter 'chunk_by_dims' has been renamed to just "
-                "'chunk_dims'. 'chunk_by_dims' will be removed in aicsimageio>=4.1."
+            warnings.warn(
+                "CziReader parameter 'chunk_by_dims' has been renamed to 'chunk_dims'. "
+                "'chunk_by_dims' will be removed in aicsimageio>=4.1.",
+                DeprecationWarning,
             )
             chunk_dims = chunk_by_dims
 

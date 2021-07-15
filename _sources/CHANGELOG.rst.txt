@@ -12,6 +12,9 @@ Fix
 
 Other
 ~~~~~
+- admin/deprecate-chunk-by-dims  (`#286
+  <https://github.com/AllenCellModeling/aicsimageio/pull/286>`_)
+  [Jackson Maxfield Brown]
 - admin/bump-min-tifffile  (`#285
   <https://github.com/AllenCellModeling/aicsimageio/pull/285>`_)
   [Jackson Maxfield Brown]

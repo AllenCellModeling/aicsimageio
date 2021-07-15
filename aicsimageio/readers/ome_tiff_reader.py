@@ -23,10 +23,6 @@ from .tiff_reader import TiffReader
 
 ###############################################################################
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="[%(levelname)4s: %(module)s:%(lineno)4s %(asctime)s] %(message)s",
-)
 log = logging.getLogger(__name__)
 
 ###############################################################################

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 import xml.etree.ElementTree as ET
 from copy import copy
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
@@ -26,6 +27,8 @@ except ImportError:
         "aicspylibczi is required for this reader. "
         "Install with `pip install aicsimageio[czi]`"
     )
+
+###############################################################################
 
 CZI_SAMPLES_DIM_CHAR = "A"
 CZI_BLOCK_DIM_CHAR = "B"
@@ -55,12 +58,12 @@ class CziReader(Reader):
     ----------
     image: types.PathLike
         Path to image file to construct Reader for.
-    chunk_by_dims: Union[str, List[str]]
+    chunk_dims: Union[str, List[str]]
         Which dimensions to create chunks for.
         Default: DEFAULT_CHUNK_DIMS
-        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-        will always be added to the list if not present during dask array
-        construction.
+        Note: DimensionNames.SpatialY, DimensionNames.SpatialX, and
+        DimensionNames.Samples, will always be added to the list if not present during
+        dask array construction.
 
     Notes
     -----
@@ -80,7 +83,8 @@ class CziReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        chunk_by_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
+        chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
+        chunk_by_dims: Optional[Union[str, List[str]]] = None,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
@@ -92,11 +96,20 @@ class CziReader(Reader):
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
 
-        # Store params
-        if isinstance(chunk_by_dims, str):
-            chunk_by_dims = list(chunk_by_dims)
+        # Handle deprecated parameter
+        if chunk_by_dims is not None:
+            warnings.warn(
+                "CziReader parameter 'chunk_by_dims' has been renamed to 'chunk_dims'. "
+                "'chunk_by_dims' will be removed in aicsimageio>=4.1.",
+                DeprecationWarning,
+            )
+            chunk_dims = chunk_by_dims
 
-        self.chunk_by_dims = chunk_by_dims
+        # Store params
+        if isinstance(chunk_dims, str):
+            chunk_dims = list(chunk_dims)
+
+        self.chunk_dims = chunk_dims
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
@@ -280,11 +293,11 @@ class CziReader(Reader):
         """
         # Always add the plane dimensions if not present already
         for dim in REQUIRED_CHUNK_DIMS:
-            if dim not in self.chunk_by_dims:
-                self.chunk_by_dims.append(dim)
+            if dim not in self.chunk_dims:
+                self.chunk_dims.append(dim)
 
         # Safety measure / "feature"
-        self.chunk_by_dims = [d.upper() for d in self.chunk_by_dims]
+        self.chunk_dims = [d.upper() for d in self.chunk_dims]
 
         # Construct the delayed dask array
         dims_shape = CziReader._dims_shape_to_scene_dims_shape(
@@ -315,7 +328,7 @@ class CziReader(Reader):
             # If the dim is part of the specified chunk dims then append it to the
             # sample, and, append the dimension
             # to the chunk dimension ordering
-            if dim in self.chunk_by_dims:
+            if dim in self.chunk_dims:
                 sample_chunk_shape.append(dim_size)
                 chunk_dimension_ordering.append(dim)
 
@@ -373,7 +386,7 @@ class CziReader(Reader):
             )
 
             # Remove the dimensions that we want to chunk by from the read dims
-            for d in self.chunk_by_dims:
+            for d in self.chunk_dims:
                 this_chunk_read_dims.pop(d, None)
 
             # Get pixel type and catch unsupported

@@ -10,6 +10,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/284>`_)
   [Jackson Maxfield Brown]
 
+Other
+~~~~~
+- admin/bump-min-tifffile  (`#285
+  <https://github.com/AllenCellModeling/aicsimageio/pull/285>`_)
+  [Jackson Maxfield Brown]
+
 
 v4.0.4 (2021-07-12)
 -------------------

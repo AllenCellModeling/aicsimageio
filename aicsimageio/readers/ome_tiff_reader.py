@@ -128,9 +128,19 @@ class OmeTiffReader(TiffReader):
                 self.__class__.__name__, self._path
             )
 
-        # Warn of other behaviors
+        # Get ome-types object and warn of other behaviors
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
+                # Get and store OME
+                self._ome = self._get_ome(
+                    tiff.pages[0].description, self.clean_metadata
+                )
+
+                # Get and store scenes
+                self._scenes: Tuple[str, ...] = tuple(
+                    image_meta.id for image_meta in self._ome.images
+                )
+
                 # Log a warning stating that if this is a MM OME-TIFF, don't read
                 # many series
                 if tiff.is_micromanager:
@@ -145,16 +155,6 @@ class OmeTiffReader(TiffReader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        if self._scenes is None:
-            with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
-                    self._ome = self._get_ome(
-                        tiff.pages[0].description, self.clean_metadata
-                    )
-                    self._scenes = tuple(
-                        image_meta.id for image_meta in self._ome.images
-                    )
-
         return self._scenes
 
     @staticmethod

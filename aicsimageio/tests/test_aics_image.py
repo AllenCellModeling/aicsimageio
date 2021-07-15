@@ -277,6 +277,28 @@ def test_aicsimage(
 
 
 @pytest.mark.parametrize(
+    "filename, expected_shape",
+    [
+        ("example.png", (1, 1, 1, 800, 537, 4)),
+        ("s_1_t_10_c_3_z_1.tiff", (10, 3, 1, 325, 475)),
+        ("s_1_t_1_c_10_z_1.ome.tiff", (1, 10, 1, 1736, 1776)),
+        ("s_1_t_4_c_2_z_1.lif", (4, 2, 1, 614, 614)),
+        ("RGB-8bit.czi", (1, 1, 1, 624, 924, 3)),
+    ],
+)
+def test_no_scene_prop_access(
+    filename: str,
+    expected_shape: Tuple[int, ...],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct image and check no scene call with property access
+    img = AICSImage(uri)
+    assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
     "filename, "
     "first_scene_id, "
     "first_scene_shape, "

@@ -1,6 +1,25 @@
 Changelog
 =========
 
+v4.0.5 (2021-07-15)
+-------------------
+
+Fix
+~~~
+- bugfix/ome-tiff-ome-not-set  (`#284
+  <https://github.com/AllenCellModeling/aicsimageio/pull/284>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/deprecate-chunk-by-dims  (`#286
+  <https://github.com/AllenCellModeling/aicsimageio/pull/286>`_)
+  [Jackson Maxfield Brown]
+- admin/bump-min-tifffile  (`#285
+  <https://github.com/AllenCellModeling/aicsimageio/pull/285>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.4 (2021-07-12)
 -------------------
 

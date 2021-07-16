@@ -380,6 +380,12 @@ class LifReader(Reader):
         # Unpack short info scales
         scale_x, scale_y, scale_z, scale_t = image_short_info["scale"]
 
+        # Scales from readlif are returned as px/µm
+        # We want to return as µm/px
+        scale_x = 1 / scale_x if scale_x is not None else None
+        scale_y = 1 / scale_y if scale_y is not None else None
+        scale_z = 1 / scale_z if scale_z is not None else None
+
         # Handle Spatial Dimensions
         if scale_z is not None:
             coords[DimensionNames.SpatialZ] = Reader._generate_coord_array(
@@ -596,6 +602,9 @@ class LifReader(Reader):
 
         # Add expanded Y and X coords
         scale_x, scale_y, _, _ = selected_scene.info["scale"]
+        scale_x = 1 / scale_x if scale_x is not None else None
+        scale_y = 1 / scale_y if scale_y is not None else None
+
         if scale_y is not None:
             coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
                 0, stitched.shape[-2], scale_y

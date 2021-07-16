@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import dask.array as da
 import numpy as np
 import xarray as xr
+from ome_types import OME
 
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS
@@ -662,6 +663,23 @@ class AICSImage:
             for details on its metadata property.
         """
         return self.reader.metadata
+
+    @property
+    def ome_metadata(self) -> OME:
+        """
+        Returns
+        -------
+        metadata: OME
+            The original metadata transformed into the OME specfication.
+            This likely isn't a complete transformation but is guarenteed to
+            be a valid transformation.
+
+        Raises
+        ------
+        NotImplementedError
+            No metadata transformer available.
+        """
+        return self.reader.ome_metadata
 
     @property
     def channel_names(self) -> List[str]:

@@ -9,6 +9,7 @@ import dask.array as da
 import numpy as np
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
+from ome_types import OME
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
@@ -696,6 +697,23 @@ class Reader(ABC):
                 ]
 
         return self._metadata
+
+    @property
+    def ome_metadata(self) -> OME:
+        """
+        Returns
+        -------
+        metadata: OME
+            The original metadata transformed into the OME specfication.
+            This likely isn't a complete transformation but is guarenteed to
+            be a valid transformation.
+
+        Raises
+        ------
+        NotImplementedError
+            No metadata transformer available.
+        """
+        raise NotImplementedError()
 
     @property
     def channel_names(self) -> Optional[List[str]]:

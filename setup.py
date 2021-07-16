@@ -68,6 +68,7 @@ requirements = [
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",
+    "lxml~=4.6.3",
     "numpy~=1.16",
     "ome-types~=0.2.4",
     "tifffile>=2021.6.6",

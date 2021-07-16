@@ -2,13 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 import re
-import xml.etree.ElementTree as ET
 from copy import deepcopy
+from pathlib import Path
 from typing import Dict, Optional, Union
+from xml.etree import ElementTree as ET
 
+import lxml.etree
 import numpy as np
+from ome_types import OME, from_xml
 from ome_types.model.simple_types import PixelType
+
+from ..types import PathLike
 
 ###############################################################################
 
@@ -34,6 +40,64 @@ KNOWN_INVALID_OME_XSD_REFERENCES = [
 REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2016-06"
 
 ###############################################################################
+
+
+def transform_metadata_with_xslt(
+    tree: ET.Element,
+    xslt: PathLike,
+) -> OME:
+    """
+    Given an in-memory metadata Element and a path to an XSLT file, convert
+    metadata to OME.
+
+    Parameters
+    ----------
+    tree: ET.Element
+        The metadata tree to convert.
+    xslt: PathLike
+        Path to the XSLT file.
+
+    Returns
+    -------
+    ome: OME
+        The generated / translated OME metadata.
+
+    Notes
+    -----
+    This function will briefly update your processes current working directory
+    to the directory that stores the XSLT file.
+    """
+    # Store current process directory
+    process_dir = Path().cwd()
+
+    # Make xslt path absolute
+    xslt_abs_path = Path(xslt).resolve(strict=True).absolute()
+
+    # Try the transform
+    try:
+        # We switch directories so that whatever sub-moduled in XSLT
+        # main file can have local references to supporting transforms.
+        # i.e. the main XSLT file imports a transformers for specific sections
+        # of the metadata (camera, experiment, etc.)
+        os.chdir(xslt_abs_path.parent)
+
+        # Parse template and generate transform function
+        template = lxml.etree.parse(str(xslt_abs_path))
+        transform = lxml.etree.XSLT(template)
+
+        # Convert from stdlib ET to lxml ET
+        tree_str = ET.tostring(tree)
+        lxml_tree = lxml.etree.fromstring(tree_str)
+        ome_etree = transform(lxml_tree)
+
+        # Dump generated etree to string and read with ome-types
+        ome = from_xml(str(ome_etree))
+
+    # Regardless of error or succeed, move back to original process dir
+    finally:
+        os.chdir(process_dir)
+
+    return ome
 
 
 def generate_ome_image_id(image_id: Union[str, int]) -> str:

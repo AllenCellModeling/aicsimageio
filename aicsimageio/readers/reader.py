@@ -711,7 +711,7 @@ class Reader(ABC):
         Raises
         ------
         NotImplementedError
-            No XSLT file available for metadata transformation.
+            No metadata transformer available.
         """
         raise NotImplementedError()
 

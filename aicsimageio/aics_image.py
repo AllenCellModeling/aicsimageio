@@ -677,7 +677,7 @@ class AICSImage:
         Raises
         ------
         NotImplementedError
-            No XSLT file available for metadata transformation.
+            No metadata transformer available.
         """
         return self.reader.ome_metadata
 

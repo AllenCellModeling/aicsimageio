@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/ome-metadata-xslt-spec  (`#289
+  <https://github.com/AllenCellModeling/aicsimageio/pull/289>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.5 (2021-07-15)
 -------------------
 

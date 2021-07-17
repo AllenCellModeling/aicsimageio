@@ -41,6 +41,7 @@ aicsimageio.readers.ome\_tiff\_reader.OmeTiffReader
       ~OmeTiffReader.mosaic_tile_dims
       ~OmeTiffReader.mosaic_xarray_dask_data
       ~OmeTiffReader.mosaic_xarray_data
+      ~OmeTiffReader.ome_metadata
       ~OmeTiffReader.physical_pixel_sizes
       ~OmeTiffReader.scenes
       ~OmeTiffReader.shape

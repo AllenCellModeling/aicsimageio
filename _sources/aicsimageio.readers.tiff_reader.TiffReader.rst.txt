@@ -41,6 +41,7 @@ aicsimageio.readers.tiff\_reader.TiffReader
       ~TiffReader.mosaic_tile_dims
       ~TiffReader.mosaic_xarray_dask_data
       ~TiffReader.mosaic_xarray_data
+      ~TiffReader.ome_metadata
       ~TiffReader.physical_pixel_sizes
       ~TiffReader.scenes
       ~TiffReader.shape

@@ -40,6 +40,7 @@ aicsimageio.aics\_image.AICSImage
       ~AICSImage.metadata
       ~AICSImage.module_path
       ~AICSImage.mosaic_tile_dims
+      ~AICSImage.ome_metadata
       ~AICSImage.physical_pixel_sizes
       ~AICSImage.reader
       ~AICSImage.reader_name

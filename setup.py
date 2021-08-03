@@ -54,6 +54,7 @@ test_requirements = [
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
+    "tox>=3.15.2",
 ]
 
 dev_requirements = [
@@ -68,7 +69,6 @@ dev_requirements = [
     "pytest-runner>=5.2",
     "Sphinx>=3.4.3",
     "sphinx_rtd_theme>=0.5.1",
-    "tox>=3.15.2",
     "twine>=3.1.1",
     "wheel>=0.34.2",
 ]
@@ -115,9 +115,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
-    # package_data={
-    #     "metadata": ["aicsimageio/metadata/czi-to-ome-xslt/xslt/*.xsl"],
-    # },
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
         "in Pure Python"

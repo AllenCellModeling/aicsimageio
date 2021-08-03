@@ -10,7 +10,7 @@ from typing import Dict, List
 
 
 class BuildPyCommand(build_py):
-    """Custom build command."""
+    """Check for existence of XSLT before building."""
     def run(self):
         xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
         if not xslt.is_file():

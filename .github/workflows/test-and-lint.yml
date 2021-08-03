@@ -30,9 +30,11 @@ jobs:
       - name: Download Test Resources
         run: |
           python scripts/download_test_resources.py --debug
-      - name: Run Tox
+      - name: Run tests with Tox
         # Run tox using the version of Python in `PATH`, and don't include remote resources
         run: tox -e py -- -k "not REMOTE"
+      - name: Upload codecov
+        uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest

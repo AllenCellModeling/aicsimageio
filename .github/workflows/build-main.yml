@@ -23,51 +23,53 @@ jobs:
           windows-latest,
           macOS-10.15,
         ]
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[test]
-    - name: Download Test Resources
-      run: |
-        python scripts/download_test_resources.py --debug
-    - name: Test with pytest
-      run: |
-        pytest --cov-report xml --cov=aicsimageio aicsimageio/tests/
-    - name: Upload codecov
-      uses: codecov/codecov-action@v1
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[test]
+      - name: Download Test Resources
+        run: |
+          python scripts/download_test_resources.py --debug
+      - name: Run tests with Tox
+        # Run tox using the version of Python in `PATH`, and don't include remote resources
+        run: tox -e py -- -k "not REMOTE"
+      - name: Upload codecov
+        uses: codecov/codecov-action@v1
 
   lint:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.9
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[test]
-    - name: Lint with flake8
-      run: |
-        flake8 aicsimageio --count --verbose --show-source --statistics
-        isort aicsimageio --check-only
-        mypy aicsimageio
-        black --check --exclude vendor aicsimageio
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[test]
+      - name: Lint
+        run: |
+          flake8 aicsimageio --count --verbose --show-source --statistics --exclude aicsimageio/metadata/czi-to-ome-xslt/
+          isort aicsimageio --check-only --skip aicsimageio/metadata/czi-to-ome-xslt/
+          mypy aicsimageio --exclude aicsimageio/metadata/czi-to-ome-xslt/
+          black --check aicsimageio --exclude aicsimageio/metadata/czi-to-ome-xslt/
 
   publish:
     if: "contains(github.event.head_commit.message, 'Bump version')"
@@ -75,7 +77,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        submodules: true
     - name: Set up Python
       uses: actions/setup-python@v1
       with:

@@ -4,7 +4,21 @@
 """The setup script."""
 
 from setuptools import find_packages, setup
+from setuptools.command.build_py import build_py
+from pathlib import Path
 from typing import Dict, List
+
+
+class BuildPyCommand(build_py):
+    """Custom build command."""
+    def run(self):
+        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        if not xslt.is_file():
+            raise FileNotFoundError(
+                "XSLT not found. Is the submodule checked out?"
+            )
+        build_py.run(self)
+
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
@@ -89,6 +103,7 @@ extra_requirements = {
 setup(
     author="Jackson Maxfield Brown, Allen Institute for Cell Science",
     author_email="jmaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
+    cmdclass={"build_py": BuildPyCommand},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",
@@ -100,6 +115,9 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
     ],
+    # package_data={
+    #     "metadata": ["aicsimageio/metadata/czi-to-ome-xslt/xslt/*.xsl"],
+    # },
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
         "in Pure Python"

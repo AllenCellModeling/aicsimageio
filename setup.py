@@ -68,14 +68,13 @@ requirements = [
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",
-    "lxml~=4.6.3",
+    "lxml~=4.6",
     "numpy~=1.16",
-    "ome-types~=0.2.7",
+    "ome-types~=0.2",
     "tifffile>=2021.6.6",
-    "toolz~=0.11.0",
     "xarray~=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
-    "zarr~=2.6.1",
+    "zarr~=2.6",
 ]
 
 extra_requirements = {

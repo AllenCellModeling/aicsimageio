@@ -392,6 +392,10 @@ class OmeTiffReader(TiffReader):
                 )
 
     @property
+    def ome_metadata(self) -> OME:
+        return self.metadata
+
+    @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
         """
         Returns

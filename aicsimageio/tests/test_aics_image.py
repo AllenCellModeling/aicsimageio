@@ -168,7 +168,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
-            (None, 2.9485556406398508, 2.9485556406398508),
+            (None, 0.33914910277324634, 0.33914910277324634),
             ET.Element,
         ),
         (
@@ -179,7 +179,7 @@ from .image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray", "Red", "Green", "Cyan"],
-            (None, 4.984719055966396, 4.984719055966396),
+            (None, 0.20061311154598827, 0.20061311154598827),
             ET.Element,
         ),
         #######################################################################

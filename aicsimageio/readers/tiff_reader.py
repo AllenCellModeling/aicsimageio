@@ -168,15 +168,13 @@ class TiffReader(Reader):
                 # handoff _during_ a read.
                 return arr[retrieve_indices].compute(scheduler="synchronous")
 
-    def _get_tiff_tags(self) -> TiffTags:
-        with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
-                unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
+    def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
+        unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
 
-                # Create dict of tag and value
-                tags: Dict[int, str] = {}
-                for code, tag in unprocessed_tags.items():
-                    tags[code] = tag.value
+        # Create dict of tag and value
+        tags: Dict[int, str] = {}
+        for code, tag in unprocessed_tags.items():
+            tags[code] = tag.value
 
         return tags
 
@@ -438,7 +436,7 @@ class TiffReader(Reader):
                 image_data = self._create_dask_array(tiff, dims)
 
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                tiff_tags = self._get_tiff_tags(tiff)
 
                 # Get channel names for this scene or generate
                 channels = self._get_channel_names_for_scene(image_data.shape, dims)
@@ -493,7 +491,7 @@ class TiffReader(Reader):
                 image_data = tiff.series[self.current_scene_index].asarray()
 
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                tiff_tags = self._get_tiff_tags(tiff)
 
                 # Get channel names for this scene or generate
                 channels = self._get_channel_names_for_scene(image_data.shape, dims)

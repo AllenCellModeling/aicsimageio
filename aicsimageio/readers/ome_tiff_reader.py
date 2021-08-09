@@ -331,7 +331,7 @@ class OmeTiffReader(TiffReader):
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
                 dims, coords = self._get_dims_and_coords_from_ome(
@@ -373,7 +373,7 @@ class OmeTiffReader(TiffReader):
         with self._fs.open(self._path) as open_resource:
             with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
-                tiff_tags = self._get_tiff_tags()
+                tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
                 dims, coords = self._get_dims_and_coords_from_ome(

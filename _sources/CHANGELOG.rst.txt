@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- bugfix/use-dict-of-tiff-tags  (`#293
+  <https://github.com/AllenCellModeling/aicsimageio/pull/293>`_)
+  [Jackson Maxfield Brown]
 - bugfix/invert-lif-scales  (`#288
   <https://github.com/AllenCellModeling/aicsimageio/pull/288>`_)
   [Jackson Maxfield Brown]

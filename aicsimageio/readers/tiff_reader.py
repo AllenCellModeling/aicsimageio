@@ -155,23 +155,28 @@ class TiffReader(Reader):
             The image chunk as a numpy array.
         """
         with fs.open(path) as open_resource:
-            arr = da.from_zarr(
-                imread(
-                    open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
-                )
-            )
-            arr = arr.transpose(transpose_indices)
+            with imread(
+                open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
+            ) as store:
+                arr = da.from_zarr(store)
+                arr = arr.transpose(transpose_indices)
 
-            # By setting the compute call to always use a "synchronous" scheduler,
-            # it informs Dask not to look for an existing scheduler / client
-            # and instead simply read the data using the current thread / process.
-            #
-            # In doing so, we shouldn't run into any worker data transfer and handoff
-            # _during_ a read.
-            return arr[retrieve_indices].compute(scheduler="synchronous")
+                # By setting the compute call to always use a "synchronous" scheduler,
+                # it informs Dask not to look for an existing scheduler / client
+                # and instead simply read the data using the current thread / process.
+                # In doing so, we shouldn't run into any worker data transfer and
+                # handoff _during_ a read.
+                return arr[retrieve_indices].compute(scheduler="synchronous")
 
     def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
-        return tiff.series[self.current_scene_index].pages[0].tags
+        unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
+
+        # Create dict of tag and value
+        tags: Dict[int, str] = {}
+        for code, tag in unprocessed_tags.items():
+            tags[code] = tag.value
+
+        return tags
 
     @staticmethod
     def _merge_dim_guesses(dims_from_meta: str, guessed_dims: str) -> str:
@@ -450,7 +455,7 @@ class TiffReader(Reader):
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[
                             TIFF_IMAGE_DESCRIPTION_TAG_INDEX
-                        ].value,
+                        ],
                     }
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
@@ -505,7 +510,7 @@ class TiffReader(Reader):
                         constants.METADATA_UNPROCESSED: tiff_tags,
                         constants.METADATA_PROCESSED: tiff_tags[
                             TIFF_IMAGE_DESCRIPTION_TAG_INDEX
-                        ].value,
+                        ],
                     }
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}

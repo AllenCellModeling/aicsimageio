@@ -37,7 +37,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-BF--EMP_BF", "Green--FLUO--GFP"],
-            (None, 3.076923076923077, 3.076923076923077),
+            (None, 0.32499999999999996, 0.32499999999999996),
         ),
         (
             "s_1_t_4_c_2_z_1.lif",
@@ -47,7 +47,7 @@ from ..image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
-            (None, 2.9485556406398508, 2.9485556406398508),
+            (None, 0.33914910277324634, 0.33914910277324634),
         ),
         (
             "tiled.lif",
@@ -57,7 +57,7 @@ from ..image_container_test_utils import (
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES,
             ["Gray", "Red", "Green", "Cyan"],
-            (None, 4.984719055966396, 4.984719055966396),
+            (None, 0.20061311154598827, 0.20061311154598827),
         ),
         pytest.param(
             "example.txt",
@@ -306,10 +306,10 @@ def test_lif_reader_mosaic_tile_inspection(
     [
         (
             "tiled.lif",
-            np.arange(0, 2552.176156654795, 4.984719055966396),
-            np.arange(0, 2552.176156654795, 4.984719055966396),
-            np.arange(0, 28024.09053264308, 4.984719055966396),
-            np.arange(0, 38212.85628303839, 4.984719055966396),
+            np.arange(0, 102.71391311154599, 0.20061311154598827),
+            np.arange(0, 102.71391311154599, 0.20061311154598827),
+            np.arange(0, 1127.846913111546, 0.20061311154598827),
+            np.arange(0, 1537.900113111546, 0.20061311154598827),
         ),
     ],
 )

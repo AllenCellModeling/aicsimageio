@@ -10,6 +10,12 @@ New
   <https://github.com/AllenCellModeling/aicsimageio/pull/289>`_)
   [Jackson Maxfield Brown]
 
+Fix
+~~~
+- bugfix/invert-lif-scales  (`#288
+  <https://github.com/AllenCellModeling/aicsimageio/pull/288>`_)
+  [Jackson Maxfield Brown]
+
 
 v4.0.5 (2021-07-15)
 -------------------

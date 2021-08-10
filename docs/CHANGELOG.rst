@@ -1,6 +1,31 @@
 Changelog
 =========
 
+v4.1.0 (2021-08-10)
+-------------------
+
+New
+~~~
+- feature/ome-metadata-xslt-spec  (`#289
+  <https://github.com/AllenCellModeling/aicsimageio/pull/289>`_)
+  [Jackson Maxfield Brown]
+
+Fix
+~~~
+- bugfix/use-dict-of-tiff-tags  (`#293
+  <https://github.com/AllenCellModeling/aicsimageio/pull/293>`_)
+  [Jackson Maxfield Brown]
+- bugfix/invert-lif-scales  (`#288
+  <https://github.com/AllenCellModeling/aicsimageio/pull/288>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/loosen-any-non-zero-semver-deps  (`#294
+  <https://github.com/AllenCellModeling/aicsimageio/pull/294>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.0.5 (2021-07-15)
 -------------------
 

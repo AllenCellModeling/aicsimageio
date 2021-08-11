@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
     from .reader import Reader
     from .tiff_reader import TiffReader  # noqa: F401
+    from .glob_reader import GlobReader  # noqa: F401
 
 
 # add ".relativepath.ClassName"
@@ -27,6 +28,7 @@ _READERS = (
     ".nd2_reader.ND2Reader",
     ".ome_tiff_reader.OmeTiffReader",
     ".tiff_reader.TiffReader",
+    ".glob_reader.GlobReader",
 )
 _LOOKUP = {k.rsplit(".", 1)[-1]: k for k in _READERS}
 __all__ = list(_LOOKUP)
@@ -40,3 +42,4 @@ def __getattr__(name: str) -> Type["Reader"]:
         mod = import_module(path, __name__)
         return getattr(mod, clsname)
     raise AttributeError(f"module {__name__!r} has no attribute import name {name!r}")
+

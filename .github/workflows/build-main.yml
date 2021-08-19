@@ -65,11 +65,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[test]
       - name: Lint
-        run: |
-          flake8 aicsimageio --count --verbose --show-source --statistics --exclude aicsimageio/metadata/czi-to-ome-xslt/
-          isort aicsimageio --check-only --skip aicsimageio/metadata/czi-to-ome-xslt/
-          mypy aicsimageio --exclude aicsimageio/metadata/czi-to-ome-xslt/
-          black --check aicsimageio --exclude aicsimageio/metadata/czi-to-ome-xslt/
+        run: tox -e lint
 
   publish:
     if: "contains(github.event.head_commit.message, 'Bump version')"

@@ -7,22 +7,27 @@ helps, and credit will always be given.
 
 Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
-1.  Fork the `aicsimageio` repo on GitHub.
+1. Fork the `aicsimageio` repo on GitHub.
 
-2.  Clone your fork locally:
+2. Clone your fork locally:
 
     ```bash
     git clone https://{your_name_here}@github.com/aicsimageio.git
     ```
 
-3.  Install the project in editable mode (and preferably in a virtual environment):
+3. Check out the submodules used in this repo:
+    ```bash
+    git submodule update --init --recursive
+    ```
+
+4. Install the project in editable mode (and preferably in a virtual environment):
 
     ```bash
     cd aicsimageio/
     pip install -e .[dev]
     ```
 
-4.  Download the test resources:
+5. Download the test resources:
 
     ```bash
     python scripts/download_test_resources.py
@@ -30,7 +35,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
     If you need to upload new resources please let a core maintainer know.
 
-5.  Create a branch for local development:
+6. Create a branch for local development:
 
     ```bash
     git checkout -b {your_development_type}/short-description
@@ -39,7 +44,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     Ex: feature/read-tiff-files or bugfix/handle-file-not-found<br>
     Now you can make your changes locally.
 
-6.  When you're done making changes, check that your changes pass linting and
+7. When you're done making changes, check that your changes pass linting and
     tests, including testing other Python versions with make (!! Important !!):
 
     ```bash
@@ -53,7 +58,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     make build-with-remote
     ```
 
-7.  Commit your changes and push your branch to GitHub:
+8. Commit your changes and push your branch to GitHub:
 
     ```bash
     git add .
@@ -61,7 +66,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
     git push origin {your_development_type}/short-description
     ```
 
-8.  Submit a pull request through the GitHub website.
+9. Submit a pull request through the GitHub website.
 
 ## Benchmarking
 

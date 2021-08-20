@@ -13,6 +13,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
+          submodules: true
       - name: Set up Python
         uses: actions/setup-python@v1
         with:

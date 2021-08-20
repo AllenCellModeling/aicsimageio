@@ -9,75 +9,75 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: main
-    - name: Set up Python
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.9
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
 
-    - name: Checkout v3 Code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: v3
-        path: .aicsimageio-v3/
-    - name: Generate v3 Docs
-      run: |
-        cd .aicsimageio-v3/
-        pip install -e .[dev]
-        gitchangelog
-        make docs
-        mkdir -p ../docs/_static/v3/
-        cp -r docs/_build/html/* ../docs/_static/v3/
-    - name: Cleanup v3 Resources
-      run: |
-        rm -Rf .aicsimageio-v3/
-  
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
-    - name: Install Dependencies
-      run: |
-        pip install --upgrade pip
-        pip install .[dev] --no-cache-dir --force-reinstall
-    - name: Download Test Resources
-      run: |
-        python scripts/download_test_resources.py --debug
-    - name: Get Prior Benchmark Results
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-        ref: benchmark-results
-        path: .asv/
-    - name: Run Benchmarks
-      run: |
-        asv machine --machine github-ci --yes
-        asv run --machine github-ci
-    - name: Store New Benchmark Results
-      run: |
-        cd .asv
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add .
-        git commit -m "Benchmark results for ${{ github.sha }}"
-        git push
-    
-    - name: Generate Latest Docs
-      run: |
-        gitchangelog
-        make gen-docs-full
-        touch docs/_build/html/.nojekyll
+      - name: Checkout v3 Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: v3
+          path: .aicsimageio-v3/
+      - name: Generate v3 Docs
+        run: |
+          cd .aicsimageio-v3/
+          pip install -e .[dev]
+          gitchangelog
+          make docs
+          mkdir -p ../docs/_static/v3/
+          cp -r docs/_build/html/* ../docs/_static/v3/
+      - name: Cleanup v3 Resources
+        run: |
+          rm -Rf .aicsimageio-v3/
 
-    - name: Publish Docs
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        BASE_BRANCH: main # The branch the action should deploy from.
-        BRANCH: gh-pages # The branch the action should deploy to.
-        FOLDER: docs/_build/html/ # The folder the action should deploy.
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install .[dev] --no-cache-dir --force-reinstall
+      - name: Download Test Resources
+        run: |
+          python scripts/download_test_resources.py --debug
+      - name: Get Prior Benchmark Results
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: benchmark-results
+          path: .asv/
+      - name: Run Benchmarks
+        run: |
+          asv machine --machine github-ci --yes
+          asv run --machine github-ci
+      - name: Store New Benchmark Results
+        run: |
+          cd .asv
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "Benchmark results for ${{ github.sha }}"
+          git push
+
+      - name: Generate Latest Docs
+        run: |
+          gitchangelog
+          make gen-docs-full
+          touch docs/_build/html/.nojekyll
+
+      - name: Publish Docs
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_BRANCH: main # The branch the action should deploy from.
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: docs/_build/html/ # The folder the action should deploy.

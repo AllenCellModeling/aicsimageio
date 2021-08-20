@@ -4,7 +4,21 @@
 """The setup script."""
 
 from setuptools import find_packages, setup
+from setuptools.command.build_py import build_py
+from pathlib import Path
 from typing import Dict, List
+
+
+class BuildPyCommand(build_py):
+    """Check for existence of XSLT before building."""
+    def run(self):
+        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        if not xslt.is_file():
+            raise FileNotFoundError(
+                "XSLT not found. Is the submodule checked out?"
+            )
+        build_py.run(self)
+
 
 with open("README.md") as readme_file:
     readme = readme_file.read()
@@ -40,6 +54,7 @@ test_requirements = [
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
+    "tox>=3.15.2",
 ]
 
 dev_requirements = [
@@ -54,7 +69,6 @@ dev_requirements = [
     "pytest-runner>=5.2",
     "Sphinx>=3.4.3",
     "sphinx_rtd_theme>=0.5.1",
-    "tox>=3.15.2",
     "twine>=3.1.1",
     "wheel>=0.34.2",
 ]
@@ -89,6 +103,7 @@ extra_requirements = {
 setup(
     author="Jackson Maxfield Brown, Allen Institute for Cell Science",
     author_email="jmaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
+    cmdclass={"build_py": BuildPyCommand},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Science/Research",

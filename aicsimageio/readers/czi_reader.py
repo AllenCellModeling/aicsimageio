@@ -4,6 +4,7 @@
 import warnings
 import xml.etree.ElementTree as ET
 from copy import copy
+from pathlib import Path
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -12,9 +13,11 @@ import xarray as xr
 from dask import delayed
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
+from ome_types.model.ome import OME
 
-from .. import constants, exceptions, metadata, types
+from .. import constants, exceptions, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
 
@@ -169,7 +172,7 @@ class CziReader(Reader):
 
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
-                    scene_names = [metadata.utils.generate_ome_image_id(0)]
+                    scene_names = [metadata_utils.generate_ome_image_id(0)]
                 self._scenes = tuple(scene_names)
 
         return self._scenes
@@ -750,6 +753,14 @@ class CziReader(Reader):
 
     def _get_stitched_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.data)
+
+    @property
+    def ome_metadata(self) -> OME:
+        return metadata_utils.transform_metadata_with_xslt(
+            self.metadata,
+            Path(__file__).parent.parent
+            / "metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl",
+        )
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

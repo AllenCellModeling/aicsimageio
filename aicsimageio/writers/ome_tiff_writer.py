@@ -223,10 +223,12 @@ class OmeTiffWriter(Writer):
             else:
                 single_image_channel_colors_provided = True
 
-            if channel_colors[0] is not None:
-                if isinstance(channel_colors[0], list):
-                    if isinstance(channel_colors[0][0], int):
-                        single_image_channel_colors_provided = True
+            if (
+                channel_colors[0] is not None
+                and isinstance(channel_colors[0], list)
+                and isinstance(channel_colors[0][0], int)
+            ):
+                single_image_channel_colors_provided = True
 
         if channel_colors is None or single_image_channel_colors_provided:
             channel_colors = [channel_colors] * num_images  # type: ignore
@@ -471,7 +473,9 @@ class OmeTiffWriter(Writer):
             raise ValueError(f"Wrong number of channel names {len(channel_names)}")
         if isinstance(channel_colors, list) and len(channel_colors) != channel_count:
             raise ValueError(
-                f"Wrong number of channel colors {len(channel_colors)} {channel_colors}"
+                f"Wrong number of channel colors. "
+                f"Received: {len(channel_colors)} ({channel_colors}) "
+                f"Expected: {channel_count}."
             )
 
         samples_per_pixel = 1

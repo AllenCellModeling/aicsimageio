@@ -28,11 +28,12 @@ From sources
 
 The sources for aicsimageio can be downloaded from the `Github repo`_.
 
-You can either clone the public repository:
+You can either clone the public repository and submodules:
 
 .. code-block:: console
 
     $ git clone git://github.com/AllenCellModeling/aicsimageio
+    $ git submodule update --init --recursive
 
 Or download the `tarball`_:
 

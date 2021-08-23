@@ -1,6 +1,28 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/metadata-module  (`#292
+  <https://github.com/AllenCellModeling/aicsimageio/pull/292>`_) [Matte
+  Bailey]
+
+Fix
+~~~
+- bugfix/asv-with-submodules  (`#297
+  <https://github.com/AllenCellModeling/aicsimageio/pull/297>`_)
+  [Jackson Maxfield Brown]
+- bugfix/pass-aws-creds-to-tox  (`#296
+  <https://github.com/AllenCellModeling/aicsimageio/pull/296>`_) [Matte
+  Bailey]
+- bugfix/checkout-submodules-for-doc-building  (`#295
+  <https://github.com/AllenCellModeling/aicsimageio/pull/295>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.1.0 (2021-08-10)
 -------------------
 

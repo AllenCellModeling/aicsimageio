@@ -39,7 +39,9 @@ class OmeTiffWriter(Writer):
         physical_pixel_sizes: Optional[
             Union[types.PhysicalPixelSizes, List[types.PhysicalPixelSizes]]
         ] = None,
-        channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]] = None,
+        channel_colors: Optional[
+            Union[List[List[int]], List[Optional[List[List[int]]]]]
+        ] = None,
         **kwargs: Any,
     ) -> None:
         """
@@ -88,9 +90,9 @@ class OmeTiffWriter(Writer):
                 List[types.PhysicalPixelSizes]]]
             List of numbers representing the physical pixel sizes in Z, Y, X in microns
             Default: None
-        channel_colors: Optional[Union[List[int], List[Optional[List[int]]]]]
-            List of rgb color values per channel. These must be values compatible with
-            the OME spec.
+        channel_colors: Optional[Union[List[List[int]], List[Optional[List[List[int]]]]]
+            List of rgb color values per channel or a list of lists for each image.
+            These must be values compatible with the OME spec.
             Default: None
 
         Raises
@@ -177,15 +179,16 @@ class OmeTiffWriter(Writer):
                         )
             if channel_colors is not None:
                 if isinstance(channel_colors[0], list):
-                    if len(channel_colors) != num_images:
-                        raise exceptions.ConflictingArgumentsError(
-                            f"OmeTiffWriter received a list of arrays to use as scenes "
-                            f"but the provided list of channel_colors is of different "
-                            f"length. "
-                            f"Number of provided scenes: {num_images}, "
-                            f"Number of provided dimension strings: "
-                            f"{len(channel_colors)}"
-                        )
+                    if not isinstance(channel_colors[0][0], int):
+                        if len(channel_colors) != num_images:
+                            raise exceptions.ConflictingArgumentsError(
+                                f"OmeTiffWriter received a list of arrays to use as "
+                                f"scenes but the provided list of channel_colors is of "
+                                f"different length. "
+                                f"Number of provided scenes: {num_images}, "
+                                f"Number of provided dimension strings: "
+                                f"{len(channel_colors)}"
+                            )
 
         # make sure data is a list
         if not isinstance(data, list):
@@ -205,7 +208,29 @@ class OmeTiffWriter(Writer):
             ] * num_images
         if channel_names is None or isinstance(channel_names[0], str):
             channel_names = [channel_names] * num_images  # type: ignore
-        if channel_colors is None or isinstance(channel_colors[0], int):
+
+        if channel_colors is not None:
+            if all(
+                [
+                    (
+                        channel_colors[img_idx] is None
+                        or isinstance(channel_colors[img_idx], list)
+                    )
+                    for img_idx in range(num_images)
+                ]
+            ):
+                single_image_channel_colors_provided = False
+            else:
+                single_image_channel_colors_provided = True
+
+            if (
+                channel_colors[0] is not None
+                and isinstance(channel_colors[0], list)
+                and isinstance(channel_colors[0][0], int)
+            ):
+                single_image_channel_colors_provided = True
+
+        if channel_colors is None or single_image_channel_colors_provided:
             channel_colors = [channel_colors] * num_images  # type: ignore
 
         xml = b""
@@ -418,7 +443,7 @@ class OmeTiffWriter(Writer):
             None, None, None
         ),
         channel_names: List[str] = None,
-        channel_colors: List[int] = None,
+        channel_colors: Optional[List[List[int]]] = None,
     ) -> Image:
         if len(data_shape) < 2 or len(data_shape) > 6:
             raise ValueError(f"Bad OME image shape length: {data_shape}")
@@ -447,7 +472,11 @@ class OmeTiffWriter(Writer):
         if isinstance(channel_names, list) and len(channel_names) != channel_count:
             raise ValueError(f"Wrong number of channel names {len(channel_names)}")
         if isinstance(channel_colors, list) and len(channel_colors) != channel_count:
-            raise ValueError(f"Wrong number of channel colors {len(channel_colors)}")
+            raise ValueError(
+                f"Wrong number of channel colors. "
+                f"Received: {len(channel_colors)} ({channel_colors}) "
+                f"Expected: {channel_count}."
+            )
 
         samples_per_pixel = 1
         if is_rgb:
@@ -507,7 +536,24 @@ class OmeTiffWriter(Writer):
         if channel_colors is not None:
             assert len(channel_colors) >= pixels.size_c
             for i in range(channel_count):
-                pixels.channels[i].color = Color(channel_colors[i])
+                this_channel_color_def = channel_colors[i]
+                if len(this_channel_color_def) != 3:
+                    raise ValueError(
+                        f"Expected RGB (3) color definition for channel color. "
+                        f"Received {len(this_channel_color_def)} values "
+                        f"({this_channel_color_def}) for image {image_index} "
+                        f"channel {i}."
+                    )
+                else:
+                    # Handle List[int] -> Tuple[int, int, int] for color def
+                    # Naive cast of tuple(List[int]) generates type: Tuple[int, ...]
+                    this_channel_color = (
+                        this_channel_color_def[0],
+                        this_channel_color_def[1],
+                        this_channel_color_def[2],
+                    )
+
+                    pixels.channels[i].color = Color(this_channel_color)
 
         img = Image(
             name=image_name,
@@ -524,7 +570,7 @@ class OmeTiffWriter(Writer):
         channel_names: Optional[List[Optional[List[str]]]] = None,
         image_name: List[Optional[str]] = None,
         physical_pixel_sizes: List[types.PhysicalPixelSizes] = None,
-        channel_colors: List[Optional[List[int]]] = None,
+        channel_colors: List[Optional[List[List[int]]]] = None,
     ) -> OME:
         """
 
@@ -547,7 +593,7 @@ class OmeTiffWriter(Writer):
             Z,Y, and X physical dimensions of each pixel,
             defaulting to microns
         channel_colors:
-            The channel colors to be put into the OME metadata
+            List of all images channel colors to be put into the OME metadata
         is_rgb:
             is a S dimension present?  S is expected to be the last dim in
             the data shape

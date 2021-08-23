@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- bugfix/catch-channel-colors-errors-from-typing  (`#299
+  <https://github.com/AllenCellModeling/aicsimageio/pull/299>`_)
+  [Jackson Maxfield Brown]
 - bugfix/asv-with-submodules  (`#297
   <https://github.com/AllenCellModeling/aicsimageio/pull/297>`_)
   [Jackson Maxfield Brown]

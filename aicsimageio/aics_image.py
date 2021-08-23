@@ -9,6 +9,7 @@ import dask.array as da
 import numpy as np
 import xarray as xr
 from ome_types import OME
+from ome_types.model import Image
 
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS
@@ -743,7 +744,10 @@ class AICSImage:
     def save(
         self,
         uri: types.PathLike,
-        select_scenes: Optional[Union[List[str], Tuple[str, ...]]] = None,
+        select_scenes: Optional[
+            Union[List[int], List[str], Tuple[int, ...], Tuple[str, ...]]
+        ] = None,
+        use_metadata_translation: bool = False,
     ) -> None:
         """
         Saves the file data to OME-TIFF format with general naive best practices.
@@ -753,9 +757,15 @@ class AICSImage:
         uri: types.PathLike
             The URI or local path for where to save the data.
             Note: Can only write to local file systems.
-        select_scenes: Optional[Union[List[str], Tuple[str, ...]]]
+        select_scenes: Optional[
+            Union[List[Union[int, str]], Tuple[Union[int, str], ...]]
+            ]
             Which scenes in the image to save to the file.
             Default: None (save all scenes)
+        use_metadata_translation: bool
+            Should the AICSImage object's ome_metadata property be used for metadata
+            retrieval or just save with basic metadata.
+            Default: False (use basic info)
 
         Notes
         -----
@@ -771,16 +781,58 @@ class AICSImage:
         """
         from .writers import OmeTiffWriter
 
-        # Get all parameters as dict of lists, or static because of unchanging values
+        # Get selected scenes / handle None scenes
+        if select_scenes is None:
+            select_scenes = list(range(len(self.scenes)))
+
         datas: List[types.ArrayLike] = []
         dim_orders: List[Optional[str]] = []
+
+        # Get OME if possible
+        if use_metadata_translation:
+            try:
+                ome = self.ome_metadata
+
+                # Only attach scenes that were selected
+                selected_image_metadatas: List[Image] = []
+                for scene in select_scenes:
+                    self.set_scene(scene)
+
+                    # Append scene data and dim order
+                    datas.append(self.dask_data)
+                    dim_orders.append(self.dims.order)
+
+                    # Select the OME Image
+                    if isinstance(scene, int):
+                        selected_image_metadatas.append(ome.images[scene])
+                    else:
+                        matches_by_name = [
+                            img for img in ome.images if img.name == scene
+                        ]
+                        # No better way to handle multiple-images with the same name
+                        selected_image_metadatas.append(matches_by_name[0])
+
+                # Update ome
+                ome.images = selected_image_metadatas
+
+                # Save all selected scenes
+                return OmeTiffWriter.save(
+                    data=datas,
+                    uri=uri,
+                    dim_order=dim_orders,
+                    ome_xml=ome,
+                )
+
+            # No ome-metadata prop definition, use basics
+            except NotImplementedError:
+                pass
+
+        # Generate basic metadata
+        datas = []  # safety reset values
+        dim_orders = []  # safety reset values
         channel_names: List[Optional[List[str]]] = []
         image_names: List[Optional[str]] = []
         physical_pixel_sizes: List[PhysicalPixelSizes] = []
-
-        # Get selected scenes / handle None scenes
-        if select_scenes is None:
-            select_scenes = self.scenes
 
         # Iter through scenes to get data
         for scene in select_scenes:
@@ -794,7 +846,7 @@ class AICSImage:
             physical_pixel_sizes.append(self.physical_pixel_sizes)
 
         # Save all selected scenes
-        OmeTiffWriter.save(
+        return OmeTiffWriter.save(
             data=datas,
             uri=uri,
             dim_order=dim_orders,

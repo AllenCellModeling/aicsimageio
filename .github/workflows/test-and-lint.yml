@@ -79,6 +79,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: bugfix/asv-with-submodules
           submodules: true
       - name: Set up Python
         uses: actions/setup-python@v1

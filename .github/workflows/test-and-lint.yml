@@ -90,4 +90,5 @@ jobs:
           pip install .[dev]
       - name: Run ASV
         run: |
-          asv run .
+          asv machine --machine github-ci --yes
+          asv run --machine github-ci

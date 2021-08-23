@@ -3,7 +3,7 @@
     "project": "aicsimageio",
     "project_url": "http://AllenCellModeling.github.io/aicsimageio/",
     "repo": ".",
-    "branches": ["main"],
+    "branches": ["main", "bugfix/asv-with-submodules"],
     "dvcs": "git",
     "environment_type": "virtualenv",
     "install_command": [

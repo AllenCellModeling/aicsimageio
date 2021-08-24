@@ -649,19 +649,38 @@ def test_aicsimage_from_array(
 
 
 @pytest.mark.parametrize(
-    "filename, select_scenes",
+    "filename, select_scenes, use_metadata_translation",
     [
-        ("s_1_t_10_c_3_z_1.tiff", None),
-        ("s_3_t_1_c_3_z_5.ome.tiff", None),
-        ("s_3_t_1_c_3_z_5.ome.tiff", ["Image:2", "Image:1"]),
-        ("s_1_t_4_c_2_z_1.lif", None),
-        ("tiled.lif", None),
-        ("s_1_t_1_c_1_z_1.czi", None),
-        ("s_3_t_1_c_3_z_5.czi", ["P2", "P1"]),
+        ("s_1_t_10_c_3_z_1.tiff", None, False),
+        ("s_3_t_1_c_3_z_5.ome.tiff", None, False),
+        ("s_3_t_1_c_3_z_5.ome.tiff", ["Image:2", "Image:1"], False),
+        ("s_1_t_4_c_2_z_1.lif", None, False),
+        ("tiled.lif", None, False),
+        ("s_1_t_1_c_1_z_1.czi", None, False),
+        ("s_3_t_1_c_3_z_5.czi", ["P2", "P1"], False),
+        ("s_3_t_1_c_3_z_5.czi", [0, 1], False),
+        ("s_1_t_10_c_3_z_1.tiff", None, True),
+        # TODO: must fix this one,
+        # This is wild that it is failing considering this is an OME object already...
+        pytest.param(
+            "s_3_t_1_c_3_z_5.ome.tiff",
+            None,
+            True,
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        # Failing because of re-read bugs
+        pytest.param(
+            "s_3_t_1_c_3_z_5.czi",
+            None,
+            True,
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
     ],
 )
 def test_roundtrip_save_all_scenes(
-    filename: str, select_scenes: Optional[List[str]]
+    filename: str,
+    select_scenes: Optional[Union[List[str], List[int]]],
+    use_metadata_translation: bool,
 ) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, LOCAL)
@@ -672,7 +691,11 @@ def test_roundtrip_save_all_scenes(
     # Save to temp and compare
     with TemporaryDirectory() as tmpdir:
         save_path = Path(tmpdir) / f"converted-{filename}.ome.tiff"
-        original.save(save_path, select_scenes=select_scenes)
+        original.save(
+            save_path,
+            select_scenes=select_scenes,
+            use_metadata_translation=use_metadata_translation,
+        )
 
         # Re-read
         result = AICSImage(save_path)
@@ -681,16 +704,18 @@ def test_roundtrip_save_all_scenes(
         # They may not have the same scene ids as some readers use scene names as the
         # id, see LifReader for example
         if select_scenes is None:
-            select_original_scenes = list(original.scenes)
+            select_original_scenes: Union[List[str], List[int]] = list(
+                range(len(original.scenes))
+            )
         else:
             select_original_scenes = select_scenes
 
         assert len(select_original_scenes) == len(result.scenes)
         for original_scene_id, result_scene_id in zip(
-            select_original_scenes, result.scenes
+            select_original_scenes, list(range(len(result.scenes)))
         ):
             # Compare
-            original.set_scene(original_scene_id)
+            original.set_scene(original_scene_id)  # type: ignore
             result.set_scene(result_scene_id)
 
             np.testing.assert_array_equal(original.data, result.data)

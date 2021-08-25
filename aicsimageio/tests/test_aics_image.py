@@ -675,6 +675,9 @@ def test_aicsimage_from_array(
             True,
             marks=pytest.mark.raises(exception=ValueError),
         ),
+        # This file does not have scenes, but we want to ensure it is correctly
+        # converted to an OME-TIFF.
+        ("OverViewScan.czi", None, True),
     ],
 )
 def test_roundtrip_save_all_scenes(
@@ -699,6 +702,8 @@ def test_roundtrip_save_all_scenes(
 
         # Re-read
         result = AICSImage(save_path)
+        # Ensure that created OME-TIFF was read without issues
+        assert isinstance(result.reader, readers.OmeTiffReader)
 
         # Compare all scenes
         # They may not have the same scene ids as some readers use scene names as the

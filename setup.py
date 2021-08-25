@@ -84,7 +84,7 @@ requirements = [
     "imagecodecs>=2020.5.30",
     "lxml~=4.6",
     "numpy~=1.16",
-    "ome-types~=0.2",
+    "ome-types~=0.2.9",
     "tifffile>=2021.6.6",
     "xarray~=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types

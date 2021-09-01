@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 
 import re
 import glob
+from pathlib import Path
 import dask.array as da
 import numpy as np
 import pandas as pd
@@ -109,7 +110,7 @@ class GlobReader(Reader):
                 DimensionNames.SpatialZ,
             ]
             indexer = lambda x: pd.Series(
-                re.findall(r"\d+", x.split("/")[-1]), index=series_idx
+                re.findall(r"\d+", Path(x).name), index=series_idx
             ).astype(int)
 
         if callable(indexer):

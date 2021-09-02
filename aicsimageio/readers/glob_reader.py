@@ -95,7 +95,7 @@ class GlobReader(Reader):
         if isinstance(glob_in, str):
             file_series = pd.Series(
                 glob.glob(glob_in)
-            )  # pd.DataFrame({"filename":glob.glob(glob_in)})
+            )
         elif isinstance(glob_in, list):
             file_series = pd.Series(glob_in)  # pd.DataFrame({"filename": glob_in})
 
@@ -179,9 +179,9 @@ class GlobReader(Reader):
                         self._single_file_shape = tuple(
                             tiff.shaped_metadata[0]["shape"]
                         )
-                    else:
-                        self._single_file_shape = tiff.pages[0].shape
-
+                    elif len(tiff.series)==1:
+                        self._single_file_shape = tiff.series[0].shape
+                    
         else:
             self._single_file_shape = single_file_shape
 
@@ -196,6 +196,7 @@ class GlobReader(Reader):
         else:
             self._single_file_dims = list(single_file_dims)
 
+        self._single_file_sizes = dict(zip(self._single_file_dims, self._single_file_shape))
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
@@ -220,29 +221,32 @@ class GlobReader(Reader):
         group_dims = [
             x for x in scene_files.columns if x not in self.chunk_dims + ["filename"]
         ]
-        # cutoffs = .nunique().min().drop('filename')
-        # df = df.loc[(df.loc[:, ~df.columns.isin(['S', 'filename'])] < cutoffs).all('columns')]
+        
         chunks = np.zeros(scene_files[group_dims].nunique().values, dtype="object")
+
+        shape = ()
+        for i,x in scene_files.nunique().iteritems():
+            if i not in group_dims +['filename']:
+                if i not in self._single_file_dims:
+                    shape += (x,)
+                else:
+                    shape += (self._single_file_sizes[i]*x,) 
+
+        for i,x in self._single_file_sizes.items():
+            if i not in scene_files.columns:
+                shape += (x,)
+        
+        ordered_chunk_dims = [
+            d for d in scene_files.columns if d in self.chunk_dims
+        ]
+        ordered_chunk_dims += [
+            d for d in self.chunk_dims
+            if d not in ordered_chunk_dims + [DimensionNames.Samples]
+        ]
+
         for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
             zarr_im = imread(val.filename.tolist(), aszarr=True)
             darr = da.from_zarr(zarr_im).rechunk(-1)
-            if i == 0:
-                shape = (
-                    tuple(
-                        x
-                        for i, x in scene_files.nunique().iteritems()
-                        if i in self.chunk_dims
-                    )
-                    + self._single_file_shape
-                )  # darr.shape[-2:]
-                ordered_chunk_dims = [
-                    d for d in scene_files.columns if d in self.chunk_dims
-                ]
-                ordered_chunk_dims += [
-                    d
-                    for d in self.chunk_dims
-                    if d not in ordered_chunk_dims + [DimensionNames.Samples]
-                ]
             darr = darr.reshape(shape)
             chunks[idx] = darr
 

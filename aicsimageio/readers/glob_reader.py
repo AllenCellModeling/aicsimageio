@@ -21,6 +21,7 @@ from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
     REQUIRED_CHUNK_DIMS,
     DimensionNames,
+    DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
 )
 from ..metadata import utils as metadata_utils
@@ -167,8 +168,12 @@ class GlobReader(Reader):
 
         # Safety measure / "feature"
         self.chunk_dims = [d.upper() for d in self.chunk_dims]
+        
+        if dim_order is not None:
+            self._dim_order = dim_order
+        else:
+            self._dim_order = "".join(d for d in DEFAULT_DIMENSION_ORDER if d in self._all_files.columns or d in self.chunk_dims)
 
-        self._dim_order = dim_order
         self._channel_names = channel_names
 
         if single_file_shape is None:
@@ -262,9 +267,7 @@ class GlobReader(Reader):
             dims, d_data.shape, self.current_scene_index, channel_names
         )
         x_data = xr.DataArray(d_data, dims=dims, coords=coords)
-        if self._dim_order is not None:
-            x_data.transpose(*list(self._dim_order))
-
+            
         return x_data
 
     def _read_immediate(self) -> xr.DataArray:
@@ -295,8 +298,6 @@ class GlobReader(Reader):
             dims=dims,
             coords=coords,
         )
-        if self._dim_order is not None:
-            x_data.transpose(*list(self._dim_order))
 
         return x_data
 

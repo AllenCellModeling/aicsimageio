@@ -5,6 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, Callable
 
 import re
 import glob
+from collections import OrderedDict
 from pathlib import Path
 import dask.array as da
 import numpy as np
@@ -218,77 +219,76 @@ class GlobReader(Reader):
             self._all_files[DimensionNames.Samples] == self.current_scene_index
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
-
+        scene_nunique = scene_files.nunique()
         group_dims = [
             x for x in scene_files.columns if x not in self.chunk_dims + ["filename"]
         ]
 
-        chunks = np.zeros(scene_files[group_dims].nunique().values, dtype="object")
-
-        chunk_shape = self._get_shape_for_scene(scene_files, group_dims)
-
-        ordered_chunk_dims = [d for d in scene_files.columns if d in self.chunk_dims]
-
-        ordered_chunk_dims += [
-            d
-            for d in self.chunk_dims
-            if d not in ordered_chunk_dims + [DimensionNames.Samples]
-        ]
+        group_sizes = OrderedDict([(d, scene_nunique[d]) for d in group_dims])
+        chunk_sizes = self._get_sizes_for_scene(scene_nunique, group_dims)
         
-        #Need to allow rechunk in ways other than -1
-        # so that when you want planes of a file in separate chunks e.g. files are ZYX and chunk_dims is TC
-        # you can still reshape the dask array but then rechunk appropriately
-        image_dims_not_in_chunk = [x for x in self._single_file_dims if x not in ordered_chunk_dims]
-        print(image_dims_not_in_chunk)
-        print(chunk_shape)
-        print(ordered_chunk_dims)
+        
+        # Assemble the dask array
+        if len(group_dims)>0: #use groupby to assemble array out of chunks
+            chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
 
-        for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
-            zarr_im = imread(val.filename.tolist(), aszarr=True)
+            for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
+                zarr_im = imread(val.filename.tolist(), aszarr=True)
+                darr = da.from_zarr(zarr_im).rechunk(-1)
+                darr = darr.reshape(tuple(chunk_sizes.values()))
+                chunks[idx] = darr
+        
+            overlap_dims = group_sizes.keys() & chunk_sizes.keys()
+            expanded_shape = tuple(s for d,s in group_sizes.items() if d not in overlap_dims)
+            for d in chunk_sizes:
+                if d in overlap_dims:
+                    expanded_shape += (group_sizes[d],)
+                else:
+                    expanded_shape += (1,)
+            
+            chunks = chunks.reshape(expanded_shape)
+            d_data = da.block(chunks.tolist())
+
+        else: # assemble array in a single chunk
+            zarr_im = imread(scene_files.filename.tolist(), aszarr=True)
             darr = da.from_zarr(zarr_im).rechunk(-1)
-            if i==0: print(darr.shape)
-            darr = darr.reshape(chunk_shape)
-            chunks[idx] = darr
+            d_data = darr.reshape(tuple(chunk_sizes.values()))
 
-        chunks = np.expand_dims(
-            chunks, tuple(range(-1, -len(ordered_chunk_dims) - 1, -1))
-        )
-
-        d_data = da.block(chunks.tolist())
-
-        dims = group_dims + ordered_chunk_dims
+        # Assign dims and coords to construct xarray
+        dims = [d for d in group_dims if d not in overlap_dims] + list(chunk_sizes.keys())
         channel_names = self._get_channel_names_for_scene(dims)
 
         coords = self._get_coords(
             dims, d_data.shape, self.current_scene_index, channel_names
         )
         x_data = xr.DataArray(d_data, dims=dims, coords=coords)
-        
         if self._dim_order is not None:
-            print(self._dim_order)
             x_data.transpose(*list(self._dim_order))
 
         return x_data
 
     def _read_immediate(self) -> xr.DataArray:
+        # Set up scene specific information
         scene_files = self._all_files.loc[
             self._all_files[DimensionNames.Samples] == self.current_scene_index
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
+        scene_nunique = scene_files.nunique()
 
+        scene_sizes = self._get_sizes_for_scene(scene_nunique)
+        
+        # Assemble array
         arr = imread(scene_files.filename.tolist())
-
-        shape = self._get_shape_for_scene(scene_files)
-
-        arr = arr.reshape(shape)
-
+        arr = arr.reshape(tuple(scene_sizes.values()))
+    
+        # Assign dims and coords to construct xarray
         dims = scene_files.columns.drop("filename").values.tolist()
         file_dims = [x for x in self._single_file_dims if x not in dims]
         dims += file_dims
 
         channel_names = self._get_channel_names_for_scene(dims)
 
-        coords = self._get_coords(dims, shape, self.current_scene_index, channel_names)
+        coords = self._get_coords(dims, arr.shape, self.current_scene_index, channel_names)
 
         x_data = xr.DataArray(
             arr,
@@ -296,28 +296,31 @@ class GlobReader(Reader):
             coords=coords,
         )
         if self._dim_order is not None:
-            print(self._dim_order)
             x_data.transpose(*list(self._dim_order))
 
         return x_data
 
-    def _get_shape_for_scene(
-        self, scene_files: pd.DataFrame, group_dims: Union[List[str], type(None)] = None
+    def _get_sizes_for_scene(
+        self, scene_files_nunique: pd.Series, group_dims: List[str] = [] 
     ):
-        if group_dims is None:
-            group_dims = []
-        shape = ()
-        for i, x in scene_files.nunique().iteritems():
+
+        sizes = OrderedDict() 
+        for i, x in scene_files_nunique.iteritems():
             if i not in group_dims + ["filename"]:
                 if i not in self._single_file_dims:
-                    shape += (x,)
+                    sizes[i] = x
                 else:
-                    shape += (self._single_file_sizes[i] * x,)
+                    sizes[i] = self._single_file_sizes[i] * x
+        
+        for d,s in self._single_file_sizes.items():
+            if d not in self.chunk_dims and d not in sizes:
+                sizes[d] = s
 
         for i, x in self._single_file_sizes.items():
-            if i not in scene_files.columns:
-                shape += (x,)
-        return shape
+            if i not in scene_files_nunique.index:
+                sizes[i] = x
+
+        return sizes
 
     def _get_channel_names_for_scene(self, dims: List[str]) -> Optional[List[str]]:
         # Fast return in None case

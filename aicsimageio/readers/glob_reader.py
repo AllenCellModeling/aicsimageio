@@ -93,9 +93,7 @@ class GlobReader(Reader):
 
         # Assmble glob list if given a string
         if isinstance(glob_in, str):
-            file_series = pd.Series(
-                glob.glob(glob_in)
-            )
+            file_series = pd.Series(glob.glob(glob_in))
         elif isinstance(glob_in, list):
             file_series = pd.Series(glob_in)  # pd.DataFrame({"filename": glob_in})
 
@@ -179,9 +177,9 @@ class GlobReader(Reader):
                         self._single_file_shape = tuple(
                             tiff.shaped_metadata[0]["shape"]
                         )
-                    elif len(tiff.series)==1:
+                    elif len(tiff.series) == 1:
                         self._single_file_shape = tiff.series[0].shape
-                    
+
         else:
             self._single_file_shape = single_file_shape
 
@@ -196,7 +194,9 @@ class GlobReader(Reader):
         else:
             self._single_file_dims = list(single_file_dims)
 
-        self._single_file_sizes = dict(zip(self._single_file_dims, self._single_file_shape))
+        self._single_file_sizes = dict(
+            zip(self._single_file_dims, self._single_file_shape)
+        )
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
@@ -218,36 +218,36 @@ class GlobReader(Reader):
             self._all_files[DimensionNames.Samples] == self.current_scene_index
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
+
         group_dims = [
             x for x in scene_files.columns if x not in self.chunk_dims + ["filename"]
         ]
-        
+
         chunks = np.zeros(scene_files[group_dims].nunique().values, dtype="object")
 
-        shape = ()
-        for i,x in scene_files.nunique().iteritems():
-            if i not in group_dims +['filename']:
-                if i not in self._single_file_dims:
-                    shape += (x,)
-                else:
-                    shape += (self._single_file_sizes[i]*x,) 
+        chunk_shape = self._get_shape_for_scene(scene_files, group_dims)
 
-        for i,x in self._single_file_sizes.items():
-            if i not in scene_files.columns:
-                shape += (x,)
-        
-        ordered_chunk_dims = [
-            d for d in scene_files.columns if d in self.chunk_dims
-        ]
+        ordered_chunk_dims = [d for d in scene_files.columns if d in self.chunk_dims]
+
         ordered_chunk_dims += [
-            d for d in self.chunk_dims
+            d
+            for d in self.chunk_dims
             if d not in ordered_chunk_dims + [DimensionNames.Samples]
         ]
+        
+        #Need to allow rechunk in ways other than -1
+        # so that when you want planes of a file in separate chunks e.g. files are ZYX and chunk_dims is TC
+        # you can still reshape the dask array but then rechunk appropriately
+        image_dims_not_in_chunk = [x for x in self._single_file_dims if x not in ordered_chunk_dims]
+        print(image_dims_not_in_chunk)
+        print(chunk_shape)
+        print(ordered_chunk_dims)
 
         for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
             zarr_im = imread(val.filename.tolist(), aszarr=True)
             darr = da.from_zarr(zarr_im).rechunk(-1)
-            darr = darr.reshape(shape)
+            if i==0: print(darr.shape)
+            darr = darr.reshape(chunk_shape)
             chunks[idx] = darr
 
         chunks = np.expand_dims(
@@ -263,39 +263,61 @@ class GlobReader(Reader):
             dims, d_data.shape, self.current_scene_index, channel_names
         )
         x_data = xr.DataArray(d_data, dims=dims, coords=coords)
+        
+        if self._dim_order is not None:
+            print(self._dim_order)
+            x_data.transpose(*list(self._dim_order))
 
         return x_data
 
     def _read_immediate(self) -> xr.DataArray:
-        scene = self.current_scene_index
-
         scene_files = self._all_files.loc[
-            self._all_files[DimensionNames.Samples] == scene
+            self._all_files[DimensionNames.Samples] == self.current_scene_index
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
 
         arr = imread(scene_files.filename.tolist())
 
-        shape = (
-            tuple(x for i, x in scene_files.nunique().drop("filename").iteritems())
-            + self._single_file_shape
-        )
+        shape = self._get_shape_for_scene(scene_files)
+
         arr = arr.reshape(shape)
 
-        dims = scene_files.columns.drop("filename").values.tolist() + list(
-            self._single_file_dims
-        )
+        dims = scene_files.columns.drop("filename").values.tolist()
+        file_dims = [x for x in self._single_file_dims if x not in dims]
+        dims += file_dims
+
         channel_names = self._get_channel_names_for_scene(dims)
 
-        coords = self._get_coords(dims, shape, scene, channel_names)
+        coords = self._get_coords(dims, shape, self.current_scene_index, channel_names)
 
         x_data = xr.DataArray(
             arr,
             dims=dims,
             coords=coords,
         )
+        if self._dim_order is not None:
+            print(self._dim_order)
+            x_data.transpose(*list(self._dim_order))
 
         return x_data
+
+    def _get_shape_for_scene(
+        self, scene_files: pd.DataFrame, group_dims: Union[List[str], type(None)] = None
+    ):
+        if group_dims is None:
+            group_dims = []
+        shape = ()
+        for i, x in scene_files.nunique().iteritems():
+            if i not in group_dims + ["filename"]:
+                if i not in self._single_file_dims:
+                    shape += (x,)
+                else:
+                    shape += (self._single_file_sizes[i] * x,)
+
+        for i, x in self._single_file_sizes.items():
+            if i not in scene_files.columns:
+                shape += (x,)
+        return shape
 
     def _get_channel_names_for_scene(self, dims: List[str]) -> Optional[List[str]]:
         # Fast return in None case
@@ -356,4 +378,3 @@ class GlobReader(Reader):
             coords[DimensionNames.Channel] = channel_names
 
         return coords
-

@@ -126,7 +126,6 @@ class GlobReader(Reader):
                 self._all_files[dim] = 0
             if dim in self._all_files.columns:
                 sort_order.append(dim)
-
         self._all_files = self._all_files.sort_values(sort_order).reset_index(drop=True)
 
         # run tests on a single file (?)
@@ -230,33 +229,63 @@ class GlobReader(Reader):
         ]
 
         group_sizes = OrderedDict([(d, scene_nunique[d]) for d in group_dims])
-        chunk_sizes = self._get_sizes_for_scene(scene_nunique, group_dims)
-        
-        
+        chunk_sizes = self._get_chunk_sizes(scene_nunique, group_dims)
+        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in set(chunk_sizes.keys())-set(group_sizes.keys())])
+        reshape_sizes = tuple(unpack_sizes.values())+tuple(self._single_file_sizes.values())
+        # reshape_axes = tuple(unpack_sizes.keys()) + tuple(self._single_file_sizes.keys())
+
+        axes_order = self._get_axes_order(chunk_sizes, unpack_sizes, group_sizes)
+
+        print(f"{group_sizes=}") 
+        print(f"{chunk_sizes=}")
+        # print(f"{unpack_sizes=}")
+        # print(f"{self._dim_order=}")
+        # print(f"{self._single_file_sizes=}")
+        print(f"{reshape_sizes=}")
+        print(f"{axes_order=}")
         # Assemble the dask array
         if len(group_dims)>0: #use groupby to assemble array out of chunks
             chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
-
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
+                # print(val.filename.values)
                 zarr_im = imread(val.filename.tolist(), aszarr=True)
                 darr = da.from_zarr(zarr_im).rechunk(-1)
+                if i==0: print("orignal" ,darr.shape)
+                # simply reshapeing here is not specific enough, may need to swap axes first?
+                # trying to do crazy stiff staring here
+                # unpack the first dimension if it contains multiple axes
+                darr = darr.reshape(reshape_sizes)
+                # Then reorder dimensions so matching ones from the glob and the file are adjacent (glob then file)
+                darr = darr.transpose(axes_order)
+                # end madness
+                # Then reshape the array to chunk_sizes
                 darr = darr.reshape(tuple(chunk_sizes.values()))
+                if i==0: print("final", f"{darr.shape=}")
                 chunks[idx] = darr
-        
+            print(f"{chunks.shape=}") 
             overlap_dims = group_sizes.keys() & chunk_sizes.keys()
+            print(f"{overlap_dims=}")
+            # PROBLEM HERE IN SETUP OF EXPANDED SHAPE
+            #chunks_axes = tuple(group_sizes.keys())+tuple(chunk_sizes.keys())
+            expanded_shape = chunks.shape + tuple([1 for d in chunk_sizes if d not in group_sizes])
+            #print(f"{chunks_axes=}")
             expanded_shape = tuple(s for d,s in group_sizes.items() if d not in overlap_dims)
+            #expanded_shape = (2,1,1,5,1,1)#(2,5,1,1,1,1)
+            #print(expanded_shape)
             for d in chunk_sizes:
                 if d in overlap_dims:
                     expanded_shape += (group_sizes[d],)
                 else:
                     expanded_shape += (1,)
-            
+            # print(f"{expanded_shape=}")    
             chunks = chunks.reshape(expanded_shape)
             d_data = da.block(chunks.tolist())
-
+            print(d_data.shape)
         else: # assemble array in a single chunk
             zarr_im = imread(scene_files.filename.tolist(), aszarr=True)
             darr = da.from_zarr(zarr_im).rechunk(-1)
+            darr = darr.reshape(reshape_sizes)
+            darr = darr.transpose(axes_order)
             d_data = darr.reshape(tuple(chunk_sizes.values()))
 
         # Assign dims and coords to construct xarray
@@ -267,7 +296,9 @@ class GlobReader(Reader):
             dims, d_data.shape, self.current_scene_index, channel_names
         )
         x_data = xr.DataArray(d_data, dims=dims, coords=coords)
-            
+        
+        x_data = x_data.transpose(*self._dim_order)
+
         return x_data
 
     def _read_immediate(self) -> xr.DataArray:
@@ -278,11 +309,18 @@ class GlobReader(Reader):
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
         scene_nunique = scene_files.nunique()
 
-        scene_sizes = self._get_sizes_for_scene(scene_nunique)
+        chunk_sizes = self._get_chunk_sizes(scene_nunique)
+
+        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in chunk_sizes.keys()])
+
+        reshape_sizes = tuple(unpack_sizes.values())+tuple(self._single_file_sizes.values())
         
+        axes_order = self._get_axes_order(chunk_sizes, unpack_sizes)
         # Assemble array
         arr = imread(scene_files.filename.tolist())
-        arr = arr.reshape(tuple(scene_sizes.values()))
+        arr = arr.reshape(reshape_sizes)
+        arr = arr.transpose(axes_order)
+        arr = arr.reshape(tuple(chunk_sizes.values()))
     
         # Assign dims and coords to construct xarray
         dims = scene_files.columns.drop("filename").values.tolist()
@@ -301,9 +339,18 @@ class GlobReader(Reader):
 
         return x_data
 
-    def _get_sizes_for_scene(
+    def _get_axes_order(self, chunk_sizes: OrderedDict, unpack_sizes: OrderedDict, group_sizes: OrderedDict = OrderedDict()) -> Tuple :
+        axes_order = ()
+        for d in chunk_sizes:
+            if d in unpack_sizes:
+                axes_order += (list(unpack_sizes.keys()).index(d),)
+            if d in self._single_file_sizes:
+                axes_order += (len(unpack_sizes) + list(self._single_file_sizes.keys()).index(d),)
+        return axes_order
+
+    def _get_chunk_sizes(
         self, scene_files_nunique: pd.Series, group_dims: List[str] = [] 
-    ):
+    ) -> OrderedDict :
 
         sizes = OrderedDict() 
         for i, x in scene_files_nunique.iteritems():

@@ -230,7 +230,7 @@ class GlobReader(Reader):
         if self._scenes is None:
             self._scenes = tuple(
                 metadata_utils.generate_ome_image_id(s)
-                for s in range(self._all_files[scene_glob_character].nunique())
+                for s in range(self._all_files[self.scene_glob_character].nunique())
             )
         return self._scenes
 

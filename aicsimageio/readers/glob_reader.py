@@ -262,7 +262,7 @@ class GlobReader(Reader):
         if len(group_dims)>0: #use groupby to assemble array out of chunks
             chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
-                zarr_im = imread(val.filename.tolist(), aszarr=True, level=0, chunkmode="page")
+                zarr_im = imread(val.filename.tolist(), aszarr=True, level=0)
                 darr = da.from_zarr(zarr_im).rechunk(-1)
 
                 # unpack the first dimension if it contains multiple axes
@@ -281,7 +281,7 @@ class GlobReader(Reader):
             dims = list(expanded_blocks_sizes.keys())
 
         else: # assemble array in a single chunk
-            zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0, chunkmode="page")
+            zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0)
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
@@ -330,7 +330,7 @@ class GlobReader(Reader):
         
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes)
         # Assemble array
-        arr = imread(scene_files.filename.tolist(), level=0, chunkmode="page")
+        arr = imread(scene_files.filename.tolist(), level=0)
         arr = arr.reshape(reshape_sizes)
         arr = arr.transpose(axes_order)
         arr = arr.reshape(tuple(chunk_sizes.values()))

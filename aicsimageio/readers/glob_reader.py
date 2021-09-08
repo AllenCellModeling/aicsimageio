@@ -29,6 +29,8 @@ from ..utils import io_utils
 from .reader import Reader
 
 
+TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
+
 class GlobReader(Reader):
 
     """
@@ -229,6 +231,9 @@ class GlobReader(Reader):
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
         scene_nunique = scene_files.nunique()
+        
+        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
+
         group_dims = [
             x for x in scene_files.columns if x not in self.chunk_dims + ["filename"]
         ]
@@ -279,7 +284,19 @@ class GlobReader(Reader):
         coords = self._get_coords(
             dims, d_data.shape, self.current_scene_index, channel_names
         )
-        x_data = xr.DataArray(d_data, dims=dims, coords=coords)
+
+        # Try accepted processed metadata
+        try:
+            attrs = {
+                constants.METADATA_UNPROCESSED: tiff_tags,
+                constants.METADATA_PROCESSED: tiff_tags[
+                    TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                ],
+            }
+        except KeyError:
+            attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
+
+        x_data = xr.DataArray(d_data, dims=dims, coords=coords, attrs=attrs)
         
         x_data = x_data.transpose(*self._dim_order)
 
@@ -292,6 +309,8 @@ class GlobReader(Reader):
         ]
         scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
         scene_nunique = scene_files.nunique()
+
+        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
 
         chunk_sizes = self._get_chunk_sizes(scene_nunique)
 
@@ -315,6 +334,16 @@ class GlobReader(Reader):
 
         coords = self._get_coords(dims, arr.shape, self.current_scene_index, channel_names)
 
+        # Try accepted processed metadata
+        try:
+            attrs = {
+                constants.METADATA_UNPROCESSED: tiff_tags,
+                constants.METADATA_PROCESSED: tiff_tags[
+                    TIFF_IMAGE_DESCRIPTION_TAG_INDEX
+                ],
+            }
+        except KeyError:
+            attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
         x_data = xr.DataArray(
             arr,
             dims=dims,
@@ -450,3 +479,14 @@ class GlobReader(Reader):
             coords[DimensionNames.Channel] = channel_names
 
         return coords
+
+
+    def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
+        unprocessed_tags = tiff.series[0].pages[0].tags
+
+        # Create dict of tag and value
+        tags: Dict[int, str] = {}
+        for code, tag in unprocessed_tags.items():
+            tags[code] = tag.value
+
+        return tags

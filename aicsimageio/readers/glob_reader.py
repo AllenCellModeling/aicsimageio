@@ -126,6 +126,7 @@ class GlobReader(Reader):
                 self._all_files[dim] = 0
             if dim in self._all_files.columns:
                 sort_order.append(dim)
+        
         self._all_files = self._all_files.sort_values(sort_order).reset_index(drop=True)
 
         # run tests on a single file (?)
@@ -133,7 +134,11 @@ class GlobReader(Reader):
 
         # Store params
         if isinstance(chunk_dims, str):
-            chunk_dims = list(chunk_dims)
+            self.chunk_dims = list(chunk_dims)
+        elif isinstance(chunk_dims, list) and isinstance(chunk_dims[0], str):
+            self.chunk_dims = chunk_dims
+        else:
+            raise ValueError("chunk_dims must be str or list of str")
 
         # Run basic checks on dims and channel names
         if isinstance(dim_order, list):
@@ -159,7 +164,7 @@ class GlobReader(Reader):
                     )
             self._channel_names = channel_names
 
-        self.chunk_dims = chunk_dims
+        # self.chunk_dims = chunk_dims
 
         for dim in REQUIRED_CHUNK_DIMS:
             if dim not in self.chunk_dims:
@@ -230,66 +235,45 @@ class GlobReader(Reader):
 
         group_sizes = OrderedDict([(d, scene_nunique[d]) for d in group_dims])
         chunk_sizes = self._get_chunk_sizes(scene_nunique, group_dims)
-        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in set(chunk_sizes.keys())-set(group_sizes.keys())])
+        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in chunk_sizes.keys()-group_sizes.keys()])
         reshape_sizes = tuple(unpack_sizes.values())+tuple(self._single_file_sizes.values())
-        # reshape_axes = tuple(unpack_sizes.keys()) + tuple(self._single_file_sizes.keys())
-
+        
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes, group_sizes)
 
-        print(f"{group_sizes=}") 
-        print(f"{chunk_sizes=}")
-        # print(f"{unpack_sizes=}")
-        # print(f"{self._dim_order=}")
-        # print(f"{self._single_file_sizes=}")
-        print(f"{reshape_sizes=}")
-        print(f"{axes_order=}")
+        
+        expanded_blocks_sizes, expanded_chunks_sizes = self._get_expanded_shapes(group_sizes, chunk_sizes)
+
         # Assemble the dask array
         if len(group_dims)>0: #use groupby to assemble array out of chunks
             chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
-                # print(val.filename.values)
                 zarr_im = imread(val.filename.tolist(), aszarr=True)
                 darr = da.from_zarr(zarr_im).rechunk(-1)
-                if i==0: print("orignal" ,darr.shape)
-                # simply reshapeing here is not specific enough, may need to swap axes first?
-                # trying to do crazy stiff staring here
+
                 # unpack the first dimension if it contains multiple axes
                 darr = darr.reshape(reshape_sizes)
+
                 # Then reorder dimensions so matching ones from the glob and the file are adjacent (glob then file)
                 darr = darr.transpose(axes_order)
-                # end madness
+
                 # Then reshape the array to chunk_sizes
-                darr = darr.reshape(tuple(chunk_sizes.values()))
-                if i==0: print("final", f"{darr.shape=}")
+                darr = darr.reshape(tuple(expanded_chunks_sizes.values()))
+
                 chunks[idx] = darr
-            print(f"{chunks.shape=}") 
-            overlap_dims = group_sizes.keys() & chunk_sizes.keys()
-            print(f"{overlap_dims=}")
-            # PROBLEM HERE IN SETUP OF EXPANDED SHAPE
-            #chunks_axes = tuple(group_sizes.keys())+tuple(chunk_sizes.keys())
-            expanded_shape = chunks.shape + tuple([1 for d in chunk_sizes if d not in group_sizes])
-            #print(f"{chunks_axes=}")
-            expanded_shape = tuple(s for d,s in group_sizes.items() if d not in overlap_dims)
-            #expanded_shape = (2,1,1,5,1,1)#(2,5,1,1,1,1)
-            #print(expanded_shape)
-            for d in chunk_sizes:
-                if d in overlap_dims:
-                    expanded_shape += (group_sizes[d],)
-                else:
-                    expanded_shape += (1,)
-            # print(f"{expanded_shape=}")    
-            chunks = chunks.reshape(expanded_shape)
+
+            chunks = chunks.reshape(tuple(expanded_blocks_sizes.values()))
             d_data = da.block(chunks.tolist())
-            print(d_data.shape)
+            dims = list(expanded_blocks_sizes.keys())
+
         else: # assemble array in a single chunk
             zarr_im = imread(scene_files.filename.tolist(), aszarr=True)
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
             d_data = darr.reshape(tuple(chunk_sizes.values()))
-
+            dims = list(expanded_chunks_sizes.keys())
+            
         # Assign dims and coords to construct xarray
-        dims = [d for d in group_dims if d not in overlap_dims] + list(chunk_sizes.keys())
         channel_names = self._get_channel_names_for_scene(dims)
 
         coords = self._get_coords(
@@ -369,6 +353,43 @@ class GlobReader(Reader):
                 sizes[i] = x
 
         return sizes
+        
+    def _get_expanded_shapes(self, group_sizes: OrderedDict, chunk_sizes: OrderedDict) -> Tuple[OrderedDict, OrderedDict] :
+        expanded_blocks_sizes = OrderedDict()
+        expanded_chunks_sizes = OrderedDict()
+        
+        for i,(d,s) in enumerate(group_sizes.items()):
+            if d in chunk_sizes :
+                if d not in expanded_blocks_sizes:
+                    d_idx_in_chunks = list(chunk_sizes.keys()).index(d)
+                    for j in range(d_idx_in_chunks):
+                        c_key = list(chunk_sizes.keys())[j]
+                        if c_key not in expanded_blocks_sizes:
+                            expanded_blocks_sizes[c_key] = 1
+                    
+                    expanded_blocks_sizes[d] = s
+
+            if d not in chunk_sizes:
+                if len(expanded_blocks_sizes)<=i:
+                    expanded_blocks_sizes[d] = s
+                else:
+                    for d2 in expanded_blocks_sizes:
+                        expanded_chunks_sizes[d2] = chunk_sizes[d2]
+                    expanded_chunks_sizes[d]=1
+                    expanded_blocks_sizes[d]=group_sizes[d]
+                    for d2, s2 in chunk_sizes.items():
+                        if d2 not in expanded_chunks_sizes:
+                            expanded_chunks_sizes[d2]=s2
+                            
+        for d,s in chunk_sizes.items():
+            if d not in expanded_blocks_sizes:
+                expanded_blocks_sizes[d] = 1
+
+            
+        if len(expanded_chunks_sizes)==0:
+            expanded_chunks_sizes = chunk_sizes
+
+        return expanded_blocks_sizes, expanded_chunks_sizes
 
     def _get_channel_names_for_scene(self, dims: List[str]) -> Optional[List[str]]:
         # Fast return in None case

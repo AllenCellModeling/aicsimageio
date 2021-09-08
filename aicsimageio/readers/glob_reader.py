@@ -95,7 +95,7 @@ class GlobReader(Reader):
         **kwargs: Any,
     ):
 
-        # Assmble glob list if given a string
+        # Assemble glob list if given a string
         if isinstance(glob_in, str):
             file_series = pd.Series(glob.glob(glob_in))
         elif isinstance(glob_in, list):

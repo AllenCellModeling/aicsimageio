@@ -45,6 +45,9 @@ class GlobReader(Reader):
     indexer: Union[Callable, pandas.DataFrame]
         If callable, should consume each filename and return a pd.Series with index
         corresponding to the dimensions and values corresponding to the index
+    scene_glob_character: str 
+        Character to represent different scenes.
+        Default: "S"
     chunk_dims: Union[str, List[str]]
         Which dimensions to create chunks for.
         Default: DEFAULT_CHUNK_DIMS
@@ -84,6 +87,7 @@ class GlobReader(Reader):
         self,
         glob_in: Union[str, List[str]],
         indexer: Union[pd.DataFrame, Callable] = None,
+        scene_glob_character: str = "S",
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
@@ -99,18 +103,24 @@ class GlobReader(Reader):
         if isinstance(glob_in, str):
             file_series = pd.Series(glob.glob(glob_in))
         elif isinstance(glob_in, list):
-            file_series = pd.Series(glob_in)  # pd.DataFrame({"filename": glob_in})
+            file_series = pd.Series(glob_in)
 
         if len(file_series) == 0:
             raise ValueError("No files found matching glob pattern")
 
+        self.scene_glob_character = scene_glob_character
+
         if indexer is None:
             series_idx = [
-                DimensionNames.Samples,
+                self.scene_glob_character,
                 DimensionNames.Time,
                 DimensionNames.Channel,
                 DimensionNames.SpatialZ,
             ]
+
+            # By default we will attempt to parse 4 numbers out of the filename
+            # and assign them in order to be the corresponding S, T, C, and Z indices.
+            # So indexer("S0_T1_C2_Z3.tif") returns pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
             indexer = lambda x: pd.Series(
                 re.findall(r"\d+", Path(x).name), index=series_idx
             ).astype(int)
@@ -220,22 +230,22 @@ class GlobReader(Reader):
         if self._scenes is None:
             self._scenes = tuple(
                 metadata_utils.generate_ome_image_id(s)
-                for s in range(self._all_files[DimensionNames.Samples].nunique())
+                for s in range(self._all_files[scene_glob_character].nunique())
             )
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:
 
         scene_files = self._all_files.loc[
-            self._all_files[DimensionNames.Samples] == self.current_scene_index
+            self._all_files[self.scene_glob_character] == self.current_scene_index
         ]
-        scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
+        scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
         
         tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
 
         group_dims = [
-            x for x in scene_files.columns if x not in self.chunk_dims + ["filename"]
+            x for x in scene_files.columns if x not in ["filename", *self.chunk_dims]
         ]
 
         group_sizes = OrderedDict([(d, scene_nunique[d]) for d in group_dims])
@@ -252,7 +262,7 @@ class GlobReader(Reader):
         if len(group_dims)>0: #use groupby to assemble array out of chunks
             chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
-                zarr_im = imread(val.filename.tolist(), aszarr=True)
+                zarr_im = imread(val.filename.tolist(), aszarr=True, level=0, chunkmode="page")
                 darr = da.from_zarr(zarr_im).rechunk(-1)
 
                 # unpack the first dimension if it contains multiple axes
@@ -271,7 +281,7 @@ class GlobReader(Reader):
             dims = list(expanded_blocks_sizes.keys())
 
         else: # assemble array in a single chunk
-            zarr_im = imread(scene_files.filename.tolist(), aszarr=True)
+            zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0, chunkmode="page")
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
@@ -305,9 +315,9 @@ class GlobReader(Reader):
     def _read_immediate(self) -> xr.DataArray:
         # Set up scene specific information
         scene_files = self._all_files.loc[
-            self._all_files[DimensionNames.Samples] == self.current_scene_index
+            self._all_files[self.scene_glob_character] == self.current_scene_index
         ]
-        scene_files = scene_files.drop(DimensionNames.Samples, axis=1)
+        scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
 
         tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
@@ -320,7 +330,7 @@ class GlobReader(Reader):
         
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes)
         # Assemble array
-        arr = imread(scene_files.filename.tolist())
+        arr = imread(scene_files.filename.tolist(), level=0, chunkmode="page")
         arr = arr.reshape(reshape_sizes)
         arr = arr.transpose(axes_order)
         arr = arr.reshape(tuple(chunk_sizes.values()))

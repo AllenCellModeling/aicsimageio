@@ -286,7 +286,7 @@ class GlobReader(Reader):
 
         # Assemble the dask array
         if len(group_dims) > 0:  # use groupby to assemble array out of chunks
-            chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
+            blocks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
                 zarr_im = imread(val.filename.tolist(), aszarr=True, level=0)
                 darr = da.from_zarr(zarr_im).rechunk(-1)
@@ -300,10 +300,10 @@ class GlobReader(Reader):
                 # Then reshape the array to chunk_sizes
                 darr = darr.reshape(tuple(expanded_chunk_sizes.values()))
 
-                chunks[idx] = darr
+                blocks[idx] = darr
 
-            chunks = chunks.reshape(tuple(expanded_blocks_sizes.values()))
-            d_data = da.block(chunks.tolist())
+            blocks = blocks.reshape(tuple(expanded_blocks_sizes.values()))
+            d_data = da.block(blocks.tolist())
             dims = list(expanded_blocks_sizes.keys())
 
         else:  # assemble array in a single chunk
@@ -312,7 +312,7 @@ class GlobReader(Reader):
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
             d_data = darr.reshape(tuple(chunk_sizes.values()))
-            dims = list(expanded_chunks_sizes.keys())
+            dims = list(expanded_chunk_sizes.keys())
 
         # Assign dims and coords to construct xarray
         channel_names = self._get_channel_names_for_scene(dims)
@@ -436,7 +436,7 @@ class GlobReader(Reader):
         self, group_sizes: OrderedDict, chunk_sizes: OrderedDict
     ) -> Tuple[OrderedDict, OrderedDict]:
         expanded_blocks_sizes = OrderedDict()
-        expanded_chunks_sizes = OrderedDict()
+        expanded_chunk_sizes = OrderedDict()
 
         for i, (d, s) in enumerate(group_sizes.items()):
             if d in chunk_sizes:
@@ -454,21 +454,21 @@ class GlobReader(Reader):
                     expanded_blocks_sizes[d] = s
                 else:
                     for d2 in expanded_blocks_sizes:
-                        expanded_chunks_sizes[d2] = chunk_sizes[d2]
-                    expanded_chunks_sizes[d] = 1
+                        expanded_chunk_sizes[d2] = chunk_sizes[d2]
+                    expanded_chunk_sizes[d] = 1
                     expanded_blocks_sizes[d] = group_sizes[d]
                     for d2, s2 in chunk_sizes.items():
-                        if d2 not in expanded_chunks_sizes:
-                            expanded_chunks_sizes[d2] = s2
+                        if d2 not in expanded_chunk_sizes:
+                            expanded_chunk_sizes[d2] = s2
 
         for d, s in chunk_sizes.items():
             if d not in expanded_blocks_sizes:
                 expanded_blocks_sizes[d] = 1
 
-        if len(expanded_chunks_sizes) == 0:
-            expanded_chunks_sizes = chunk_sizes
+        if len(expanded_chunk_sizes) == 0:
+            expanded_chunk_sizes = chunk_sizes
 
-        return expanded_blocks_sizes, expanded_chunks_sizes
+        return expanded_blocks_sizes, expanded_chunk_sizes
 
     def _get_channel_names_for_scene(self, dims: List[str]) -> Optional[List[str]]:
         # Fast return in None case

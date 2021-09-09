@@ -31,6 +31,7 @@ from .reader import Reader
 
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
+
 class GlobReader(Reader):
 
     """
@@ -43,9 +44,10 @@ class GlobReader(Reader):
         Glob string that identifies all files to be loaded or a list
         of paths to the files as returned by glob.
     indexer: Union[Callable, pandas.DataFrame]
-        If callable, should consume each filename and return a pd.Series with index
-        corresponding to the dimensions and values corresponding to the index
-    scene_glob_character: str 
+        If callable, should consume each filename and return a pd.Series with series index
+        corresponding to the dimensions and values corresponding to the array index of that image file within the larger array.
+        Default: None (Look for 4 numbers in the file name and use them as S, T, C, and Z indices.
+    scene_glob_character: str
         Character to represent different scenes.
         Default: "S"
     chunk_dims: Union[str, List[str]]
@@ -120,7 +122,7 @@ class GlobReader(Reader):
 
             # By default we will attempt to parse 4 numbers out of the filename
             # and assign them in order to be the corresponding S, T, C, and Z indices.
-            # So indexer("S0_T1_C2_Z3.tif") returns pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
+            # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
             indexer = lambda x: pd.Series(
                 re.findall(r"\d+", Path(x).name), index=series_idx
             ).astype(int)
@@ -138,7 +140,7 @@ class GlobReader(Reader):
                 self._all_files[dim] = 0
             if dim in self._all_files.columns:
                 sort_order.append(dim)
-        
+
         self._all_files = self._all_files.sort_values(sort_order).reset_index(drop=True)
 
         # run tests on a single file (?)
@@ -176,19 +178,21 @@ class GlobReader(Reader):
                     )
             self._channel_names = channel_names
 
-        # self.chunk_dims = chunk_dims
-
         for dim in REQUIRED_CHUNK_DIMS:
             if dim not in self.chunk_dims:
                 self.chunk_dims.append(dim)
 
         # Safety measure / "feature"
         self.chunk_dims = [d.upper() for d in self.chunk_dims]
-        
+
         if dim_order is not None:
             self._dim_order = dim_order
         else:
-            self._dim_order = "".join(d for d in DEFAULT_DIMENSION_ORDER if d in self._all_files.columns or d in self.chunk_dims)
+            self._dim_order = "".join(
+                d
+                for d in DEFAULT_DIMENSION_ORDER
+                if d in self._all_files.columns or d in self.chunk_dims
+            )
 
         self._channel_names = channel_names
 
@@ -241,25 +245,47 @@ class GlobReader(Reader):
         ]
         scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
-        
+
         tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
 
         group_dims = [
             x for x in scene_files.columns if x not in ["filename", *self.chunk_dims]
         ]
 
+        # xxx_sizes are modeled after xr.DataArray.sizes
+        # These are OrderedDicts that map a dimension name to a shape.
+        # Use these to align and reshape the arrays that come from imread
+        # dims and sizes are not always necessary but they keep things much
+        # clearer internally.
+
+        # sizes of dimensions we grouping by i.e. not chunks
         group_sizes = OrderedDict([(d, scene_nunique[d]) for d in group_dims])
+
+        # sizes of each chunk
         chunk_sizes = self._get_chunk_sizes(scene_nunique, group_dims)
-        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in chunk_sizes.keys()-group_sizes.keys()])
-        reshape_sizes = tuple(unpack_sizes.values())+tuple(self._single_file_sizes.values())
-        
+
+        # sizes that will be used to reshape the array representing the full glob into separate dimensions
+        unpack_sizes = OrderedDict(
+            [
+                (d, s)
+                for d, s in scene_nunique.iteritems()
+                if d in chunk_sizes.keys() - group_sizes.keys()
+            ]
+        )
+        reshape_sizes = tuple(unpack_sizes.values()) + tuple(
+            self._single_file_sizes.values()
+        )
+
+        # after unpacking the result of imread we sometimes need to rearrange dims in case they are in the glob and single files
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes, group_sizes)
 
-        
-        expanded_blocks_sizes, expanded_chunks_sizes = self._get_expanded_shapes(group_sizes, chunk_sizes)
+        # expand the sizes with singleton dimensions to facilitate dask.array.block at the end
+        expanded_blocks_sizes, expanded_chunk_sizes = self._get_expanded_shapes(
+            group_sizes, chunk_sizes
+        )
 
         # Assemble the dask array
-        if len(group_dims)>0: #use groupby to assemble array out of chunks
+        if len(group_dims) > 0:  # use groupby to assemble array out of chunks
             chunks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
                 zarr_im = imread(val.filename.tolist(), aszarr=True, level=0)
@@ -272,7 +298,7 @@ class GlobReader(Reader):
                 darr = darr.transpose(axes_order)
 
                 # Then reshape the array to chunk_sizes
-                darr = darr.reshape(tuple(expanded_chunks_sizes.values()))
+                darr = darr.reshape(tuple(expanded_chunk_sizes.values()))
 
                 chunks[idx] = darr
 
@@ -280,14 +306,14 @@ class GlobReader(Reader):
             d_data = da.block(chunks.tolist())
             dims = list(expanded_blocks_sizes.keys())
 
-        else: # assemble array in a single chunk
+        else:  # assemble array in a single chunk
             zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0)
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
             d_data = darr.reshape(tuple(chunk_sizes.values()))
             dims = list(expanded_chunks_sizes.keys())
-            
+
         # Assign dims and coords to construct xarray
         channel_names = self._get_channel_names_for_scene(dims)
 
@@ -307,7 +333,7 @@ class GlobReader(Reader):
             attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
         x_data = xr.DataArray(d_data, dims=dims, coords=coords, attrs=attrs)
-        
+
         x_data = x_data.transpose(*self._dim_order)
 
         return x_data
@@ -324,17 +350,21 @@ class GlobReader(Reader):
 
         chunk_sizes = self._get_chunk_sizes(scene_nunique)
 
-        unpack_sizes = OrderedDict([(d,s) for d,s in scene_nunique.iteritems() if d in chunk_sizes.keys()])
+        unpack_sizes = OrderedDict(
+            [(d, s) for d, s in scene_nunique.iteritems() if d in chunk_sizes.keys()]
+        )
 
-        reshape_sizes = tuple(unpack_sizes.values())+tuple(self._single_file_sizes.values())
-        
+        reshape_sizes = tuple(unpack_sizes.values()) + tuple(
+            self._single_file_sizes.values()
+        )
+
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes)
         # Assemble array
         arr = imread(scene_files.filename.tolist(), level=0)
         arr = arr.reshape(reshape_sizes)
         arr = arr.transpose(axes_order)
         arr = arr.reshape(tuple(chunk_sizes.values()))
-    
+
         # Assign dims and coords to construct xarray
         dims = scene_files.columns.drop("filename").values.tolist()
         file_dims = [x for x in self._single_file_dims if x not in dims]
@@ -342,7 +372,9 @@ class GlobReader(Reader):
 
         channel_names = self._get_channel_names_for_scene(dims)
 
-        coords = self._get_coords(dims, arr.shape, self.current_scene_index, channel_names)
+        coords = self._get_coords(
+            dims, arr.shape, self.current_scene_index, channel_names
+        )
 
         # Try accepted processed metadata
         try:
@@ -362,28 +394,35 @@ class GlobReader(Reader):
 
         return x_data
 
-    def _get_axes_order(self, chunk_sizes: OrderedDict, unpack_sizes: OrderedDict, group_sizes: OrderedDict = OrderedDict()) -> Tuple :
+    def _get_axes_order(
+        self,
+        chunk_sizes: OrderedDict,
+        unpack_sizes: OrderedDict,
+        group_sizes: OrderedDict = OrderedDict(),
+    ) -> Tuple:
         axes_order = ()
         for d in chunk_sizes:
             if d in unpack_sizes:
                 axes_order += (list(unpack_sizes.keys()).index(d),)
             if d in self._single_file_sizes:
-                axes_order += (len(unpack_sizes) + list(self._single_file_sizes.keys()).index(d),)
+                axes_order += (
+                    len(unpack_sizes) + list(self._single_file_sizes.keys()).index(d),
+                )
         return axes_order
 
     def _get_chunk_sizes(
-        self, scene_files_nunique: pd.Series, group_dims: List[str] = [] 
-    ) -> OrderedDict :
+        self, scene_files_nunique: pd.Series, group_dims: List[str] = []
+    ) -> OrderedDict:
 
-        sizes = OrderedDict() 
+        sizes = OrderedDict()
         for i, x in scene_files_nunique.iteritems():
-            if i not in group_dims + ["filename"]:
+            if i not in ["filename", *group_dims]:
                 if i not in self._single_file_dims:
                     sizes[i] = x
                 else:
                     sizes[i] = self._single_file_sizes[i] * x
-        
-        for d,s in self._single_file_sizes.items():
+
+        for d, s in self._single_file_sizes.items():
             if d not in self.chunk_dims and d not in sizes:
                 sizes[d] = s
 
@@ -392,40 +431,41 @@ class GlobReader(Reader):
                 sizes[i] = x
 
         return sizes
-        
-    def _get_expanded_shapes(self, group_sizes: OrderedDict, chunk_sizes: OrderedDict) -> Tuple[OrderedDict, OrderedDict] :
+
+    def _get_expanded_shapes(
+        self, group_sizes: OrderedDict, chunk_sizes: OrderedDict
+    ) -> Tuple[OrderedDict, OrderedDict]:
         expanded_blocks_sizes = OrderedDict()
         expanded_chunks_sizes = OrderedDict()
-        
-        for i,(d,s) in enumerate(group_sizes.items()):
-            if d in chunk_sizes :
+
+        for i, (d, s) in enumerate(group_sizes.items()):
+            if d in chunk_sizes:
                 if d not in expanded_blocks_sizes:
                     d_idx_in_chunks = list(chunk_sizes.keys()).index(d)
                     for j in range(d_idx_in_chunks):
                         c_key = list(chunk_sizes.keys())[j]
                         if c_key not in expanded_blocks_sizes:
                             expanded_blocks_sizes[c_key] = 1
-                    
+
                     expanded_blocks_sizes[d] = s
 
             if d not in chunk_sizes:
-                if len(expanded_blocks_sizes)<=i:
+                if len(expanded_blocks_sizes) <= i:
                     expanded_blocks_sizes[d] = s
                 else:
                     for d2 in expanded_blocks_sizes:
                         expanded_chunks_sizes[d2] = chunk_sizes[d2]
-                    expanded_chunks_sizes[d]=1
-                    expanded_blocks_sizes[d]=group_sizes[d]
+                    expanded_chunks_sizes[d] = 1
+                    expanded_blocks_sizes[d] = group_sizes[d]
                     for d2, s2 in chunk_sizes.items():
                         if d2 not in expanded_chunks_sizes:
-                            expanded_chunks_sizes[d2]=s2
-                            
-        for d,s in chunk_sizes.items():
+                            expanded_chunks_sizes[d2] = s2
+
+        for d, s in chunk_sizes.items():
             if d not in expanded_blocks_sizes:
                 expanded_blocks_sizes[d] = 1
 
-            
-        if len(expanded_chunks_sizes)==0:
+        if len(expanded_chunks_sizes) == 0:
             expanded_chunks_sizes = chunk_sizes
 
         return expanded_blocks_sizes, expanded_chunks_sizes
@@ -489,7 +529,6 @@ class GlobReader(Reader):
             coords[DimensionNames.Channel] = channel_names
 
         return coords
-
 
     def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
         unprocessed_tags = tiff.series[0].pages[0].tags

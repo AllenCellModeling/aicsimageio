@@ -9,7 +9,7 @@ except ImportError:
 
     # backport from 3.8
 
-    class cached_property:
+    class cached_property:  # type: ignore # noqa
         def __init__(self, func: Callable):
             self.func = func
             self.attrname: Optional[str] = None

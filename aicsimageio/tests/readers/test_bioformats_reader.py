@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 from typing import List, Tuple
-from urllib.error import HTTPError
 
 import numpy as np
 import pytest
 from ome_types import OME
 
 from aicsimageio import dimensions, exceptions
-from aicsimageio.readers import OmeTiffReader
+from aicsimageio.readers import BioformatsReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
@@ -154,7 +153,7 @@ def test_ome_tiff_reader(
 
     # Run checks
     run_image_file_checks(
-        ImageContainer=OmeTiffReader,
+        ImageContainer=BioformatsReader,
         image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -252,7 +251,7 @@ def test_ome_tiff_reader_large_files(
 
     # Run checks
     run_image_file_checks(
-        ImageContainer=OmeTiffReader,
+        ImageContainer=BioformatsReader,
         image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -303,7 +302,7 @@ def test_multi_scene_ome_tiff_reader(
 
     # Run checks
     run_multi_scene_image_read_checks(
-        ImageContainer=OmeTiffReader,
+        ImageContainer=BioformatsReader,
         image=uri,
         first_scene_id=first_scene_id,
         first_scene_shape=first_scene_shape,
@@ -364,7 +363,7 @@ def test_multi_resolution_ome_tiff_reader(
 
     # Run checks
     run_image_file_checks(
-        ImageContainer=OmeTiffReader,
+        ImageContainer=BioformatsReader,
         image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -378,44 +377,6 @@ def test_multi_resolution_ome_tiff_reader(
     )
 
 
-@host
-@pytest.mark.parametrize(
-    "filename",
-    [
-        # Pipline 4 is valid, :tada:
-        "pipeline-4.ome.tiff",
-        # Some of our test files are valid, :tada:
-        "s_1_t_1_c_1_z_1.ome.tiff",
-        "s_3_t_1_c_3_z_5.ome.tiff",
-        # A lot of our files aren't valid, :upside-down-smiley:
-        # These files have invalid schema / layout
-        pytest.param(
-            "3d-cell-viewer.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "pre-variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "actk.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        # This file has a namespace that doesn't exist
-        pytest.param(
-            "s_1_t_1_c_10_z_1.ome.tiff", marks=pytest.mark.raises(exception=HTTPError)
-        ),
-    ],
-)
-def test_known_errors_without_cleaning(filename: str, host: str) -> None:
-    # Construct full filepath
-    uri = get_resource_full_path(filename, host)
-
-    OmeTiffReader(uri, clean_metadata=False)
 
 
 def test_micromanager_ome_tiff_main_file() -> None:
@@ -436,7 +397,7 @@ def test_micromanager_ome_tiff_main_file() -> None:
     # Run image read checks on the first scene
     # (this files binary data)
     run_image_file_checks(
-        ImageContainer=OmeTiffReader,
+        ImageContainer=BioformatsReader,
         image=uri,
         set_scene="Image:0",
         expected_scenes=("Image:0", "Image:1"),

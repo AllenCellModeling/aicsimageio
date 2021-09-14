@@ -91,19 +91,19 @@ New `Reader` classes are **required** to implement:
 
 New `Reader` classes can **optionally** implement:
 
--   `_get_stitched_dask_mosaic`: otherwises raises `NotImplementedError`
--   `_get_stitched_mosaic`: otherwises raises `NotImplementedError`
--   `get_mosaic_tile_position`: otherwises raises `NotImplementedError`
--   `ome_metadata`: otherwises raises `NotImplementedError`
--   `physical_pixel_sizes`: default returns `(None, None, None)`
+-   `_get_stitched_dask_mosaic`: a function to stitch mosaic tiles from a
+    delayed dask array, otherwise raises `NotImplementedError`.
+-   `_get_stitched_mosaic`: a function to stitch mosaic tiles from an
+    in-memory numpy array, otherwise raises `NotImplementedError`.
+-   `get_mosaic_tile_position`: a function to get a specific mosaic tile's position
+    from it's tile index, otherwise raises `NotImplementedError`.
+-   `ome_metadata`: a property which returns the format's metadata type converted to
+    OME metadata, otherwise raises `NotImplementedError`.
+-   `physical_pixel_sizes`: a property which returns the spatial dimensions pixel sizes,
+    otherwise returns `(None, None, None)`
 
-Please see `Reader` code for docstrings on each of these
-optional functions or properties.
-
-After the **required** functions and properties have been implemented,
-`Reader` class functions like `get_image_data` and properties like `channel_names`
-are then handled for you because the `Reader` base class has built-in functions to
-operate against the provided / stored xarray objects.
+Please see the `Reader` code for docstrings with more information
+for each of the above functions and properties.
 
 ### Custom Dependencies
 
@@ -120,7 +120,7 @@ add your file format(s) + reader module path to our
 --if `TiffReader` was put before `OmeTiffReader`,
 `OmeTiffReader` would never be reached.
 
-For an example of a `Reader` that requires custom dependencies, see our `CziReader` (specifically 
+For an example of a `Reader` that requires custom dependencies, see our `CziReader` (specifically
 [Reader dependency lookup during import of the module](https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/readers/czi_reader.py#L24)).
 
 ### Testing

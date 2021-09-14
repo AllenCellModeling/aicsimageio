@@ -7,64 +7,56 @@ helps, and credit will always be given.
 
 Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
-1. Fork the `aicsimageio` repo on GitHub.
+1.  Fork the `aicsimageio` repo on GitHub.
 
-2. Clone your fork locally:
+2.  Clone your fork locally:
 
-    ```bash
-    git clone https://{your_name_here}@github.com/aicsimageio.git
-    ```
+        git clone https://{your_name_here}@github.com/aicsimageio.git
 
-3. Check out the submodules used in this repo:
-    ```bash
-    git submodule update --init --recursive
-    ```
+3.  Check out the submodules used in this repo:
 
-4. Install the project in editable mode (and preferably in a virtual environment):
+        git submodule update --init --recursive
 
-    ```bash
-    cd aicsimageio/
-    pip install -e .[dev]
-    ```
+4.  Install the project in editable mode (and preferably in a virtual environment):
 
-5. Download the test resources:
+        cd aicsimageio/
+        pip install -e .[dev]
 
-    ```bash
-    python scripts/download_test_resources.py
-    ```
+5.  Download the test resources:
+
+        python scripts/download_test_resources.py
 
     If you need to upload new resources please let a core maintainer know.
 
-6. Create a branch for local development:
+    If you cannot download the test resources, feel free to open a Draft Pull Request
+    to the main `aicsimageio` repository as our GitHub Actions will allow you to test
+    with the resources downloaded.
 
-    ```bash
-    git checkout -b {your_development_type}/short-description
-    ```
+6.  Create a branch for local development:
+
+        git checkout -b {your_development_type}/short-description
 
     Ex: feature/read-tiff-files or bugfix/handle-file-not-found<br>
     Now you can make your changes locally.
 
-7. When you're done making changes, check that your changes pass linting and
+7.  When you're done making changes, check that your changes pass linting and
     tests, including testing other Python versions with make (!! Important !!):
 
-    ```bash
-    make build
-    ```
+        make build
 
     If you have any AWS credentials configured and would like to run the full
     remote IO test suite:
 
-    ```bash
-    make build-with-remote
-    ```
+        make build-with-remote
 
-8. Commit your changes and push your branch to GitHub:
+8.  Commit your changes and push your branch to GitHub:
 
-    ```bash
-    git add .
-    git commit -m "Resolves gh-###. Your detailed description of your changes."
-    git push origin {your_development_type}/short-description
-    ```
+        git add .
+        git commit -m "Resolves gh-###. Your detailed description of your changes."
+        git push origin {your_development_type}/short-description
+
+9.  Submit a pull request through the GitHub website.
+
 
 9. Submit a pull request through the GitHub website.
 

@@ -148,8 +148,7 @@ add a `{YourReader}Suite` class to our
 [benchmark_image_containers file](https://github.com/AllenCellModeling/aicsimageio/blob/main/benchmarks/benchmark_image_containers.py#L167).
 
 **Note:** You may want to specifically choose files larger than 100MB to
-benchmark against to make random IO spikes on the GitHub Action runner
-to be considered neglible.
+benchmark against to make random IO spikes on the GitHub Action runner negligible.
 
 ### Documentation
 

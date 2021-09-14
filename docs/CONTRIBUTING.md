@@ -69,8 +69,8 @@ AICS / near-OME standard model.
 
 ### Reader Class Implementation
 
-The `Reader` base class can largely be thought of as a wrapper around
-`xarray` due to how we largely store most or all data and metadata on
+The `Reader` base class can be thought of as a wrapper around
+`xarray` since we store most or all data and metadata on
 `xarray.DataArray` objects.
 Because of this, it may be useful to read the
 [xarray documentation](http://xarray.pydata.org/en/stable/).

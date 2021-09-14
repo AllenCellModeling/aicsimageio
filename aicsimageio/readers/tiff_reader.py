@@ -460,8 +460,6 @@ class TiffReader(Reader):
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
-                print('dims', dims)
-                print('coords', coords)
                 return xr.DataArray(
                     image_data,
                     dims=dims,

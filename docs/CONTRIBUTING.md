@@ -139,7 +139,7 @@ for an example parametrized usage of these standard testing functions.
 
 Outside of using these standard testing functions, you should feel free to
 add additional testing for you `Reader` class when needed or
-for cases that you feel we should ensure support.
+for cases that you feel we should support.
 
 ### Optional Reader Benchmarking
 

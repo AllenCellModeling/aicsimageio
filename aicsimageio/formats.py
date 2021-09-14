@@ -27,6 +27,7 @@ FORMAT_IMPLEMENTATIONS: Dict[str, str] = {
     "tif": "aicsimageio.readers.tiff_reader.TiffReader",
     "czi": "aicsimageio.readers.czi_reader.CziReader",
     "lif": "aicsimageio.readers.lif_reader.LifReader",
+    "nd2": "aicsimageio.readers.bioformats_reader.BioformatsReader",
     # BASE-IMAGEIO FORMATS (with tifffile + non-existant removals)
     #
     # Pulled using:

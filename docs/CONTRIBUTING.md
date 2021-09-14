@@ -120,8 +120,8 @@ add your file format(s) + reader module path to our
 --if `TiffReader` was put before `OmeTiffReader`,
 `OmeTiffReader` would never be reached.
 
-For an example of a `Reader` that requires custom dependencies, see our `CziReader`.
-See how we handle [Reader dependency lookup during import of the module](https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/readers/czi_reader.py#L24).
+For an example of a `Reader` that requires custom dependencies, see our `CziReader` (specifically 
+[Reader dependency lookup during import of the module](https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/readers/czi_reader.py#L24)).
 
 ### Testing
 

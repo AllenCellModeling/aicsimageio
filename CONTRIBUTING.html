@@ -1,77 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Contributing &mdash; AICSImageIO 4.1.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contributor Covenant Code of Conduct" href="CODE_OF_CONDUCT.html" />
     <link rel="prev" title="Developer Resources" href="developer_resources.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> AICSImageIO
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 4.1.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,18 +38,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
@@ -125,6 +73,15 @@
 <li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Contributing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-new-custom-reader">Adding a New Custom Reader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basics">Basics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reader-class-implementation">Reader Class Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-dependencies">Custom Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#optional-reader-benchmarking">Optional Reader Benchmarking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#documentation">Documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#benchmarking">Benchmarking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#deploying">Deploying</a></li>
 </ul>
@@ -171,119 +128,120 @@
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#fix">Fix</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id6">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id8">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id7">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id12">Other</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id12">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id14">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id16">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id17">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id22">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id25">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id27">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id27">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id29">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id29">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id31">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id34">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id36">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id36">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id57">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id65">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id38">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id59">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id67">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id79">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id81">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id82">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id84">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id84">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id86">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id87">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id89">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id89">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id91">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id91">New</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id93">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id95">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id97">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id97">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id99">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id100">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id102">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id102">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id106">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id109">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id104">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id108">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id111">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id113">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id115">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id115">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id117">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id117">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id119">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id119">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id121">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id121">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id125">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id126">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id129">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id128">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id131">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id132">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id134">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id134">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id136">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id138">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id140">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id140">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id142">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id143">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id144">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id145">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id146">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -300,148 +258,190 @@
 <li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">AICSImageIO</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="developer_resources.html">Developer Resources</a> &raquo;</li>
-        
       <li>Contributing</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/CONTRIBUTING.md.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
-  </ul>
-
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="CODE_OF_CONDUCT.html" class="btn btn-neutral float-right" title="Contributor Covenant Code of Conduct" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-      
-      
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
         <a href="developer_resources.html" class="btn btn-neutral float-left" title="Developer Resources" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-      
+        <a href="CODE_OF_CONDUCT.html" class="btn btn-neutral float-right" title="Contributor Covenant Code of Conduct" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="contributing">
-<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline"></a></h1>
 <p>Contributions are welcome, and they are greatly appreciated! Every little bit
 helps, and credit will always be given.</p>
 <div class="section" id="get-started">
-<h2>Get Started!<a class="headerlink" href="#get-started" title="Permalink to this headline">¶</a></h2>
+<h2>Get Started!<a class="headerlink" href="#get-started" title="Permalink to this headline"></a></h2>
 <p>Ready to contribute? Here’s how to set up <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> for local development.</p>
 <ol class="arabic">
 <li><p>Fork the <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> repo on GitHub.</p></li>
 <li><p>Clone your fork locally:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://<span class="o">{</span>your_name_here<span class="o">}</span>@github.com/aicsimageio.git
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="p">{</span><span class="n">your_name_here</span><span class="p">}</span><span class="nd">@github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">aicsimageio</span><span class="o">.</span><span class="n">git</span>
 </pre></div>
 </div>
 </li>
 <li><p>Check out the submodules used in this repo:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git submodule update --init --recursive
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">submodule</span> <span class="n">update</span> <span class="o">--</span><span class="n">init</span> <span class="o">--</span><span class="n">recursive</span>
 </pre></div>
 </div>
 </li>
 <li><p>Install the project in editable mode (and preferably in a virtual environment):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> aicsimageio/
-pip install -e .<span class="o">[</span>dev<span class="o">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">aicsimageio</span><span class="o">/</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span><span class="p">[</span><span class="n">dev</span><span class="p">]</span>
 </pre></div>
 </div>
 </li>
 <li><p>Download the test resources:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>   python scripts/download_test_resources.py
-
-If you need to upload new resources please <span class="nb">let</span> a core maintainer know.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">scripts</span><span class="o">/</span><span class="n">download_test_resources</span><span class="o">.</span><span class="n">py</span>
 </pre></div>
 </div>
+<p>If you need to upload new resources please let a core maintainer know.</p>
+<p>If you cannot download the test resources, feel free to open a Draft Pull Request
+to the main <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> repository as our GitHub Actions will allow you to test
+with the resources downloaded.</p>
 </li>
 <li><p>Create a branch for local development:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>   git checkout -b <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
-
-Ex: feature/read-tiff-files or bugfix/handle-file-not-found<span class="se">\ </span>:raw-html-m2r:<span class="sb">`</span>&lt;br&gt;<span class="sb">`</span>
-Now you can make your changes locally.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">checkout</span> <span class="o">-</span><span class="n">b</span> <span class="p">{</span><span class="n">your_development_type</span><span class="p">}</span><span class="o">/</span><span class="n">short</span><span class="o">-</span><span class="n">description</span>
 </pre></div>
 </div>
+<p>Ex: feature/read-tiff-files or bugfix/handle-file-not-found<span class="raw-html-m2r"><br></span>
+Now you can make your changes locally.</p>
 </li>
-<li><dl class="simple">
-<dt>When you’re done making changes, check that your changes pass linting and</dt><dd><p>tests, including testing other Python versions with make (!! Important !!):</p>
-</dd>
-</dl>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>   make build
-
-If you have any AWS credentials configured and would like to run the full
-remote IO <span class="nb">test</span> suite:
+<li><p>When you’re done making changes, check that your changes pass linting and
+tests, including testing other Python versions with make (!! Important !!):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span>
 </pre></div>
 </div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make build-with-remote
+<p>If you have any AWS credentials configured and would like to run the full
+remote IO test suite:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">make</span> <span class="n">build</span><span class="o">-</span><span class="k">with</span><span class="o">-</span><span class="n">remote</span>
 </pre></div>
 </div>
 </li>
 <li><p>Commit your changes and push your branch to GitHub:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git add .
-git commit -m <span class="s2">&quot;Resolves gh-###. Your detailed description of your changes.&quot;</span>
-git push origin <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">add</span> <span class="o">.</span>
+<span class="n">git</span> <span class="n">commit</span> <span class="o">-</span><span class="n">m</span> <span class="s2">&quot;Resolves gh-###. Your detailed description of your changes.&quot;</span>
+<span class="n">git</span> <span class="n">push</span> <span class="n">origin</span> <span class="p">{</span><span class="n">your_development_type</span><span class="p">}</span><span class="o">/</span><span class="n">short</span><span class="o">-</span><span class="n">description</span>
 </pre></div>
 </div>
 </li>
 <li><p>Submit a pull request through the GitHub website.</p></li>
 </ol>
 </div>
+<div class="section" id="adding-a-new-custom-reader">
+<h2>Adding a New Custom Reader<a class="headerlink" href="#adding-a-new-custom-reader" title="Permalink to this headline"></a></h2>
+<div class="section" id="basics">
+<h3>Basics<a class="headerlink" href="#basics" title="Permalink to this headline"></a></h3>
+<p>AICSImageIO is broken into the <code class="docutils literal notranslate"><span class="pre">Reader</span></code> base class and the <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code> higher
+level “standardization” class. <code class="docutils literal notranslate"><span class="pre">Reader</span></code> classes should always provide
+access in some sense to the “raw” data. The <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code> class wraps the
+<code class="docutils literal notranslate"><span class="pre">Reader</span></code> classes to then select and transform the “raw” data into our
+AICS / near-OME standard model.</p>
+</div>
+<div class="section" id="reader-class-implementation">
+<h3>Reader Class Implementation<a class="headerlink" href="#reader-class-implementation" title="Permalink to this headline"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">Reader</span></code> base class can be thought of as a wrapper around
+<code class="docutils literal notranslate"><span class="pre">xarray</span></code> since we store most or all data and metadata on
+<code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> objects.
+Because of this, it may be useful to read the
+<a class="reference external" href="http://xarray.pydata.org/en/stable/">xarray documentation</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Reader</span></code> base class in full can be found
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/readers/reader.py">here</a>.</p>
+<p>New <code class="docutils literal notranslate"><span class="pre">Reader</span></code> classes are <strong>required</strong> to implement:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_is_supported_image</span></code>: a function to check if the custom <code class="docutils literal notranslate"><span class="pre">Reader</span></code> class
+<em>can</em> read the provided object (file, array, etc.)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scenes</span></code>: a property which returns the Tuple of all scene names
+(or in OME terms, “images” or “series”).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_read_delayed</span></code>: a function which returns an <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> object
+which is backed by a delayed <code class="docutils literal notranslate"><span class="pre">dask.array.Array</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_read_immediate</span></code>: a function which returns an <code class="docutils literal notranslate"><span class="pre">xarray.DataArray</span></code> object
+which is backed by an in-memory <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code>.</p></li>
+</ul>
+<p>New <code class="docutils literal notranslate"><span class="pre">Reader</span></code> classes can <strong>optionally</strong> implement:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_get_stitched_dask_mosaic</span></code>: a function to stitch mosaic tiles from a
+delayed dask array, otherwise raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_get_stitched_mosaic</span></code>: a function to stitch mosaic tiles from an
+in-memory numpy array, otherwise raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get_mosaic_tile_position</span></code>: a function to get a specific mosaic tile’s position
+from it’s tile index, otherwise raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ome_metadata</span></code>: a property which returns the format’s metadata type converted to
+OME metadata, otherwise raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">physical_pixel_sizes</span></code>: a property which returns the spatial dimensions pixel sizes,
+otherwise returns <code class="docutils literal notranslate"><span class="pre">(None,</span> <span class="pre">None,</span> <span class="pre">None)</span></code></p></li>
+</ul>
+<p>Please see the <code class="docutils literal notranslate"><span class="pre">Reader</span></code> code for docstrings with more information
+for each of the above functions and properties.</p>
+</div>
+<div class="section" id="custom-dependencies">
+<h3>Custom Dependencies<a class="headerlink" href="#custom-dependencies" title="Permalink to this headline"></a></h3>
+<p>If your <code class="docutils literal notranslate"><span class="pre">Reader</span></code> requires custom dependencies, add the custom dependencies
+to our <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/setup.py#L26">format_libs lookup in setup.py</a>.</p>
+<p>If you want your <code class="docutils literal notranslate"><span class="pre">Reader</span></code> to be used as a part of the <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code>
+object’s attempted reader resolution (i.e. the <code class="docutils literal notranslate"><span class="pre">AICSImage</span></code> object iterates
+through <code class="docutils literal notranslate"><span class="pre">Reader</span></code> objects until a <code class="docutils literal notranslate"><span class="pre">Reader</span></code> can read the provided object),
+add your file format(s) + reader module path to our
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/formats.py">FORMAT_IMPLEMENTATIONS lookup</a>.</p>
+<p><strong>Note:</strong> the order of the <code class="docutils literal notranslate"><span class="pre">FORMAT_IMPLEMENTATIONS</span></code> lookup matters
+–if <code class="docutils literal notranslate"><span class="pre">TiffReader</span></code> was put before <code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code>,
+<code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code> would never be reached.</p>
+<p>For an example of a <code class="docutils literal notranslate"><span class="pre">Reader</span></code> that requires custom dependencies, see our <code class="docutils literal notranslate"><span class="pre">CziReader</span></code> (specifically
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/readers/czi_reader.py#L24">Reader dependency lookup during import of the module</a>).</p>
+</div>
+<div class="section" id="testing">
+<h3>Testing<a class="headerlink" href="#testing" title="Permalink to this headline"></a></h3>
+<p>We provide standard functions for testing and validating data and metadata
+as well as running serialization and deserialization and other checks for you.
+These are:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/tests/image_container_test_utils.py#L46">run_image_container_checks</a>
+for single-scene</p></li>
+<li><p><a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/tests/image_container_test_utils.py#L179">run_multi_scene_image_read_checks</a>
+for multi-scene.</p></li>
+</ul>
+<p>See our <a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/tests/readers/test_ome_tiff_reader.py">OmeTiffReader Tests</a>
+for an example parametrized usage of these standard testing functions.</p>
+<p>Outside of using these standard testing functions, you should feel free to
+add additional testing for you <code class="docutils literal notranslate"><span class="pre">Reader</span></code> class when needed or
+for cases that you feel we should support.</p>
+</div>
+<div class="section" id="optional-reader-benchmarking">
+<h3>Optional Reader Benchmarking<a class="headerlink" href="#optional-reader-benchmarking" title="Permalink to this headline"></a></h3>
+<p>If you want to benchmark your <code class="docutils literal notranslate"><span class="pre">Reader</span></code> over the course of <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> patches,
+add a <code class="docutils literal notranslate"><span class="pre">{YourReader}Suite</span></code> class to our
+<a class="reference external" href="https://github.com/AllenCellModeling/aicsimageio/blob/main/benchmarks/benchmark_image_containers.py#L167">benchmark_image_containers file</a>.</p>
+<p><strong>Note:</strong> You may want to specifically choose files larger than 100MB to
+benchmark against to make random IO spikes on the GitHub Action runner negligible.</p>
+</div>
+<div class="section" id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline"></a></h3>
+<p>Let people know your <code class="docutils literal notranslate"><span class="pre">Reader</span></code> is available for use! Document it’s install pattern
+in the README.</p>
+</div>
+</div>
 <div class="section" id="benchmarking">
-<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this headline">¶</a></h2>
+<h2>Benchmarking<a class="headerlink" href="#benchmarking" title="Permalink to this headline"></a></h2>
 <p>If you are working on a patch that would change a base reader it is recommended
 to run <code class="docutils literal notranslate"><span class="pre">asv</span></code> to benchmark how the change compares to the current release.</p>
 <p>To do so simply run <code class="docutils literal notranslate"><span class="pre">asv</span></code> in the top level directory of this repo.
@@ -450,7 +450,7 @@ You can create a specific comparison by running <code class="docutils literal no
 <a class="reference external" href="https://asv.readthedocs.io/en/stable/">their documentation</a>.</p>
 </div>
 <div class="section" id="deploying">
-<h2>Deploying<a class="headerlink" href="#deploying" title="Permalink to this headline">¶</a></h2>
+<h2>Deploying<a class="headerlink" href="#deploying" title="Permalink to this headline"></a></h2>
 <p>A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed.
 Then run:</p>
@@ -467,46 +467,30 @@ not a minor or major version.</p>
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
-
-    </p>
+    <p>&#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

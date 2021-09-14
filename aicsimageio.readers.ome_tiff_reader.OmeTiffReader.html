@@ -1,77 +1,36 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>aicsimageio.readers.ome_tiff_reader.OmeTiffReader &mdash; AICSImageIO 4.1.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="aicsimageio.readers.tiff_reader.TiffReader" href="aicsimageio.readers.tiff_reader.TiffReader.html" />
     <link rel="prev" title="aicsimageio.readers.reader.Reader" href="aicsimageio.readers.reader.Reader.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> AICSImageIO
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 4.1.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -79,18 +38,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
@@ -125,6 +73,15 @@
 <li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CONTRIBUTING.html">Contributing</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#adding-a-new-custom-reader">Adding a New Custom Reader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#basics">Basics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#reader-class-implementation">Reader Class Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#custom-dependencies">Custom Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#optional-reader-benchmarking">Optional Reader Benchmarking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="CONTRIBUTING.html#documentation">Documentation</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CONTRIBUTING.html#deploying">Deploying</a></li>
 </ul>
@@ -171,119 +128,120 @@
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#fix">Fix</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id6">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id8">Fix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id7">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id9">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id12">Other</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id12">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id14">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id16">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id17">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id21">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id22">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id25">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id27">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id27">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id29">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id29">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id31">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id34">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id36">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id36">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id57">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id65">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id38">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id59">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id67">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id79">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id81">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id82">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id84">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id84">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id86">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id87">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id89">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id89">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id91">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id91">New</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id93">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id95">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id97">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id97">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id99">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id100">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id102">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id102">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id106">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id109">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id104">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id108">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id111">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id113">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id115">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id115">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id117">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id117">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id119">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id119">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id121">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id121">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id125">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id126">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id129">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id128">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id131">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id132">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id134">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id134">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id136">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id138">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id140">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id140">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id142">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id143">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id144">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id145">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id146">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -300,85 +258,38 @@
 <li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">AICSImageIO</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li>aicsimageio.readers.ome_tiff_reader.OmeTiffReader</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/aicsimageio.readers.ome_tiff_reader.OmeTiffReader.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
-  </ul>
-
-  
-  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
-      
-        <a href="aicsimageio.readers.tiff_reader.TiffReader.html" class="btn btn-neutral float-right" title="aicsimageio.readers.tiff_reader.TiffReader" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-      
-      
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
         <a href="aicsimageio.readers.reader.Reader.html" class="btn btn-neutral float-left" title="aicsimageio.readers.reader.Reader" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-      
+        <a href="aicsimageio.readers.tiff_reader.TiffReader.html" class="btn btn-neutral float-right" title="aicsimageio.readers.tiff_reader.TiffReader" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
   </div>
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="aicsimageio-readers-ome-tiff-reader-ometiffreader">
-<h1>aicsimageio.readers.ome_tiff_reader.OmeTiffReader<a class="headerlink" href="#aicsimageio-readers-ome-tiff-reader-ometiffreader" title="Permalink to this headline">¶</a></h1>
+<h1>aicsimageio.readers.ome_tiff_reader.OmeTiffReader<a class="headerlink" href="#aicsimageio-readers-ome-tiff-reader-ometiffreader" title="Permalink to this headline"></a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="aicsimageio.readers.ome_tiff_reader.OmeTiffReader">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">aicsimageio.readers.ome_tiff_reader.</span></span><span class="sig-name descname"><span class="pre">OmeTiffReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_dims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">['Z',</span> <span class="pre">'Y',</span> <span class="pre">'X',</span> <span class="pre">'S']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_metadata</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/ome_tiff_reader.html#OmeTiffReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.ome_tiff_reader.OmeTiffReader" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">aicsimageio.readers.ome_tiff_reader.</span></span><span class="sig-name descname"><span class="pre">OmeTiffReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_dims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">['Z',</span> <span class="pre">'Y',</span> <span class="pre">'X',</span> <span class="pre">'S']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_metadata</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/ome_tiff_reader.html#OmeTiffReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.ome_tiff_reader.OmeTiffReader" title="Permalink to this definition"></a></dt>
 <dd><p>Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
 API but for volumetric OME-TIFF images.</p>
 <dl class="field-list simple">
@@ -403,7 +314,7 @@ this will fail to read your file and raise an exception.</p>
 this reader will make a request to the referenced remote OME schema to validate.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_dims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">['Z',</span> <span class="pre">'Y',</span> <span class="pre">'X',</span> <span class="pre">'S']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_metadata</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/ome_tiff_reader.html#OmeTiffReader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">pathlib.Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chunk_dims</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">['Z',</span> <span class="pre">'Y',</span> <span class="pre">'X',</span> <span class="pre">'S']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_metadata</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/ome_tiff_reader.html#OmeTiffReader.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.__init__" title="Permalink to this definition"></a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods</p>
@@ -443,7 +354,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">channel_names</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>channel_names</strong> – Using available metadata, the list of strings representing channel names.</p>
+<dd class="field-odd"><p><strong>channel_names</strong> -- Using available metadata, the list of strings representing channel names.</p>
 </dd>
 </dl>
 </p></td>
@@ -451,7 +362,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_scene</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>scene</strong> – The current operating scene.</p>
+<dd class="field-odd"><p><strong>scene</strong> -- The current operating scene.</p>
 </dd>
 </dl>
 </p></td>
@@ -459,7 +370,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">current_scene_index</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>scene_index</strong> – The current operating scene index in the file.</p>
+<dd class="field-odd"><p><strong>scene_index</strong> -- The current operating scene index in the file.</p>
 </dd>
 </dl>
 </p></td>
@@ -467,7 +378,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dask_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>dask_data</strong> – The image as a dask array with the native dimension ordering.</p>
+<dd class="field-odd"><p><strong>dask_data</strong> -- The image as a dask array with the native dimension ordering.</p>
 </dd>
 </dl>
 </p></td>
@@ -475,7 +386,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>data</strong> – The image as a numpy array with native dimension ordering.</p>
+<dd class="field-odd"><p><strong>data</strong> -- The image as a numpy array with native dimension ordering.</p>
 </dd>
 </dl>
 </p></td>
@@ -483,7 +394,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dims</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>dims</strong> – Object with the paired dimension names and their sizes.</p>
+<dd class="field-odd"><p><strong>dims</strong> -- Object with the paired dimension names and their sizes.</p>
 </dd>
 </dl>
 </p></td>
@@ -491,7 +402,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dtype</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>dtype</strong> – Data-type of the image array’s elements.</p>
+<dd class="field-odd"><p><strong>dtype</strong> -- Data-type of the image array's elements.</p>
 </dd>
 </dl>
 </p></td>
@@ -499,7 +410,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">metadata</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>metadata</strong> – The metadata for the formats supported by the inhereting Reader.</p>
+<dd class="field-odd"><p><strong>metadata</strong> -- The metadata for the formats supported by the inhereting Reader.</p>
 </dd>
 </dl>
 </p></td>
@@ -507,7 +418,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_dask_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>dask_data</strong> – The stitched together mosaic image as a dask array.</p>
+<dd class="field-odd"><p><strong>dask_data</strong> -- The stitched together mosaic image as a dask array.</p>
 </dd>
 </dl>
 </p></td>
@@ -515,7 +426,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>data</strong> – The stitched together mosaic image as a numpy array.</p>
+<dd class="field-odd"><p><strong>data</strong> -- The stitched together mosaic image as a numpy array.</p>
 </dd>
 </dl>
 </p></td>
@@ -523,7 +434,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_tile_dims</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>tile_dims</strong> – The dimensions for each tile in the mosaic image.</p>
+<dd class="field-odd"><p><strong>tile_dims</strong> -- The dimensions for each tile in the mosaic image.</p>
 </dd>
 </dl>
 </p></td>
@@ -531,7 +442,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_xarray_dask_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>xarray_dask_data</strong> – The delayed mosaic image and metadata as an annotated data array.</p>
+<dd class="field-odd"><p><strong>xarray_dask_data</strong> -- The delayed mosaic image and metadata as an annotated data array.</p>
 </dd>
 </dl>
 </p></td>
@@ -539,7 +450,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mosaic_xarray_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>xarray_dask_data</strong> – The in-memory mosaic image and metadata as an annotated data array.</p>
+<dd class="field-odd"><p><strong>xarray_dask_data</strong> -- The in-memory mosaic image and metadata as an annotated data array.</p>
 </dd>
 </dl>
 </p></td>
@@ -547,7 +458,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.ome_metadata" title="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.ome_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ome_metadata</span></code></a></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>metadata</strong> – The original metadata transformed into the OME specfication.</p>
+<dd class="field-odd"><p><strong>metadata</strong> -- The original metadata transformed into the OME specfication.</p>
 </dd>
 </dl>
 </p></td>
@@ -555,7 +466,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.physical_pixel_sizes" title="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.physical_pixel_sizes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">physical_pixel_sizes</span></code></a></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>sizes</strong> – Using available metadata, the floats representing physical pixel sizes for</p>
+<dd class="field-odd"><p><strong>sizes</strong> -- Using available metadata, the floats representing physical pixel sizes for</p>
 </dd>
 </dl>
 </p></td>
@@ -563,7 +474,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><a class="reference internal" href="aicsimageio.readers.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.scenes" title="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.scenes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scenes</span></code></a></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>scenes</strong> – A tuple of valid scene ids in the file.</p>
+<dd class="field-odd"><p><strong>scenes</strong> -- A tuple of valid scene ids in the file.</p>
 </dd>
 </dl>
 </p></td>
@@ -571,7 +482,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>shape</strong> – Tuple of the image array’s dimensions.</p>
+<dd class="field-odd"><p><strong>shape</strong> -- Tuple of the image array's dimensions.</p>
 </dd>
 </dl>
 </p></td>
@@ -579,7 +490,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray_dask_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>xarray_dask_data</strong> – The delayed image and metadata as an annotated data array.</p>
+<dd class="field-odd"><p><strong>xarray_dask_data</strong> -- The delayed image and metadata as an annotated data array.</p>
 </dd>
 </dl>
 </p></td>
@@ -587,7 +498,7 @@ this reader will make a request to the referenced remote OME schema to validate.
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray_data</span></code></p></td>
 <td><p><dl class="field-list simple">
 <dt class="field-odd">returns</dt>
-<dd class="field-odd"><p><strong>xarray_data</strong> – The fully read image and metadata as an annotated data array.</p>
+<dd class="field-odd"><p><strong>xarray_data</strong> -- The fully read image and metadata as an annotated data array.</p>
 </dd>
 </dl>
 </p></td>
@@ -600,46 +511,30 @@ this reader will make a request to the referenced remote OME schema to validate.
 
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.
-
-    </p>
+    <p>&#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

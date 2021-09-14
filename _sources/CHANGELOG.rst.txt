@@ -25,6 +25,19 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/295>`_)
   [Jackson Maxfield Brown]
 
+Other
+~~~~~
+- admin/add-custom-reader-addition-docs  (`#305
+  <https://github.com/AllenCellModeling/aicsimageio/pull/305>`_)
+  [Jackson Maxfield Brown, Madison Swain-Bowden <bowdenm@spu.edu>    *
+  Grammer on object's    Co-authored-by: Madison Swain-Bowden
+  <bowdenm@spu.edu>    * Better CziReader custom dependency link    Co-
+  authored-by: Madison Swain-Bowden <bowdenm@spu.edu>    * Remove extra
+  words    Co-authored-by: Madison Swain-Bowden <bowdenm@spu.edu>    *
+  Better wording on benchmark additions    Co-authored-by: Madison
+  Swain-Bowden <bowdenm@spu.edu>    * Clean up Reader class impl section
+  Co-authored-by: Madison Swain-Bowden <bowdenm@spu.edu>]
+
 
 v4.1.0 (2021-08-10)
 -------------------

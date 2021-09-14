@@ -110,8 +110,8 @@ operate against the provided / stored xarray objects.
 If your `Reader` requires custom dependencies, add the custom dependencies
 to our [format_libs lookup in setup.py](https://github.com/AllenCellModeling/aicsimageio/blob/main/setup.py#L26).
 
-If you want your `Reader` to be used as a part of `AICSImage`
-object attempted reader resolution (i.e. the `AICSImage` object iterates
+If you want your `Reader` to be used as a part of the `AICSImage`
+object's attempted reader resolution (i.e. the `AICSImage` object iterates
 through `Reader` objects until a `Reader` can read the provided object),
 add your file format(s) + reader module path to our
 [FORMAT_IMPLEMENTATIONS lookup](https://github.com/AllenCellModeling/aicsimageio/blob/main/aicsimageio/formats.py).

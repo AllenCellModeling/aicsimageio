@@ -2,16 +2,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import contextlib
 from functools import lru_cache
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
-import contextlib
-
 
 import numpy as np
+import ome_types
 import xarray as xr
 from wrapt import ObjectProxy
-import ome_types
 
 from .. import dimensions, exceptions
 from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
@@ -93,9 +92,7 @@ class BioformatsReader(Reader):
         return self._to_xarray(delayed=True)
 
     def _read_immediate(self) -> xr.DataArray:
-        with LociFile(self._path) as rdr:
-            arr = self._to_xarray(delayed=False)
-        return arr
+        return self._to_xarray(delayed=False)
 
     @cached_property
     def ome_metadata(self) -> OME:
@@ -236,7 +233,7 @@ class LociFile:
 
     def close(self) -> None:
         """Close file."""
-        with contextlib.suppress(Attribute, ImportError, RuntimeError):
+        with contextlib.suppress(AttributeError, ImportError, RuntimeError):
             self._r.close()
 
     def to_numpy(self, series: Optional[int] = None) -> np.ndarray:

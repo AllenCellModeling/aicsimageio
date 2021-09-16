@@ -1,96 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from __future__ import annotations
+from ..utils.cached_property import cached_property
 
 from typing import TYPE_CHECKING, Any, Tuple
 
-import dask.array as da
-import numpy as np
 import xarray as xr
-from ..utils.cached_property import cached_property
+from .. import exceptions
 from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
+from ..metadata import utils as metadata_utils
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
-from ..types import PhysicalPixelSizes
+from ..dimensions import DEFAULT_DIMENSION_ORDER_LIST
 
 if TYPE_CHECKING:
-    from ome_types import OME
-    from bioformats_jar import loci
     from fsspec.spec import AbstractFileSystem
+    from ome_types import OME
 
     from .. import types
 
-    FormatReader = loci.formats.IFormatReader
 
-
-class LociReader:
-    def __init__(self, path: types.PathLike) -> None:
-        try:
-            from bioformats_jar import loci
-        except ImportError:
-            raise ImportError(
-                "bioformats_jar is required for this reader. "
-                "Install with `pip install aicsimageio[bioformats]`"
-            )
-
-        fmt = loci.formats
-        self._rdr = fmt.ChannelSeparator(fmt.ChannelFiller())
-        self._meta = fmt.MetadataTools.createOMEXMLMetadata()
-        self._rdr.setMetadataStore(self._meta)
-        self._rdr.setId(str(path))
-
-    @cached_property
-    def shape(self) -> Tuple[int, int, int, int, int]:
-        from bioformats_jar.utils import shape
-
-        return shape(self._rdr)
-
-    @cached_property
-    def dtype(self) -> str:
-        from bioformats_jar.utils import dtype
-
-        return dtype(self._rdr)
-
-    @cached_property
-    def xml(self) -> str:
-        return str(self._meta.dumpXML())
-
-    @cached_property
-    def ome_metadata(self) -> OME:
-        import ome_types
-
-        return ome_types.from_xml(self.xml)
-
-    def to_xarray(self, lazy: bool = True) -> xr.DataArray:
-        scene_index = 0  # TODO
-        # TODO: put in a utils method somewhere?
-        from .ome_tiff_reader import OmeTiffReader
-
-        _, coords = OmeTiffReader._get_dims_and_coords_from_ome(
-            ome=self.ome_metadata,
-            scene_index=scene_index,
-        )
-        image_data = self.to_dask() if lazy else self.to_numpy()
-        # this is currently hardcoded in reader2dask
-        dims = list("TCZYX")
-
-        return xr.DataArray(
-            image_data,
-            dims=dims,
-            coords=coords,  # type: ignore
-            attrs={
-                METADATA_UNPROCESSED: self.xml,
-                METADATA_PROCESSED: self.ome_metadata,
-            },
-        )
-
-    def to_dask(self) -> da.Array:
-        from bioformats_jar.utils import reader2dask
-
-        return reader2dask(self._rdr)
-
-    def to_numpy(self) -> np.ndarray:
-        return np.asarray(self.to_dask())
+try:
+    from ._loci_reader import LociFile
+except ImportError:
+    raise ImportError(
+        "bioformats_jar is required for this reader. "
+        "Install with `pip install aicsimageio[bioformats]`"
+    )
 
 
 class BioformatsReader(Reader):
@@ -98,7 +35,8 @@ class BioformatsReader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             # TODO: deal with remote data
-            LociReader(path)
+            l = LociFile(path, meta=False, memoize=False)
+            l.close()
             return True
 
         except Exception:
@@ -109,26 +47,60 @@ class BioformatsReader(Reader):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # n_series = LociReader(image)._rdr.getSeriesCount()
         # self._scenes: Tuple[str, ...] = tuple(f"Image:{i}" for i in range(n_series))
-        self._scenes: Tuple[str, ...] = ("Image:0",)
+        try:
+            with LociFile(self._path) as rdr:
+                self._scenes: Tuple[str, ...] = tuple(
+                    metadata_utils.generate_ome_image_id(i) for i in range(rdr._nseries)
+                )
+        except Exception:
+            raise exceptions.UnsupportedFileFormatError(
+                self.__class__.__name__, self._path
+            )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:
-        return LociReader(self._path).to_xarray(lazy=True)
+        return self._to_xarray(delayed=True)
 
     def _read_immediate(self) -> xr.DataArray:
-        return LociReader(self._path).to_xarray(lazy=False)
+        with LociFile(self._path) as rdr:
+            arr = self._to_xarray(delayed=False)
+        return arr
 
-    @property
+    @cached_property
     def ome_metadata(self) -> OME:
-        return LociReader(self._path).ome_metadata
+        with LociFile(self._path) as rdr:
+            meta = rdr.ome_metadata
+        return meta
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
-        z = self.ome_metadata.images[self.current_scene_index].pixels.physical_size_z
-        y = self.ome_metadata.images[self.current_scene_index].pixels.physical_size_y
-        x = self.ome_metadata.images[self.current_scene_index].pixels.physical_size_x
+        px = self.ome_metadata.images[self.current_scene_index].pixels
+        return PhysicalPixelSizes(
+            px.physical_size_z, px.physical_size_y, px.physical_size_x
+        )
 
-        return PhysicalPixelSizes(z, y, x)
+    def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
+        # TODO: put in a utils method somewhere?
+        from .ome_tiff_reader import OmeTiffReader
+
+        with LociFile(self._path) as rdr:
+            image_data = rdr.to_dask() if delayed else rdr.to_numpy()
+            xml = rdr.ome_xml
+            ome = rdr.ome_metadata
+            _, coords = OmeTiffReader._get_dims_and_coords_from_ome(
+                ome=ome,
+                scene_index=self.current_scene_index,
+            )
+
+        return xr.DataArray(
+            image_data,
+            dims=DEFAULT_DIMENSION_ORDER_LIST,
+            coords=coords,  # type: ignore
+            attrs={
+                METADATA_UNPROCESSED: xml,
+                METADATA_PROCESSED: ome,
+            },
+        )

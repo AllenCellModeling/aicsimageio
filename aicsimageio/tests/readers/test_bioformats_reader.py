@@ -11,7 +11,7 @@ from aicsimageio import dimensions, exceptions
 from aicsimageio.readers import BioformatsReader
 
 from ..conftest import LOCAL, get_resource_full_path, host
-from ..image_container_test_utils import (
+from aicsimageio.tests.image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
@@ -104,14 +104,13 @@ from ..image_container_test_utils import (
         ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            "Image:0",
+            ("Image:0",),
+            (1, 2, 1, 2048, 2048),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1"],  # not as nice as lif reader
+            (None, 0.325, 0.325),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -137,7 +136,7 @@ from ..image_container_test_utils import (
         ),
     ],
 )
-def test_ome_tiff_reader(
+def test_bioformats_reader(
     filename: str,
     host: str,
     set_scene: str,
@@ -197,7 +196,7 @@ def test_ome_tiff_reader(
             ],
             (0.29, 0.10833333333333334, 0.10833333333333334),
         ),
-        (
+        pytest.param(
             "variance-cfe.ome.tiff",
             "Image:0",
             ("Image:0",),
@@ -216,6 +215,8 @@ def test_ome_tiff_reader(
                 "CON_DNA",
             ],
             (0.29, 0.10833333333333332, 0.10833333333333332),
+            # java.util.zip.ZipException: unknown compression method
+            marks=pytest.mark.xfail,
         ),
         (
             "actk.ome.tiff",
@@ -313,6 +314,7 @@ def test_multi_scene_ome_tiff_reader(
     )
 
 
+@pytest.mark.skip
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "
@@ -375,8 +377,6 @@ def test_multi_resolution_ome_tiff_reader(
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=OME,
     )
-
-
 
 
 def test_micromanager_ome_tiff_main_file() -> None:

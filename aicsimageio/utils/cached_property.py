@@ -30,7 +30,8 @@ except ImportError:
                 return self
             if self.attrname is None:
                 raise TypeError(
-                    "Cannot use cached_property instance without calling __set_name__ on it."
+                    "Cannot use cached_property instance without calling "
+                    "__set_name__ on it."
                 )
             try:
                 # not all objects have __dict__ (e.g. class defines slots)
@@ -51,8 +52,9 @@ except ImportError:
                         try:
                             cache[self.attrname] = val
                         except TypeError:
+                            name = type(instance).__name__
                             msg = (
-                                f"The '__dict__' attribute on {type(instance).__name__!r} "
+                                f"The '__dict__' attribute on {name!r} "
                                 "instance does not support item assignment for caching "
                                 f"{self.attrname!r} property."
                             )

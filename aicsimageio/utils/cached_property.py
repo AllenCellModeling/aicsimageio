@@ -1,4 +1,16 @@
-from typing import Optional, Callable, Any
+"""
+TODO: remove when we drop support for python 3.7
+
+cached_property is in the standard library (functools) as of python 3.8.
+
+It transforms a method of a class into a property whose value is computed once and then
+cached as a normal attribute for the life of the instance. Similar to property(), with
+the addition of caching. Useful for expensive computed properties of instances that are
+otherwise effectively immutable.
+
+This is backported here
+"""
+from typing import Any, Callable, Optional
 
 try:
     from functools import cached_property
@@ -6,8 +18,6 @@ except ImportError:
     from threading import RLock
 
     _NOT_FOUND = object()
-
-    # backport from 3.8
 
     class cached_property:  # type: ignore # noqa
         def __init__(self, func: Callable):

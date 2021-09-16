@@ -44,6 +44,19 @@ def get_ome_metadata(path) -> "OME":
 
 
 class BioformatsReader(Reader):
+    """Bioformats reader using bioformats_jar and jpype.
+
+    Parameters
+    ----------
+    image : types.PathLike
+        path to file
+
+    Raises
+    ------
+    exceptions.UnsupportedFileFormatError
+        If the file is not supported by bioformats.
+    """
+
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
@@ -56,6 +69,7 @@ class BioformatsReader(Reader):
             return False
 
     def __init__(self, image: types.PathLike):
+
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
         try:
@@ -119,8 +133,16 @@ class BioformatsReader(Reader):
             },
         )
 
+    @staticmethod
+    def bioformats_version() -> str:
+        from bioformats_jar import get_loci
+
+        return get_loci().__version__
+
 
 class CoreMeta(NamedTuple):
+    """NamedTuple with core bioformats metadata. (not OME meta)"""
+
     shape: Tuple[int, int, int, int, int]
     dtype: str
     series_count: int
@@ -335,6 +357,7 @@ class LociFile:
 
 
 def _pixtype2dtype(pixeltype: int, little_endian: bool) -> str:
+    """convert a loci pixel type into a numpy dtype string."""
     from bioformats_jar import loci
 
     FT = loci.formats.FormatTools
@@ -351,25 +374,17 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> str:
     return ("<" if little_endian else ">") + fmt2type[pixeltype]
 
 
-class _ArrayMethodProxy:
-    def __init__(self, method, reader) -> None:
-        self.method = method
-        self._r = reader
-
-    def __repr__(self):
-        return repr(self.method)
-
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        import dask.array as da
-
-        with self._r:
-            result = self.method(*args, **kwds)
-        if isinstance(result, da.Array):
-            return _DaskArrayProxy(result, self._r)
-        return result
-
-
 class _DaskArrayProxy(ObjectProxy):
+    """Dask array wrapper that provides a 'file open' context when computing.
+
+    This is necessary because `LociFile.to_dask` returns an array with a mapped
+    underlying reader function that requires the file to be open.  But we don't want to
+    open/close the file on every single chunk.  So this wrap the `compute` and
+    `__array__` method in an open-file context manager.  For __getattr__, we return an
+    `ArrayMethodProxy` that again wraps the resulting object in a DaskArrayProxy if it
+    is a dask array.
+    """
+
     def __init__(self, wrapped, reader):
         super().__init__(wrapped)
         self._r = reader
@@ -399,7 +414,29 @@ class _DaskArrayProxy(ObjectProxy):
             return self.__wrapped__.__array_function__(func, types, args, kwargs)
 
 
-def _slice2width(slc, length):
+class _ArrayMethodProxy:
+    """Wraps method on a dask array and returns a DaskArrayProxy if the result of the
+    method is a dask array.  see details in DaskArrayProxy docstring."""
+
+    def __init__(self, method, reader) -> None:
+        self.method = method
+        self._r = reader
+
+    def __repr__(self):
+        return repr(self.method)
+
+    def __call__(self, *args: Any, **kwds: Any) -> Any:
+        import dask.array as da
+
+        with self._r:
+            result = self.method(*args, **kwds)
+        if isinstance(result, da.Array):
+            return _DaskArrayProxy(result, self._r)
+        return result
+
+
+def _slice2width(slc: slice, length: int) -> Tuple[int, int]:
+    """convert `slice` object into (start, width) """
     if slc.stop is not None or slc.start is not None:
         # NOTE: we're ignoring step != 1 here
         start, stop, _ = slc.indices(length)
@@ -408,11 +445,13 @@ def _slice2width(slc, length):
 
 
 @lru_cache
-def _hide_memoization_warning():
+def _hide_memoization_warning() -> None:
+    """HACK: this silences a warning about memoization for now
+
+    An illegal reflective access operation has occurred
+    https://github.com/ome/bioformats/issues/3659
+    """
     import jpype
 
-    # hack: this silences a warning about memoization for now
-    # "An illegal reflective access operation has occurred"
-    # https://github.com/ome/bioformats/issues/3659
     System = jpype.JPackage("java").lang.System
     System.err.close()

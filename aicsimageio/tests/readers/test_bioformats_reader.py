@@ -8,7 +8,7 @@ import pytest
 from ome_types import OME
 
 from aicsimageio import dimensions, exceptions
-from aicsimageio.readers import BioformatsReader
+from aicsimageio.readers.bioformats_reader import BioformatsReader
 from aicsimageio.tests.image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,

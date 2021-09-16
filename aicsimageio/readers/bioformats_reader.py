@@ -5,7 +5,16 @@ from __future__ import annotations
 import contextlib
 from functools import lru_cache
 from threading import Lock
-from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    NamedTuple,
+    Optional,
+    Tuple,
+    Union,
+)
 
 import numpy as np
 import ome_types
@@ -39,7 +48,7 @@ except ImportError:
     )
 
 
-def get_ome_metadata(path) -> "OME":
+def get_ome_metadata(path: types.PathLike) -> "OME":
     """Helper to retrieve OME meta from any compatible file, using bioformats."""
     with LociFile(path) as lf:
         return lf.ome_metadata
@@ -77,7 +86,8 @@ class BioformatsReader(Reader):
         try:
             with LociFile(self._path) as rdr:
                 self._scenes: Tuple[str, ...] = tuple(
-                    metadata_utils.generate_ome_image_id(i) for i in range(rdr._nseries)
+                    metadata_utils.generate_ome_image_id(i)
+                    for i in range(rdr.core_meta.series_count)
                 )
         except Exception:
             raise exceptions.UnsupportedFileFormatError(
@@ -143,7 +153,7 @@ class BioformatsReader(Reader):
 class CoreMeta(NamedTuple):
     """NamedTuple with core bioformats metadata. (not OME meta)"""
 
-    shape: Tuple[int, int, int, int, int]
+    shape: Tuple[int, int, int, int, int, int]
     dtype: str
     series_count: int
     is_rgb: bool
@@ -178,9 +188,9 @@ class LociFile:
     def __init__(
         self,
         path: Union[str, "Path"],
-        series=0,
-        meta=True,
-        memoize=50,
+        series: int = 0,
+        meta: bool = True,
+        memoize: Union[int, bool] = 50,
     ):
         loci = get_loci()
         self._path = str(path)
@@ -202,10 +212,9 @@ class LociFile:
             mo.set("nativend2.chunkmap", "False")
             self._r.setMetadataOptions(mo)
 
-        self._nseries = self._r.getSeriesCount()
         self.set_series(series)
 
-    def set_series(self, series=0):
+    def set_series(self, series: int=0) -> None:
         self._r.setSeries(series)
         self._core_meta = CoreMeta(
             (
@@ -257,7 +266,7 @@ class LociFile:
         nt, nc, nz, ny, nx, nrgb = self.core_meta.shape
         chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
         if nrgb > 1:
-            chunks = chunks + (nrgb,)
+            chunks = chunks + (nrgb,)  # type: ignore
         arr = da.map_blocks(
             self._dask_chunk,
             chunks=chunks,
@@ -302,7 +311,12 @@ class LociFile:
         self.close()
 
     def _get_plane(
-        self, t=0, c=0, z=0, y: slice = slice(None), x: slice = slice(None)
+        self,
+        t: int = 0,
+        c: int = 0,
+        z: int = 0,
+        y: slice = slice(None),
+        x: slice = slice(None),
     ) -> np.ndarray:
         """Load a single plane."""
         idx = self._r.getIndex(z, c, t)
@@ -326,7 +340,7 @@ class LociFile:
         # TODO: check this... we might need to reshaped the non interleaved case
         return im
 
-    def _dask_chunk(self, block_id: tuple) -> np.ndarray:
+    def _dask_chunk(self, block_id: Tuple[int, ...]) -> np.ndarray:
         # if someone indexes a 5D dask array as `arr[0,1,2]`, then the `info`
         # dict will contain the key: 'chunk-location': (0, 1, 2, 0, 0)
         # reader.getIndex() expects (Z, C, T) ...
@@ -379,53 +393,53 @@ class _DaskArrayProxy(ObjectProxy):
     is a dask array.
     """
 
-    def __init__(self, wrapped, reader):
+    def __init__(self, wrapped: da.Array, loci_file: LociFile) -> None:
         super().__init__(wrapped)
-        self._r = reader
+        self.lf = loci_file
 
-    def __getitem__(self, key):
-        return _DaskArrayProxy(self.__wrapped__.__getitem__(key), self._r)
+    def __getitem__(self, key: Any) -> _DaskArrayProxy:
+        return _DaskArrayProxy(self.__wrapped__.__getitem__(key), self.lf)
 
-    def __getattr__(self, key):
+    def __getattr__(self, key: Any) -> Any:
         attr = getattr(self.__wrapped__, key)
         if callable(attr):
-            return _ArrayMethodProxy(attr, self._r)
+            return _ArrayMethodProxy(attr, self.lf)
         return attr
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.__wrapped__)
 
-    def compute(self, **kwargs):
-        with self._r:
+    def compute(self, **kwargs: Any) -> np.ndarray:
+        with self.lf:
             return self.__wrapped__.compute(**kwargs)
 
-    def __array__(self, dtype=None, **kwargs):
-        with self._r:
+    def __array__(self, dtype: str = None, **kwargs: Any) -> np.ndarray:
+        with self.lf:
             return self.__wrapped__.__array__(dtype, **kwargs)
 
-    def __array_function__(self, func, types, args, kwargs):
-        with self._r:
-            return self.__wrapped__.__array_function__(func, types, args, kwargs)
+    def __array_function__(self, *args: Any) -> Any:
+        with self.lf:
+            return self.__wrapped__.__array_function__(*args)
 
 
 class _ArrayMethodProxy:
     """Wraps method on a dask array and returns a DaskArrayProxy if the result of the
     method is a dask array.  see details in DaskArrayProxy docstring."""
 
-    def __init__(self, method, reader) -> None:
+    def __init__(self, method: Callable, loci_file: LociFile) -> None:
         self.method = method
-        self._r = reader
+        self.lf = loci_file
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self.method)
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         import dask.array as da
 
-        with self._r:
+        with self.lf:
             result = self.method(*args, **kwds)
         if isinstance(result, da.Array):
-            return _DaskArrayProxy(result, self._r)
+            return _DaskArrayProxy(result, self.lf)
         return result
 
 

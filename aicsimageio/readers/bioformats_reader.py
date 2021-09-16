@@ -12,7 +12,7 @@ from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
-from ..dimensions import DEFAULT_DIMENSION_ORDER_LIST
+from .. import dimensions
 
 if TYPE_CHECKING:
     from fsspec.spec import AbstractFileSystem
@@ -43,10 +43,8 @@ class BioformatsReader(Reader):
             return False
 
     def __init__(self, image: types.PathLike):
-        # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        # n_series = LociReader(image)._rdr.getSeriesCount()
-        # self._scenes: Tuple[str, ...] = tuple(f"Image:{i}" for i in range(n_series))
+
         try:
             with LociFile(self._path) as rdr:
                 self._scenes: Tuple[str, ...] = tuple(
@@ -90,6 +88,7 @@ class BioformatsReader(Reader):
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             xml = rdr.ome_xml
             ome = rdr.ome_metadata
+            rgb = rdr.core_meta.is_rgb
             _, coords = OmeTiffReader._get_dims_and_coords_from_ome(
                 ome=ome,
                 scene_index=self.current_scene_index,
@@ -97,7 +96,9 @@ class BioformatsReader(Reader):
 
         return xr.DataArray(
             image_data,
-            dims=DEFAULT_DIMENSION_ORDER_LIST,
+            dims=dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
+            if rgb
+            else dimensions.DEFAULT_DIMENSION_ORDER_LIST,
             coords=coords,  # type: ignore
             attrs={
                 METADATA_UNPROCESSED: xml,

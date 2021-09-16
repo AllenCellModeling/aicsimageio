@@ -2,23 +2,31 @@ from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, Union
 from functools import lru_cache
 import numpy as np
+from numpy.core.shape_base import block
 from wrapt import ObjectProxy
+from typing import NamedTuple
 
 if TYPE_CHECKING:
     from pathlib import Path
+    from bioformats_jar import loci
 
     import dask.array as da
     from ome_types import OME
 
 
-@lru_cache
-def _hide_memoization_warning():
-    import jpype
-    # hack: this silences a warning about memoization for now
-    # "An illegal reflective access operation has occurred"
-    # https://github.com/ome/bioformats/issues/3659
-    System = jpype.JPackage("java").lang.System
-    System.err.close()
+class CoreMeta(NamedTuple):
+    shape: Tuple[int, int, int, int, int]
+    dtype: str
+    series_count: int
+    is_rgb: bool
+    is_interleaved: bool
+    dimension_order: str
+
+
+def get_ome_metadata(path) -> 'OME':
+    """Helper to retrieve OME meta from any compatible file, using bioformats."""
+    with LociFile(path) as lf:
+        return lf.ome_metadata
 
 
 class LociFile:
@@ -57,7 +65,7 @@ class LociFile:
         self._path = str(path)
         self._r = loci.formats.ImageReader()
         if meta:
-            self._r.setMetadataStore(self._create_meta())
+            self._r.setMetadataStore(self._create_ome_meta())
 
         # memoize to save time on later re-openings of the same file.
         if memoize > 0:
@@ -78,16 +86,25 @@ class LociFile:
 
     def set_series(self, series=0):
         self._r.setSeries(series)
-        self._shape: Tuple[int, int, int, int, int] = (
-            self._r.getSizeT(),
-            self._r.getSizeC(),
-            self._r.getSizeZ(),
-            self._r.getSizeY(),
-            self._r.getSizeX(),
+        self._core_meta = CoreMeta(
+            (
+                self._r.getSizeT(),
+                self._r.getEffectiveSizeC(),
+                self._r.getSizeZ(),
+                self._r.getSizeY(),
+                self._r.getSizeX(),
+                self._r.getRGBChannelCount(),
+            ),
+            _pixtype2dtype(self._r.getPixelType(), self._r.isLittleEndian()),
+            self._r.getSeriesCount(),
+            self._r.isRGB(),
+            self._r.isInterleaved(),
+            self._r.getDimensionOrder(),
         )
-        self._dtype: str = _pixtype2dtype(
-            self._r.getPixelType(), self._r.isLittleEndian()
-        )
+
+    @property
+    def core_meta(self) -> CoreMeta:
+        return self._core_meta
 
     def open(self) -> None:
         """Open file."""
@@ -115,11 +132,14 @@ class LociFile:
         if series is not None:
             self._r.setSeries(series)
 
-        nt, nc, nz, ny, nx = self._shape
+        nt, nc, nz, ny, nx, nrgb = self.core_meta.shape
+        chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
+        if nrgb > 1:
+            chunks = chunks + (nrgb,)
         arr = da.map_blocks(
             self._dask_chunk,
-            chunks=((1,) * nt, (1,) * nc, (1,) * nz, (ny,), (nx,)),
-            dtype=self._dtype,
+            chunks=chunks,
+            dtype=self.core_meta.dtype,
         )
         return DaskArrayProxy(arr, self)
 
@@ -172,15 +192,24 @@ class LociFile:
     ) -> np.ndarray:
         """Load a single plane."""
         idx = self._r.getIndex(z, c, t)
-        nt, nc, nz, ny, nx = self._shape
+        *_, ny, nx, nrgb = self.core_meta.shape
         ystart, ywidth = _slice2width(y, ny)
         xstart, xwidth = _slice2width(x, nx)
         with self._lock:
             buffer = self._r.openBytes(idx, xstart, ystart, xwidth, ywidth)
             # TODO: check what the bare minimim amount of copying is to prevent
             # reading incorrect regions (doesnt' segfault, but can get weird)
-            im = np.frombuffer(buffer[:], self._dtype).copy()
-        im.shape = (self._r.getSizeY(), self._r.getSizeX())
+            im = np.frombuffer(buffer[:], self.core_meta.dtype).copy()
+        if nrgb > 1:
+            # TODO: check this with some examples
+            if self.core_meta.is_interleaved:
+                im.shape = (ywidth, xwidth, nrgb)
+            else:
+                im.shape = (nrgb, ywidth, xwidth)
+                im = np.transpose(im, (1, 2, 0))
+        else:
+            im.shape = (ywidth, xwidth)
+        # TODO: check this... we might need to reshaped the non interleaved case
         return im
 
     def _dask_chunk(self, block_id: tuple) -> np.ndarray:
@@ -198,7 +227,7 @@ class LociFile:
     _service: Optional["loci.common.services.ServiceFactory"] = None
 
     @classmethod
-    def _create_meta(cls) -> Any:
+    def _create_ome_meta(cls) -> Any:
         from bioformats_jar import loci
 
         if not cls._service:
@@ -278,3 +307,14 @@ def _slice2width(slc, length):
         start, stop, _ = slc.indices(length)
         return min(start, stop), abs(stop - start)
     return 0, length
+
+
+@lru_cache
+def _hide_memoization_warning():
+    import jpype
+
+    # hack: this silences a warning about memoization for now
+    # "An illegal reflective access operation has occurred"
+    # https://github.com/ome/bioformats/issues/3659
+    System = jpype.JPackage("java").lang.System
+    System.err.close()

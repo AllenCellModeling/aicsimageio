@@ -215,8 +215,6 @@ def test_bioformats_reader(
                 "CON_DNA",
             ],
             (0.29, 0.10833333333333332, 0.10833333333333332),
-            # java.util.zip.ZipException: unknown compression method
-            marks=pytest.mark.xfail,
         ),
         (
             "actk.ome.tiff",

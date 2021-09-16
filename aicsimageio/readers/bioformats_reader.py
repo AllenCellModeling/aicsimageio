@@ -5,10 +5,13 @@ from __future__ import annotations
 from functools import lru_cache
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
+import contextlib
+
 
 import numpy as np
 import xarray as xr
 from wrapt import ObjectProxy
+import ome_types
 
 from .. import dimensions, exceptions
 from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
@@ -61,8 +64,8 @@ class BioformatsReader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             # TODO: deal with remote data
-            l = LociFile(path, meta=False, memoize=False)
-            l.close()
+            f = LociFile(path, meta=False, memoize=False)
+            f.close()
             return True
 
         except Exception:
@@ -233,10 +236,8 @@ class LociFile:
 
     def close(self) -> None:
         """Close file."""
-        try:
+        with contextlib.suppress(Attribute, ImportError, RuntimeError):
             self._r.close()
-        except (ImportError, RuntimeError):
-            pass
 
     def to_numpy(self, series: Optional[int] = None) -> np.ndarray:
         """Create numpy array for the current series."""
@@ -289,10 +290,6 @@ class LociFile:
     @property
     def ome_metadata(self) -> "OME":
         """Return OME object parsed by ome_types."""
-        import ome_types
-
-        from ..metadata import utils as metadata_utils
-
         xml = metadata_utils.clean_ome_xml_for_known_issues(self.ome_xml)
         return ome_types.from_xml(xml)
 
@@ -444,7 +441,7 @@ def _slice2width(slc: slice, length: int) -> Tuple[int, int]:
     return 0, length
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def _hide_memoization_warning() -> None:
     """HACK: this silences a warning about memoization for now
 

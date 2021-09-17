@@ -214,7 +214,7 @@ class LociFile:
 
         self.set_series(series)
 
-    def set_series(self, series: int=0) -> None:
+    def set_series(self, series: int = 0) -> None:
         self._r.setSeries(series)
         self._core_meta = CoreMeta(
             (

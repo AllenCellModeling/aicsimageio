@@ -27,6 +27,9 @@ Fix
 
 Other
 ~~~~~
+- Add .pre-commit-config.yaml  (`#308
+  <https://github.com/AllenCellModeling/aicsimageio/pull/308>`_) [Talley
+  Lambert]
 - admin/add-custom-reader-addition-docs  (`#305
   <https://github.com/AllenCellModeling/aicsimageio/pull/305>`_)
   [Jackson Maxfield Brown, Madison Swain-Bowden <bowdenm@spu.edu>    *

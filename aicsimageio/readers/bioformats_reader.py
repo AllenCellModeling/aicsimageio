@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
-import contextlib
 from functools import lru_cache
 from threading import Lock
 from typing import (
@@ -17,8 +16,8 @@ from typing import (
 )
 
 import numpy as np
-import ome_types
 import xarray as xr
+from ome_types import OME
 from wrapt import ObjectProxy
 
 from .. import dimensions, exceptions
@@ -35,7 +34,6 @@ if TYPE_CHECKING:
     import dask.array as da
     from bioformats_jar import loci
     from fsspec.spec import AbstractFileSystem
-    from ome_types import OME
 
     from .. import types
 
@@ -48,9 +46,9 @@ except ImportError:
     )
 
 
-def get_ome_metadata(path: types.PathLike) -> "OME":
+def get_ome_metadata(path: types.PathLike, original_meta: bool = False) -> OME:
     """Helper to retrieve OME meta from any compatible file, using bioformats."""
-    with LociFile(path) as lf:
+    with LociFile(path, meta=True, original_meta=original_meta, memoize=False) as lf:
         return lf.ome_metadata
 
 
@@ -159,6 +157,7 @@ class CoreMeta(NamedTuple):
     is_rgb: bool
     is_interleaved: bool
     dimension_order: str
+    resolution_count: int
 
 
 class LociFile:
@@ -190,6 +189,7 @@ class LociFile:
         path: Union[str, "Path"],
         series: int = 0,
         meta: bool = True,
+        original_meta: bool = False,
         memoize: Union[int, bool] = 50,
     ):
         loci = get_loci()
@@ -197,6 +197,8 @@ class LociFile:
         self._r = loci.formats.ImageReader()
         if meta:
             self._r.setMetadataStore(self._create_ome_meta())
+        if original_meta:
+            self._r.setOriginalMetadataPopulated(True)
 
         # memoize to save time on later re-openings of the same file.
         if memoize > 0:
@@ -230,6 +232,7 @@ class LociFile:
             self._r.isRGB(),
             self._r.isInterleaved(),
             self._r.getDimensionOrder(),
+            self._r.getResolutionCount(),
         )
 
     @property
@@ -242,19 +245,14 @@ class LociFile:
 
     def close(self) -> None:
         """Close file."""
-        with contextlib.suppress(AttributeError, ImportError, RuntimeError):
+        try:
             self._r.close()
+        except (AttributeError, ImportError, RuntimeError):
+            pass
 
     def to_numpy(self, series: Optional[int] = None) -> np.ndarray:
         """Create numpy array for the current series."""
         return np.asarray(self.to_dask(series))
-        # doesn't seem any faster ...
-        # from itertools import product
-        # nt, nc, nz, *_ = self._shape
-        # out = np.empty(self._shape)
-        # for z, c, t in product(range(nz), range(nc), range(nt)):
-        #     out[t, c, z] = self._get_plane(z, c, t)
-        # return out
 
     def to_dask(self, series: Optional[int] = None) -> "da.Array":
         """Create dask array for the current series."""
@@ -294,10 +292,10 @@ class LociFile:
             return str(store.dumpXML()) if store else ""
 
     @property
-    def ome_metadata(self) -> "OME":
+    def ome_metadata(self) -> OME:
         """Return OME object parsed by ome_types."""
         xml = metadata_utils.clean_ome_xml_for_known_issues(self.ome_xml)
-        return ome_types.from_xml(xml)
+        return OME.from_xml(xml)
 
     def __enter__(self) -> "LociFile":
         if not self.is_open:

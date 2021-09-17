@@ -190,7 +190,7 @@ class LociFile:
         series: int = 0,
         meta: bool = True,
         original_meta: bool = False,
-        memoize: Union[int, bool] = 50,
+        memoize: Union[int, bool] = 0,
     ):
         loci = get_loci()
         self._path = str(path)
@@ -265,12 +265,12 @@ class LociFile:
         chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
         if nrgb > 1:
             chunks = chunks + (nrgb,)  # type: ignore
-        arr = da.map_blocks(
+        return da.map_blocks(
             self._dask_chunk,
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
-        return _DaskArrayProxy(arr, self)
+        # return _DaskArrayProxy(arr, self)
 
     @property
     def is_open(self) -> bool:
@@ -317,25 +317,30 @@ class LociFile:
         x: slice = slice(None),
     ) -> np.ndarray:
         """Load a single plane."""
-        idx = self._r.getIndex(z, c, t)
-        *_, ny, nx, nrgb = self.core_meta.shape
-        ystart, ywidth = _slice2width(y, ny)
-        xstart, xwidth = _slice2width(x, nx)
         with self._lock:
+            was_open = self.is_open
+            if not was_open:
+                self.open()
+            idx = self._r.getIndex(z, c, t)
+            *_, ny, nx, nrgb = self.core_meta.shape
+            ystart, ywidth = _slice2width(y, ny)
+            xstart, xwidth = _slice2width(x, nx)
             buffer = self._r.openBytes(idx, xstart, ystart, xwidth, ywidth)
             # TODO: check what the bare minimim amount of copying is to prevent
             # reading incorrect regions (doesnt' segfault, but can get weird)
             im = np.frombuffer(buffer[:], self.core_meta.dtype).copy()
-        if nrgb > 1:
-            # TODO: check this with some examples
-            if self.core_meta.is_interleaved:
-                im.shape = (ywidth, xwidth, nrgb)
+            if nrgb > 1:
+                # TODO: check this with some examples
+                if self.core_meta.is_interleaved:
+                    im.shape = (ywidth, xwidth, nrgb)
+                else:
+                    im.shape = (nrgb, ywidth, xwidth)
+                    im = np.transpose(im, (1, 2, 0))
             else:
-                im.shape = (nrgb, ywidth, xwidth)
-                im = np.transpose(im, (1, 2, 0))
-        else:
-            im.shape = (ywidth, xwidth)
-        # TODO: check this... we might need to reshaped the non interleaved case
+                im.shape = (ywidth, xwidth)
+            # TODO: check this... we might need to reshaped the non interleaved case
+            if not was_open:
+                self.close()
         return im
 
     def _dask_chunk(self, block_id: Tuple[int, ...]) -> np.ndarray:

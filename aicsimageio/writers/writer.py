@@ -45,4 +45,3 @@ class Writer(ABC):
         """
         # There are no requirements for n-dimensions of data.
         # The data provided can be 2D - ND.
-        pass

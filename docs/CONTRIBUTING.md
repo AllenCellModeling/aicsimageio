@@ -49,13 +49,20 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
         make build-with-remote
 
-8.  Commit your changes and push your branch to GitHub:
+8.  (Optional) If you'd like to have linting checks run automatically prior to
+    every `git commit`, then you can install a commit-hook that runs
+    [pre-commit](https://pre-commit.com/), as follows:
+
+        pip install pre-commit
+        pre-commit install
+
+9.  Commit your changes and push your branch to GitHub:
 
         git add .
         git commit -m "Resolves gh-###. Your detailed description of your changes."
         git push origin {your_development_type}/short-description
 
-9.  Submit a pull request through the GitHub website.
+10. Submit a pull request through the GitHub website.
 
 ## Adding a New Custom Reader
 

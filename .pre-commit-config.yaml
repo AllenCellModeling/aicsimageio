@@ -1,0 +1,26 @@
+exclude: aicsimageio/metadata/czi-to-ome-xslt/
+files: aicsimageio
+repos:
+    - repo: https://github.com/PyCQA/flake8
+      rev: 3.9.2
+      hooks:
+          - id: flake8
+            additional_dependencies: [flake8-typing-imports, flake8-debugger]
+            args: [--count, --show-source, --statistics, --min-python-version=3.7.0]
+    - repo: https://github.com/myint/autoflake
+      rev: v1.4
+      hooks:
+          - id: autoflake
+            args: ["--in-place", "--remove-all-unused-imports"]
+    - repo: https://github.com/PyCQA/isort
+      rev: 5.9.3
+      hooks:
+          - id: isort
+    - repo: https://github.com/psf/black
+      rev: 21.9b0
+      hooks:
+          - id: black
+    - repo: https://github.com/pre-commit/mirrors-mypy
+      rev: v0.910
+      hooks:
+          - id: mypy

@@ -14,7 +14,7 @@ from ome_types import OME
 
 from .. import constants, dimensions, exceptions, types
 from ..metadata import utils as metadata_utils
-from ..utils import io_utils
+from ..utils import io_utils, ome_utils
 from ..utils.cached_property import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
@@ -102,34 +102,25 @@ class BioformatsReader(Reader):
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
-        px = self.ome_metadata.images[self.current_scene_index].pixels
-        return types.PhysicalPixelSizes(
-            px.physical_size_z, px.physical_size_y, px.physical_size_x
-        )
+        return ome_utils.physical_pixel_sizes(self.metadata, self.current_scene_index)
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
-        # TODO: put in a utils method somewhere?
-        from .ome_tiff_reader import OmeTiffReader
-
         with LociFile(self._path) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
-            xml = rdr.ome_xml
-            ome = rdr.ome_metadata
-            rgb = rdr.core_meta.is_rgb
-            _, coords = OmeTiffReader._get_dims_and_coords_from_ome(
-                ome=ome,
+            _, coords = ome_utils.get_dims_and_coords_from_ome(
+                ome=rdr.ome_metadata,
                 scene_index=self.current_scene_index,
             )
 
         return xr.DataArray(
             image_data,
             dims=dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
-            if rgb
+            if rdr.core_meta.is_rgb
             else dimensions.DEFAULT_DIMENSION_ORDER_LIST,
             coords=coords,  # type: ignore
             attrs={
-                constants.METADATA_UNPROCESSED: xml,
-                constants.METADATA_PROCESSED: ome,
+                constants.METADATA_UNPROCESSED: rdr.ome_xml,
+                constants.METADATA_PROCESSED: rdr.ome_metadata,
             },
         )
 

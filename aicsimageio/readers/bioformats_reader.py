@@ -6,6 +6,7 @@ from functools import lru_cache
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
 
+import dask.array as da
 import numpy as np
 import xarray as xr
 from ome_types import OME
@@ -20,7 +21,6 @@ from .reader import Reader
 if TYPE_CHECKING:
     from pathlib import Path
 
-    import dask.array as da
     from bioformats_jar import loci
     from fsspec.spec import AbstractFileSystem
 
@@ -140,7 +140,7 @@ class CoreMeta(NamedTuple):
     """NamedTuple with core bioformats metadata. (not OME meta)"""
 
     shape: Tuple[int, int, int, int, int, int]
-    dtype: str
+    dtype: np.dtype
     series_count: int
     is_rgb: bool
     is_interleaved: bool
@@ -244,8 +244,6 @@ class LociFile:
 
     def to_dask(self, series: Optional[int] = None) -> "da.Array":
         """Create dask array for the current series."""
-        import dask.array as da
-
         if series is not None:
             self._r.setSeries(series)
 
@@ -313,10 +311,9 @@ class LociFile:
             *_, ny, nx, nrgb = self.core_meta.shape
             ystart, ywidth = _slice2width(y, ny)
             xstart, xwidth = _slice2width(x, nx)
-            buffer = self._r.openBytes(idx, xstart, ystart, xwidth, ywidth)
-            # TODO: check what the bare minimim amount of copying is to prevent
-            # reading incorrect regions (doesnt' segfault, but can get weird)
-            im = np.frombuffer(buffer[:], self.core_meta.dtype).copy()
+            buffer = bytearray(ny * nx * nrgb * self.core_meta.dtype.itemsize)
+            self._r.openBytes(idx, buffer, xstart, ystart, xwidth, ywidth)
+            im = np.frombuffer(buffer, self.core_meta.dtype)
             if nrgb > 1:
                 # TODO: check this with some examples
                 if self.core_meta.is_interleaved:
@@ -355,7 +352,7 @@ class LociFile:
         return cls._service.createOMEXMLMetadata()
 
 
-def _pixtype2dtype(pixeltype: int, little_endian: bool) -> str:
+def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
     """convert a loci pixel type into a numpy dtype string."""
     from bioformats_jar import loci
 
@@ -370,7 +367,7 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> str:
         FT.FLOAT: "f4",
         FT.DOUBLE: "f8",
     }
-    return ("<" if little_endian else ">") + fmt2type[pixeltype]
+    return np.dtype(("<" if little_endian else ">") + fmt2type[pixeltype])
 
 
 def _slice2width(slc: slice, length: int) -> Tuple[int, int]:

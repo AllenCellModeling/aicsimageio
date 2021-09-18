@@ -26,6 +26,7 @@ if TYPE_CHECKING:
 
 
 try:
+    import jpype
     from bioformats_jar import get_loci
 except ImportError:
     raise ImportError(
@@ -35,7 +36,11 @@ except ImportError:
 
 
 class BioformatsReader(Reader):
-    """Bioformats reader using bioformats_jar and jpype.
+    """Read files using bioformats.
+
+    This reader requires bioformats_jar to be installed in the environment, and requires
+    the java executable to be available on the path, or via the JAVA_HOME environment
+    variable.
 
     Parameters
     ----------
@@ -75,6 +80,8 @@ class BioformatsReader(Reader):
                     metadata_utils.generate_ome_image_id(i)
                     for i in range(rdr.core_meta.series_count)
                 )
+        except jpype.JVMNotFoundException:
+            raise
         except Exception:
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
@@ -92,12 +99,25 @@ class BioformatsReader(Reader):
 
     @cached_property
     def ome_metadata(self) -> OME:
+        """Return OME object parsed by ome_types."""
         with LociFile(self._path) as rdr:
             meta = rdr.ome_metadata
         return meta
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
+        """
+        Returns
+        -------
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
+        """
         return ome_utils.physical_pixel_sizes(self.metadata, self.current_scene_index)
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
@@ -122,6 +142,7 @@ class BioformatsReader(Reader):
 
     @staticmethod
     def bioformats_version() -> str:
+        """The version of the bioformats_package.jar being used."""
         from bioformats_jar import get_loci
 
         return get_loci().__version__
@@ -171,7 +192,15 @@ class LociFile:
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
     ):
-        loci = get_loci()
+        try:
+            loci = get_loci()
+        except jpype.JVMNotFoundException as e:
+            raise type(e)(
+                str(e) + "\n\nBioformatsReader requires a java executable to be "
+                "available in your environment. If you are using conda, you can "
+                "install with `conda install -c conda-forge openjdk`. "
+            )
+
         self._path = str(path)
         self._r = loci.formats.ImageReader()
         if meta:
@@ -363,6 +392,7 @@ class LociFile:
 
     @classmethod
     def _create_ome_meta(cls) -> Any:
+        """create an OMEXMLMetadata object to populate"""
         from bioformats_jar import get_loci
 
         loci = get_loci()

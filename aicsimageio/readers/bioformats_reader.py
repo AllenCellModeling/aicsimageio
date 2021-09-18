@@ -447,7 +447,7 @@ class _ArrayMethodProxy:
 
 
 def _slice2width(slc: slice, length: int) -> Tuple[int, int]:
-    """convert `slice` object into (start, width) """
+    """convert `slice` object into (start, width)"""
     if slc.stop is not None or slc.start is not None:
         # NOTE: we're ignoring step != 1 here
         start, stop, _ = slc.indices(length)

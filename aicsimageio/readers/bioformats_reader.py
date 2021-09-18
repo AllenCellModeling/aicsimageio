@@ -12,8 +12,7 @@ import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
 
-from .. import dimensions, exceptions, types
-from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
+from .. import constants, dimensions, exceptions, types
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from ..utils.cached_property import cached_property
@@ -21,9 +20,6 @@ from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
-    from bioformats_jar import loci
     from fsspec.spec import AbstractFileSystem
 
 
@@ -47,7 +43,7 @@ class BioformatsReader(Reader):
 
     Parameters
     ----------
-    image : types.PathLike
+    image : Path or str
         path to file
 
     Raises
@@ -132,8 +128,8 @@ class BioformatsReader(Reader):
             else dimensions.DEFAULT_DIMENSION_ORDER_LIST,
             coords=coords,  # type: ignore
             attrs={
-                METADATA_UNPROCESSED: xml,
-                METADATA_PROCESSED: ome,
+                constants.METADATA_UNPROCESSED: xml,
+                constants.METADATA_PROCESSED: ome,
             },
         )
 
@@ -166,7 +162,7 @@ class LociFile:
 
     Parameters
     ----------
-    path : Union[str, Path]
+    path : str or Path
         path to file
     series : int, optional
         the image series to read, by default 0
@@ -182,7 +178,7 @@ class LociFile:
 
     def __init__(
         self,
-        path: Union[str, "Path"],
+        path: types.PathLike,
         series: int = 0,
         meta: bool = True,
         original_meta: bool = False,
@@ -348,12 +344,13 @@ class LociFile:
         im = self._get_plane(t, c, z)
         return im[np.newaxis, np.newaxis, np.newaxis]
 
-    _service: Optional["loci.common.services.ServiceFactory"] = None
+    _service: Any = None
 
     @classmethod
     def _create_ome_meta(cls) -> Any:
-        from bioformats_jar import loci
+        from bioformats_jar import get_loci
 
+        loci = get_loci()
         if not cls._service:
             factory = loci.common.services.ServiceFactory()
             cls._service = factory.getInstance(loci.formats.services.OMEXMLService)
@@ -362,9 +359,9 @@ class LociFile:
 
 def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
     """convert a loci pixel type into a numpy dtype string."""
-    from bioformats_jar import loci
+    from bioformats_jar import get_loci
 
-    FT = loci.formats.FormatTools
+    FT = get_loci().formats.FormatTools
     fmt2type: Dict[int, str] = {
         FT.INT8: "i1",
         FT.UINT8: "u1",

@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
 import dask.array as da
 import numpy as np
 import xarray as xr
+from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
 
 from .. import dimensions, exceptions, types
@@ -58,7 +59,8 @@ class BioformatsReader(Reader):
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
-            # TODO: deal with remote data
+            if not isinstance(fs, LocalFileSystem):
+                return False
             f = LociFile(path, meta=False, memoize=False)
             f.close()
             return True
@@ -67,8 +69,13 @@ class BioformatsReader(Reader):
             return False
 
     def __init__(self, image: types.PathLike):
-
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        # Catch non-local file system
+        if not isinstance(self._fs, LocalFileSystem):
+            raise ValueError(
+                f"Cannot read Bioformats from non-local file system. "
+                f"Received URI: {self._path}, which points to {type(self._fs)}."
+            )
 
         try:
             with LociFile(self._path) as rdr:

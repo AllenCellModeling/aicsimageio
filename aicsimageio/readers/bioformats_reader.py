@@ -34,12 +34,6 @@ except ImportError:
     )
 
 
-def get_ome_metadata(path: types.PathLike, original_meta: bool = False) -> OME:
-    """Helper to retrieve OME meta from any compatible file, using bioformats."""
-    with LociFile(path, meta=True, original_meta=original_meta, memoize=False) as lf:
-        return lf.ome_metadata
-
-
 class BioformatsReader(Reader):
     """Bioformats reader using bioformats_jar and jpype.
 
@@ -213,7 +207,7 @@ class LociFile:
                 self._r.getRGBChannelCount(),
             ),
             _pixtype2dtype(self._r.getPixelType(), self._r.isLittleEndian()),
-            self._r.getSeriesCount(),
+            self._r.getSeCiesCount(),
             self._r.isRGB(),
             self._r.isInterleaved(),
             self._r.getDimensionOrder(),
@@ -299,20 +293,46 @@ class LociFile:
         y: slice = slice(None),
         x: slice = slice(None),
     ) -> np.ndarray:
-        """Load a single plane."""
+        """Load bytes from a single plane.
+
+        Parameters
+        ----------
+        t : int, optional
+            the time index, by default 0
+        c : int, optional
+            the channel index, by default 0
+        z : int, optional
+            the z index, by default 0
+        y : slice, optional
+            a slice object to select a Y subset of the plane, by default: full axis.
+        x : slice, optional
+            a slice object to select a X subset of the plane, by default: full axis.
+
+        Returns
+        -------
+        np.ndarray
+            array of requested bytes.
+        """
         with self._lock:
             was_open = self.is_open
             if not was_open:
                 self.open()
-            idx = self._r.getIndex(z, c, t)
+
             *_, ny, nx, nrgb = self.core_meta.shape
+
+            # get bytes from bioformats
+            idx = self._r.getIndex(z, c, t)
             ystart, ywidth = _slice2width(y, ny)
             xstart, xwidth = _slice2width(x, nx)
+
+            # create buffer first on the python side
             buffer = bytearray(ny * nx * nrgb * self.core_meta.dtype.itemsize)
             self._r.openBytes(idx, buffer, xstart, ystart, xwidth, ywidth)
+            # convert buffer to numpy array
             im = np.frombuffer(buffer, self.core_meta.dtype)
+
+            # reshape
             if nrgb > 1:
-                # TODO: check this with some examples
                 if self.core_meta.is_interleaved:
                     im.shape = (ywidth, xwidth, nrgb)
                 else:
@@ -320,19 +340,21 @@ class LociFile:
                     im = np.transpose(im, (1, 2, 0))
             else:
                 im.shape = (ywidth, xwidth)
-            # TODO: check this... we might need to reshaped the non interleaved case
+
             if not was_open:
                 self.close()
+
         return im
 
     def _dask_chunk(self, block_id: Tuple[int, ...]) -> np.ndarray:
-        # if someone indexes a 5D dask array as `arr[0,1,2]`, then the `info`
-        # dict will contain the key: 'chunk-location': (0, 1, 2, 0, 0)
-        # reader.getIndex() expects (Z, C, T) ...
-        # We ASSUME that the final dask array is in the order TCZYX, so chunk-location
-        # will be coming in as (T, C, Z, Y, X). `[2::-1]`` converts that to (Z, C, T)
-        # TODO: we could either use the native getDimensionOrder? (or not) or let
-        # the user
+        """Retrieve `block_id` from array.
+
+        This function is for map_blocks (called in `to_dask`).
+        If someone indexes a 5D dask array as `arr[0, 1, 2]`, then 'block_id'
+        will be (0, 1, 2, 0, 0)
+        """
+        # Our convention is that the final dask array is in the order TCZYX, so
+        # block_id will be coming in as (T, C, Z, Y, X).
         t, c, z, *_ = block_id
         im = self._get_plane(t, c, z)
         return im[np.newaxis, np.newaxis, np.newaxis]
@@ -351,7 +373,7 @@ class LociFile:
 
 
 def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
-    """convert a loci pixel type into a numpy dtype string."""
+    """Convert a loci.formats PixelType integer into a numpy dtype."""
     from bioformats_jar import get_loci
 
     FT = get_loci().formats.FormatTools
@@ -369,7 +391,7 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
 
 
 def _slice2width(slc: slice, length: int) -> Tuple[int, int]:
-    """convert `slice` object into (start, width)"""
+    """Convert `slice` object into (start, width)"""
     if slc.stop is not None or slc.start is not None:
         # NOTE: we're ignoring step != 1 here
         start, stop, _ = slc.indices(length)

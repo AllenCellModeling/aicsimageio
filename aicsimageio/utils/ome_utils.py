@@ -14,6 +14,37 @@ if TYPE_CHECKING:
     from .. import types
 
 
+def bioformats_ome(path: types.PathLike, original_meta: bool = False) -> OME:
+    """Retrieve OME meta from any compatible file, using bioformats.
+
+    Note: this function requires the bioformats_jar package to be installed.
+
+    Parameters
+    ----------
+    path : str or Path
+        path to image
+    original_meta : bool, optional
+        whether to also retrieve the proprietary metadata as structured annotations in
+        the OME output, by default False
+
+    Returns
+    -------
+    OME : ome_types.OME
+        The parsed metadata object.
+
+    Raises
+    ------
+    ImportError
+        if bioformats_jar is not installed.
+    ValidationError
+        if ome_types.cannot parse the xml in the file
+    """
+    from ..readers.bioformats_reader import LociFile
+
+    with LociFile(path, meta=True, original_meta=original_meta, memoize=False) as lf:
+        return lf.ome_metadata
+
+
 def get_dims_and_coords_from_ome(
     ome: OME, scene_index: int
 ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:

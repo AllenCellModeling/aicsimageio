@@ -4,26 +4,15 @@ from __future__ import annotations
 
 from functools import lru_cache
 from threading import Lock
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    NamedTuple,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
 
 import numpy as np
 import xarray as xr
 from ome_types import OME
-from wrapt import ObjectProxy
 
-from .. import dimensions, exceptions
+from .. import dimensions, exceptions, types
 from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
 from ..metadata import utils as metadata_utils
-from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from ..utils.cached_property import cached_property
 from .reader import Reader
@@ -35,7 +24,6 @@ if TYPE_CHECKING:
     from bioformats_jar import loci
     from fsspec.spec import AbstractFileSystem
 
-    from .. import types
 
 try:
     from bioformats_jar import get_loci
@@ -109,9 +97,9 @@ class BioformatsReader(Reader):
         return meta
 
     @property
-    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+    def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
         px = self.ome_metadata.images[self.current_scene_index].pixels
-        return PhysicalPixelSizes(
+        return types.PhysicalPixelSizes(
             px.physical_size_z, px.physical_size_y, px.physical_size_x
         )
 
@@ -270,7 +258,7 @@ class LociFile:
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
-        # return _DaskArrayProxy(arr, self)
+        # return DaskArrayProxy(arr, self)
 
     @property
     def is_open(self) -> bool:
@@ -383,67 +371,6 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> str:
         FT.DOUBLE: "f8",
     }
     return ("<" if little_endian else ">") + fmt2type[pixeltype]
-
-
-class _DaskArrayProxy(ObjectProxy):
-    """Dask array wrapper that provides a 'file open' context when computing.
-
-    This is necessary because `LociFile.to_dask` returns an array with a mapped
-    underlying reader function that requires the file to be open.  But we don't want to
-    open/close the file on every single chunk.  So this wrap the `compute` and
-    `__array__` method in an open-file context manager.  For __getattr__, we return an
-    `ArrayMethodProxy` that again wraps the resulting object in a DaskArrayProxy if it
-    is a dask array.
-    """
-
-    def __init__(self, wrapped: da.Array, loci_file: LociFile) -> None:
-        super().__init__(wrapped)
-        self.lf = loci_file
-
-    def __getitem__(self, key: Any) -> _DaskArrayProxy:
-        return _DaskArrayProxy(self.__wrapped__.__getitem__(key), self.lf)
-
-    def __getattr__(self, key: Any) -> Any:
-        attr = getattr(self.__wrapped__, key)
-        if callable(attr):
-            return _ArrayMethodProxy(attr, self.lf)
-        return attr
-
-    def __repr__(self) -> str:
-        return repr(self.__wrapped__)
-
-    def compute(self, **kwargs: Any) -> np.ndarray:
-        with self.lf:
-            return self.__wrapped__.compute(**kwargs)
-
-    def __array__(self, dtype: str = None, **kwargs: Any) -> np.ndarray:
-        with self.lf:
-            return self.__wrapped__.__array__(dtype, **kwargs)
-
-    def __array_function__(self, *args: Any) -> Any:
-        with self.lf:
-            return self.__wrapped__.__array_function__(*args)
-
-
-class _ArrayMethodProxy:
-    """Wraps method on a dask array and returns a DaskArrayProxy if the result of the
-    method is a dask array.  see details in DaskArrayProxy docstring."""
-
-    def __init__(self, method: Callable, loci_file: LociFile) -> None:
-        self.method = method
-        self.lf = loci_file
-
-    def __repr__(self) -> str:
-        return repr(self.method)
-
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
-        import dask.array as da
-
-        with self.lf:
-            result = self.method(*args, **kwds)
-        if isinstance(result, da.Array):
-            return _DaskArrayProxy(result, self.lf)
-        return result
 
 
 def _slice2width(slc: slice, length: int) -> Tuple[int, int]:

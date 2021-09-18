@@ -16,6 +16,7 @@ from ..constants import METADATA_PROCESSED, METADATA_UNPROCESSED
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from ..utils.cached_property import cached_property
+from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -251,12 +252,12 @@ class LociFile:
         chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
         if nrgb > 1:
             chunks = chunks + (nrgb,)  # type: ignore
-        return da.map_blocks(
+        arr = da.map_blocks(
             self._dask_chunk,
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
-        # return DaskArrayProxy(arr, self)
+        return DaskArrayProxy(arr, self)
 
     @property
     def is_open(self) -> bool:

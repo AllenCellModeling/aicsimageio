@@ -1,6 +1,5 @@
 import warnings
-from contextlib import contextmanager
-from typing import Iterator, Tuple
+from typing import Any, Tuple
 
 import dask.array as da
 import numpy as np
@@ -8,30 +7,29 @@ import pytest
 
 from aicsimageio.utils.dask_proxy import DaskArrayProxy
 
-FILE_OPEN = False
-OPEN_COUNT = 0
 
+# a *re-entrant* file context manager
+class FileContext:
+    FILE_OPEN = False
+    OPEN_COUNT = 0
 
-@contextmanager
-def open_file() -> Iterator[None]:
-    global FILE_OPEN
-    global OPEN_COUNT
-    FILE_OPEN = True
-    OPEN_COUNT += 1
-    try:
-        yield
-    finally:
-        FILE_OPEN = False
+    def __enter__(self) -> "FileContext":
+        if not self.FILE_OPEN:
+            self.OPEN_COUNT += 1
+        self.FILE_OPEN = True
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        self.FILE_OPEN = False
 
 
 @pytest.fixture
 def dask_arr() -> da.Array:
-    global OPEN_COUNT
-    OPEN_COUNT = 0
     called = [0]
+    ctx = FileContext()
 
     def get_chunk(block_id: Tuple[int, ...]) -> np.ndarray:
-        if not FILE_OPEN:
+        if not ctx.FILE_OPEN:
             warnings.warn("You didn't open the file!")
         nonlocal called
 
@@ -41,41 +39,42 @@ def dask_arr() -> da.Array:
 
     d = da.map_blocks(get_chunk, chunks=((1,) * 10, (1,) * 10, 10, 10), dtype=float)
     d.called = called
+    d.ctx = ctx
     return d
 
 
 @pytest.fixture
 def proxy(dask_arr: da.Array) -> DaskArrayProxy:
-    return DaskArrayProxy(dask_arr, open_file)
+    return DaskArrayProxy(dask_arr, dask_arr.ctx)
 
 
 def test_array(dask_arr: da.Array) -> None:
     with pytest.warns(UserWarning):
         dask_arr.compute()
 
-    assert OPEN_COUNT == 0
+    assert dask_arr.ctx.OPEN_COUNT == 0
 
-    with open_file():
+    with dask_arr.ctx:
         assert dask_arr.compute().shape == (10, 10, 10, 10)
 
-    assert OPEN_COUNT == 1
+    assert dask_arr.ctx.OPEN_COUNT == 1
 
 
 def test_proxy_compute(proxy: DaskArrayProxy) -> None:
-    assert OPEN_COUNT == 0
+    assert proxy.ctx.OPEN_COUNT == 0
     ary = proxy.compute()
     assert isinstance(ary, np.ndarray)
     assert ary.shape == (10, 10, 10, 10)
-    assert OPEN_COUNT == 1
+    assert proxy.ctx.OPEN_COUNT == 1
     assert proxy.__wrapped__.called[0] == 100
 
 
 def test_proxy_asarray(proxy: DaskArrayProxy) -> None:
-    assert OPEN_COUNT == 0
+    assert proxy.ctx.OPEN_COUNT == 0
     ary = np.asarray(proxy)
     assert isinstance(ary, np.ndarray)
     assert ary.shape == (10, 10, 10, 10)
-    assert OPEN_COUNT == 1
+    assert proxy.ctx.OPEN_COUNT == 1
     assert proxy.__wrapped__.called[0] == 100
 
 

@@ -1,14 +1,13 @@
 """
-TODO: remove when we drop support for python 3.7
+back-ported cached_property from the standard library (functools) in python 3.8.
 
-cached_property is in the standard library (functools) as of python 3.8.
+TODO: remove when we drop support for python 3.7
 
 It transforms a method of a class into a property whose value is computed once and then
 cached as a normal attribute for the life of the instance. Similar to property(), with
 the addition of caching. Useful for expensive computed properties of instances that are
 otherwise effectively immutable.
 
-This is backported here
 """
 from typing import Any, Callable, Optional
 

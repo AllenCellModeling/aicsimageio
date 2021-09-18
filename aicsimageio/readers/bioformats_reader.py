@@ -12,7 +12,7 @@ import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
 
-from .. import constants, dimensions, exceptions, types
+from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils, ome_utils
 from ..utils.cached_property import cached_property
@@ -21,6 +21,8 @@ from .reader import Reader
 
 if TYPE_CHECKING:
     from fsspec.spec import AbstractFileSystem
+
+    from .. import types
 
 
 try:
@@ -278,7 +280,7 @@ class LociFile:
         xml = metadata_utils.clean_ome_xml_for_known_issues(self.ome_xml)
         return OME.from_xml(xml)
 
-    def __enter__(self) -> "LociFile":
+    def __enter__(self) -> LociFile:
         if not self.is_open:
             self.open()
         return self

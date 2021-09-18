@@ -1,4 +1,6 @@
-"""Experimental!"""
+"""
+experimental Dask array proxy for file IO
+"""
 from __future__ import annotations
 
 from typing import Any, Callable, ContextManager

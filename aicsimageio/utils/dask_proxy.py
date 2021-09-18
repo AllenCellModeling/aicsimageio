@@ -49,10 +49,6 @@ class DaskArrayProxy(ObjectProxy):
         with self.__wrapped__._ctx_():
             return self.__wrapped__.__array__(dtype, **kwargs)
 
-    def __array_function__(self, *args: Any) -> Any:
-        with self.__wrapped__._ctx_():
-            return self.__wrapped__.__array_function__(*args)
-
 
 class _ArrayMethodProxy:
     """Wraps method on a dask array and returns a DaskArrayProxy if the result of the

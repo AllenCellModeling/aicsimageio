@@ -236,7 +236,7 @@ class LociFile:
                 self._r.getRGBChannelCount(),
             ),
             _pixtype2dtype(self._r.getPixelType(), self._r.isLittleEndian()),
-            self._r.getSeCiesCount(),
+            self._r.getSeriesCount(),
             self._r.isRGB(),
             self._r.isInterleaved(),
             self._r.getDimensionOrder(),

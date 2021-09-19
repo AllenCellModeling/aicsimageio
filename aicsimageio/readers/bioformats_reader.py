@@ -14,7 +14,7 @@ from ome_types import OME
 
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
-from ..utils import io_utils, ome_utils
+from ..utils import io_utils
 from ..utils.cached_property import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
@@ -118,12 +118,14 @@ class BioformatsReader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        return ome_utils.physical_pixel_sizes(self.metadata, self.current_scene_index)
+        return metadata_utils.physical_pixel_sizes(
+            self.metadata, self.current_scene_index
+        )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
         with LociFile(self._path) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
-            _, coords = ome_utils.get_dims_and_coords_from_ome(
+            _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
                 scene_index=self.current_scene_index,
             )

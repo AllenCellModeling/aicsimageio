@@ -17,7 +17,7 @@ from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
-from ..utils import io_utils, ome_utils
+from ..utils import io_utils
 from .tiff_reader import TiffReader
 
 ###############################################################################
@@ -256,7 +256,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = ome_utils.get_dims_and_coords_from_ome(
+                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -298,7 +298,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = ome_utils.get_dims_and_coords_from_ome(
+                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -331,4 +331,6 @@ class OmeTiffReader(TiffReader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        return ome_utils.physical_pixel_sizes(self.metadata, self.current_scene_index)
+        return metadata_utils.physical_pixel_sizes(
+            self.metadata, self.current_scene_index
+        )

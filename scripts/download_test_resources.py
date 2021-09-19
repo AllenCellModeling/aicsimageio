@@ -20,6 +20,10 @@ log = logging.getLogger(__name__)
 ###############################################################################
 # Args
 
+RESOURCES_DIR = (
+    Path(__file__).parent.parent / "aicsimageio" / "tests" / "resources"
+).resolve()
+
 
 class Args(argparse.Namespace):
     def __init__(self):
@@ -51,6 +55,11 @@ class Args(argparse.Namespace):
             action="store_true",
             help="Show traceback if the script were to fail.",
         )
+        p.add_argument(
+            "--no-bioformats",
+            action="store_true",
+            help="Don't download bioformats test files.",
+        )
 
         # Parse
         p.parse_args(namespace=self)
@@ -64,10 +73,7 @@ def download_test_resources(args: Args):
     # Try running the download pipeline
     try:
         # Get test resources dir
-        resources_dir = (
-            Path(__file__).parent.parent / "aicsimageio" / "tests" / "resources"
-        ).resolve()
-        resources_dir.mkdir(exist_ok=True)
+        RESOURCES_DIR.mkdir(exist_ok=True)
 
         # Use or read top hash
         if args.top_hash is None:
@@ -86,7 +92,7 @@ def download_test_resources(args: Args):
         )
 
         # Download
-        package["resources"].fetch(resources_dir)
+        package["resources"].fetch(RESOURCES_DIR)
 
         log.info(f"Completed package download.")
 
@@ -101,6 +107,31 @@ def download_test_resources(args: Args):
         sys.exit(1)
 
 
+def download_bioformats_resources() -> None:
+    from urllib.request import urlretrieve
+    from concurrent.futures import ThreadPoolExecutor
+
+    def _fetch(suffix: str) -> None:
+        ROOT = "https://downloads.openmicroscopy.org/images/"
+        dest = str(RESOURCES_DIR / suffix.replace("/", "_").replace("%20", "_"))
+        log.info(str(ROOT + suffix))
+        urlretrieve(str(ROOT + suffix), dest)
+
+    files = [
+        "ND2/aryeh/but3_cont200-1.nd2",
+        "ND2/jonas/header_test2.nd2",
+        "ND2/maxime/BF007.nd2",
+        "DV/siRNAi-HeLa/IN_02.r3d_D3D.dv",
+        "DV/siRNAi-HeLa/IN_02.r3d",
+        "Olympus-OIR/etienne/amy%20slice%20z%20stack_0001.oir",
+        "Imaris-IMS/davemason/Convallaria_3C_1T_confocal.ims",
+        "KLB/samples/img.klb",
+        "DICOM/samples/MR-MONO2-8-16x-heart.dcm",
+    ]
+    with ThreadPoolExecutor() as exc:
+        list(exc.map(_fetch, files))
+
+
 ###############################################################################
 # Runner
 
@@ -108,6 +139,8 @@ def download_test_resources(args: Args):
 def main():
     args = Args()
     download_test_resources(args)
+    if not args.no_bioformats:
+        download_bioformats_resources()
 
 
 ###############################################################################

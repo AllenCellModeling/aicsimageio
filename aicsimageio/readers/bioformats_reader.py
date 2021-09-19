@@ -353,12 +353,10 @@ class LociFile:
             idx = self._r.getIndex(z, c, t)
             ystart, ywidth = _slice2width(y, ny)
             xstart, xwidth = _slice2width(x, nx)
-
-            # create buffer first on the python side
-            buffer = bytearray(ny * nx * nrgb * self.core_meta.dtype.itemsize)
-            self._r.openBytes(idx, buffer, xstart, ystart, xwidth, ywidth)
+            # read bytes using bioformats
+            buffer = self._r.openBytes(idx, xstart, ystart, xwidth, ywidth)
             # convert buffer to numpy array
-            im = np.frombuffer(buffer, self.core_meta.dtype)
+            im = np.frombuffer(bytes(buffer), self.core_meta.dtype)
 
             # reshape
             if nrgb > 1:

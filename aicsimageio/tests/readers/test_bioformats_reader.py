@@ -39,19 +39,6 @@ from ..conftest import LOCAL, get_resource_full_path, host
             (None, 1.0833333333333333, 1.0833333333333333),
         ),
         (
-            "s_1_t_1_c_10_z_1.ome.tiff",
-            "Image:0",
-            ("Image:0",),
-            (1, 10, 1, 1736, 1776),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [f"C:{i}" for i in range(10)],  # This is the actual metadata
-            (None, None, None),
-        ),
-        (
-            # This is actually an OME-TIFF file
-            # Shows we don't just work off of extensions
-            # But the content of the file
             "s_1_t_1_c_2_z_1_RGB.tiff",
             "Image:0",
             ("Image:0",),
@@ -81,16 +68,6 @@ from ..conftest import LOCAL, get_resource_full_path, host
             ["EGFP", "TaRFP", "Bright"],
             (1.0, 1.0833333333333333, 1.0833333333333333),
         ),
-        (
-            "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:2",
-            ("Image:0", "Image:1", "Image:2"),
-            (1, 3, 5, 325, 475),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["EGFP", "TaRFP", "Bright"],
-            (1.0, 1.0833333333333333, 1.0833333333333333),
-        ),
         pytest.param(
             "example.txt",
             None,
@@ -102,6 +79,26 @@ from ..conftest import LOCAL, get_resource_full_path, host
             None,
             marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
+        (
+            "s_3_t_1_c_3_z_5.czi",
+            "Image:0",
+            ("Image:0", "Image:1", "Image:2"),
+            (1, 3, 5, 325, 475),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["EGFP", "TaRFP", "Bright"],
+            (1.0, 1.0833333333333333, 1.0833333333333333),
+        ),
+        (
+            "RGB-8bit.czi",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 624, 924, 3),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+            ["C1"],
+            (None, 1.0833333333333333, 1.0833333333333333),
+        ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
             "Image:0",
@@ -112,20 +109,99 @@ from ..conftest import LOCAL, get_resource_full_path, host
             ["Channel:0:0", "Channel:0:1"],  # not as nice as lif reader
             (None, 0.325, 0.325),
         ),
+        (
+            "ND2_aryeh_but3_cont200-1.nd2",
+            "Image:0",
+            ("Image:0", "Image:1", "Image:2", "Image:3", "Image:4"),
+            (1, 2, 1, 1040, 1392),
+            np.dtype(">u2"),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["20phase", "20xDiO"],
+            (None, None, None),
+        ),
+        (
+            "ND2_jonas_header_test2.nd2",
+            "Image:0",
+            ("Image:0",),
+            (4, 1, 5, 520, 696),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["PSM_GFP"],
+            (0.5, 0.12863494437945, 0.12863494437945),
+        ),
+        (
+            "ND2_maxime_BF007.nd2",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 1, 156, 164),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["405/488/561/633nm"],
+            (None, 0.158389678930686, 0.158389678930686),
+        ),
+        (
+            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
+            "Image:0",
+            ("Image:0",),
+            (1, 4, 40, 512, 512),
+            np.int16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
+            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+        ),
+        (
+            "DV_siRNAi-HeLa_IN_02.r3d",
+            "Image:0",
+            ("Image:0",),
+            (1, 4, 40, 512, 512),
+            np.dtype(">i2"),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
+            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+        ),
+        (
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            "Image:0",
+            ("Image:0",),
+            (32, 1, 1, 512, 512),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["CH3"],
+            (1.0, 1.242961138804478, 1.242961138804478),
+        ),
+        (
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims",
+            "Image:0",
+            ("Image:0",),
+            (1, 3, 1, 1024, 1024),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (0.001, 1.2059374999999999, 1.2059570312500014),
+        ),
+        (
+            "KLB_samples_img.klb",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 29, 151, 101),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (1.0, 1.0, 1.0),
+        ),
+        (
+            "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
+            "Image:0",
+            ("Image:0",),
+            (1, 1, 16, 256, 256),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (None, None, None),
+        ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
             "Image:1",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
-        pytest.param(
-            "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:3",
             None,
             None,
             None,
@@ -235,7 +311,7 @@ def test_bioformats_reader(
         ),
     ],
 )
-def test_ome_tiff_reader_large_files(
+def test_bioformats_reader_large_files(
     filename: str,
     set_scene: str,
     expected_scenes: Tuple[str, ...],
@@ -288,7 +364,7 @@ def test_ome_tiff_reader_large_files(
         ),
     ],
 )
-def test_multi_scene_ome_tiff_reader(
+def test_multi_scene_bioformats_reader(
     filename: str,
     host: str,
     first_scene_id: str,
@@ -310,122 +386,3 @@ def test_multi_scene_ome_tiff_reader(
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.dtype(np.uint16),
     )
-
-
-@pytest.mark.skip
-@pytest.mark.parametrize(
-    "filename, "
-    "set_scene, "
-    "expected_scenes, "
-    "expected_shape, "
-    "expected_dtype, "
-    "expected_dims_order, "
-    "expected_channel_names, "
-    "expected_physical_pixel_sizes",
-    [
-        # TODO:
-        # Select a different level besides level 0
-        # TiffReader / OmeTiffReader defaults to reading level 0
-        (
-            "variable_scene_shape_first_scene_pyramid.ome.tiff",
-            "Image:0",
-            ("Image:0", "Image:1"),
-            (1, 3, 1, 6184, 7712),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["EGFP", "mCher", "PGC"],
-            (None, 0.9082107048835328, 0.9082107048835328),
-        ),
-        (
-            "variable_scene_shape_first_scene_pyramid.ome.tiff",
-            "Image:1",
-            ("Image:0", "Image:1"),
-            (1, 1, 1, 2030, 422),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:1:0"],
-            (None, 0.9082107048835328, 0.9082107048835328),
-        ),
-    ],
-)
-def test_multi_resolution_ome_tiff_reader(
-    filename: str,
-    set_scene: str,
-    expected_scenes: Tuple[str, ...],
-    expected_shape: Tuple[int, ...],
-    expected_dtype: np.dtype,
-    expected_dims_order: str,
-    expected_channel_names: List[str],
-    expected_physical_pixel_sizes: Tuple[float, float, float],
-) -> None:
-    # Construct full filepath
-    uri = get_resource_full_path(filename, LOCAL)
-
-    # Run checks
-    run_image_file_checks(
-        ImageContainer=BioformatsReader,
-        image=uri,
-        set_scene=set_scene,
-        expected_scenes=expected_scenes,
-        expected_current_scene=set_scene,
-        expected_shape=expected_shape,
-        expected_dtype=expected_dtype,
-        expected_dims_order=expected_dims_order,
-        expected_channel_names=expected_channel_names,
-        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
-        expected_metadata_type=OME,
-    )
-
-
-def test_micromanager_ome_tiff_main_file() -> None:
-    # Construct full filepath
-    uri = get_resource_full_path(
-        "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
-        LOCAL,
-    )
-
-    # MicroManager will split up multi-scene image sets into multiple files
-    # tifffile will then read in all of the scenes at once when it detects
-    # the file is a micromanager file set
-    # resulting in this single file truly only containing the binary for a
-    # single scene but containing the metadata for all files in the set
-    # and, while this file only contains the binary for itself, tifffile will
-    # read the image data for the linked files
-
-    # Run image read checks on the first scene
-    # (this files binary data)
-    run_image_file_checks(
-        ImageContainer=BioformatsReader,
-        image=uri,
-        set_scene="Image:0",
-        expected_scenes=("Image:0", "Image:1"),
-        expected_current_scene="Image:0",
-        expected_shape=(50, 3, 5, 256, 256),
-        expected_dtype=np.dtype(np.uint16),
-        expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
-        expected_channel_names=["Cy5", "DAPI", "FITC"],
-        expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
-        expected_metadata_type=OME,
-    )
-
-    # TODO:
-    # The user shouldn't do this because it can raise a "Seek on closed file" error
-    # Long term solution is something like:
-    # https://github.com/AllenCellModeling/aicsimageio/issues/196
-    # or more generally "support many file OME-TIFFs"
-    #
-    # Run image read checks on the second scene
-    # (a different files binary data)
-    # (image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif)
-    # run_image_read_checks(
-    #     ImageContainer=OmeTiffReader,
-    #     uri=uri,
-    #     set_scene="Image:1",
-    #     expected_scenes=("Image:0", "Image:1"),
-    #     expected_current_scene="Image:1",
-    #     expected_shape=(50, 3, 5, 256, 256),
-    #     expected_dtype=np.uint16,
-    #     expected_dims_order=dimensions.DEFAULT_DIMENSION_ORDER,
-    #     expected_channel_names=["Cy5", "DAPI", "FITC"],
-    #     expected_physical_pixel_sizes=(1.75, 2.0, 2.0),
-    # )

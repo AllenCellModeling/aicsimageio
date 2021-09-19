@@ -27,6 +27,9 @@ Fix
 
 Other
 ~~~~~
+- admin/add-tox-work-dir-env-var-opt-to-tox-ini  (`#310
+  <https://github.com/AllenCellModeling/aicsimageio/pull/310>`_) [Talley
+  Lambert]
 - Add .pre-commit-config.yaml  (`#308
   <https://github.com/AllenCellModeling/aicsimageio/pull/308>`_) [Talley
   Lambert]

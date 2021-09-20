@@ -190,7 +190,10 @@ class BioFile:
         the image series to read, by default 0
     meta : bool, optional
         whether to get metadata as well, by default True
-    memoize : int, optional
+    original_meta : bool, optional
+        whether to also retrieve the proprietary metadata as structured annotations in
+        the OME output, by default False
+    memoize : bool or int, optional
         threshold (in milliseconds) for memoizing the reader. If the the time
         required to call `reader.setId()` is larger than this number, the initialized
         reader (including all reader wrappers) will be cached in a memo file, reducing

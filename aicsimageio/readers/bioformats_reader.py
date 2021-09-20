@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import annotations
 
+import os
 from functools import lru_cache
+from pathlib import Path
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
 
@@ -82,7 +84,8 @@ class BioformatsReader(Reader):
                 )
         except jpype.JVMNotFoundException:
             raise
-        except Exception:
+        except Exception as e:
+            print(e)
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
             )
@@ -162,6 +165,15 @@ class CoreMeta(NamedTuple):
     resolution_count: int
 
 
+# by default, .bfmemo files will go into the same directory as the file.
+# users can override this with BIOFORMATS_MEMO_DIR env var
+BIOFORMATS_MEMO_DIR: Optional[Path] = None
+_BFDIR = os.getenv("BIOFORMATS_MEMO_DIR")
+if _BFDIR:
+    BIOFORMATS_MEMO_DIR = Path(_BFDIR).expanduser().absolute()
+    BIOFORMATS_MEMO_DIR.mkdir(exist_ok=True, parents=True)
+
+
 class LociFile:
     """Read image and metadata from file supported by Bioformats.
 
@@ -179,10 +191,13 @@ class LociFile:
     meta : bool, optional
         whether to get metadata as well, by default True
     memoize : int, optional
-        threshold for memoizing the reader. If the time required to call
-        `reader.setId()` is larger than this number, the initialized reader
-        (including all reader wrappers) will be cached in a memo file for later
-        retrieval. by default 50.  set to 0 or less to turn off memoization.
+        threshold (in milliseconds) for memoizing the reader. If the the time
+        required to call `reader.setId()` is larger than this number, the initialized
+        reader (including all reader wrappers) will be cached in a memo file, reducing
+        time to load the file on future reads.  By default, this results in a hidden
+        `.bfmemo` file in the same directory as the file. The `BIOFORMATS_MEMO_DIR`
+        environment can be used to change the memo file directory.
+        Set `memoize` to greater than 0 to turn on memoization. by default it's off.
         https://downloads.openmicroscopy.org/bio-formats/latest/api/loci/formats/Memoizer.html
     """
 
@@ -213,7 +228,10 @@ class LociFile:
         # memoize to save time on later re-openings of the same file.
         if memoize > 0:
             _hide_memoization_warning()
-            self._r = loci.formats.Memoizer(self._r, memoize)
+            if BIOFORMATS_MEMO_DIR is not None:
+                self._r = loci.formats.Memoizer(self._r, memoize, BIOFORMATS_MEMO_DIR)
+            else:
+                self._r = loci.formats.Memoizer(self._r, memoize)
 
         self.open()
         self._lock = Lock()

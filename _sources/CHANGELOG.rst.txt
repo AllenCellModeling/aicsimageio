@@ -27,6 +27,9 @@ Fix
 
 Other
 ~~~~~
+- admin/add-test-resources-caching  (`#313
+  <https://github.com/AllenCellModeling/aicsimageio/pull/313>`_)
+  [Jackson Maxfield Brown]
 - admin/add-tox-work-dir-env-var-opt-to-tox-ini  (`#310
   <https://github.com/AllenCellModeling/aicsimageio/pull/310>`_) [Talley
   Lambert]

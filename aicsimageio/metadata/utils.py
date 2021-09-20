@@ -14,6 +14,7 @@ import numpy as np
 from ome_types import OME
 from ome_types.model.simple_types import PixelType
 
+from ..dimensions import DimensionNames
 from ..types import ArrayLike, PathLike, PhysicalPixelSizes
 
 ###############################################################################
@@ -617,9 +618,6 @@ def get_dims_and_coords_from_ome(
     coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
         The coordinate planes / data for each dimension.
     """
-    import numpy as np
-
-    from ..dimensions import DimensionNames
     from ..readers.reader import Reader
 
     # Select scene
@@ -691,7 +689,5 @@ def physical_pixel_sizes(ome: OME, scene: int = 0) -> PhysicalPixelSizes:
     We currently do not handle unit attachment to these values. Please see the file
     metadata for unit information.
     """
-    from ..types import PhysicalPixelSizes
-
     p = ome.images[scene].pixels
     return PhysicalPixelSizes(p.physical_size_z, p.physical_size_y, p.physical_size_x)

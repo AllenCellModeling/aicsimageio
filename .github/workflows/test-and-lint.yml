@@ -35,6 +35,8 @@ jobs:
           key: ${{ hashFiles('scripts/TEST_RESOURCES_HASH.txt') }}
       - name: Download Test Resources
         if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python scripts/download_test_resources.py --debug
       - name: Run tests with Tox
         # Run tox using the version of Python in `PATH`, and don't include remote resources
         run: tox -e py -- -k "not REMOTE"

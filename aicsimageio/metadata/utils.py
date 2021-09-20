@@ -592,9 +592,9 @@ def bioformats_ome(path: PathLike, original_meta: bool = False) -> OME:
     ValidationError
         if ome_types.cannot parse the xml in the file
     """
-    from ..readers.bioformats_reader import LociFile
+    from ..readers.bioformats_reader import BioFile
 
-    with LociFile(path, meta=True, original_meta=original_meta, memoize=False) as lf:
+    with BioFile(path, meta=True, original_meta=original_meta, memoize=False) as lf:
         return lf.ome_metadata
 
 

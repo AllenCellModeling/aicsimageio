@@ -60,7 +60,7 @@ class BioformatsReader(Reader):
         try:
             if not isinstance(fs, LocalFileSystem):
                 return False
-            f = LociFile(path, meta=False, memoize=False)
+            f = BioFile(path, meta=False, memoize=False)
             f.close()
             return True
 
@@ -77,7 +77,7 @@ class BioformatsReader(Reader):
             )
 
         try:
-            with LociFile(self._path) as rdr:
+            with BioFile(self._path) as rdr:
                 self._scenes: Tuple[str, ...] = tuple(
                     metadata_utils.generate_ome_image_id(i)
                     for i in range(rdr.core_meta.series_count)
@@ -103,7 +103,7 @@ class BioformatsReader(Reader):
     @cached_property
     def ome_metadata(self) -> OME:
         """Return OME object parsed by ome_types."""
-        with LociFile(self._path) as rdr:
+        with BioFile(self._path) as rdr:
             meta = rdr.ome_metadata
         return meta
 
@@ -126,7 +126,7 @@ class BioformatsReader(Reader):
         )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
-        with LociFile(self._path) as rdr:
+        with BioFile(self._path) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
@@ -174,13 +174,13 @@ if _BFDIR:
     BIOFORMATS_MEMO_DIR.mkdir(exist_ok=True, parents=True)
 
 
-class LociFile:
+class BioFile:
     """Read image and metadata from file supported by Bioformats.
 
-    LociFile instances must be closed using the 'close' method, which is
+    BioFile instances must be closed using the 'close' method, which is
     automatically called when using the 'with' context manager.
 
-    LociFile instances are not thread-safe.
+    BioFile instances are not thread-safe.
 
     Parameters
     ----------
@@ -323,7 +323,7 @@ class LociFile:
         xml = metadata_utils.clean_ome_xml_for_known_issues(self.ome_xml)
         return OME.from_xml(xml)
 
-    def __enter__(self) -> LociFile:
+    def __enter__(self) -> BioFile:
         if not self.is_open:
             self.open()
         return self

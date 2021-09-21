@@ -84,8 +84,7 @@ class BioformatsReader(Reader):
                 )
         except jpype.JVMNotFoundException:
             raise
-        except Exception as e:
-            print(e)
+        except Exception:
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
             )

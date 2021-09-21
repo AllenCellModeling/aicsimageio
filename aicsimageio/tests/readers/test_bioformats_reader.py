@@ -99,7 +99,7 @@ from ..conftest import LOCAL, get_resource_full_path, host
             ["C1"],
             (None, 1.0833333333333333, 1.0833333333333333),
         ),
-        pytest.param(
+        (
             "s_1_t_1_c_2_z_1.lif",
             "Image:0",
             ("Image:0",),

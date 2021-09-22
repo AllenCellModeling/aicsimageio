@@ -78,9 +78,9 @@ class BioformatsReader(Reader):
 
         try:
             with BioFile(self._path) as rdr:
+                md = rdr._r.getMetadataStore()
                 self._scenes: Tuple[str, ...] = tuple(
-                    metadata_utils.generate_ome_image_id(i)
-                    for i in range(rdr.core_meta.series_count)
+                    str(md.getImageName(i)) for i in range(md.getImageCount())
                 )
         except jpype.JVMNotFoundException:
             raise

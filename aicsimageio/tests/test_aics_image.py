@@ -210,8 +210,8 @@ from .image_container_test_utils import (
         # BioformatsReader
         (
             "ND2_jonas_header_test2.nd2",
-            "Image:0",
-            ("Image:0",),
+            "ND2_jonas_header_test2.nd2 (series 1)",
+            ("ND2_jonas_header_test2.nd2 (series 1)",),
             (4, 1, 5, 520, 696),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -221,8 +221,8 @@ from .image_container_test_utils import (
         ),
         (
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
-            "Image:0",
-            ("Image:0",),
+            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
+            ("DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",),
             (1, 4, 40, 512, 512),
             np.int16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -232,8 +232,8 @@ from .image_container_test_utils import (
         ),
         (
             "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
-            "Image:0",
-            ("Image:0",),
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            ("Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",),
             (32, 1, 1, 512, 512),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -243,8 +243,8 @@ from .image_container_test_utils import (
         ),
         (
             "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims",
-            "Image:0",
-            ("Image:0",),
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",
+            ("Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",),
             (1, 3, 1, 1024, 1024),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -255,8 +255,8 @@ from .image_container_test_utils import (
         # needs #307
         # (
         #     "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
-        #     "Image:0",
-        #     ("Image:0",),
+        #     "Series 0",
+        #     ("Series 0",),
         #     (1, 1, 16, 256, 256),
         #     np.uint8,
         #     dimensions.DEFAULT_DIMENSION_ORDER,

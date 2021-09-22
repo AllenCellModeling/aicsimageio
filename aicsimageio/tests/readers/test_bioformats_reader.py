@@ -272,8 +272,8 @@ def test_bioformats_reader(
     [
         (
             "pre-variance-cfe.ome.tiff",
-            "Image:0",
-            ("Image:0",),
+            "3500002402_100X_20181009_1-Scene-10-aligned_cropped-P9-G04.czi #1",
+            ("3500002402_100X_20181009_1-Scene-10-aligned_cropped-P9-G04.czi #1",),
             (1, 9, 65, 600, 900),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -292,8 +292,8 @@ def test_bioformats_reader(
         ),
         pytest.param(
             "variance-cfe.ome.tiff",
-            "Image:0",
-            ("Image:0",),
+            "3500003034_100X_20190520_1-Scene-18-P108-G03.czi #1",
+            ("3500003034_100X_20190520_1-Scene-18-P108-G03.czi #1",),
             (1, 9, 65, 600, 900),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -312,8 +312,8 @@ def test_bioformats_reader(
         ),
         (
             "actk.ome.tiff",
-            "Image:0",
-            ("Image:0",),
+            "IMAGE0",
+            ("IMAGE0",),
             (1, 6, 65, 233, 345),
             np.float64,
             dimensions.DEFAULT_DIMENSION_ORDER,
@@ -368,16 +368,16 @@ def test_bioformats_reader_large_files(
     [
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:0",
+            "s_3_t_10_c_3_z_5.czi #1",
             (1, 3, 5, 325, 475),
-            "Image:1",
+            "s_3_t_10_c_3_z_5.czi #2",
             (1, 3, 5, 325, 475),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
-            "Image:1",
+            "s_3_t_10_c_3_z_5.czi #2",
             (1, 3, 5, 325, 475),
-            "Image:2",
+            "s_3_t_10_c_3_z_5.czi #3",
             (1, 3, 5, 325, 475),
         ),
     ],

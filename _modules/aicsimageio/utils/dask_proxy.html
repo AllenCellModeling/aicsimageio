@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>aicsimageio.writers.writer &mdash; AICSImageIO 4.1.0 documentation</title>
+  <title>aicsimageio.utils.dask_proxy &mdash; AICSImageIO 4.1.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -272,7 +272,7 @@
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
           <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
-      <li>aicsimageio.writers.writer</li>
+      <li>aicsimageio.utils.dask_proxy</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -281,54 +281,86 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for aicsimageio.writers.writer</h1><div class="highlight"><pre>
-<span></span><span class="ch">#!/usr/bin/env python</span>
-<span class="c1"># -*- coding: utf-8 -*-</span>
+  <h1>Source code for aicsimageio.utils.dask_proxy</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">experimental Dask array proxy for file IO</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ContextManager</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
-<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="n">DEFAULT_DIMENSION_ORDER</span>
-
-<span class="c1">###############################################################################</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">wrapt</span> <span class="kn">import</span> <span class="n">ObjectProxy</span>
 
 
-<div class="viewcode-block" id="Writer"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer">[docs]</a><span class="k">class</span> <span class="nc">Writer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A small class to build standardized image writer functions.</span>
+<div class="viewcode-block" id="DaskArrayProxy"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.dask_proxy.DaskArrayProxy">[docs]</a><span class="k">class</span> <span class="nc">DaskArrayProxy</span><span class="p">(</span><span class="n">ObjectProxy</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dask array wrapper that provides a &#39;file open&#39; context when computing.</span>
+
+<span class="sd">    This is necessary when the dask array contains a delayed underlying reader function</span>
+<span class="sd">    that requires the file to be open. We don&#39;t want to open/close the file on</span>
+<span class="sd">    every single chunk.  So this wrap the `compute` and `__array__` method in an</span>
+<span class="sd">    open-file context manager.  For __getattr__, we return an `ArrayMethodProxy` that</span>
+<span class="sd">    again wraps the resulting object in a DaskArrayProxy if it is a dask array.</span>
+
+<span class="sd">    Experimental!</span>
+<span class="sd">    The state held by the `file_ctx` may be problematic for dask distributed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    wrapped : da.Array</span>
+<span class="sd">        the dask array that requires some file</span>
+<span class="sd">    file_ctx : ContextManager</span>
+<span class="sd">        A context in which the file is open.</span>
+<span class="sd">        IMPORTANT: the context must be reusable, and preferably re-entrant:</span>
+<span class="sd">        https://docs.python.org/3/library/contextlib.html#reentrant-context-managers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Writer.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer.save">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>
-        <span class="n">uri</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
-        <span class="n">dim_order</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Write a data array to a file.</span>
+    <span class="n">__wrapped__</span><span class="p">:</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        data: types.ArrayLike</span>
-<span class="sd">            The array of data to store.</span>
-<span class="sd">        uri: types.PathLike</span>
-<span class="sd">            The URI or local path for where to save the data.</span>
-<span class="sd">        dim_order: str</span>
-<span class="sd">            The dimension order of the data.</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">:</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">file_ctx</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span> <span class="o">=</span> <span class="n">file_ctx</span>
 
-<span class="sd">        Examples</span>
-<span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
-<span class="sd">        ... DerivedWriter.save(image, &quot;file.ome.tif&quot;, &quot;TCZYX&quot;)</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DaskArrayProxy</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">)</span>
 
-<span class="sd">        &gt;&gt;&gt; image = dask.array.ones((4, 100, 100))</span>
-<span class="sd">        ... DerivedWriter.save(image, &quot;file.png&quot;, &quot;CYX&quot;)</span>
-<span class="sd">        &quot;&quot;&quot;</span></div></div>
-        <span class="c1"># There are no requirements for n-dimensions of data.</span>
-        <span class="c1"># The data provided can be 2D - ND.</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">_ArrayMethodProxy</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="k">else</span> <span class="n">attr</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DaskArrayProxy.compute"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.dask_proxy.DaskArrayProxy.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">__array__</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="k">class</span> <span class="nc">_ArrayMethodProxy</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Wraps method on a dask array and returns a DaskArrayProxy if the result of the</span>
+<span class="sd">    method is a dask array.  see details in DaskArrayProxy docstring.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">file_ctx</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span> <span class="o">=</span> <span class="n">file_ctx</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
 </pre></div>
 
            </div>

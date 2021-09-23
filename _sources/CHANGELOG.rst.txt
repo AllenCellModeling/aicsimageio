@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/bioformats-reader  (`#306
+  <https://github.com/AllenCellModeling/aicsimageio/pull/306>`_) [Talley
+  Lambert]
 - feature/metadata-module  (`#292
   <https://github.com/AllenCellModeling/aicsimageio/pull/292>`_) [Matte
   Bailey]

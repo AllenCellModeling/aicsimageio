@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aicsimageio.readers.bioformats_reader &mdash; AICSImageIO 4.1.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          </a>
+              <div class="version">
+                4.1.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#adding-a-new-custom-reader">Adding a New Custom Reader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#basics">Basics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#reader-class-implementation">Reader Class Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#custom-dependencies">Custom Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#optional-reader-benchmarking">Optional Reader Benchmarking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id11">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id13">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id16">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id18">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id20">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id23">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id25">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id28">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id31">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id33">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id35">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id40">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id42">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id63">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id71">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id85">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id88">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id90">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id93">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id95">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id97">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id99">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id101">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id103">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id106">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id108">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id112">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id115">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id119">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id121">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id123">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id125">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id127">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id129">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id132">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id135">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id138">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id140">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id144">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id146">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id149">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id150">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+      <li>aicsimageio.readers.bioformats_reader</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aicsimageio.readers.bioformats_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Lock</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">fsspec.implementations.local</span> <span class="kn">import</span> <span class="n">LocalFileSystem</span>
+<span class="kn">from</span> <span class="nn">ome_types</span> <span class="kn">import</span> <span class="n">OME</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">dimensions</span><span class="p">,</span> <span class="n">exceptions</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">..utils.cached_property</span> <span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span> <span class="nn">..utils.dask_proxy</span> <span class="kn">import</span> <span class="n">DaskArrayProxy</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
+
+    <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">jpype</span>
+    <span class="kn">from</span> <span class="nn">bioformats_jar</span> <span class="kn">import</span> <span class="n">get_loci</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+        <span class="s2">&quot;bioformats_jar is required for this reader. &quot;</span>
+        <span class="s2">&quot;Install with `pip install aicsimageio[bioformats]`&quot;</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="BioformatsReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioformatsReader">[docs]</a><span class="k">class</span> <span class="nc">BioformatsReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read files using bioformats.</span>
+
+<span class="sd">    This reader requires bioformats_jar to be installed in the environment, and requires</span>
+<span class="sd">    the java executable to be available on the path, or via the JAVA_HOME environment</span>
+<span class="sd">    variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    image : Path or str</span>
+<span class="sd">        path to file</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    exceptions.UnsupportedFileFormatError</span>
+<span class="sd">        If the file is not supported by bioformats.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span><span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">LocalFileSystem</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">BioFile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">memoize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">enforce_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Catch non-local file system</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="n">LocalFileSystem</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot read Bioformats from non-local file system. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received URI: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">, which points to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">BioFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+                <span class="n">md</span> <span class="o">=</span> <span class="n">rdr</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getMetadataStore</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">getImageName</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">md</span><span class="o">.</span><span class="n">getImageCount</span><span class="p">())</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="n">jpype</span><span class="o">.</span><span class="n">JVMNotFoundException</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span>
+
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_xarray</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_xarray</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">ome_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OME</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return OME object parsed by ome_types.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">BioFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+            <span class="n">meta</span> <span class="o">=</span> <span class="n">rdr</span><span class="o">.</span><span class="n">ome_metadata</span>
+        <span class="k">return</span> <span class="n">meta</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">physical_pixel_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sizes: PhysicalPixelSizes</span>
+<span class="sd">            Using available metadata, the floats representing physical pixel sizes for</span>
+<span class="sd">            dimensions Z, Y, and X.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        We currently do not handle unit attachment to these values. Please see the file</span>
+<span class="sd">        metadata for unit information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_to_xarray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delayed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">BioFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="n">rdr</span><span class="o">.</span><span class="n">to_dask</span><span class="p">()</span> <span class="k">if</span> <span class="n">delayed</span> <span class="k">else</span> <span class="n">rdr</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">coords</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">get_dims_and_coords_from_ome</span><span class="p">(</span>
+                <span class="n">ome</span><span class="o">=</span><span class="n">rdr</span><span class="o">.</span><span class="n">ome_metadata</span><span class="p">,</span>
+                <span class="n">scene_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+            <span class="n">image_data</span><span class="p">,</span>
+            <span class="n">dims</span><span class="o">=</span><span class="n">dimensions</span><span class="o">.</span><span class="n">DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES</span>
+            <span class="k">if</span> <span class="n">rdr</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">is_rgb</span>
+            <span class="k">else</span> <span class="n">dimensions</span><span class="o">.</span><span class="n">DEFAULT_DIMENSION_ORDER_LIST</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="n">rdr</span><span class="o">.</span><span class="n">ome_xml</span><span class="p">,</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_PROCESSED</span><span class="p">:</span> <span class="n">rdr</span><span class="o">.</span><span class="n">ome_metadata</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="BioformatsReader.bioformats_version"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioformatsReader.bioformats_version">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">bioformats_version</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The version of the bioformats_package.jar being used.&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">bioformats_jar</span> <span class="kn">import</span> <span class="n">get_loci</span>
+
+        <span class="k">return</span> <span class="n">get_loci</span><span class="p">()</span><span class="o">.</span><span class="n">__version__</span></div></div>
+
+
+<div class="viewcode-block" id="CoreMeta"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.CoreMeta">[docs]</a><span class="k">class</span> <span class="nc">CoreMeta</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;NamedTuple with core bioformats metadata. (not OME meta)&quot;&quot;&quot;</span>
+
+    <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="n">series_count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">is_rgb</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">is_interleaved</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">dimension_order</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">resolution_count</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<span class="c1"># by default, .bfmemo files will go into the same directory as the file.</span>
+<span class="c1"># users can override this with BIOFORMATS_MEMO_DIR env var</span>
+<span class="n">BIOFORMATS_MEMO_DIR</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">_BFDIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;BIOFORMATS_MEMO_DIR&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">_BFDIR</span><span class="p">:</span>
+    <span class="n">BIOFORMATS_MEMO_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">_BFDIR</span><span class="p">)</span><span class="o">.</span><span class="n">expanduser</span><span class="p">()</span><span class="o">.</span><span class="n">absolute</span><span class="p">()</span>
+    <span class="n">BIOFORMATS_MEMO_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BioFile"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile">[docs]</a><span class="k">class</span> <span class="nc">BioFile</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Read image and metadata from file supported by Bioformats.</span>
+
+<span class="sd">    BioFile instances must be closed using the &#39;close&#39; method, which is</span>
+<span class="sd">    automatically called when using the &#39;with&#39; context manager.</span>
+
+<span class="sd">    BioFile instances are not thread-safe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str or Path</span>
+<span class="sd">        path to file</span>
+<span class="sd">    series : int, optional</span>
+<span class="sd">        the image series to read, by default 0</span>
+<span class="sd">    meta : bool, optional</span>
+<span class="sd">        whether to get metadata as well, by default True</span>
+<span class="sd">    original_meta : bool, optional</span>
+<span class="sd">        whether to also retrieve the proprietary metadata as structured annotations in</span>
+<span class="sd">        the OME output, by default False</span>
+<span class="sd">    memoize : bool or int, optional</span>
+<span class="sd">        threshold (in milliseconds) for memoizing the reader. If the the time</span>
+<span class="sd">        required to call `reader.setId()` is larger than this number, the initialized</span>
+<span class="sd">        reader (including all reader wrappers) will be cached in a memo file, reducing</span>
+<span class="sd">        time to load the file on future reads.  By default, this results in a hidden</span>
+<span class="sd">        `.bfmemo` file in the same directory as the file. The `BIOFORMATS_MEMO_DIR`</span>
+<span class="sd">        environment can be used to change the memo file directory.</span>
+<span class="sd">        Set `memoize` to greater than 0 to turn on memoization. by default it&#39;s off.</span>
+<span class="sd">        https://downloads.openmicroscopy.org/bio-formats/latest/api/loci/formats/Memoizer.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">series</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">meta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">original_meta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">memoize</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">loci</span> <span class="o">=</span> <span class="n">get_loci</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">jpype</span><span class="o">.</span><span class="n">JVMNotFoundException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)(</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">BioformatsReader requires a java executable to be &quot;</span>
+                <span class="s2">&quot;available in your environment. If you are using conda, you can &quot;</span>
+                <span class="s2">&quot;install with `conda install -c conda-forge openjdk`. &quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="n">loci</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">ImageReader</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">meta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setMetadataStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_ome_meta</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">original_meta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setOriginalMetadataPopulated</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># memoize to save time on later re-openings of the same file.</span>
+        <span class="k">if</span> <span class="n">memoize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_hide_memoization_warning</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">BIOFORMATS_MEMO_DIR</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="n">loci</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">Memoizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="p">,</span> <span class="n">memoize</span><span class="p">,</span> <span class="n">BIOFORMATS_MEMO_DIR</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span> <span class="o">=</span> <span class="n">loci</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">Memoizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="p">,</span> <span class="n">memoize</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s2">&quot;ND2&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getReader</span><span class="p">()):</span>
+            <span class="c1"># https://github.com/openmicroscopy/bioformats/issues/2955</span>
+            <span class="n">mo</span> <span class="o">=</span> <span class="n">loci</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">in_</span><span class="o">.</span><span class="n">DynamicMetadataOptions</span><span class="p">()</span>
+            <span class="n">mo</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;nativend2.chunkmap&quot;</span><span class="p">,</span> <span class="s2">&quot;False&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setMetadataOptions</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_series</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BioFile.set_series"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile.set_series">[docs]</a>    <span class="k">def</span> <span class="nf">set_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setSeries</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_core_meta</span> <span class="o">=</span> <span class="n">CoreMeta</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getSizeT</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getEffectiveSizeC</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getSizeZ</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getSizeY</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getSizeX</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getRGBChannelCount</span><span class="p">(),</span>
+            <span class="p">),</span>
+            <span class="n">_pixtype2dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getPixelType</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">isLittleEndian</span><span class="p">()),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getSeriesCount</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">isRGB</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">isInterleaved</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getDimensionOrder</span><span class="p">(),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getResolutionCount</span><span class="p">(),</span>
+        <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">core_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CoreMeta</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_core_meta</span>
+
+<div class="viewcode-block" id="BioFile.open"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Open file.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setId</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BioFile.close"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Close file.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">,</span> <span class="ne">RuntimeError</span><span class="p">):</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BioFile.to_numpy"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile.to_numpy">[docs]</a>    <span class="k">def</span> <span class="nf">to_numpy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create numpy array for the current series.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dask</span><span class="p">(</span><span class="n">series</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BioFile.to_dask"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.bioformats_reader.BioFile.to_dask">[docs]</a>    <span class="k">def</span> <span class="nf">to_dask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">series</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;da.Array&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create dask array for the current series.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">series</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">setSeries</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
+
+        <span class="n">nt</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">nz</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nrgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">chunks</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">nt</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">nc</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span> <span class="o">*</span> <span class="n">nz</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nrgb</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">chunks</span> <span class="o">=</span> <span class="n">chunks</span> <span class="o">+</span> <span class="p">(</span><span class="n">nrgb</span><span class="p">,)</span>  <span class="c1"># type: ignore</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">map_blocks</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dask_chunk</span><span class="p">,</span>
+            <span class="n">chunks</span><span class="o">=</span><span class="n">chunks</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Whether the underlying file is currently open&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getCurrentFile</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return name of file handle.&quot;&quot;&quot;</span>
+        <span class="c1"># return self._r.getCurrentFile()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ome_xml</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;return OME XML string.&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">store</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getMetadataStore</span><span class="p">()</span>
+
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">store</span><span class="o">.</span><span class="n">dumpXML</span><span class="p">())</span> <span class="k">if</span> <span class="n">store</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ome_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OME</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return OME object parsed by ome_types.&quot;&quot;&quot;</span>
+        <span class="n">xml</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">clean_ome_xml_for_known_issues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ome_xml</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">OME</span><span class="o">.</span><span class="n">from_xml</span><span class="p">(</span><span class="n">xml</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BioFile</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_plane</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">t</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">c</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">z</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">y</span><span class="p">:</span> <span class="nb">slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">x</span><span class="p">:</span> <span class="nb">slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load bytes from a single plane.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : int, optional</span>
+<span class="sd">            the time index, by default 0</span>
+<span class="sd">        c : int, optional</span>
+<span class="sd">            the channel index, by default 0</span>
+<span class="sd">        z : int, optional</span>
+<span class="sd">            the z index, by default 0</span>
+<span class="sd">        y : slice, optional</span>
+<span class="sd">            a slice object to select a Y subset of the plane, by default: full axis.</span>
+<span class="sd">        x : slice, optional</span>
+<span class="sd">            a slice object to select a X subset of the plane, by default: full axis.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            array of requested bytes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+            <span class="n">was_open</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_open</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">was_open</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+            <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="n">ny</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">nrgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">shape</span>
+
+            <span class="c1"># get bytes from bioformats</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">getIndex</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">ystart</span><span class="p">,</span> <span class="n">ywidth</span> <span class="o">=</span> <span class="n">_slice2width</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ny</span><span class="p">)</span>
+            <span class="n">xstart</span><span class="p">,</span> <span class="n">xwidth</span> <span class="o">=</span> <span class="n">_slice2width</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nx</span><span class="p">)</span>
+            <span class="c1"># read bytes using bioformats</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_r</span><span class="o">.</span><span class="n">openBytes</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">xstart</span><span class="p">,</span> <span class="n">ystart</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">,</span> <span class="n">ywidth</span><span class="p">)</span>
+            <span class="c1"># convert buffer to numpy array</span>
+            <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">buffer</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="c1"># reshape</span>
+            <span class="k">if</span> <span class="n">nrgb</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">core_meta</span><span class="o">.</span><span class="n">is_interleaved</span><span class="p">:</span>
+                    <span class="n">im</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">ywidth</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">,</span> <span class="n">nrgb</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">im</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">nrgb</span><span class="p">,</span> <span class="n">ywidth</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">)</span>
+                    <span class="n">im</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">im</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">ywidth</span><span class="p">,</span> <span class="n">xwidth</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">was_open</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">im</span>
+
+    <span class="k">def</span> <span class="nf">_dask_chunk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve `block_id` from array.</span>
+
+<span class="sd">        This function is for map_blocks (called in `to_dask`).</span>
+<span class="sd">        If someone indexes a 5D dask array as `arr[0, 1, 2]`, then &#39;block_id&#39;</span>
+<span class="sd">        will be (0, 1, 2, 0, 0)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Our convention is that the final dask array is in the order TCZYX, so</span>
+        <span class="c1"># block_id will be coming in as (T, C, Z, Y, X).</span>
+        <span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">block_id</span>
+        <span class="n">im</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plane</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">im</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+    <span class="n">_service</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_create_ome_meta</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;create an OMEXMLMetadata object to populate&quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">bioformats_jar</span> <span class="kn">import</span> <span class="n">get_loci</span>
+
+        <span class="n">loci</span> <span class="o">=</span> <span class="n">get_loci</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_service</span><span class="p">:</span>
+            <span class="n">factory</span> <span class="o">=</span> <span class="n">loci</span><span class="o">.</span><span class="n">common</span><span class="o">.</span><span class="n">services</span><span class="o">.</span><span class="n">ServiceFactory</span><span class="p">()</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_service</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">getInstance</span><span class="p">(</span><span class="n">loci</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">services</span><span class="o">.</span><span class="n">OMEXMLService</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">createOMEXMLMetadata</span><span class="p">()</span></div>
+
+
+<span class="k">def</span> <span class="nf">_pixtype2dtype</span><span class="p">(</span><span class="n">pixeltype</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">little_endian</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Convert a loci.formats PixelType integer into a numpy dtype.&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">bioformats_jar</span> <span class="kn">import</span> <span class="n">get_loci</span>
+
+    <span class="n">FT</span> <span class="o">=</span> <span class="n">get_loci</span><span class="p">()</span><span class="o">.</span><span class="n">formats</span><span class="o">.</span><span class="n">FormatTools</span>
+    <span class="n">fmt2type</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">INT8</span><span class="p">:</span> <span class="s2">&quot;i1&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">UINT8</span><span class="p">:</span> <span class="s2">&quot;u1&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">INT16</span><span class="p">:</span> <span class="s2">&quot;i2&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">UINT16</span><span class="p">:</span> <span class="s2">&quot;u2&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">INT32</span><span class="p">:</span> <span class="s2">&quot;i4&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">UINT32</span><span class="p">:</span> <span class="s2">&quot;u4&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">:</span> <span class="s2">&quot;f4&quot;</span><span class="p">,</span>
+        <span class="n">FT</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span> <span class="s2">&quot;f8&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">((</span><span class="s2">&quot;&lt;&quot;</span> <span class="k">if</span> <span class="n">little_endian</span> <span class="k">else</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">fmt2type</span><span class="p">[</span><span class="n">pixeltype</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">_slice2width</span><span class="p">(</span><span class="n">slc</span><span class="p">:</span> <span class="nb">slice</span><span class="p">,</span> <span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Convert `slice` object into (start, width)&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">slc</span><span class="o">.</span><span class="n">stop</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">slc</span><span class="o">.</span><span class="n">start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># NOTE: we&#39;re ignoring step != 1 here</span>
+        <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">slc</span><span class="o">.</span><span class="n">indices</span><span class="p">(</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">length</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_hide_memoization_warning</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;HACK: this silences a warning about memoization for now</span>
+
+<span class="sd">    An illegal reflective access operation has occurred</span>
+<span class="sd">    https://github.com/ome/bioformats/issues/3659</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">jpype</span>
+
+    <span class="n">System</span> <span class="o">=</span> <span class="n">jpype</span><span class="o">.</span><span class="n">JPackage</span><span class="p">(</span><span class="s2">&quot;java&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lang</span><span class="o">.</span><span class="n">System</span>
+    <span class="n">System</span><span class="o">.</span><span class="n">err</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

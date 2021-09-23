@@ -12,6 +12,14 @@ aicsimageio.readers.array\_like\_reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.bioformats\_reader module
+---------------------------------------------
+
+.. automodule:: aicsimageio.readers.bioformats_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.czi\_reader module
 --------------------------------------
 

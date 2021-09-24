@@ -11,12 +11,14 @@ from typing import Dict, List
 
 class BuildPyCommand(build_py):
     """Check for existence of XSLT before building."""
+
     def run(self):
-        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        xslt = (
+            Path(__file__).parent
+            / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        )
         if not xslt.is_file():
-            raise FileNotFoundError(
-                "XSLT not found. Is the submodule checked out?"
-            )
+            raise FileNotFoundError("XSLT not found. Is the submodule checked out?")
         build_py.run(self)
 
 
@@ -24,9 +26,9 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 format_libs: Dict[str, List[str]] = {
-    "base-imageio": ["imageio[ffmpeg]~=2.9.0", "Pillow~=8.2.0,!=8.3.0"],
-    "lif": ["readlif~=0.6.1"],
-    "czi": ["aicspylibczi~=3.0.2"],
+    "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
+    "lif": ["readlif>=0.6.1"],
+    "czi": ["aicspylibczi>=3.0.2"],
     "bioformats": ["bioformats_jar"],
 }
 
@@ -76,20 +78,20 @@ dev_requirements = [
 
 benchmark_requirements = [
     *dev_requirements,
-    "dask-image~=0.6.0",
+    "dask-image>=0.6.0",
 ]
 
 requirements = [
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",
-    "lxml~=4.6",
-    "numpy~=1.16",
-    "ome-types~=0.2",
+    "lxml>=4.6,<5",
+    "numpy>=1.16,<2",
+    "ome-types>=0.2",
     "tifffile>=2021.6.6",
-    "xarray~=0.16.1",
+    "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
-    "zarr~=2.6",
+    "zarr>=2.6,<3",
 ]
 
 extra_requirements = {

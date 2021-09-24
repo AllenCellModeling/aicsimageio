@@ -130,7 +130,16 @@ setup(
     include_package_data=True,
     keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
+    packages=find_packages(
+        exclude=[
+            "tests",
+            "*.tests",
+            "*.tests.*",
+            "benchmarks",
+            "*.benchmarks",
+            "*.benchmarks.*",
+        ]
+    ),
     python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",

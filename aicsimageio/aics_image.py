@@ -154,7 +154,7 @@ class AICSImage:
 
             # Check for extension in FORMAT_IMPLEMENTATIONS
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
-                if path.endswith(format_ext):
+                if path.lower().endswith(format_ext):
                     for reader in readers:
                         try:
                             ReaderClass = _load_reader(reader)

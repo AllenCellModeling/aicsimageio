@@ -15,6 +15,9 @@ New
 
 Fix
 ~~~
+- bugfix/resolve-conflict-between-format-impls-and-determine-reader
+  (`#318 <https://github.com/AllenCellModeling/aicsimageio/pull/318>`_)
+  [Jackson Maxfield Brown]
 - bugfix/catch-channel-colors-errors-from-typing  (`#299
   <https://github.com/AllenCellModeling/aicsimageio/pull/299>`_)
   [Jackson Maxfield Brown]

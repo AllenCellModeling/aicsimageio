@@ -21,11 +21,11 @@ LOCAL_RESOURCES_DIR = (
 
 
 class NativePythonCompareSuite(_ImageContainerTimeSuite):
-    # This suite measures the effect of switching from Bioformats to a native Python
-    # file format reader can have.
-    # All readers will be different, but we do want to show the drawback of reading
-    # using a Java pipe.
-
+    # This suite compares the time it takes to do common operations for file formats
+    # covered by multiple readers
+    # (specifically, a native Python reader and the BioformatsReader).
+    # Where our native implementation is faster or slower than the Bioformats jpype
+    # implementation.
     params = (
         [
             str(LOCAL_RESOURCES_DIR / "pre-variance-cfe.ome.tiff"),

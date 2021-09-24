@@ -11,12 +11,14 @@ from typing import Dict, List
 
 class BuildPyCommand(build_py):
     """Check for existence of XSLT before building."""
+
     def run(self):
-        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        xslt = (
+            Path(__file__).parent
+            / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        )
         if not xslt.is_file():
-            raise FileNotFoundError(
-                "XSLT not found. Is the submodule checked out?"
-            )
+            raise FileNotFoundError("XSLT not found. Is the submodule checked out?")
         build_py.run(self)
 
 

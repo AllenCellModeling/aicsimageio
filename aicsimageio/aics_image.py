@@ -14,7 +14,7 @@ from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
-from .types import PhysicalPixelSizes, ReaderType
+from .types import PhysicalPixelSizes
 
 ###############################################################################
 
@@ -36,7 +36,7 @@ class AICSImage:
     ----------
     image: types.ImageLike
         A string, Path, fsspec supported URI, or arraylike to read.
-    reader: Optional[types.ReaderType]
+    reader: Optional[Type[Reader]]
         The Reader class to specifically use for reading the provided image.
         Default: None (find matching reader)
     reconstruct_mosaic: bool
@@ -199,7 +199,7 @@ class AICSImage:
     def __init__(
         self,
         image: types.ImageLike,
-        reader: Optional[ReaderType] = None,
+        reader: Optional[Type[Reader]] = None,
         reconstruct_mosaic: bool = True,
         **kwargs: Any,
     ):

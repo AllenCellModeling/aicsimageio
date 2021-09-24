@@ -5,7 +5,7 @@ import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import dask.array as da
 import numpy as np
@@ -1015,7 +1015,7 @@ def test_set_coords(
 )
 def test_set_reader(
     filename: str,
-    set_reader: types.ReaderType,
+    set_reader: Type[readers.reader.Reader],
     extra_kwargs: Dict[str, Any],
     expected_dims: str,
     expected_shape: Tuple[int, ...],

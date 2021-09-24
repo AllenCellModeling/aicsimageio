@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import platform
 from typing import List, Tuple
 
 import numpy as np
@@ -14,6 +15,7 @@ from ..conftest import get_resource_full_path, host
 
 
 @host
+@pytest.mark.skipif(platform.system() == "Linux", reason="nd2 not yet ready for linux")
 @pytest.mark.parametrize(
     "filename, "
     "set_scene, "

@@ -168,13 +168,16 @@ class AICSImage:
         # Useful in cases where the provided filename is a GUID or similar
         # Or provided an in-memory object (arraylike)
         for ReaderClass in AICSImage.SUPPORTED_READERS:
-            if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
-                return ReaderClass
+            try:
+                if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
+                    return ReaderClass
+            except Exception:
+                pass
 
         # If we haven't hit anything yet, check for suffix and suggest a reader install
         if isinstance(path, str):
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
-                if path.endswith(format_ext):
+                if path.lower().endswith(f".{format_ext}"):
                     installer = READER_TO_INSTALL[readers[0]]
                     raise exceptions.UnsupportedFileFormatError(
                         "AICSImage",

@@ -3,7 +3,7 @@
 
 import importlib
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import dask.array as da
 import numpy as np
@@ -17,6 +17,12 @@ from .readers.reader import Reader
 from .types import PhysicalPixelSizes, ReaderType
 
 ###############################################################################
+
+
+def _load_reader(reader_path: str) -> Type[Reader]:
+    module_path, reader_name = reader_path.rsplit(".", 1)
+    loaded_mod = importlib.import_module(module_path)
+    return getattr(loaded_mod, reader_name)
 
 
 class AICSImage:
@@ -115,27 +121,26 @@ class AICSImage:
     """
 
     # Construct SUPPORTED_READERS as we parse FORMAT_IMPLEMENTATIONS
-    SUPPORTED_READERS: List[ReaderType] = []
-    for reader_path in FORMAT_IMPLEMENTATIONS.values():
-        module_path, reader_name = reader_path.rsplit(".", 1)
-        try:
-            loaded_mod = importlib.import_module(module_path)
-            ReaderClass = getattr(loaded_mod, reader_name)
-            if ReaderClass not in SUPPORTED_READERS:
-                SUPPORTED_READERS.append(ReaderClass)
+    SUPPORTED_READERS: List[Type[Reader]] = []
+    for reader_paths in FORMAT_IMPLEMENTATIONS.values():
+        for reader_path in reader_paths:
+            try:
+                ReaderClass = _load_reader(reader_path)
+                if ReaderClass not in SUPPORTED_READERS:
+                    SUPPORTED_READERS.append(ReaderClass)
 
-        except ImportError:
-            pass
+            except ImportError:
+                pass
 
     @staticmethod
-    def determine_reader(image: types.ImageLike, **kwargs: Any) -> ReaderType:
+    def determine_reader(image: types.ImageLike, **kwargs: Any) -> Type[Reader]:
         """
         Cheaply check to see if a given file is a recognized type and return the
         appropriate reader for the image.
 
         Returns
         -------
-        ReaderClass: ReaderType
+        ReaderClass: Type[Reader]
             The reader that supports the provided image.
 
         Raises
@@ -143,39 +148,44 @@ class AICSImage:
         exceptions.UnsupportedFileFormatError
             No reader could be found that supports the provided image.
         """
-        for ReaderClass in AICSImage.SUPPORTED_READERS:
-            if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
-                return ReaderClass
-
-        # Construct non-URI image "paths"
-        # numpy, dask, etc.
+        # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):
             path = str(image)
 
             # Check for extension in FORMAT_IMPLEMENTATIONS
-            # We do a reverse string match, i.e. match from the back
-            # of the path.
-            # It is unfortunately pretty common for microscopy images to be labeled
-            # "some-file.czi.ome.tiff" where the file _was_ a CZI
-            # but was converted to OME-TIFF.
-            for format_ext in FORMAT_IMPLEMENTATIONS.keys():
-                if path[(len(format_ext) * -1) :] == format_ext:
-                    raise exceptions.UnsupportedFileFormatError(
-                        "AICSImage",
-                        path,
-                        msg_extra=(
-                            f"File extension suggests format: '{format_ext}'. "
-                            f"Install extra format dependency with: "
-                            f"`pip install aicsimageio[{format_ext}]`. "
-                            f"See all known format extensions and their extra install "
-                            f"name with `aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
-                        ),
-                    )
+            for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
+                if path.endswith(format_ext):
+                    for reader in readers:
+                        try:
+                            ReaderClass = _load_reader(reader)
+                            if ReaderClass.is_supported_image(image):
+                                return ReaderClass
 
-        else:
-            path = str(type(image))
+                        except ImportError:
+                            raise exceptions.UnsupportedFileFormatError(
+                                "AICSImage",
+                                path,
+                                msg_extra=(
+                                    f"File extension suggests format: '{format_ext}'. "
+                                    f"Install extra format dependency with: "
+                                    f"`pip install aicsimageio[{format_ext}]`. "
+                                    f"See all known format extensions and their "
+                                    f"extra install name with "
+                                    f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
+                                ),
+                            )
+                        except Exception:
+                            pass
 
-        # Unsupported extension
+        # Try all known readers
+        # Useful in cases where the provided filename is a GUID or similar
+        # Or provided an in-memory object (arraylike)
+        for ReaderClass in AICSImage.SUPPORTED_READERS:
+            if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
+                return ReaderClass
+
+        # If we haven't hit anything yet, we likely don't support this file / object
+        path = str(type(image))
         raise exceptions.UnsupportedFileFormatError(
             "AICSImage",
             path,

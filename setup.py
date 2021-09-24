@@ -11,12 +11,14 @@ from typing import Dict, List
 
 class BuildPyCommand(build_py):
     """Check for existence of XSLT before building."""
+
     def run(self):
-        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        xslt = (
+            Path(__file__).parent
+            / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        )
         if not xslt.is_file():
-            raise FileNotFoundError(
-                "XSLT not found. Is the submodule checked out?"
-            )
+            raise FileNotFoundError("XSLT not found. Is the submodule checked out?")
         build_py.run(self)
 
 
@@ -128,7 +130,16 @@ setup(
     include_package_data=True,
     keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
+    packages=find_packages(
+        exclude=[
+            "tests",
+            "*.tests",
+            "*.tests.*",
+            "benchmarks",
+            "*.benchmarks",
+            "*.benchmarks.*",
+        ]
+    ),
     python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",

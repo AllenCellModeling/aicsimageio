@@ -61,7 +61,7 @@ class _ImageContainerTimeSuite:
         DimensionNames.Samples,
     ]
 
-    def time_init(self, img_path, chunk_dims=None, **kwargs):
+    def time_init(self, img_path, chunk_dims=None, reader=None):
         """
         Benchmark how long it takes to validate a file and finish general setup.
         """
@@ -70,7 +70,7 @@ class _ImageContainerTimeSuite:
 
         self.ImageContainer(img_path, chunk_dims=chunk_dims)
 
-    def time_delayed_array_construct(self, img_path, chunk_dims=None, **kwargs):
+    def time_delayed_array_construct(self, img_path, chunk_dims=None, reader=None):
         """
         Benchmark how long it takes to construct the delayed dask array for a file.
         """
@@ -79,7 +79,7 @@ class _ImageContainerTimeSuite:
 
         self.ImageContainer(img_path, chunk_dims=chunk_dims).dask_data
 
-    def time_random_single_chunk_read(self, img_path, chunk_dims=None, **kwargs):
+    def time_random_single_chunk_read(self, img_path, chunk_dims=None, reader=None):
         """
         Benchmark how long it takes to read a single chunk out of a file.
 
@@ -100,7 +100,7 @@ class _ImageContainerTimeSuite:
         )
         r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()
 
-    def time_random_many_chunk_read(self, img_path, chunk_dims=None, **kwargs):
+    def time_random_many_chunk_read(self, img_path, chunk_dims=None, reader=None):
         """
         Open a file, get many chunks out of the file at once.
 

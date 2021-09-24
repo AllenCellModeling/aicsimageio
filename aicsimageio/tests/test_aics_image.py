@@ -252,18 +252,17 @@ from .image_container_test_utils import (
             (0.001, 1.2059374999999999, 1.2059570312500014),
             OME,
         ),
-        # needs #307
-        # (
-        #     "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
-        #     "Series 0",
-        #     ("Series 0",),
-        #     (1, 1, 16, 256, 256),
-        #     np.uint8,
-        #     dimensions.DEFAULT_DIMENSION_ORDER,
-        #     ["Channel:0:0"],
-        #     (None, None, None),
-        #     OME,
-        # ),
+        (
+            "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
+            "Series 0",
+            ("Series 0",),
+            (1, 1, 16, 256, 256),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (None, None, None),
+            OME,
+        ),
         #######################################################################
         # Errors
         pytest.param(

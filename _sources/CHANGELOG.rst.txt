@@ -30,6 +30,9 @@ Fix
 
 Other
 ~~~~~
+- admin/exclude-benchmarks-from-package-install  (`#319
+  <https://github.com/AllenCellModeling/aicsimageio/pull/319>`_)
+  [Jackson Maxfield Brown]
 - admin/loosen-version-pins  (`#320
   <https://github.com/AllenCellModeling/aicsimageio/pull/320>`_)
   [Jackson Maxfield Brown]

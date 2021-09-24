@@ -468,3 +468,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "zpo": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "zvi": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
 }
+
+READER_TO_INSTALL: Dict[str, str] = {
+    "aicsimageio.readers.bioformats_reader.BioformatsReader": "bioformats",
+    "aicsimageio.readers.default_reader.DefaultReader": "base-imageio",
+    "aicsimageio.readers.lif_reader.LifReader": "lif",
+    "aicsimageio.readers.czi_reader.CziReader": "czi",
+}

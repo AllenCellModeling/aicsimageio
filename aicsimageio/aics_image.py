@@ -11,7 +11,7 @@ import xarray as xr
 from ome_types import OME
 
 from . import dimensions, exceptions, transforms, types
-from .formats import FORMAT_IMPLEMENTATIONS
+from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
@@ -161,19 +161,6 @@ class AICSImage:
                             if ReaderClass.is_supported_image(image):
                                 return ReaderClass
 
-                        except ImportError:
-                            raise exceptions.UnsupportedFileFormatError(
-                                "AICSImage",
-                                path,
-                                msg_extra=(
-                                    f"File extension suggests format: '{format_ext}'. "
-                                    f"Install extra format dependency with: "
-                                    f"`pip install aicsimageio[{format_ext}]`. "
-                                    f"See all known format extensions and their "
-                                    f"extra install name with "
-                                    f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
-                                ),
-                            )
                         except Exception:
                             pass
 
@@ -183,6 +170,24 @@ class AICSImage:
         for ReaderClass in AICSImage.SUPPORTED_READERS:
             if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
                 return ReaderClass
+
+        # If we haven't hit anything yet, check for suffix and suggest a reader install
+        if isinstance(path, str):
+            for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
+                if path.endswith(format_ext):
+                    installer = READER_TO_INSTALL[readers[0]]
+                    raise exceptions.UnsupportedFileFormatError(
+                        "AICSImage",
+                        path,
+                        msg_extra=(
+                            f"File extension suggests format: '{format_ext}'. "
+                            f"Install extra format dependency with: "
+                            f"`pip install aicsimageio[{installer}]`. "
+                            f"See all known format extensions and their "
+                            f"extra install name with "
+                            f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
+                        ),
+                    )
 
         # If we haven't hit anything yet, we likely don't support this file / object
         path = str(type(image))

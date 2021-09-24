@@ -69,6 +69,7 @@ class LifReader(Reader):
         self,
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
+        **kwargs: Any,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)

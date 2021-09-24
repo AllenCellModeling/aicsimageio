@@ -88,6 +88,7 @@ class CziReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         chunk_by_dims: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)

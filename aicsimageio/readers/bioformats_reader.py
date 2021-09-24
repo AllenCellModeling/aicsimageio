@@ -67,7 +67,11 @@ class BioformatsReader(Reader):
         except Exception:
             return False
 
-    def __init__(self, image: types.PathLike):
+    def __init__(
+        self,
+        image: types.PathLike,
+        **kwargs: Any,
+    ):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):

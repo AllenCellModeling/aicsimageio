@@ -30,6 +30,9 @@ Fix
 
 Other
 ~~~~~
+- admin/loosen-version-pins  (`#320
+  <https://github.com/AllenCellModeling/aicsimageio/pull/320>`_)
+  [Jackson Maxfield Brown]
 - admin/add-test-resources-caching  (`#313
   <https://github.com/AllenCellModeling/aicsimageio/pull/313>`_)
   [Jackson Maxfield Brown]

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
 
-from .. import constants, exceptions
+from .. import constants, exceptions, types
 from ..utils import io_utils
 from ..utils.cached_property import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
@@ -14,8 +14,6 @@ if TYPE_CHECKING:
     import xarray as xr
     from fsspec.spec import AbstractFileSystem
     from ome_types import OME
-
-    from .. import types
 
 
 try:
@@ -104,4 +102,4 @@ class ND2Reader(Reader):
         metadata for unit information.
         """
         with nd2.ND2File(self._path) as nd2file:
-            return nd2file.pixel_size()
+            return types.PhysicalPixelSizes(*nd2file.pixel_size()[::-1])

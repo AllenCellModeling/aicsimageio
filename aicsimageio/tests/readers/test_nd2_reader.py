@@ -54,7 +54,7 @@ from ..conftest import get_resource_full_path, host
             np.uint16,
             "TZCYX",
             ["Jonas_DIC"],
-            [0.12863494437945, 0.12863494437945, 0.5],
+            (0.5, 0.12863494437945, 0.12863494437945),
         ),
         (
             "ND2_maxime_BF007.nd2",
@@ -64,7 +64,7 @@ from ..conftest import get_resource_full_path, host
             np.uint16,
             "CYX",
             ["405/488/561/633nm"],
-            [0.158389678930686, 0.158389678930686, 1.0],
+            (1.0, 0.158389678930686, 0.158389678930686),
         ),
     ],
 )

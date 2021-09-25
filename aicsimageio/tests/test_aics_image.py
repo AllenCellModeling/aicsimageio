@@ -216,7 +216,7 @@ from .image_container_test_utils import (
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Jonas_DIC"],
-            [0.12863494437945, 0.12863494437945, 0.5],
+            (0.5, 0.12863494437945, 0.12863494437945),
             dict,
         ),
         (

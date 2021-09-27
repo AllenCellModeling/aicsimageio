@@ -40,14 +40,31 @@ except ImportError:
 class BioformatsReader(Reader):
     """Read files using bioformats.
 
-    This reader requires bioformats_jar to be installed in the environment, and requires
-    the java executable to be available on the path, or via the JAVA_HOME environment
-    variable.
+    This reader requires `bioformats_jar` to be installed in the environment, and
+    requires the java executable to be available on the path, or via the JAVA_HOME
+    environment variable.
 
     Parameters
     ----------
     image : Path or str
         path to file
+    original_meta : bool, optional
+        whether to also retrieve the proprietary metadata as structured annotations in
+        the OME output, by default False
+    memoize : bool or int, optional
+        threshold (in milliseconds) for memoizing the reader. If the the time
+        required to call `reader.setId()` is larger than this number, the initialized
+        reader (including all reader wrappers) will be cached in a memo file, reducing
+        time to load the file on future reads.  By default, this results in a hidden
+        `.bfmemo` file in the same directory as the file. The `BIOFORMATS_MEMO_DIR`
+        environment can be used to change the memo file directory.
+        Set `memoize` to greater than 0 to turn on memoization. by default it's off.
+        https://downloads.openmicroscopy.org/bio-formats/latest/api/loci/formats/Memoizer.html
+    options : Dict[str, bool], optional
+        A mapping of option-name -> bool specifying additional reader-specific options.
+        see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
+        For example: to turn off chunkmap table reading for ND2 files, use
+        `options={"nativend2.chunkmap": False}`
 
     Raises
     ------
@@ -67,7 +84,14 @@ class BioformatsReader(Reader):
         except Exception:
             return False
 
-    def __init__(self, image: types.PathLike):
+    def __init__(
+        self,
+        image: types.PathLike,
+        *,
+        original_meta: bool = False,
+        memoize: Union[int, bool] = 0,
+        options: Dict[str, bool] = {},
+    ):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
@@ -76,8 +100,13 @@ class BioformatsReader(Reader):
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
 
+        self._bf_kwargs = {
+            "options": options,
+            "original_meta": original_meta,
+            "memoize": memoize,
+        }
         try:
-            with BioFile(self._path) as rdr:
+            with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
                 md = rdr._r.getMetadataStore()
                 self._scenes: Tuple[str, ...] = tuple(
                     str(md.getImageName(i)) for i in range(md.getImageCount())
@@ -102,7 +131,7 @@ class BioformatsReader(Reader):
     @cached_property
     def ome_metadata(self) -> OME:
         """Return OME object parsed by ome_types."""
-        with BioFile(self._path) as rdr:
+        with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
             meta = rdr.ome_metadata
         return meta
 
@@ -125,7 +154,7 @@ class BioformatsReader(Reader):
         )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
-        with BioFile(self._path) as rdr:
+        with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
@@ -201,6 +230,11 @@ class BioFile:
         environment can be used to change the memo file directory.
         Set `memoize` to greater than 0 to turn on memoization. by default it's off.
         https://downloads.openmicroscopy.org/bio-formats/latest/api/loci/formats/Memoizer.html
+    options : Dict[str, bool], optional
+        A mapping of option-name -> bool specifying additional reader-specific options.
+        see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
+        For example: to turn off chunkmap table reading for ND2 files, use
+        `options={"nativend2.chunkmap": False}`
     """
 
     def __init__(
@@ -208,8 +242,10 @@ class BioFile:
         path: types.PathLike,
         series: int = 0,
         meta: bool = True,
+        *,
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
+        options: Dict[str, bool] = {},
     ):
         try:
             loci = get_loci()
@@ -235,15 +271,14 @@ class BioFile:
             else:
                 self._r = loci.formats.Memoizer(self._r, memoize)
 
-        self.open()
-        self._lock = Lock()
-
-        if "ND2" in str(self._r.getReader()):
-            # https://github.com/openmicroscopy/bioformats/issues/2955
+        if options:
             mo = loci.formats.in_.DynamicMetadataOptions()
-            mo.set("nativend2.chunkmap", "False")
+            for name, value in options.items():
+                mo.set(name, str(value))
             self._r.setMetadataOptions(mo)
 
+        self.open()
+        self._lock = Lock()
         self.set_series(series)
 
     def set_series(self, series: int = 0) -> None:
@@ -281,11 +316,35 @@ class BioFile:
             pass
 
     def to_numpy(self, series: Optional[int] = None) -> np.ndarray:
-        """Create numpy array for the current series."""
+        """Create numpy array for the specified or current series.
+
+        Note: the order of the returned array will *always* be `TCZYX[r]`,
+        where `[r]` refers to an optional RGB dimension with size 3 or 4.
+        If the image is RGB it will have `ndim==6`, otherwise `ndim` will be 5.
+
+        Parameters
+        ----------
+        series : int, optional
+            The series index to retrieve, by default None
+        """
         return np.asarray(self.to_dask(series))
 
-    def to_dask(self, series: Optional[int] = None) -> "da.Array":
-        """Create dask array for the current series."""
+    def to_dask(self, series: Optional[int] = None) -> DaskArrayProxy:
+        """Create dask array for the specified or current series.
+
+        Note: the order of the returned array will *always* be `TCZYX[r]`,
+        where `[r]` refers to an optional RGB dimension with size 3 or 4.
+        If the image is RGB it will have `ndim==6`, otherwise `ndim` will be 5.
+
+        The returned object is a `DaskArrayProxy`, which is a wrapper on a dask array
+        that ensures the file is open when actually reading (computing) a chunk.  It
+        has all the methods and behavior of a dask array.
+        see :class:`aicsimageio.utils.dask_proxy.DaskArrayProxy`.
+
+        Returns
+        -------
+        DaskArrayProxy
+        """
         if series is not None:
             self._r.setSeries(series)
 

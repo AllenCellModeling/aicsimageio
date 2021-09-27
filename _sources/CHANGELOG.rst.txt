@@ -33,6 +33,9 @@ Fix
 
 Other
 ~~~~~
+- docs/update-biofile-docstring-add-bf-options-param  (`#322
+  <https://github.com/AllenCellModeling/aicsimageio/pull/322>`_) [Talley
+  Lambert]
 - admin/exclude-benchmarks-from-package-install  (`#319
   <https://github.com/AllenCellModeling/aicsimageio/pull/319>`_)
   [Jackson Maxfield Brown]

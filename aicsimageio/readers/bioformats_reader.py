@@ -63,6 +63,8 @@ class BioformatsReader(Reader):
     options : Dict[str, bool], optional
         A mapping of option-name -> bool specifying additional reader-specific options.
         see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
+        For example: to turn off chunkmap table reading for ND2 files, use
+        `options={"nativend2.chunkmap": False}`
 
     Raises
     ------

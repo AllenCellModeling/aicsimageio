@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- docs/more-detailed-bioformats-install-instruction-on-error  (`#324
+  <https://github.com/AllenCellModeling/aicsimageio/pull/324>`_) [Talley
+  Lambert]
+
+
 v4.2.0 (2021-09-27)
 -------------------
 

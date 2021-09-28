@@ -44,6 +44,16 @@ class BioformatsReader(Reader):
     requires the java executable to be available on the path, or via the JAVA_HOME
     environment variable.
 
+    To install java with conda, run `conda install -c conda-forge openjdk`.
+    You may need to deactivate/reactivate your environment after installing.  If you
+    are *still* getting a `JVMNotFoundException`, try setting JAVA_HOME as follows:
+
+        # mac and linux:
+        export JAVA_HOME=$CONDA_PREFIX
+
+        # windows:
+        set JAVA_HOME=%CONDA_PREFIX%\\Library
+
     Parameters
     ----------
     image : Path or str
@@ -253,7 +263,13 @@ class BioFile:
             raise type(e)(
                 str(e) + "\n\nBioformatsReader requires a java executable to be "
                 "available in your environment. If you are using conda, you can "
-                "install with `conda install -c conda-forge openjdk`. "
+                "install with `conda install -c conda-forge openjdk`.\n\n"
+                "Note: you may need to reactivate your conda environment after "
+                "installing opendjk. If you still have this error, try:\n\n"
+                "# mac and linux:\n"
+                "export JAVA_HOME=$CONDA_PREFIX\n\n"
+                "# windows:\n"
+                "set JAVA_HOME=%CONDA_PREFIX%\\Library"
             )
 
         self._path = str(path)

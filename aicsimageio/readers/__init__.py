@@ -28,7 +28,7 @@ _LOOKUP = {k.rsplit(".", 1)[-1]: k for k in _READERS}
 __all__ = list(_LOOKUP)
 
 
-def __getattr__(name: str) -> Type[Reader]:
+def __getattr__(name: str) -> Type["Reader"]:
     if name in _LOOKUP:
         from importlib import import_module
 

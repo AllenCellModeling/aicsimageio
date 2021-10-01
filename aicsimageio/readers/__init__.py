@@ -35,7 +35,4 @@ def __getattr__(name: str) -> Type["Reader"]:
         path, clsname = _LOOKUP[name].rsplit(".", 1)
         mod = import_module(path, __name__)
         return getattr(mod, clsname)
-    raise ImportError(
-        f"cannot import name {name!r} from {__name__!r}({__file__}). "
-        f"Readers include: {__all__}"
-    )
+    raise AttributeError(f"module {__name__!r} has no attribute import name {name!r}")

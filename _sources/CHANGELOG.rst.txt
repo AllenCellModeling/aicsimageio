@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+New
+~~~
+- feature/import-any-reader-from-readers  (`#326
+  <https://github.com/AllenCellModeling/aicsimageio/pull/326>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
 - docs/more-detailed-bioformats-install-instruction-on-error  (`#324
   <https://github.com/AllenCellModeling/aicsimageio/pull/324>`_) [Talley
   Lambert]

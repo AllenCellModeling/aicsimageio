@@ -27,7 +27,7 @@ with open("README.md") as readme_file:
 
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
-    "lif": ["readlif>=0.6.1"],
+    "lif": ["readlif>=0.6.4"],
     "czi": ["aicspylibczi>=3.0.2"],
     "bioformats": ["bioformats_jar", "wrapt>=1.12"],
 }

@@ -37,6 +37,9 @@ for deps in format_libs.values():
     for dep in deps:
         all_formats.append(dep)
 
+setup_requirements = [
+    "pytest-runner>=5.2",
+]
 
 test_requirements = [
     *all_formats,
@@ -54,6 +57,7 @@ test_requirements = [
 ]
 
 dev_requirements = [
+    *setup_requirements,
     *test_requirements,
     "asv>=0.4.2",
     "black>=19.10b0",
@@ -93,6 +97,7 @@ requirements = [
 ]
 
 extra_requirements = {
+    "setup": setup_requirements,
     "test": test_requirements,
     "dev": dev_requirements,
     "benchmark": benchmark_requirements,
@@ -138,6 +143,7 @@ setup(
         ]
     ),
     python_requires=">=3.7",
+    setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,
     extras_require=extra_requirements,

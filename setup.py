@@ -28,6 +28,7 @@ with open("README.md") as readme_file:
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
     "bioformats": ["bioformats_jar"],
+    "lif": ["readlif>=0.6.4"],
     "czi": ["aicspylibczi>=3.0.2"],
     "lif": ["readlif>=0.6.1"],
     "nd2": ["nd2"],
@@ -150,6 +151,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.1.0",
+    version="4.2.0",
     zip_safe=False,
 )

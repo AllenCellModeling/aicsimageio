@@ -6,7 +6,7 @@ from typing import List, Tuple
 import numpy as np
 import pytest
 
-from aicsimageio import dimensions, exceptions
+from aicsimageio import exceptions
 from aicsimageio.readers.nd2_reader import ND2Reader
 from aicsimageio.tests.image_container_test_utils import run_image_file_checks
 
@@ -39,9 +39,9 @@ from ..conftest import get_resource_full_path, host
             "ND2_aryeh_but3_cont200-1.nd2",
             "Image:0",
             ("Image:0",),
-            (1, 2, 1, 1040, 1392),
+            (2, 1040, 1392),
             np.dtype(">u2"),
-            dimensions.DEFAULT_DIMENSION_ORDER,
+            "CYX",
             ["20phase", "20xDiO"],
             (None, None, None),
             marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
@@ -50,9 +50,9 @@ from ..conftest import get_resource_full_path, host
             "ND2_jonas_header_test2.nd2",
             "Image:0",
             ("Image:0",),
-            (4, 5, 1, 520, 696),
+            (1, 4, 5, 520, 696),
             np.uint16,
-            "TZCYX",
+            "CTZYX",
             ["Jonas_DIC"],
             (0.5, 0.12863494437945, 0.12863494437945),
         ),

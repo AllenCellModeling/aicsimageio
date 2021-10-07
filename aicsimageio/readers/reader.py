@@ -587,7 +587,15 @@ class Reader(ABC):
             given_dims=self.dims.order,
             return_dims=dimension_order_out,
             **kwargs,
-        )
+        ).copy()
+        # XXX: mystery
+        # copy is a no-op for dask arrays, but for some reason, seems to fix a segfault
+        # that only appears for DaskArrayProxy when running pytest,
+        # at this line in run_image_container_checks:
+        # np.testing.assert_array_equal(
+        #     zyx_chunk_from_delayed,
+        #     zyx_chunk_from_mem,
+        # )
 
     def get_image_data(
         self, dimension_order_out: Optional[str] = None, **kwargs: Any

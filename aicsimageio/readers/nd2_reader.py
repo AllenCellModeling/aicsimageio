@@ -74,9 +74,9 @@ class ND2Reader(Reader):
 
     def _xarr_reformat(self, delayed: bool) -> xr.DataArray:
         with nd2.ND2File(self._path) as ndfile:
-            xarr = ndfile.to_xarray(delayed=delayed)
+            xarr = ndfile.to_xarray(delayed=delayed, squeeze=False)
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, xarr.data._ctx)
+                xarr.data = DaskArrayProxy(xarr.data, ndfile)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
         return xarr
 
@@ -102,4 +102,4 @@ class ND2Reader(Reader):
         metadata for unit information.
         """
         with nd2.ND2File(self._path) as nd2file:
-            return types.PhysicalPixelSizes(*nd2file.pixel_size()[::-1])
+            return types.PhysicalPixelSizes(*nd2file.voxel_size()[::-1])

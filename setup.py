@@ -27,10 +27,9 @@ with open("README.md") as readme_file:
 
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
-    "bioformats": ["bioformats_jar"],
     "lif": ["readlif>=0.6.4"],
     "czi": ["aicspylibczi>=3.0.2"],
-    "lif": ["readlif>=0.6.1"],
+    "bioformats": ["bioformats_jar", "wrapt>=1.12"],
     "nd2": ["nd2"],
 }
 
@@ -91,7 +90,6 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.2",
     "tifffile>=2021.6.6",
-    "wrapt>=1.12",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",

@@ -32,7 +32,7 @@ from .reader import Reader
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 
-class GlobReader(Reader):
+class TiffGlobReader(Reader):
 
     """
     Wraps the tifffile imread API to provide the same aicsimageio Reader API but for
@@ -73,10 +73,15 @@ class GlobReader(Reader):
     single_file_dims : Optional[Tuple]
         Dimensions that correspond to the data dimensions of a single file in the glob.
         Default : ('Y', 'X')
+
+    Examples
+    --------
+    reader = TiffGlobReader("~/data/my_dataset/*.tif")
+    
     """
 
     @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+    def _is_supported_image(fs: AbstractFileSystem, path: types.PathLike, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource):
@@ -133,7 +138,11 @@ class GlobReader(Reader):
         elif isinstance(indexer, pd.DataFrame):
             self._all_files = indexer
             self._all_files["filename"] = file_series
-
+        
+        # If a dim doesn't exist on the file set the column value for that dim to zero.
+        # If the dim is present, add it to the sort order. Because we are using
+        # the default dimension ordering, this will naturally create a sort order
+        # based off the standard dimension order.
         sort_order = []
         for dim in DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES:
             if dim not in self._all_files.columns and dim not in single_file_dims:
@@ -390,6 +399,7 @@ class GlobReader(Reader):
             arr,
             dims=dims,
             coords=coords,
+            attrs=attrs,
         )
 
         return x_data

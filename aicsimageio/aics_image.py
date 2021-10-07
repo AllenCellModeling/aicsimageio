@@ -15,7 +15,7 @@ from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
 from .metadata import utils as metadata_utils
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
-from .readers import GlobReader
+from .readers import TiffGlobReader
 
 ###############################################################################
 
@@ -151,9 +151,9 @@ class AICSImage:
         """
         
         if isinstance(image, list) and isinstance(image[0], str):
-           return GlobReader
+           return TiffGlobReader
         elif isinstance(image, str) and "*" in image:
-            return GlobReader
+            return TiffGlobReader
 
         # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):

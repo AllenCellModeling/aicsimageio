@@ -45,7 +45,7 @@ def make_fake_data_2d(path):
 
 def test_glob_reader_2d(tmp_path: Path):
     reference = make_fake_data_2d(tmp_path)
-    gr = aicsimageio.readers.GlobReader(str(tmp_path / "2d_images/*.tif"))
+    gr = aicsimageio.readers.TiffGlobReader(str(tmp_path / "2d_images/*.tif"))
 
     assert gr.xarray_dask_data.data.chunksize == (1, 1) + DATA_SHAPE[-3:]
 
@@ -82,14 +82,14 @@ def test_glob_reader_3d(tmp_path: Path):
     ).astype(int)
 
     # do not stack z dimension
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "3d_images/*Z0.tif"), single_file_dims=list("ZYX")
     )
     assert gr.xarray_dask_data.data.chunksize == (1, 1, 2, 7, 8)
     check_values(gr, reference.isel(Z=slice(0, 2)))
 
     # stack along z dimension but do not chunk
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "3d_images/*.tif"),
         single_file_dims=list("ZYX"),
         chunk_dims=list("TC"),
@@ -98,7 +98,7 @@ def test_glob_reader_3d(tmp_path: Path):
     check_values(gr, reference)
 
     # stack along z and chunk along z
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "3d_images/*.tif"), single_file_dims=list("ZYX")
     )
     assert gr.xarray_dask_data.data.chunksize == (1, 1, 6, 7, 8)
@@ -144,21 +144,21 @@ def test_glob_reader_4d(tmp_path: Path):
     reference = make_fake_data_4d(tmp_path)
 
     # stack none
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "4d_images/*T0*Z0.tif"), single_file_dims=list("TZYX")
     )
     assert gr.xarray_dask_data.data.chunksize == (2, 1, 3, 7, 8)
     check_values(gr, reference.isel(T=slice(0, 2), Z=slice(0, 3)))
 
     # stack z and t - chunk z
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "4d_images/*.tif"), single_file_dims=list("TZYX")
     )
     assert gr.xarray_dask_data.data.chunksize == (2, 1, 6, 7, 8)
     check_values(gr, reference)
 
     # stack z and t - chunk z and t
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "4d_images/*.tif"),
         single_file_dims=list("TZYX"),
         chunk_dims=["T", "Z"],
@@ -167,7 +167,7 @@ def test_glob_reader_4d(tmp_path: Path):
     check_values(gr, reference)
 
     # stack z an t - chunk ztc
-    gr = aicsimageio.readers.GlobReader(
+    gr = aicsimageio.readers.TiffGlobReader(
         str(tmp_path / "4d_images/*.tif"),
         single_file_dims=list("TZYX"),
         chunk_dims=list("TCZ"),

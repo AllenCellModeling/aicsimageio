@@ -42,4 +42,3 @@ def __getattr__(name: str) -> Type["Reader"]:
         mod = import_module(path, __name__)
         return getattr(mod, clsname)
     raise AttributeError(f"module {__name__!r} has no attribute import name {name!r}")
-

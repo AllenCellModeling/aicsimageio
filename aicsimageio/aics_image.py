@@ -149,9 +149,9 @@ class AICSImage:
         exceptions.UnsupportedFileFormatError
             No reader could be found that supports the provided image.
         """
-        
+
         if isinstance(image, list) and isinstance(image[0], str):
-           return TiffGlobReader
+            return TiffGlobReader
         elif isinstance(image, str) and "*" in image:
             return TiffGlobReader
 

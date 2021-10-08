@@ -90,4 +90,4 @@ class DVReader(Reader):
         metadata for unit information.
         """
         with DVFile(self._path) as dvfile:
-            return types.PhysicalPixelSizes(*dvfile.voxel_size()[::-1])
+            return types.PhysicalPixelSizes(*dvfile.voxel_size[::-1])

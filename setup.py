@@ -29,7 +29,7 @@ format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
     "lif": ["readlif>=0.6.4"],
     "czi": ["aicspylibczi>=3.0.2"],
-    "bioformats": ["bioformats_jar", "wrapt>=1.12"],
+    # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
 }
 
 all_formats: List[str] = []
@@ -53,6 +53,7 @@ test_requirements = [
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
     "tox>=3.15.2",
+    "bioformats_jar", # to test bioformats
 ]
 
 dev_requirements = [
@@ -89,6 +90,7 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.2",
     "tifffile>=2021.6.6",
+    "wrapt>=1.12",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",

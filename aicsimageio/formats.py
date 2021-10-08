@@ -108,7 +108,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "drf": ["aicsimageio.readers.default_reader.DefaultReader"],
     "dsc": ["aicsimageio.readers.default_reader.DefaultReader"],
     "dti": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
-    "dv": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
+    "dv": [
+        "aicsimageio.readers.dv_reader.DVReader",
+        "aicsimageio.readers.bioformats_reader.BioformatsReader",
+    ],
     "ecw": ["aicsimageio.readers.default_reader.DefaultReader"],
     "emf": ["aicsimageio.readers.default_reader.DefaultReader"],
     "eps": [

@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- admin/remove-bioformats-extra  (`#329
+  <https://github.com/AllenCellModeling/aicsimageio/pull/329>`_) [Talley
+  Lambert]
 - admin/bump-readlif-for-multi-scene  (`#327
   <https://github.com/AllenCellModeling/aicsimageio/pull/327>`_)
   [psobolewskiPhD]

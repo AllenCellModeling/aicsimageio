@@ -15,9 +15,9 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   `OME-TIFF`
     -   `TIFF`
     -   `CZI` -- (`pip install aicsimageio[czi]`)
-    -   `LIF` -- (`pip install aicsimageio[lif]`)
+    -   `LIF` -- (`pip install readlif>=0.6.4`)
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
-    - Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`)
+    -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
@@ -49,8 +49,9 @@ optionally installed using `[...]` syntax.
 -   For a single additional supported format (e.g. CZI): `pip install aicsimageio[czi]`
 -   For a single additional supported format (e.g. CZI), development head: `pip install "aicsimageio[czi] @ git+https://github.com/AllenCellModeling/aicsimageio.git"`
 -   For a single additional supported format (e.g. CZI), specific tag (e.g. `v4.0.0.dev6`): `pip install "aicsimageio[czi] @ git+https://github.com/AllenCellModeling/aicsimageio.git@v4.0.0.dev6"`
--   For multiple additional supported formats: `pip install aicsimageio[czi,lif]`
+-   For multiple additional supported formats: `pip install aicsimageio[base-imageio,czi]`
 -   For all additional supported formats: `pip install aicsimageio[all]`
+-   Due to the GPL license, LIF support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio readlif>=0.6.4`
 -   Due to the GPL license, Bio-Formats support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio bioformats_jar`
 
 ## Documentation
@@ -332,4 +333,5 @@ If you find `aicsimageio` useful, please cite this repository as:
 
 _Free software: BSD-3-Clause_
 
+_(The LIF component is licensed under GPLv3 and is not included in this package)_
 _(The Bio-Formats component is licensed under GPLv2 and is not included in this package)_

@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- admin/remove-lif-from-standard-install  (`#332
+  <https://github.com/AllenCellModeling/aicsimageio/pull/332>`_)
+  [Jackson Maxfield Brown]
 - admin/remove-bioformats-extra  (`#329
   <https://github.com/AllenCellModeling/aicsimageio/pull/329>`_) [Talley
   Lambert]

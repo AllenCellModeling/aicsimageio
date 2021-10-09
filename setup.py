@@ -27,7 +27,7 @@ with open("README.md") as readme_file:
 
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
-    "lif": ["readlif>=0.6.4"],
+    # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
     "czi": ["aicspylibczi>=3.0.2"],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     "dv": ["mrc>=0.2.0"],
@@ -54,7 +54,8 @@ test_requirements = [
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
     "tox>=3.15.2",
-    "bioformats_jar", # to test bioformats
+    "bioformats_jar",  # to test bioformats
+    "readlif>=0.6.4",  # to test lif
 ]
 
 dev_requirements = [
@@ -151,6 +152,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.2.0",
+    version="4.3.0",
     zip_safe=False,
 )

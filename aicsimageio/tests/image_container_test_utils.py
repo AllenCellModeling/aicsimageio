@@ -90,7 +90,6 @@ def run_image_container_checks(
     # Read in mem then pull chunks
     zyx_chunk_from_mem = image_container.get_image_data("ZYX")
     cyz_chunk_from_mem = image_container.get_image_data("CYX")
-    print("hi")
 
     # Compare chunk reads
     np.testing.assert_array_equal(
@@ -101,7 +100,6 @@ def run_image_container_checks(
         cyx_chunk_from_delayed,
         cyz_chunk_from_mem,
     )
-    print("hi")
 
     # Check that the shape and dtype are expected after reading in full
     assert image_container.data.shape == expected_shape

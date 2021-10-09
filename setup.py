@@ -30,7 +30,7 @@ format_libs: Dict[str, List[str]] = {
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
     "czi": ["aicspylibczi>=3.0.2"],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
-    "nd2": ["nd2>=0.1.2"],
+    "nd2": ["nd2[legacy]>=0.1.2"],
 }
 
 all_formats: List[str] = []

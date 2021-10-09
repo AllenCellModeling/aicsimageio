@@ -6,14 +6,12 @@ from fsspec.implementations.local import LocalFileSystem
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from ..utils.cached_property import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
     import xarray as xr
     from fsspec.spec import AbstractFileSystem
-    from ome_types import OME
 
 
 try:
@@ -38,22 +36,22 @@ class ND2Reader(Reader):
     Raises
     ------
     exceptions.UnsupportedFileFormatError
-        If the file is not supported by bioformats.
+        If the file is not supported by ND2.
     """
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
-        from nd2._util import NEW_HEADER_MAGIC_NUM
+        from nd2._util import NEW_HEADER_MAGIC, OLD_HEADER_MAGIC
 
         with fs.open(path, "rb") as fh:
-            return int.from_bytes(fh.read(4), "little") == NEW_HEADER_MAGIC_NUM
+            return fh.read(4) in (NEW_HEADER_MAGIC, OLD_HEADER_MAGIC)
 
     def __init__(self, image: types.PathLike):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
             raise ValueError(
-                f"Cannot read Bioformats from non-local file system. "
+                f"Cannot read ND2 from non-local file system. "
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
 
@@ -79,13 +77,6 @@ class ND2Reader(Reader):
                 xarr.data = DaskArrayProxy(xarr.data, ndfile)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
         return xarr
-
-    @cached_property
-    def ome_metadata(self) -> OME:
-        """Return OME object parsed by ome_types."""
-        from ..metadata.utils import bioformats_ome
-
-        return bioformats_ome(self._path)
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

@@ -19,7 +19,7 @@ try:
 except ImportError:
     raise ImportError(
         "The mrc package is required for this reader. "
-        "Install with `pip install aicsimageio[mrc]`"
+        "Install with `pip install aicsimageio[dv]`"
     )
 
 
@@ -47,8 +47,8 @@ class DVReader(Reader):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot read dv from non-local file system. "
+            raise NotImplementedError(
+                f"dv reader not yet implemented for non-local file system. "
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
 

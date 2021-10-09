@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from .bioformats_reader import BioformatsReader  # noqa: F401
     from .czi_reader import CziReader  # noqa: F401
     from .lif_reader import LifReader  # noqa: F401
+    from .nd2_reader import ND2Reader  # noqa: F401
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
     from .reader import Reader
     from .tiff_reader import TiffReader  # noqa: F401
@@ -21,6 +22,7 @@ _READERS = (
     ".bioformats_reader.BioformatsReader",
     ".czi_reader.CziReader",
     ".lif_reader.LifReader",
+    ".nd2_reader.ND2Reader",
     ".ome_tiff_reader.OmeTiffReader",
     ".tiff_reader.TiffReader",
 )

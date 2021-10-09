@@ -207,7 +207,7 @@ from .image_container_test_utils import (
             ET.Element,
         ),
         #######################################################################
-        # BioformatsReader
+        # ND2 Reader
         (
             "ND2_jonas_header_test2.nd2",
             "Image:0",
@@ -219,6 +219,8 @@ from .image_container_test_utils import (
             (0.5, 0.12863494437945, 0.12863494437945),
             dict,
         ),
+        #######################################################################
+        # BioformatsReader
         (
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",

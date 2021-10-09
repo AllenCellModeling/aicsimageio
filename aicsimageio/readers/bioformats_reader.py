@@ -33,7 +33,7 @@ try:
 except ImportError:
     raise ImportError(
         "bioformats_jar is required for this reader. "
-        "Install with `pip install aicsimageio[bioformats]`"
+        "Install with `pip install bioformats_jar`"
     )
 
 
@@ -219,6 +219,8 @@ class BioFile:
     automatically called when using the 'with' context manager.
 
     BioFile instances are not thread-safe.
+
+    Bio-Formats is licensed under GPLv2 and is not included in this package.
 
     Parameters
     ----------

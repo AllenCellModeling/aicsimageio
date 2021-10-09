@@ -1,6 +1,31 @@
 Changelog
 =========
 
+v4.3.0 (2021-10-08)
+-------------------
+
+New
+~~~
+- feature/import-any-reader-from-readers  (`#326
+  <https://github.com/AllenCellModeling/aicsimageio/pull/326>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
+- admin/remove-lif-from-standard-install  (`#332
+  <https://github.com/AllenCellModeling/aicsimageio/pull/332>`_)
+  [Jackson Maxfield Brown]
+- admin/remove-bioformats-extra  (`#329
+  <https://github.com/AllenCellModeling/aicsimageio/pull/329>`_) [Talley
+  Lambert]
+- admin/bump-readlif-for-multi-scene  (`#327
+  <https://github.com/AllenCellModeling/aicsimageio/pull/327>`_)
+  [psobolewskiPhD]
+- docs/more-detailed-bioformats-install-instruction-on-error  (`#324
+  <https://github.com/AllenCellModeling/aicsimageio/pull/324>`_) [Talley
+  Lambert]
+
+
 v4.2.0 (2021-09-27)
 -------------------
 

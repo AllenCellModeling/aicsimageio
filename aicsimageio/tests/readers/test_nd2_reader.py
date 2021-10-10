@@ -43,7 +43,7 @@ from ..conftest import get_resource_full_path, host
             np.uint16,
             "TSCYX",
             ["20phase", "20xDiO"],
-            (1, 1, 1),
+            (1, 50, 50),
         ),
         (
             "ND2_jonas_header_test2.nd2",

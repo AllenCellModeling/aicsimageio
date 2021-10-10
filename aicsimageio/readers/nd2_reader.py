@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 try:
     import nd2
+    import nd2._util
 except ImportError:
     raise ImportError(
         "The nd2 package is required for this reader. "
@@ -62,7 +63,8 @@ class ND2Reader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        return ("Image:0",)  # TODO
+        with nd2.ND2File(self._path) as rdr:
+            return tuple(rdr._position_names())
 
     def _read_delayed(self) -> xr.DataArray:
         return self._xarr_reformat(delayed=True)
@@ -71,12 +73,14 @@ class ND2Reader(Reader):
         return self._xarr_reformat(delayed=False)
 
     def _xarr_reformat(self, delayed: bool) -> xr.DataArray:
-        with nd2.ND2File(self._path) as ndfile:
-            xarr = ndfile.to_xarray(delayed=delayed, squeeze=False)
+        with nd2.ND2File(self._path) as rdr:
+            xarr = rdr.to_xarray(
+                delayed=delayed, squeeze=False, position=self.current_scene_index
+            )
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, ndfile)
+                xarr.data = DaskArrayProxy(xarr.data, rdr)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
-        return xarr
+        return xarr.isel({nd2._util.AXIS.POSITION: 0})
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
@@ -92,5 +96,5 @@ class ND2Reader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        with nd2.ND2File(self._path) as nd2file:
-            return types.PhysicalPixelSizes(*nd2file.voxel_size()[::-1])
+        with nd2.ND2File(self._path) as rdr:
+            return types.PhysicalPixelSizes(*rdr.voxel_size()[::-1])

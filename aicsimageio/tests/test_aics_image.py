@@ -207,6 +207,19 @@ from .image_container_test_utils import (
             ET.Element,
         ),
         #######################################################################
+        # DV-Reader
+        (
+            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
+            "Image:0",
+            ("Image:0",),
+            (1, 4, 40, 512, 512),
+            np.int16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["360/457", "490/528", "555/617", "640/685"],
+            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+            dict,
+        ),
+        #######################################################################
         # ND2 Reader
         (
             "ND2_jonas_header_test2.nd2",
@@ -221,17 +234,6 @@ from .image_container_test_utils import (
         ),
         #######################################################################
         # BioformatsReader
-        (
-            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
-            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
-            ("DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",),
-            (1, 4, 40, 512, 512),
-            np.int16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
-            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
-            OME,
-        ),
         (
             "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
             "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",

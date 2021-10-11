@@ -15,19 +15,18 @@ if TYPE_CHECKING:
 
 
 try:
-    import nd2
-    from nd2._util import NEW_HEADER_MAGIC, OLD_HEADER_MAGIC
+    from mrc import DVFile
 except ImportError:
     raise ImportError(
-        "The nd2 package is required for this reader. "
-        "Install with `pip install aicsimageio[nd2]`"
+        "The mrc package is required for this reader. "
+        "Install with `pip install aicsimageio[dv]`"
     )
 
 
-class ND2Reader(Reader):
-    """Read NIS-Elements files using the Nikon nd2 SDK.
+class DVReader(Reader):
+    """Read DV/Deltavision files.
 
-    This reader requires `nd2` to be installed in the environment.
+    This reader requires `mrc` to be installed in the environment.
 
     Parameters
     ----------
@@ -37,20 +36,19 @@ class ND2Reader(Reader):
     Raises
     ------
     exceptions.UnsupportedFileFormatError
-        If the file is not supported by ND2.
+        If the file is not a supported dv file.
     """
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
-        with fs.open(path, "rb") as fh:
-            return fh.read(4) in (NEW_HEADER_MAGIC, OLD_HEADER_MAGIC)
+        return DVFile.is_supported_file(path)
 
     def __init__(self, image: types.PathLike):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot read ND2 from non-local file system. "
+            raise NotImplementedError(
+                f"dv reader not yet implemented for non-local file system. "
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
 
@@ -61,8 +59,7 @@ class ND2Reader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        with nd2.ND2File(self._path) as rdr:
-            return tuple(rdr._position_names())
+        return ("Image:0",)
 
     def _read_delayed(self) -> xr.DataArray:
         return self._xarr_reformat(delayed=True)
@@ -71,14 +68,12 @@ class ND2Reader(Reader):
         return self._xarr_reformat(delayed=False)
 
     def _xarr_reformat(self, delayed: bool) -> xr.DataArray:
-        with nd2.ND2File(self._path) as rdr:
-            xarr = rdr.to_xarray(
-                delayed=delayed, squeeze=False, position=self.current_scene_index
-            )
+        with DVFile(self._path) as dv:
+            xarr = dv.to_xarray(delayed=delayed, squeeze=False)
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, rdr)
+                xarr.data = DaskArrayProxy(xarr.data, dv)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
-        return xarr.isel({nd2._util.AXIS.POSITION: 0})
+        return xarr
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:
@@ -94,5 +89,5 @@ class ND2Reader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        with nd2.ND2File(self._path) as rdr:
-            return types.PhysicalPixelSizes(*rdr.voxel_size()[::-1])
+        with DVFile(self._path) as dvfile:
+            return types.PhysicalPixelSizes(*dvfile.voxel_size[::-1])

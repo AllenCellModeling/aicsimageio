@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>aicsimageio.utils.dask_proxy &mdash; AICSImageIO 4.3.0 documentation</title>
+  <title>aicsimageio.readers.nd2_reader &mdash; AICSImageIO 4.3.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -281,7 +281,7 @@
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../index.html">Module code</a> &raquo;</li>
           <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
-      <li>aicsimageio.utils.dask_proxy</li>
+      <li>aicsimageio.readers.nd2_reader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -290,86 +290,107 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for aicsimageio.utils.dask_proxy</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">experimental Dask array proxy for file IO</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+  <h1>Source code for aicsimageio.readers.nd2_reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">ContextManager</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">wrapt</span> <span class="kn">import</span> <span class="n">ObjectProxy</span>
+<span class="kn">from</span> <span class="nn">fsspec.implementations.local</span> <span class="kn">import</span> <span class="n">LocalFileSystem</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">..utils.dask_proxy</span> <span class="kn">import</span> <span class="n">DaskArrayProxy</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+    <span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
 
 
-<div class="viewcode-block" id="DaskArrayProxy"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.dask_proxy.DaskArrayProxy">[docs]</a><span class="k">class</span> <span class="nc">DaskArrayProxy</span><span class="p">(</span><span class="n">ObjectProxy</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Dask array wrapper that provides a &#39;file open&#39; context when computing.</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">nd2</span>
+    <span class="kn">import</span> <span class="nn">nd2._util</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+        <span class="s2">&quot;The nd2 package is required for this reader. &quot;</span>
+        <span class="s2">&quot;Install with `pip install aicsimageio[nd2]`&quot;</span>
+    <span class="p">)</span>
 
-<span class="sd">    This is necessary when the dask array contains a delayed underlying reader function</span>
-<span class="sd">    that requires the file to be open. We don&#39;t want to open/close the file on</span>
-<span class="sd">    every single chunk.  So this wrap the `compute` and `__array__` method in an</span>
-<span class="sd">    open-file context manager.  For __getattr__, we return an `ArrayMethodProxy` that</span>
-<span class="sd">    again wraps the resulting object in a DaskArrayProxy if it is a dask array.</span>
 
-<span class="sd">    Experimental!</span>
-<span class="sd">    The state held by the `file_ctx` may be problematic for dask distributed.</span>
+<div class="viewcode-block" id="ND2Reader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.nd2_reader.ND2Reader">[docs]</a><span class="k">class</span> <span class="nc">ND2Reader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Read NIS-Elements files using the Nikon nd2 SDK.</span>
+
+<span class="sd">    This reader requires `nd2` to be installed in the environment.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    wrapped : da.Array</span>
-<span class="sd">        the dask array that requires some file</span>
-<span class="sd">    file_ctx : ContextManager</span>
-<span class="sd">        A context in which the file is open.</span>
-<span class="sd">        IMPORTANT: the context must be reusable, and preferably re-entrant:</span>
-<span class="sd">        https://docs.python.org/3/library/contextlib.html#reentrant-context-managers</span>
+<span class="sd">    image : Path or str</span>
+<span class="sd">        path to file</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    exceptions.UnsupportedFileFormatError</span>
+<span class="sd">        If the file is not supported by ND2.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">__wrapped__</span><span class="p">:</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span><span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">nd2._util</span> <span class="kn">import</span> <span class="n">NEW_HEADER_MAGIC</span><span class="p">,</span> <span class="n">OLD_HEADER_MAGIC</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrapped</span><span class="p">:</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="n">file_ctx</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wrapped</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span> <span class="o">=</span> <span class="n">file_ctx</span>
+        <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fh</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="ow">in</span> <span class="p">(</span><span class="n">NEW_HEADER_MAGIC</span><span class="p">,</span> <span class="n">OLD_HEADER_MAGIC</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DaskArrayProxy</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">enforce_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Catch non-local file system</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="n">LocalFileSystem</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Cannot read ND2 from non-local file system. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received URI: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">, which points to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="n">_ArrayMethodProxy</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">)</span> <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span> <span class="k">else</span> <span class="n">attr</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_supported_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+            <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="p">)</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">with</span> <span class="n">nd2</span><span class="o">.</span><span class="n">ND2File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">rdr</span><span class="o">.</span><span class="n">_position_names</span><span class="p">())</span>
 
-<div class="viewcode-block" id="DaskArrayProxy.compute"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.dask_proxy.DaskArrayProxy.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_reformat</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">_ctx_</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped__</span><span class="o">.</span><span class="n">__array__</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_reformat</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">_xarr_reformat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delayed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">nd2</span><span class="o">.</span><span class="n">ND2File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+            <span class="n">xarr</span> <span class="o">=</span> <span class="n">rdr</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">(</span>
+                <span class="n">delayed</span><span class="o">=</span><span class="n">delayed</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">delayed</span><span class="p">:</span>
+                <span class="n">xarr</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="n">xarr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rdr</span><span class="p">)</span>
+            <span class="n">xarr</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">]</span> <span class="o">=</span> <span class="n">xarr</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">xarr</span><span class="o">.</span><span class="n">isel</span><span class="p">({</span><span class="n">nd2</span><span class="o">.</span><span class="n">_util</span><span class="o">.</span><span class="n">AXIS</span><span class="o">.</span><span class="n">POSITION</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>
 
-<span class="k">class</span> <span class="nc">_ArrayMethodProxy</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Wraps method on a dask array and returns a DaskArrayProxy if the result of the</span>
-<span class="sd">    method is a dask array.  see details in DaskArrayProxy docstring.&quot;&quot;&quot;</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">physical_pixel_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sizes: PhysicalPixelSizes</span>
+<span class="sd">            Using available metadata, the floats representing physical pixel sizes for</span>
+<span class="sd">            dimensions Z, Y, and X.</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">file_ctx</span><span class="p">:</span> <span class="n">ContextManager</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span> <span class="o">=</span> <span class="n">file_ctx</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">DaskArrayProxy</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_ctx</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        We currently do not handle unit attachment to these values. Please see the file</span>
+<span class="sd">        metadata for unit information.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">nd2</span><span class="o">.</span><span class="n">ND2File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">rdr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">(</span><span class="o">*</span><span class="n">rdr</span><span class="o">.</span><span class="n">voxel_size</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 </pre></div>
 
            </div>

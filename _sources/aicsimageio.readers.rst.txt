@@ -44,6 +44,14 @@ aicsimageio.readers.lif\_reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.nd2\_reader module
+--------------------------------------
+
+.. automodule:: aicsimageio.readers.nd2_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.ome\_tiff\_reader module
 --------------------------------------------
 

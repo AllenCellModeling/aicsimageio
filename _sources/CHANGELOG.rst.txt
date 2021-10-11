@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/add-native-nd2-reader  (`#317
+  <https://github.com/AllenCellModeling/aicsimageio/pull/317>`_) [Talley
+  Lambert]
+
+
 v4.3.0 (2021-10-08)
 -------------------
 

@@ -36,6 +36,14 @@ aicsimageio.readers.default\_reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.dv\_reader module
+-------------------------------------
+
+.. automodule:: aicsimageio.readers.dv_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.lif\_reader module
 --------------------------------------
 

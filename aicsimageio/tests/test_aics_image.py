@@ -207,18 +207,20 @@ from .image_container_test_utils import (
             ET.Element,
         ),
         #######################################################################
-        # BioformatsReader
+        # ND2 Reader
         (
             "ND2_jonas_header_test2.nd2",
-            "ND2_jonas_header_test2.nd2 (series 1)",
-            ("ND2_jonas_header_test2.nd2 (series 1)",),
+            "XYPos:0",
+            ("XYPos:0",),
             (4, 1, 5, 520, 696),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["PSM_GFP"],
+            ["Jonas_DIC"],
             (0.5, 0.12863494437945, 0.12863494437945),
-            OME,
+            dict,
         ),
+        #######################################################################
+        # BioformatsReader
         (
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",

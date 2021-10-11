@@ -284,7 +284,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "mvd2": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "naf": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "nd": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
-    "nd2": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
+    "nd2": [
+        "aicsimageio.readers.nd2_reader.ND2Reader",
+        "aicsimageio.readers.bioformats_reader.BioformatsReader",
+    ],
     "ndpi": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "ndpis": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "nef": [

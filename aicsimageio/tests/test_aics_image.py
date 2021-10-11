@@ -210,8 +210,8 @@ from .image_container_test_utils import (
         # ND2 Reader
         (
             "ND2_jonas_header_test2.nd2",
-            "Image:0",
-            ("Image:0",),
+            "XYPos:0",
+            ("XYPos:0",),
             (4, 1, 5, 520, 696),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,

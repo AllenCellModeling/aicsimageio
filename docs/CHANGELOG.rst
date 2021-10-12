@@ -1,6 +1,19 @@
 Changelog
 =========
 
+v4.4.0 (2021-10-12)
+-------------------
+
+New
+~~~
+- feature/add-native-deltavision-reader  (`#333
+  <https://github.com/AllenCellModeling/aicsimageio/pull/333>`_) [Talley
+  Lambert]
+- feature/add-native-nd2-reader  (`#317
+  <https://github.com/AllenCellModeling/aicsimageio/pull/317>`_) [Talley
+  Lambert]
+
+
 v4.3.0 (2021-10-08)
 -------------------
 

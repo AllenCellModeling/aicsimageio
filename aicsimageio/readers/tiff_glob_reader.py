@@ -32,7 +32,7 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 class TiffGlobReader(Reader):
 
-    """
+    r"""
     Wraps the tifffile imread API to provide the same aicsimageio Reader API but for
     multifile tiff datasets (and other tifffile supported) images.
 
@@ -42,9 +42,11 @@ class TiffGlobReader(Reader):
         Glob string that identifies all files to be loaded or a list
         of paths to the files as returned by glob.
     indexer: Union[Callable, pandas.DataFrame]
-        If callable, should consume each filename and return a pd.Series with series index
-        corresponding to the dimensions and values corresponding to the array index of that image file within the larger array.
-        Default: None (Look for 4 numbers in the file name and use them as S, T, C, and Z indices.
+        If callable, should consume each filename and return a pd.Series with series
+        index corresponding to the dimensions and values corresponding to the array
+        index of that image file within the larger array.
+        Default: None (Look for 4 numbers in the file name and use them as
+        S, T, C, and Z indices.)
     scene_glob_character: str
         Character to represent different scenes.
         Default: "S"
@@ -146,10 +148,11 @@ class TiffGlobReader(Reader):
 
             # By default we will attempt to parse 4 numbers out of the filename
             # and assign them in order to be the corresponding S, T, C, and Z indices.
-            # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
-            indexer = lambda x: pd.Series(
-                re.findall(r"\d+", Path(x).name), index=series_idx
-            ).astype(int)
+            # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns 
+            # pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
+            def indexer(x: str) -> pd.Series:
+                pd.Series(re.findall(r"\d+", Path(x).name),
+                          index=series_idx).astype(int)
 
         if callable(indexer):
             self._all_files = file_series.apply(indexer)
@@ -292,7 +295,8 @@ class TiffGlobReader(Reader):
         # sizes of each chunk
         chunk_sizes = self._get_chunk_sizes(scene_nunique, group_dims)
 
-        # sizes that will be used to reshape the array representing the full glob into separate dimensions
+        # sizes that will be used to reshape the array representing
+        # the full glob into separate dimensions.
         unpack_sizes = OrderedDict(
             [
                 (d, s)
@@ -304,10 +308,11 @@ class TiffGlobReader(Reader):
             self._single_file_sizes.values()
         )
 
-        # after unpacking the result of imread we sometimes need to rearrange dims in case they are in the glob and single files
+        # after unpacking the result of imread we sometimes need to rearrange dims
+        # in case they are in the glob and single files.
         axes_order = self._get_axes_order(chunk_sizes, unpack_sizes, group_sizes)
 
-        # expand the sizes with singleton dimensions to facilitate dask.array.block at the end
+        # expand the sizes with singleton dimensions to facilitate da.block at the end
         expanded_blocks_sizes, expanded_chunk_sizes = self._get_expanded_shapes(
             group_sizes, chunk_sizes
         )
@@ -322,7 +327,8 @@ class TiffGlobReader(Reader):
                 # unpack the first dimension if it contains multiple axes
                 darr = darr.reshape(reshape_sizes)
 
-                # Then reorder dimensions so matching ones from the glob and the file are adjacent (glob then file)
+                # Then reorder dimensions so matching ones from the glob 
+                # and the file are adjacent (glob then file)
                 darr = darr.transpose(axes_order)
 
                 # Then reshape the array to chunk_sizes

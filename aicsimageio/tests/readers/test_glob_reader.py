@@ -1,10 +1,8 @@
 #! usr/env/bin/python
 import os
-import re
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 import tifffile as tiff
 import xarray as xr
 
@@ -81,9 +79,6 @@ def make_fake_data_3d(path: Path) -> xr.DataArray:
 
 def test_glob_reader_3d(tmp_path: Path) -> None:
     reference = make_fake_data_3d(tmp_path)
-    idxr = lambda x: pd.Series(
-        re.findall(r"\d+", Path(x).name), index=list("STC")
-    ).astype(int)
 
     # do not stack z dimension
     gr = aicsimageio.readers.TiffGlobReader(

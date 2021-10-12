@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Optional, Tuple, Union, Callable
-
-import re
 import glob
+import re
 from collections import OrderedDict
 from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+
 import dask.array as da
 import numpy as np
 import pandas as pd
 import xarray as xr
-from dask import delayed
 from fsspec.spec import AbstractFileSystem
 from tifffile import TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
@@ -19,15 +18,14 @@ from tifffile.tifffile import TiffTags
 from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
-    REQUIRED_CHUNK_DIMS,
-    DimensionNames,
     DEFAULT_DIMENSION_ORDER,
     DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES,
+    REQUIRED_CHUNK_DIMS,
+    DimensionNames,
 )
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
-
 
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
@@ -120,7 +118,7 @@ class TiffGlobReader(Reader):
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
         single_file_shape: Optional[Tuple] = None,
-        single_file_dims: Optional[Tuple] = (
+        single_file_dims: Sequence[str] = (
             DimensionNames.SpatialY,
             DimensionNames.SpatialX,
         ),
@@ -194,6 +192,8 @@ class TiffGlobReader(Reader):
                     f"Number of provided dimension order strings: {len(dim_order)}"
                 )
 
+        self._channel_names = channel_names
+
         # If provided a list
         if isinstance(channel_names, list):
             # If provided a list of lists
@@ -223,8 +223,6 @@ class TiffGlobReader(Reader):
                 for d in DEFAULT_DIMENSION_ORDER
                 if d in self._all_files.columns or d in self.chunk_dims
             )
-
-        self._channel_names = channel_names
 
         if single_file_shape is None:
             with self._fs.open(self._path) as open_resource:
@@ -345,7 +343,7 @@ class TiffGlobReader(Reader):
             dims = list(expanded_chunk_sizes.keys())
 
         # Assign dims and coords to construct xarray
-        channel_names = self._get_channel_names_for_scene(dims)
+        channel_names = self._get_channel_names_for_scene(dims, d_data.shape)
 
         coords = self._get_coords(
             dims, d_data.shape, self.current_scene_index, channel_names
@@ -400,7 +398,7 @@ class TiffGlobReader(Reader):
         file_dims = [x for x in self._single_file_dims if x not in dims]
         dims += file_dims
 
-        channel_names = self._get_channel_names_for_scene(dims)
+        channel_names = self._get_channel_names_for_scene(dims, arr.shape)
 
         coords = self._get_coords(
             dims, arr.shape, self.current_scene_index, channel_names
@@ -431,7 +429,7 @@ class TiffGlobReader(Reader):
         unpack_sizes: OrderedDict,
         group_sizes: OrderedDict = OrderedDict(),
     ) -> Tuple:
-        axes_order = ()
+        axes_order: Tuple[int, ...] = ()
         for d in chunk_sizes:
             if d in unpack_sizes:
                 axes_order += (list(unpack_sizes.keys()).index(d),)
@@ -501,7 +499,9 @@ class TiffGlobReader(Reader):
 
         return expanded_blocks_sizes, expanded_chunk_sizes
 
-    def _get_channel_names_for_scene(self, dims: List[str]) -> Optional[List[str]]:
+    def _get_channel_names_for_scene(
+        self, dims: List[str], image_shape: Tuple[int, ...]
+    ) -> Optional[List[str]]:
         # Fast return in None case
         if self._channel_names is None:
             return None

@@ -1,17 +1,21 @@
 #! usr/env/bin/python
 import os
 import re
+from pathlib import Path
+
 import numpy as np
-import xarray as xr
 import pandas as pd
 import tifffile as tiff
+import xarray as xr
+
 import aicsimageio
-from pathlib import Path
 
 DATA_SHAPE = (3, 4, 5, 6, 7, 8)  # STCZYX
 
 
-def check_values(reader, reference):
+def check_values(
+    reader: aicsimageio.readers.TiffGlobReader, reference: xr.DataArray
+) -> None:
     for i, s in enumerate(reader.scenes):
         reader.set_scene(s)
         assert np.all(
@@ -20,7 +24,7 @@ def check_values(reader, reference):
         assert np.all(reference.isel(S=i).data == reader.xarray_data.data)
 
 
-def make_fake_data_2d(path):
+def make_fake_data_2d(path: Path) -> xr.DataArray:
 
     data = np.arange(np.prod(DATA_SHAPE), dtype="uint16").reshape(DATA_SHAPE)
 
@@ -43,7 +47,7 @@ def make_fake_data_2d(path):
     return x_data
 
 
-def test_glob_reader_2d(tmp_path: Path):
+def test_glob_reader_2d(tmp_path: Path) -> None:
     reference = make_fake_data_2d(tmp_path)
     gr = aicsimageio.readers.TiffGlobReader(str(tmp_path / "2d_images/*.tif"))
 
@@ -52,7 +56,7 @@ def test_glob_reader_2d(tmp_path: Path):
     check_values(gr, reference)
 
 
-def make_fake_data_3d(path):
+def make_fake_data_3d(path: Path) -> xr.DataArray:
 
     data = np.arange(np.prod(DATA_SHAPE), dtype="uint16").reshape(DATA_SHAPE)
 
@@ -75,7 +79,7 @@ def make_fake_data_3d(path):
     return x_data
 
 
-def test_glob_reader_3d(tmp_path: Path):
+def test_glob_reader_3d(tmp_path: Path) -> None:
     reference = make_fake_data_3d(tmp_path)
     idxr = lambda x: pd.Series(
         re.findall(r"\d+", Path(x).name), index=list("STC")
@@ -105,7 +109,7 @@ def test_glob_reader_3d(tmp_path: Path):
     check_values(gr, reference)
 
 
-def make_fake_data_4d(path):
+def make_fake_data_4d(path: Path) -> xr.DataArray:
 
     data = np.arange(np.prod(DATA_SHAPE), dtype="uint16").reshape(DATA_SHAPE)
 
@@ -140,7 +144,7 @@ def make_fake_data_4d(path):
     return x_data
 
 
-def test_glob_reader_4d(tmp_path: Path):
+def test_glob_reader_4d(tmp_path: Path) -> None:
     reference = make_fake_data_4d(tmp_path)
 
     # stack none

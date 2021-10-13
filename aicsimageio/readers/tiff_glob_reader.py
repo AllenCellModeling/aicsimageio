@@ -148,11 +148,12 @@ class TiffGlobReader(Reader):
 
             # By default we will attempt to parse 4 numbers out of the filename
             # and assign them in order to be the corresponding S, T, C, and Z indices.
-            # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns 
+            # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns
             # pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
             def indexer(x: str) -> pd.Series:
-                pd.Series(re.findall(r"\d+", Path(x).name),
-                          index=series_idx).astype(int)
+                pd.Series(re.findall(r"\d+", Path(x).name), index=series_idx).astype(
+                    int
+                )
 
         if callable(indexer):
             self._all_files = file_series.apply(indexer)
@@ -327,7 +328,7 @@ class TiffGlobReader(Reader):
                 # unpack the first dimension if it contains multiple axes
                 darr = darr.reshape(reshape_sizes)
 
-                # Then reorder dimensions so matching ones from the glob 
+                # Then reorder dimensions so matching ones from the glob
                 # and the file are adjacent (glob then file)
                 darr = darr.transpose(axes_order)
 

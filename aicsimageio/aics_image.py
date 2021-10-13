@@ -13,9 +13,9 @@ from ome_types import OME
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
 from .metadata import utils as metadata_utils
+from .readers import TiffGlobReader
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
-from .readers import TiffGlobReader
 
 ###############################################################################
 

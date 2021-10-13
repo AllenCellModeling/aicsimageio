@@ -14,8 +14,8 @@ if TYPE_CHECKING:
     from .nd2_reader import ND2Reader  # noqa: F401
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
     from .reader import Reader
-    from .tiff_reader import TiffReader  # noqa: F401
     from .tiff_glob_reader import TiffGlobReader  # noqa: F401
+    from .tiff_reader import TiffReader  # noqa: F401
 
 
 # add ".relativepath.ClassName"

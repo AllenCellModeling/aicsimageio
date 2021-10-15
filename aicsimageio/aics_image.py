@@ -154,6 +154,8 @@ class AICSImage:
             return TiffGlobReader
         elif isinstance(image, str) and "*" in image:
             return TiffGlobReader
+        elif isinstance(image, Path) and "*" in str(image):
+            return TiffGlobReader
 
         # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):

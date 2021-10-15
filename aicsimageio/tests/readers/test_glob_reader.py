@@ -173,3 +173,16 @@ def test_glob_reader_4d(tmp_path: Path) -> None:
     )
     assert gr.xarray_dask_data.data.chunksize == (4, 5, 6, 7, 8)
     check_values(gr, reference)
+
+
+def test_aics_image(tmp_path: Path) -> None:
+
+    _ = make_fake_data_4d(tmp_path)
+
+    aicsimage_tiff = aicsimageio.AICSImage(tmp_path / "4d_images/S0_T0_C0_Z0.tif")
+    assert isinstance(aicsimage_tiff.reader, aicsimageio.readers.tiff_reader.TiffReader)
+
+    aicsimage_tiff_glob = aicsimageio.AICSImage(
+        tmp_path / "4d_images/*.tif", single_file_dims=list("TZYX")
+    )
+    assert isinstance(aicsimage_tiff_glob.reader, aicsimageio.readers.TiffGlobReader)

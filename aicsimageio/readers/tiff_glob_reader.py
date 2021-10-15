@@ -132,6 +132,8 @@ class TiffGlobReader(Reader):
             file_series = pd.Series(glob.glob(glob_in))
         elif isinstance(glob_in, list):
             file_series = pd.Series(glob_in)
+        elif isinstance(glob_in, Path) and "*" in str(glob_in):
+            file_series = pd.Series(glob.glob(str(glob_in)))
 
         if len(file_series) == 0:
             raise ValueError("No files found matching glob pattern")
@@ -151,9 +153,9 @@ class TiffGlobReader(Reader):
             # So indexer("path/to/data/S0_T1_C2_Z3.tif") returns
             # pd.Series([0,1,2,3], index=['S','T','C', 'Z'])
             def indexer(x: str) -> pd.Series:
-                pd.Series(re.findall(r"\d+", Path(x).name), index=series_idx).astype(
-                    int
-                )
+                return pd.Series(
+                    re.findall(r"\d+", Path(x).name), index=series_idx
+                ).astype(int)
 
         if callable(indexer):
             self._all_files = file_series.apply(indexer)

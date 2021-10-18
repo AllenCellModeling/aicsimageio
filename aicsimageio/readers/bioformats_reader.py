@@ -6,7 +6,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from threading import Lock
-from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union, List
 
 import dask.array as da
 import numpy as np
@@ -101,6 +101,8 @@ class BioformatsReader(Reader):
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
         options: Dict[str, bool] = {},
+        dask_tiles: bool = False,
+        tile_size: Optional[Tuple[int, int]] = None,
     ):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
@@ -114,6 +116,8 @@ class BioformatsReader(Reader):
             "options": options,
             "original_meta": original_meta,
             "memoize": memoize,
+            "dask_tiles": dask_tiles,
+            "tile_size": tile_size,
         }
         try:
             with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
@@ -258,6 +262,8 @@ class BioFile:
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
         options: Dict[str, bool] = {},
+        dask_tiles: bool = False,
+        tile_size: int = None,
     ):
         try:
             loci = get_loci()
@@ -298,6 +304,16 @@ class BioFile:
         self.open()
         self._lock = Lock()
         self.set_series(series)
+
+        self.dask_tiles = dask_tiles
+        if self.dask_tiles:
+            if tile_size is None:
+                self.tile_size = (
+                    self._r.getOptimalTileHeight(),
+                    self._r.getOptimalTileWidth(),
+                )
+            else:
+                self.tile_size = tile_size
 
     def set_series(self, series: int = 0) -> None:
         self._r.setSeries(series)
@@ -367,7 +383,12 @@ class BioFile:
             self._r.setSeries(series)
 
         nt, nc, nz, ny, nx, nrgb = self.core_meta.shape
-        chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
+
+        if self.dask_tiles:
+            chunks = _get_dask_tile_chunks(nt, nc, nz, ny, nx, self.tile_size)
+        else:
+            chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
+
         if nrgb > 1:
             chunks = chunks + (nrgb,)  # type: ignore
         arr = da.map_blocks(
@@ -481,8 +502,16 @@ class BioFile:
         """
         # Our convention is that the final dask array is in the order TCZYX, so
         # block_id will be coming in as (T, C, Z, Y, X).
-        t, c, z, *_ = block_id
-        im = self._get_plane(t, c, z)
+        t, c, z, y, x, *_ = block_id
+
+        if self.dask_tiles:
+            *_, ny, nx, _ = self.core_meta.shape
+            y_slice = _axis_id_to_slice(y, self.tile_size[0], ny)
+            x_slice = _axis_id_to_slice(x, self.tile_size[1], nx)
+            im = self._get_plane(t, c, z, y_slice, x_slice)
+        else:
+            im = self._get_plane(t, c, z)
+
         return im[np.newaxis, np.newaxis, np.newaxis]
 
     _service: Any = None
@@ -515,6 +544,40 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
         FT.DOUBLE: "f8",
     }
     return np.dtype(("<" if little_endian else ">") + fmt2type[pixeltype])
+
+
+def _get_dask_tile_chunks(
+    nt: int, nc: int, nz: int, ny: int, nx: int, tile_size: Tuple[int, int]
+) -> Tuple[Tuple, Tuple, Tuple, Tuple, Tuple]:
+    """Returns chunking tuples (length of each chunk in each axis) after tiling.
+    I.e., if nx == 2048 and tile_size == 1024, chunks for x axis will be (1024,1024)"""
+
+    y_tile_size, x_tile_size = tile_size
+
+    def _chunk_by_tile_size(n_px, tile_length):
+        n_splits = n_px / tile_length
+        n_full_tiles = np.floor(n_splits)
+
+        if n_splits.is_integer():
+            tile_chunks = (int(tile_length),) * int(n_full_tiles)
+        else:
+            edge_tile = n_px - (n_full_tiles * tile_length)
+            tile_chunks = (int(tile_length),) * int(n_full_tiles) + (int(edge_tile),)
+        return tile_chunks
+
+    y_tiling_chunks = _chunk_by_tile_size(ny, y_tile_size)
+    x_tiling_chunks = _chunk_by_tile_size(nx, x_tile_size)
+
+    return ((1,) * nt, (1,) * nc, (1,) * nz, y_tiling_chunks, x_tiling_chunks)
+
+
+def _axis_id_to_slice(axis_id: int, tile_length: int, n_px: int) -> slice:
+    """Take the axis_id from a dask block_id and create the corresponding
+    tile slice, taking into account edge tiles."""
+    if (axis_id * tile_length) + tile_length <= n_px:
+        return slice(axis_id * tile_length, (axis_id * tile_length) + tile_length)
+    else:
+        return slice(axis_id * tile_length, n_px)
 
 
 def _slice2width(slc: slice, length: int) -> Tuple[int, int]:

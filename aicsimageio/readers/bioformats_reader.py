@@ -165,6 +165,7 @@ class BioformatsReader(Reader):
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
         with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
+            rdr.set_series(self.current_scene_index)
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,

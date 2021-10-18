@@ -6,7 +6,7 @@ import os
 from functools import lru_cache
 from pathlib import Path
 from threading import Lock
-from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union, List
+from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np

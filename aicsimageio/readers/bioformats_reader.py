@@ -75,7 +75,13 @@ class BioformatsReader(Reader):
         see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
         For example: to turn off chunkmap table reading for ND2 files, use
         `options={"nativend2.chunkmap": False}`
-
+    dask_tiles: bool, optional
+        Whether to chunk the bioformats dask array by tiles to easily read sub-regions
+        with numpy-like array indexing
+        Defaults to false and iamges are read by entire planes
+    tile_size: Optional[Tuple[int, int]]
+        Tuple that sets the tile size of y and x axis, respectively
+        By default, it will use optimal values computed by bioformats itself
     Raises
     ------
     exceptions.UnsupportedFileFormatError
@@ -251,6 +257,13 @@ class BioFile:
         see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
         For example: to turn off chunkmap table reading for ND2 files, use
         `options={"nativend2.chunkmap": False}`
+    dask_tiles: bool, optional
+        Whether to chunk the bioformats dask array by tiles to easily read sub-regions
+        with numpy-like array indexing
+        Defaults to false and iamges are read by entire planes
+    tile_size: Optional[Tuple[int, int]]
+        Tuple that sets the tile size of y and x axis, respectively
+        By default, it will use optimal values computed by bioformats itself
     """
 
     def __init__(

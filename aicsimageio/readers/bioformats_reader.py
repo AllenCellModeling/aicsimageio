@@ -257,13 +257,6 @@ class BioFile:
         see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
         For example: to turn off chunkmap table reading for ND2 files, use
         `options={"nativend2.chunkmap": False}`
-    dask_tiles: bool, optional
-        Whether to chunk the bioformats dask array by tiles to easily read sub-regions
-        with numpy-like array indexing
-        Defaults to false and iamges are read by entire planes
-    tile_size: Optional[Tuple[int, int]]
-        Tuple that sets the tile size of y and x axis, respectively
-        By default, it will use optimal values computed by bioformats itself
     """
 
     def __init__(
@@ -275,8 +268,6 @@ class BioFile:
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
         options: Dict[str, bool] = {},
-        dask_tiles: bool = False,
-        tile_size: int = None,
     ):
         try:
             loci = get_loci()
@@ -376,7 +367,9 @@ class BioFile:
         """
         return np.asarray(self.to_dask(series))
 
-    def to_dask(self, series: Optional[int] = None) -> DaskArrayProxy:
+    def to_dask(self, series: Optional[int] = None,
+                dask_tiles: bool = False,
+                tile_size: Optional[Tuple[int,int]] = None,) -> DaskArrayProxy:
         """Create dask array for the specified or current series.
 
         Note: the order of the returned array will *always* be `TCZYX[r]`,
@@ -388,6 +381,18 @@ class BioFile:
         has all the methods and behavior of a dask array.
         see :class:`aicsimageio.utils.dask_proxy.DaskArrayProxy`.
 
+        Parameters
+        ----------
+        series : int, optional
+            The series index to retrieve, by default None
+        dask_tiles: bool, optional
+            Whether to chunk the bioformats dask array by tiles to easily read sub-regions
+            with numpy-like array indexing
+            Defaults to false and iamges are read by entire planes
+        tile_size: Optional[Tuple[int, int]]
+            Tuple that sets the tile size of y and x axis, respectively
+            By default, it will use optimal values computed by bioformats itself
+
         Returns
         -------
         DaskArrayProxy
@@ -397,8 +402,15 @@ class BioFile:
 
         nt, nc, nz, ny, nx, nrgb = self.core_meta.shape
 
-        if self.dask_tiles:
-            chunks = _get_dask_tile_chunks(nt, nc, nz, ny, nx, self.tile_size)
+        if dask_tiles:
+            if tile_size is None:
+                yx_tile_size = (
+                    self._r.getOptimalTileHeight(),
+                    self._r.getOptimalTileWidth(),
+                )
+            else:
+                yx_tile_size = tile_size
+            chunks = _get_dask_tile_chunks(nt, nc, nz, ny, nx, yx_tile_size)
         else:
             chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
 

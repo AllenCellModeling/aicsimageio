@@ -398,6 +398,12 @@ class AICSImage:
                     )
                 )
 
+            if "M" in self._xarray_dask_data.dims:
+                m_idx = self._xarray_dask_data.dims.index("M")
+                if self._xarray_dask_data.shape[m_idx] == 1:
+                    self._xarray_dask_data = np.squeeze(
+                        self._xarray_dask_data, axis=m_idx
+                    )
         return self._xarray_dask_data
 
     @property

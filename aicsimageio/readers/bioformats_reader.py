@@ -75,13 +75,6 @@ class BioformatsReader(Reader):
         see: https://docs.openmicroscopy.org/bio-formats/latest/formats/options.html
         For example: to turn off chunkmap table reading for ND2 files, use
         `options={"nativend2.chunkmap": False}`
-    dask_tiles: bool, optional
-        Whether to chunk the bioformats dask array by tiles to easily read sub-regions
-        with numpy-like array indexing
-        Defaults to false and iamges are read by entire planes
-    tile_size: Optional[Tuple[int, int]]
-        Tuple that sets the tile size of y and x axis, respectively
-        By default, it will use optimal values computed by bioformats itself
     Raises
     ------
     exceptions.UnsupportedFileFormatError
@@ -107,8 +100,6 @@ class BioformatsReader(Reader):
         original_meta: bool = False,
         memoize: Union[int, bool] = 0,
         options: Dict[str, bool] = {},
-        dask_tiles: bool = False,
-        tile_size: Optional[Tuple[int, int]] = None,
     ):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
@@ -122,8 +113,6 @@ class BioformatsReader(Reader):
             "options": options,
             "original_meta": original_meta,
             "memoize": memoize,
-            "dask_tiles": dask_tiles,
-            "tile_size": tile_size,
         }
         try:
             with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
@@ -174,8 +163,21 @@ class BioformatsReader(Reader):
         )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
+
         with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
-            image_data = rdr.to_dask() if delayed else rdr.to_numpy()
+            rdr.set_series(self.current_scene_index)
+
+            dims = (
+                dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES_AND_SAMPLES
+                if rdr.core_meta.is_rgb
+                else dimensions.DEFAULT_DIMENSION_ORDER_WITH_MOSAIC_TILES
+            )
+
+            image_data = (
+                rdr.to_dask(self.current_scene_index) if delayed else rdr.to_numpy()
+            )
+            image_data = image_data.reshape((1,) + image_data.shape)
+
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
                 scene_index=self.current_scene_index,
@@ -183,15 +185,57 @@ class BioformatsReader(Reader):
 
         return xr.DataArray(
             image_data,
-            dims=dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
-            if rdr.core_meta.is_rgb
-            else dimensions.DEFAULT_DIMENSION_ORDER_LIST,
+            dims=list(dims),
             coords=coords,  # type: ignore
             attrs={
                 constants.METADATA_UNPROCESSED: rdr.ome_xml,
                 constants.METADATA_PROCESSED: rdr.ome_metadata,
             },
         )
+
+    def _construct_mosaic_xarray(
+        self,
+        delayed: bool = True,
+        tile_size: Optional[Tuple[int, int]] = None,
+    ) -> xr.DataArray:
+
+        with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
+            rdr.set_series(self.current_scene_index)
+
+            dims = (
+                dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
+                if rdr.core_meta.is_rgb
+                else dimensions.DEFAULT_DIMENSION_ORDER
+            )
+
+            image_data = (
+                rdr.to_dask(
+                    self.current_scene_index, dask_tiles=True, tile_size=tile_size
+                )
+                if delayed
+                else rdr.to_numpy()
+            )
+
+            _, coords = metadata_utils.get_dims_and_coords_from_ome(
+                ome=rdr.ome_metadata,
+                scene_index=self.current_scene_index,
+            )
+
+        return xr.DataArray(
+            image_data,
+            dims=list(dims),
+            coords=coords,  # type: ignore
+            attrs={
+                constants.METADATA_UNPROCESSED: rdr.ome_xml,
+                constants.METADATA_PROCESSED: rdr.ome_metadata,
+            },
+        )
+
+    def _get_stitched_dask_mosaic(self) -> xr.DataArray:
+        return self._construct_mosaic_xarray(delayed=True)
+
+    def _get_stitched_mosaic(self) -> xr.DataArray:
+        return self._construct_mosaic_xarray(delayed=False)
 
     @staticmethod
     def bioformats_version() -> str:
@@ -309,16 +353,6 @@ class BioFile:
         self._lock = Lock()
         self.set_series(series)
 
-        self.dask_tiles = dask_tiles
-        if self.dask_tiles:
-            if tile_size is None:
-                self.tile_size = (
-                    self._r.getOptimalTileHeight(),
-                    self._r.getOptimalTileWidth(),
-                )
-            else:
-                self.tile_size = tile_size
-
     def set_series(self, series: int = 0) -> None:
         self._r.setSeries(series)
         self._core_meta = CoreMeta(
@@ -367,9 +401,12 @@ class BioFile:
         """
         return np.asarray(self.to_dask(series))
 
-    def to_dask(self, series: Optional[int] = None,
-                dask_tiles: bool = False,
-                tile_size: Optional[Tuple[int,int]] = None,) -> DaskArrayProxy:
+    def to_dask(
+        self,
+        series: Optional[int] = None,
+        dask_tiles: bool = False,
+        tile_size: Optional[Tuple[int, int]] = None,
+    ) -> DaskArrayProxy:
         """Create dask array for the specified or current series.
 
         Note: the order of the returned array will *always* be `TCZYX[r]`,
@@ -411,13 +448,18 @@ class BioFile:
             else:
                 yx_tile_size = tile_size
             chunks = _get_dask_tile_chunks(nt, nc, nz, ny, nx, yx_tile_size)
+            dask_chunk_func = lambda block_id: self._dask_chunk(
+                block_id, dask_tiles=dask_tiles, tile_size=yx_tile_size
+            )
         else:
             chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
+            dask_chunk_func = self._dask_chunk
 
         if nrgb > 1:
             chunks = chunks + (nrgb,)  # type: ignore
+
         arr = da.map_blocks(
-            self._dask_chunk,
+            dask_chunk_func,
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
@@ -518,7 +560,12 @@ class BioFile:
 
         return im
 
-    def _dask_chunk(self, block_id: Tuple[int, ...]) -> np.ndarray:
+    def _dask_chunk(
+        self,
+        block_id: Tuple[int, ...],
+        dask_tiles: bool = False,
+        tile_size: Optional[Tuple[int, int]] = None,
+    ) -> np.ndarray:
         """Retrieve `block_id` from array.
 
         This function is for map_blocks (called in `to_dask`).
@@ -529,10 +576,10 @@ class BioFile:
         # block_id will be coming in as (T, C, Z, Y, X).
         t, c, z, y, x, *_ = block_id
 
-        if self.dask_tiles:
+        if dask_tiles:
             *_, ny, nx, _ = self.core_meta.shape
-            y_slice = _axis_id_to_slice(y, self.tile_size[0], ny)
-            x_slice = _axis_id_to_slice(x, self.tile_size[1], nx)
+            y_slice = _axis_id_to_slice(y, tile_size[0], ny)
+            x_slice = _axis_id_to_slice(x, tile_size[1], nx)
             im = self._get_plane(t, c, z, y_slice, x_slice)
         else:
             im = self._get_plane(t, c, z)

@@ -1,5 +1,6 @@
 #! usr/env/bin/python
 import os
+from itertools import product
 from pathlib import Path
 
 import numpy as np
@@ -31,17 +32,14 @@ def make_fake_data_2d(path: Path) -> xr.DataArray:
     x_data = xr.DataArray(data, dims=dims)
 
     os.mkdir(str(path / "2d_images"))
+    for s, t, c, z in product(*(range(x) for x in DATA_SHAPE[:4])):
 
-    for s in range(DATA_SHAPE[0]):
-        for t in range(DATA_SHAPE[1]):
-            for c in range(DATA_SHAPE[2]):
-                for z in range(DATA_SHAPE[3]):
-                    im = data[s, t, c, z]
-                    tiff.imsave(
-                        str(path / f"2d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
-                        im,
-                        dtype=np.uint16,
-                    )
+        im = data[s, t, c, z]
+        tiff.imsave(
+            str(path / f"2d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
+            im,
+            dtype=np.uint16,
+        )
     return x_data
 
 
@@ -64,16 +62,14 @@ def make_fake_data_3d(path: Path) -> xr.DataArray:
 
     os.mkdir(str(path / "3d_images"))
 
-    for s in range(DATA_SHAPE[0]):
-        for t in range(DATA_SHAPE[1]):
-            for c in range(DATA_SHAPE[2]):
-                for z in range(int(DATA_SHAPE[3] / 2)):
-                    im = data[s, t, c, 2 * z : 2 * (z + 1)]
-                    tiff.imsave(
-                        str(path / f"3d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
-                        im,
-                        dtype=np.uint16,
-                    )
+    shape_for_3d = (*DATA_SHAPE[:3], int(DATA_SHAPE[3] / 2))
+    for s, t, c, z in product(*(range(x) for x in shape_for_3d)):
+        im = data[s, t, c, 2 * z : 2 * (z + 1)]
+        tiff.imsave(
+            str(path / f"3d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
+            im,
+            dtype=np.uint16,
+        )
     return x_data
 
 
@@ -120,22 +116,20 @@ def make_fake_data_4d(path: Path) -> xr.DataArray:
     per_file_z = 3
     z_files = int(DATA_SHAPE[3] / per_file_z)
 
-    for s in range(DATA_SHAPE[0]):
-        for t in range(t_files):
-            for c in range(DATA_SHAPE[2]):
-                for z in range(z_files):
-                    im = data[
-                        s,
-                        per_file_t * t : per_file_t * (t + 1),
-                        c,
-                        per_file_z * z : per_file_z * (z + 1),
-                    ]
-                    tiff.imsave(
-                        str(path / f"4d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
-                        im,
-                        dtype=np.uint16,
-                        photometric="MINISBLACK",
-                    )
+    shape_for_4d = (DATA_SHAPE[0], t_files, DATA_SHAPE[2], z_files)
+    for s, t, c, z in product(*(range(x) for x in shape_for_4d)):
+        im = data[
+            s,
+            per_file_t * t : per_file_t * (t + 1),
+            c,
+            per_file_z * z : per_file_z * (z + 1),
+        ]
+        tiff.imsave(
+            str(path / f"4d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
+            im,
+            dtype=np.uint16,
+            photometric="MINISBLACK",
+        )
     return x_data
 
 

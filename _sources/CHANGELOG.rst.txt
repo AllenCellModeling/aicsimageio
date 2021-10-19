@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/update-pr-template-remove-link-to-gh-12  (`#342
+  <https://github.com/AllenCellModeling/aicsimageio/pull/342>`_)
+  [Madison Swain-Bowden]
+
+
 v4.4.0 (2021-10-12)
 -------------------
 

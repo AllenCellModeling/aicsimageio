@@ -165,7 +165,8 @@ class BioformatsReader(Reader):
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
         with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
-            image_data = rdr.to_dask() if delayed else rdr.to_numpy()
+            f = rdr.to_dask if delayed else rdr.to_numpy
+            image_data = f(self.current_scene_index)
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
                 scene_index=self.current_scene_index,
@@ -295,6 +296,7 @@ class BioFile:
                 mo.set(name, str(value))
             self._r.setMetadataOptions(mo)
 
+        self._close_on_exit = True
         self.open()
         self._lock = Lock()
         self.set_series(series)
@@ -403,12 +405,15 @@ class BioFile:
         return OME.from_xml(xml)
 
     def __enter__(self) -> BioFile:
+        # entering an already opened file should not close the file on exit.
+        self._close_on_exit = not self.is_open
         if not self.is_open:
             self.open()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        self.close()
+        if self._close_on_exit:
+            self.close()
 
     def __del__(self) -> None:
         self.close()

@@ -8,7 +8,7 @@ import pytest
 from ome_types import OME
 
 from aicsimageio import dimensions, exceptions
-from aicsimageio.readers.bioformats_reader import BioformatsReader
+from aicsimageio.readers.bioformats_reader import BioFile, BioformatsReader
 from aicsimageio.tests.image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
@@ -404,3 +404,13 @@ def test_multi_scene_bioformats_reader(
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.dtype(np.uint16),
     )
+
+
+def test_biofile_scene_change() -> None:
+    """Make sure that DaskArrayProxy doesn't close an opened file."""
+    uri = get_resource_full_path("ND2_dims_p4z5t3c2y32x32.nd2", LOCAL)
+    f = BioFile(uri)
+    assert isinstance(f.to_dask().compute(), np.ndarray)
+    f.set_series(1)
+    assert isinstance(f.to_dask().compute(), np.ndarray)
+    f.close()

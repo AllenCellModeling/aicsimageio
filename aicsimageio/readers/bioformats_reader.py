@@ -276,7 +276,7 @@ class BioFile:
         memoize: Union[int, bool] = 0,
         options: Dict[str, bool] = {},
         dask_tiles: bool = False,
-        tile_size: int = None,
+        tile_size: Optional[Tuple[int, int]] = None,
     ):
         try:
             loci = get_loci()

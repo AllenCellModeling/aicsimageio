@@ -400,7 +400,7 @@ class BioFile:
         if self.dask_tiles:
             chunks = _get_dask_tile_chunks(nt, nc, nz, ny, nx, self.tile_size)
         else:
-            chunks = ((1,) * nt, (1,) * nc, (1,) * nz, ny, nx)
+            chunks = ((1,) * nt, (1,) * nc, (1,) * nz, (ny,), (nx,))
 
         if nrgb > 1:
             chunks = chunks + (nrgb,)  # type: ignore

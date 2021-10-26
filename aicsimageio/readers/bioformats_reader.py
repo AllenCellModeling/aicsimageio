@@ -561,13 +561,15 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
 
 def _get_dask_tile_chunks(
     nt: int, nc: int, nz: int, ny: int, nx: int, tile_size: Tuple[int, int]
-) -> Tuple[Tuple, Tuple, Tuple, Tuple, Tuple]:
+) -> Tuple[
+    Tuple[int, ...], Tuple[int, ...], Tuple[int, ...], Tuple[int, ...], Tuple[int, ...]
+]:
     """Returns chunking tuples (length of each chunk in each axis) after tiling.
     I.e., if nx == 2048 and tile_size == 1024, chunks for x axis will be (1024,1024)"""
 
     y_tile_size, x_tile_size = tile_size
 
-    def _chunk_by_tile_size(n_px, tile_length):
+    def _chunk_by_tile_size(n_px: int, tile_length: int) -> Tuple[int, ...]:
         n_splits = n_px / tile_length
         n_full_tiles = np.floor(n_splits)
 

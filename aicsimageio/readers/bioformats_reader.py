@@ -559,6 +559,18 @@ def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
     return np.dtype(("<" if little_endian else ">") + fmt2type[pixeltype])
 
 
+def _chunk_by_tile_size(n_px: int, tile_length: int) -> Tuple[int, ...]:
+    n_splits = n_px / tile_length
+    n_full_tiles = np.floor(n_splits)
+
+    if n_splits.is_integer():
+        tile_chunks = (int(tile_length),) * int(n_full_tiles)
+    else:
+        edge_tile = n_px - (n_full_tiles * tile_length)
+        tile_chunks = (int(tile_length),) * int(n_full_tiles) + (int(edge_tile),)
+    return tile_chunks
+
+
 def _get_dask_tile_chunks(
     nt: int, nc: int, nz: int, ny: int, nx: int, tile_size: Tuple[int, int]
 ) -> Tuple[
@@ -568,17 +580,6 @@ def _get_dask_tile_chunks(
     I.e., if nx == 2048 and tile_size == 1024, chunks for x axis will be (1024,1024)"""
 
     y_tile_size, x_tile_size = tile_size
-
-    def _chunk_by_tile_size(n_px: int, tile_length: int) -> Tuple[int, ...]:
-        n_splits = n_px / tile_length
-        n_full_tiles = np.floor(n_splits)
-
-        if n_splits.is_integer():
-            tile_chunks = (int(tile_length),) * int(n_full_tiles)
-        else:
-            edge_tile = n_px - (n_full_tiles * tile_length)
-            tile_chunks = (int(tile_length),) * int(n_full_tiles) + (int(edge_tile),)
-        return tile_chunks
 
     y_tiling_chunks = _chunk_by_tile_size(ny, y_tile_size)
     x_tiling_chunks = _chunk_by_tile_size(nx, x_tile_size)

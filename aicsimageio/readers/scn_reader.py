@@ -69,7 +69,7 @@ class SCNReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        scenes = tuple()
+        scenes: Tuple[str, ...] = tuple()
         for idx, im in enumerate(
             self._scn_metadata.get("scn").get("collection").get("image")
         ):

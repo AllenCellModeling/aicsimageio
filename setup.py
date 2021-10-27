@@ -11,12 +11,14 @@ from typing import Dict, List
 
 class BuildPyCommand(build_py):
     """Check for existence of XSLT before building."""
+
     def run(self):
-        xslt = Path(__file__).parent / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        xslt = (
+            Path(__file__).parent
+            / "aicsimageio/metadata/czi-to-ome-xslt/xslt/czi-to-ome.xsl"
+        )
         if not xslt.is_file():
-            raise FileNotFoundError(
-                "XSLT not found. Is the submodule checked out?"
-            )
+            raise FileNotFoundError("XSLT not found. Is the submodule checked out?")
         build_py.run(self)
 
 
@@ -24,9 +26,12 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 format_libs: Dict[str, List[str]] = {
-    "base-imageio": ["imageio[ffmpeg]~=2.9.0", "Pillow~=8.2.0,!=8.3.0"],
-    "lif": ["readlif~=0.6.1"],
-    "czi": ["aicspylibczi~=3.0.2"],
+    "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
+    "czi": ["aicspylibczi>=3.0.2"],
+    "nd2": ["nd2[legacy]>=0.1.4"],
+    "dv": ["mrc>=0.2.0"],
+    # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
+    # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
 }
 
 all_formats: List[str] = []
@@ -40,14 +45,9 @@ setup_requirements = [
 
 test_requirements = [
     *all_formats,
-    "black>=19.10b0",
     "codecov>=2.1.4",
     "distributed>=2021.4.1",
     "docutils>=0.10,<0.16",
-    "flake8>=3.8.3",
-    "flake8-debugger>=3.2.1",
-    "isort>=5.7.0",
-    "mypy>=0.800",
     "psutil>=5.7.0",
     "pytest>=5.4.3",
     "pytest-cov>=2.9.0",
@@ -55,17 +55,24 @@ test_requirements = [
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
     "tox>=3.15.2",
+    "bioformats_jar",  # to test bioformats
+    "readlif>=0.6.4",  # to test lif
 ]
 
 dev_requirements = [
     *setup_requirements,
     *test_requirements,
     "asv>=0.4.2",
+    "black>=19.10b0",
     "bump2version>=1.0.1",
     "coverage>=5.1",
+    "flake8>=3.8.3",
+    "flake8-debugger>=3.2.1",
     "gitchangelog>=3.0.4",
     "ipython>=7.15.0",
+    "isort>=5.7.0",
     "m2r2>=0.2.7",
+    "mypy>=0.800",
     "pytest-runner>=5.2",
     "Sphinx>=3.4.3",
     "sphinx_rtd_theme>=0.5.1",
@@ -75,20 +82,21 @@ dev_requirements = [
 
 benchmark_requirements = [
     *dev_requirements,
-    "dask-image~=0.6.0",
+    "dask-image>=0.6.0",
 ]
 
 requirements = [
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",
-    "lxml~=4.6",
-    "numpy~=1.16",
-    "ome-types~=0.2.9",
+    "lxml>=4.6,<5",
+    "numpy>=1.16,<2",
+    "ome-types>=0.2",
     "tifffile>=2021.6.6",
-    "xarray~=0.16.1",
+    "wrapt>=1.12",
+    "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
-    "zarr~=2.6",
+    "zarr>=2.6,<3",
 ]
 
 extra_requirements = {
@@ -127,7 +135,16 @@ setup(
     include_package_data=True,
     keywords="imageio, image reading, image writing, metadata, microscopy, allen cell",
     name="aicsimageio",
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
+    packages=find_packages(
+        exclude=[
+            "tests",
+            "*.tests",
+            "*.tests.*",
+            "benchmarks",
+            "*.benchmarks",
+            "*.benchmarks.*",
+        ]
+    ),
     python_requires=">=3.7",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
@@ -136,6 +153,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.1.0",
+    version="4.4.0",
     zip_safe=False,
 )

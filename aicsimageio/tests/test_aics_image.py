@@ -5,7 +5,7 @@ import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import dask.array as da
 import numpy as np
@@ -205,6 +205,67 @@ from .image_container_test_utils import (
             ["Channel:0:0"],
             (None, 1.0833333333333333, 1.0833333333333333),
             ET.Element,
+        ),
+        #######################################################################
+        # DV-Reader
+        (
+            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
+            "Image:0",
+            ("Image:0",),
+            (1, 4, 40, 512, 512),
+            np.int16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["360/457", "490/528", "555/617", "640/685"],
+            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+            dict,
+        ),
+        #######################################################################
+        # ND2 Reader
+        (
+            "ND2_jonas_header_test2.nd2",
+            "XYPos:0",
+            ("XYPos:0",),
+            (4, 1, 5, 520, 696),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Jonas_DIC"],
+            (0.5, 0.12863494437945, 0.12863494437945),
+            dict,
+        ),
+        #######################################################################
+        # BioformatsReader
+        (
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            ("Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",),
+            (32, 1, 1, 512, 512),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["CH3"],
+            (1.0, 1.242961138804478, 1.242961138804478),
+            OME,
+        ),
+        (
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims",
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",
+            ("Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",),
+            (1, 3, 1, 1024, 1024),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (0.001, 1.2059374999999999, 1.2059570312500014),
+            OME,
+        ),
+        (
+            "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
+            "Series 0",
+            ("Series 0",),
+            (1, 1, 16, 256, 256),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (None, None, None),
+            OME,
         ),
         #######################################################################
         # Errors
@@ -987,7 +1048,7 @@ def test_set_coords(
 )
 def test_set_reader(
     filename: str,
-    set_reader: types.ReaderType,
+    set_reader: Type[readers.reader.Reader],
     extra_kwargs: Dict[str, Any],
     expected_dims: str,
     expected_shape: Tuple[int, ...],

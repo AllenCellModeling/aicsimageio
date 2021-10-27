@@ -1,6 +1,106 @@
 Changelog
 =========
 
+v4.4.0 (2021-10-12)
+-------------------
+
+New
+~~~
+- feature/add-native-deltavision-reader  (`#333
+  <https://github.com/AllenCellModeling/aicsimageio/pull/333>`_) [Talley
+  Lambert]
+- feature/add-native-nd2-reader  (`#317
+  <https://github.com/AllenCellModeling/aicsimageio/pull/317>`_) [Talley
+  Lambert]
+
+
+v4.3.0 (2021-10-08)
+-------------------
+
+New
+~~~
+- feature/import-any-reader-from-readers  (`#326
+  <https://github.com/AllenCellModeling/aicsimageio/pull/326>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
+- admin/remove-lif-from-standard-install  (`#332
+  <https://github.com/AllenCellModeling/aicsimageio/pull/332>`_)
+  [Jackson Maxfield Brown]
+- admin/remove-bioformats-extra  (`#329
+  <https://github.com/AllenCellModeling/aicsimageio/pull/329>`_) [Talley
+  Lambert]
+- admin/bump-readlif-for-multi-scene  (`#327
+  <https://github.com/AllenCellModeling/aicsimageio/pull/327>`_)
+  [psobolewskiPhD]
+- docs/more-detailed-bioformats-install-instruction-on-error  (`#324
+  <https://github.com/AllenCellModeling/aicsimageio/pull/324>`_) [Talley
+  Lambert]
+
+
+v4.2.0 (2021-09-27)
+-------------------
+
+New
+~~~
+- feature/bioformats-reader  (`#306
+  <https://github.com/AllenCellModeling/aicsimageio/pull/306>`_) [Talley
+  Lambert]
+- feature/metadata-module  (`#292
+  <https://github.com/AllenCellModeling/aicsimageio/pull/292>`_) [Matte
+  Bailey]
+
+Fix
+~~~
+- bugfix/resolve-conflict-between-format-impls-and-determine-reader
+  (`#318 <https://github.com/AllenCellModeling/aicsimageio/pull/318>`_)
+  [Jackson Maxfield Brown]
+- bugfix/catch-channel-colors-errors-from-typing  (`#299
+  <https://github.com/AllenCellModeling/aicsimageio/pull/299>`_)
+  [Jackson Maxfield Brown]
+- bugfix/asv-with-submodules  (`#297
+  <https://github.com/AllenCellModeling/aicsimageio/pull/297>`_)
+  [Jackson Maxfield Brown]
+- bugfix/pass-aws-creds-to-tox  (`#296
+  <https://github.com/AllenCellModeling/aicsimageio/pull/296>`_) [Matte
+  Bailey]
+- bugfix/checkout-submodules-for-doc-building  (`#295
+  <https://github.com/AllenCellModeling/aicsimageio/pull/295>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- docs/update-biofile-docstring-add-bf-options-param  (`#322
+  <https://github.com/AllenCellModeling/aicsimageio/pull/322>`_) [Talley
+  Lambert]
+- admin/exclude-benchmarks-from-package-install  (`#319
+  <https://github.com/AllenCellModeling/aicsimageio/pull/319>`_)
+  [Jackson Maxfield Brown]
+- admin/loosen-version-pins  (`#320
+  <https://github.com/AllenCellModeling/aicsimageio/pull/320>`_)
+  [Jackson Maxfield Brown]
+- admin/add-test-resources-caching  (`#313
+  <https://github.com/AllenCellModeling/aicsimageio/pull/313>`_)
+  [Jackson Maxfield Brown]
+- admin/add-tox-work-dir-env-var-opt-to-tox-ini  (`#310
+  <https://github.com/AllenCellModeling/aicsimageio/pull/310>`_) [Talley
+  Lambert]
+- Add .pre-commit-config.yaml  (`#308
+  <https://github.com/AllenCellModeling/aicsimageio/pull/308>`_) [Talley
+  Lambert]
+- admin/add-custom-reader-addition-docs  (`#305
+  <https://github.com/AllenCellModeling/aicsimageio/pull/305>`_)
+  [Jackson Maxfield Brown, Madison Swain-Bowden <bowdenm@spu.edu>    *
+  Grammer on object's    Co-authored-by: Madison Swain-Bowden
+  <bowdenm@spu.edu>    * Better CziReader custom dependency link    Co-
+  authored-by: Madison Swain-Bowden <bowdenm@spu.edu>    * Remove extra
+  words    Co-authored-by: Madison Swain-Bowden <bowdenm@spu.edu>    *
+  Better wording on benchmark additions    Co-authored-by: Madison
+  Swain-Bowden <bowdenm@spu.edu>    * Clean up Reader class impl section
+  Co-authored-by: Madison Swain-Bowden <bowdenm@spu.edu>]
+
+
 v4.1.0 (2021-08-10)
 -------------------
 

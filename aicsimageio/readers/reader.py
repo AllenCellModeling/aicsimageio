@@ -68,7 +68,6 @@ class Reader(ABC):
         supported: bool
             Boolean value indicating if the file is supported by the reader.
         """
-        pass
 
     @classmethod
     def is_supported_image(cls, image: types.ImageLike, **kwargs: Any) -> bool:
@@ -153,7 +152,6 @@ class Reader(ABC):
 
         >>> for i in range(len(image.scenes))
         """
-        pass
 
     @property
     def current_scene(self) -> str:
@@ -264,7 +262,6 @@ class Reader(ABC):
         * If a channel dimension is present, please populate the channel dimensions
         coordinate array the respective channel coordinate values.
         """
-        pass
 
     @abstractmethod
     def _read_immediate(self) -> xr.DataArray:
@@ -283,7 +280,6 @@ class Reader(ABC):
         * If a channel dimension is present, please populate the channel dimensions
         coordinate array the respective channel coordinate values.
         """
-        pass
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         """

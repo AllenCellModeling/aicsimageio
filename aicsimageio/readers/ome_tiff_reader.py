@@ -5,13 +5,12 @@ import logging
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import numpy as np
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
-from tifffile.tifffile import TiffFile, TiffFileError, TiffTag, TiffTags
+from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
@@ -156,83 +155,6 @@ class OmeTiffReader(TiffReader):
         return self._scenes
 
     @staticmethod
-    def _get_dims_and_coords_from_ome(
-        ome: TiffTag,
-        scene_index: int,
-    ) -> Tuple[List[str], Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]]:
-        """
-        Process the OME metadata to retrieve the dimension names and coordinate planes.
-
-        Parameters
-        ----------
-        ome: OME
-            A constructed OME object to retrieve data from.
-        scene_index: int
-            The current operating scene index to pull metadata from.
-
-        Returns
-        -------
-        dims: List[str]
-            The dimension names pulled from the OME metadata.
-        coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
-            The coordinate planes / data for each dimension.
-        """
-        # Select scene
-        scene_meta = ome.images[scene_index]
-
-        # Create dimension order by getting the current scene's dimension order
-        # and reversing it because OME store order vs use order is :shrug:
-        dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
-
-        # Get coordinate planes
-        coords: Dict[str, Union[List[str], np.ndarray]] = {}
-
-        # Channels
-        # Channel name isn't required by OME spec, so try to use it but
-        # roll back to ID if not found
-        coords[DimensionNames.Channel] = [
-            channel.name if channel.name is not None else channel.id
-            for channel in scene_meta.pixels.channels
-        ]
-
-        # Time
-        # If global linear timescale we can np.linspace with metadata
-        if scene_meta.pixels.time_increment is not None:
-            coords[DimensionNames.Time] = TiffReader._generate_coord_array(
-                0, scene_meta.pixels.size_t, scene_meta.pixels.time_increment
-            )
-        # If non global linear timescale, we need to create an array of every plane
-        # time value
-        elif scene_meta.pixels.size_t > 1:
-            if len(scene_meta.pixels.planes) > 0:
-                t_index_to_delta_map = {
-                    p.the_t: p.delta_t for p in scene_meta.pixels.planes
-                }
-                coords[DimensionNames.Time] = list(t_index_to_delta_map.values())
-            else:
-                coords[DimensionNames.Time] = np.linspace(
-                    0,
-                    scene_meta.pixels.size_t - 1,
-                    scene_meta.pixels.size_t,
-                )
-
-        # Handle Spatial Dimensions
-        if scene_meta.pixels.physical_size_z is not None:
-            coords[DimensionNames.SpatialZ] = TiffReader._generate_coord_array(
-                0, scene_meta.pixels.size_z, scene_meta.pixels.physical_size_z
-            )
-        if scene_meta.pixels.physical_size_y is not None:
-            coords[DimensionNames.SpatialY] = TiffReader._generate_coord_array(
-                0, scene_meta.pixels.size_y, scene_meta.pixels.physical_size_y
-            )
-        if scene_meta.pixels.physical_size_x is not None:
-            coords[DimensionNames.SpatialX] = TiffReader._generate_coord_array(
-                0, scene_meta.pixels.size_x, scene_meta.pixels.physical_size_x
-            )
-
-        return dims, coords
-
-    @staticmethod
     def _expand_dims_to_match_ome(
         image_data: types.ArrayLike,
         ome: OME,
@@ -334,7 +256,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = self._get_dims_and_coords_from_ome(
+                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -376,7 +298,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = self._get_dims_and_coords_from_ome(
+                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -409,8 +331,6 @@ class OmeTiffReader(TiffReader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        z = self.metadata.images[self.current_scene_index].pixels.physical_size_z
-        y = self.metadata.images[self.current_scene_index].pixels.physical_size_y
-        x = self.metadata.images[self.current_scene_index].pixels.physical_size_x
-
-        return PhysicalPixelSizes(z, y, x)
+        return metadata_utils.physical_pixel_sizes(
+            self.metadata, self.current_scene_index
+        )

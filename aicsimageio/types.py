@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from abc import ABCMeta
 from pathlib import Path
 from typing import List, NamedTuple, Optional, Union
 
@@ -16,9 +15,6 @@ PathLike = Union[str, Path]
 ArrayLike = Union[np.ndarray, da.Array]
 MetaArrayLike = Union[ArrayLike, xr.DataArray]
 ImageLike = Union[PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike]]
-
-# Reader Type
-ReaderType = ABCMeta
 
 
 # Image Utility Types

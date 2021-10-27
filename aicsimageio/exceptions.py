@@ -9,8 +9,6 @@ class ConflictingArgumentsError(Exception):
     This exception is returned when 2 arguments to the same function are in conflict.
     """
 
-    pass
-
 
 class InvalidDimensionOrderingError(Exception):
     """
@@ -18,16 +16,12 @@ class InvalidDimensionOrderingError(Exception):
     validation. Should be provided with a message for the user to be given more context.
     """
 
-    pass
-
 
 class UnexpectedShapeError(Exception):
     """
     A general exception that can be thrown when handling shape validation.
     Should be provided with a message for the user to be given more context.
     """
-
-    pass
 
 
 class UnsupportedFileFormatError(Exception):

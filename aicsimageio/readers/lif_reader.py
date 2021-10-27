@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "readlif is required for this reader. "
-        "Install with `pip install aicsimageio[lif]`"
+        "Install with `pip install readlif>=0.6.4`"
     )
 
 ###############################################################################
@@ -52,7 +52,9 @@ class LifReader(Reader):
 
     Notes
     -----
-    To use this reader, install with: `pip install aicsimageio[lif]`.
+    To use this reader, install with: `pip install readlif>=0.6.4`.
+
+    readlif is licensed under GPLv3 and is not included in this package.
     """
 
     @staticmethod

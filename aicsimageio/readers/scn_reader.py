@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Tuple, Dict, Union, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-from fsspec.implementations.local import LocalFileSystem
-from tifffile.tifffile import TiffFile, ZarrTiffStore, TiffFileError, xml2dict
-import numpy as np
-import zarr
 import dask.array as da
+import numpy as np
 import xarray as xr
+import zarr
+from fsspec.implementations.local import LocalFileSystem
+from tifffile.tifffile import TiffFile, TiffFileError, ZarrTiffStore, xml2dict
 
 from .. import constants, exceptions, types
-from ..utils import io_utils
-
-from .reader import Reader
 from ..dimensions import DimensionNames
+from ..utils import io_utils
+from .reader import Reader
 
 if TYPE_CHECKING:
     from fsspec.spec import AbstractFileSystem
@@ -46,7 +45,7 @@ class SCNReader(Reader):
         except (TiffFileError, TypeError):
             return False
 
-    def __init__(self, image: types.PathLike, scene: Optional[Union[int, str]] = 0):
+    def __init__(self, image: types.PathLike, scene: Optional[Union[int, str]] = None):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
@@ -62,6 +61,9 @@ class SCNReader(Reader):
 
         with TiffFile(self._path) as rdr:
             self._scn_metadata = xml2dict(rdr.scn_metadata)
+
+        if scene is None:
+            scene = 0
 
         self.set_scene(scene)
 
@@ -190,12 +192,12 @@ class SCNReader(Reader):
             # get this series and this subresolution's metadata
             series_level_meta = self._get_series_level_meta(series_idx, level_idx)
 
-            _dims = [
+            _dims_list = [
                 {f"{k.split('size')[1]}": v}
                 for k, v in series_level_meta.items()
                 if "size" in k
             ]
-            _dims = {k: v for d in _dims for k, v in d.items()}
+            _dims = {k: v for d in _dims_list for k, v in d.items()}
 
             is_rgb = self._get_is_rgb(rdr, series_idx, level_idx)
 

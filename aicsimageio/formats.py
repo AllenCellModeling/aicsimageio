@@ -397,7 +397,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "rwl": ["aicsimageio.readers.default_reader.DefaultReader"],
     "rwz": ["aicsimageio.readers.default_reader.DefaultReader"],
     "scan": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
-    "scn": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
+    "scn": [
+        "aicsimageio.readers.scn_reader.SCNReader",
+        "aicsimageio.readers.bioformats_reader.BioformatsReader",
+    ],
     "sdt": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "seq": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "sif": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],

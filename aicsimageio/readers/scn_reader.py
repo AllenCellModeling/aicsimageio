@@ -107,12 +107,16 @@ class SCNReader(Reader):
     def _get_xy_pixel_sizes(
         self, rdr: TiffFile, series_idx: int, level_idx: int
     ) -> Dict[str, float]:
-        tpage = rdr.series[series_idx].levels[level_idx].pages[0]
+        """Resolution data is stored in the TIFF tags in
+        Pixels per cm, this is converted to microns per pixel
+        """
 
-        x_res = tpage.tags["XResolution"].value
-        y_res = tpage.tags["XResolution"].value
+        current_page = rdr.series[series_idx].levels[level_idx].pages[0]
 
-        res_unit = tpage.tags["ResolutionUnit"].value
+        x_res = current_page.tags["XResolution"].value
+        y_res = current_page.tags["XResolution"].value
+
+        res_unit = current_page.tags["ResolutionUnit"].value
 
         # convert units to micron
         if res_unit.value == 1:
@@ -128,7 +132,10 @@ class SCNReader(Reader):
         return {"X": x_res_um, "Y": y_res_um}
 
     def _get_is_rgb(self, rdr: TiffFile, series_idx: int, level_idx: int) -> bool:
-
+        """Use PhotometricInterpretation TIFF tag to determine if
+        RGB (interleaved, multiple samples per pixel) or
+        non-interleaved channels
+        """
         tpage = rdr.series[series_idx].levels[level_idx].pages[0]
         photometric = tpage.tags["PhotometricInterpretation"].value
 
@@ -138,6 +145,7 @@ class SCNReader(Reader):
             return False
 
     def _get_n_ch(self, series_idx: int) -> int:
+        """Number of channels for fluorescence images from SCN metadata"""
         channel_idx_meta = (
             self._scn_metadata.get("scn")
             .get("collection")
@@ -150,6 +158,7 @@ class SCNReader(Reader):
         return max_ch_idx + 1
 
     def _get_ch_names(self, series_idx: int) -> List[str]:
+        """Pull channel names from SCN metadata"""
         channel_meta = (
             self._scn_metadata.get("scn")
             .get("collection")
@@ -165,6 +174,7 @@ class SCNReader(Reader):
     def _generate_xarray_coords(
         self, dims: Dict[str, int], x_res: float, y_res: float
     ) -> Dict[str, Union[List[str], np.ndarray]]:
+        """Generate xr coord data from metadata and physical pixel size"""
 
         coords: Dict[str, Union[List[str], np.ndarray]] = {}
 

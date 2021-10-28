@@ -136,10 +136,7 @@ class SCNReader(Reader):
         tpage = rdr.series[series_idx].levels[level_idx].pages[0]
         photometric = tpage.tags["PhotometricInterpretation"].value
 
-        if photometric.name in ["RGB", "YCBCR"]:
-            return True
-        else:
-            return False
+        return photometric.name in {"RGB", "YCBCR"}
 
     def _get_n_ch(self, series_idx: int) -> int:
         """Number of channels for fluorescence images from SCN metadata"""

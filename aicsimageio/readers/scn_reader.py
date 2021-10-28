@@ -37,10 +37,7 @@ class SCNReader(Reader):
         try:
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource) as rdr:
-                    if rdr.scn_metadata:
-                        return True
-                    else:
-                        return False
+                    return bool(rdr.scn_metadata)
 
         except (TiffFileError, TypeError):
             return False

@@ -58,6 +58,7 @@ class SCNReader(Reader):
 
         with TiffFile(self._path) as rdr:
             self._scn_metadata = xml2dict(rdr.scn_metadata)
+            self._image_metadata = self._scn_metadata["scn"]["collection"]["image"]
 
         if scene is None:
             scene = 0
@@ -67,20 +68,12 @@ class SCNReader(Reader):
     @property
     def scenes(self) -> Tuple[str, ...]:
         scenes: Tuple[str, ...] = tuple()
-        for idx, im in enumerate(
-            self._scn_metadata.get("scn").get("collection").get("image")
-        ):
-            series_meta = (
-                self._scn_metadata.get("scn")
-                .get("collection")
-                .get("image")[idx]
-                .get("pixels")
-                .get("dimension")
-            )
-            res_indices = [d.get("r") for d in series_meta]
+        for idx, sub_image_meta in enumerate(self._image_metadata):
+            series_meta = sub_image_meta.get("pixels").get("dimension")
+            res_indices = [d["r"] for d in series_meta]
             n_res = np.max(res_indices) + 1
             scenes = scenes + tuple(
-                f"{im.get('name')} S{idx}-(R{sr})" for sr in range(n_res)
+                f"{sub_image_meta.get('name')} S{idx}-(R{sr})" for sr in range(n_res)
             )
 
         return scenes
@@ -92,11 +85,7 @@ class SCNReader(Reader):
         """
 
         series_level_meta = (
-            self._scn_metadata.get("scn")
-            .get("collection")
-            .get("image")[series_idx]
-            .get("pixels")
-            .get("dimension")
+            self._image_metadata[series_idx].get("pixels").get("dimension")
         )
 
         return [md for md in series_level_meta if md.get("r") == level_idx][0]
@@ -138,25 +127,10 @@ class SCNReader(Reader):
 
         return photometric.name in {"RGB", "YCBCR"}
 
-    def _get_n_ch(self, series_idx: int) -> int:
-        """Number of channels for fluorescence images from SCN metadata"""
-        channel_idx_meta = (
-            self._scn_metadata.get("scn")
-            .get("collection")
-            .get("image")[series_idx]
-            .get("pixels")
-            .get("dimension")
-        )
-        ch_indices = [d.get("c") for d in channel_idx_meta]
-        max_ch_idx = np.max(ch_indices)
-        return max_ch_idx + 1
-
     def _get_ch_names(self, series_idx: int) -> List[str]:
         """Pull channel names from SCN metadata"""
         channel_meta = (
-            self._scn_metadata.get("scn")
-            .get("collection")
-            .get("image")[series_idx]
+            self._image_metadata[series_idx]
             .get("scanSettings")
             .get("channelSettings")
             .get("channel")
@@ -224,8 +198,8 @@ class SCNReader(Reader):
                 _dims.update({"S": data.shape[-1]})
                 dims = {"Y": _dims["Y"], "X": _dims["X"], "S": _dims["S"]}
             else:
-                n_ch = self._get_n_ch(series_idx)
                 ch_names = self._get_ch_names(series_idx)
+                n_ch = len(ch_names)
 
                 coords[DimensionNames.Channel] = ch_names
 

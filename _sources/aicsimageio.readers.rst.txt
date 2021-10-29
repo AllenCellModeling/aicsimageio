@@ -76,6 +76,14 @@ aicsimageio.readers.reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.tiff\_glob\_reader module
+---------------------------------------------
+
+.. automodule:: aicsimageio.readers.tiff_glob_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.tiff\_reader module
 ---------------------------------------
 

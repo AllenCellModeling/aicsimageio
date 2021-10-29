@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aicsimageio.readers.tiff_glob_reader &mdash; AICSImageIO 4.4.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> AICSImageIO
+          </a>
+              <div class="version">
+                4.4.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#adding-a-new-custom-reader">Adding a New Custom Reader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#basics">Basics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#reader-class-implementation">Reader Class Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#custom-dependencies">Custom Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#optional-reader-benchmarking">Optional Reader Benchmarking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-4-0-2021-10-12">v4.4.0 (2021-10-12)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id3">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-3-0-2021-10-08">v4.3.0 (2021-10-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id6">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id8">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-2-0-2021-09-27">v4.2.0 (2021-09-27)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id21">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id29">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id31">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id34">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id38">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id41">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id43">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id46">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id49">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id51">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id53">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id58">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id60">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id81">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id89">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id103">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id106">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id108">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id111">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id113">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id115">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id117">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id119">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id121">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id124">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id126">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id130">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id133">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id137">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id139">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id141">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id143">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id145">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id147">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id150">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id153">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id156">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id158">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id162">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id164">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id167">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id168">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../aicsimageio.html">aicsimageio</a> &raquo;</li>
+      <li>aicsimageio.readers.tiff_glob_reader</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aicsimageio.readers.tiff_glob_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
+<span class="kn">from</span> <span class="nn">tifffile</span> <span class="kn">import</span> <span class="n">TiffFile</span><span class="p">,</span> <span class="n">TiffFileError</span><span class="p">,</span> <span class="n">TiffSequence</span><span class="p">,</span> <span class="n">imread</span>
+<span class="kn">from</span> <span class="nn">tifffile.tifffile</span> <span class="kn">import</span> <span class="n">TiffTags</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_CHUNK_DIMS</span><span class="p">,</span>
+    <span class="n">DEFAULT_DIMENSION_ORDER</span><span class="p">,</span>
+    <span class="n">DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES</span><span class="p">,</span>
+    <span class="n">REQUIRED_CHUNK_DIMS</span><span class="p">,</span>
+    <span class="n">DimensionNames</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">metadata_utils</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+
+<span class="n">TIFF_IMAGE_DESCRIPTION_TAG_INDEX</span> <span class="o">=</span> <span class="mi">270</span>
+
+
+<div class="viewcode-block" id="TiffGlobReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_glob_reader.TiffGlobReader">[docs]</a><span class="k">class</span> <span class="nc">TiffGlobReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps the tifffile imread API to provide the same aicsimageio Reader API but for</span>
+<span class="sd">    multifile tiff datasets (and other tifffile supported) images.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    glob_in: Union[PathLike, List[PathLike]]</span>
+<span class="sd">        Glob string that identifies all files to be loaded or a list</span>
+<span class="sd">        of paths to the files as returned by glob.</span>
+<span class="sd">    indexer: Union[Callable, pandas.DataFrame]</span>
+<span class="sd">        If callable, should consume each filename and return a pd.Series with series</span>
+<span class="sd">        index corresponding to the dimensions and values corresponding to the array</span>
+<span class="sd">        index of that image file within the larger array.</span>
+<span class="sd">        Default: None (Look for 4 numbers in the file name and use them as</span>
+<span class="sd">        S, T, C, and Z indices.)</span>
+<span class="sd">    scene_glob_character: str</span>
+<span class="sd">        Character to represent different scenes.</span>
+<span class="sd">        Default: &quot;S&quot;</span>
+<span class="sd">    chunk_dims: Union[str, List[str]]</span>
+<span class="sd">        Which dimensions to create chunks for.</span>
+<span class="sd">        Default: DEFAULT_CHUNK_DIMS</span>
+<span class="sd">        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,</span>
+<span class="sd">        will always be added to the list if not present during dask array</span>
+<span class="sd">        construction.</span>
+<span class="sd">    dim_order: Optional[Union[List[str], str]]</span>
+<span class="sd">        A string of dimensions to be applied to all array(s) or a</span>
+<span class="sd">        list of string dimension names to be mapped onto the list of arrays</span>
+<span class="sd">        provided to image. I.E. &quot;TYX&quot;.</span>
+<span class="sd">        Default: None (guess dimensions for single array or multiple arrays)</span>
+<span class="sd">    channel_names: Optional[Union[List[str], List[List[str]]]]</span>
+<span class="sd">        A list of string channel names to be applied to all array(s) or a</span>
+<span class="sd">        list of lists of string channel names to be mapped onto the list of arrays</span>
+<span class="sd">        provided to image.</span>
+<span class="sd">        Default: None (create OME channel IDs for names for single or multiple arrays)</span>
+<span class="sd">    single_file_shape : Optional[Tuple]</span>
+<span class="sd">        Expected shape for a single file of the set. If not provided, will attempt to</span>
+<span class="sd">        determine the shape from the first file found in the glob.</span>
+<span class="sd">        Default : None</span>
+<span class="sd">    single_file_dims : Optional[Tuple]</span>
+<span class="sd">        Dimensions that correspond to the data dimensions of a single file in the glob.</span>
+<span class="sd">        Default : (&#39;Y&#39;, &#39;X&#39;)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    # Given files with names like &quot;Position001_t002_c03_z04.tif&quot;</span>
+
+<span class="sd">    reader = TiffGlobReader(&quot;path/to/data/*.tif&quot;)</span>
+
+<span class="sd">    # We can use this to read single image tiffs generated by MicroManager</span>
+<span class="sd">    # Micromanager creates directories for each position so we need to recursively glob</span>
+<span class="sd">    # for the images files and pass the list to TiffGlobReader. Note that all images are</span>
+<span class="sd">    # named according to img_channel000_position001_time000000003_z004.tif&quot;</span>
+
+<span class="sd">    files = glob.glob(&quot;path/to/data/**/*.tif&quot;, recursive=True)</span>
+
+<span class="sd">    # since the numbers in Micromanager files are not in STCZ order we need</span>
+<span class="sd">    # to use a custom indexer.</span>
+
+<span class="sd">    def mm_indexer(path_to_img):</span>
+<span class="sd">        inds = re.findall(r&quot;\d+&quot;, Path(path_to_img).name)</span>
+<span class="sd">        series = pd.Series(inds, index=[&#39;C&#39;, &#39;S&#39;, &#39;T&#39;, &#39;Z&#39;]).astype(int)</span>
+<span class="sd">        return series</span>
+
+<span class="sd">    mm_reader = TiffGlobReader(files, indexer=mm_indexer)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span>
+        <span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_resource</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="n">open_resource</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="p">(</span><span class="n">TiffFileError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">glob_in</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]],</span>
+        <span class="n">indexer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scene_glob_character</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;S&quot;</span><span class="p">,</span>
+        <span class="n">chunk_dims</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">DEFAULT_CHUNK_DIMS</span><span class="p">,</span>
+        <span class="n">dim_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">single_file_shape</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">single_file_dims</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+
+        <span class="c1"># Assemble glob list if given a string</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob_in</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">file_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob_in</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob_in</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">file_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">glob_in</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob_in</span><span class="p">,</span> <span class="n">Path</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;*&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">glob_in</span><span class="p">):</span>
+            <span class="n">file_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">glob_in</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">file_series</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files found matching glob pattern&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span> <span class="o">=</span> <span class="n">scene_glob_character</span>
+
+        <span class="k">if</span> <span class="n">indexer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">series_idx</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">,</span>
+                <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span>
+                <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span>
+                <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="p">]</span>
+
+            <span class="c1"># By default we will attempt to parse 4 numbers out of the filename</span>
+            <span class="c1"># and assign them in order to be the corresponding S, T, C, and Z indices.</span>
+            <span class="c1"># So indexer(&quot;path/to/data/S0_T1_C2_Z3.tif&quot;) returns</span>
+            <span class="c1"># pd.Series([0,1,2,3], index=[&#39;S&#39;,&#39;T&#39;,&#39;C&#39;, &#39;Z&#39;])</span>
+            <span class="k">def</span> <span class="nf">indexer</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                    <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\d+&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="n">series_idx</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">indexer</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span> <span class="o">=</span> <span class="n">file_series</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">indexer</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_series</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indexer</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span> <span class="o">=</span> <span class="n">indexer</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">file_series</span>
+
+        <span class="c1"># If a dim doesn&#39;t exist on the file set the column value for that dim to zero.</span>
+        <span class="c1"># If the dim is present, add it to the sort order. Because we are using</span>
+        <span class="c1"># the default dimension ordering, this will naturally create a sort order</span>
+        <span class="c1"># based off the standard dimension order.</span>
+        <span class="n">sort_order</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">single_file_dims</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="n">dim</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">sort_order</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sort_order</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># run tests on a single file (?)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># Store params</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_dims</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunk_dims</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_dims</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk_dims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span> <span class="o">=</span> <span class="n">chunk_dims</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;chunk_dims must be str or list of str&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Run basic checks on dims and channel names</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dim_order</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dim_order</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Number of dimension strings provided does not match the &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;number of scenes found in the file. &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Number of scenes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Number of provided dimension order strings: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">dim_order</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+        <span class="c1"># If provided a list</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_names</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="c1"># If provided a list of lists</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="c1"># Ensure that the outer list is the number of scenes</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of channel name lists provided does not match the &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;number of scenes found in the file. &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Number of scenes: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scenes</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;Provided channel name lists: </span><span class="si">{</span><span class="n">dim_order</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+        <span class="k">for</span> <span class="n">dim</span> <span class="ow">in</span> <span class="n">REQUIRED_CHUNK_DIMS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dim</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+
+        <span class="c1"># Safety measure / &quot;feature&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">dim_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dim_order</span> <span class="o">=</span> <span class="n">dim_order</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dim_order</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">d</span>
+                <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">DEFAULT_DIMENSION_ORDER</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">columns</span> <span class="ow">or</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">single_file_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">open_resource</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">TiffFile</span><span class="p">(</span><span class="n">open_resource</span><span class="p">)</span> <span class="k">as</span> <span class="n">tiff</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">tiff</span><span class="o">.</span><span class="n">is_shaped</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                            <span class="n">tiff</span><span class="o">.</span><span class="n">shaped_metadata</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span> <span class="o">=</span> <span class="n">single_file_shape</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">single_file_dims</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Number of single file dimensions does not match the&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;number of dimensions in a test file. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Number of dimensions in file: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided number of dimensions: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">single_file_dims</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">single_file_dims</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_file_dims</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_shape</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># Enforce valid image</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_supported_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">]</span><span class="o">.</span><span class="n">nunique</span><span class="p">())</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span>
+
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+
+        <span class="n">scene_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+        <span class="p">]</span>
+        <span class="n">scene_files</span> <span class="o">=</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">scene_nunique</span> <span class="o">=</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+
+        <span class="n">tiff_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tiff_tags</span><span class="p">(</span><span class="n">TiffFile</span><span class="p">(</span><span class="n">scene_files</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">group_dims</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="c1"># xxx_sizes are modeled after xr.DataArray.sizes</span>
+        <span class="c1"># These are OrderedDicts that map a dimension name to a shape.</span>
+        <span class="c1"># Use these to align and reshape the arrays that come from imread</span>
+        <span class="c1"># dims and sizes are not always necessary but they keep things much</span>
+        <span class="c1"># clearer internally.</span>
+
+        <span class="c1"># sizes of dimensions we grouping by i.e. not chunks</span>
+        <span class="n">group_sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">d</span><span class="p">,</span> <span class="n">scene_nunique</span><span class="p">[</span><span class="n">d</span><span class="p">])</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">group_dims</span><span class="p">])</span>
+
+        <span class="c1"># sizes of each chunk</span>
+        <span class="n">chunk_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_chunk_sizes</span><span class="p">(</span><span class="n">scene_nunique</span><span class="p">,</span> <span class="n">group_dims</span><span class="p">)</span>
+
+        <span class="c1"># sizes that will be used to reshape the array representing</span>
+        <span class="c1"># the full glob into separate dimensions.</span>
+        <span class="n">unpack_sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scene_nunique</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="n">group_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">reshape_sizes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">unpack_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="c1"># after unpacking the result of imread we sometimes need to rearrange dims</span>
+        <span class="c1"># in case they are in the glob and single files.</span>
+        <span class="n">axes_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_axes_order</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="p">,</span> <span class="n">unpack_sizes</span><span class="p">,</span> <span class="n">group_sizes</span><span class="p">)</span>
+
+        <span class="c1"># expand the sizes with singleton dimensions to facilitate da.block at the end</span>
+        <span class="n">expanded_blocks_sizes</span><span class="p">,</span> <span class="n">expanded_chunk_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_expanded_shapes</span><span class="p">(</span>
+            <span class="n">group_sizes</span><span class="p">,</span> <span class="n">chunk_sizes</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Assemble the dask array</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_dims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># use groupby to assemble array out of chunks</span>
+            <span class="n">blocks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">group_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;object&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">scene_files</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">group_dims</span><span class="p">)):</span>
+                <span class="k">with</span> <span class="n">TiffSequence</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span> <span class="k">as</span> <span class="n">tif</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">tif</span><span class="o">.</span><span class="n">aszarr</span><span class="p">()</span> <span class="k">as</span> <span class="n">zarr_im</span><span class="p">:</span>
+                        <span class="n">darr</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_zarr</span><span class="p">(</span><span class="n">zarr_im</span><span class="p">)</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># unpack the first dimension if it contains multiple axes</span>
+                <span class="n">darr</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">reshape_sizes</span><span class="p">)</span>
+
+                <span class="c1"># Then reorder dimensions so matching ones from the glob</span>
+                <span class="c1"># and the file are adjacent (glob then file)</span>
+                <span class="n">darr</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">axes_order</span><span class="p">)</span>
+
+                <span class="c1"># Then reshape the array to chunk_sizes</span>
+                <span class="n">darr</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">expanded_chunk_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+                <span class="n">blocks</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">darr</span>
+
+            <span class="n">blocks</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">expanded_blocks_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">d_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">block</span><span class="p">(</span><span class="n">blocks</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expanded_blocks_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># assemble array in a single chunk</span>
+            <span class="n">zarr_im</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">scene_files</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">aszarr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">darr</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">from_zarr</span><span class="p">(</span><span class="n">zarr_im</span><span class="p">)</span><span class="o">.</span><span class="n">rechunk</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">darr</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">reshape_sizes</span><span class="p">)</span>
+            <span class="n">darr</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">axes_order</span><span class="p">)</span>
+            <span class="n">d_data</span> <span class="o">=</span> <span class="n">darr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+            <span class="n">dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">expanded_chunk_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># Assign dims and coords to construct xarray</span>
+        <span class="n">channel_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_names_for_scene</span><span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">d_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_coords</span><span class="p">(</span>
+            <span class="n">dims</span><span class="p">,</span> <span class="n">d_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">,</span> <span class="n">channel_names</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Try accepted processed metadata</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">,</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_PROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">[</span>
+                    <span class="n">TIFF_IMAGE_DESCRIPTION_TAG_INDEX</span>
+                <span class="p">],</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">}</span>
+
+        <span class="n">x_data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span><span class="n">d_data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">)</span>
+
+        <span class="n">x_data</span> <span class="o">=</span> <span class="n">x_data</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_dim_order</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_data</span>
+
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="c1"># Set up scene specific information</span>
+        <span class="n">scene_files</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_all_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+        <span class="p">]</span>
+        <span class="n">scene_files</span> <span class="o">=</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scene_glob_character</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">scene_nunique</span> <span class="o">=</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">nunique</span><span class="p">()</span>
+
+        <span class="n">tiff_tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_tiff_tags</span><span class="p">(</span><span class="n">TiffFile</span><span class="p">(</span><span class="n">scene_files</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">chunk_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_chunk_sizes</span><span class="p">(</span><span class="n">scene_nunique</span><span class="p">)</span>
+
+        <span class="n">unpack_sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+            <span class="p">[(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">scene_nunique</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+        <span class="p">)</span>
+
+        <span class="n">reshape_sizes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">unpack_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">axes_order</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_axes_order</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="p">,</span> <span class="n">unpack_sizes</span><span class="p">)</span>
+        <span class="c1"># Assemble array</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span><span class="n">scene_files</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">reshape_sizes</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">axes_order</span><span class="p">)</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="c1"># Assign dims and coords to construct xarray</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="n">scene_files</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;filename&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">file_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_dims</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">]</span>
+        <span class="n">dims</span> <span class="o">+=</span> <span class="n">file_dims</span>
+
+        <span class="n">channel_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_names_for_scene</span><span class="p">(</span><span class="n">dims</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_coords</span><span class="p">(</span>
+            <span class="n">dims</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">,</span> <span class="n">channel_names</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Try accepted processed metadata</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">,</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_PROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">[</span>
+                    <span class="n">TIFF_IMAGE_DESCRIPTION_TAG_INDEX</span>
+                <span class="p">],</span>
+            <span class="p">}</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="n">tiff_tags</span><span class="p">}</span>
+        <span class="n">x_data</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+            <span class="n">arr</span><span class="p">,</span>
+            <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="n">attrs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_data</span>
+
+    <span class="k">def</span> <span class="nf">_get_axes_order</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chunk_sizes</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span>
+        <span class="n">unpack_sizes</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span>
+        <span class="n">group_sizes</span><span class="p">:</span> <span class="n">OrderedDict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(),</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">:</span>
+        <span class="n">axes_order</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">unpack_sizes</span><span class="p">:</span>
+                <span class="n">axes_order</span> <span class="o">+=</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">unpack_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">d</span><span class="p">),)</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="p">:</span>
+                <span class="n">axes_order</span> <span class="o">+=</span> <span class="p">(</span>
+                    <span class="nb">len</span><span class="p">(</span><span class="n">unpack_sizes</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">d</span><span class="p">),</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">axes_order</span>
+
+    <span class="k">def</span> <span class="nf">_get_chunk_sizes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">scene_files_nunique</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">group_dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scene_files_nunique</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;filename&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">group_dims</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_dims</span><span class="p">:</span>
+                    <span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span>
+
+        <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chunk_dims</span> <span class="ow">and</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">:</span>
+                <span class="n">sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_single_file_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scene_files_nunique</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">return</span> <span class="n">sizes</span>
+
+    <span class="k">def</span> <span class="nf">_get_expanded_shapes</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">group_sizes</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">chunk_sizes</span><span class="p">:</span> <span class="n">OrderedDict</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]:</span>
+        <span class="n">expanded_blocks_sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="n">expanded_chunk_sizes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expanded_blocks_sizes</span><span class="p">:</span>
+                    <span class="n">d_idx_in_chunks</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d_idx_in_chunks</span><span class="p">):</span>
+                        <span class="n">c_key</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chunk_sizes</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">j</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">c_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expanded_blocks_sizes</span><span class="p">:</span>
+                            <span class="n">expanded_blocks_sizes</span><span class="p">[</span><span class="n">c_key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+                    <span class="n">expanded_blocks_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">expanded_blocks_sizes</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">:</span>
+                    <span class="n">expanded_blocks_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">s</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">d2</span> <span class="ow">in</span> <span class="n">expanded_blocks_sizes</span><span class="p">:</span>
+                        <span class="n">expanded_chunk_sizes</span><span class="p">[</span><span class="n">d2</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_sizes</span><span class="p">[</span><span class="n">d2</span><span class="p">]</span>
+                    <span class="n">expanded_chunk_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">expanded_blocks_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">group_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">d2</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">d2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expanded_chunk_sizes</span><span class="p">:</span>
+                            <span class="n">expanded_chunk_sizes</span><span class="p">[</span><span class="n">d2</span><span class="p">]</span> <span class="o">=</span> <span class="n">s2</span>
+
+        <span class="k">for</span> <span class="n">d</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">chunk_sizes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">d</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">expanded_blocks_sizes</span><span class="p">:</span>
+                <span class="n">expanded_blocks_sizes</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">expanded_chunk_sizes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">expanded_chunk_sizes</span> <span class="o">=</span> <span class="n">chunk_sizes</span>
+
+        <span class="k">return</span> <span class="n">expanded_blocks_sizes</span><span class="p">,</span> <span class="n">expanded_chunk_sizes</span>
+
+    <span class="k">def</span> <span class="nf">_get_channel_names_for_scene</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">image_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+        <span class="c1"># Fast return in None case</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># If channels was provided as a list of lists</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">scene_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="p">):</span>
+            <span class="n">scene_channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span>  <span class="c1"># type: ignore</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># If scene channels isn&#39;t None and no channel dimension raise error</span>
+        <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided channel names for scene with no channel dimension. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Scene dims: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided channel names: </span><span class="si">{</span><span class="n">scene_channels</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># If scene channels isn&#39;t the same length as the size of channel dim</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scene_channels</span><span class="p">)</span> <span class="o">!=</span> <span class="n">image_shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">)]:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">ConflictingArgumentsError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Number of channel names provided does not match the &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;size of the channel dimension for this scene. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Scene shape: </span><span class="si">{</span><span class="n">image_shape</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Dims: </span><span class="si">{</span><span class="n">dims</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Provided channel names: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_channel_names</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scene_channels</span>  <span class="c1"># type: ignore</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_coords</span><span class="p">(</span>
+        <span class="n">dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">scene_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="c1"># Use dims for coord determination</span>
+        <span class="n">coords</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Get ImageId for channel naming</span>
+            <span class="n">image_id</span> <span class="o">=</span> <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">scene_index</span><span class="p">)</span>
+
+            <span class="c1"># Use range for channel indices</span>
+            <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">:</span>
+                <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span>
+                        <span class="n">image_id</span><span class="o">=</span><span class="n">image_id</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="n">i</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">)])</span>
+                <span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+        <span class="k">return</span> <span class="n">coords</span>
+
+    <span class="k">def</span> <span class="nf">_get_tiff_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tiff</span><span class="p">:</span> <span class="n">TiffFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TiffTags</span><span class="p">:</span>
+        <span class="n">unprocessed_tags</span> <span class="o">=</span> <span class="n">tiff</span><span class="o">.</span><span class="n">series</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tags</span>
+
+        <span class="c1"># Create dict of tag and value</span>
+        <span class="n">tags</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">code</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">unprocessed_tags</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">tags</span><span class="p">[</span><span class="n">code</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">return</span> <span class="n">tags</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, Jackson Maxfield Brown, Allen Institute for Cell Science.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

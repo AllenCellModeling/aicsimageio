@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+New
+~~~
+- feature/glob-reader  (`#303
+  <https://github.com/AllenCellModeling/aicsimageio/pull/303>`_) [John
+  Russell, Madison Swain-Bowden]
+
+Other
+~~~~~
 - admin/update-pr-template-remove-link-to-gh-12  (`#342
   <https://github.com/AllenCellModeling/aicsimageio/pull/342>`_)
   [Madison Swain-Bowden]

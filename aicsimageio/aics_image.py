@@ -13,6 +13,7 @@ from ome_types import OME
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
 from .metadata import utils as metadata_utils
+from .readers import TiffGlobReader
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
 
@@ -148,8 +149,17 @@ class AICSImage:
         exceptions.UnsupportedFileFormatError
             No reader could be found that supports the provided image.
         """
+
+        if isinstance(image, list) and isinstance(image[0], (str, Path)):
+            return TiffGlobReader
+        elif isinstance(image, str) and "*" in image:
+            return TiffGlobReader
+        elif isinstance(image, Path) and "*" in str(image):
+            return TiffGlobReader
+
         # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):
+
             path = str(image)
 
             # Check for extension in FORMAT_IMPLEMENTATIONS

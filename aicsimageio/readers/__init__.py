@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .czi_reader import CziReader  # noqa: F401
     from .dv_reader import DVReader  # noqa: F401
     from .lif_reader import LifReader  # noqa: F401
+    from .mrc_reader import MrcReader  # noqa: F401
     from .nd2_reader import ND2Reader  # noqa: F401
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
     from .reader import Reader
@@ -27,6 +28,7 @@ _READERS = (
     ".nd2_reader.ND2Reader",
     ".ome_tiff_reader.OmeTiffReader",
     ".tiff_reader.TiffReader",
+    ".mrc_reader.MrcReader",
 )
 _LOOKUP = {k.rsplit(".", 1)[-1]: k for k in _READERS}
 __all__ = list(_LOOKUP)

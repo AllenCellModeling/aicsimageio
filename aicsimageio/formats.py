@@ -275,7 +275,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "mpeg": ["aicsimageio.readers.default_reader.DefaultReader"],
     "mpg": ["aicsimageio.readers.default_reader.DefaultReader"],
     "mpo": ["aicsimageio.readers.default_reader.DefaultReader"],
-    "mrc": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
+    "mrc": [
+        "aicsimageio.readers.mrc_reader.MrcReader",
+        "aicsimageio.readers.bioformats_reader.BioformatsReader",
+    ],
     "mri": ["aicsimageio.readers.default_reader.DefaultReader"],
     "mrw": [
         "aicsimageio.readers.default_reader.DefaultReader",

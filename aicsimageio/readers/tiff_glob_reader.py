@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError, imread
+from tifffile import TiffFile, TiffFileError, TiffSequence, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
@@ -324,8 +324,9 @@ class TiffGlobReader(Reader):
         if len(group_dims) > 0:  # use groupby to assemble array out of chunks
             blocks = np.zeros(tuple(group_sizes.values()), dtype="object")
             for i, (idx, val) in enumerate(scene_files.groupby(group_dims)):
-                zarr_im = imread(val.filename.tolist(), aszarr=True, level=0)
-                darr = da.from_zarr(zarr_im).rechunk(-1)
+                with TiffSequence(val.filename.tolist()) as tif:
+                    with tif.aszarr() as zarr_im:
+                        darr = da.from_zarr(zarr_im).rechunk(-1)
 
                 # unpack the first dimension if it contains multiple axes
                 darr = darr.reshape(reshape_sizes)

@@ -4,6 +4,7 @@
 import logging
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
+from ome_types.model.pixels import DimensionOrder
 
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
@@ -14,7 +15,12 @@ from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
-from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
+from ..dimensions import (
+    DEFAULT_CHUNK_DIMS,
+    DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSION_ORDER_LIST,
+    DimensionNames,
+)
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -132,6 +138,15 @@ class OmeTiffReader(TiffReader):
                     tiff.pages[0].description, self.clean_metadata
                 )
 
+                # Fix dim order in metadata to be standard
+                # Standard being the reverse of our standard
+                self._true_dimension_orders = []
+                for image in self._ome.images:
+                    self._true_dimension_orders.append(
+                        [d for d in image.pixels.dimension_order.value][::-1]
+                    )
+                    image.pixels.dimension_order = DimensionOrder.XYZCT
+
                 # Get and store scenes
                 self._scenes: Tuple[str, ...] = tuple(
                     image_meta.id for image_meta in self._ome.images
@@ -167,7 +182,7 @@ class OmeTiffReader(TiffReader):
         # need to correct channel count if this is a RGB image
         n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         for d in dims:
-            if d == "C" and n_samples is not None and n_samples > 1:
+            if d == DimensionNames.Channel and n_samples is not None and n_samples > 1:
                 count = len(ome.images[scene_index].pixels.channels)
             else:
                 count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
@@ -176,7 +191,7 @@ class OmeTiffReader(TiffReader):
         # Check for num samples and expand dims if greater than 1
         if n_samples is not None and n_samples > 1:
             # Append to the end, i.e. the last dimension
-            dims.append("S")
+            dims.append(DimensionNames.Samples)
             ome_shape.append(n_samples)
 
         # The file may not have all the data but OME requires certain dimensions
@@ -222,7 +237,10 @@ class OmeTiffReader(TiffReader):
         )
 
         # Reset dims after transform
-        dims = [d for d in out_order]
+        dims = DEFAULT_DIMENSION_ORDER_LIST
+
+        print(dims)
+        print(image_data.shape)
 
         return xr.DataArray(
             image_data,
@@ -256,7 +274,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
+                _, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -271,7 +289,7 @@ class OmeTiffReader(TiffReader):
 
                 return self._general_data_array_constructor(
                     image_data,
-                    dims,
+                    self._true_dimension_orders[self.current_scene_index],
                     coords,
                     tiff_tags,
                 )
@@ -298,7 +316,7 @@ class OmeTiffReader(TiffReader):
                 tiff_tags = self._get_tiff_tags(tiff)
 
                 # Unpack dims and coords from OME
-                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
+                _, coords = metadata_utils.get_dims_and_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
                 )
@@ -308,7 +326,7 @@ class OmeTiffReader(TiffReader):
 
                 return self._general_data_array_constructor(
                     image_data,
-                    dims,
+                    self._true_dimension_orders[self.current_scene_index],
                     coords,
                     tiff_tags,
                 )

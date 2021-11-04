@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import ItemsView, Iterable, Tuple, Union
+from collections.abc import Sequence as seq
+from typing import ItemsView, Iterable, Sequence, Tuple, Union
 
 ###############################################################################
 
@@ -78,6 +79,7 @@ class Dimensions:
         --------
         >>> dims = Dimensions("TCZYX", (1, 4, 75, 624, 924))
         ... dims.X
+        ... dims['T', 'X']
         """
         # Make dims a string
         if not isinstance(dims, str):
@@ -121,3 +123,22 @@ class Dimensions:
 
     def __repr__(self) -> str:
         return str(self)
+
+    def __getitem__(self, key: Union[str, Sequence[str]]) -> Tuple[int, ...]:
+        if isinstance(key, str):
+            if key not in self._order:
+                raise IndexError(f"{key} not in {self._order}")
+            return (self._dims_shape[key],)
+        elif isinstance(key, seq) and all(isinstance(k, str) for k in key):
+            invalid_dims = []
+            for k in key:
+                if k not in self._order:
+                    invalid_dims.append(k)
+            if len(invalid_dims) == 0:
+                return tuple(self._dims_shape[k] for k in key)
+            else:
+                raise IndexError(f"{', '.join(invalid_dims)} not in {self._order}")
+        else:
+            raise TypeError(
+                f"Key must be a string or list of strings but got type {type(key)}"
+            )

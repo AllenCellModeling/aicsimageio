@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/add-getitem-to-dimensions-object  (`#347
+  <https://github.com/AllenCellModeling/aicsimageio/pull/347>`_) [Ian
+  Hunt-Isaak]
 - feature/allow-bioformats-x-y-chunking   (`#336
   <https://github.com/AllenCellModeling/aicsimageio/pull/336>`_) [Heath
   Patterson]

@@ -1,12 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple, Union
 
 import dask.array as da
 import numpy as np
 import xarray as xr
 import zarr
-from fsspec.implementations.local import LocalFileSystem
 from tifffile.tifffile import TiffFile, TiffFileError, ZarrTiffStore, xml2dict
 
 from .. import constants, exceptions, types
@@ -20,6 +19,8 @@ if TYPE_CHECKING:
 
 class SCNReader(Reader):
     """Read Leica SCN files using tifffile.
+    This does not support SCN files containing Z-stacks but works for
+    both multi-channel fluorescence, and brightfield RGB SCNs.
 
     Parameters
     ----------
@@ -29,7 +30,7 @@ class SCNReader(Reader):
     Raises
     ------
     exceptions.UnsupportedFileFormatError
-        If the file is not supported by ND2.
+        If the file is not supported by tifffile backed SCNReader.
     """
 
     @staticmethod
@@ -42,14 +43,8 @@ class SCNReader(Reader):
         except (TiffFileError, TypeError):
             return False
 
-    def __init__(self, image: types.PathLike, scene: Optional[Union[int, str]] = None):
+    def __init__(self, image: types.PathLike):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
-        # Catch non-local file system
-        if not isinstance(self._fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot read SCN from non-local file system. "
-                f"Received URI: {self._path}, which points to {type(self._fs)}."
-            )
 
         if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(
@@ -60,13 +55,11 @@ class SCNReader(Reader):
             self._scn_metadata = xml2dict(rdr.scn_metadata)
             self._image_metadata = self._scn_metadata["scn"]["collection"]["image"]
 
-        if scene is None:
-            scene = 0
-
-        self.set_scene(scene)
-
     @property
     def scenes(self) -> Tuple[str, ...]:
+        """Scenes are accessed by their UUID name within metadata
+        This name is extended with the Series and Sub-Resolution index
+        (S and R, respectively)"""
         scenes: Tuple[str, ...] = tuple()
         for idx, sub_image_meta in enumerate(self._image_metadata):
             series_meta = sub_image_meta.get("pixels").get("dimension")
@@ -79,11 +72,13 @@ class SCNReader(Reader):
         return scenes
 
     def _get_series_level_meta(self, series_idx: int, level_idx: int) -> Dict:
-        """tifffile organizes data series -> level (sub-resolution)
+        """tifffile organizes data series -> levels (sub-resolutions)
         The metadata has similar organization but with series -> level -> channel
         This makes sure the correct X and Y pixel lengths are pulled
         """
 
+        # access metadata by series index which matches
+        # tifffiles "series" attribute
         series_level_meta = (
             self._image_metadata[series_idx].get("pixels").get("dimension")
         )
@@ -92,11 +87,12 @@ class SCNReader(Reader):
 
     def _get_xy_pixel_sizes(
         self, rdr: TiffFile, series_idx: int, level_idx: int
-    ) -> Dict[str, float]:
+    ) -> types.PhysicalPixelSizes:
         """Resolution data is stored in the TIFF tags in
         Pixels per cm, this is converted to microns per pixel
         """
-
+        # pages are accessed because they contain the tiff tag
+        # subset by series -> level -> first page contains all tags
         current_page = rdr.series[series_idx].levels[level_idx].pages[0]
 
         x_res = current_page.tags["XResolution"].value
@@ -105,6 +101,11 @@ class SCNReader(Reader):
         res_unit = current_page.tags["ResolutionUnit"].value
 
         # convert units to micron
+        # res_unit == 1: undefined (px)
+        # res_unit == 2 pixels per inch
+        # res unit == 3 pixels per cm
+        # in all cases we convert to um
+        # https://www.awaresystems.be/imaging/tiff/tifftags/resolutionunit.html
         if res_unit.value == 1:
             res_to_um = 1
         if res_unit.value == 2:
@@ -112,10 +113,11 @@ class SCNReader(Reader):
         elif res_unit.value == 3:
             res_to_um = 10000
 
+        # conversion of pixels / um to um / pixel
         x_res_um = (1 / (x_res[0] / x_res[1])) * res_to_um
         y_res_um = (1 / (y_res[0] / y_res[1])) * res_to_um
 
-        return {"X": x_res_um, "Y": y_res_um}
+        return types.PhysicalPixelSizes(X=x_res_um, Y=y_res_um, Z=None)
 
     def _get_is_rgb(self, rdr: TiffFile, series_idx: int, level_idx: int) -> bool:
         """Use PhotometricInterpretation TIFF tag to determine if
@@ -128,7 +130,7 @@ class SCNReader(Reader):
         return photometric.name in {"RGB", "YCBCR"}
 
     def _get_ch_names(self, series_idx: int) -> List[str]:
-        """Pull channel names from SCN metadata"""
+        """Pull channel names from SCN metadata a given series"""
         channel_meta = (
             self._image_metadata[series_idx]
             .get("scanSettings")
@@ -140,11 +142,14 @@ class SCNReader(Reader):
         return ch_names
 
     def _generate_xarray_coords(
-        self, dims: Dict[str, int], x_res: float, y_res: float
+        self, dims: Dict[str, int], xy_res: types.PhysicalPixelSizes
     ) -> Dict[str, Union[List[str], np.ndarray]]:
         """Generate xr coord data from metadata and physical pixel size"""
 
         coords: Dict[str, Union[List[str], np.ndarray]] = {}
+
+        y_res = xy_res.Y
+        x_res = xy_res.X
 
         coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
             0, dims[DimensionNames.SpatialY], y_res
@@ -154,6 +159,15 @@ class SCNReader(Reader):
         )
         return coords
 
+    def _get_current_tf_indices(self) -> Tuple[int, int]:
+        current_scene = self.scenes[self.current_scene_index]
+
+        # parse series and level indices built into the scene name
+        series_idx = int(current_scene.split("S")[1].split("-")[0])
+        level_idx = int(current_scene.split("R")[1].split(")")[0])
+
+        return series_idx, level_idx
+
     def _read_delayed(self) -> xr.DataArray:
         return self._xr_read(delayed=True)
 
@@ -162,14 +176,13 @@ class SCNReader(Reader):
 
     def _xr_read(self, delayed: bool) -> xr.DataArray:
         with TiffFile(self._path) as rdr:
-            current_scene = self.scenes[self.current_scene_index]
 
-            series_idx = int(current_scene.split("S")[1].split("-")[0])
-            level_idx = int(current_scene.split("R")[1].split(")")[0])
+            series_idx, level_idx = self._get_current_tf_indices()
 
-            # get this series and this subresolution's metadata
+            # get this series and this sub-resolution's metadata
             series_level_meta = self._get_series_level_meta(series_idx, level_idx)
 
+            # dim lengths are provided as size{DIM_NAME}
             _dims_list = [
                 {f"{k.split('size')[1]}": v}
                 for k, v in series_level_meta.items()
@@ -181,14 +194,17 @@ class SCNReader(Reader):
 
             xy_res = self._get_xy_pixel_sizes(rdr, series_idx, level_idx)
 
-            coords = self._generate_xarray_coords(
-                _dims, x_res=xy_res["X"], y_res=xy_res["Y"]
-            )
+            coords = self._generate_xarray_coords(_dims, xy_res)
 
+            # access zarr data
             zarr_data = zarr.open(
                 ZarrTiffStore(rdr.series[series_idx].levels[level_idx])
             )
 
+            # if the base level is accessed, tifffile will always return
+            # a zarr group even if level 0 is requested
+            # so the first component is accessed to get the zarr.Array
+            # sub-resolutions will return a zarr.Array type
             if isinstance(zarr_data, zarr.hierarchy.Group):
                 data = da.from_zarr(zarr_data[0])
             else:
@@ -198,6 +214,7 @@ class SCNReader(Reader):
                 _dims.update({"S": data.shape[-1]})
                 dims = {"Y": _dims["Y"], "X": _dims["X"], "S": _dims["S"]}
             else:
+                # if fluorescence, get channel names
                 ch_names = self._get_ch_names(series_idx)
                 n_ch = len(ch_names)
 
@@ -237,9 +254,9 @@ class SCNReader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        current_scene = self.scenes[self.current_scene_index]
-        series_idx = int(current_scene.split("S")[1].split("-")[0])
-        level_idx = int(current_scene.split("R")[1].split(")")[0])
+
+        series_idx, level_idx = self._get_current_tf_indices()
+
         with TiffFile(self._path) as rdr:
             xy_res = self._get_xy_pixel_sizes(rdr, series_idx, level_idx)
-        return types.PhysicalPixelSizes(X=xy_res["X"], Y=xy_res["Y"], Z=None)
+        return xy_res

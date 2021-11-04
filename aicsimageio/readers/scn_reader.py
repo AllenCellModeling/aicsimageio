@@ -148,14 +148,12 @@ class SCNReader(Reader):
 
         coords: Dict[str, Union[List[str], np.ndarray]] = {}
 
-        y_res = xy_res.Y
-        x_res = xy_res.X
-
         coords[DimensionNames.SpatialY] = Reader._generate_coord_array(
-            0, dims[DimensionNames.SpatialY], y_res
+            0, dims[DimensionNames.SpatialY], xy_res.Y  # type: ignore
         )
+
         coords[DimensionNames.SpatialX] = Reader._generate_coord_array(
-            0, dims[DimensionNames.SpatialX], x_res
+            0, dims[DimensionNames.SpatialX], xy_res.X  # type: ignore
         )
         return coords
 

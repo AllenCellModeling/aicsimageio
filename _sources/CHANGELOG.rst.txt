@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/allow-bioformats-x-y-chunking   (`#336
+  <https://github.com/AllenCellModeling/aicsimageio/pull/336>`_) [Heath
+  Patterson]
 - feature/glob-reader  (`#303
   <https://github.com/AllenCellModeling/aicsimageio/pull/303>`_) [John
   Russell, Madison Swain-Bowden]

@@ -88,8 +88,15 @@ class TiffGlobReader(Reader):
     import glob
     files = glob.glob("path/to/data/**/*.tif", recursive=True)
 
-    # since the numbers in Micromanager files are not in STCZ order we need
-    # to use a custom indexer.
+    # since the numbers in Micromanager files are not in STCZ order we
+    # need to use a different indexer than default. For convenience
+    # when working MicroManager generated files you can use the provided
+    # TiffGlobReader.MicroManagerIndexer
+
+    mm_reader = TiffGlobReader(files, indexer=TiffGlobReader.MicroManagerIndexer)
+
+    # as an example of making a custom indexer you can manually create
+    # the MicroManagerIndexer like so:
 
     import pandas as pd
     from pathlib import Path
@@ -100,7 +107,6 @@ class TiffGlobReader(Reader):
         return series
 
     mm_reader = TiffGlobReader(files, indexer=mm_indexer)
-
     """
 
     @staticmethod
@@ -584,3 +590,27 @@ class TiffGlobReader(Reader):
             tags[code] = tag.value
 
         return tags
+
+    @staticmethod
+    def MicroManagerIndexer(path_to_img: Union[str, Path]) -> pd.Series:
+        """
+        An indexer function to transform Micromanager MDA tiff filenames
+        to indices. To use::
+
+            reader = TiffGlobReader(files, indexer=TiffGlobReader.MicroManagerIndexer)
+
+        Expects images to have names of the form:
+            img_channel_[0-9]+_position[0-9]+_time[0-9]+_z[0-9]+.tif[f]
+
+        Parameters
+        ----------
+        path_to_img : [str, Path]
+            The path to an image.
+
+        Returns
+        -------
+        pd.Series
+        """
+        inds = re.findall(r"\d+", Path(path_to_img).name)
+        series = pd.Series(inds, index=["C", "S", "T", "Z"]).astype(int)
+        return series

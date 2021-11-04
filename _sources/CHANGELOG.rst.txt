@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/add-stored-mm-indexer-function-to-glob-reader  (`#346
+  <https://github.com/AllenCellModeling/aicsimageio/pull/346>`_) [Ian
+  Hunt-Isaak]
 - feature/add-getitem-to-dimensions-object  (`#347
   <https://github.com/AllenCellModeling/aicsimageio/pull/347>`_) [Ian
   Hunt-Isaak]

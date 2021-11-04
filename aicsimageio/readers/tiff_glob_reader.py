@@ -85,11 +85,15 @@ class TiffGlobReader(Reader):
     # for the images files and pass the list to TiffGlobReader. Note that all images are
     # named according to img_channel000_position001_time000000003_z004.tif"
 
+    import glob
     files = glob.glob("path/to/data/**/*.tif", recursive=True)
 
     # since the numbers in Micromanager files are not in STCZ order we need
     # to use a custom indexer.
 
+    import pandas as pd
+    from pathlib import Path
+    import re
     def mm_indexer(path_to_img):
         inds = re.findall(r"\d+", Path(path_to_img).name)
         series = pd.Series(inds, index=['C', 'S', 'T', 'Z']).astype(int)

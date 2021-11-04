@@ -8,6 +8,7 @@ import tifffile as tiff
 import xarray as xr
 
 import aicsimageio
+from aicsimageio.readers.tiff_glob_reader import TiffGlobReader
 
 DATA_SHAPE = (3, 4, 5, 6, 7, 8)  # STCZYX
 
@@ -23,10 +24,21 @@ def check_values(
         assert np.all(reference.isel(S=i).data == reader.xarray_data.data)
 
 
-def make_fake_data_2d(path: Path) -> xr.DataArray:
+def make_fake_data_2d(path: Path, as_mm: bool = False) -> xr.DataArray:
+    """
+    Parameters
+    ----------
+    path : [Path]
+        Folder to save data in
+    as_mm : [bool]
+        Whether to save the data in with Micromanager MDA naming conventions.
+
+    Returns
+    -------
+    x_data : [xr.DataArray]
+    """
 
     data = np.arange(np.prod(DATA_SHAPE), dtype="uint16").reshape(DATA_SHAPE)
-
     dims = list("STCZYX")
 
     x_data = xr.DataArray(data, dims=dims)
@@ -35,8 +47,12 @@ def make_fake_data_2d(path: Path) -> xr.DataArray:
     for s, t, c, z in product(*(range(x) for x in DATA_SHAPE[:4])):
 
         im = data[s, t, c, z]
+        if as_mm:
+            name = f"img_channel{c}_position{s}_time{t}_z{z}.tif"
+        else:
+            name = f"S{s}_T{t}_C{c}_Z{z}.tif"
         tiff.imsave(
-            str(path / f"2d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
+            str(path / "2d_images" / name),
             im,
             dtype=np.uint16,
         )
@@ -50,6 +66,15 @@ def test_glob_reader_2d(tmp_path: Path) -> None:
     assert gr.xarray_dask_data.data.chunksize == (1, 1) + DATA_SHAPE[-3:]
 
     check_values(gr, reference)
+
+
+def test_mm_indexer(tmp_path: Path) -> None:
+    _ = make_fake_data_2d(tmp_path, True)
+    gr = aicsimageio.readers.TiffGlobReader(
+        str(tmp_path / "2d_images/*.tif"), indexer=TiffGlobReader.MicroManagerIndexer
+    )
+    assert gr.dims.order == "TCZYX"
+    assert gr.dims.shape == DATA_SHAPE[1:]
 
 
 def make_fake_data_3d(path: Path) -> xr.DataArray:

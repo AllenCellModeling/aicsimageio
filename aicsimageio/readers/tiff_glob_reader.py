@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import glob
+import json
 import re
 from collections import OrderedDict
 from pathlib import Path
@@ -222,7 +223,15 @@ class TiffGlobReader(Reader):
                         f"Number of scenes: {len(self.scenes)}, "
                         f"Provided channel name lists: {dim_order}"
                     )
-            self._channel_names = channel_names
+
+        if channel_names is None:
+            path = Path(self._path)
+            for folder in [path.parent, path.parent.parent]:
+                disp_file = folder / "DisplaySettings.json"
+                if disp_file.exists():
+                    self._channel_names = (
+                        TiffGlobReader.get_channels_from_DisplaySettings(disp_file)
+                    )
 
         for dim in REQUIRED_CHUNK_DIMS:
             if dim not in self.chunk_dims:
@@ -526,11 +535,17 @@ class TiffGlobReader(Reader):
         if self._channel_names is None:
             return None
 
+        scene_channels: Optional[Union[List[List[str]], List[str], str]] = None
         # If channels was provided as a list of lists
         if isinstance(self._channel_names[0], list):
             scene_channels = self._channel_names[self.current_scene_index]
         elif all(isinstance(c, str) for c in self._channel_names):
-            scene_channels = self._channel_names  # type: ignore
+            # If we got channel_names from DisplaySettings.json then there
+            # may be channel names included that the user does not want to load.
+            # e.g. if they excluded a channel that is not included in the whole z-stack
+            scene_channels = [
+                self._channel_names[c] for c in self._all_files.C.unique()
+            ]
         else:
             return None
 
@@ -614,3 +629,25 @@ class TiffGlobReader(Reader):
         inds = re.findall(r"\d+", Path(path_to_img).name)
         series = pd.Series(inds, index=["C", "S", "T", "Z"]).astype(int)
         return series
+
+    @staticmethod
+    def get_channels_from_DisplaySettings(
+        display_settings_file: Union[str, Path]
+    ) -> Optional[List[str]]:
+        """
+        Extract the Channel Names from the MicroManager generated DisplaySettings.json file. This file
+        is generated when saving single tiff files and is the only way this metadata is accessible with that
+        MM 1.4 style saving method.
+        (TODO check that that statement is true. I inferred it from reading
+        https://github.com/micro-manager/micro-manager/blob/v2.0.0/mmstudio/src/main/java/org/micromanager/data/internal/StorageSinglePlaneTiffSeries.java # noqa
+        )
+        """
+        with open(Path(display_settings_file)) as f:
+            disp_settings = json.load(f)
+        try:
+            names = []
+            for i, chan in enumerate(disp_settings["map"]["ChannelSettings"]["array"]):
+                names.append(chan["Channel"]["scalar"])
+            return names
+        except KeyError:
+            return None

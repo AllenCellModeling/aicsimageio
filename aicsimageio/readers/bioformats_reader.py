@@ -295,7 +295,6 @@ class BioFile:
                 mo.set(name, str(value))
             self._r.setMetadataOptions(mo)
 
-        self._close_on_exit = True
         self.open()
         self._lock = Lock()
         self.set_series(series)
@@ -379,9 +378,9 @@ class BioFile:
         return DaskArrayProxy(arr, self)
 
     @property
-    def is_open(self) -> bool:
+    def closed(self) -> bool:
         """Whether the underlying file is currently open"""
-        return bool(self._r.getCurrentFile())
+        return not bool(self._r.getCurrentFile())
 
     @property
     def filename(self) -> str:
@@ -405,14 +404,11 @@ class BioFile:
 
     def __enter__(self) -> BioFile:
         # entering an already opened file should not close the file on exit.
-        self._close_on_exit = not self.is_open
-        if not self.is_open:
-            self.open()
+        self.open()
         return self
 
     def __exit__(self, *args: Any) -> None:
-        if self._close_on_exit:
-            self.close()
+        self.close()
 
     def __del__(self) -> None:
         self.close()
@@ -446,7 +442,7 @@ class BioFile:
             array of requested bytes.
         """
         with self._lock:
-            was_open = self.is_open
+            was_open = not self.closed
             if not was_open:
                 self.open()
 

@@ -437,7 +437,6 @@ class BioFile:
         return OME.from_xml(xml)
 
     def __enter__(self) -> BioFile:
-        # entering an already opened file should not close the file on exit.
         self.open()
         return self
 

@@ -412,9 +412,9 @@ class BioFile:
         return DaskArrayProxy(arr, self)
 
     @property
-    def is_open(self) -> bool:
+    def closed(self) -> bool:
         """Whether the underlying file is currently open"""
-        return bool(self._r.getCurrentFile())
+        return not bool(self._r.getCurrentFile())
 
     @property
     def filename(self) -> str:
@@ -437,8 +437,7 @@ class BioFile:
         return OME.from_xml(xml)
 
     def __enter__(self) -> BioFile:
-        if not self.is_open:
-            self.open()
+        self.open()
         return self
 
     def __exit__(self, *args: Any) -> None:
@@ -476,7 +475,7 @@ class BioFile:
             array of requested bytes.
         """
         with self._lock:
-            was_open = self.is_open
+            was_open = not self.closed
             if not was_open:
                 self.open()
 

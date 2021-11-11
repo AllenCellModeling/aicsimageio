@@ -1,6 +1,31 @@
 Changelog
 =========
 
+v4.5.0 (2021-11-04)
+-------------------
+
+New
+~~~
+- feature/add-stored-mm-indexer-function-to-glob-reader  (`#346
+  <https://github.com/AllenCellModeling/aicsimageio/pull/346>`_) [Ian
+  Hunt-Isaak]
+- feature/add-getitem-to-dimensions-object  (`#347
+  <https://github.com/AllenCellModeling/aicsimageio/pull/347>`_) [Ian
+  Hunt-Isaak]
+- feature/allow-bioformats-x-y-chunking   (`#336
+  <https://github.com/AllenCellModeling/aicsimageio/pull/336>`_) [Heath
+  Patterson]
+- feature/glob-reader  (`#303
+  <https://github.com/AllenCellModeling/aicsimageio/pull/303>`_) [John
+  Russell, Madison Swain-Bowden]
+
+Other
+~~~~~
+- admin/update-pr-template-remove-link-to-gh-12  (`#342
+  <https://github.com/AllenCellModeling/aicsimageio/pull/342>`_)
+  [Madison Swain-Bowden]
+
+
 v4.4.0 (2021-10-12)
 -------------------
 

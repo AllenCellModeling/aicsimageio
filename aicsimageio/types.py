@@ -14,7 +14,9 @@ import xarray as xr
 PathLike = Union[str, Path]
 ArrayLike = Union[np.ndarray, da.Array]
 MetaArrayLike = Union[ArrayLike, xr.DataArray]
-ImageLike = Union[PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike]]
+ImageLike = Union[
+    PathLike, ArrayLike, MetaArrayLike, List[MetaArrayLike], List[PathLike]
+]
 
 
 # Image Utility Types

@@ -13,6 +13,10 @@ class FileContext:
     FILE_OPEN = False
     OPEN_COUNT = 0
 
+    @property
+    def closed(self) -> bool:
+        return not self.FILE_OPEN
+
     def __enter__(self) -> "FileContext":
         if not self.FILE_OPEN:
             self.OPEN_COUNT += 1

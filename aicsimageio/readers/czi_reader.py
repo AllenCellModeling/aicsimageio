@@ -68,6 +68,9 @@ class CziReader(Reader):
         Note: DimensionNames.SpatialY, DimensionNames.SpatialX, and
         DimensionNames.Samples, will always be added to the list if not present during
         dask array construction.
+    include_subblock_metadata: bool
+        Whether to append metadata from the subblocks to the rest of the embeded
+        metadata.
 
     Notes
     -----
@@ -89,6 +92,7 @@ class CziReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         chunk_by_dims: Optional[Union[str, List[str]]] = None,
+        include_subblock_metadata: bool = False,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
@@ -114,6 +118,8 @@ class CziReader(Reader):
             chunk_dims = list(chunk_dims)
 
         self.chunk_dims = chunk_dims
+
+        self._include_subblock_metadata = include_subblock_metadata
 
         # Delayed storage
         self._px_sizes: Optional[types.PhysicalPixelSizes] = None
@@ -545,6 +551,11 @@ class CziReader(Reader):
                 scene_index=self.current_scene_index,
                 dims_shape=dims_shape,
             )
+
+            # Append subblock metadata to the other metadata if param is True
+            if self._include_subblock_metadata:
+                subblocks = czi.read_subblock_metadata(unified_xml=True)
+                meta.append(subblocks)
 
             # Store pixel sizes
             self._px_sizes = px_sizes

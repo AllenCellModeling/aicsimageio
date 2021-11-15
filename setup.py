@@ -86,7 +86,7 @@ benchmark_requirements = [
 ]
 
 requirements = [
-    "dask[array]>=2021.4.1",
+    "dask[array]==2021.10.0",
     "fsspec>=2021.4.0",
     "imagecodecs==2021.8.26",
     "lxml>=4.6,<5",

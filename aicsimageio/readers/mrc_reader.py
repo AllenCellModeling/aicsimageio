@@ -49,6 +49,7 @@ class MrcReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
+        # TODO: treat mrcs as stacks of scenes?
         return ("Image:0",)
 
     def _read_delayed(self) -> xr.DataArray:

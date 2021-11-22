@@ -279,6 +279,7 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
         "aicsimageio.readers.mrc_reader.MrcReader",
         "aicsimageio.readers.bioformats_reader.BioformatsReader",
     ],
+    "mrcs": ["aicsimageio.readers.mrc_reader.MrcReader"],
     "mri": ["aicsimageio.readers.default_reader.DefaultReader"],
     "mrw": [
         "aicsimageio.readers.default_reader.DefaultReader",
@@ -483,4 +484,5 @@ READER_TO_INSTALL: Dict[str, str] = {
     "aicsimageio.readers.default_reader.DefaultReader": "base-imageio",
     "aicsimageio.readers.lif_reader.LifReader": "lif",
     "aicsimageio.readers.czi_reader.CziReader": "czi",
+    "aicsimageio.readers.mrc_reader.MrcReader": "mrc",
 }

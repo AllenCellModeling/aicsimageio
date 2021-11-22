@@ -6,6 +6,7 @@ from typing import Any, Tuple
 import mrcfile
 import dask.array as da
 import xarray as xr
+from numpy.lib.recfunctions import structured_to_unstructured
 from fsspec.spec import AbstractFileSystem
 from fsspec.implementations.local import LocalFileSystem
 
@@ -82,4 +83,5 @@ class MrcReader(Reader):
         metadata for unit information.
         """
         with mrcfile.open(self._path, permissive=True, header_only=True) as mrc:
-            return types.PhysicalPixelSizes(*mrc.voxel_size[::-1])
+            sizes = structured_to_unstructured(mrc.voxel_size)[::-1]
+            return types.PhysicalPixelSizes(*sizes)

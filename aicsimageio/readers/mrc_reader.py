@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Tuple
 
 import mrcfile
 import dask.array as da
@@ -9,9 +9,7 @@ import xarray as xr
 from fsspec.spec import AbstractFileSystem
 from fsspec.implementations.local import LocalFileSystem
 
-from .. import constants, exceptions, types
-from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
-from ..metadata import utils as metadata_utils
+from .. import exceptions, types
 from ..utils import io_utils
 from .reader import Reader
 

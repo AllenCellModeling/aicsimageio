@@ -28,7 +28,7 @@ with open("README.md") as readme_file:
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<3", "Pillow>=8.2.0,!=8.3.0,<9"],
     "czi": ["aicspylibczi>=3.0.2"],
-    "nd2": ["nd2[legacy]>=0.1.4"],
+    "nd2": ["nd2[legacy]==0.1.4"],
     "dv": ["mrc>=0.2.0"],
     "mrc": ["mrcfile>=1.3.0"],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
@@ -93,8 +93,8 @@ requirements = [
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
     "ome-types>=0.2",
-    "tifffile>=2021.6.6",
     "wrapt>=1.12",
+    "tifffile>=2021.8.30",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",
@@ -154,6 +154,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.4.0",
+    version="4.5.0",
     zip_safe=False,
 )

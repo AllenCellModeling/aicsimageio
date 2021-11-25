@@ -4,6 +4,7 @@
 from typing import Any, Tuple
 
 import mrcfile
+import numpy as np
 import dask.array as da
 import xarray as xr
 from numpy.lib.recfunctions import structured_to_unstructured
@@ -12,6 +13,7 @@ from fsspec.implementations.local import LocalFileSystem
 
 from .. import exceptions, types
 from ..utils import io_utils
+from ..dimensions import DimensionNames
 from .reader import Reader
 
 
@@ -50,8 +52,15 @@ class MrcReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        # TODO: treat mrcs as stacks of scenes?
-        return ("Image:0",)
+        if self._scenes is None:
+            # need full mmap open here because `is_image_stack` needs access to data shape
+            with mrcfile.mmap(self._path, permissive=True) as mrc:
+                if mrc.is_image_stack():
+                    n_scenes = mrc.header.nz
+                else:
+                    n_scenes = mrc.header.nz / mrc.header.mz
+                self._scenes = [f'Image:{i}' for i in range(int(n_scenes))]
+        return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:
         return self._make_xarray(delayed=True)
@@ -60,13 +69,31 @@ class MrcReader(Reader):
         return self._make_xarray(delayed=False)
 
     def _make_xarray(self, delayed: bool) -> xr.DataArray:
-        reader = mrcfile.mmap if delayed else mrcfile.open
-        with reader(self._path, permissive=True) as mrc:
-            data = mrc.data
+        with mrcfile.mmap(self._path, permissive=True) as mrc:
+            if mrc.is_single_image():
+                scene = mrc.data
+                dims = [DimensionNames.SpatialY, DimensionNames.SpatialX]
+            elif mrc.is_image_stack():
+                scene = mrc.data[self._current_scene_index]
+                dims = [DimensionNames.SpatialY, DimensionNames.SpatialX]
+            elif mrc.is_volume():
+                scene = mrc.data
+                dims = [DimensionNames.SpatialZ,
+                        DimensionNames.SpatialY,
+                        DimensionNames.SpatialX]
+            else:
+                scene = mrc.data[self._current_scene_index]
+                dims = [DimensionNames.SpatialZ,
+                        DimensionNames.SpatialY,
+                        DimensionNames.SpatialX]
+
+            # convert before exiting the context manager or scene will be None
             if delayed:
-                data = da.from_array(data)
-        xarr = xr.DataArray(data, dims=['Z', 'Y', 'X'])
-        return xarr
+                data = da.from_array(scene)
+            else:
+                data = np.asarray(scene)
+
+        return xr.DataArray(data, dims=dims)
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

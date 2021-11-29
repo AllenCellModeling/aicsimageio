@@ -550,8 +550,12 @@ class CziReader(Reader):
             self._px_sizes = px_sizes
 
             # handle edge case where image has 0,0 YX dims:
-            if image_data.shape[-2:] == (0,0):
-                return xr.DataArray(dims=coords.keys(), coords=coords, attrs={constants.METADATA_UNPROCESSED: meta})
+            if image_data.shape[-2:] == (0, 0):
+                return xr.DataArray(
+                    dims=coords.keys(),
+                    coords=coords,
+                    attrs={constants.METADATA_UNPROCESSED: meta},
+                )
             else:
                 return xr.DataArray(
                     image_data,

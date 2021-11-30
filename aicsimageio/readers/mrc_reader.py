@@ -11,9 +11,10 @@ from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from numpy.lib.recfunctions import structured_to_unstructured
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
-from ..utils import io_utils, generate_ome_image_id
+from ..utils import io_utils
+from ..metadata.utils import generate_ome_image_id
 from .reader import Reader
 
 
@@ -91,13 +92,34 @@ class MrcReader(Reader):
                     DimensionNames.SpatialX,
                 ]
 
+            # build coordinates
+            coords = {}
+            for dim in dims:
+                mrc_dim = dim.lower()
+                start = mrc.header[f'n{mrc_dim}start']
+                # only weird case, because header.mz is not 1 despite images having z=1
+                if mrc_dim == 'z' and mrc.is_image_stack():
+                    end = 1
+                else:
+                    end = mrc.header[f'm{mrc_dim}']
+                voxel_size = mrc.voxel_size[mrc_dim]
+                coords[dim] = self._generate_coord_array(start, end, voxel_size)
+
             # convert before exiting the context manager or scene will be None
             if delayed:
                 data = da.from_array(scene)
             else:
                 data = np.asarray(scene)
 
-        return xr.DataArray(data, dims=dims)
+            # get raw metadata
+            meta = np.asarray(mrc.header)
+
+        return xr.DataArray(
+            data,
+            dims=dims,
+            coords=coords,
+            attrs={constants.METADATA_UNPROCESSED: meta},
+        )
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

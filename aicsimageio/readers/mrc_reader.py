@@ -54,13 +54,16 @@ class MrcReader(Reader):
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            # need full mmap open here because `is_image_stack` needs access to data shape
+            # need full mmap open here because `is_image_stack`
+            # needs access to data shape
             with mrcfile.mmap(self._path, permissive=True) as mrc:
                 if mrc.is_image_stack():
                     n_scenes = mrc.header.nz
                 else:
                     n_scenes = mrc.header.nz / mrc.header.mz
-                self._scenes = [generate_ome_image_id(i) for i in range(int(n_scenes))]
+                self._scenes = tuple(
+                    generate_ome_image_id(i) for i in range(int(n_scenes))
+                )
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:

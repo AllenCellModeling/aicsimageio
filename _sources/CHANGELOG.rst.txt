@@ -1,6 +1,25 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/pin-nd2-dep  (`#358
+  <https://github.com/AllenCellModeling/aicsimageio/pull/358>`_) [Talley
+  Lambert]
+- fix/only-close-biofiofile-on-exit-if-not-open-on-entry  (`#341
+  <https://github.com/AllenCellModeling/aicsimageio/pull/341>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
+- allow metadata extraction from czi files with no subblocks  (`#360
+  <https://github.com/AllenCellModeling/aicsimageio/pull/360>`_)
+  [toloudis]
+
+
 v4.5.0 (2021-11-04)
 -------------------
 

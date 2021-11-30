@@ -3,17 +3,17 @@
 
 from typing import Any, Tuple
 
+import dask.array as da
 import mrcfile
 import numpy as np
-import dask.array as da
 import xarray as xr
-from numpy.lib.recfunctions import structured_to_unstructured
-from fsspec.spec import AbstractFileSystem
 from fsspec.implementations.local import LocalFileSystem
+from fsspec.spec import AbstractFileSystem
+from numpy.lib.recfunctions import structured_to_unstructured
 
 from .. import exceptions, types
-from ..utils import io_utils
 from ..dimensions import DimensionNames
+from ..utils import io_utils
 from .reader import Reader
 
 
@@ -59,7 +59,7 @@ class MrcReader(Reader):
                     n_scenes = mrc.header.nz
                 else:
                     n_scenes = mrc.header.nz / mrc.header.mz
-                self._scenes = [f'Image:{i}' for i in range(int(n_scenes))]
+                self._scenes = [f"Image:{i}" for i in range(int(n_scenes))]
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:
@@ -78,14 +78,18 @@ class MrcReader(Reader):
                 dims = [DimensionNames.SpatialY, DimensionNames.SpatialX]
             elif mrc.is_volume():
                 scene = mrc.data
-                dims = [DimensionNames.SpatialZ,
-                        DimensionNames.SpatialY,
-                        DimensionNames.SpatialX]
+                dims = [
+                    DimensionNames.SpatialZ,
+                    DimensionNames.SpatialY,
+                    DimensionNames.SpatialX,
+                ]
             else:
                 scene = mrc.data[self._current_scene_index]
-                dims = [DimensionNames.SpatialZ,
-                        DimensionNames.SpatialY,
-                        DimensionNames.SpatialX]
+                dims = [
+                    DimensionNames.SpatialZ,
+                    DimensionNames.SpatialY,
+                    DimensionNames.SpatialX,
+                ]
 
             # convert before exiting the context manager or scene will be None
             if delayed:

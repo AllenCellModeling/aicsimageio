@@ -13,7 +13,7 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from .. import exceptions, types
 from ..dimensions import DimensionNames
-from ..utils import io_utils
+from ..utils import io_utils, generate_ome_image_id
 from .reader import Reader
 
 
@@ -59,7 +59,7 @@ class MrcReader(Reader):
                     n_scenes = mrc.header.nz
                 else:
                     n_scenes = mrc.header.nz / mrc.header.mz
-                self._scenes = [f"Image:{i}" for i in range(int(n_scenes))]
+                self._scenes = [generate_ome_image_id(i) for i in range(int(n_scenes))]
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:

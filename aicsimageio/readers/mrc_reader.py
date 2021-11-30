@@ -13,8 +13,8 @@ from numpy.lib.recfunctions import structured_to_unstructured
 
 from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
-from ..utils import io_utils
 from ..metadata.utils import generate_ome_image_id
+from ..utils import io_utils
 from .reader import Reader
 
 
@@ -96,12 +96,12 @@ class MrcReader(Reader):
             coords = {}
             for dim in dims:
                 mrc_dim = dim.lower()
-                start = mrc.header[f'n{mrc_dim}start']
+                start = mrc.header[f"n{mrc_dim}start"]
                 # only weird case, because header.mz is not 1 despite images having z=1
-                if mrc_dim == 'z' and mrc.is_image_stack():
+                if mrc_dim == "z" and mrc.is_image_stack():
                     end = 1
                 else:
-                    end = mrc.header[f'm{mrc_dim}']
+                    end = mrc.header[f"m{mrc_dim}"]
                 voxel_size = mrc.voxel_size[mrc_dim]
                 coords[dim] = self._generate_coord_array(start, end, voxel_size)
 

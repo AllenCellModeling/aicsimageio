@@ -15,6 +15,9 @@ Fix
 
 Other
 ~~~~~
+- Add ability to manually trigger build of main  (`#359
+  <https://github.com/AllenCellModeling/aicsimageio/pull/359>`_) [Matte
+  Bailey]
 - allow metadata extraction from czi files with no subblocks  (`#360
   <https://github.com/AllenCellModeling/aicsimageio/pull/360>`_)
   [toloudis]

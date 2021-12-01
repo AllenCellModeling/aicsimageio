@@ -15,6 +15,9 @@ Fix
 
 Other
 ~~~~~
+- Add missing char to workflow file  (`#362
+  <https://github.com/AllenCellModeling/aicsimageio/pull/362>`_) [Matte
+  Bailey]
 - Add ability to manually trigger build of main  (`#359
   <https://github.com/AllenCellModeling/aicsimageio/pull/359>`_) [Matte
   Bailey]

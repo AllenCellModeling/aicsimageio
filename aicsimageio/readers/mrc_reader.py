@@ -37,6 +37,7 @@ class MrcReader(Reader):
             return False
 
     def __init__(self, image: types.PathLike):
+        self._physical_pixel_sizes = None
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
         # Catch non-local file system
@@ -138,6 +139,11 @@ class MrcReader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        with mrcfile.open(self._path, permissive=True, header_only=True) as mrc:
-            sizes = structured_to_unstructured(mrc.voxel_size)[::-1]
-            return types.PhysicalPixelSizes(*sizes)
+        if self._physical_pixel_sizes is None:
+            with mrcfile.mmap(self._path, permissive=True) as mrc:
+                sizes = structured_to_unstructured(mrc.voxel_size)
+                if mrc.is_image_stack() or mrc.is_single_image():
+                    self._physical_pixel_sizes = types.PhysicalPixelSizes(X=sizes[0], Y=sizes[1], Z=None)
+                else:
+                    self._physical_pixel_sizes = types.PhysicalPixelSizes(*sizes[::-1])
+        return self._physical_pixel_sizes

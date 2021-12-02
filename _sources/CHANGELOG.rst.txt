@@ -4,6 +4,12 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- feature/czi-subblock-metadata  (`#353
+  <https://github.com/AllenCellModeling/aicsimageio/pull/353>`_) [Matte
+  Bailey]
+
 Fix
 ~~~
 - bugfix/pin-nd2-dep  (`#358

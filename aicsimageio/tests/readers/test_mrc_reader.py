@@ -42,7 +42,7 @@ from ..conftest import get_resource_full_path, host
             (None, 1.1449999809265137, 1.1449999809265137),
         ),
         (
-            "volume.mrc.new",
+            "volume.mrc",
             "Image:0",
             ("Image:0",),
             (128, 128, 128),

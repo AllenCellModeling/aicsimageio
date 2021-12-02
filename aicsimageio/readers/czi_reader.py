@@ -46,6 +46,7 @@ PIXEL_DICT = {
     "gray32": np.uint32,
     "bgr24": np.uint8,
     "bgr48": np.uint16,
+    "invalid": np.uint8,
 }
 
 
@@ -395,7 +396,7 @@ class CziReader(Reader):
             # Get pixel type and catch unsupported
             pixel_type = PIXEL_DICT.get(czi.pixel_type)
             if pixel_type is None:
-                raise TypeError(f"Pixel type: {pixel_type} is not supported.")
+                raise TypeError(f"Pixel type: {czi.pixel_type} is not supported.")
 
             # Add delayed array to lazy arrays at index
             lazy_arrays[np_index] = da.from_delayed(
@@ -548,12 +549,20 @@ class CziReader(Reader):
             # Store pixel sizes
             self._px_sizes = px_sizes
 
-            return xr.DataArray(
-                image_data,
-                dims=img_dims_list,
-                coords=coords,  # type: ignore
-                attrs={constants.METADATA_UNPROCESSED: meta},
-            )
+            # handle edge case where image has 0,0 YX dims:
+            if image_data.shape[-2:] == (0, 0):
+                return xr.DataArray(
+                    dims=coords.keys(),
+                    coords=coords,
+                    attrs={constants.METADATA_UNPROCESSED: meta},
+                )
+            else:
+                return xr.DataArray(
+                    image_data,
+                    dims=img_dims_list,
+                    coords=coords,  # type: ignore
+                    attrs={constants.METADATA_UNPROCESSED: meta},
+                )
 
     def _read_immediate(self) -> xr.DataArray:
         """

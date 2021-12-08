@@ -1,6 +1,40 @@
 Changelog
 =========
 
+v4.5.1 (2021-12-08)
+-------------------
+
+New
+~~~
+- feature/czi-subblock-metadata  (`#353
+  <https://github.com/AllenCellModeling/aicsimageio/pull/353>`_) [Matte
+  Bailey]
+
+Fix
+~~~
+- bugfix/pin-nd2-dep  (`#358
+  <https://github.com/AllenCellModeling/aicsimageio/pull/358>`_) [Talley
+  Lambert]
+- fix/only-close-biofiofile-on-exit-if-not-open-on-entry  (`#341
+  <https://github.com/AllenCellModeling/aicsimageio/pull/341>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
+- Update submodule commit to latest  (`#363
+  <https://github.com/AllenCellModeling/aicsimageio/pull/363>`_) [Matte
+  Bailey]
+- Add missing char to workflow file  (`#362
+  <https://github.com/AllenCellModeling/aicsimageio/pull/362>`_) [Matte
+  Bailey]
+- Add ability to manually trigger build of main  (`#359
+  <https://github.com/AllenCellModeling/aicsimageio/pull/359>`_) [Matte
+  Bailey]
+- allow metadata extraction from czi files with no subblocks  (`#360
+  <https://github.com/AllenCellModeling/aicsimageio/pull/360>`_)
+  [toloudis]
+
+
 v4.5.0 (2021-11-04)
 -------------------
 

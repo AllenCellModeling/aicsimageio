@@ -64,6 +64,22 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
 10. Submit a pull request through the GitHub website.
 
+## Updating the Submodule
+If there are updates to the submodule repo that you would like to integrate into AICSImageIO, follow these steps:
+1. Create a new branch in this repo:
+```
+git checkout -b {your_development_type}/short-description
+```
+
+2. Pull in the changes from the submodule:
+```
+git submodule update --remote --merge
+```
+
+3. Commit the changes caused by the above command.
+
+4. Create a PR with these changes.
+
 ## Adding a New Custom Reader
 
 ### Basics

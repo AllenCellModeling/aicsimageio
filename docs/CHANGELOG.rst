@@ -1,6 +1,16 @@
 Changelog
 =========
 
+v4.5.2 (2021-12-16)
+-------------------
+- Update XSLT subbmodule  (`#365
+  <https://github.com/AllenCellModeling/aicsimageio/pull/365>`_) [Matte
+  Bailey]
+- Add instructions for updating the submodule  (`#364
+  <https://github.com/AllenCellModeling/aicsimageio/pull/364>`_) [Matte
+  Bailey]
+
+
 v4.5.1 (2021-12-08)
 -------------------
 

@@ -186,19 +186,25 @@ class AICSImage:
 
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
                 if path.lower().endswith(f".{format_ext}"):
-                    installer = READER_TO_INSTALL[readers[0]]
-                    raise exceptions.UnsupportedFileFormatError(
-                        "AICSImage",
-                        path,
-                        msg_extra=(
-                            f"File extension suggests format: '{format_ext}'. "
-                            f"Install extra format dependency with: "
-                            f"`pip install aicsimageio[{installer}]`. "
-                            f"See all known format extensions and their "
-                            f"extra install name with "
-                            f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
-                        ),
-                    )
+                    if readers[0] in READER_TO_INSTALL:
+                        installer = READER_TO_INSTALL[readers[0]]
+                        raise exceptions.UnsupportedFileFormatError(
+                            "AICSImage",
+                            path,
+                            msg_extra=(
+                                f"File extension suggests format: '{format_ext}'. "
+                                f"Install extra format dependency with: "
+                                f"`pip install aicsimageio[{installer}]`. "
+                                f"See all known format extensions and their "
+                                f"extra install name with "
+                                f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
+                            ),
+                        )
+                    else:
+                        raise exceptions.UnsupportedFileFormatError(
+                            "AICSImage",
+                            path,
+                        )
 
         # If we haven't hit anything yet, we likely don't support this file / object
         image_type = str(type(image))

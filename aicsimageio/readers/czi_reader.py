@@ -80,6 +80,12 @@ class CziReader(Reader):
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
+            if not isinstance(fs, LocalFileSystem):
+                raise ValueError(
+                    f"Cannot read CZIs from non-local file system. "
+                    f"Received URI: {path}, which points to {type(fs)}."
+                )
+
             with fs.open(path) as open_resource:
                 CziFile(open_resource)
                 return True

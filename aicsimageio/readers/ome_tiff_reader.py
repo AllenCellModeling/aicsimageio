@@ -11,6 +11,7 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
+from urllib.error import URLError
 from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types
@@ -98,6 +99,15 @@ class OmeTiffReader(TiffReader):
         # invalid OME XMl
         except XMLSchemaValidationError as e:
             log.error("OME XML validation failed")
+            log.error(e)
+            return False
+
+        # cant connect to external schema resource (no internet conection)
+        except URLError as e:
+            log.error(
+                "Could not validate OME XML against referenced schema "
+                "(no internet connection)"
+            )
             log.error(e)
             return False
 

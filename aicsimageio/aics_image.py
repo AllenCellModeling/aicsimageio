@@ -166,13 +166,9 @@ class AICSImage:
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
                 if path.lower().endswith(f".{format_ext}"):
                     for reader in readers:
-                        try:
-                            ReaderClass = _load_reader(reader)
-                            if ReaderClass.is_supported_image(image):
-                                return ReaderClass
-
-                        except Exception:
-                            pass
+                        ReaderClass = _load_reader(reader)
+                        if ReaderClass.is_supported_image(image):
+                            return ReaderClass
 
         # Try all known readers
         # Useful in cases where the provided filename is a GUID or similar

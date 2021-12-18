@@ -305,6 +305,18 @@ from .image_container_test_utils import (
             None,
             marks=pytest.mark.raises(exception=IndexError),
         ),
+        pytest.param(
+            "does-not-exist-klafjjksdafkjl.bad",
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            marks=pytest.mark.raises(exception=FileNotFoundError),
+        ),
     ],
 )
 def test_aicsimage(

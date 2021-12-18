@@ -4,6 +4,7 @@
 import logging
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
+from urllib.error import URLError
 
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
@@ -11,7 +12,6 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
-from urllib.error import URLError
 from xmlschema import XMLSchemaValidationError
 
 from .. import constants, exceptions, transforms, types

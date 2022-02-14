@@ -476,8 +476,10 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
 }
 
 READER_TO_INSTALL: Dict[str, str] = {
-    "aicsimageio.readers.bioformats_reader.BioformatsReader": "bioformats",
-    "aicsimageio.readers.default_reader.DefaultReader": "base-imageio",
-    "aicsimageio.readers.lif_reader.LifReader": "lif",
-    "aicsimageio.readers.czi_reader.CziReader": "czi",
+    "aicsimageio.readers.bioformats_reader.BioformatsReader": "bioformats_jar",
+    "aicsimageio.readers.default_reader.DefaultReader": "aicsimageio[base-imageio]",
+    "aicsimageio.readers.lif_reader.LifReader": "readlif>=0.6.4",
+    "aicsimageio.readers.czi_reader.CziReader": "aicsimageio[czi]",
+    "aicsimageio.readers.dv_reader.DVReader": "aicsimageio[dv]",
+    "aicsimageio.readers.nd2_reader.ND2Reader": "aicsimageio[nd2]",
 }

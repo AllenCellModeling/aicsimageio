@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from typing import List, Tuple
-from urllib.error import HTTPError
 
 import numpy as np
 import pytest
@@ -407,7 +406,8 @@ def test_multi_resolution_ome_tiff_reader(
         ),
         # This file has a namespace that doesn't exist
         pytest.param(
-            "s_1_t_1_c_10_z_1.ome.tiff", marks=pytest.mark.raises(exception=HTTPError)
+            "s_1_t_1_c_10_z_1.ome.tiff",
+            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )

@@ -4,6 +4,7 @@
 import logging
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional, Tuple, Union
+from urllib.error import URLError
 
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
@@ -91,14 +92,21 @@ class OmeTiffReader(TiffReader):
 
         # xml parse errors
         except ET.ParseError as e:
-            log.error("Failed to parse XML for the provided file.")
-            log.error(e)
+            log.error(f"Failed to parse XML for the provided file. Error: {e}")
             return False
 
         # invalid OME XMl
         except XMLSchemaValidationError as e:
-            log.error("OME XML validation failed")
-            log.error(e)
+            log.error(f"OME XML validation failed. Error: {e}")
+            return False
+
+        # cant connect to external schema resource (no internet conection)
+        except URLError as e:
+            log.error(
+                f"Could not validate OME XML against referenced schema "
+                f"(no internet connection). "
+                f"Error: {e}"
+            )
             return False
 
     def __init__(

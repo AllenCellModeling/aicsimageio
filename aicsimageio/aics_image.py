@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import importlib
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
@@ -16,6 +17,11 @@ from .metadata import utils as metadata_utils
 from .readers import TiffGlobReader
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
+from .utils.io_utils import pathlike_to_fs
+
+###############################################################################
+
+log = logging.getLogger(__name__)
 
 ###############################################################################
 
@@ -159,8 +165,7 @@ class AICSImage:
 
         # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):
-
-            path = str(image)
+            _, path = pathlike_to_fs(image, enforce_exists=True)
 
             # Check for extension in FORMAT_IMPLEMENTATIONS
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
@@ -170,9 +175,11 @@ class AICSImage:
                             ReaderClass = _load_reader(reader)
                             if ReaderClass.is_supported_image(image):
                                 return ReaderClass
-
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            log.warning(
+                                f"Attempted file ({path}) load with "
+                                f"reader: {reader} failed with error: {e}"
+                            )
 
         # Try all known readers
         # Useful in cases where the provided filename is a GUID or similar
@@ -185,28 +192,37 @@ class AICSImage:
                 pass
 
         # If we haven't hit anything yet, check for suffix and suggest a reader install
-        if isinstance(path, str):
+        if isinstance(image, (str, Path)):
+            # Reminder that `path` variable is already populated from prior
+            # path suffix / fast reader lookup.
+
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
                 if path.lower().endswith(f".{format_ext}"):
-                    installer = READER_TO_INSTALL[readers[0]]
-                    raise exceptions.UnsupportedFileFormatError(
-                        "AICSImage",
-                        path,
-                        msg_extra=(
-                            f"File extension suggests format: '{format_ext}'. "
-                            f"Install extra format dependency with: "
-                            f"`pip install aicsimageio[{installer}]`. "
-                            f"See all known format extensions and their "
-                            f"extra install name with "
-                            f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
-                        ),
-                    )
+                    if readers[0] in READER_TO_INSTALL:
+                        installer = READER_TO_INSTALL[readers[0]]
+                        raise exceptions.UnsupportedFileFormatError(
+                            "AICSImage",
+                            path,
+                            msg_extra=(
+                                f"File extension suggests format: '{format_ext}'. "
+                                f"Install extra format dependency with: "
+                                f"`pip install {installer}`. "
+                                f"See all known format extensions and their "
+                                f"extra install name with "
+                                f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."
+                            ),
+                        )
+                    else:
+                        raise exceptions.UnsupportedFileFormatError(
+                            "AICSImage",
+                            path,
+                        )
 
         # If we haven't hit anything yet, we likely don't support this file / object
-        path = str(type(image))
+        image_type = str(type(image))
         raise exceptions.UnsupportedFileFormatError(
             "AICSImage",
-            path,
+            image_type,
             msg_extra=(
                 "You may need to install an extra format dependency. "
                 "See all known format extensions and their extra install "

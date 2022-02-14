@@ -205,7 +205,7 @@ class AICSImage:
                             msg_extra=(
                                 f"File extension suggests format: '{format_ext}'. "
                                 f"Install extra format dependency with: "
-                                f"`pip install aicsimageio[{installer}]`. "
+                                f"`pip install {installer}`. "
                                 f"See all known format extensions and their "
                                 f"extra install name with "
                                 f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`."

@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import importlib
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
@@ -17,6 +18,10 @@ from .readers import TiffGlobReader
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
 from .utils.io_utils import pathlike_to_fs
+
+###############################################################################
+
+log = logging.getLogger(__name__)
 
 ###############################################################################
 
@@ -166,9 +171,15 @@ class AICSImage:
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
                 if path.lower().endswith(f".{format_ext}"):
                     for reader in readers:
-                        ReaderClass = _load_reader(reader)
-                        if ReaderClass.is_supported_image(image):
-                            return ReaderClass
+                        try:
+                            ReaderClass = _load_reader(reader)
+                            if ReaderClass.is_supported_image(image):
+                                return ReaderClass
+                        except Exception as e:
+                            log.warning(
+                                f"Attempted file ({path}) load with "
+                                f"reader: {reader} failed with error: {e}"
+                            )
 
         # Try all known readers
         # Useful in cases where the provided filename is a GUID or similar

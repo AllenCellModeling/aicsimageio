@@ -26,9 +26,9 @@ with open("README.md") as readme_file:
     readme = readme_file.read()
 
 
-# If you need to update a version pin for one of these supporting format libs
-# Also be sure to see if you need to update these versions in the aicsimageio/formats.py
-# The "READER_TO_INSTALL" lookup table
+# If you need to update a version pin for one of these supporting format libs,
+# be sure to also check if you need to update these versions in the
+# "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
     "base-imageio": ["imageio[ffmpeg]>=2.9.0,<2.11.0", "Pillow>=8.2.0,!=8.3.0,<9"],
     "czi": ["aicspylibczi>=3.0.4"],

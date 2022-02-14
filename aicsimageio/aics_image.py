@@ -193,7 +193,8 @@ class AICSImage:
 
         # If we haven't hit anything yet, check for suffix and suggest a reader install
         if isinstance(image, (str, Path)):
-            _, path = pathlike_to_fs(image, enforce_exists=True)
+            # Reminder that `path` variable is already populated from prior
+            # path suffix / fast reader lookup.
 
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
                 if path.lower().endswith(f".{format_ext}"):

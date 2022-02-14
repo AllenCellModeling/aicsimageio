@@ -92,23 +92,21 @@ class OmeTiffReader(TiffReader):
 
         # xml parse errors
         except ET.ParseError as e:
-            log.error("Failed to parse XML for the provided file.")
-            log.error(e)
+            log.error(f"Failed to parse XML for the provided file. Error: {e}")
             return False
 
         # invalid OME XMl
         except XMLSchemaValidationError as e:
-            log.error("OME XML validation failed")
-            log.error(e)
+            log.error(f"OME XML validation failed. Error: {e}")
             return False
 
         # cant connect to external schema resource (no internet conection)
         except URLError as e:
             log.error(
-                "Could not validate OME XML against referenced schema "
-                "(no internet connection)"
+                f"Could not validate OME XML against referenced schema "
+                f"(no internet connection). "
+                f"Error: {e}"
             )
-            log.error(e)
             return False
 
     def __init__(

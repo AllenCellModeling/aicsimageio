@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/v3-m2r-to-m2r2-docs-build-fix  (`#374
+  <https://github.com/AllenCellModeling/aicsimageio/pull/374>`_)
+  [Jackson Maxfield Brown]
+
+
 v3.3.7 (2021-05-31)
 -------------------
 

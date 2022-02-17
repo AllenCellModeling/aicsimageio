@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import xml.etree.ElementTree as ET
 from copy import copy
 from pathlib import Path

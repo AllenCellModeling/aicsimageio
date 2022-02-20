@@ -10,6 +10,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/367>`_)
   [Jackson Maxfield Brown]
 
+Other
+~~~~~
+- admin/bump-nd2-v0.2.0  (`#379
+  <https://github.com/AllenCellModeling/aicsimageio/pull/379>`_) [Talley
+  Lambert]
+
 
 v4.5.2 (2021-12-16)
 -------------------

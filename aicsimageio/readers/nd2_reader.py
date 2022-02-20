@@ -6,7 +6,6 @@ from fsspec.implementations.local import LocalFileSystem
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -16,7 +15,6 @@ if TYPE_CHECKING:
 
 try:
     import nd2
-    from nd2._util import NEW_HEADER_MAGIC, OLD_HEADER_MAGIC
 except ImportError:
     raise ImportError(
         "The nd2 package is required for this reader. "
@@ -42,8 +40,7 @@ class ND2Reader(Reader):
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
-        with fs.open(path, "rb") as fh:
-            return fh.read(4) in (NEW_HEADER_MAGIC, OLD_HEADER_MAGIC)
+        return nd2.is_supported_file(path, fs.open)
 
     def __init__(self, image: types.PathLike):
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
@@ -75,10 +72,8 @@ class ND2Reader(Reader):
             xarr = rdr.to_xarray(
                 delayed=delayed, squeeze=False, position=self.current_scene_index
             )
-            if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, rdr)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
-        return xarr.isel({nd2._util.AXIS.POSITION: 0})
+        return xarr.isel({nd2.AXIS.POSITION: 0})
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "aicspylibczi is required for this reader. "
-        "Install with `pip install aicsimageio[czi]`"
+        "Install with `pip install aicspylibczi>=3.0.5"
     )
 
 ###############################################################################
@@ -74,7 +74,7 @@ class CziReader(Reader):
 
     Notes
     -----
-    To use this reader, install with: `pip install aicsimageio[czi]`.
+    To use this reader, install with: `pip install aicspylibczi>=3.0.5`.
     """
 
     @staticmethod

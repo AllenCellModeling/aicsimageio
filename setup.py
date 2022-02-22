@@ -30,10 +30,13 @@ with open("README.md") as readme_file:
 # be sure to also check if you need to update these versions in the
 # "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
-    "base-imageio": ["imageio[ffmpeg]>=2.9.0,<2.11.0", "Pillow>=8.2.0,!=8.3.0,<9"],
-    "czi": ["aicspylibczi>=3.0.4"],
+    "base-imageio": [
+        "imageio[ffmpeg]>=2.9.0,<2.11.0",
+        "Pillow>=8.2.0,!=8.3.0,<9",
+    ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
+    # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
 }
@@ -61,6 +64,7 @@ test_requirements = [
     "tox>=3.15.2",
     "bioformats_jar",  # to test bioformats
     "readlif>=0.6.4",  # to test lif
+    "aicspylibczi>=3.0.5",  # to test czi
 ]
 
 dev_requirements = [

@@ -211,7 +211,7 @@ class AICSImage:
                                 f"extra install name with "
                                 f"`aicsimageio.formats.FORMAT_IMPLEMENTATIONS`. "
                                 f"If the extra dependency is already installed this "
-                                f"this error may have raised because the file is "
+                                f"error may have raised because the file is "
                                 f"corrupt or similar issue. For potentially more "
                                 f"information and to help debug, try loading the file "
                                 f"directly with the desired file format reader "

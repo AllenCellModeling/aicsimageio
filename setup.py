@@ -34,7 +34,7 @@ format_libs: Dict[str, List[str]] = {
         "imageio[ffmpeg]>=2.9.0,<2.11.0",
         "Pillow>=8.2.0,!=8.3.0,<9",
     ],
-    "nd2": ["nd2[legacy]==0.1.4"],
+    "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
     # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons

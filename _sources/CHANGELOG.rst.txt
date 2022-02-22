@@ -12,6 +12,9 @@ Fix
 
 Other
 ~~~~~
+- admin/remove-czi-install-pattern  (`#376
+  <https://github.com/AllenCellModeling/aicsimageio/pull/376>`_)
+  [Jackson Maxfield Brown]
 - admin/bump-nd2-v0.2.0  (`#379
   <https://github.com/AllenCellModeling/aicsimageio/pull/379>`_) [Talley
   Lambert]

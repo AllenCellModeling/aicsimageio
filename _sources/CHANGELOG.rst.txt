@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- bugfix/more-info-and-help-on-corrupt-file  (`#380
+  <https://github.com/AllenCellModeling/aicsimageio/pull/380>`_)
+  [Jackson Maxfield Brown]
 - bugfix/reader-selection-fixes  (`#367
   <https://github.com/AllenCellModeling/aicsimageio/pull/367>`_)
   [Jackson Maxfield Brown]

@@ -100,6 +100,7 @@ requirements = [
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
     "ome-types>=0.2",
+    "ome-zarr>=0.3.0",
     "wrapt>=1.12",
     "tifffile>=2021.8.30",
     "xarray>=0.16.1",

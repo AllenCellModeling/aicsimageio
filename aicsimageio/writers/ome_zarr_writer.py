@@ -257,7 +257,7 @@ class OmeZarrWriter(Writer):
                 group,
                 chunks=(60, 256, 256),
                 scaler=scaler,
-                metadata={"omero": ome_json},
+                omero=ome_json,
                 axes=[
                     {"name": "t", "type": "time", "unit": "millisecond"},
                     {"name": "c", "type": "channel"},
@@ -382,6 +382,8 @@ class OmeZarrWriter(Writer):
             #     "projectName": "aics cell variance project",
             #     "datasetId": 3
             # },
+            # no longer needed as this is captured elsewhere?
+            # or is this still a convenience for the 3d viewer?
             # "size": {
             #     "width": shape[4],
             #     "c": shape[1],

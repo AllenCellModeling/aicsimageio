@@ -1,16 +1,15 @@
+import pathlib
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
-from fsspec.implementations.local import LocalFileSystem
 
 # import shutil
 import numpy
 import zarr
-import pathlib
-
-from ome_zarr.writer import write_image
-from ome_zarr.scale import Scaler
+from fsspec.implementations.local import LocalFileSystem
 from ome_zarr.io import parse_url
+from ome_zarr.scale import Scaler
+from ome_zarr.writer import write_image
 
 from .. import exceptions, types
 from ..utils import io_utils

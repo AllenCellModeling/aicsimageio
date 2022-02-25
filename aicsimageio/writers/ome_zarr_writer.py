@@ -242,8 +242,8 @@ class OmeZarrWriter(Writer):
             # try to construct per-image metadata
             ome_json = OmeZarrWriter.build_ome(
                 image_data.shape,
-                channel_names=channel_names[scene_index],
-                channel_colors=channel_colors[scene_index],
+                channel_names=channel_names[scene_index],  # type: ignore
+                channel_colors=channel_colors[scene_index],  # type: ignore
                 # this can be slow if going over all T values,
                 # might be better if user supplies the min/max?
                 channel_minmax=[
@@ -283,9 +283,15 @@ class OmeZarrWriter(Writer):
                             "scale": [
                                 1.0,
                                 1.0,
-                                pixelsize.Z * scaler.downscale,
-                                pixelsize.Y * scaler.downscale,
-                                pixelsize.X * scaler.downscale,
+                                pixelsize.Z * scaler.downscale
+                                if pixelsize.Z is not None
+                                else scaler.downscale,
+                                pixelsize.Y * scaler.downscale
+                                if pixelsize.Y is not None
+                                else scaler.downscale,
+                                pixelsize.X * scaler.downscale
+                                if pixelsize.X is not None
+                                else scaler.downscale,
                             ],
                         }
                     ],
@@ -297,9 +303,15 @@ class OmeZarrWriter(Writer):
                             "scale": [
                                 1.0,
                                 1.0,
-                                pixelsize.Z * scaler.downscale * scaler.downscale,
-                                pixelsize.Y * scaler.downscale * scaler.downscale,
-                                pixelsize.X * scaler.downscale * scaler.downscale,
+                                pixelsize.Z * scaler.downscale * scaler.downscale
+                                if pixelsize.Z is not None
+                                else scaler.downscale * scaler.downscale,
+                                pixelsize.Y * scaler.downscale * scaler.downscale
+                                if pixelsize.Y is not None
+                                else scaler.downscale * scaler.downscale,
+                                pixelsize.X * scaler.downscale * scaler.downscale
+                                if pixelsize.X is not None
+                                else scaler.downscale * scaler.downscale,
                             ],
                         }
                     ],
@@ -316,9 +328,9 @@ class OmeZarrWriter(Writer):
     @staticmethod
     def build_ome(
         data_shape: Tuple[int, ...],
-        channel_names: Optional[List[str]] = None,
-        channel_colors: Optional[List[List[int]]] = None,
-        channel_minmax: Optional[List[Tuple[float, float]]] = None,
+        channel_names: List[str],
+        channel_colors: List[int],
+        channel_minmax: List[Tuple[float, float]],
     ) -> Dict:
         """
         Create the necessary metadata for an OME tiff image

@@ -494,11 +494,11 @@ class CziReader(Reader):
         # the values are stored in units of meters always in .czi, so
         # divide by 1E-6 to convert to microns
         if scale_xe is not None and scale_xe.text is not None:
-            scale_x = float(scale_xe.text)/(1E-6)
+            scale_x = float(scale_xe.text) / (1e-6)
         if scale_ye is not None and scale_ye.text is not None:
-            scale_y = float(scale_ye.text)/(1E-6)
+            scale_y = float(scale_ye.text) / (1e-6)
         if scale_ze is not None and scale_ze.text is not None:
-            scale_z = float(scale_ze.text)/(1E-6)
+            scale_z = float(scale_ze.text) / (1e-6)
 
         # Handle Spatial Dimensions
         for scale, dim_name in [

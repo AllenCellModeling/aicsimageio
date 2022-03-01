@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/czi-physical-size  (`#384
+  <https://github.com/AllenCellModeling/aicsimageio/pull/384>`_)
+  [emay2022]
+
+
 v4.6.0 (2022-02-22)
 -------------------
 

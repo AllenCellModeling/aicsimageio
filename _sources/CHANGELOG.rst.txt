@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/update-czi-to-ome-xslt-submodule  (`#382
+  <https://github.com/AllenCellModeling/aicsimageio/pull/382>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.6.1 (2022-03-01)
 -------------------
 

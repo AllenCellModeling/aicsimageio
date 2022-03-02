@@ -333,13 +333,21 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
             # This effects all CFE files (new and old) but for different reasons
             pixels_children_out_of_order = False
             encountered_something_besides_channel = False
+            encountered_plane = False
             for child in pixels:
                 if child.tag != f"{namespace}Channel":
                     encountered_something_besides_channel = True
+                if child.tag == f"{namespace}Plane":
+                    encountered_plane = True
                 if (
                     encountered_something_besides_channel
                     and child.tag == f"{namespace}Channel"
                 ):
+                    pixels_children_out_of_order = True
+                    break
+                if encountered_plane and child.tag in [
+                    f"{namespace}{t}" for t in ["BinData", "TiffData", "MetadataOnly"]
+                ]:
                     pixels_children_out_of_order = True
                     break
 

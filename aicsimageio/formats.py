@@ -326,12 +326,14 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "oir": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "ome": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "ome.tif": [
+        "aicsimageio.readers.ome_tiled_tiff_reader.OmeTiledTiffReader",
         "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
         "aicsimageio.readers.tiff_reader.TiffReader",
         "aicsimageio.readers.bioformats_reader.BioformatsReader",
         "aicsimageio.readers.default_reader.DefaultReader",
     ],
     "ome.tiff": [
+        "aicsimageio.readers.ome_tiled_tiff_reader.OmeTiledTiffReader",
         "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
         "aicsimageio.readers.tiff_reader.TiffReader",
         "aicsimageio.readers.bioformats_reader.BioformatsReader",

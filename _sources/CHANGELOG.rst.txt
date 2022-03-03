@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/add-logic-to-ensure-OME-XML-plane-elements-occur-last  (`#385
+  <https://github.com/AllenCellModeling/aicsimageio/pull/385>`_)
+  [Nicholas-Schaub]
+
+
 v4.6.2 (2022-03-01)
 -------------------
 - admin/update-czi-to-ome-xslt-submodule  (`#382

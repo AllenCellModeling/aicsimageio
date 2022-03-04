@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import xml.etree.ElementTree as ET
-from typing import Any, List, Tuple, Union, Optional
+from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
 import xarray as xr
@@ -53,7 +52,7 @@ class BfioReader(Reader):
     this reader will make a request to the referenced remote OME schema to validate.
     """
 
-    backend = None
+    backend: Optional[str] = None
 
     def _general_data_array_constructor(
         self,
@@ -147,7 +146,7 @@ class BfioReader(Reader):
             self._tiff_tags(),
         )
 
-    def _tiff_tags(self):
+    def _tiff_tags(self) -> TiffTags:
 
         if self.backend == "python":
             tiff_tags = self._rdr._backend._rdr.pages[0].tags
@@ -181,7 +180,7 @@ class BfioReader(Reader):
     def ome_metadata(self) -> OME:
         return self._rdr.metadata
 
-    def __del__(self):
+    def __del__(self) -> None:
         """Try to do some cleanup when deleted or falls out of context."""
 
         self._rdr.close()
@@ -215,7 +214,7 @@ class OmeTiledTiffReader(BfioReader):
     this reader will make a request to the referenced remote OME schema to validate.
     """
 
-    backend = "python"
+    backend: str = "python"
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:

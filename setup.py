@@ -36,6 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
+    # "bfio": ["bfio>=2.2.0"],  # excluded for licensing reasons
     # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons

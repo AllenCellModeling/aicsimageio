@@ -326,14 +326,14 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "oir": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "ome": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "ome.tif": [
-        "aicsimageio.readers.ome_tiled_tiff_reader.OmeTiledTiffReader",
+        "aicsimageio.readers.bfio_reader.OmeTiledTiffReader",
         "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
         "aicsimageio.readers.tiff_reader.TiffReader",
         "aicsimageio.readers.bioformats_reader.BioformatsReader",
         "aicsimageio.readers.default_reader.DefaultReader",
     ],
     "ome.tiff": [
-        "aicsimageio.readers.ome_tiled_tiff_reader.OmeTiledTiffReader",
+        "aicsimageio.readers.bfio_reader.OmeTiledTiffReader",
         "aicsimageio.readers.ome_tiff_reader.OmeTiffReader",
         "aicsimageio.readers.tiff_reader.TiffReader",
         "aicsimageio.readers.bioformats_reader.BioformatsReader",
@@ -479,6 +479,7 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
 
 READER_TO_INSTALL: Dict[str, str] = {
     "aicsimageio.readers.bioformats_reader.BioformatsReader": "bioformats_jar",
+    "aicsimageio.readers.bfio_reader.OmeTiledTiffReader": "bfio>=2.2.0",
     "aicsimageio.readers.default_reader.DefaultReader": "aicsimageio[base-imageio]",
     "aicsimageio.readers.lif_reader.LifReader": "readlif>=0.6.4",
     "aicsimageio.readers.czi_reader.CziReader": "aicspylibczi>=3.0.5",

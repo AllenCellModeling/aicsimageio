@@ -3,13 +3,11 @@
 
 import logging
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Tuple, Union
-from urllib.error import URLError
+from typing import Any, List, Tuple, Union, Optional
 
 import dask.array as da
 import xarray as xr
 from bfio import BioReader
-from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import OME
 from tifffile.tifffile import TiffTags
@@ -27,14 +25,14 @@ log = logging.getLogger(__name__)
 ###############################################################################
 
 
-class OmeTiledTiffReader(Reader):
+class BfioReader(Reader):
     """
-    Wraps .
+    Abstract bfio reader to utilize optimized readers for ome tiled tiffs and ome zarr.
 
     Parameters
     ----------
     image: types.PathLike
-        Path to image file to construct Reader for.
+        Path to image file.
     chunk_dims: List[str]
         Which dimensions to create chunks for.
         Default: DEFAULT_CHUNK_DIMS
@@ -55,44 +53,58 @@ class OmeTiledTiffReader(Reader):
     this reader will make a request to the referenced remote OME schema to validate.
     """
 
+    backend = None
+
     def _general_data_array_constructor(
         self,
         image_data: types.ArrayLike,
-        tiff_tags: TiffTags,
+        tiff_tags: Optional[TiffTags] = None,
     ) -> xr.DataArray:
 
         # Unpack dims and coords from OME
         dims, coords = metadata_utils.get_dims_and_coords_from_ome(
-            ome=self._ome,
+            ome=self._rdr.metadata,
             scene_index=0,
         )
+
+        dims = [
+            d
+            for d in self._rdr.metadata.images[0].pixels.dimension_order.name[
+                : len(image_data.shape)
+            ]
+        ]
+
+        coords = {d: coords[d] for d in dims if d in coords}
+
+        attrs = {constants.METADATA_PROCESSED: self._rdr.metadata}
+
+        if tiff_tags is not None:
+            attrs[constants.METADATA_UNPROCESSED] = tiff_tags
 
         return xr.DataArray(
             image_data,
             dims=dims,
             coords=coords,  # type: ignore
-            attrs={
-                constants.METADATA_UNPROCESSED: tiff_tags,
-                constants.METADATA_PROCESSED: self._ome,
-            },
+            attrs=attrs,
         )
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             # with fs.open(path) as open_resource:
-            with BioReader(path):
+            with BioReader(path, backend="python"):
 
                 return True
 
         # tifffile exceptions
-        # except (TypeError, ValueError):
-        #     return False
+        except (TypeError, ValueError):
+            return False
 
     def __init__(
         self,
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
+        clean_metadata: bool = True,
         **kwargs: Any,
     ):
         # Expand details of provided image
@@ -104,11 +116,14 @@ class OmeTiledTiffReader(Reader):
                 self.__class__.__name__, self._path
             )
 
-        self._rdr = BioReader(self._path, backend="python")
+        self._rdr = BioReader(self._path, backend=self.backend)
+
+        # Add ndim attribute so _rdr can be passed directly to dask
+        self._rdr.ndim = len(self._rdr.shape)
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        return tuple(image_meta.id for image_meta in self._ome.images)
+        return tuple(image_meta.id for image_meta in self._rdr.metadata.images)
 
     def _read_delayed(self) -> xr.DataArray:
         """
@@ -126,12 +141,20 @@ class OmeTiledTiffReader(Reader):
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
-        tiff_tags = self._rdr._backend._rdr.pages[0].tags
 
         return self._general_data_array_constructor(
-            da.from_array(self._rdr),
-            tiff_tags,
+            da.from_array(self._rdr, chunks=(1024, 1024) + (1,) * (self._rdr.ndim - 2)),
+            self._tiff_tags(),
         )
+
+    def _tiff_tags(self):
+
+        if self.backend == "python":
+            tiff_tags = self._rdr._backend._rdr.pages[0].tags
+        else:
+            tiff_tags = None
+
+        return tiff_tags
 
     def _read_immediate(self) -> xr.DataArray:
         """
@@ -149,9 +172,9 @@ class OmeTiledTiffReader(Reader):
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
-
         return self._general_data_array_constructor(
-            self._rdr[:], self._rdr._backend._rdr.pages[0].tags
+            self._rdr[:],
+            self._tiff_tags(),
         )
 
     @property
@@ -163,20 +186,45 @@ class OmeTiledTiffReader(Reader):
 
         self._rdr.close()
 
-    # @property
-    # def physical_pixel_sizes(self) -> PhysicalPixelSizes:
-    #     """
-    #     Returns
-    #     -------
-    #     sizes: PhysicalPixelSizes
-    #         Using available metadata, the floats representing physical pixel sizes for
-    #         dimensions Z, Y, and X.
 
-    #     Notes
-    #     -----
-    #     We currently do not handle unit attachment to these values. Please see the file
-    #     metadata for unit information.
-    #     """
-    #     return metadata_utils.physical_pixel_sizes(
-    #         self.metadata, self.current_scene_index
-    #     )
+class OmeTiledTiffReader(BfioReader):
+    """
+    Wrapper around bfio.BioReader(backend="python").
+
+    Parameters
+    ----------
+    image: types.PathLike
+        Path to image file.
+    chunk_dims: List[str]
+        Which dimensions to create chunks for.
+        Default: DEFAULT_CHUNK_DIMS
+        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
+        will always be added to the list if not present during dask array
+        construction.
+    clean_metadata: bool
+        Should the OME XML metadata found in the file be cleaned for known
+        AICSImageIO 3.x and earlier created errors.
+        Default: True (Clean the metadata for known errors)
+
+    Notes
+    -----
+    If the OME metadata in your file isn't OME schema compilant or does not validate
+    this will fail to read your file and raise an exception.
+
+    If the OME metadata in your file doesn't use the latest OME schema (2016-06),
+    this reader will make a request to the referenced remote OME schema to validate.
+    """
+
+    backend = "python"
+
+    @staticmethod
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+        try:
+            # with fs.open(path) as open_resource:
+            with BioReader(path, backend="python"):
+
+                return True
+
+        # tifffile exceptions
+        except (TypeError, ValueError):
+            return False

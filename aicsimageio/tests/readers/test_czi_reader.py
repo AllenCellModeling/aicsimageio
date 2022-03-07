@@ -67,7 +67,7 @@ def test_subblocks(filename: str, num_subblocks: int, acquistion_time: str) -> N
             np.uint16,
             "HTCZMYX",
             ["DAPI", "EGFP"],
-            (1.0, 4.0, 4.0),
+            (1.0, 0.4, 0.4),
         ),
         (
             "s_1_t_1_c_1_z_1.czi",

@@ -14,10 +14,28 @@ from .writer import Writer
 
 
 class OmeZarrWriter(Writer):
-    @staticmethod
+    def __init__(self, uri: types.PathLike):
+        # Resolve final destination
+        fs, path = io_utils.pathlike_to_fs(uri)
+
+        # Catch non-local file system
+        if not isinstance(fs, LocalFileSystem):
+            raise ValueError(
+                f"Cannot write to non-local file system. "
+                f"Received URI: {uri}, which points to {type(fs)}."
+            )
+
+        # Save image to zarr store!
+        mypath = pathlib.Path(uri)
+        # TODO handle overwrite scenario?
+        self.store = parse_url(mypath, mode="w").store
+        # print(store)
+        self.root_group = zarr.group(store=self.store)
+        # print(root)
+
     def save(
+        self,
         data: Union[List[types.ArrayLike], types.ArrayLike],
-        uri: types.PathLike,
         dim_order: Optional[Union[str, List[Union[str, None]]]] = None,
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
         image_names: Optional[Union[str, List[Union[str, None]]]] = None,
@@ -98,16 +116,6 @@ class OmeZarrWriter(Writer):
         ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
         ... )
         """
-        # Resolve final destination
-        fs, path = io_utils.pathlike_to_fs(uri)
-
-        # Catch non-local file system
-        if not isinstance(fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot write to non-local file system. "
-                f"Received URI: {uri}, which points to {type(fs)}."
-            )
-
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):
             num_images = len(data)
@@ -208,115 +216,19 @@ class OmeZarrWriter(Writer):
         if channel_colors is None or single_image_channel_colors_provided:
             channel_colors = [channel_colors] * num_images  # type: ignore
 
-        # Save image to zarr store!
-        mypath = pathlib.Path(uri)
-        # TODO handle overwrite scenario?
-        # shutil.rmtree(mypath)
-        # print(mypath)
-        store = parse_url(mypath, mode="w").store
-        # print(store)
-        root = zarr.group(store=store)
-        # print(root)
         for scene_index in range(num_images):
             image_data = data[scene_index]
             pixelsize = physical_pixel_sizes[scene_index]
 
-            # TODO image names must be unique!!!!!!
-            group = root.create_group(image_names[scene_index])
-            # TODO scaler might want to use different method for segmentations than raw
-            # TODO control how many levels of zarr are created
-            scaler = Scaler()
-            scaler.method = "nearest"
-            # TODO calculate these for desired downscaling factors
-            scaler.max_layer = 2
-            scaler.downscale = 2
-
-            # try to construct per-image metadata
-            ome_json = OmeZarrWriter.build_ome(
-                image_data.shape,
-                channel_names=channel_names[scene_index],  # type: ignore
-                channel_colors=channel_colors[scene_index],  # type: ignore
-                # this can be slow if going over all T values,
-                # might be better if user supplies the min/max?
-                channel_minmax=[
-                    (numpy.min(image_data[:, i, :]), numpy.max(image_data[:, i, :]))
-                    for i in range(image_data.shape[1])
-                ],
+            self.write_image(
+                image_data=image_data,
+                pixelsize=pixelsize,
+                image_name=image_names[scene_index],
+                channel_names=channel_names[scene_index],
+                channel_colors=channel_colors[scene_index],
+                scale_num_levels=2,
+                scale_factor=2,
             )
-
-            pixelsizes = [
-                pixelsize.Z if pixelsize.Z is not None else 1.0,
-                pixelsize.Y if pixelsize.Y is not None else 1.0,
-                pixelsize.X if pixelsize.X is not None else 1.0,
-            ]
-            write_image(
-                image_data,
-                group,
-                # TODO parameterize or construct a sensible guess
-                # (maybe ZYX dims or YX dims)
-                chunks=(60, 256, 256),
-                scaler=scaler,
-                omero=ome_json,
-                axes=[
-                    {"name": "t", "type": "time", "unit": "millisecond"},
-                    {"name": "c", "type": "channel"},
-                    {"name": "z", "type": "space", "unit": "micrometer"},
-                    {"name": "y", "type": "space", "unit": "micrometer"},
-                    {"name": "x", "type": "space", "unit": "micrometer"},
-                ],
-                # For each resolution, we have a List of transformation Dicts (not
-                # validated). Each list of dicts are added to each datasets in order.
-                coordinate_transformations=[
-                    [
-                        # the voxel size for the first scale level (0.5 micrometer)
-                        {
-                            "type": "scale",
-                            "scale": [
-                                1.0,
-                                1.0,
-                                pixelsizes[0],
-                                pixelsizes[1],
-                                pixelsizes[2],
-                            ],
-                        }
-                    ],
-                    [
-                        # the voxel size for the second scale level
-                        # (downscaled by a factor of 2 -> 1 micrometer)
-                        {
-                            "type": "scale",
-                            "scale": [
-                                1.0,
-                                1.0,
-                                pixelsizes[0],
-                                pixelsizes[1] * scaler.downscale,
-                                pixelsizes[2] * scaler.downscale,
-                            ],
-                        }
-                    ],
-                    [
-                        # the voxel size for the second scale level
-                        # (downscaled by a factor of 4 -> 2 micrometer)
-                        {
-                            "type": "scale",
-                            "scale": [
-                                1.0,
-                                1.0,
-                                pixelsizes[0],
-                                pixelsizes[1] * scaler.downscale * scaler.downscale,
-                                pixelsizes[2] * scaler.downscale * scaler.downscale,
-                            ],
-                        }
-                    ],
-                ],
-                # Options to be passed on to the storage backend. A list would need to
-                # match the number of datasets in a multiresolution pyramid. One can
-                # provide different chunk size for each level of a pyramind using this
-                # option.
-                storage_options=[],
-            )
-            # print(os.listdir(mypath))
-            # print(os.listdir(mypath / "image0"))
 
     @staticmethod
     def build_ome(
@@ -398,3 +310,101 @@ class OmeZarrWriter(Writer):
             # },
         }
         return omero
+
+    def write_image(
+        self,
+        image_data,  # must be 5D TCZYX
+        pixelsize: types.PhysicalPixelSizes,
+        image_name: str,
+        channel_names: List[str],
+        channel_colors: Optional[List[int]],
+        scale_num_levels: Optional[int],
+        scale_factor: Optional[float],
+    ):
+        pixelsizes = [
+            pixelsize.Z if pixelsize.Z is not None else 1.0,
+            pixelsize.Y if pixelsize.Y is not None else 1.0,
+            pixelsize.X if pixelsize.X is not None else 1.0,
+        ]
+        transforms = [
+            [
+                # the voxel size for the first scale level
+                {
+                    "type": "scale",
+                    "scale": [
+                        1.0,
+                        1.0,
+                        pixelsizes[0],
+                        pixelsizes[1],
+                        pixelsizes[2],
+                    ],
+                }
+            ]
+        ]
+        # TODO scaler might want to use different method for segmentations than raw
+        # TODO control how many levels of zarr are created
+        if scale_num_levels > 1:
+            scaler = Scaler()
+            scaler.method = "nearest"
+            scaler.max_layer = scale_num_levels - 1
+            scaler.downscale = scale_factor if scale_factor is not None else 2
+            for i in range(scale_num_levels - 1):
+                transforms.append(
+                    [
+                        {
+                            "type": "scale",
+                            "scale": [
+                                1.0,
+                                1.0,
+                                pixelsizes[0],
+                                transforms[i][0]["scale"][3] * scaler.downscale,
+                                transforms[i][0]["scale"][4] * scaler.downscale,
+                            ],
+                        }
+                    ]
+                )
+        else:
+            scaler = None
+
+        # try to construct per-image metadata
+        ome_json = OmeZarrWriter.build_ome(
+            image_data.shape,
+            channel_names=channel_names,  # type: ignore
+            channel_colors=channel_colors,  # type: ignore
+            # this can be slow if going over all T values,
+            # might be better if user supplies the min/max?
+            channel_minmax=[
+                (numpy.min(image_data[:, i, :]), numpy.max(image_data[:, i, :]))
+                for i in range(image_data.shape[1])
+            ],
+        )
+
+        # TODO parameterize or construct a sensible guess
+        # (maybe ZYX dims or YX dims, or some byte size limit)
+        chunk_dims = (pixelsizes[0], pixelsizes[1], pixelsizes[2])
+        # TODO image name must be unique within this root group
+        group = self.root_group.create_group(image_name)
+        write_image(
+            image_data,
+            group,
+            chunks=chunk_dims,
+            scaler=scaler,
+            omero=ome_json,
+            axes=[
+                {"name": "t", "type": "time", "unit": "millisecond"},
+                {"name": "c", "type": "channel"},
+                {"name": "z", "type": "space", "unit": "micrometer"},
+                {"name": "y", "type": "space", "unit": "micrometer"},
+                {"name": "x", "type": "space", "unit": "micrometer"},
+            ],
+            # For each resolution, we have a List of transformation Dicts (not
+            # validated). Each list of dicts are added to each datasets in order.
+            coordinate_transformations=transforms,
+            # Options to be passed on to the storage backend. A list would need to
+            # match the number of datasets in a multiresolution pyramid. One can
+            # provide different chunk size for each level of a pyramind using this
+            # option.
+            storage_options=[],
+        )
+        # print(os.listdir(mypath))
+        # print(os.listdir(mypath / "image0"))

@@ -27,7 +27,6 @@ class OmeZarrWriter(Writer):
 
         # Save image to zarr store!
         mypath = pathlib.Path(uri)
-        # TODO handle overwrite scenario?
         self.store = parse_url(mypath, mode="w").store
         # print(store)
         self.root_group = zarr.group(store=self.store)
@@ -383,7 +382,7 @@ class OmeZarrWriter(Writer):
         # (maybe ZYX dims or YX dims, or some byte size limit)
         chunk_dims = (pixelsizes[0], pixelsizes[1], pixelsizes[2])
         # TODO image name must be unique within this root group
-        group = self.root_group.create_group(image_name)
+        group = self.root_group.create_group(image_name, overwrite=True)
         write_image(
             image_data,
             group,

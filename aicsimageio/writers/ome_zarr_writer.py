@@ -380,7 +380,13 @@ class OmeZarrWriter(Writer):
 
         # TODO parameterize or construct a sensible guess
         # (maybe ZYX dims or YX dims, or some byte size limit)
-        chunk_dims = (image_data.shape[2], image_data.shape[3], image_data.shape[4])
+        chunk_dims = (
+            1,
+            1,
+            image_data.shape[2],
+            image_data.shape[3],
+            image_data.shape[4],
+        )
         # TODO image name must be unique within this root group
         group = self.root_group.create_group(image_name, overwrite=True)
         write_image(

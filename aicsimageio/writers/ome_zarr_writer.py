@@ -1,9 +1,6 @@
 import pathlib
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-import dask.array as da
-
-# import shutil
 import numpy
 import zarr
 from fsspec.implementations.local import LocalFileSystem
@@ -23,7 +20,7 @@ class OmeZarrWriter(Writer):
         uri: types.PathLike,
         dim_order: Optional[Union[str, List[Union[str, None]]]] = None,
         channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
-        image_name: Optional[Union[str, List[Union[str, None]]]] = None,
+        image_names: Optional[Union[str, List[Union[str, None]]]] = None,
         physical_pixel_sizes: Optional[
             Union[types.PhysicalPixelSizes, List[types.PhysicalPixelSizes]]
         ] = None,
@@ -80,23 +77,23 @@ class OmeZarrWriter(Writer):
 
         Examples
         --------
-        Write a TCZYX data set to OME-Tiff
+        Write a TCZYX data set to OME-Zarr
 
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        ... OmeZarrWriter.save(image, "file.ome.tif")
+        ... OmeZarrWriter.save(image, "file.ome.zarr")
 
-        Write data with a dimension order into OME-Tiff
+        Write data with a dimension order into OME-Zarr
 
         >>> image = numpy.ndarray([10, 3, 1024, 2048])
-        ... OmeZarrWriter.save(image, "file.ome.tif", dim_order="ZCYX")
+        ... OmeZarrWriter.save(image, "file.ome.zarr", dim_order="ZCYX")
 
-        Write multi-scene data to OME-Tiff, specifying channel names
+        Write multi-scene data to OME-Zarr, specifying channel names
 
         >>> image0 = numpy.ndarray([3, 10, 1024, 2048])
         ... image1 = numpy.ndarray([3, 10, 512, 512])
         ... OmeZarrWriter.save(
         ...     [image0, image1],
-        ...     "file.ome.tif",
+        ...     "file.ome.zarr",
         ...     dim_order="CZYX",  # this single value will be repeated to each image
         ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
         ... )
@@ -124,14 +121,14 @@ class OmeZarrWriter(Writer):
                         f"Number of provided dimension strings: "
                         f"{len(dim_order)}"
                     )
-            if isinstance(image_name, list):
-                if len(image_name) != num_images:
+            if isinstance(image_names, list):
+                if len(image_names) != num_images:
                     raise exceptions.ConflictingArgumentsError(
                         f"OmeZarrWriter received a list of arrays to use as scenes "
                         f"but the provided list of image_names is of different "
                         f"length. "
                         f"Number of provided scenes: {num_images}, "
-                        f"Number of provided dimension strings: {len(image_name)}"
+                        f"Number of provided dimension strings: {len(image_names)}"
                     )
             if isinstance(physical_pixel_sizes, list):
                 if len(physical_pixel_sizes) != num_images:
@@ -176,8 +173,8 @@ class OmeZarrWriter(Writer):
         # If metadata is attached as singles, expand to lists to match data
         if dim_order is None or isinstance(dim_order, str):
             dim_order = [dim_order] * num_images
-        if image_name is None or isinstance(image_name, str):
-            image_name = [image_name] * num_images
+        if image_names is None or isinstance(image_names, str):
+            image_names = [image_names] * num_images
         if isinstance(physical_pixel_sizes, tuple):
             physical_pixel_sizes = [physical_pixel_sizes] * num_images
         elif physical_pixel_sizes is None:
@@ -223,13 +220,9 @@ class OmeZarrWriter(Writer):
         for scene_index in range(num_images):
             image_data = data[scene_index]
             pixelsize = physical_pixel_sizes[scene_index]
-            # TODO can this be deferred to inside of write_image?
-            # Assumption: if provided a dask array to save, it can fit into memory
-            if isinstance(image_data, da.core.Array):
-                image_data = data[scene_index].compute()  # type: ignore
 
             # TODO image names must be unique!!!!!!
-            group = root.create_group(image_name[scene_index])
+            group = root.create_group(image_names[scene_index])
             # TODO scaler might want to use different method for segmentations than raw
             # TODO control how many levels of zarr are created
             scaler = Scaler()
@@ -251,9 +244,16 @@ class OmeZarrWriter(Writer):
                 ],
             )
 
+            pixelsizes = [
+                pixelsize.Z if pixelsize.Z is not None else 1.0,
+                pixelsize.Y if pixelsize.Y is not None else 1.0,
+                pixelsize.X if pixelsize.X is not None else 1.0,
+            ]
             write_image(
                 image_data,
                 group,
+                # TODO parameterize or construct a sensible guess
+                # (maybe ZYX dims or YX dims)
                 chunks=(60, 256, 256),
                 scaler=scaler,
                 omero=ome_json,
@@ -271,7 +271,13 @@ class OmeZarrWriter(Writer):
                         # the voxel size for the first scale level (0.5 micrometer)
                         {
                             "type": "scale",
-                            "scale": [1.0, 1.0, pixelsize.Z, pixelsize.Y, pixelsize.X],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                pixelsizes[0],
+                                pixelsizes[1],
+                                pixelsizes[2],
+                            ],
                         }
                     ],
                     [
@@ -282,15 +288,9 @@ class OmeZarrWriter(Writer):
                             "scale": [
                                 1.0,
                                 1.0,
-                                pixelsize.Z * scaler.downscale
-                                if pixelsize.Z is not None
-                                else scaler.downscale,
-                                pixelsize.Y * scaler.downscale
-                                if pixelsize.Y is not None
-                                else scaler.downscale,
-                                pixelsize.X * scaler.downscale
-                                if pixelsize.X is not None
-                                else scaler.downscale,
+                                pixelsizes[0],
+                                pixelsizes[1] * scaler.downscale,
+                                pixelsizes[2] * scaler.downscale,
                             ],
                         }
                     ],
@@ -302,15 +302,9 @@ class OmeZarrWriter(Writer):
                             "scale": [
                                 1.0,
                                 1.0,
-                                pixelsize.Z * scaler.downscale * scaler.downscale
-                                if pixelsize.Z is not None
-                                else scaler.downscale * scaler.downscale,
-                                pixelsize.Y * scaler.downscale * scaler.downscale
-                                if pixelsize.Y is not None
-                                else scaler.downscale * scaler.downscale,
-                                pixelsize.X * scaler.downscale * scaler.downscale
-                                if pixelsize.X is not None
-                                else scaler.downscale * scaler.downscale,
+                                pixelsizes[0],
+                                pixelsizes[1] * scaler.downscale * scaler.downscale,
+                                pixelsizes[2] * scaler.downscale * scaler.downscale,
                             ],
                         }
                     ],

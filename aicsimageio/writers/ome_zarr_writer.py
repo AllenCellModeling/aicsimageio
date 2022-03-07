@@ -15,6 +15,15 @@ from .writer import Writer
 
 class OmeZarrWriter(Writer):
     def __init__(self, uri: types.PathLike):
+        """
+        Constructor.
+
+        Parameters
+        ----------
+        uri: types.PathLike
+            The URI or local path for where to save the data.
+            Note: OmeZarrWriter can only write to local file systems for now.
+        """
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
 
@@ -56,9 +65,6 @@ class OmeZarrWriter(Writer):
             list is provided, then it is understood to be multiple images written to the
             ome-tiff file. All following metadata parameters will be expanded to the
             length of this list.
-        uri: types.PathLike
-            The URI or local path for where to save the data.
-            Note: OmeZarrWriter can only write to local file systems.
         dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
             Dimensions must be a list of T, C, Z, Y, Z, and S (S=samples for rgb data).
@@ -87,33 +93,33 @@ class OmeZarrWriter(Writer):
             These must be values compatible with the OME spec.
             Default: None
 
-        Raises
-        ------
-        ValueError:
-            Non-local file system URI provided.
-
         Examples
         --------
         Write a TCZYX data set to OME-Zarr
 
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        ... OmeZarrWriter.save(image, "file.ome.zarr")
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.save(image)
 
         Write data with a dimension order into OME-Zarr
 
         >>> image = numpy.ndarray([10, 3, 1024, 2048])
-        ... OmeZarrWriter.save(image, "file.ome.zarr", dim_order="ZCYX")
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.save(image, dim_order="ZCYX")
 
         Write multi-scene data to OME-Zarr, specifying channel names
 
         >>> image0 = numpy.ndarray([3, 10, 1024, 2048])
         ... image1 = numpy.ndarray([3, 10, 512, 512])
-        ... OmeZarrWriter.save(
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.save(
         ...     [image0, image1],
         ...     "file.ome.zarr",
-        ...     dim_order="CZYX",  # this single value will be repeated to each image
         ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
         ... )
+        ... OR
+        ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
+        ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
         """
         # If metadata is attached as lists, enforce matching shape
         if isinstance(data, list):

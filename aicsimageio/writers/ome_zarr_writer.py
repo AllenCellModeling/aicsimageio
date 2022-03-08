@@ -1,5 +1,5 @@
 import pathlib
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
 import numpy
 import zarr
@@ -8,8 +8,9 @@ from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
 
-from .. import exceptions, types
+from .. import types
 from ..utils import io_utils
+from ..metadata import utils
 from .writer import Writer
 
 
@@ -145,7 +146,8 @@ class OmeZarrWriter(Writer):
         image_name: str
             string representing the name of the image
         physical_pixel_sizes: Optional[types.PhysicalPixelSizes]
-            PhysicalPixelSizes object representing the physical pixel sizes in Z, Y, X in microns
+            PhysicalPixelSizes object representing the physical pixel sizes in Z, Y, X
+            in microns.
             Default: None
         channel_names: Optional[List[str]]
             Lists of strings representing the names of the data channels
@@ -160,7 +162,7 @@ class OmeZarrWriter(Writer):
             Number of pyramid levels to use for the image.
             Default: 1 (represents no downsampled levels)
         scale_factor: Optional[float]
-            The scale factor to use for the image.
+            The scale factor to use for the image. Only active if scale_num_levels > 1.
             Default: 2.0
 
         Examples
@@ -179,11 +181,25 @@ class OmeZarrWriter(Writer):
         ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
         ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
         """
-        pixelsizes = [
-            physical_pixel_sizes.Z if physical_pixel_sizes.Z is not None else 1.0,
-            physical_pixel_sizes.Y if physical_pixel_sizes.Y is not None else 1.0,
-            physical_pixel_sizes.X if physical_pixel_sizes.X is not None else 1.0,
-        ]
+        if physical_pixel_sizes is None:
+            pixelsizes = (1.0, 1.0, 1.0)
+        else:
+            pixelsizes = (
+                physical_pixel_sizes.Z if physical_pixel_sizes.Z is not None else 1.0,
+                physical_pixel_sizes.Y if physical_pixel_sizes.Y is not None else 1.0,
+                physical_pixel_sizes.X if physical_pixel_sizes.X is not None else 1.0,
+            )
+        if channel_names is None:
+            # TODO this isn't generating a very pretty looking name but it will be
+            # unique
+            channel_names = [
+                utils.generate_ome_channel_id(image_id=image_name, channel_id=i)
+                for i in range(image_data.shape[1])
+            ]
+        if channel_colors is None:
+            # TODO generate proper colors or confirm that the underlying lib can handle
+            # None
+            channel_colors = [i for i in range(image_data.shape[1])]
         transforms = [
             [
                 # the voxel size for the first scale level

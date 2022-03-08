@@ -41,200 +41,6 @@ class OmeZarrWriter(Writer):
         self.root_group = zarr.group(store=self.store)
         # print(root)
 
-    def save(
-        self,
-        data: Union[List[types.ArrayLike], types.ArrayLike],
-        dim_order: Optional[Union[str, List[Union[str, None]]]] = None,
-        channel_names: Optional[Union[List[str], List[Optional[List[str]]]]] = None,
-        image_names: Optional[Union[str, List[Union[str, None]]]] = None,
-        physical_pixel_sizes: Optional[
-            Union[types.PhysicalPixelSizes, List[types.PhysicalPixelSizes]]
-        ] = None,
-        channel_colors: Optional[
-            Union[List[List[int]], List[Optional[List[List[int]]]]]
-        ] = None,
-        **kwargs: Any,
-    ) -> None:
-        """
-        Write a data array to a file.
-
-        Parameters
-        ----------
-        data: Union[List[types.ArrayLike], types.ArrayLike]
-            The array of data to store. Data arrays must have 2 to 6 dimensions. If a
-            list is provided, then it is understood to be multiple images written to the
-            ome-tiff file. All following metadata parameters will be expanded to the
-            length of this list.
-        dim_order: Optional[Union[str, List[Union[str, None]]]]
-            The dimension order of the provided data.
-            Dimensions must be a list of T, C, Z, Y, Z, and S (S=samples for rgb data).
-            Dimension strings must be same length as number of dimensions in the data.
-            If S is present it must be last and its data count must be 3 or 4.
-            Default: None.
-            If None is provided for any data array, we will guess dimensions based on a
-            TCZYX ordering.
-            In the None case, data will be assumed to be scalar, not RGB.
-        channel_names: Optional[Union[List[str], List[Optional[List[str]]]]]
-            Lists of strings representing the names of the data channels
-            Default: None
-            If None is given, the list will be generated as a 0-indexed list of strings
-            of the form "Channel:image_index:channel_index"
-        image_names: Optional[Union[str, List[Union[str, None]]]]
-            List of strings representing the names of the images
-            Default: None
-            If None is given, the list will be generated as a 0-indexed list of strings
-            of the form "Image:image_index"
-        physical_pixel_sizes: Optional[Union[types.PhysicalPixelSizes,
-                List[types.PhysicalPixelSizes]]]
-            List of numbers representing the physical pixel sizes in Z, Y, X in microns
-            Default: None
-        channel_colors: Optional[Union[List[List[int]], List[Optional[List[List[int]]]]]
-            List of rgb color values per channel or a list of lists for each image.
-            These must be values compatible with the OME spec.
-            Default: None
-
-        Examples
-        --------
-        Write a TCZYX data set to OME-Zarr
-
-        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
-        ... writer.save(image)
-
-        Write data with a dimension order into OME-Zarr
-
-        >>> image = numpy.ndarray([10, 3, 1024, 2048])
-        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
-        ... writer.save(image, dim_order="ZCYX")
-
-        Write multi-scene data to OME-Zarr, specifying channel names
-
-        >>> image0 = numpy.ndarray([3, 10, 1024, 2048])
-        ... image1 = numpy.ndarray([3, 10, 512, 512])
-        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
-        ... writer.save(
-        ...     [image0, image1],
-        ...     "file.ome.zarr",
-        ...     channel_names=[["C00","C01","C02"],["C10","C11","C12"]]
-        ... )
-        ... OR
-        ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
-        ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
-        """
-        # If metadata is attached as lists, enforce matching shape
-        if isinstance(data, list):
-            num_images = len(data)
-            if isinstance(dim_order, list):
-                if len(dim_order) != num_images:
-                    raise exceptions.ConflictingArgumentsError(
-                        f"OmeZarrWriter received a list of arrays to use as scenes "
-                        f"but the provided list of dimension_order is of different "
-                        f"length. "
-                        f"Number of provided scenes: {num_images}, "
-                        f"Number of provided dimension strings: "
-                        f"{len(dim_order)}"
-                    )
-            if isinstance(image_names, list):
-                if len(image_names) != num_images:
-                    raise exceptions.ConflictingArgumentsError(
-                        f"OmeZarrWriter received a list of arrays to use as scenes "
-                        f"but the provided list of image_names is of different "
-                        f"length. "
-                        f"Number of provided scenes: {num_images}, "
-                        f"Number of provided dimension strings: {len(image_names)}"
-                    )
-            if isinstance(physical_pixel_sizes, list):
-                if len(physical_pixel_sizes) != num_images:
-                    raise exceptions.ConflictingArgumentsError(
-                        f"OmeZarrWriter received a list of arrays to use as scenes "
-                        f"but the provided list of image_names is of different "
-                        f"length. "
-                        f"Number of provided scenes: {num_images}, "
-                        f"Number of provided dimension strings: "
-                        f"{len(physical_pixel_sizes)}"
-                    )
-
-            if channel_names is not None:
-                if isinstance(channel_names[0], list):
-                    if len(channel_names) != num_images:
-                        raise exceptions.ConflictingArgumentsError(
-                            f"OmeZarrWriter received a list of arrays to use as scenes "
-                            f"but the provided list of channel_names is of different "
-                            f"length. "
-                            f"Number of provided scenes: {num_images}, "
-                            f"Number of provided dimension strings: "
-                            f"{len(channel_names)}"
-                        )
-            if channel_colors is not None:
-                if isinstance(channel_colors[0], list):
-                    if not isinstance(channel_colors[0][0], int):
-                        if len(channel_colors) != num_images:
-                            raise exceptions.ConflictingArgumentsError(
-                                f"OmeZarrWriter received a list of arrays to use as "
-                                f"scenes but the provided list of channel_colors is of "
-                                f"different length. "
-                                f"Number of provided scenes: {num_images}, "
-                                f"Number of provided dimension strings: "
-                                f"{len(channel_colors)}"
-                            )
-
-        # make sure data is a list
-        if not isinstance(data, list):
-            data = [data]
-        num_images = len(data)
-
-        # If metadata is attached as singles, expand to lists to match data
-        if dim_order is None or isinstance(dim_order, str):
-            dim_order = [dim_order] * num_images
-        if image_names is None or isinstance(image_names, str):
-            image_names = [image_names] * num_images
-        if isinstance(physical_pixel_sizes, tuple):
-            physical_pixel_sizes = [physical_pixel_sizes] * num_images
-        elif physical_pixel_sizes is None:
-            physical_pixel_sizes = [
-                types.PhysicalPixelSizes(None, None, None)
-            ] * num_images
-        if channel_names is None or isinstance(channel_names[0], str):
-            channel_names = [channel_names] * num_images  # type: ignore
-
-        if channel_colors is not None:
-            if all(
-                [
-                    (
-                        channel_colors[img_idx] is None
-                        or isinstance(channel_colors[img_idx], list)
-                    )
-                    for img_idx in range(num_images)
-                ]
-            ):
-                single_image_channel_colors_provided = False
-            else:
-                single_image_channel_colors_provided = True
-
-            if (
-                channel_colors[0] is not None
-                and isinstance(channel_colors[0], list)
-                and isinstance(channel_colors[0][0], int)
-            ):
-                single_image_channel_colors_provided = True
-
-        if channel_colors is None or single_image_channel_colors_provided:
-            channel_colors = [channel_colors] * num_images  # type: ignore
-
-        for scene_index in range(num_images):
-            image_data = data[scene_index]
-            pixelsize = physical_pixel_sizes[scene_index]
-
-            self.write_image(
-                image_data=image_data,
-                pixelsize=pixelsize,
-                image_name=image_names[scene_index],
-                channel_names=channel_names[scene_index],
-                channel_colors=channel_colors[scene_index],
-                scale_num_levels=2,
-                scale_factor=2,
-            )
-
     @staticmethod
     def build_ome(
         data_shape: Tuple[int, ...],
@@ -318,18 +124,65 @@ class OmeZarrWriter(Writer):
 
     def write_image(
         self,
-        image_data,  # must be 5D TCZYX
-        pixelsize: types.PhysicalPixelSizes,
+        image_data: types.ArrayLike,  # must be 5D TCZYX
         image_name: str,
-        channel_names: List[str],
+        physical_pixel_sizes: Optional[types.PhysicalPixelSizes],
+        channel_names: Optional[List[str]],
         channel_colors: Optional[List[int]],
-        scale_num_levels: Optional[int],
-        scale_factor: Optional[float],
+        scale_num_levels: int = 1,
+        scale_factor: float = 2.0,
     ):
+        """
+        Write a data array to a file.
+
+        Parameters
+        ----------
+        image_data: types.ArrayLike
+            The array of data to store. Data arrays must have 2 to 6 dimensions. If a
+            list is provided, then it is understood to be multiple images written to the
+            ome-tiff file. All following metadata parameters will be expanded to the
+            length of this list.
+        image_name: str
+            string representing the name of the image
+        physical_pixel_sizes: Optional[types.PhysicalPixelSizes]
+            PhysicalPixelSizes object representing the physical pixel sizes in Z, Y, X in microns
+            Default: None
+        channel_names: Optional[List[str]]
+            Lists of strings representing the names of the data channels
+            Default: None
+            If None is given, the list will be generated as a 0-indexed list of strings
+            of the form "Channel:image_index:channel_index"
+        channel_colors: Optional[List[int]]
+            List of rgb color values per channel or a list of lists for each image.
+            These must be values compatible with the OME spec.
+            Default: None
+        scale_num_levels: Optional[int]
+            Number of pyramid levels to use for the image.
+            Default: 1 (represents no downsampled levels)
+        scale_factor: Optional[float]
+            The scale factor to use for the image.
+            Default: 2.0
+
+        Examples
+        --------
+        Write a TCZYX data set to OME-Zarr
+
+        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.write_image(image)
+
+        Write multi-scene data to OME-Zarr, specifying channel names
+
+        >>> image0 = numpy.ndarray([3, 10, 1024, 2048])
+        ... image1 = numpy.ndarray([3, 10, 512, 512])
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
+        ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
+        """
         pixelsizes = [
-            pixelsize.Z if pixelsize.Z is not None else 1.0,
-            pixelsize.Y if pixelsize.Y is not None else 1.0,
-            pixelsize.X if pixelsize.X is not None else 1.0,
+            physical_pixel_sizes.Z if physical_pixel_sizes.Z is not None else 1.0,
+            physical_pixel_sizes.Y if physical_pixel_sizes.Y is not None else 1.0,
+            physical_pixel_sizes.X if physical_pixel_sizes.X is not None else 1.0,
         ]
         transforms = [
             [

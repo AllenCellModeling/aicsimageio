@@ -1,5 +1,6 @@
 import pathlib
 from typing import Dict, List, Optional, Tuple
+import typing
 
 import numpy
 import zarr
@@ -132,7 +133,7 @@ class OmeZarrWriter(Writer):
         channel_colors: Optional[List[int]],
         scale_num_levels: int = 1,
         scale_factor: float = 2.0,
-    ):
+    ) -> None:
         """
         Write a data array to a file.
 
@@ -223,6 +224,8 @@ class OmeZarrWriter(Writer):
             scaler.max_layer = scale_num_levels - 1
             scaler.downscale = scale_factor if scale_factor is not None else 2
             for i in range(scale_num_levels - 1):
+                last_transform = transforms[-1][0]
+                last_scale = typing.cast(List, last_transform["scale"])
                 transforms.append(
                     [
                         {
@@ -231,8 +234,8 @@ class OmeZarrWriter(Writer):
                                 1.0,
                                 1.0,
                                 pixelsizes[0],
-                                transforms[i][0]["scale"][3] * scaler.downscale,
-                                transforms[i][0]["scale"][4] * scaler.downscale,
+                                last_scale[3] * scaler.downscale,
+                                last_scale[4] * scaler.downscale,
                             ],
                         }
                     ]

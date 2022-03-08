@@ -1,6 +1,6 @@
 import pathlib
-from typing import Dict, List, Optional, Tuple
 import typing
+from typing import Dict, List, Optional, Tuple
 
 import numpy
 import zarr
@@ -10,8 +10,8 @@ from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
 
 from .. import types
-from ..utils import io_utils
 from ..metadata import utils
+from ..utils import io_utils
 from .writer import Writer
 
 

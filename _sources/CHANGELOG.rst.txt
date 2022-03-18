@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/update-czi-to-ome-xslt-for-channel-id  (`#389
+  <https://github.com/AllenCellModeling/aicsimageio/pull/389>`_)
+  [Griffin Fujioka, Griffin Fujioka]
+
+
 v4.6.3 (2022-03-03)
 -------------------
 

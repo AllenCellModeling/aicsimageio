@@ -178,6 +178,20 @@ class OmeTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
         self.ImageContainer = readers.ome_tiff_reader.OmeTiffReader
 
 
+class OmeTiledTiffReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
+    params = [
+        [
+            str(LOCAL_RESOURCES_DIR / "actk_ome_tiff_tiles.ome.tif"),
+            str(LOCAL_RESOURCES_DIR / "pre-variance-cfe_ome_tiff_tiles.ome.tif"),
+            str(LOCAL_RESOURCES_DIR / "variance-cfe_ome_tiff_tiles.ome.tif"),
+        ]
+    ]
+
+    def setup(self, img_path):
+        random.seed(42)
+        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader
+
+
 class LifReaderSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
     params = [
         sorted([str(f) for f in LOCAL_RESOURCES_DIR.glob("*.lif")]),
@@ -208,6 +222,7 @@ class AICSImageSuite(_ImageContainerTimeSuite, _ImageContainerMemorySuite):
             DefaultReaderSuite.params[0]
             + TiffReaderSuite.params[0]
             + OmeTiffReaderSuite.params[0]
+            + OmeTiledTiffReaderSuite.params[0]
             + LifReaderSuite.params[0]
             + CziReaderSuite.params[0]
         )

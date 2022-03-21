@@ -352,12 +352,12 @@ class Reader(ABC):
 
             # Remake the delayed xarray dataarray object using a rechunked dask array
             # from the just retrieved in-memory xarray dataarray
-            self._xarray_dask_data = xr.DataArray(
-                da.from_array(self._xarray_data.data),
-                dims=self._xarray_data.dims,
-                coords=self._xarray_data.coords,
-                attrs=self._xarray_data.attrs,
-            )
+            # self._xarray_dask_data = xr.DataArray(
+            #     da.from_array(self._xarray_data.data),
+            #     dims=self._xarray_data.dims,
+            #     coords=self._xarray_data.coords,
+            #     attrs=self._xarray_data.attrs,
+            # )
 
         return self._xarray_data
 

@@ -2,18 +2,19 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import xarray as xr
 from bfio import BioReader
 from fsspec.spec import AbstractFileSystem
 from ome_types import OME
-from tifffile.tifffile import TiffTags
+from tifffile.tifffile import TiffFileError, TiffTags
 
-from .. import constants, exceptions, types
-from ..dimensions import DEFAULT_CHUNK_DIMS
+from .. import constants, exceptions, transforms, types
+from ..dimensions import DEFAULT_DIMENSION_ORDER
 from ..metadata import utils as metadata_utils
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
 
@@ -38,10 +39,6 @@ class BfioReader(Reader):
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
-    clean_metadata: bool
-        Should the OME XML metadata found in the file be cleaned for known
-        AICSImageIO 3.x and earlier created errors.
-        Default: True (Clean the metadata for known errors)
 
     Notes
     -----
@@ -61,19 +58,15 @@ class BfioReader(Reader):
     ) -> xr.DataArray:
 
         # Unpack dims and coords from OME
-        dims, coords = metadata_utils.get_dims_and_coords_from_ome(
+        _, coords = metadata_utils.get_dims_and_coords_from_ome(
             ome=self._rdr.metadata,
             scene_index=0,
         )
 
-        dims = [
-            d
-            for d in self._rdr.metadata.images[0].pixels.dimension_order.name[
-                : len(image_data.shape)
-            ]
-        ]
-
-        coords = {d: coords[d] for d in dims if d in coords}
+        coords = {d: coords[d] for d in self.out_dim_order if d in coords}
+        image_data = transforms.reshape_data(
+            image_data, self.native_dim_order, self.out_dim_order
+        )
 
         attrs = {constants.METADATA_PROCESSED: self._rdr.metadata}
 
@@ -82,7 +75,7 @@ class BfioReader(Reader):
 
         return xr.DataArray(
             image_data,
-            dims=dims,
+            dims=self.out_dim_order,
             coords=coords,  # type: ignore
             attrs=attrs,
         )
@@ -96,81 +89,122 @@ class BfioReader(Reader):
                 return True
 
         # tifffile exceptions
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, TiffFileError):
             return False
 
     def __init__(
         self,
         image: types.PathLike,
-        chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
-        clean_metadata: bool = True,
+        chunk_dims: Optional[Union[str, List[str]]] = None,
+        out_order: str = DEFAULT_DIMENSION_ORDER,
         **kwargs: Any,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
 
-        # Enforce valid image
-        if not self._is_supported_image(None, self._path):
+        try:
+            self._rdr = BioReader(self._path, backend=self.backend)
+        except (TypeError, ValueError, TiffFileError):
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
             )
 
-        self._rdr = BioReader(self._path, backend=self.backend)
-
         # Add ndim attribute so _rdr can be passed directly to dask
         self._rdr.ndim = len(self._rdr.shape)
+
+        # Setup dimension ordering
+        dims = "YXZCT"
+        self.native_dim_order = dims[: len(self._rdr.shape)]
+        assert all(d in out_order for d in dims)
+        self.out_dim_order = "".join([d for d in out_order if d in dims])
+
+        # Store chunking dimensions for dask, even though it shouldn't matter for bfio
+        if chunk_dims is not None:
+            log.warning(
+                "OmeTiledTiffReader does not currently support custom chunking."
+            )
 
     @property
     def scenes(self) -> Tuple[str, ...]:
         return tuple(image_meta.id for image_meta in self._rdr.metadata.images)
 
-    def _read_delayed(self) -> xr.DataArray:
-        """
-        Construct the delayed xarray DataArray object for the image.
+    @property
+    def current_scene(self) -> str:
+        return self.scenes[self._current_scene_index]
 
-        Returns
-        -------
-        image: xr.DataArray
-            The fully constructed and fully delayed image as a DataArray object.
-            Metadata is attached in some cases as coords, dims, and attrs contains
-            unprocessed tags and processed OME object.
+    @property
+    def current_scene_index(self) -> int:
+        return self._current_scene_index
+
+    def set_scene(self, scene_id: Union[str, int]) -> None:
+        """
+        For all BfioReader subclasses, the only allowed value is the name of the first
+        scene since only the first scene can be read by BioReader objects. This method
+        exists primarily to help this Reader fit into existing unit test templates and
+        in case BioReader is updated to support multiple scenes.
+
+        Parameters
+        ----------
+        scene_id: Union[str, int]
+            The scene id (if string) or scene index (if integer)
+            to set as the operating scene.
 
         Raises
         ------
-        exceptions.UnsupportedFileFormatError
-            The file could not be read or is not supported.
+        IndexError
+            The provided scene id or index does not reference the first scene.
+        TypeError
+            The provided value wasn't a string (scene id) or integer (scene index).
         """
+        # Route to int or str setting
+        if isinstance(scene_id, (str, int)):
+            # Only need to run when the scene id is different from current scene
+            if scene_id not in (self.current_scene, self.current_scene_index):
+
+                raise IndexError(
+                    "Scene id: Cannot change scene for "
+                    + f"{self.__class__.__name__} objects."
+                )
+
+        else:
+            raise TypeError(
+                f"Must provide either a string (for scene id) "
+                f"or integer (for scene index). Provided: {scene_id} ({type(scene_id)}."
+            )
+
+    @property
+    def channel_names(self) -> Optional[List[str]]:
+
+        return self._rdr.channel_names
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        return types.PhysicalPixelSizes(
+            self._rdr.ps_z[0],
+            self._rdr.ps_y[0],
+            self._rdr.ps_x[0],
+        )
+
+    def _read_delayed(self) -> xr.DataArray:
 
         return self._general_data_array_constructor(
             da.from_array(self._rdr, chunks=(1024, 1024) + (1,) * (self._rdr.ndim - 2)),
             self._tiff_tags(),
         )
 
-    def _tiff_tags(self) -> TiffTags:
+    def _tiff_tags(self) -> Optional[Dict[str, str]]:
 
+        tiff_tags: Optional[Dict[str, str]] = None
         if self.backend == "python":
-            tiff_tags = self._rdr._backend._rdr.pages[0].tags
-        else:
-            tiff_tags = None
+            # Create a copy since TiffTags are not serializable
+            tiff_tags = {
+                code: tag.value
+                for code, tag in self._rdr._backend._rdr.pages[0].tags.items()
+            }
 
         return tiff_tags
 
     def _read_immediate(self) -> xr.DataArray:
-        """
-        Construct the in-memory xarray DataArray object for the image.
-
-        Returns
-        -------
-        image: xr.DataArray
-            The fully constructed and fully read into memory image as a DataArray
-            object. Metadata is attached in some cases as coords, dims, and attrs
-            contains unprocessed tags and processed OME object.
-
-        Raises
-        ------
-        exceptions.UnsupportedFileFormatError
-            The file could not be read or is not supported.
-        """
         return self._general_data_array_constructor(
             self._rdr[:],
             self._tiff_tags(),
@@ -179,11 +213,6 @@ class BfioReader(Reader):
     @property
     def ome_metadata(self) -> OME:
         return self._rdr.metadata
-
-    def __del__(self) -> None:
-        """Try to do some cleanup when deleted or falls out of context."""
-
-        self._rdr.close()
 
 
 class OmeTiledTiffReader(BfioReader):
@@ -207,7 +236,7 @@ class OmeTiledTiffReader(BfioReader):
 
     Notes
     -----
-    If the OME metadata in your file isn't OME schema compilant or does not validate
+    If the OME metadata in your file isn't OME schema compliant or does not validate
     this will fail to read your file and raise an exception.
 
     If the OME metadata in your file doesn't use the latest OME schema (2016-06),

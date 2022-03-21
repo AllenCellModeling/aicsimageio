@@ -65,13 +65,15 @@ class BfioReader(Reader):
 
         coords = {d: coords[d] for d in self.out_dim_order if d in coords}
         image_data = transforms.reshape_data(
-            image_data, self.native_dim_order, self.out_dim_order
+            image_data, self.native_dim_order, "".join(self.out_dim_order)
         )
 
         attrs = {constants.METADATA_PROCESSED: self._rdr.metadata}
 
         if tiff_tags is not None:
             attrs[constants.METADATA_UNPROCESSED] = tiff_tags
+
+        print(image_data.shape, coords)
 
         return xr.DataArray(
             image_data,
@@ -116,7 +118,7 @@ class BfioReader(Reader):
         dims = "YXZCT"
         self.native_dim_order = dims[: len(self._rdr.shape)]
         assert all(d in out_order for d in dims)
-        self.out_dim_order = "".join([d for d in out_order if d in dims])
+        self.out_dim_order = [d for d in out_order if d in dims]
 
         # Store chunking dimensions for dask, even though it shouldn't matter for bfio
         if chunk_dims is not None:

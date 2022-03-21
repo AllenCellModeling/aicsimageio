@@ -73,8 +73,6 @@ class BfioReader(Reader):
         if tiff_tags is not None:
             attrs[constants.METADATA_UNPROCESSED] = tiff_tags
 
-        print(image_data.shape, coords)
-
         return xr.DataArray(
             image_data,
             dims=self.out_dim_order,

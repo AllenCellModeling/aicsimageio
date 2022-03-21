@@ -45,19 +45,6 @@ from ..image_container_test_utils import run_image_file_checks
             [f"C:{i}" for i in range(10)],  # This is the actual metadata
             (None, None, None),
         ),
-        (
-            # This is actually an OME-TIFF file
-            # Shows we don't just work off of extensions
-            # But the content of the file
-            "s_1_t_1_c_2_z_1_RGB_tiff_tiles.tif",
-            "Image:0",
-            ("Image:0",),
-            (1, 6, 1, 32, 32),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            [None, None, None, None, None, None],
-            (None, None, None),
-        ),
         pytest.param(
             # This is the same file as the first file, but it is not tiled
             # This should throw and error since it is not tiled

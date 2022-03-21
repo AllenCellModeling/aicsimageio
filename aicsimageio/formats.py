@@ -479,7 +479,7 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
 
 READER_TO_INSTALL: Dict[str, str] = {
     "aicsimageio.readers.bioformats_reader.BioformatsReader": "bioformats_jar",
-    "aicsimageio.readers.bfio_reader.OmeTiledTiffReader": "bfio>=2.2.0",
+    "aicsimageio.readers.bfio_reader.OmeTiledTiffReader": "bfio>=2.2.1-dev1",
     "aicsimageio.readers.default_reader.DefaultReader": "aicsimageio[base-imageio]",
     "aicsimageio.readers.lif_reader.LifReader": "readlif>=0.6.4",
     "aicsimageio.readers.czi_reader.CziReader": "aicspylibczi>=3.0.5",

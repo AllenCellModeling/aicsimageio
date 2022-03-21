@@ -80,17 +80,6 @@ from ..image_container_test_utils import run_image_file_checks
             None,
             marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
         ),
-        pytest.param(
-            "s_1_t_1_c_2_z_1_RGB_tiff_tiles.tif",
-            "Image:1",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.raises(exception=IndexError),
-        ),
     ],
 )
 def test_ome_tiff_reader(

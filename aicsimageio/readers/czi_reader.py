@@ -27,7 +27,7 @@ try:
 except ImportError:
     raise ImportError(
         "aicspylibczi is required for this reader. "
-        "Install with `pip install aicsimageio[czi]`"
+        "Install with `pip install aicspylibczi>=3.0.5"
     )
 
 ###############################################################################
@@ -73,7 +73,7 @@ class CziReader(Reader):
 
     Notes
     -----
-    To use this reader, install with: `pip install aicsimageio[czi]`.
+    To use this reader, install with: `pip install aicspylibczi>=3.0.5`.
     """
 
     @staticmethod
@@ -480,15 +480,14 @@ class CziReader(Reader):
         scale_z = None
 
         # Unpack the string value to a float
-        # Split by "E" and take the first part because the values are stored
-        # with E-06 for micrometers, even though the unit is also present in metadata
-        # 🤷
+        # the values are stored in units of meters always in .czi, so
+        # divide by 1E-6 to convert to microns
         if scale_xe is not None and scale_xe.text is not None:
-            scale_x = float(scale_xe.text.split("E")[0])
+            scale_x = float(scale_xe.text) / (1e-6)
         if scale_ye is not None and scale_ye.text is not None:
-            scale_y = float(scale_ye.text.split("E")[0])
+            scale_y = float(scale_ye.text) / (1e-6)
         if scale_ze is not None and scale_ze.text is not None:
-            scale_z = float(scale_ze.text.split("E")[0])
+            scale_z = float(scale_ze.text) / (1e-6)
 
         # Handle Spatial Dimensions
         for scale, dim_name in [

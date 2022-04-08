@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import dask.array as da
 import xarray as xr
 from bfio import BioReader
+from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import OME
 from tifffile.tifffile import TiffFileError, TiffTags
@@ -36,13 +37,15 @@ class BfioReader(Reader):
     chunk_dims: List[str]
         Which dimensions to create chunks for.
         Default: DEFAULT_CHUNK_DIMS
-        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-        will always be added to the list if not present during dask array
-        construction.
+        Note: Dimensions.SpatialY, and Dimensions.SpatialX will always be added to the
+        list if not present during dask array construction.
+    out_order: List[str]
+        The output dimension ordering.
+        Default: DEFAULT_DIMENSION_ORDER
 
     Notes
     -----
-    If the OME metadata in your file isn't OME schema compilant or does not validate
+    If the OME metadata in your file isn't OME schema compliant or does not validate
     this will fail to read your file and raise an exception.
 
     If the OME metadata in your file doesn't use the latest OME schema (2016-06),
@@ -82,14 +85,14 @@ class BfioReader(Reader):
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+        """This method should be overwritten by a subclass."""
         try:
-            # with fs.open(path) as open_resource:
-            with BioReader(path, backend="python"):
+            with BioReader(path):
 
                 return True
 
-        # tifffile exceptions
-        except (TypeError, ValueError, TiffFileError):
+        except Exception:
+
             return False
 
     def __init__(
@@ -101,6 +104,12 @@ class BfioReader(Reader):
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+
+        if not isinstance(self._fs, LocalFileSystem):
+            raise ValueError(
+                "Cannot read .ome.tif from non-local file system. "
+                f"Received URI: {self._path}, which points to {type(self._fs)}."
+            )
 
         try:
             self._rdr = BioReader(self._path, backend=self.backend)
@@ -118,7 +127,7 @@ class BfioReader(Reader):
         assert all(d in out_order for d in dims)
         self.out_dim_order = [d for d in out_order if d in dims]
 
-        # Store chunking dimensions for dask, even though it shouldn't matter for bfio
+        # Currently do not support custom chunking, throw a warning.
         if chunk_dims is not None:
             log.warning(
                 "OmeTiledTiffReader does not currently support custom chunking."
@@ -219,6 +228,21 @@ class OmeTiledTiffReader(BfioReader):
     """
     Wrapper around bfio.BioReader(backend="python").
 
+    The OmeTiledTiffReader is an optimized TIFF reader written in pure Python, built on
+    top of tifffile. This reader is optimized for speed and scalability, but will only
+    read TIFF files that meet the following requirements:
+
+    1. TileWidth and TileHeight tags must both be set to 1024
+    2. The Description tag must contain OMEXML
+    3. The OMEXML channel ordering must be set to XYZCT
+    4. Channels cannot be interleaved, meaning individual channels must be planes.
+
+    The advantage of the reader for files that meet these requirements are improvements
+    in reading speed, especially when accessing data using dask.
+
+    This TIFF reader will only read the first image and pyramid layer. If pyramid layers
+    or images beyond the first image in the file need to be read, use the OmeTiffReader.
+
     Parameters
     ----------
     image: types.PathLike
@@ -226,13 +250,11 @@ class OmeTiledTiffReader(BfioReader):
     chunk_dims: List[str]
         Which dimensions to create chunks for.
         Default: DEFAULT_CHUNK_DIMS
-        Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
-        will always be added to the list if not present during dask array
-        construction.
-    clean_metadata: bool
-        Should the OME XML metadata found in the file be cleaned for known
-        AICSImageIO 3.x and earlier created errors.
-        Default: True (Clean the metadata for known errors)
+        Note: Dimensions.SpatialY, and Dimensions.SpatialX will always be added to the
+        list if not present during dask array construction.
+    out_order: List[str]
+        The output dimension ordering.
+        Default: DEFAULT_DIMENSION_ORDER
 
     Notes
     -----
@@ -248,8 +270,13 @@ class OmeTiledTiffReader(BfioReader):
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
-            # with fs.open(path) as open_resource:
-            with BioReader(path, backend="python"):
+            if not isinstance(fs, LocalFileSystem):
+                return False
+
+            with BioReader(path, backend="python") as br:
+
+                # Fail fast if multi-image file
+                assert len(br.metadata.images) == 1
 
                 return True
 

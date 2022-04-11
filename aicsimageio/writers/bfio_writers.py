@@ -2,6 +2,7 @@ from typing import Any, List, Optional, Union
 
 import dask.array as da
 import numpy as np
+import xarray as xr
 from bfio import BioWriter
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME, from_xml
@@ -34,6 +35,7 @@ class OmeTiledTiffWriter(Writer):
             present. For example, a 3-channel image that is 1024x1024 must at least have
             shape [3,1,1024,1024]. Image with shape [3,1024,1024] will be interpreted as
             an image with 3 z-slices.
+            If the data is a Dask array, chunked writing will be performed
         uri: types.PathLike
             The URI or local path for where to save the data.
             Note: OmeTiledTiffWriter can only write to local file systems.
@@ -57,6 +59,14 @@ class OmeTiledTiffWriter(Writer):
             List of numbers representing the physical pixel sizes in Z, Y, X in microns
             Default: None
 
+        Note
+        ----
+        This writer can perform chunked writing. When the input array is a dask array or
+        an xarray DataArray backed by dask, data is written one XY plane at a time to
+        conserve memory. This is especially useful when the image will not fit into
+        memory. The underlying write can support further chunking in XY dimensions, so
+        this functionality should be added in the future.
+
         Raises
         ------
         ValueError:
@@ -64,10 +74,17 @@ class OmeTiledTiffWriter(Writer):
 
         Examples
         --------
-        Write a TCZYX data set to OME-Tiff
+        Write a TCZYX data set to a tiled OME-Tiff
 
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
-        ... OmeTiffWriter.save(image, "file.ome.tif")
+        ... OmeTiledTiffWriter.save(image, "file.ome.tif")
+
+        If an image is too large to fit into memory, a dask array can be passed in and
+        chunked writing will take place. This will work if each YX plane can fit into
+        memory.
+
+        >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
+        ... OmeTiledTiffWriter.save(image, "file.ome.tif")
         """
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
@@ -107,8 +124,18 @@ class OmeTiledTiffWriter(Writer):
 
             dim_order = (-2, -1) + tuple(reversed(range(len(data.shape) - 2)))
 
-            if isinstance(data, da.core.Array):
-                data = data[...].compute()  # type: ignore
-
             data = data.transpose(dim_order)
-            bw[:] = data
+
+            # If the data is not a dask array, just write the image all at once
+            if isinstance(data, xr.core.dataarray.DataArray):
+                data = data.data
+
+            if not isinstance(data, da.Array):
+                bw[:] = data
+
+            # If the data is a dask array, perform chunked writing for more scalability
+            else:
+                for t in range(data.shape[4]):
+                    for c in range(data.shape[3]):
+                        for z in range(data.shape[2]):
+                            bw[:, :, z, c, t] = data[:, :, z, c, t].compute()

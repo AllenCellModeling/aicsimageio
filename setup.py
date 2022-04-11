@@ -64,7 +64,10 @@ test_requirements = [
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=2022.11.0",
-    "tox==3.27.1",
+    "tox>=3.27.1",
+    "bioformats_jar",  # to test bioformats
+    "readlif>=0.6.4",  # to test lif
+    "aicspylibczi>=3.0.5",  # to test czi
 ]
 
 dev_requirements = [

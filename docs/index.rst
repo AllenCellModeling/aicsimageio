@@ -23,6 +23,7 @@ Specific Doc Pages
    aicsimageio.readers.ome_tiff_reader.OmeTiffReader
    aicsimageio.readers.tiff_reader.TiffReader
    aicsimageio.writers.ome_tiff_writer.OmeTiffWriter
+   aicsimageio.writers.bfio_writers.OmeTiledTiffWriter
 
 Indices and tables
 ==================

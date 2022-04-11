@@ -1,3 +1,4 @@
+from itertools import product
 from typing import Any, List, Optional, Union
 
 import dask.array as da
@@ -34,7 +35,7 @@ class OmeTiledTiffWriter(Writer):
             should have shape [T,C,Z,Y,X], where interstitial empty dimensions must be
             present. For example, a 3-channel image that is 1024x1024 must at least have
             shape [3,1,1024,1024]. Image with shape [3,1024,1024] will be interpreted as
-            an image with 3 z-slices.
+            an image with 3 z-slices. Sample dimension is not supported.
             If the data is a Dask array, chunked writing will be performed
         uri: types.PathLike
             The URI or local path for where to save the data.
@@ -86,6 +87,12 @@ class OmeTiledTiffWriter(Writer):
         >>> image = numpy.ndarray([1, 10, 3, 1024, 2048])
         ... OmeTiledTiffWriter.save(image, "file.ome.tif")
         """
+        if data.ndim > 5 or data.ndim < 2:
+            raise ValueError(
+                "Data must have 2-5 dimensions and be in TCZYX order. "
+                + "The S (sample) dimension is not allowed."
+            )
+
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
 
@@ -126,6 +133,12 @@ class OmeTiledTiffWriter(Writer):
 
             data = data.transpose(dim_order)
 
+            if not all(w == d for w, d in zip(bw.shape, data.shape)):
+                raise ValueError("Metadata dimensions do not match input data.")
+
+            if bw.dtype != data.dtype:
+                raise ValueError("Writer data type does not match input data.")
+
             # If the data is not a dask array, just write the image all at once
             if isinstance(data, xr.core.dataarray.DataArray):
                 data = data.data
@@ -135,7 +148,6 @@ class OmeTiledTiffWriter(Writer):
 
             # If the data is a dask array, perform chunked writing for more scalability
             else:
-                for t in range(data.shape[4]):
-                    for c in range(data.shape[3]):
-                        for z in range(data.shape[2]):
-                            bw[:, :, z, c, t] = data[:, :, z, c, t].compute()
+                for plane in product(*(range(d) for d in reversed(data.shape[2:]))):
+                    index = (slice(None), slice(None)) + plane[::-1]
+                    bw[index] = data[index].compute()

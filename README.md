@@ -51,6 +51,7 @@ optionally installed using `[...]` syntax.
 -   For a single additional supported format (e.g. ND2): `pip install aicsimageio[nd2]`
 -   For a single additional supported format (e.g. ND2), development head: `pip install "aicsimageio[nd2] @ git+https://github.com/AllenCellModeling/aicsimageio.git"`
 -   For a single additional supported format (e.g. ND2), specific tag (e.g. `v4.0.0.dev6`): `pip install "aicsimageio[nd2] @ git+https://github.com/AllenCellModeling/aicsimageio.git@v4.0.0.dev6"`
+-   For faster OME-TIFF reading with tile tags: `pip install aicsimageio[bfio]`
 -   For multiple additional supported formats: `pip install aicsimageio[base-imageio,nd2]`
 -   For all additional supported (and openly licensed) formats: `pip install aicsimageio[all]`
 -   Due to the GPL license, LIF support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio readlif>=0.6.4`

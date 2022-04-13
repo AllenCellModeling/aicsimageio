@@ -14,6 +14,7 @@ from tifffile.tifffile import TiffFileError, TiffTags
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER
+from ..exceptions import UnsupportedFileFormatError
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -276,7 +277,14 @@ class OmeTiledTiffReader(BfioReader):
             with BioReader(path, backend="python") as br:
 
                 # Fail fast if multi-image file
-                assert len(br.metadata.images) == 1
+                if len(br.metadata.images) > 1:
+                    raise UnsupportedFileFormatError(
+                        path,
+                        "This file contains more than one scene and only the first "
+                        + "scene can be read by the OmeTiledTiffReader. "
+                        + "To read additional scenes, use the TiffReader, "
+                        + "OmeTiffReader, or BioformatsReader.",
+                    )
 
                 return True
 

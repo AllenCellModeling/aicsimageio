@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
     from .array_like_reader import ArrayLikeReader  # noqa: F401
+    from .bfio_reader import OmeTiledTiffReader  # noqa: F401
     from .bioformats_reader import BioformatsReader  # noqa: F401
     from .czi_reader import CziReader  # noqa: F401
     from .dv_reader import DVReader  # noqa: F401
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
 # add ".relativepath.ClassName"
 _READERS = (
     ".array_like_reader.ArrayLikeReader",
+    ".bfio_reader.OmeTiledTiffReader",
     ".bioformats_reader.BioformatsReader",
     ".czi_reader.CziReader",
     ".dv_reader.DVReader",

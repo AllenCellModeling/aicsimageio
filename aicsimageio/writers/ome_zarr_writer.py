@@ -12,10 +12,10 @@ from ome_zarr.writer import write_image
 from .. import types
 from ..metadata import utils
 from ..utils import io_utils
-from .writer import Writer
+# from .writer import Writer
 
 
-class OmeZarrWriter(Writer):
+class OmeZarrWriter:
     def __init__(self, uri: types.PathLike):
         """
         Constructor.
@@ -285,7 +285,7 @@ class OmeZarrWriter(Writer):
             coordinate_transformations=transforms,
             # Options to be passed on to the storage backend. A list would need to
             # match the number of datasets in a multiresolution pyramid. One can
-            # provide different chunk size for each level of a pyramind using this
+            # provide different chunk size for each level of a pyramid using this
             # option.
             storage_options=[],
         )

@@ -992,6 +992,41 @@ def test_set_coords(
 
 
 @pytest.mark.parametrize(
+    "filename, expected_reader",
+    [
+        (
+            "s_1_t_1_c_1_z_1.tiff",
+            readers.TiffReader,
+        ),
+        (
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            readers.OmeTiffReader,
+        ),
+        (
+            "s_1_t_1_c_1_z_1_ome_tiff_tiles.ome.tif",
+            readers.OmeTiledTiffReader,
+        ),
+        (  # Multiscene tiff
+            "variable_scene_shape_first_scene_pyramid.ome.tiff",
+            readers.OmeTiffReader,
+        ),
+    ],
+)
+def test_selected_tiff_reader(
+    filename: str,
+    expected_reader: Type[readers.reader.Reader],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+
+    # Assert basics
+    assert isinstance(img.reader, expected_reader)
+
+
+@pytest.mark.parametrize(
     "filename, set_reader, extra_kwargs, expected_dims, expected_shape",
     [
         (

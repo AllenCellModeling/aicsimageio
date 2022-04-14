@@ -36,6 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
+    "bfio": ["bfio>=2.3.0"],
     # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
@@ -63,6 +64,7 @@ test_requirements = [
     "s3fs[boto3]>=0.4.2",
     "tox>=3.15.2",
     "bioformats_jar",  # to test bioformats
+    "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
     "aicspylibczi>=3.0.5",  # to test czi
 ]
@@ -162,6 +164,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.6.3",
+    version="4.6.4",
     zip_safe=False,
 )

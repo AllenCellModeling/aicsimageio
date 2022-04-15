@@ -251,7 +251,8 @@ class OmeZarrWriter:
             # this can be slow if going over all T values,
             # might be better if user supplies the min/max?
             channel_minmax=[
-                (numpy.min(image_data[:, i, :]), numpy.max(image_data[:, i, :]))
+                (0.0, 1.0)
+                # (numpy.min(image_data[:, i, :, :, :]), numpy.max(image_data[:, i, :, :, :]))
                 for i in range(image_data.shape[1])
             ],
         )

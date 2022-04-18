@@ -226,7 +226,7 @@ class OmeZarrWriter:
             image_data.shape[3],
             image_data.shape[4],
         ))]
-        lasty = image.data.shape[3]
+        lasty = image_data.shape[3]
         lastx = image_data.shape[4]
         # TODO scaler might want to use different method for segmentations than raw
         # TODO control how many levels of zarr are created

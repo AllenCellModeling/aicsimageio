@@ -2,7 +2,7 @@ import pathlib
 import typing
 from typing import Dict, List, Optional, Tuple
 
-import numpy
+import math
 import zarr
 from fsspec.implementations.local import LocalFileSystem
 from ome_zarr.io import parse_url
@@ -216,6 +216,18 @@ class OmeZarrWriter:
                 }
             ]
         ]
+        # TODO parameterize or construct a sensible guess
+        # (maybe ZYX dims or YX dims, or some byte size limit)
+        # TODO precompute sizes for downsampled also.
+        chunk_dims = [dict(chunks=(
+            1,
+            1,
+            1,
+            image_data.shape[3],
+            image_data.shape[4],
+        ))]
+        lasty = image.data.shape[3]
+        lastx = image_data.shape[4]
         # TODO scaler might want to use different method for segmentations than raw
         # TODO control how many levels of zarr are created
         if scale_num_levels > 1:
@@ -240,6 +252,9 @@ class OmeZarrWriter:
                         }
                     ]
                 )
+                lasty = int(math.ceil(lasty / scaler.downscale))
+                lastx = int(math.ceil(lastx / scaler.downscale))
+                chunk_dims.append(dict(chunks=(1, 1, 1, lasty, lastx)))
         else:
             scaler = None
 
@@ -256,31 +271,22 @@ class OmeZarrWriter:
                 for i in range(image_data.shape[1])
             ],
         )
+        axes_5d = [
+            {"name": "t", "type": "time", "unit": "millisecond"},
+            {"name": "c", "type": "channel"},
+            {"name": "z", "type": "space", "unit": "micrometer"},
+            {"name": "y", "type": "space", "unit": "micrometer"},
+            {"name": "x", "type": "space", "unit": "micrometer"},
+        ]
 
-        # TODO parameterize or construct a sensible guess
-        # (maybe ZYX dims or YX dims, or some byte size limit)
-        chunk_dims = (
-            1,
-            1,
-            image_data.shape[2],
-            image_data.shape[3],
-            image_data.shape[4],
-        )
         # TODO image name must be unique within this root group
         group = self.root_group.create_group(image_name, overwrite=True)
         write_image(
             image_data,
             group,
-            chunks=chunk_dims,
             scaler=scaler,
             omero=ome_json,
-            axes=[
-                {"name": "t", "type": "time", "unit": "millisecond"},
-                {"name": "c", "type": "channel"},
-                {"name": "z", "type": "space", "unit": "micrometer"},
-                {"name": "y", "type": "space", "unit": "micrometer"},
-                {"name": "x", "type": "space", "unit": "micrometer"},
-            ],
+            axes=axes_5d,
             # For each resolution, we have a List of transformation Dicts (not
             # validated). Each list of dicts are added to each datasets in order.
             coordinate_transformations=transforms,
@@ -288,7 +294,5 @@ class OmeZarrWriter:
             # match the number of datasets in a multiresolution pyramid. One can
             # provide different chunk size for each level of a pyramid using this
             # option.
-            storage_options=[],
+            storage_options=chunk_dims,
         )
-        # print(os.listdir(mypath))
-        # print(os.listdir(mypath / "image0"))

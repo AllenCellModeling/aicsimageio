@@ -152,23 +152,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "timeout": 60.0,
@@ -184,23 +187,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "timeout": 60.0,
@@ -216,23 +222,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "timeout": 60.0,
@@ -250,23 +259,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "repeat": 0,
@@ -288,23 +300,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "repeat": 0,
@@ -326,23 +341,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "repeat": 0,
@@ -364,23 +382,26 @@
         ],
         "params": [
             [
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/OverViewScan.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.png'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_2_z_1.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/RGB-8bit.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_3_t_1_c_3_z_5.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.bmp'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk.ome.tiff'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variable_scene_shape_first_scene_pyramid.czi'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/tiled.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/merged-tiles.lif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_4_c_2_z_1.lif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
                 "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe.ome.tiff'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/S=2_4x2_T=2=Z=3_CH=2.czi'",
-                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/s_1_t_1_c_1_z_1.czi'"
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/example.jpg'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos001_000.ome.tif'"
             ]
         ],
         "repeat": 0,
@@ -1018,6 +1039,156 @@
         "type": "time",
         "unit": "seconds",
         "version": "e14faaa38ddc7e183dc587dc9673f65e1c74b9b93abfa78ccbce115d14869ef0",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_cached_array": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_cached_array(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for the whole image container once the\n        current scene is read into memory.\n    \n        Serves as a comparison against the delayed construct and as a sanity check.\n        Estimate: `r.data.size * r.data.itemsize` + some metadata and object overhead.\n        \"\"\"\n        r = self.ImageContainer(img_path)\n        r.data\n        return r\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_cached_array",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "41118f4f5f8a203951ac57fe0855ccdac63dd57794bf020eb75182a05b90cdac"
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_delayed_array": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_delayed_array(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for the image container once the\n        delayed dask array is constructed.\n    \n        Serves as a comparison against the init.\n        Metadata should account for most of the memory difference.\n        \"\"\"\n        r = self.ImageContainer(img_path)\n        r.dask_data\n        return r\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_delayed_array",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "bb71e33fa24aec352baf5d2a8ae0acebe591470e463048a351c3470c1cbc52aa"
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_init": {
+        "code": "class _ImageContainerMemorySuite:\n    def peakmem_init(self, img_path):\n        \"\"\"\n        Benchmark how much memory is used for just the initialized image container.\n        \"\"\"\n        return self.ImageContainer(img_path)\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.peakmem_init",
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "timeout": 60.0,
+        "type": "peakmemory",
+        "unit": "bytes",
+        "version": "49afbb6ef291d6aff5b1f51ccc90d7c566c4384c5a12eeeb623b1ab6d0a35493"
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.time_delayed_array_construct": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_delayed_array_construct(self, img_path, chunk_dims=None):\n        \"\"\"\n        Benchmark how long it takes to construct the delayed dask array for a file.\n        \"\"\"\n        if chunk_dims is None:\n            chunk_dims = DEFAULT_CHUNK_DIMS\n    \n        self.ImageContainer(img_path, chunk_dims=chunk_dims).dask_data\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.time_delayed_array_construct",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "47209d0070bf30825a16528ba2651b0a448595dd80940948d764bbd86e790452",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.time_init": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_init(self, img_path, chunk_dims=None):\n        \"\"\"\n        Benchmark how long it takes to validate a file and finish general setup.\n        \"\"\"\n        if chunk_dims is None:\n            chunk_dims = DEFAULT_CHUNK_DIMS\n    \n        self.ImageContainer(img_path, chunk_dims=chunk_dims)\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.time_init",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "67d0a38b3b3d157db283a805a0d52fe8b02394105b72e764e2287a4ebbfde6bb",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.time_random_many_chunk_read": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_random_many_chunk_read(self, img_path, chunk_dims=None):\n        \"\"\"\n        Open a file, get many chunks out of the file at once.\n    \n        I.E. \"Pull the DNA and Nucleus channel z-stacks, for the middle 50% timepoints\".\n        \"\"\"\n        if chunk_dims is None:\n            chunk_dims = DEFAULT_CHUNK_DIMS\n    \n        r = self.ImageContainer(img_path, chunk_dims=chunk_dims)\n    \n        random_index_selections = {}\n        for dim, size in zip(r.dims.order, r.dims.shape):\n            if dim not in self.DEFAULT_CHUNK_DIMS:\n                a = random.randint(0, size - 1)\n                b = random.randint(0, size - 1)\n                lower = min(a, b)\n                upper = max(a, b)\n                random_index_selections[dim] = slice(lower, upper, 1)\n    \n        r.get_image_dask_data(r.dims.order, **random_index_selections).compute()\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.time_random_many_chunk_read",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "54610dad5b4a24c9ecc55d0f5db7ce9a11e4cdbc0b0e6cfcebd08483f1028961",
+        "warmup_time": -1
+    },
+    "benchmark_image_containers.OmeTiledTiffReaderSuite.time_random_single_chunk_read": {
+        "code": "class _ImageContainerTimeSuite:\n    def time_random_single_chunk_read(self, img_path, chunk_dims=None):\n        \"\"\"\n        Benchmark how long it takes to read a single chunk out of a file.\n    \n        I.E. \"Pull just the Brightfield channel z-stack.\n        \"\"\"\n        if chunk_dims is None:\n            chunk_dims = DEFAULT_CHUNK_DIMS\n    \n        r = self.ImageContainer(img_path, chunk_dims=chunk_dims)\n    \n        random_index_selections = {}\n        for dim, size in zip(r.dims.order, r.dims.shape):\n            if dim not in self.DEFAULT_CHUNK_DIMS:\n                random_index_selections[dim] = random.randint(0, size - 1)\n    \n        valid_dims_to_return = \"\".join(\n            [d for d in r.dims.order if d in self.DEFAULT_CHUNK_DIMS]\n        )\n        r.get_image_dask_data(valid_dims_to_return, **random_index_selections).compute()\n\nclass OmeTiledTiffReaderSuite:\n    def setup(self, img_path):\n        random.seed(42)\n        self.ImageContainer = readers.bfio_reader.OmeTiledTiffReader",
+        "min_run_count": 2,
+        "name": "benchmark_image_containers.OmeTiledTiffReaderSuite.time_random_single_chunk_read",
+        "number": 0,
+        "param_names": [
+            "param1"
+        ],
+        "params": [
+            [
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/actk_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/pre-variance-cfe_ome_tiff_tiles.ome.tif'",
+                "'/home/runner/work/aicsimageio/aicsimageio/aicsimageio/tests/resources/variance-cfe_ome_tiff_tiles.ome.tif'"
+            ]
+        ],
+        "repeat": 0,
+        "rounds": 2,
+        "sample_time": 0.01,
+        "timeout": 60.0,
+        "type": "time",
+        "unit": "seconds",
+        "version": "c1adfae7ca5dd9a24297ab55ff70c1304fa33e1d037b3c969baf4d58c6767468",
         "warmup_time": -1
     },
     "benchmark_image_containers.TiffReaderSuite.peakmem_cached_array": {

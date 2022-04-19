@@ -73,7 +73,7 @@ dev_requirements = [
     *setup_requirements,
     *test_requirements,
     "asv>=0.4.2",
-    "black>=19.10b0",
+    "black>=22.3.0",
     "bump2version>=1.0.1",
     "coverage>=5.1",
     "flake8>=3.8.3",

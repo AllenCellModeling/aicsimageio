@@ -24,7 +24,7 @@ from .writer import Writer
 # the libtiff writer was unable to handle a 2GB numpy array.
 # It would be great if we better understood exactly what this threshold is and how to
 # calculate it but for now this is a stopgap working value
-BIGTIFF_BYTE_LIMIT = 2 ** 21
+BIGTIFF_BYTE_LIMIT = 2**21
 
 
 class OmeTiffWriter(Writer):

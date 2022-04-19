@@ -219,10 +219,14 @@ class OmeZarrWriter:
         # TODO parameterize or construct a sensible guess
         # (maybe ZYX dims or YX dims, or some byte size limit)
         # TODO precompute sizes for downsampled also.
+        plane_size = image_data.shape[3] * image_data.shape[4] * image_data.itemsize
+        target_chunk_size = 16 * (1024 * 1024)  # 16 MB
+        nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
+        nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
         chunk_dims = [dict(chunks=(
             1,
             1,
-            1,
+            nplanes_per_chunk,
             image_data.shape[3],
             image_data.shape[4],
         ))]
@@ -254,7 +258,10 @@ class OmeZarrWriter:
                 )
                 lasty = int(math.ceil(lasty / scaler.downscale))
                 lastx = int(math.ceil(lastx / scaler.downscale))
-                chunk_dims.append(dict(chunks=(1, 1, 1, lasty, lastx)))
+                plane_size = lasty * lastx * image_data.itemsize
+                nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
+                nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
+                chunk_dims.append(dict(chunks=(1, 1, nplanes_per_chunk, lasty, lastx)))
         else:
             scaler = None
 

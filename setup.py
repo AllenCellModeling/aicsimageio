@@ -49,6 +49,7 @@ dev_requirements = [
     "pytest-runner>=4.4",
     "quilt3>=3.1.12",
     "Sphinx>=2.0.0b1,<3",
+    "Jinja2==3.0.3",  # Fix from sphinx changes
     "sphinx_rtd_theme>=0.1.2",
     "tox>=3.5.2",
     "twine>=1.13.0",

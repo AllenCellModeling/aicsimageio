@@ -103,7 +103,7 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.2",
     "wrapt>=1.12",
-    "tifffile>=2022.4.22",
+    "tifffile>=2022.4.26",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",

@@ -17,7 +17,7 @@ from ome_types import OME
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
-from ..utils.cached_property import cached_property
+from functools import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 

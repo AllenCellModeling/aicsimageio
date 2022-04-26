@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from functools import lru_cache
+from functools import cached_property, lru_cache
 from pathlib import Path
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
@@ -17,7 +17,6 @@ from ome_types import OME
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
-from functools import cached_property
 from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 

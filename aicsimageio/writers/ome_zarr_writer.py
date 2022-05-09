@@ -274,7 +274,8 @@ class OmeZarrWriter:
             # might be better if user supplies the min/max?
             channel_minmax=[
                 (0.0, 1.0)
-                # (numpy.min(image_data[:, i, :, :, :]), numpy.max(image_data[:, i, :, :, :]))
+                # (numpy.min(image_data[:, i, :, :, :]),
+                #  numpy.max(image_data[:, i, :, :, :]))
                 for i in range(image_data.shape[1])
             ],
         )
@@ -289,10 +290,9 @@ class OmeZarrWriter:
         # TODO image name must be unique within this root group
         group = self.root_group.create_group(image_name, overwrite=True)
         write_image(
-            image_data,
-            group,
+            image=image_data,
+            group=group,
             scaler=scaler,
-            omero=ome_json,
             axes=axes_5d,
             # For each resolution, we have a List of transformation Dicts (not
             # validated). Each list of dicts are added to each datasets in order.
@@ -302,4 +302,5 @@ class OmeZarrWriter:
             # provide different chunk size for each level of a pyramid using this
             # option.
             storage_options=chunk_dims,
+            metadata={"omero": ome_json},
         )

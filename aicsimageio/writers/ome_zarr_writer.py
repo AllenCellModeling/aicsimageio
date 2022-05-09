@@ -289,6 +289,7 @@ class OmeZarrWriter:
 
         # TODO image name must be unique within this root group
         group = self.root_group.create_group(image_name, overwrite=True)
+        group.attrs["omero"] = ome_json
         write_image(
             image=image_data,
             group=group,
@@ -302,5 +303,4 @@ class OmeZarrWriter:
             # provide different chunk size for each level of a pyramid using this
             # option.
             storage_options=chunk_dims,
-            metadata={"omero": ome_json},
         )

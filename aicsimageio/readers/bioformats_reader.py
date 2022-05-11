@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import warnings
 from functools import lru_cache
 from pathlib import Path
 from threading import Lock
@@ -328,8 +329,8 @@ class BioFile:
             else:
                 self.tile_size = tile_size
 
-    def set_scene(self, series: int = 0) -> None:
-        self._r.setSeries(series)
+    def set_scene(self, scene_id: Union[str, int] = 0) -> None:
+        self._r.setSeries(scene_id)
         self._core_meta = CoreMeta(
             (
                 self._r.getSizeT(),
@@ -346,6 +347,16 @@ class BioFile:
             self._r.getDimensionOrder(),
             self._r.getResolutionCount(),
         )
+
+    def set_series(self, series: int = 0) -> None:
+        warnings.warn(
+            (
+                "BioformatsReader.set_series has been renamed to set_scene to "
+                "maintain a consistant API. set_series will be removed in 4.10."
+            ),
+            DeprecationWarning,
+        )
+        self.set_scene(scene_id=series)
 
     @property
     def core_meta(self) -> CoreMeta:

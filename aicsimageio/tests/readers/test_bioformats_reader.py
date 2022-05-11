@@ -411,7 +411,7 @@ def test_biofile_scene_change() -> None:
     uri = get_resource_full_path("ND2_dims_p4z5t3c2y32x32.nd2", LOCAL)
     f = BioFile(uri)
     assert isinstance(f.to_dask().compute(), np.ndarray)
-    f.set_series(1)
+    f.set_scene(1)
     assert isinstance(f.to_dask().compute(), np.ndarray)
     f.close()
 

@@ -316,7 +316,7 @@ class BioFile:
 
         self.open()
         self._lock = Lock()
-        self.set_series(series)
+        self.set_scene(series)
 
         self.dask_tiles = dask_tiles
         if self.dask_tiles:
@@ -328,7 +328,7 @@ class BioFile:
             else:
                 self.tile_size = tile_size
 
-    def set_series(self, series: int = 0) -> None:
+    def set_scene(self, series: int = 0) -> None:
         self._r.setSeries(series)
         self._core_meta = CoreMeta(
             (

@@ -8,9 +8,9 @@ import pytest
 
 from aicsimageio import exceptions
 from aicsimageio.readers.default_reader import DefaultReader
-from aicsimageio.writers.extra_writers.two_d_writer import TwoDWriter
+from aicsimageio.writers.two_d_writer import TwoDWriter
 
-from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
+from ...conftest import LOCAL, array_constructor, get_resource_write_full_path
 
 
 @array_constructor

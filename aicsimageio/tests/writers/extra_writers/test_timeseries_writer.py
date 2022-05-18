@@ -8,9 +8,9 @@ import pytest
 
 from aicsimageio import exceptions
 from aicsimageio.readers.default_reader import DefaultReader
-from aicsimageio.writers.extra_writers.timeseries_writer import TimeseriesWriter
+from aicsimageio.writers.timeseries_writer import TimeseriesWriter
 
-from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
+from ...conftest import LOCAL, array_constructor, get_resource_write_full_path
 
 
 @array_constructor

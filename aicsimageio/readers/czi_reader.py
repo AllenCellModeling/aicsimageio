@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import warnings
 import xml.etree.ElementTree as ET
 from copy import copy
 from pathlib import Path
@@ -97,7 +96,6 @@ class CziReader(Reader):
         self,
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
-        chunk_by_dims: Optional[Union[str, List[str]]] = None,
         include_subblock_metadata: bool = False,
     ):
         # Expand details of provided image
@@ -109,15 +107,6 @@ class CziReader(Reader):
                 f"Cannot read CZIs from non-local file system. "
                 f"Received URI: {self._path}, which points to {type(self._fs)}."
             )
-
-        # Handle deprecated parameter
-        if chunk_by_dims is not None:
-            warnings.warn(
-                "CziReader parameter 'chunk_by_dims' has been renamed to 'chunk_dims'. "
-                "'chunk_by_dims' will be removed in aicsimageio>=4.1.",
-                DeprecationWarning,
-            )
-            chunk_dims = chunk_by_dims
 
         # Store params
         if isinstance(chunk_dims, str):

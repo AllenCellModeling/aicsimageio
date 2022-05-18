@@ -3,11 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
+from resource_backed_dask_array import resource_backed_dask_array
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
 from .reader import Reader
-from resource_backed_dask_array import resource_backed_dask_array
 
 if TYPE_CHECKING:
     import xarray as xr

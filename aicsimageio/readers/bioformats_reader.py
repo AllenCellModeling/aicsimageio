@@ -13,14 +13,14 @@ import numpy as np
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
+from resource_backed_dask_array import (
+    ResourceBackedDaskArray,
+    resource_backed_dask_array,
+)
 
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
-from resource_backed_dask_array import (
-    resource_backed_dask_array,
-    ResourceBackedDaskArray,
-)
 from .reader import Reader
 
 if TYPE_CHECKING:

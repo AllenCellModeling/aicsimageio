@@ -851,3 +851,20 @@ def test_no_scene_prop_access(
     # Construct image and check no scene call with property access
     img = AICSImage(uri)
     assert img.shape == expected_shape
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "actk.ome.tiff",
+    ],
+)
+def test_ome_metadata(filename: str) -> None:
+    # Get full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init image
+    img = AICSImage(uri)
+
+    # Test the transform
+    assert isinstance(img.ome_metadata, OME)

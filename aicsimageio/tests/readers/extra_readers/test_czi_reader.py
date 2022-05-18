@@ -8,6 +8,7 @@ from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest
+from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import ArrayLikeReader
@@ -661,3 +662,21 @@ def test_mosaic_passthrough(
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "s_1_t_1_c_1_z_1.czi",
+        "RGB-8bit.czi",
+    ],
+)
+def test_ome_metadata(filename: str) -> None:
+    # Get full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init image
+    img = AICSImage(uri)
+
+    # Test the transform
+    assert isinstance(img.ome_metadata, OME)

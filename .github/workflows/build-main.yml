@@ -19,10 +19,8 @@ jobs:
       matrix:
         python-version: [3.8, 3.9]
         os: [
-          ubuntu-18.04,
           ubuntu-20.04,
           windows-latest,
-          macOS-10.15,
           macos-11,
         ]
     steps:
@@ -65,10 +63,8 @@ jobs:
       matrix:
         python-version: [3.8, 3.9]
         os: [
-          ubuntu-18.04,
           ubuntu-20.04,
           windows-latest,
-          macOS-10.15,
           macos-11,
         ]
         tox-env: [

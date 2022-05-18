@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import numpy as np
 import pytest
-from pathlib import Path
-from tempfile import TemporaryDirectory
-import time
+from distributed import Client, LocalCluster
 
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import TiffReader
 from aicsimageio.readers.reader import Reader
-from distributed import LocalCluster, Client
 
-from ..conftest import LOCAL, get_resource_full_path, host, REMOTE
+from ..conftest import LOCAL, REMOTE, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,

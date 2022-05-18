@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 import xml.etree.ElementTree as ET
-from typing import Any, Dict, List, Optional, Tuple, Union
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import time
-
-from distributed import LocalCluster, Client
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest
+from distributed import Client, LocalCluster
 from readlif.reader import LifFile
 
 from aicsimageio import AICSImage, dimensions, exceptions

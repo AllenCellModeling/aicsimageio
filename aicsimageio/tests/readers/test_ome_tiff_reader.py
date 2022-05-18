@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import numpy as np
 import pytest
+from distributed import Client, LocalCluster
 from ome_types import OME
-from pathlib import Path
-from tempfile import TemporaryDirectory
-from distributed import LocalCluster, Client
-import time
 
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import OmeTiffReader

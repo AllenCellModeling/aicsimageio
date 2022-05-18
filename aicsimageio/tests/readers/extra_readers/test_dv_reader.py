@@ -10,7 +10,7 @@ from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import DVReader
 from aicsimageio.tests.image_container_test_utils import run_image_file_checks
 
-from ...conftest import get_resource_full_path, host, LOCAL
+from ...conftest import LOCAL, get_resource_full_path, host
 
 
 @host

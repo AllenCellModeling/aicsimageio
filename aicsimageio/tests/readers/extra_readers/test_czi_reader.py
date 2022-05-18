@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import xml.etree.ElementTree as ET
-from typing import Any, List, Optional, Tuple, Union
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Any, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest

@@ -6,15 +6,15 @@ from typing import Any
 import dask.array as da
 from imageio import get_writer
 
-from .. import types
-from ..dimensions import DimensionNames
-from ..exceptions import InvalidDimensionOrderingError, UnexpectedShapeError
-from ..transforms import reshape_data
-from ..utils import io_utils
-from .writer import Writer
+from ... import types
+from ...dimensions import DimensionNames
+from ...exceptions import InvalidDimensionOrderingError, UnexpectedShapeError
+from ...transforms import reshape_data
+from ...utils import io_utils
+from ..writer import Writer
 
 try:
-    from ..readers.default_reader import DefaultReader
+    from ...readers.default_reader import DefaultReader
 
 except ImportError:
     raise ImportError(

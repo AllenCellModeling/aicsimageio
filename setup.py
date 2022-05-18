@@ -35,7 +35,7 @@ format_libs: Dict[str, List[str]] = {
         "Pillow>=8.2.0,!=8.3.0,<9",
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
-    "dv": ["mrc>=0.2.0", "resource-backed-dask-array>=0.1.0"],
+    "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
     # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
@@ -104,6 +104,7 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.2",
     "wrapt>=1.12",
+    "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types

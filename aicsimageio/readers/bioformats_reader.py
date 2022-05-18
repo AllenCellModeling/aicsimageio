@@ -17,7 +17,10 @@ from ome_types import OME
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
-from ..utils.dask_proxy import DaskArrayProxy
+from resource_backed_dask_array import (
+    resource_backed_dask_array,
+    ResourceBackedDaskArray,
+)
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -375,21 +378,21 @@ class BioFile:
         """
         return np.asarray(self.to_dask(series))
 
-    def to_dask(self, series: Optional[int] = None) -> DaskArrayProxy:
+    def to_dask(self, series: Optional[int] = None) -> ResourceBackedDaskArray:
         """Create dask array for the specified or current series.
 
         Note: the order of the returned array will *always* be `TCZYX[r]`,
         where `[r]` refers to an optional RGB dimension with size 3 or 4.
         If the image is RGB it will have `ndim==6`, otherwise `ndim` will be 5.
 
-        The returned object is a `DaskArrayProxy`, which is a wrapper on a dask array
-        that ensures the file is open when actually reading (computing) a chunk.  It
-        has all the methods and behavior of a dask array.
-        see :class:`aicsimageio.utils.dask_proxy.DaskArrayProxy`.
+        The returned object is a `ResourceBackedDaskArray`, which is a wrapper on
+        a dask array that ensures the file is open when actually reading (computing)
+        a chunk.  It has all the methods and behavior of a dask array.
+        See: https://github.com/tlambert03/resource-backed-dask-array
 
         Returns
         -------
-        DaskArrayProxy
+        ResourceBackedDaskArray
         """
         if series is not None:
             self._r.setSeries(series)
@@ -408,7 +411,7 @@ class BioFile:
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
-        return DaskArrayProxy(arr, self)
+        return resource_backed_dask_array(arr, self)
 
     @property
     def closed(self) -> bool:

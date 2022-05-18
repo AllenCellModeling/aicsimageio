@@ -6,7 +6,6 @@ from fsspec.implementations.local import LocalFileSystem
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -16,6 +15,7 @@ if TYPE_CHECKING:
 
 try:
     from mrc import DVFile
+    from resource_backed_dask_array import resource_backed_dask_array
 except ImportError:
     raise ImportError(
         "The mrc package is required for this reader. "
@@ -71,7 +71,7 @@ class DVReader(Reader):
         with DVFile(self._path) as dv:
             xarr = dv.to_xarray(delayed=delayed, squeeze=False)
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, dv)
+                xarr.data = resource_backed_dask_array(xarr.data, dv)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
         return xarr
 

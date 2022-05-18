@@ -60,7 +60,7 @@ jobs:
         # Run tox using the version of Python in `PATH`
         run: tox -e py
       - name: Upload codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
 
   lint:
     runs-on: ubuntu-latest

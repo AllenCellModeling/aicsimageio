@@ -45,7 +45,7 @@ jobs:
         # Run tox using the version of Python in `PATH`, and don't include remote resources
         run: tox -e py -- -k "not REMOTE"
       - name: Upload codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2
 
   lint:
     runs-on: ubuntu-latest

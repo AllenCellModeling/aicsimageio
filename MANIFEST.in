@@ -1,5 +1,6 @@
 include LICENSE
 include README.md
+include aicsimageio/py.typed
 
 recursive-include tests *
 recursive-exclude * __pycache__

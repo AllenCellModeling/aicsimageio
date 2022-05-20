@@ -18,7 +18,7 @@ from ..utils import io_utils
 
 
 class OmeZarrWriter:
-    def __init__(self, uri: types.PathLike, s3: Optional[s3fs.S3FileSystem]):
+    def __init__(self, uri: types.PathLike):
         """
         Constructor.
 
@@ -39,11 +39,7 @@ class OmeZarrWriter:
         #     )
 
         # Save image to zarr store!
-        # mypath = pathlib.Path(uri)
-        if s3 is not None:
-            self.store = s3fs.S3Map(root=uri, s3=s3, check=True)
-        else:
-            self.store = parse_url(uri, mode="w").store
+        self.store = parse_url(uri, mode="w").store
         # print(store)
         self.root_group = zarr.group(store=self.store)
         # print(root)

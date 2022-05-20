@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import warnings
 from functools import cached_property, lru_cache
 from pathlib import Path
 from threading import Lock
@@ -177,7 +176,11 @@ class BioformatsReader(Reader):
         )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
-        with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
+        with BioFile(
+            self._path,
+            series=self.current_scene_index,
+            **self._bf_kwargs,  # type: ignore
+        ) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
@@ -319,7 +322,7 @@ class BioFile:
 
         self.open()
         self._lock = Lock()
-        self.set_scene(series)
+        self.set_series(series)
 
         self.dask_tiles = dask_tiles
         if self.dask_tiles:
@@ -331,8 +334,8 @@ class BioFile:
             else:
                 self.tile_size = tile_size
 
-    def set_scene(self, scene_id: Union[str, int] = 0) -> None:
-        self._r.setSeries(scene_id)
+    def set_series(self, series: int = 0) -> None:
+        self._r.setSeries(series)
         self._core_meta = CoreMeta(
             (
                 self._r.getSizeT(),
@@ -349,16 +352,6 @@ class BioFile:
             self._r.getDimensionOrder(),
             self._r.getResolutionCount(),
         )
-
-    def set_series(self, series: int = 0) -> None:
-        warnings.warn(
-            (
-                "BioformatsReader.set_series has been renamed to set_scene to "
-                "maintain a consistant API. set_series will be removed in 4.10."
-            ),
-            DeprecationWarning,
-        )
-        self.set_scene(scene_id=series)
 
     @property
     def core_meta(self) -> CoreMeta:

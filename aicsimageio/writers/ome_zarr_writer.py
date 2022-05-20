@@ -5,6 +5,8 @@ from typing import Dict, List, Optional, Tuple
 import math
 import zarr
 from fsspec.implementations.local import LocalFileSystem
+import s3fs
+
 from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
@@ -16,7 +18,7 @@ from ..utils import io_utils
 
 
 class OmeZarrWriter:
-    def __init__(self, uri: types.PathLike):
+    def __init__(self, uri: types.PathLike, s3: Optional[s3fs.S3FileSystem]):
         """
         Constructor.
 
@@ -30,15 +32,18 @@ class OmeZarrWriter:
         fs, path = io_utils.pathlike_to_fs(uri)
 
         # Catch non-local file system
-        if not isinstance(fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot write to non-local file system. "
-                f"Received URI: {uri}, which points to {type(fs)}."
-            )
+        # if not isinstance(fs, LocalFileSystem):
+        #     raise ValueError(
+        #         f"Cannot write to non-local file system. "
+        #         f"Received URI: {uri}, which points to {type(fs)}."
+        #     )
 
         # Save image to zarr store!
-        mypath = pathlib.Path(uri)
-        self.store = parse_url(mypath, mode="w").store
+        # mypath = pathlib.Path(uri)
+        if s3 is not None:
+            self.store = s3fs.S3Map(root=uri, s3=s3, check=True)
+        else:
+            self.store = parse_url(uri, mode="w").store
         # print(store)
         self.root_group = zarr.group(store=self.store)
         # print(root)

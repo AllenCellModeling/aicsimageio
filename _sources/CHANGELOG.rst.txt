@@ -1,6 +1,14 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- admin/ship-mypy-type-annotations-drop-py37-add-py310-manage-test-
+  dependencies-separate-for-each-tox-env  (`#397
+  <https://github.com/AllenCellModeling/aicsimageio/pull/397>`_)
+  [Jackson Maxfield Brown]
+
+
 v4.7.0 (2022-04-19)
 -------------------
 

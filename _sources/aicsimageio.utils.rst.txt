@@ -4,22 +4,6 @@ aicsimageio.utils package
 Submodules
 ----------
 
-aicsimageio.utils.cached\_property module
------------------------------------------
-
-.. automodule:: aicsimageio.utils.cached_property
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-aicsimageio.utils.dask\_proxy module
-------------------------------------
-
-.. automodule:: aicsimageio.utils.dask_proxy
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 aicsimageio.utils.io\_utils module
 ----------------------------------
 

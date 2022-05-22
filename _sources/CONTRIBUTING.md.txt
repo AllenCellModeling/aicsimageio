@@ -49,6 +49,18 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 
         make build-with-remote
 
+    If you want to test just core readers and writers (Tiff and OmeTiff) run core tests:
+
+        tox -e py
+
+    If you want to test your custom reader or writer, be sure to add a tox configuration
+    and the name of the custom tox env to the matrix on our GitHub Actions. Once added,
+    the testing pattern should follow:
+
+        tox -e lif
+        tox -e bfio
+        tox -e czi
+
 8.  (Optional) If you'd like to have linting checks run automatically prior to
     every `git commit`, then you can install a commit-hook that runs
     [pre-commit](https://pre-commit.com/), as follows:
@@ -65,13 +77,17 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 10. Submit a pull request through the GitHub website.
 
 ## Updating the Submodule
+
 If there are updates to the submodule repo that you would like to integrate into AICSImageIO, follow these steps:
+
 1. Create a new branch in this repo:
+
 ```
 git checkout -b {your_development_type}/short-description
 ```
 
 2. Pull in the changes from the submodule:
+
 ```
 git submodule update --remote --merge
 ```

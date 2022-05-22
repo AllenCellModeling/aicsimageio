@@ -179,10 +179,10 @@ def run_image_file_checks(
 def run_multi_scene_image_read_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,
-    first_scene_id: str,
+    first_scene_id: Union[str, int],
     first_scene_shape: Tuple[int, ...],
     first_scene_dtype: np.dtype,
-    second_scene_id: str,
+    second_scene_id: Union[str, int],
     second_scene_shape: Tuple[int, ...],
     second_scene_dtype: np.dtype,
     allow_same_scene_data: bool = True,
@@ -200,7 +200,10 @@ def run_multi_scene_image_read_checks(
     image_container.set_scene(first_scene_id)
 
     # Check basics
-    assert image_container.current_scene == first_scene_id
+    if isinstance(first_scene_id, str):
+        assert image_container.current_scene == first_scene_id
+    else:
+        assert image_container.current_scene_index == first_scene_id
     assert image_container.shape == first_scene_shape
     assert image_container.dtype == first_scene_dtype
 
@@ -221,7 +224,10 @@ def run_multi_scene_image_read_checks(
     assert image_container._dims is None
 
     # Check basics
-    assert image_container.current_scene == second_scene_id
+    if isinstance(second_scene_id, str):
+        assert image_container.current_scene == second_scene_id
+    else:
+        assert image_container.current_scene_index == second_scene_id
     assert image_container.shape == second_scene_shape
     assert image_container.dtype == second_scene_dtype
 

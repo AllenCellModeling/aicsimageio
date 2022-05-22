@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from functools import lru_cache
+from functools import cached_property, lru_cache
 from pathlib import Path
 from threading import Lock
 from typing import TYPE_CHECKING, Any, Dict, NamedTuple, Optional, Tuple, Union
@@ -13,12 +13,14 @@ import numpy as np
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
+from resource_backed_dask_array import (
+    ResourceBackedDaskArray,
+    resource_backed_dask_array,
+)
 
 from .. import constants, dimensions, exceptions
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
-from ..utils.cached_property import cached_property
-from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -376,21 +378,21 @@ class BioFile:
         """
         return np.asarray(self.to_dask(series))
 
-    def to_dask(self, series: Optional[int] = None) -> DaskArrayProxy:
+    def to_dask(self, series: Optional[int] = None) -> ResourceBackedDaskArray:
         """Create dask array for the specified or current series.
 
         Note: the order of the returned array will *always* be `TCZYX[r]`,
         where `[r]` refers to an optional RGB dimension with size 3 or 4.
         If the image is RGB it will have `ndim==6`, otherwise `ndim` will be 5.
 
-        The returned object is a `DaskArrayProxy`, which is a wrapper on a dask array
-        that ensures the file is open when actually reading (computing) a chunk.  It
-        has all the methods and behavior of a dask array.
-        see :class:`aicsimageio.utils.dask_proxy.DaskArrayProxy`.
+        The returned object is a `ResourceBackedDaskArray`, which is a wrapper on
+        a dask array that ensures the file is open when actually reading (computing)
+        a chunk.  It has all the methods and behavior of a dask array.
+        See: https://github.com/tlambert03/resource-backed-dask-array
 
         Returns
         -------
-        DaskArrayProxy
+        ResourceBackedDaskArray
         """
         if series is not None:
             self._r.setSeries(series)
@@ -409,7 +411,7 @@ class BioFile:
             chunks=chunks,
             dtype=self.core_meta.dtype,
         )
-        return DaskArrayProxy(arr, self)
+        return resource_backed_dask_array(arr, self)
 
     @property
     def closed(self) -> bool:

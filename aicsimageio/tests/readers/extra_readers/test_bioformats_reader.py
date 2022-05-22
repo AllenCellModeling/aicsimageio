@@ -1,20 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Tuple
+from typing import Any, List, Tuple, Union
 
 import numpy as np
 import pytest
 from ome_types import OME
 
-from aicsimageio import dimensions, exceptions
+from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers.bioformats_reader import BioFile, BioformatsReader
 from aicsimageio.tests.image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
 )
 
-from ..conftest import LOCAL, get_resource_full_path, host
+from ...conftest import LOCAL, get_resource_full_path, host
 
 
 @host
@@ -407,7 +407,7 @@ def test_multi_scene_bioformats_reader(
 
 
 def test_biofile_scene_change() -> None:
-    """Make sure that DaskArrayProxy doesn't close an opened file."""
+    """Make sure that ResourceBackedDaskArray doesn't close an opened file."""
     uri = get_resource_full_path("ND2_dims_p4z5t3c2y32x32.nd2", LOCAL)
     f = BioFile(uri)
     assert isinstance(f.to_dask().compute(), np.ndarray)
@@ -460,3 +460,79 @@ def test_bioformats_dask_tiling_read(filename: str) -> None:
 
     np.testing.assert_array_equal(arr_tiled, arr_fullplane)
     np.testing.assert_array_equal(arr_tiled_set, arr_fullplane)
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "expected_scenes, "
+    "expected_shape, "
+    "expected_dtype, "
+    "expected_dims_order, "
+    "expected_channel_names, "
+    "expected_physical_pixel_sizes, "
+    "expected_metadata_type",
+    [
+        (
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            "Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",
+            ("Olympus-OIR_etienne_amy_slice_z_stack_0001.oir",),
+            (32, 1, 1, 512, 512),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["CH3"],
+            (1.0, 1.242961138804478, 1.242961138804478),
+            OME,
+        ),
+        (
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims",
+            "Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",
+            ("Imaris-IMS_davemason_Convallaria_3C_1T_confocal.ims Resolution Level 1",),
+            (1, 3, 1, 1024, 1024),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (0.001, 1.2059374999999999, 1.2059570312500014),
+            OME,
+        ),
+        (
+            "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
+            "Series 0",
+            ("Series 0",),
+            (1, 1, 16, 256, 256),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (None, None, None),
+            OME,
+        ),
+    ],
+)
+def test_aicsimage(
+    filename: str,
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dtype: np.dtype,
+    expected_dims_order: str,
+    expected_channel_names: List[str],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_image_file_checks(
+        ImageContainer=AICSImage,
+        image=uri,
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=set_scene,
+        expected_shape=expected_shape,
+        expected_dtype=expected_dtype,
+        expected_dims_order=expected_dims_order,
+        expected_channel_names=expected_channel_names,
+        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=expected_metadata_type,
+    )

@@ -51,7 +51,7 @@ def make_fake_data_2d(path: Path, as_mm: bool = False) -> xr.DataArray:
             name = f"img_channel{c}_position{s}_time{t}_z{z}.tif"
         else:
             name = f"S{s}_T{t}_C{c}_Z{z}.tif"
-        tiff.imsave(
+        tiff.imwrite(
             str(path / "2d_images" / name),
             im,
             dtype=np.uint16,
@@ -90,7 +90,7 @@ def make_fake_data_3d(path: Path) -> xr.DataArray:
     shape_for_3d = (*DATA_SHAPE[:3], int(DATA_SHAPE[3] / 2))
     for s, t, c, z in product(*(range(x) for x in shape_for_3d)):
         im = data[s, t, c, 2 * z : 2 * (z + 1)]
-        tiff.imsave(
+        tiff.imwrite(
             str(path / f"3d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
             im,
             dtype=np.uint16,
@@ -149,7 +149,7 @@ def make_fake_data_4d(path: Path) -> xr.DataArray:
             c,
             per_file_z * z : per_file_z * (z + 1),
         ]
-        tiff.imsave(
+        tiff.imwrite(
             str(path / f"4d_images/S{s}_T{t}_C{c}_Z{z}.tif"),
             im,
             dtype=np.uint16,

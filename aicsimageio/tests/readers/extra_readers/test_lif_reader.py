@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import time
 import xml.etree.ElementTree as ET
-from typing import List, Optional, Tuple
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pytest
+from distributed import Client, LocalCluster
 from readlif.reader import LifFile
 
-from aicsimageio import dimensions, exceptions
+from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers.lif_reader import LifReader
 
-from ..conftest import LOCAL, get_resource_full_path, host
-from ..image_container_test_utils import (
+from ...conftest import LOCAL, get_resource_full_path, host
+from ...image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
 )
@@ -345,3 +349,245 @@ def test_lif_reader_mosaic_coords(
         reader.mosaic_xarray_dask_data.coords[dimensions.DimensionNames.SpatialX].data,
         expected_mosaic_x_coords,
     )
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "set_scene, "
+    "expected_scenes, "
+    "expected_shape, "
+    "expected_dtype, "
+    "expected_dims_order, "
+    "expected_channel_names, "
+    "expected_physical_pixel_sizes, "
+    "expected_metadata_type",
+    [
+        (
+            "s_1_t_4_c_2_z_1.lif",
+            "b2_001_Crop001_Resize001",
+            ("b2_001_Crop001_Resize001",),
+            (4, 2, 1, 614, 614),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Gray--TL-PH--EMP_BF", "Green--FLUO--GFP"],
+            (None, 0.33914910277324634, 0.33914910277324634),
+            ET.Element,
+        ),
+        (
+            "tiled.lif",
+            "TileScan_002",
+            ("TileScan_002",),
+            (1, 4, 1, 5622, 7666),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Gray", "Red", "Green", "Cyan"],
+            (None, 0.20061311154598827, 0.20061311154598827),
+            ET.Element,
+        ),
+    ],
+)
+def test_aicsimage(
+    filename: str,
+    set_scene: str,
+    expected_scenes: Tuple[str, ...],
+    expected_shape: Tuple[int, ...],
+    expected_dtype: np.dtype,
+    expected_dims_order: str,
+    expected_channel_names: List[str],
+    expected_physical_pixel_sizes: Tuple[float, float, float],
+    expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_image_file_checks(
+        ImageContainer=AICSImage,
+        image=uri,
+        set_scene=set_scene,
+        expected_scenes=expected_scenes,
+        expected_current_scene=set_scene,
+        expected_shape=expected_shape,
+        expected_dtype=expected_dtype,
+        expected_dims_order=expected_dims_order,
+        expected_channel_names=expected_channel_names,
+        expected_physical_pixel_sizes=expected_physical_pixel_sizes,
+        expected_metadata_type=expected_metadata_type,
+    )
+
+
+@pytest.mark.parametrize(
+    "filename, select_scenes",
+    [
+        ("s_1_t_4_c_2_z_1.lif", None),
+        ("tiled.lif", None),
+    ],
+)
+def test_roundtrip_save_all_scenes(
+    filename: str, select_scenes: Optional[List[str]]
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Read initial
+    original = AICSImage(uri)
+
+    # Save to temp and compare
+    with TemporaryDirectory() as tmpdir:
+        save_path = Path(tmpdir) / f"converted-{filename}.ome.tiff"
+        original.save(save_path, select_scenes=select_scenes)
+
+        # Re-read
+        result = AICSImage(save_path)
+
+        # Compare all scenes
+        # They may not have the same scene ids as some readers use scene names as the
+        # id, see LifReader for example
+        if select_scenes is None:
+            select_original_scenes = list(original.scenes)
+        else:
+            select_original_scenes = select_scenes
+
+        assert len(select_original_scenes) == len(result.scenes)
+        for original_scene_id, result_scene_id in zip(
+            select_original_scenes, result.scenes
+        ):
+            # Compare
+            original.set_scene(original_scene_id)
+            result.set_scene(result_scene_id)
+
+            np.testing.assert_array_equal(original.data, result.data)
+            assert original.dims.order == result.dims.order
+            assert original.channel_names == result.channel_names
+
+
+@pytest.mark.parametrize(
+    "filename, "
+    "reconstruct_mosaic, "
+    "set_scene, "
+    "expected_shape, "
+    "expected_mosaic_tile_dims, "
+    "specific_tile_index",
+    [
+        (
+            "tiled.lif",
+            True,
+            "TileScan_002",
+            (1, 4, 1, 5622, 7666),
+            (512, 512),
+            0,
+        ),
+        (
+            "tiled.lif",
+            False,
+            "TileScan_002",
+            (165, 1, 4, 1, 512, 512),
+            (512, 512),
+            0,
+        ),
+        pytest.param(
+            "tiled.lif",
+            False,
+            "TileScan_002",
+            (165, 1, 4, 1, 512, 512),
+            (512, 512),
+            999,
+            marks=pytest.mark.raises(exception=IndexError),
+        ),
+    ],
+)
+def test_mosaic_passthrough(
+    filename: str,
+    reconstruct_mosaic: bool,
+    set_scene: str,
+    expected_shape: Tuple[int, ...],
+    expected_mosaic_tile_dims: Tuple[int, int],
+    specific_tile_index: int,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri, reconstruct_mosaic=reconstruct_mosaic)
+    img.set_scene(set_scene)
+
+    # Assert basics
+    assert img.shape == expected_shape
+    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]  # type: ignore
+    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]  # type: ignore
+
+    # Ensure that regardless of stitched or not, we can get tile position
+    img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename, set_scene, get_dims, get_specific_dims, expected_shape",
+    [
+        (
+            "s_1_t_4_c_2_z_1.lif",
+            "b2_001_Crop001_Resize001",
+            "TYX",
+            {},
+            (4, 614, 614),
+        ),
+        # Check mosaic chunk handling
+        (
+            "tiled.lif",
+            "TileScan_002",
+            "CYX",
+            {"Y": slice(0, 2000), "X": slice(0, 2000)},
+            (4, 2000, 2000),
+        ),
+    ],
+)
+@pytest.mark.parametrize("chunk_dims", ["YX", "ZYX"])
+@pytest.mark.parametrize("processes", [True, False])
+def test_parallel_read(
+    filename: str,
+    set_scene: str,
+    chunk_dims: str,
+    processes: bool,
+    get_dims: str,
+    get_specific_dims: Dict[str, Union[int, slice, range, Tuple[int, ...], List[int]]],
+    expected_shape: Tuple[int, ...],
+) -> None:
+    """
+    This test ensures that our produced dask array can be read in parallel.
+    """
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init image
+    img = AICSImage(uri, chunk_dims=chunk_dims)
+    img.set_scene(set_scene)
+
+    # Init cluster
+    cluster = LocalCluster(processes=processes)
+    client = Client(cluster)
+
+    # Select data
+    out = img.get_image_dask_data(get_dims, **get_specific_dims).compute()
+    assert out.shape == expected_shape
+
+    # Shutdown and then safety measure timeout
+    cluster.close()
+    client.close()
+    time.sleep(5)
+
+
+@pytest.mark.parametrize(
+    "filename, expected_shape",
+    [
+        ("s_1_t_4_c_2_z_1.lif", (4, 2, 1, 614, 614)),
+    ],
+)
+def test_no_scene_prop_access(
+    filename: str,
+    expected_shape: Tuple[int, ...],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Construct image and check no scene call with property access
+    img = AICSImage(uri)
+    assert img.shape == expected_shape

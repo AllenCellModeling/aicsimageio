@@ -3,10 +3,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
+from resource_backed_dask_array import resource_backed_dask_array
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -71,7 +71,7 @@ class DVReader(Reader):
         with DVFile(self._path) as dv:
             xarr = dv.to_xarray(delayed=delayed, squeeze=False)
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, dv)
+                xarr.data = resource_backed_dask_array(xarr.data, dv)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
         return xarr
 

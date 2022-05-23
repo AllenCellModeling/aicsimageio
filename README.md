@@ -55,8 +55,10 @@ optionally installed using `[...]` syntax.
 -   For multiple additional supported formats: `pip install aicsimageio[base-imageio,nd2]`
 -   For all additional supported (and openly licensed) formats: `pip install aicsimageio[all]`
 -   Due to the GPL license, LIF support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio readlif>=0.6.4`
--   Due to the GPL license, Bio-Formats support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio bioformats_jar`
 -   Due to the GPL license, CZI support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio aicspylibczi>=3.0.5`
+-   Due to the GPL license, Bio-Formats support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio bioformats_jar`.
+  
+    **Important!!** Bio-Formats support also requires a `java` executable in the environment. The simplest method is to install `bioformats_jar` from conda: `conda install -c conda-forge bioformats_jar` (which will additionally bring `openjdk`).
 
 ## Documentation
 

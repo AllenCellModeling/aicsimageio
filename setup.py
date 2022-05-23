@@ -85,7 +85,7 @@ dev_requirements = [
     "wheel>=0.34.2",
     # reader deps
     *all_formats,
-    "bioformats_jar",  # to test bioformats
+    "bioformats_jar @ git+ssh://git@github.com/tlambert03/bioformats_jar.git#egg=bioformats_jar",  # to test bioformats
     "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
     "aicspylibczi>=3.0.5",  # to test czi

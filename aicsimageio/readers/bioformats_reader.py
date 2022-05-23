@@ -320,6 +320,7 @@ class BioFile:
                 mo.set(name, str(value))
             self._r.setMetadataOptions(mo)
 
+        self._current_scene_index = series
         self.open()
         self._lock = Lock()
         self.set_series(series)
@@ -352,6 +353,7 @@ class BioFile:
             self._r.getDimensionOrder(),
             self._r.getResolutionCount(),
         )
+        self._current_scene_index = series
 
     @property
     def core_meta(self) -> CoreMeta:
@@ -360,6 +362,7 @@ class BioFile:
     def open(self) -> None:
         """Open file."""
         self._r.setId(self._path)
+        self._r.setSeries(self._current_scene_index)
 
     def close(self) -> None:
         """Close file."""

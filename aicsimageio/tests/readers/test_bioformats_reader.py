@@ -16,6 +16,15 @@ from aicsimageio.tests.image_container_test_utils import (
 
 from ..conftest import LOCAL, get_resource_full_path, host
 
+try:
+    bfj = pytest.importorskip("bioformats_jar")
+    bf_version = tuple(int(x) for x in str(bfj.__version__).split(".")[:2])
+except Exception:
+    bf_version = (6, 7)
+
+# bioformats changed their DICOM scene labeling scheme at some point
+SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
+
 
 @host
 @pytest.mark.parametrize(
@@ -209,8 +218,8 @@ from ..conftest import LOCAL, get_resource_full_path, host
         ),
         (
             "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
-            "Series 0",
-            ("Series 0",),
+            SERIES_0,
+            (SERIES_0,),
             (1, 1, 16, 256, 256),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,

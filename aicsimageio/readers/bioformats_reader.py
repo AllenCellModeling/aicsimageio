@@ -266,7 +266,7 @@ class BioFile:
     dask_tiles: bool, optional
         Whether to chunk the bioformats dask array by tiles to easily read sub-regions
         with numpy-like array indexing
-        Defaults to false and iamges are read by entire planes
+        Defaults to false and images are read by entire planes
     tile_size: Optional[Tuple[int, int]]
         Tuple that sets the tile size of y and x axis, respectively
         By default, it will use optimal values computed by bioformats itself

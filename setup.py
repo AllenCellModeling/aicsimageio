@@ -36,7 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
-    "bfio": ["bfio>=2.3.0"],
+    "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
     # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
@@ -52,7 +52,6 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    *all_formats,
     "codecov>=2.1.4",
     "distributed>=2021.4.1",
     "docutils>=0.10,<0.16",
@@ -63,10 +62,6 @@ test_requirements = [
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
     "tox>=3.15.2",
-    "bioformats_jar",  # to test bioformats
-    "bfio>=2.3.0",
-    "readlif>=0.6.4",  # to test lif
-    "aicspylibczi>=3.0.5",  # to test czi
 ]
 
 dev_requirements = [
@@ -88,6 +83,12 @@ dev_requirements = [
     "sphinx_rtd_theme>=0.5.1",
     "twine>=3.1.1",
     "wheel>=0.34.2",
+    # reader deps
+    *all_formats,
+    "bioformats_jar",  # to test bioformats
+    "bfio>=2.3.0",
+    "readlif>=0.6.4",  # to test lif
+    "aicspylibczi>=3.0.5",  # to test czi
 ]
 
 benchmark_requirements = [
@@ -103,6 +104,7 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.2",
     "wrapt>=1.12",
+    "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
@@ -129,9 +131,9 @@ setup(
         "Intended Audience :: Education",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
@@ -155,7 +157,7 @@ setup(
             "*.benchmarks.*",
         ]
     ),
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,

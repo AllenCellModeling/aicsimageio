@@ -14,11 +14,12 @@ jobs:
           fetch-depth: 0
           ref: main
           submodules: true
+
+      # v3 Docs
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: 3.9
-
       - name: Checkout v3 Code
         uses: actions/checkout@v2
         with:
@@ -37,6 +38,11 @@ jobs:
         run: |
           rm -Rf .aicsimageio-v3/
 
+      # Latest Docs
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: '3.10'
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:

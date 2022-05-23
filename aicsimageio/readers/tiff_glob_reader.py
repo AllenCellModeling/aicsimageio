@@ -31,7 +31,6 @@ TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 
 class TiffGlobReader(Reader):
-
     r"""
     Wraps the tifffile imread API to provide the same aicsimageio Reader API but for
     multifile tiff datasets (and other tifffile supported) images.
@@ -243,12 +242,7 @@ class TiffGlobReader(Reader):
         if single_file_shape is None:
             with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
-                    if tiff.is_shaped:
-                        self._single_file_shape = tuple(
-                            tiff.shaped_metadata[0]["shape"]
-                        )
-                    elif len(tiff.series) == 1:
-                        self._single_file_shape = tiff.series[0].shape
+                    self._single_file_shape = tiff.series[0].shape
 
         else:
             self._single_file_shape = single_file_shape

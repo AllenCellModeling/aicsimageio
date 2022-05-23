@@ -10,7 +10,7 @@
         "in-dir={env_dir} python -mpip install {build_dir}[benchmark]"
     ],
     "show_commit_url": "http://github.com/AllenCellModeling/aicsimageio/commit/",
-    "pythons": ["3.9"],
+    "pythons": ["3.10"],
     "benchmark_dir": "benchmarks",
     "env_dir": ".asv/env",
     "results_dir": ".asv/results",

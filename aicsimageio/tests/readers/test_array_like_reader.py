@@ -1132,3 +1132,67 @@ def test_aicsimage_from_array(
             dict,
         ),
     )
+
+
+def make_arange_data() -> xr.DataArray:
+    dims = list("STCZYX")
+    shape = (3, 4, 5, 6, 7, 8)
+    data = np.arange(np.prod(shape), dtype="uint16").reshape(shape)
+    coords = {
+        "S": [f"Image:{i}" for i in range(shape[0])],
+        "C": ["bf", "dapi", "gfp", "yfp", "dsred"],
+    }
+    return xr.DataArray(data, dims=dims, coords=coords)
+
+
+def test_get_stack_defaults() -> None:
+    data = make_arange_data()
+    alr = ArrayLikeReader([scene for scene in data])
+
+    # numpy
+    stack = alr.get_stack()
+    assert np.allclose(stack, data)
+
+    # dask
+    dask_stack = alr.get_dask_stack()
+    assert np.allclose(dask_stack, data).compute()
+
+    # xarray dask
+    xarray_dask_stack = alr.get_xarray_dask_stack()
+    xr.testing.assert_allclose(xarray_dask_stack, data)
+
+    # xarray numpy
+    xarray_stack = alr.get_xarray_stack()
+    xr.testing.assert_allclose(xarray_stack, data)
+
+
+def test_get_stack_different_shape() -> None:
+    data = make_arange_data()
+    data_list = [scene for scene in data]
+    data_list[1] = data_list[1][:3, :4, :5, :6]
+    alr = ArrayLikeReader(data_list)
+
+    with pytest.raises(exceptions.UnexpectedShapeError):
+        alr.get_stack()
+
+    stack1 = alr.get_stack(drop_non_matching_scenes=True)
+    assert np.allclose(data.data[[0, 2]], stack1)
+
+    stack2 = alr.get_stack(select_scenes=(0, 2))
+    assert np.allclose(data.data[[0, 2]], stack2)
+
+
+def test_get_stack_different_dtype() -> None:
+    data = make_arange_data()
+    data_list = [scene for scene in data]
+    data_list[1] = data_list[1].astype("int64")
+    alr = ArrayLikeReader(data_list)
+
+    with pytest.raises(TypeError):
+        alr.get_stack()
+
+    stack1 = alr.get_stack(drop_non_matching_scenes=True)
+    assert np.allclose(data.data[[0, 2]], stack1)
+
+    stack2 = alr.get_stack(select_scenes=(0, 2))
+    assert np.allclose(data.data[[0, 2]], stack2)

@@ -179,12 +179,13 @@ def run_image_file_checks(
 def run_multi_scene_image_read_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,
-    first_scene_id: str,
+    first_scene_id: Union[str, int],
     first_scene_shape: Tuple[int, ...],
     first_scene_dtype: np.dtype,
-    second_scene_id: str,
+    second_scene_id: Union[str, int],
     second_scene_shape: Tuple[int, ...],
     second_scene_dtype: np.dtype,
+    allow_same_scene_data: bool = True,
 ) -> Union[AICSImage, Reader]:
     """
     A suite of tests to ensure that data is reset when switching scenes.
@@ -199,12 +200,17 @@ def run_multi_scene_image_read_checks(
     image_container.set_scene(first_scene_id)
 
     # Check basics
+    if isinstance(first_scene_id, str):
+        assert image_container.current_scene == first_scene_id
+    else:
+        assert image_container.current_scene_index == first_scene_id
     assert image_container.shape == first_scene_shape
     assert image_container.dtype == first_scene_dtype
 
     # Check that the shape and dtype are expected after reading in full
-    assert image_container.data.shape == first_scene_shape
-    assert image_container.data.dtype == first_scene_dtype
+    first_scene_data = image_container.data
+    assert first_scene_data.shape == first_scene_shape
+    assert first_scene_data.dtype == first_scene_dtype
 
     check_local_file_not_open(image_container)
     check_can_serialize_image_container(image_container)
@@ -218,12 +224,26 @@ def run_multi_scene_image_read_checks(
     assert image_container._dims is None
 
     # Check basics
+    if isinstance(second_scene_id, str):
+        assert image_container.current_scene == second_scene_id
+    else:
+        assert image_container.current_scene_index == second_scene_id
     assert image_container.shape == second_scene_shape
     assert image_container.dtype == second_scene_dtype
 
     # Check that the shape and dtype are expected after reading in full
-    assert image_container.data.shape == first_scene_shape
-    assert image_container.data.dtype == first_scene_dtype
+    second_scene_data = image_container.data
+    assert second_scene_data.shape == second_scene_shape
+    assert second_scene_data.dtype == second_scene_dtype
+
+    # Check that the first and second scene are not the same
+    if not allow_same_scene_data:
+        np.testing.assert_raises(
+            AssertionError,
+            np.testing.assert_array_equal,
+            first_scene_data,
+            second_scene_data,
+        )
 
     check_local_file_not_open(image_container)
     check_can_serialize_image_container(image_container)

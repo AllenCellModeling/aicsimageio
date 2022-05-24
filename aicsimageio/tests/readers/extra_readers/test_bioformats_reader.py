@@ -380,6 +380,13 @@ def test_bioformats_reader_large_files(
             "s_3_t_10_c_3_z_5.czi #3",
             (1, 3, 5, 325, 475),
         ),
+        (
+            "S=2_4x2_T=2=Z=3_CH=2.czi",
+            "S=2_4x2_T=2=Z=3_CH=2.czi #1",
+            (2, 2, 3, 488, 948),
+            "S=2_4x2_T=2=Z=3_CH=2.czi #2",
+            (2, 2, 3, 244, 474),
+        ),
     ],
 )
 def test_multi_scene_bioformats_reader(
@@ -403,6 +410,7 @@ def test_multi_scene_bioformats_reader(
         second_scene_id=second_scene_id,
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.dtype(np.uint16),
+        allow_same_scene_data=False,  # checks that data is diff between scenes
     )
 
 

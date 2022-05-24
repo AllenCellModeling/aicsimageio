@@ -176,7 +176,11 @@ class BioformatsReader(Reader):
         )
 
     def _to_xarray(self, delayed: bool = True) -> xr.DataArray:
-        with BioFile(self._path, **self._bf_kwargs) as rdr:  # type: ignore
+        with BioFile(
+            self._path,
+            series=self.current_scene_index,
+            **self._bf_kwargs,  # type: ignore
+        ) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
             _, coords = metadata_utils.get_dims_and_coords_from_ome(
                 ome=rdr.ome_metadata,
@@ -262,7 +266,7 @@ class BioFile:
     dask_tiles: bool, optional
         Whether to chunk the bioformats dask array by tiles to easily read sub-regions
         with numpy-like array indexing
-        Defaults to false and iamges are read by entire planes
+        Defaults to false and images are read by entire planes
     tile_size: Optional[Tuple[int, int]]
         Tuple that sets the tile size of y and x axis, respectively
         By default, it will use optimal values computed by bioformats itself
@@ -316,6 +320,7 @@ class BioFile:
                 mo.set(name, str(value))
             self._r.setMetadataOptions(mo)
 
+        self._current_scene_index = series
         self.open()
         self._lock = Lock()
         self.set_series(series)
@@ -348,6 +353,7 @@ class BioFile:
             self._r.getDimensionOrder(),
             self._r.getResolutionCount(),
         )
+        self._current_scene_index = series
 
     @property
     def core_meta(self) -> CoreMeta:
@@ -356,6 +362,7 @@ class BioFile:
     def open(self) -> None:
         """Open file."""
         self._r.setId(self._path)
+        self._r.setSeries(self._current_scene_index)
 
     def close(self) -> None:
         """Close file."""

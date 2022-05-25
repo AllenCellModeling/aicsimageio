@@ -52,6 +52,9 @@ class DefaultReader(Reader):
         Optional list of channel names.
         Must provide the same number of channels as the read channel dimension.
         Default: None (generate standard names)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----

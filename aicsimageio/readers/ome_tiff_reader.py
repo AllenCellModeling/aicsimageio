@@ -47,6 +47,9 @@ class OmeTiffReader(TiffReader):
         Should the OME XML metadata found in the file be cleaned for known
         AICSImageIO 3.x and earlier created errors.
         Default: True (Clean the metadata for known errors)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----

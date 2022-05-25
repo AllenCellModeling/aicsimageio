@@ -52,6 +52,9 @@ class TiffReader(Reader):
         list of lists of string channel names to be mapped onto the list of arrays
         provided to image.
         Default: None (create OME channel IDs for names for single or multiple arrays)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
     """
 
     @staticmethod

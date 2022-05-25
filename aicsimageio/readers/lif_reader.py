@@ -49,6 +49,9 @@ class LifReader(Reader):
         Note: Dimensions.SpatialY, Dimensions.SpatialX, and DimensionNames.Samples,
         will always be added to the list if not present during dask array
         construction.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----

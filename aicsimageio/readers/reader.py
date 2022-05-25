@@ -28,6 +28,9 @@ class Reader(ABC):
     ----------
     image: Any
         Some type of object to read and follow the Reader specification.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -87,6 +90,10 @@ class Reader(ABC):
         ----------
         image: types.ImageLike
             The filepath or array to validate as a supported type.
+        fs_kwargs: Dict[str, Any]
+            Any specific keyword arguments to pass down to the fsspec created
+            filesystem.
+            Default: {}
         kwargs: Any
             Any kwargs used for reading and validation of the file.
 

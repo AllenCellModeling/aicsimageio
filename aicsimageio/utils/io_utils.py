@@ -33,6 +33,9 @@ def pathlike_to_fs(
         The filesystem to operate on.
     path: str
         The full path to the target resource.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Raises
     ------

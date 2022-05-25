@@ -43,6 +43,9 @@ class BfioReader(Reader):
     out_order: List[str]
         The output dimension ordering.
         Default: DEFAULT_DIMENSION_ORDER
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----

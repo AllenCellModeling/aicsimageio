@@ -72,6 +72,9 @@ class TiffGlobReader(Reader):
     single_file_dims : Optional[Tuple]
         Dimensions that correspond to the data dimensions of a single file in the glob.
         Default : ('Y', 'X')
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Examples
     --------

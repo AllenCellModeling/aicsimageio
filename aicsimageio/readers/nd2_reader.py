@@ -31,6 +31,9 @@ class ND2Reader(Reader):
     ----------
     image : Path or str
         path to file
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Raises
     ------

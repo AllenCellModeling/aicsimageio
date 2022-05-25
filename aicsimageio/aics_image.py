@@ -58,6 +58,9 @@ class AICSImage:
         `M` dimension for tiles.
         If image is not a mosaic, data won't be stitched or have an `M` dimension for
         tiles.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 

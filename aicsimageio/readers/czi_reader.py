@@ -70,6 +70,9 @@ class CziReader(Reader):
     include_subblock_metadata: bool
         Whether to append metadata from the subblocks to the rest of the embeded
         metadata.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----

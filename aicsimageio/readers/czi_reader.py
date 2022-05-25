@@ -97,9 +97,14 @@ class CziReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         include_subblock_metadata: bool = False,
+        fs_kwargs: Dict[str, Any] = {},
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
 
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):

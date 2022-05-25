@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
 
@@ -42,8 +42,12 @@ class ND2Reader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         return nd2.is_supported_file(path, fs.open)
 
-    def __init__(self, image: types.PathLike):
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+    def __init__(self, image: types.PathLike, fs_kwargs: Dict[str, Any] = {}):
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
             raise ValueError(

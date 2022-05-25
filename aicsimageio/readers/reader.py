@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -49,7 +49,11 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+    def _is_supported_image(
+        fs: AbstractFileSystem,
+        path: str,
+        **kwargs: Any,
+    ) -> bool:
         """
         The per-Reader implementation used to validate that an image is supported or not
         by the Reader itself.
@@ -70,7 +74,12 @@ class Reader(ABC):
         """
 
     @classmethod
-    def is_supported_image(cls, image: types.ImageLike, **kwargs: Any) -> bool:
+    def is_supported_image(
+        cls,
+        image: types.ImageLike,
+        fs_kwargs: Dict[str, Any] = {},
+        **kwargs: Any,
+    ) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 
@@ -95,7 +104,11 @@ class Reader(ABC):
         # Check path
         if isinstance(image, (str, Path)):
             # Expand details of provided image
-            fs, path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+            fs, path = io_utils.pathlike_to_fs(
+                image,
+                enforce_exists=True,
+                fs_kwargs=fs_kwargs,
+            )
 
             return cls._is_supported_image(fs, path, **kwargs)
 

@@ -111,8 +111,13 @@ class BioformatsReader(Reader):
         options: Dict[str, bool] = {},
         dask_tiles: bool = False,
         tile_size: Optional[Tuple[int, int]] = None,
+        fs_kwargs: Dict[str, Any] = {},
     ):
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
             raise ValueError(

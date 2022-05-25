@@ -133,6 +133,7 @@ class TiffGlobReader(Reader):
             DimensionNames.SpatialY,
             DimensionNames.SpatialX,
         ),
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
 
@@ -187,7 +188,10 @@ class TiffGlobReader(Reader):
         self._all_files = self._all_files.sort_values(sort_order).reset_index(drop=True)
 
         # run tests on a single file (?)
-        self._fs, self._path = io_utils.pathlike_to_fs(self._all_files.iloc[0].filename)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            self._all_files.iloc[0].filename,
+            fs_kwargs=fs_kwargs,
+        )
 
         # Store params
         if isinstance(chunk_dims, str):

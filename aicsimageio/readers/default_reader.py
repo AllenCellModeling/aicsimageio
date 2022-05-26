@@ -52,6 +52,9 @@ class DefaultReader(Reader):
         Optional list of channel names.
         Must provide the same number of channels as the read channel dimension.
         Default: None (generate standard names)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -126,10 +129,15 @@ class DefaultReader(Reader):
         image: types.PathLike,
         dim_order: Optional[str] = None,
         channel_names: Optional[List[str]] = None,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
         self.extension, self.imageio_read_mode = self._get_extension_and_mode(
             self._path
         )

@@ -47,6 +47,9 @@ class OmeTiffReader(TiffReader):
         Should the OME XML metadata found in the file be cleaned for known
         AICSImageIO 3.x and earlier created errors.
         Default: True (Clean the metadata for known errors)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -114,10 +117,15 @@ class OmeTiffReader(TiffReader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         clean_metadata: bool = True,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
 
         # Store params
         if isinstance(chunk_dims, str):

@@ -420,7 +420,7 @@ def test_known_errors_without_cleaning(filename: str, host: str) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 
-    OmeTiffReader(uri, clean_metadata=False)
+    OmeTiffReader(uri, clean_metadata=False, fs_kwargs=dict(anon=True))
 
 
 def test_micromanager_ome_tiff_main_file() -> None:

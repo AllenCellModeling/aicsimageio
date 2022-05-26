@@ -84,6 +84,10 @@ class BioformatsReader(Reader):
     tile_size: Optional[Tuple[int, int]]
         Tuple that sets the tile size of y and x axis, respectively
         By default, it will use optimal values computed by bioformats itself
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
+
     Raises
     ------
     exceptions.UnsupportedFileFormatError
@@ -111,8 +115,13 @@ class BioformatsReader(Reader):
         options: Dict[str, bool] = {},
         dask_tiles: bool = False,
         tile_size: Optional[Tuple[int, int]] = None,
+        fs_kwargs: Dict[str, Any] = {},
     ):
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
             raise ValueError(

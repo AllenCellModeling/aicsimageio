@@ -11,6 +11,7 @@ from xml.etree import ElementTree as ET
 
 import lxml.etree
 import numpy as np
+import ome_types
 from ome_types import OME
 from ome_types.model.simple_types import PixelType
 
@@ -41,6 +42,31 @@ KNOWN_INVALID_OME_XSD_REFERENCES = [
 REPLACEMENT_OME_XSD_REFERENCE = "www.openmicroscopy.org/Schemas/OME/2016-06"
 
 ###############################################################################
+
+
+_ome_has_lxml = tuple(int(x) for x in ome_types.__version__.split(".")[:2]) >= (0, 3)
+
+
+def _ome_from_xml(xml: Union[Path, str], parser: str = "lxml") -> OME:
+    """Convert XML string to OME object.
+
+    This helper function lets us use the faster lxml parser when available,
+    without losing support for installs with older versions of ome-types.
+    `parser`
+
+    Parameters
+    ----------
+    xml : Union[Path, str]
+        the XML string to parse
+    parser : str, optional
+        parser to user. can be either 'lxml' (the newer faster parser) or 'xmlschema',
+        the older slower one that validates the xml first before parsing.
+        by default "lxml"
+    """
+    if _ome_has_lxml:
+        return ome_types.from_xml(xml, parser=parser)
+    else:
+        return ome_types.from_xml(xml)
 
 
 def transform_metadata_with_xslt(
@@ -92,7 +118,7 @@ def transform_metadata_with_xslt(
         ome_etree = transform(lxml_tree)
 
         # Dump generated etree to string and read with ome-types
-        ome = OME.from_xml(str(ome_etree))
+        ome = _ome_from_xml(str(ome_etree))
 
     # Regardless of error or succeed, move back to original process dir
     finally:
@@ -590,7 +616,7 @@ def bioformats_ome(path: PathLike, original_meta: bool = False) -> OME:
 
     Returns
     -------
-    OME : ome_types.OME
+    OME : OME
         The parsed metadata object.
 
     Raises

@@ -444,7 +444,7 @@ class BioFile:
     def ome_metadata(self) -> OME:
         """Return OME object parsed by ome_types."""
         xml = metadata_utils.clean_ome_xml_for_known_issues(self.ome_xml)
-        return OME.from_xml(xml)
+        return metadata_utils._ome_from_xml(xml)
 
     def __enter__(self) -> BioFile:
         self.open()

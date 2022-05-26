@@ -58,6 +58,9 @@ class AICSImage:
         `M` dimension for tiles.
         If image is not a mosaic, data won't be stitched or have an `M` dimension for
         tiles.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
     kwargs: Any
         Extra keyword arguments that will be passed down to the reader subclass.
 
@@ -140,7 +143,11 @@ class AICSImage:
                 pass
 
     @staticmethod
-    def determine_reader(image: types.ImageLike, **kwargs: Any) -> Type[Reader]:
+    def determine_reader(
+        image: types.ImageLike,
+        fs_kwargs: Dict[str, Any] = {},
+        **kwargs: Any,
+    ) -> Type[Reader]:
         """
         Cheaply check to see if a given file is a recognized type and return the
         appropriate reader for the image.
@@ -165,7 +172,7 @@ class AICSImage:
 
         # Try reader detection based off of file path extension
         if isinstance(image, (str, Path)):
-            _, path = pathlike_to_fs(image, enforce_exists=True)
+            _, path = pathlike_to_fs(image, enforce_exists=True, fs_kwargs=fs_kwargs)
 
             # Check for extension in FORMAT_IMPLEMENTATIONS
             for format_ext, readers in FORMAT_IMPLEMENTATIONS.items():
@@ -173,7 +180,10 @@ class AICSImage:
                     for reader in readers:
                         try:
                             ReaderClass = _load_reader(reader)
-                            if ReaderClass.is_supported_image(image):
+                            if ReaderClass.is_supported_image(
+                                image,
+                                fs_kwargs=fs_kwargs,
+                            ):
                                 return ReaderClass
                         except Exception as e:
                             log.warning(
@@ -186,7 +196,11 @@ class AICSImage:
         # Or provided an in-memory object (arraylike)
         for ReaderClass in AICSImage.SUPPORTED_READERS:
             try:
-                if ReaderClass.is_supported_image(image, **kwargs):  # type: ignore
+                if ReaderClass.is_supported_image(
+                    image,
+                    fs_kwargs=fs_kwargs,
+                    **kwargs,  # type: ignore
+                ):
                     return ReaderClass
             except Exception:
                 pass
@@ -241,17 +255,18 @@ class AICSImage:
         image: types.ImageLike,
         reader: Optional[Type[Reader]] = None,
         reconstruct_mosaic: bool = True,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
         if reader is None:
             # Determine reader class and create dask delayed array
-            ReaderClass = self.determine_reader(image, **kwargs)
+            ReaderClass = self.determine_reader(image, fs_kwargs=fs_kwargs, **kwargs)
         else:
             # Init reader
             ReaderClass = reader
 
         # Init and store reader
-        self._reader = ReaderClass(image, **kwargs)
+        self._reader = ReaderClass(image, fs_kwargs=fs_kwargs, **kwargs)
 
         # Store delayed modifiers
         self._reconstruct_mosaic = reconstruct_mosaic

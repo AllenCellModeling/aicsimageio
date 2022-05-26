@@ -151,7 +151,7 @@ def run_image_file_checks(
     expected_metadata_type: Union[type, Tuple[Union[type, Tuple[Any, ...]], ...]],
 ) -> Union[AICSImage, Reader]:
     # Init container
-    image_container = ImageContainer(image)
+    image_container = ImageContainer(image, fs_kwargs=dict(anon=True))
 
     # Check for file pointers
     check_local_file_not_open(image_container)
@@ -191,7 +191,7 @@ def run_multi_scene_image_read_checks(
     A suite of tests to ensure that data is reset when switching scenes.
     """
     # Read file
-    image_container = ImageContainer(image)
+    image_container = ImageContainer(image, fs_kwargs=dict(anon=True))
 
     check_local_file_not_open(image_container)
     check_can_serialize_image_container(image_container)

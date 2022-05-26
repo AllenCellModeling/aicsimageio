@@ -27,12 +27,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -48,7 +42,7 @@ jobs:
           python scripts/download_test_resources.py --debug
       - name: Run tests with Tox
         # Run tox using the version of Python in `PATH`
-        run: tox -e py -- -k "not REMOTE"
+        run: tox -e py
       - name: Upload codecov
         uses: codecov/codecov-action@v2
 
@@ -84,12 +78,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "11"
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -104,7 +92,7 @@ jobs:
         run: |
           python scripts/download_test_resources.py --debug
       - name: Run tests with Tox
-        run: tox -e ${{ matrix.tox-env }} -- -k "not REMOTE"
+        run: tox -e ${{ matrix.tox-env }}
       - name: Upload codecov
         uses: codecov/codecov-action@v2
 

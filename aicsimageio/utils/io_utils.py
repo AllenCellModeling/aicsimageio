@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from pathlib import Path
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 from fsspec.core import url_to_fs
 from fsspec.spec import AbstractFileSystem
@@ -15,6 +15,7 @@ from ..types import PathLike
 def pathlike_to_fs(
     uri: PathLike,
     enforce_exists: bool = False,
+    fs_kwargs: Dict[str, Any] = {},
 ) -> Tuple[AbstractFileSystem, str]:
     """
     Find and return the appropriate filesystem and path from a path-like object.
@@ -32,6 +33,9 @@ def pathlike_to_fs(
         The filesystem to operate on.
     path: str
         The full path to the target resource.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Raises
     ------
@@ -44,7 +48,7 @@ def pathlike_to_fs(
         uri = str(uri)
 
     # Get details
-    fs, path = url_to_fs(uri)
+    fs, path = url_to_fs(uri, **fs_kwargs)
 
     # Check file exists
     if enforce_exists:

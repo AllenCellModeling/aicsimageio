@@ -9,7 +9,6 @@ from urllib.error import URLError
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
-from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 from xmlschema import XMLSchemaValidationError
@@ -66,7 +65,7 @@ class OmeTiffReader(TiffReader):
         if clean_metadata:
             ome_xml = metadata_utils.clean_ome_xml_for_known_issues(ome_xml)
 
-        return from_xml(ome_xml)
+        return metadata_utils._ome_from_xml(ome_xml)
 
     @staticmethod
     def _is_supported_image(

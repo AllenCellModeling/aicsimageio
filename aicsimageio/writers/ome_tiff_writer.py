@@ -7,7 +7,7 @@ import dask.array as da
 import numpy as np
 import tifffile
 from fsspec.implementations.local import LocalFileSystem
-from ome_types import from_xml, to_xml
+from ome_types import to_xml
 from ome_types.model import OME, Channel, Image, Pixels, TiffData
 from ome_types.model.simple_types import ChannelID, Color, PositiveFloat, PositiveInt
 from tifffile import TIFF
@@ -255,7 +255,7 @@ class OmeTiffWriter(Writer):
             )
         # else if string, then construct OME from string
         elif isinstance(ome_xml, str):
-            ome_xml = from_xml(ome_xml)
+            ome_xml = utils._ome_from_xml(ome_xml)
 
         # if we do not have an OME object now, something is wrong
         if not isinstance(ome_xml, OME):
@@ -666,7 +666,7 @@ class OmeTiffWriter(Writer):
 
         # validate! (TODO: Is there a better api in ome-types for this?)
         test = to_xml(ome_object)
-        from_xml(test)
+        utils._ome_from_xml(test)
 
         return ome_object
 

@@ -1,9 +1,6 @@
 name: Test and Lint
 
 on: pull_request
-permissions:
-  id-token: write
-  contents: read
 
 # Cancel actions when new commits are pushed to PR
 concurrency: 

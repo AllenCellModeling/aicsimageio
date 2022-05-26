@@ -19,6 +19,13 @@ Fix
 
 Other
 ~~~~~
+- admin/prepare-bioformats_reader-to-work-with-new-bioformats_jar-based-
+  on-scyjava  (`#402
+  <https://github.com/AllenCellModeling/aicsimageio/pull/402>`_) [Talley
+  Lambert]
+- admin/add-test-upstreams-action  (`#406
+  <https://github.com/AllenCellModeling/aicsimageio/pull/406>`_)
+  [Jackson Maxfield Brown, Matthew Rocklin]
 - admin/ship-mypy-type-annotations-drop-py37-add-py310-manage-test-
   dependencies-separate-for-each-tox-env  (`#397
   <https://github.com/AllenCellModeling/aicsimageio/pull/397>`_)

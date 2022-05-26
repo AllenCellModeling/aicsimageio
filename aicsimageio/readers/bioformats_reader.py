@@ -24,6 +24,7 @@ from ..utils import io_utils
 from .reader import Reader
 
 if TYPE_CHECKING:
+    from bioformats_jar import _loci
     from fsspec.spec import AbstractFileSystem
 
     from .. import types
@@ -32,21 +33,27 @@ if TYPE_CHECKING:
 try:
     import jpype
     from bioformats_jar import get_loci
-except ImportError:
+except ImportError as e:
     raise ImportError(
         "bioformats_jar is required for this reader. "
-        "Install with `pip install bioformats_jar`"
-    )
+        "Install with `pip install bioformats_jar` or `conda install bioformats_jar`"
+    ) from e
+try:
+    from jgo.jgo import ExecutableNotFound
+except ImportError:
+
+    class ExecutableNotFound(Exception):  # type: ignore
+        ...
 
 
 class BioformatsReader(Reader):
     """Read files using bioformats.
 
     This reader requires `bioformats_jar` to be installed in the environment, and
-    requires the java executable to be available on the path, or via the JAVA_HOME
-    environment variable.
+    requires the java executable to be available on the path (or via the JAVA_HOME
+    environment variable), along with the `mvn` executable.
 
-    To install java with conda, run `conda install -c conda-forge openjdk`.
+    To install java and maven with conda, run `conda install -c conda-forge scyjava`.
     You may need to deactivate/reactivate your environment after installing.  If you
     are *still* getting a `JVMNotFoundException`, try setting JAVA_HOME as follows:
 
@@ -142,12 +149,12 @@ class BioformatsReader(Reader):
                 self._scenes: Tuple[str, ...] = tuple(
                     str(md.getImageName(i)) for i in range(md.getImageCount())
                 )
-        except jpype.JVMNotFoundException:
+        except RuntimeError:
             raise
-        except Exception:
+        except Exception as e:
             raise exceptions.UnsupportedFileFormatError(
                 self.__class__.__name__, self._path
-            )
+            ) from e
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -211,9 +218,7 @@ class BioformatsReader(Reader):
     @staticmethod
     def bioformats_version() -> str:
         """The version of the bioformats_package.jar being used."""
-        from bioformats_jar import get_loci
-
-        return get_loci().__version__
+        return _try_get_loci().__version__
 
 
 class CoreMeta(NamedTuple):
@@ -293,20 +298,7 @@ class BioFile:
         dask_tiles: bool = False,
         tile_size: Optional[Tuple[int, int]] = None,
     ):
-        try:
-            loci = get_loci()
-        except jpype.JVMNotFoundException as e:
-            raise type(e)(
-                str(e) + "\n\nBioformatsReader requires a java executable to be "
-                "available in your environment. If you are using conda, you can "
-                "install with `conda install -c conda-forge openjdk`.\n\n"
-                "Note: you may need to reactivate your conda environment after "
-                "installing opendjk. If you still have this error, try:\n\n"
-                "# mac and linux:\n"
-                "export JAVA_HOME=$CONDA_PREFIX\n\n"
-                "# windows:\n"
-                "set JAVA_HOME=%CONDA_PREFIX%\\Library"
-            )
+        loci = _try_get_loci()  # may raise RuntimeError
 
         self._path = str(path)
         self._r = loci.formats.ImageReader()
@@ -549,9 +541,7 @@ class BioFile:
     @classmethod
     def _create_ome_meta(cls) -> Any:
         """create an OMEXMLMetadata object to populate"""
-        from bioformats_jar import get_loci
-
-        loci = get_loci()
+        loci = _try_get_loci()
         if not cls._service:
             factory = loci.common.services.ServiceFactory()
             cls._service = factory.getInstance(loci.formats.services.OMEXMLService)
@@ -560,9 +550,7 @@ class BioFile:
 
 def _pixtype2dtype(pixeltype: int, little_endian: bool) -> np.dtype:
     """Convert a loci.formats PixelType integer into a numpy dtype."""
-    from bioformats_jar import get_loci
-
-    FT = get_loci().formats.FormatTools
+    FT = _try_get_loci().formats.FormatTools
     fmt2type: Dict[int, str] = {
         FT.INT8: "i1",
         FT.UINT8: "u1",
@@ -633,3 +621,36 @@ def _hide_memoization_warning() -> None:
 
     System = jpype.JPackage("java").lang.System
     System.err.close()
+
+
+MAVEN_ERROR_MSG = """
+BioformatsReader requires the maven ('mvn') executable to be
+available in your environment. If you are using conda, you can 
+install with `conda install -c conda-forge scyjava`.
+
+Alternatively, install from https://maven.apache.org/download.cgi
+"""
+
+JAVA_ERROR_MSG = """
+BioformatsReader requires a java executable to be available
+in your environment. If you are using conda, you can install
+with `conda install -c conda-forge scyjava`.
+
+Note: you may need to reactivate your conda environment after 
+installing opendjk. If you still have this error, try:
+
+# mac and linux:
+export JAVA_HOME=$CONDA_PREFIX
+
+# windows:
+set JAVA_HOME=%CONDA_PREFIX%\\Library
+"""
+
+
+def _try_get_loci() -> _loci.__module_protocol__:
+    try:
+        return get_loci()
+    except ExecutableNotFound as e:
+        raise RuntimeError(MAVEN_ERROR_MSG) from e
+    except jpype.JVMNotFoundException as e:
+        raise RuntimeError(JAVA_ERROR_MSG) from e

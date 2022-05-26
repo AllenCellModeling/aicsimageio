@@ -514,8 +514,8 @@ def test_bioformats_dask_tiling_read(filename: str) -> None:
         ),
         (
             "DICOM_samples_MR-MONO2-8-16x-heart.dcm",
-            "Series 0",
-            ("Series 0",),
+            SERIES_0,
+            (SERIES_0,),
             (1, 1, 16, 256, 256),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,

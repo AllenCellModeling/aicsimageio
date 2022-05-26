@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any
+from typing import Any, Dict
 
 import dask.array as da
 from imageio import get_writer
@@ -53,6 +53,7 @@ class TwoDWriter(Writer):
         data: types.ArrayLike,
         uri: types.PathLike,
         dim_order: str = None,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ) -> None:
         """
@@ -70,6 +71,10 @@ class TwoDWriter(Writer):
             the dimensions similar to how
             aicsimageio.readers.default_reader.DefaultReader reads in
             data. That is, two dimensions: YX and three dimensions: YXS.
+        fs_kwargs: Dict[str, Any]
+            Any specific keyword arguments to pass down to the fsspec created
+            filesystem.
+            Default: {}
 
         Examples
         --------
@@ -89,7 +94,7 @@ class TwoDWriter(Writer):
         ... TwoDWriter.save(image, "s3://my-bucket/file.png")
         """
         # Check unpack uri and extension
-        fs, path = io_utils.pathlike_to_fs(uri)
+        fs, path = io_utils.pathlike_to_fs(uri, fs_kwargs=fs_kwargs)
         (
             extension,
             imageio_mode,

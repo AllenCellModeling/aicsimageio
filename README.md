@@ -269,6 +269,10 @@ img = AICSImage("http://my-website.com/my_file.tiff")
 img = AICSImage("s3://my-bucket/my_file.tiff")
 img = AICSImage("gcs://my-bucket/my_file.tiff")
 
+# Or read with specific filesystem creation arguments
+img = AICSImage("s3://my-bucket/my_file.tiff", fs_kwargs=dict(anon=True))
+img = AICSImage("gcs://my-bucket/my_file.tiff", fs_kwargs=dict(anon=True))
+
 # All other normal operations work just fine
 ```
 

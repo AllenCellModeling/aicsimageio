@@ -52,6 +52,9 @@ class TiffReader(Reader):
         list of lists of string channel names to be mapped onto the list of arrays
         provided to image.
         Default: None (create OME channel IDs for names for single or multiple arrays)
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
     """
 
     @staticmethod
@@ -70,10 +73,15 @@ class TiffReader(Reader):
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
 
         # Store params
         if isinstance(chunk_dims, str):

@@ -70,6 +70,9 @@ class CziReader(Reader):
     include_subblock_metadata: bool
         Whether to append metadata from the subblocks to the rest of the embeded
         metadata.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -97,9 +100,14 @@ class CziReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         include_subblock_metadata: bool = False,
+        fs_kwargs: Dict[str, Any] = {},
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
 
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):

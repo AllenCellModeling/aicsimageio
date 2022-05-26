@@ -4,6 +4,13 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- feature-and-admin/create-aicsimage-objects-with-fs-kwargs-and-remove-
+  need-for-creds  (`#407
+  <https://github.com/AllenCellModeling/aicsimageio/pull/407>`_)
+  [Jackson Maxfield Brown]
+
 Fix
 ~~~
 - bugfix/pass-series-index-in-biofile-init  (`#401

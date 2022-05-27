@@ -863,8 +863,19 @@ class Reader(ABC):
         select_scenes: Optional[
                 Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
             Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names.
+            as a list or tuple of scene indices or names. It is recommended to
+            use the scene integer index instead of the scene name to avoid
+            duplicate scene name lookup issues.
             Default: None (stack all scenes)
+        scene_character: str
+            Character to use as the name of the scene dimension on the output
+            array. Default "S"
+
+        Returns
+        -------
+        stack: types.MetaArrayLike
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
 
         """
         mode_check = ["data", "dask_data", "xarray_data", "xarray_dask_data"]
@@ -877,7 +888,7 @@ class Reader(ABC):
         scene_names = []
 
         if select_scenes is None:
-            select_scenes = self.scenes
+            select_scenes = list(range(len(self.scenes)))
 
         for i, s in enumerate(select_scenes):
             self.set_scene(s)
@@ -918,7 +929,7 @@ class Reader(ABC):
                         continue
 
             scene_stacks.append(data)
-            scene_names.append(s)
+            scene_names.append(self.current_scene)
 
         stack = da.stack if "dask" in mode else np.stack
 
@@ -949,9 +960,12 @@ class Reader(ABC):
             During the scene iteration process, if the next scene to be added
             to the stack has different shape or dtype, should it be dropped or
             raise an error. Default: False (raise an error)
-        select_scenes: Optional[Union[List[Union[str, int]], Tuple[Union[str, int]]]]
+        select_scenes: Optional[
+                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
             Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names.
+            as a list or tuple of scene indices or names. It is recommended to
+            use the scene integer index instead of the scene name to avoid
+            duplicate scene name lookup issues.
             Default: None (stack all scenes)
         scene_character: str
             Character to use as the name of the scene dimension on the output
@@ -986,9 +1000,12 @@ class Reader(ABC):
             During the scene iteration process, if the next scene to be added
             to the stack has different shape or dtype, should it be dropped or
             raise an error. Default: False (raise an error)
-        select_scenes: Optional[Union[List[Union[str, int]], Tuple[Union[str, int]]]]
+        select_scenes: Optional[
+                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
             Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names.
+            as a list or tuple of scene indices or names. It is recommended to
+            use the scene integer index instead of the scene name to avoid
+            duplicate scene name lookup issues.
             Default: None (stack all scenes)
         scene_character: str
             Character to use as the name of the scene dimension on the output
@@ -1023,9 +1040,12 @@ class Reader(ABC):
             During the scene iteration process, if the next scene to be added
             to the stack has different shape or dtype, should it be dropped or
             raise an error. Default: False (raise an error)
-        select_scenes: Optional[Union[List[Union[str, int]], Tuple[Union[str, int]]]]
+        select_scenes: Optional[
+                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
             Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names.
+            as a list or tuple of scene indices or names. It is recommended to
+            use the scene integer index instead of the scene name to avoid
+            duplicate scene name lookup issues.
             Default: None (stack all scenes)
         scene_character: str
             Character to use as the name of the scene dimension on the output
@@ -1053,7 +1073,7 @@ class Reader(ABC):
         self,
         drop_non_matching_scenes: bool = False,
         select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int]]]
+            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
         ] = None,
         scene_character: str = "S",
     ) -> xr.DataArray:
@@ -1066,9 +1086,12 @@ class Reader(ABC):
             During the scene iteration process, if the next scene to be added
             to the stack has different shape or dtype, should it be dropped or
             raise an error. Default: False (raise an error)
-        select_scenes: Optional[Union[List[Union[str, int]], Tuple[Union[str, int]]]]
+        select_scenes: Optional[
+                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
             Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names.
+            as a list or tuple of scene indices or names. It is recommended to
+            use the scene integer index instead of the scene name to avoid
+            duplicate scene name lookup issues.
             Default: None (stack all scenes)
         scene_character: str
             Character to use as the name of the scene dimension on the output

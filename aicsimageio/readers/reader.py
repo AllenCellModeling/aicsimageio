@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import annotations
-
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -839,12 +837,12 @@ class Reader(ABC):
     def generate_stack(
         self,
         mode: str,
-        drop_non_matching_scenes: Optional[bool] = False,
+        drop_non_matching_scenes: bool = False,
         select_scenes: Optional[
             Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
         ] = None,
-        scene_character: Optional[str] = "I",
-        scene_coord_values: Optional[str] = "index",
+        scene_character: str = "I",
+        scene_coord_values: str = "index",
     ) -> types.MetaArrayLike:
         """
         Stack each scene contained in the reader into a

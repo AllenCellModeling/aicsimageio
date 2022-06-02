@@ -834,14 +834,15 @@ class Reader(ABC):
 
         return None
 
-    def _get_stack(
+    def generate_stack(
         self,
         mode: str,
-        drop_non_matching_scenes: bool = False,
+        drop_non_matching_scenes: Optional[bool] = False,
         select_scenes: Optional[
             Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
         ] = None,
-        scene_character: str = "S",
+        scene_character: Optional[str] = "I",
+        scene_coord_values: Optional[str] = "index",
     ) -> types.MetaArrayLike:
         """
         Stack each scene contained in the reader into a
@@ -869,7 +870,13 @@ class Reader(ABC):
             Default: None (stack all scenes)
         scene_character: str
             Character to use as the name of the scene dimension on the output
-            array. Default "S"
+            array. Default "I"
+        scene_coord_values : str
+            How to assign coordinates to the scene dimension of the final
+            array. If scene_coord_values="names" use the scene name from
+            the reader object. If scene_coord_values="index" don't attach any
+            coordinates and fall back to integer values.
+            Default: "index"
 
         Returns
         -------
@@ -878,12 +885,14 @@ class Reader(ABC):
             the first dimension.
 
         """
+
         mode_check = ["data", "dask_data", "xarray_data", "xarray_dask_data"]
         if mode not in mode_check:
             raise ValueError(
                 f"Invalid mode kwarg. Found {mode} but should be one of:"
                 f"{', '.join(mode_check)}."
             )
+
         scene_stacks = []
         scene_names = []
 
@@ -903,9 +912,13 @@ class Reader(ABC):
 
                 if "xarray" in mode:
                     coords = dict(data.coords)
-                    if scene_character in coords:
-                        _ = coords.pop(scene_character)
                     dims = data.dims
+
+                    if scene_character in coords:
+                        raise ValueError(
+                            f"Provided scene dimension character '{scene_character}' "
+                            f"was found in the existing dimensions of the data {dims}"
+                        )
 
             # Check other scenes against the first scene
             else:
@@ -935,41 +948,22 @@ class Reader(ABC):
 
         if "xarray" in mode:
             all_data = stack([x.data for x in scene_stacks])
+            if scene_coord_values == "names":
+                coords = {scene_character: scene_names, **coords}
+
             return xr.DataArray(
                 all_data,
                 dims=(scene_character, *dims),
-                coords={scene_character: scene_names, **coords},
+                coords=coords,
             )
 
         else:
             return stack(scene_stacks)
 
-    def get_stack(
-        self,
-        drop_non_matching_scenes: bool = False,
-        select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
-        ] = None,
-    ) -> np.ndarray:
+    def get_stack(self, **kwargs: Any) -> np.ndarray:
+
         """
         Get all scenes stacked in to a single array.
-
-        Parameters
-        ----------
-        drop_non_matching_scenes: bool
-            During the scene iteration process, if the next scene to be added
-            to the stack has different shape or dtype, should it be dropped or
-            raise an error. Default: False (raise an error)
-        select_scenes: Optional[
-                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
-            Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names. It is recommended to
-            use the scene integer index instead of the scene name to avoid
-            duplicate scene name lookup issues.
-            Default: None (stack all scenes)
-        scene_character: str
-            Character to use as the name of the scene dimension on the output
-            array. Default "S"
 
         Returns
         -------
@@ -977,79 +971,34 @@ class Reader(ABC):
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
 
+        See Also
+        --------
+        generate_stack
+            Underlying function for generating various scene stacks.
         """
-        return self._get_stack(
-            mode="data",
-            drop_non_matching_scenes=drop_non_matching_scenes,
-            select_scenes=select_scenes,
-        )
+        return self.generate_stack(mode="data", **kwargs)
 
-    def get_dask_stack(
-        self,
-        drop_non_matching_scenes: bool = False,
-        select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
-        ] = None,
-    ) -> da.Array:
+    def get_dask_stack(self, **kwargs: Any) -> da.Array:
         """
         Get all scenes stacked in to a single array.
-
-        Parameters
-        ----------
-        drop_non_matching_scenes: bool
-            During the scene iteration process, if the next scene to be added
-            to the stack has different shape or dtype, should it be dropped or
-            raise an error. Default: False (raise an error)
-        select_scenes: Optional[
-                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
-            Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names. It is recommended to
-            use the scene integer index instead of the scene name to avoid
-            duplicate scene name lookup issues.
-            Default: None (stack all scenes)
-        scene_character: str
-            Character to use as the name of the scene dimension on the output
-            array. Default "S"
 
         Returns
         -------
         stack: da.Array
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
-        """
-        return self._get_stack(
-            mode="dask_data",
-            drop_non_matching_scenes=drop_non_matching_scenes,
-            select_scenes=select_scenes,
-        )
 
-    def get_xarray_stack(
-        self,
-        drop_non_matching_scenes: bool = False,
-        select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
-        ] = None,
-        scene_character: str = "S",
-    ) -> xr.DataArray:
+        See Also
+        --------
+        generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return self.generate_stack(mode="dask_data", **kwargs)
+
+    def get_xarray_stack(self, **kwargs: Any) -> xr.DataArray:
         """
         Get all scenes stacked in to a single array.
 
-        Parameters
-        ----------
-        drop_non_matching_scenes: bool
-            During the scene iteration process, if the next scene to be added
-            to the stack has different shape or dtype, should it be dropped or
-            raise an error. Default: False (raise an error)
-        select_scenes: Optional[
-                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
-            Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names. It is recommended to
-            use the scene integer index instead of the scene name to avoid
-            duplicate scene name lookup issues.
-            Default: None (stack all scenes)
-        scene_character: str
-            Character to use as the name of the scene dimension on the output
-            array. Default "S"
 
         Returns
         -------
@@ -1061,41 +1010,17 @@ class Reader(ABC):
         -----
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
-        """
-        return self._get_stack(
-            mode="xarray_data",
-            drop_non_matching_scenes=drop_non_matching_scenes,
-            select_scenes=select_scenes,
-            scene_character=scene_character,
-        )
 
-    def get_xarray_dask_stack(
-        self,
-        drop_non_matching_scenes: bool = False,
-        select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
-        ] = None,
-        scene_character: str = "S",
-    ) -> xr.DataArray:
+        See Also
+        --------
+        generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return self.generate_stack(mode="xarray_data", **kwargs)
+
+    def get_xarray_dask_stack(self, **kwargs: Any) -> xr.DataArray:
         """
         Get all scenes stacked in to a single array.
-
-        Parameters
-        ----------
-        drop_non_matching_scenes: bool
-            During the scene iteration process, if the next scene to be added
-            to the stack has different shape or dtype, should it be dropped or
-            raise an error. Default: False (raise an error)
-        select_scenes: Optional[
-                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
-            Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names. It is recommended to
-            use the scene integer index instead of the scene name to avoid
-            duplicate scene name lookup issues.
-            Default: None (stack all scenes)
-        scene_character: str
-            Character to use as the name of the scene dimension on the output
-            array. Default "S"
 
         Returns
         -------
@@ -1107,13 +1032,13 @@ class Reader(ABC):
         -----
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
+
+        See Also
+        --------
+        generate_stack
+            Underlying function for generating various scene stacks.
         """
-        return self._get_stack(
-            mode="xarray_dask_data",
-            drop_non_matching_scenes=drop_non_matching_scenes,
-            select_scenes=select_scenes,
-            scene_character=scene_character,
-        )
+        return self.generate_stack(mode="xarray_dask_data", **kwargs)
 
     def __str__(self) -> str:
         return (

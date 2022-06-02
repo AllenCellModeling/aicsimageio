@@ -1134,7 +1134,8 @@ def test_aicsimage_from_array(
     )
 
 
-def make_arange_data() -> xr.DataArray:
+@pytest.fixture
+def arange_data() -> list[xr.DataArray]:
     dims = list("STCZYX")
     shape = (3, 4, 5, 6, 7, 8)
     data = np.arange(np.prod(shape), dtype="uint16").reshape(shape)
@@ -1142,12 +1143,12 @@ def make_arange_data() -> xr.DataArray:
         "S": [f"Image:{i}" for i in range(shape[0])],
         "C": ["bf", "dapi", "gfp", "yfp", "dsred"],
     }
-    return xr.DataArray(data, dims=dims, coords=coords)
+    return [arr.drop_vars("S") for arr in xr.DataArray(data, dims=dims, coords=coords)]
 
 
-def test_get_stack_defaults() -> None:
-    data = make_arange_data()
-    alr = ArrayLikeReader([scene for scene in data])
+def test_get_stack_defaults(arange_data: list[xr.DataArray]) -> None:
+    alr = ArrayLikeReader(arange_data)
+    data = xr.concat(arange_data, dim="I")
 
     # numpy
     stack = alr.get_stack()
@@ -1166,33 +1167,53 @@ def test_get_stack_defaults() -> None:
     xr.testing.assert_allclose(xarray_stack, data)
 
 
-def test_get_stack_different_shape() -> None:
-    data = make_arange_data()
-    data_list = [scene for scene in data]
-    data_list[1] = data_list[1][:3, :4, :5, :6]
-    alr = ArrayLikeReader(data_list)
+def test_get_stack_different_shape(arange_data: list[xr.DataArray]) -> None:
+    arange_data[1] = arange_data[1][:3, :4, :5, :6]
+    alr = ArrayLikeReader(arange_data)
+    data = xr.concat(arange_data[::2], dim="I")
 
     with pytest.raises(exceptions.UnexpectedShapeError):
         alr.get_stack()
 
-    stack1 = alr.get_stack(drop_non_matching_scenes=True)
-    assert np.allclose(data.data[[0, 2]], stack1)
+    stack = alr.get_stack(drop_non_matching_scenes=True)
+    np.testing.assert_allclose(data.data, stack)
 
-    stack2 = alr.get_stack(select_scenes=(0, 2))
-    assert np.allclose(data.data[[0, 2]], stack2)
+    stack = alr.get_stack(select_scenes=(0, 2))
+    np.testing.assert_allclose(data.data, stack)
+
+    stack = alr.get_xarray_stack(drop_non_matching_scenes=True)
+    xr.testing.assert_allclose(data, stack)
 
 
-def test_get_stack_different_dtype() -> None:
-    data = make_arange_data()
-    data_list = [scene for scene in data]
-    data_list[1] = data_list[1].astype("int64")
-    alr = ArrayLikeReader(data_list)
+def test_get_stack_different_dtype(arange_data: list[xr.DataArray]) -> None:
+    arange_data[1] = arange_data[1].astype("int64")
+    alr = ArrayLikeReader(arange_data)
+    data = xr.concat(arange_data[::2], dim="I")
 
     with pytest.raises(TypeError):
         alr.get_stack()
 
-    stack1 = alr.get_stack(drop_non_matching_scenes=True)
-    assert np.allclose(data.data[[0, 2]], stack1)
+    stack = alr.get_stack(drop_non_matching_scenes=True)
+    np.testing.assert_allclose(stack, data.data)
 
-    stack2 = alr.get_stack(select_scenes=(0, 2))
-    assert np.allclose(data.data[[0, 2]], stack2)
+    stack = alr.get_stack(select_scenes=(0, 2))
+    np.testing.assert_allclose(stack, data.data)
+
+    stack = alr.get_xarray_stack(drop_non_matching_scenes=True)
+    xr.testing.assert_allclose(stack, data)
+
+
+def test_get_stack_scene_coords(arange_data: list[xr.DataArray]) -> None:
+    alr = ArrayLikeReader(arange_data)
+    data = xr.concat(arange_data, dim="I")
+    data = data.assign_coords({"I": [f"Image:{i}" for i in range(3)]})
+
+    stack = alr.get_xarray_stack(scene_coord_values="names")
+    xr.testing.assert_allclose(stack, data)
+
+    # test different scene char
+    stack = alr.get_xarray_stack(scene_coord_values="names", scene_character="S")
+    xr.testing.assert_allclose(stack, data.rename({"I": "S"}))
+
+    with pytest.raises(ValueError):
+        stack = alr.get_xarray_stack(scene_coord_values="names", scene_character="T")

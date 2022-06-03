@@ -914,7 +914,7 @@ class Reader(ABC):
                     coords = dict(data.coords)
                     dims = data.dims
 
-                    if scene_character in coords:
+                    if scene_character in dims:
                         raise ValueError(
                             f"Provided scene dimension character '{scene_character}' "
                             f"was found in the existing dimensions of the data {dims}"

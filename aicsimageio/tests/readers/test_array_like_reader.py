@@ -1137,14 +1137,13 @@ def test_aicsimage_from_array(
 
 @pytest.fixture
 def arange_data() -> list[xr.DataArray]:
-    dims = list("STCZYX")
+    dims = list("ITCZYX")
     shape = (3, 4, 5, 6, 7, 8)
     data = np.arange(np.prod(shape), dtype="uint16").reshape(shape)
     coords = {
-        "S": [f"Image:{i}" for i in range(shape[0])],
         "C": ["bf", "dapi", "gfp", "yfp", "dsred"],
     }
-    return [arr.drop_vars("S") for arr in xr.DataArray(data, dims=dims, coords=coords)]
+    return [arr for arr in xr.DataArray(data, dims=dims, coords=coords)]
 
 
 def test_get_stack_defaults(arange_data: list[xr.DataArray]) -> None:
@@ -1213,8 +1212,8 @@ def test_get_stack_scene_coords(arange_data: list[xr.DataArray]) -> None:
     xr.testing.assert_allclose(stack, data)
 
     # test different scene char
-    stack = alr.get_xarray_stack(scene_coord_values="names", scene_character="S")
-    xr.testing.assert_allclose(stack, data.rename({"I": "S"}))
+    stack = alr.get_xarray_stack(scene_coord_values="names", scene_character="U")
+    xr.testing.assert_allclose(stack, data.rename({"I": "U"}))
 
     with pytest.raises(ValueError):
-        stack = alr.get_xarray_stack(scene_coord_values="names", scene_character="T")
+        stack = alr.get_xarray_stack(scene_character="T")

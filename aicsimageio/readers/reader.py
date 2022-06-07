@@ -834,132 +834,6 @@ class Reader(ABC):
 
         return None
 
-    def generate_stack(
-        self,
-        mode: str,
-        drop_non_matching_scenes: bool = False,
-        select_scenes: Optional[
-            Union[List[Union[str, int]], Tuple[Union[str, int], ...]]
-        ] = None,
-        scene_character: str = "I",
-        scene_coord_values: str = "index",
-    ) -> types.MetaArrayLike:
-        """
-        Stack each scene contained in the reader into a
-        single array. This method handles the logic of determining which
-        stack function to use (dask or numpy) and whether or not to return a
-        labelled array (xr.DataArray). Users should prefer
-        to use one of get_stack, get_dask_stack, get_xarray_stack, or
-        get_xarray_dask_stack.
-
-        Parameters
-        ----------
-        mode: str
-            String describing the style of data to return. Should be one of:
-            "data", "dask_data", "xarray_data", "xarray_dask_data".
-        drop_non_matching_scenes: bool
-            During the scene iteration process, if the next scene to be added
-            to the stack has different shape or dtype, should it be dropped or
-            raise an error.  Default: False (raise an error)
-        select_scenes: Optional[
-                Union[List[Union[str, int]], Tuple[Union[str, int], ...]]]
-            Which scenes to stack into a single array. Scenes can be provided
-            as a list or tuple of scene indices or names. It is recommended to
-            use the scene integer index instead of the scene name to avoid
-            duplicate scene name lookup issues.
-            Default: None (stack all scenes)
-        scene_character: str
-            Character to use as the name of the scene dimension on the output
-            array. Default "I"
-        scene_coord_values : str
-            How to assign coordinates to the scene dimension of the final
-            array. If scene_coord_values="names" use the scene name from
-            the reader object. If scene_coord_values="index" don't attach any
-            coordinates and fall back to integer values.
-            Default: "index"
-
-        Returns
-        -------
-        stack: types.MetaArrayLike
-            The fully stacked array. This can be 6+ dimensions with Scene being
-            the first dimension.
-
-        """
-
-        mode_check = ["data", "dask_data", "xarray_data", "xarray_dask_data"]
-        if mode not in mode_check:
-            raise ValueError(
-                f"Invalid mode kwarg. Found {mode} but should be one of:"
-                f"{', '.join(mode_check)}."
-            )
-
-        scene_stacks = []
-        scene_names = []
-
-        if select_scenes is None:
-            select_scenes = list(range(len(self.scenes)))
-
-        for i, s in enumerate(select_scenes):
-            self.set_scene(s)
-            data = getattr(self, mode)
-
-            # Store the shape and dtype of the first scenes data
-            # to check against later scenes. If returning a DataArray
-            # store the coords and dims to use in the final output
-            if i == 0:
-                shape = data.shape
-                dtype = data.dtype
-
-                if "xarray" in mode:
-                    coords = dict(data.coords)
-                    dims = data.dims
-
-                    if scene_character in dims:
-                        raise ValueError(
-                            f"Provided scene dimension character '{scene_character}' "
-                            f"was found in the existing dimensions of the data {dims}"
-                        )
-
-            # Check other scenes against the first scene
-            else:
-                if data.shape != shape:
-                    if not drop_non_matching_scenes:
-                        raise exceptions.UnexpectedShapeError(
-                            f"All scenes must have same shape. Found shape"
-                            f"{data.shape} in scene {s} but expected"
-                            f"{shape} based on scene {select_scenes[0]}"
-                        )
-                    else:
-                        continue
-                if data.dtype != dtype:
-                    if not drop_non_matching_scenes:
-                        raise TypeError(
-                            f"All scenes must have the same dtype. Found data"
-                            f"with dtype {data.dtype} in scene {s} but expected"
-                            f"dtype {dtype} based on scene {select_scenes[0]}"
-                        )
-                    else:
-                        continue
-
-            scene_stacks.append(data)
-            scene_names.append(self.current_scene)
-
-        stack = da.stack if "dask" in mode else np.stack
-
-        if "xarray" in mode:
-            all_data = stack([x.data for x in scene_stacks])
-            if scene_coord_values == "names":
-                coords = {scene_character: scene_names, **coords}
-
-            return xr.DataArray(
-                all_data,
-                dims=(scene_character, *dims),
-                coords=coords,
-            )
-
-        else:
-            return stack(scene_stacks)
-
     def get_stack(self, **kwargs: Any) -> np.ndarray:
 
         """
@@ -973,10 +847,10 @@ class Reader(ABC):
 
         See Also
         --------
-        generate_stack
+        transforms.generate_stack
             Underlying function for generating various scene stacks.
         """
-        return self.generate_stack(mode="data", **kwargs)
+        return transforms.generate_stack(self, mode="data", **kwargs)
 
     def get_dask_stack(self, **kwargs: Any) -> da.Array:
         """
@@ -990,10 +864,10 @@ class Reader(ABC):
 
         See Also
         --------
-        generate_stack
+        transforms.generate_stack
             Underlying function for generating various scene stacks.
         """
-        return self.generate_stack(mode="dask_data", **kwargs)
+        return transforms.generate_stack(self, mode="dask_data", **kwargs)
 
     def get_xarray_stack(self, **kwargs: Any) -> xr.DataArray:
         """
@@ -1013,10 +887,10 @@ class Reader(ABC):
 
         See Also
         --------
-        generate_stack
+        transforms.generate_stack
             Underlying function for generating various scene stacks.
         """
-        return self.generate_stack(mode="xarray_data", **kwargs)
+        return transforms.generate_stack(self, mode="xarray_data", **kwargs)
 
     def get_xarray_dask_stack(self, **kwargs: Any) -> xr.DataArray:
         """
@@ -1035,10 +909,10 @@ class Reader(ABC):
 
         See Also
         --------
-        generate_stack
+        transforms.generate_stack
             Underlying function for generating various scene stacks.
         """
-        return self.generate_stack(mode="xarray_dask_data", **kwargs)
+        return transforms.generate_stack(self, mode="xarray_dask_data", **kwargs)
 
     def __str__(self) -> str:
         return (

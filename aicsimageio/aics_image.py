@@ -727,7 +727,7 @@ class AICSImage:
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
         """
-        return self.reader.get_stack(**kwargs)
+        return transforms.generate_stack(self, "data", **kwargs)
 
     def get_dask_stack(self, **kwargs: Any) -> da.Array:
         """
@@ -739,7 +739,7 @@ class AICSImage:
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
         """
-        return self.reader.get_dask_stack(**kwargs)
+        return transforms.generate_stack(self, "dask_data", **kwargs)
 
     def get_xarray_stack(self, **kwargs: Any) -> xr.DataArray:
         """
@@ -756,7 +756,7 @@ class AICSImage:
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
         """
-        return self.reader.get_xarray_stack(**kwargs)
+        return transforms.generate_stack(self, "xarray_data", **kwargs)
 
     def get_xarray_dask_stack(self, **kwargs: Any) -> xr.DataArray:
         """
@@ -773,7 +773,7 @@ class AICSImage:
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
         """
-        return self.reader.get_xarray_dask_stack(**kwargs)
+        return transforms.generate_stack(self, "xarray_dask_data", **kwargs)
 
     @property
     def metadata(self) -> Any:

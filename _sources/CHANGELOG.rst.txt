@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/get-stack  (`#403
+  <https://github.com/AllenCellModeling/aicsimageio/pull/403>`_) [John
+  Russell]
+
+
 v4.8.0 (2022-05-26)
 -------------------
 

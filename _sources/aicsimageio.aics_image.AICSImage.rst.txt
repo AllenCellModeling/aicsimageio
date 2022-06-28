@@ -15,9 +15,13 @@ aicsimageio.aics\_image.AICSImage
    
       ~AICSImage.__init__
       ~AICSImage.determine_reader
+      ~AICSImage.get_dask_stack
       ~AICSImage.get_image_dask_data
       ~AICSImage.get_image_data
       ~AICSImage.get_mosaic_tile_position
+      ~AICSImage.get_stack
+      ~AICSImage.get_xarray_dask_stack
+      ~AICSImage.get_xarray_stack
       ~AICSImage.save
       ~AICSImage.set_scene
    

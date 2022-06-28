@@ -14,9 +14,13 @@ aicsimageio.readers.tiff\_reader.TiffReader
    .. autosummary::
    
       ~TiffReader.__init__
+      ~TiffReader.get_dask_stack
       ~TiffReader.get_image_dask_data
       ~TiffReader.get_image_data
       ~TiffReader.get_mosaic_tile_position
+      ~TiffReader.get_stack
+      ~TiffReader.get_xarray_dask_stack
+      ~TiffReader.get_xarray_stack
       ~TiffReader.is_supported_image
       ~TiffReader.set_scene
    

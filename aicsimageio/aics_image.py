@@ -717,6 +717,64 @@ class AICSImage:
             **kwargs,
         )
 
+    def get_stack(self, **kwargs: Any) -> np.ndarray:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: np.ndarray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+        """
+        return transforms.generate_stack(self, "data", **kwargs)
+
+    def get_dask_stack(self, **kwargs: Any) -> da.Array:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: da.Array
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+        """
+        return transforms.generate_stack(self, "dask_data", **kwargs)
+
+    def get_xarray_stack(self, **kwargs: Any) -> xr.DataArray:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: xr.DataArray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        Notes
+        -----
+        When requesting an xarray stack, the first scene's coordinate planes
+        are used for the returned xarray DataArray object coordinate planes.
+        """
+        return transforms.generate_stack(self, "xarray_data", **kwargs)
+
+    def get_xarray_dask_stack(self, **kwargs: Any) -> xr.DataArray:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: xr.DataArray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        Notes
+        -----
+        When requesting an xarray stack, the first scene's coordinate planes
+        are used for the returned xarray DataArray object coordinate planes.
+        """
+        return transforms.generate_stack(self, "xarray_dask_data", **kwargs)
+
     @property
     def metadata(self) -> Any:
         """

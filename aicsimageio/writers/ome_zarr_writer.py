@@ -23,27 +23,18 @@ class OmeZarrWriter:
         ----------
         uri: types.PathLike
             The URI or local path for where to save the data.
-            Note: OmeZarrWriter can only write to local file systems for now.
         """
         # Resolve final destination
         fs, path = io_utils.pathlike_to_fs(uri)
 
-        # Catch non-local file system
-        # if not isinstance(fs, LocalFileSystem):
-        #     raise ValueError(
-        #         f"Cannot write to non-local file system. "
-        #         f"Received URI: {uri}, which points to {type(fs)}."
-        #     )
-
         # Save image to zarr store!
         self.store = parse_url(uri, mode="w").store
-        # print(store)
         self.root_group = zarr.group(store=self.store)
-        # print(root)
 
     @staticmethod
     def build_ome(
         data_shape: Tuple[int, ...],
+        image_name: str,
         channel_names: List[str],
         channel_colors: List[int],
         channel_minmax: List[Tuple[float, float]],
@@ -55,6 +46,8 @@ class OmeZarrWriter:
         ----------
         data_shape:
             A 5-d tuple, assumed to be TCZYX order
+        image_name:
+            The name of the image
         channel_names:
             The names for each channel
         channel_colors:
@@ -88,7 +81,7 @@ class OmeZarrWriter:
 
         omero = {
             "id": 1,  # ID in OMERO
-            "name": "image0",  # Name as shown in the UI
+            "name": image_name,  # Name as shown in the UI
             "version": "0.4",  # Current version
             "channels": ch,
             "rdefs": {
@@ -96,6 +89,7 @@ class OmeZarrWriter:
                 "defaultZ": data_shape[2] // 2,  # First Z section to show the user
                 "model": "color",  # "color" or "greyscale"
             },
+            # TODO: can we add more metadata here?
             # # from here down this is all extra and not part of the ome-zarr spec
             # "meta": {
             #     "projectDescription": "20+ lines of gene edited cells etc",
@@ -124,6 +118,7 @@ class OmeZarrWriter:
 
     def write_image(
         self,
+        # TODO how to pass in precomputed multiscales?
         image_data: types.ArrayLike,  # must be 5D TCZYX
         image_name: str,
         physical_pixel_sizes: Optional[types.PhysicalPixelSizes],
@@ -270,17 +265,14 @@ class OmeZarrWriter:
         # try to construct per-image metadata
         ome_json = OmeZarrWriter.build_ome(
             image_data.shape,
+            image_name,
             channel_names=channel_names,  # type: ignore
             channel_colors=channel_colors,  # type: ignore
-            # this can be slow if going over all T values,
-            # might be better if user supplies the min/max?
-            channel_minmax=[
-                (0.0, 1.0)
-                # (numpy.min(image_data[:, i, :, :, :]),
-                #  numpy.max(image_data[:, i, :, :, :]))
-                for i in range(image_data.shape[1])
-            ],
+            # This can be slow if computed here.
+            # TODO: Rely on user to supply the per-channel min/max.
+            channel_minmax=[(0.0, 1.0) for i in range(image_data.shape[1])],
         )
+        # TODO user supplies units?
         axes_5d = [
             {"name": "t", "type": "time", "unit": "millisecond"},
             {"name": "c", "type": "channel"},

@@ -1,9 +1,8 @@
+import math
 import typing
 from typing import Dict, List, Optional, Tuple
 
-import math
 import zarr
-
 from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image

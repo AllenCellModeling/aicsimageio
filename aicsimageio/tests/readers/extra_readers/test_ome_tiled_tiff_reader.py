@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import List, Tuple
+from typing import List, Tuple, Type
 
 import numpy as np
 import pytest
 from ome_types import OME
 
-from aicsimageio import dimensions, exceptions
+from aicsimageio import AICSImage, dimensions, exceptions, readers
 from aicsimageio.readers.bfio_reader import OmeTiledTiffReader
+from aicsimageio.readers.reader import Reader
 
-from ..conftest import LOCAL, get_resource_full_path, host
-from ..image_container_test_utils import run_image_file_checks
+from ...conftest import LOCAL, get_resource_full_path, host
+from ...image_container_test_utils import run_image_file_checks
 
 
 @host
@@ -208,3 +209,38 @@ def test_ome_tiff_reader_large_files(
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=OME,
     )
+
+
+@pytest.mark.parametrize(
+    "filename, expected_reader",
+    [
+        (
+            "s_1_t_1_c_1_z_1.tiff",
+            readers.TiffReader,
+        ),
+        (
+            "s_1_t_1_c_1_z_1.ome.tiff",
+            readers.OmeTiffReader,
+        ),
+        (
+            "s_1_t_1_c_1_z_1_ome_tiff_tiles.ome.tif",
+            readers.OmeTiledTiffReader,
+        ),
+        (  # Multiscene tiff
+            "variable_scene_shape_first_scene_pyramid.ome.tiff",
+            readers.OmeTiffReader,
+        ),
+    ],
+)
+def test_selected_tiff_reader(
+    filename: str,
+    expected_reader: Type[Reader],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+
+    # Assert basics
+    assert isinstance(img.reader, expected_reader)

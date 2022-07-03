@@ -3,7 +3,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -28,6 +28,9 @@ class Reader(ABC):
     ----------
     image: Any
         Some type of object to read and follow the Reader specification.
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -49,7 +52,11 @@ class Reader(ABC):
 
     @staticmethod
     @abstractmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+    def _is_supported_image(
+        fs: AbstractFileSystem,
+        path: str,
+        **kwargs: Any,
+    ) -> bool:
         """
         The per-Reader implementation used to validate that an image is supported or not
         by the Reader itself.
@@ -70,7 +77,12 @@ class Reader(ABC):
         """
 
     @classmethod
-    def is_supported_image(cls, image: types.ImageLike, **kwargs: Any) -> bool:
+    def is_supported_image(
+        cls,
+        image: types.ImageLike,
+        fs_kwargs: Dict[str, Any] = {},
+        **kwargs: Any,
+    ) -> bool:
         """
         Asserts that the provided image like object is supported by the current Reader.
 
@@ -78,6 +90,10 @@ class Reader(ABC):
         ----------
         image: types.ImageLike
             The filepath or array to validate as a supported type.
+        fs_kwargs: Dict[str, Any]
+            Any specific keyword arguments to pass down to the fsspec created
+            filesystem.
+            Default: {}
         kwargs: Any
             Any kwargs used for reading and validation of the file.
 
@@ -95,7 +111,11 @@ class Reader(ABC):
         # Check path
         if isinstance(image, (str, Path)):
             # Expand details of provided image
-            fs, path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+            fs, path = io_utils.pathlike_to_fs(
+                image,
+                enforce_exists=True,
+                fs_kwargs=fs_kwargs,
+            )
 
             return cls._is_supported_image(fs, path, **kwargs)
 
@@ -813,6 +833,86 @@ class Reader(ABC):
             return Dimensions("YX", (self.dims.Y, self.dims.X))  # type: ignore
 
         return None
+
+    def get_stack(self, **kwargs: Any) -> np.ndarray:
+
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: np.ndarray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        See Also
+        --------
+        transforms.generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return transforms.generate_stack(self, mode="data", **kwargs)
+
+    def get_dask_stack(self, **kwargs: Any) -> da.Array:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: da.Array
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        See Also
+        --------
+        transforms.generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return transforms.generate_stack(self, mode="dask_data", **kwargs)
+
+    def get_xarray_stack(self, **kwargs: Any) -> xr.DataArray:
+        """
+        Get all scenes stacked in to a single array.
+
+
+        Returns
+        -------
+        stack: xr.DataArray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        Notes
+        -----
+        When requesting an xarray stack, the first scene's coordinate planes
+        are used for the returned xarray DataArray object coordinate planes.
+
+        See Also
+        --------
+        transforms.generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return transforms.generate_stack(self, mode="xarray_data", **kwargs)
+
+    def get_xarray_dask_stack(self, **kwargs: Any) -> xr.DataArray:
+        """
+        Get all scenes stacked in to a single array.
+
+        Returns
+        -------
+        stack: xr.DataArray
+            The fully stacked array. This can be 6+ dimensions with Scene being
+            the first dimension.
+
+        Notes
+        -----
+        When requesting an xarray stack, the first scene's coordinate planes
+        are used for the returned xarray DataArray object coordinate planes.
+
+        See Also
+        --------
+        transforms.generate_stack
+            Underlying function for generating various scene stacks.
+        """
+        return transforms.generate_stack(self, mode="xarray_dask_data", **kwargs)
 
     def __str__(self) -> str:
         return (

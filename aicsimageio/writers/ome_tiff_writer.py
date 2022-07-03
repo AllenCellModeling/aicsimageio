@@ -1,4 +1,7 @@
-from typing import Any, List, Optional, Tuple, Union
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -24,7 +27,7 @@ from .writer import Writer
 # the libtiff writer was unable to handle a 2GB numpy array.
 # It would be great if we better understood exactly what this threshold is and how to
 # calculate it but for now this is a stopgap working value
-BIGTIFF_BYTE_LIMIT = 2 ** 21
+BIGTIFF_BYTE_LIMIT = 2**21
 
 
 class OmeTiffWriter(Writer):
@@ -42,6 +45,7 @@ class OmeTiffWriter(Writer):
         channel_colors: Optional[
             Union[List[List[int]], List[Optional[List[List[int]]]]]
         ] = None,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ) -> None:
         """
@@ -94,6 +98,10 @@ class OmeTiffWriter(Writer):
             List of rgb color values per channel or a list of lists for each image.
             These must be values compatible with the OME spec.
             Default: None
+        fs_kwargs: Dict[str, Any]
+            Any specific keyword arguments to pass down to the fsspec created
+            filesystem.
+            Default: {}
 
         Raises
         ------
@@ -124,7 +132,7 @@ class OmeTiffWriter(Writer):
         ... )
         """
         # Resolve final destination
-        fs, path = io_utils.pathlike_to_fs(uri)
+        fs, path = io_utils.pathlike_to_fs(uri, fs_kwargs=fs_kwargs)
 
         # Catch non-local file system
         if not isinstance(fs, LocalFileSystem):

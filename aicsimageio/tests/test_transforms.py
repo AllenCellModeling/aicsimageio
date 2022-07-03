@@ -1,15 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Callable, List, Mapping, Tuple, Union
+from __future__ import annotations
+
+from typing import Any, Callable, List, Mapping, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
 import pytest
+import xarray as xr
 
-from aicsimageio import types
-from aicsimageio.exceptions import ConflictingArgumentsError
-from aicsimageio.transforms import reshape_data, transpose_to_dims
+from aicsimageio import AICSImage, types
+from aicsimageio.exceptions import ConflictingArgumentsError, UnexpectedShapeError
+from aicsimageio.readers import ArrayLikeReader
+from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_dims
 
 
 @pytest.mark.parametrize("array_maker", [np.zeros, da.zeros])
@@ -374,3 +378,148 @@ def test_transpose_to_dims(
 
     # Check that the output data is the same type as the input
     assert type(actual) == type(data)
+
+
+def get_data_reference(
+    mode: str,
+    mismatch: str,
+    scene_character: str,
+    scene_coord_values: str,
+    select_scenes: Optional[tuple[Union[int, str], ...]] = None,
+) -> tuple[list[types.MetaArrayLike], types.MetaArrayLike]:
+
+    # set up the core values for the dataset
+    shape = (3, 4, 5, 6, 7, 8)
+    scene_name_to_idx = dict(
+        zip([f"Image:{i}" for i in range(shape[0])], range(shape[0]))
+    )
+    data = np.arange(np.prod(shape), dtype="uint16").reshape(shape)
+
+    # convert to dask if necessary
+    if "dask" in mode:
+        data = da.from_array(data)
+
+    # split into list for image container construction
+    data = [_ for _ in data]
+
+    # mess with a scene for tests
+    if mismatch == "shape":
+        data[1] = data[1][:-1]
+    elif mismatch == "dtype":
+        data[1] = data[1].astype(int)
+
+    # select scenes from argumnet or to make valid call to stack
+    if select_scenes is None:
+        reference = (
+            np.stack(data) if mismatch == "none" else np.stack([data[0], data[2]])
+        )
+    else:
+        if isinstance(select_scenes[0], int):
+            reference = np.stack([data[i] for i in select_scenes])
+        elif isinstance(select_scenes[0], str):
+            inds = (scene_name_to_idx[str(s)] for s in select_scenes)
+            reference = np.stack([data[i] for i in inds])
+    # Assign coords and dims for xarray types
+    if "xarray" in mode:
+        data = [xr.DataArray(x, dims=list("TCZYX")) for x in data]
+        coords = {"C": [f"Channel:0:{i}" for i in range(shape[2])]}
+        if scene_coord_values == "names":
+            if mismatch == "none":
+                coords[scene_character] = [f"Image:{i}" for i in range(3)]
+            else:
+                coords[scene_character] = [f"Image:{i}" for i in (0, 2)]
+        reference = xr.DataArray(
+            reference, dims=list((scene_character, *"TCZYX")), coords=coords
+        )
+
+    return data, reference
+
+
+@pytest.mark.parametrize("image_container", [AICSImage, ArrayLikeReader])
+@pytest.mark.parametrize(
+    "mode, scene_character, scene_coord_values",
+    [
+        ("data", "I", "index"),
+        ("data", "U", "names"),
+        ("dask_data", "I", "index"),
+        ("xarray_data", "I", "index"),
+        ("xarray_data", "U", "index"),
+        ("xarray_data", "U", "names"),
+        pytest.param(
+            "xarray_data", "T", "index", marks=pytest.mark.raises(exception=ValueError)
+        ),
+        ("xarray_dask_data", "I", "index"),
+        ("xarray_dask_data", "U", "index"),
+        ("xarray_dask_data", "U", "names"),
+        pytest.param(
+            "xarray_dask_data",
+            "T",
+            "index",
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+    ],
+)
+def test_generate_stack_stacking(
+    image_container: Any,
+    mode: str,
+    scene_character: str,
+    scene_coord_values: str,
+) -> None:
+    data, reference = get_data_reference(
+        mode, "none", scene_character, scene_coord_values
+    )
+    container = image_container(data)
+    stack = generate_stack(
+        container, mode, False, None, scene_character, scene_coord_values
+    )
+    if "xarray" in mode:
+        xr.testing.assert_allclose(stack, reference)
+    else:
+        np.testing.assert_allclose(stack, reference)
+
+
+@pytest.mark.parametrize("image_container", [AICSImage, ArrayLikeReader])
+@pytest.mark.parametrize(
+    "mode", ["data", "xarray_data", "dask_data", "xarray_dask_data"]
+)
+@pytest.mark.parametrize(
+    "mismatch, drop_non_matching_scenes, select_scenes",
+    [
+        ("none", True, None),
+        ("shape", True, None),
+        ("dtype", True, None),
+        ("none", False, (0, 2)),
+        ("shape", False, (0, 2)),
+        ("dtype", False, (0, 2)),
+        ("none", False, tuple(f"Image:{i}" for i in [0, 2])),
+        ("shape", False, tuple(f"Image:{i}" for i in [0, 2])),
+        ("dtype", False, tuple(f"Image:{i}" for i in [0, 2])),
+        pytest.param(
+            "shape",
+            False,
+            None,
+            marks=pytest.mark.raises(exception=UnexpectedShapeError),
+        ),
+        pytest.param(
+            "dtype", False, None, marks=pytest.mark.raises(exception=TypeError)
+        ),
+    ],
+)
+def test_generate_stack_mismatch_and_drop(
+    # Test dropping and catching mismatched images
+    image_container: Any,
+    mode: str,
+    mismatch: str,
+    drop_non_matching_scenes: bool,
+    select_scenes: Optional[tuple[Union[int, str], ...]],
+) -> None:
+    data, reference = get_data_reference(mode, mismatch, "I", "index", select_scenes)
+    container = image_container(data)
+
+    stack = generate_stack(
+        container, mode, drop_non_matching_scenes, select_scenes, "I", "index"
+    )
+    if "xarray" in mode:
+        xr.testing.assert_allclose(stack, reference)
+    else:
+        np.testing.assert_allclose(stack, reference)

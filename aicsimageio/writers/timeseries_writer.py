@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any
+from typing import Any, Dict
 
 import dask.array as da
 import numpy as np
@@ -82,6 +82,7 @@ class TimeseriesWriter(Writer):
         uri: types.PathLike,
         dim_order: str = None,
         fps: int = 24,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ) -> None:
         """
@@ -100,6 +101,10 @@ class TimeseriesWriter(Writer):
         fps: int
             Frames per second to attach as metadata.
             Default: 24
+        fs_kwargs: Dict[str, Any]
+            Any specific keyword arguments to pass down to the fsspec created
+            filesystem.
+            Default: {}
 
         Examples
         --------
@@ -140,7 +145,7 @@ class TimeseriesWriter(Writer):
 
         """
         # Check unpack uri and extension
-        fs, path = io_utils.pathlike_to_fs(uri)
+        fs, path = io_utils.pathlike_to_fs(uri, fs_kwargs=fs_kwargs)
         (
             extension,
             imageio_mode,

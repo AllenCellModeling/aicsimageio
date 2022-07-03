@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Tuple
+from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
+from resource_backed_dask_array import resource_backed_dask_array
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from ..utils.dask_proxy import DaskArrayProxy
 from .reader import Reader
 
 if TYPE_CHECKING:
@@ -32,6 +32,9 @@ class DVReader(Reader):
     ----------
     image : Path or str
         path to file
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Raises
     ------
@@ -43,8 +46,12 @@ class DVReader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         return DVFile.is_supported_file(path)
 
-    def __init__(self, image: types.PathLike):
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+    def __init__(self, image: types.PathLike, fs_kwargs: Dict[str, Any] = {}):
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
         # Catch non-local file system
         if not isinstance(self._fs, LocalFileSystem):
             raise NotImplementedError(
@@ -71,7 +78,7 @@ class DVReader(Reader):
         with DVFile(self._path) as dv:
             xarr = dv.to_xarray(delayed=delayed, squeeze=False)
             if delayed:
-                xarr.data = DaskArrayProxy(xarr.data, dv)
+                xarr.data = resource_backed_dask_array(xarr.data, dv)
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
         return xarr
 

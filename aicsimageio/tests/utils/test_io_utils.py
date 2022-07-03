@@ -32,4 +32,4 @@ def test_pathlike_to_fs(filename: str, host: str, enforce_exists: bool) -> None:
     # Construct full filepath
     uri = get_resource_full_path(filename, host)
 
-    pathlike_to_fs(uri, enforce_exists)
+    pathlike_to_fs(uri, enforce_exists, fs_kwargs=dict(anon=True))

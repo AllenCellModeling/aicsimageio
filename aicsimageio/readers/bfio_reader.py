@@ -43,6 +43,9 @@ class BfioReader(Reader):
     out_order: List[str]
         The output dimension ordering.
         Default: DEFAULT_DIMENSION_ORDER
+    fs_kwargs: Dict[str, Any]
+        Any specific keyword arguments to pass down to the fsspec created filesystem.
+        Default: {}
 
     Notes
     -----
@@ -89,11 +92,9 @@ class BfioReader(Reader):
         """This method should be overwritten by a subclass."""
         try:
             with BioReader(path):
-
                 return True
 
         except Exception:
-
             return False
 
     def __init__(
@@ -101,10 +102,15 @@ class BfioReader(Reader):
         image: types.PathLike,
         chunk_dims: Optional[Union[str, List[str]]] = None,
         out_order: str = DEFAULT_DIMENSION_ORDER,
+        fs_kwargs: Dict[str, Any] = {},
         **kwargs: Any,
     ):
         # Expand details of provided image
-        self._fs, self._path = io_utils.pathlike_to_fs(image, enforce_exists=True)
+        self._fs, self._path = io_utils.pathlike_to_fs(
+            image,
+            enforce_exists=True,
+            fs_kwargs=fs_kwargs,
+        )
 
         if not isinstance(self._fs, LocalFileSystem):
             raise ValueError(

@@ -1,11 +1,8 @@
-import pathlib
 import typing
 from typing import Dict, List, Optional, Tuple
 
 import math
 import zarr
-from fsspec.implementations.local import LocalFileSystem
-import s3fs
 
 from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
@@ -14,6 +11,7 @@ from ome_zarr.writer import write_image
 from .. import types
 from ..metadata import utils
 from ..utils import io_utils
+
 # from .writer import Writer
 
 
@@ -224,13 +222,17 @@ class OmeZarrWriter:
         target_chunk_size = 16 * (1024 * 1024)  # 16 MB
         nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
         nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
-        chunk_dims = [dict(chunks=(
-            1,
-            1,
-            nplanes_per_chunk,
-            image_data.shape[3],
-            image_data.shape[4],
-        ))]
+        chunk_dims = [
+            dict(
+                chunks=(
+                    1,
+                    1,
+                    nplanes_per_chunk,
+                    image_data.shape[3],
+                    image_data.shape[4],
+                )
+            )
+        ]
         lasty = image_data.shape[3]
         lastx = image_data.shape[4]
         # TODO scaler might want to use different method for segmentations than raw

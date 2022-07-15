@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/lower-log-level-of-OME-TIFF-read-errors  (`#414
+  <https://github.com/AllenCellModeling/aicsimageio/pull/414>`_) [Eva
+  Maxfield Brown]
 - feature/get-stack  (`#403
   <https://github.com/AllenCellModeling/aicsimageio/pull/403>`_) [John
   Russell]

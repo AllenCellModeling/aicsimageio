@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from typing import Any, Optional, List, Tuple, Union
 from abc import ABC, abstractmethod
+from typing import Any, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np

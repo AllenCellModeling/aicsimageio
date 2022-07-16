@@ -734,7 +734,7 @@ class AICSImage(ImageContainer):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, "data", **kwargs)
 
@@ -754,7 +754,7 @@ class AICSImage(ImageContainer):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, "dask_data", **kwargs)
 
@@ -774,7 +774,7 @@ class AICSImage(ImageContainer):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
 
         Notes
         -----
@@ -799,7 +799,7 @@ class AICSImage(ImageContainer):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
 
         Notes
         -----

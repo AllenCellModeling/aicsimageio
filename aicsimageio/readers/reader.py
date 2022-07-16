@@ -852,7 +852,7 @@ class Reader(ImageContainer, ABC):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="data", **kwargs)
 
@@ -872,7 +872,7 @@ class Reader(ImageContainer, ABC):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="dask_data", **kwargs)
 
@@ -893,7 +893,7 @@ class Reader(ImageContainer, ABC):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
 
         Notes
         -----
@@ -918,7 +918,7 @@ class Reader(ImageContainer, ABC):
         See Also
         --------
         aicsimageio.transforms.generate_stack:
-            The base function where transposing occurs.
+            Underlying function for generating various scene stacks.
 
         Notes
         -----

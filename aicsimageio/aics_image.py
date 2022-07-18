@@ -14,6 +14,7 @@ from ome_types import OME
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
 from .metadata import utils as metadata_utils
+from .plugins import find_reader_for_path
 from .readers import TiffGlobReader
 from .readers.reader import Reader
 from .types import PhysicalPixelSizes
@@ -163,14 +164,11 @@ class AICSImage:
             No reader could be found that supports the provided image.
         """
         if isinstance(image, str):
-            from .plugins import plugin_cache
-            for readerkey in plugin_cache:
-                reader = plugin_cache[readerkey]
-                exts = reader._get_supported_extensions()
-                for ext in exts:
-                    if image.endswith(ext):
-                        print("found reader plugin by extension " + ext)
-                        return reader
+            # try to find by extension
+            readermeta = find_reader_for_path(image)
+            if readermeta is not None:
+                print(f"found plugin reader for {image} : {readermeta}")
+                return readermeta.get_reader()
 
         if isinstance(image, list) and isinstance(image[0], (str, Path)):
             return TiffGlobReader

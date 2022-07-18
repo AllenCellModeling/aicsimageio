@@ -21,4 +21,4 @@ def get_module_version() -> str:
 
 
 from . import plugins
-plugins.get_plugins()
+plugins.dump_plugins()

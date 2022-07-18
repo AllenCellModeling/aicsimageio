@@ -1,11 +1,12 @@
 
-from typing import Dict, List, Optional, NamedTuple
-
+from datetime import datetime
+import os
 import sys
 if sys.version_info < (3, 10):
     from importlib_metadata import entry_points, version, distribution, EntryPoint
 else:
     from importlib.metadata import entry_points, version, distribution, EntryPoint
+from typing import Dict, List, Optional, NamedTuple
 
 from base_image_reader import ReaderMetadata
 from base_image_reader.reader import Reader
@@ -34,6 +35,11 @@ def get_plugins():
             if ext not in plugins_by_ext:
                 plugins_by_ext[ext] = []
             # TODO insert in sorted order (sorted by most recently installed)
+
+            # firstfile = ep.dist.files[0]
+            # print(f"  Date    : {datetime.fromtimestamp(os.path.getmtime(firstfile.locate().parent))}")
+
+
             plugins_by_ext[ext].append(pluginentry)
 
     return plugin_cache
@@ -48,6 +54,8 @@ def dump_plugins():
         print(f"  Author  : {ep.dist.metadata['author']}")
         print(f"  Version : {ep.dist.version}")
         print(f"  License : {ep.dist.metadata['license']}")
+        firstfile = ep.dist.files[0]
+        print(f"  Date    : {datetime.fromtimestamp(os.path.getmtime(firstfile.locate().parent))}")
         # print(f"  Description : {ep.dist.metadata['description']}")
         reader_meta = plugin.metadata
         exts = ", ".join(reader_meta.get_supported_extensions())

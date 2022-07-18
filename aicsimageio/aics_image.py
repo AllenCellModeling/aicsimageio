@@ -162,6 +162,15 @@ class AICSImage:
         exceptions.UnsupportedFileFormatError
             No reader could be found that supports the provided image.
         """
+        if isinstance(image, str):
+            from .plugins import plugin_cache
+            for readerkey in plugin_cache:
+                reader = plugin_cache[readerkey]
+                exts = reader._get_supported_extensions()
+                for ext in exts:
+                    if image.endswith(ext):
+                        print("found reader plugin by extension " + ext)
+                        return reader
 
         if isinstance(image, list) and isinstance(image[0], (str, Path)):
             return TiffGlobReader

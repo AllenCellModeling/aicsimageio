@@ -14,6 +14,7 @@ from base_image_reader.reader import Reader
 class PluginEntry(NamedTuple):
     entrypoint: EntryPoint
     metadata: ReaderMetadata
+    timestamp: datetime
 
 
 # global cache of plugins
@@ -28,19 +29,30 @@ def get_plugins():
     for plugin in plugins:
         # ReaderMetadata knows how to instantiate the actual Reader
         reader_meta = plugin.load().ReaderMetadata
-        pluginentry = PluginEntry(plugin, reader_meta)
+        if plugin.dist.files is not None:
+            firstfile = plugin.dist.files[0]
+            timestamp = os.path.getmtime(firstfile.locate().parent)
+        else:
+            timestamp = 0
+        pluginentry = PluginEntry(plugin, reader_meta, timestamp)
         plugin_cache.append(pluginentry)
         exts = reader_meta.get_supported_extensions()
         for ext in exts:
             if ext not in plugins_by_ext:
-                plugins_by_ext[ext] = []
-            # TODO insert in sorted order (sorted by most recently installed)
-
-            # firstfile = ep.dist.files[0]
-            # print(f"  Date    : {datetime.fromtimestamp(os.path.getmtime(firstfile.locate().parent))}")
-
-
-            plugins_by_ext[ext].append(pluginentry)
+                plugins_by_ext[ext] = [pluginentry]
+                continue
+            
+            # insert in sorted order (sorted by most recently installed)
+            # TODO make this a function and test it
+            pluginlist = plugins_by_ext[ext]
+            inserted = False
+            for i, otherplugin in enumerate(pluginlist):
+                if timestamp > otherplugin.timestamp:
+                    pluginlist.insert(i, pluginentry)
+                    inserted = True
+                    break
+            if not inserted:
+                pluginlist.append(pluginentry)
 
     return plugin_cache
 
@@ -96,4 +108,5 @@ def find_readers_for_path(path: str) -> List[PluginEntry]:
     for ext in exts:
         if path.endswith(ext):
             candidates = candidates + plugins_by_ext[ext]
+    print(candidates)
     return candidates

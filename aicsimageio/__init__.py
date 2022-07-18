@@ -18,3 +18,7 @@ __version__ = "4.8.0"
 
 def get_module_version() -> str:
     return __version__
+
+
+from . import plugins
+plugins.get_plugins()

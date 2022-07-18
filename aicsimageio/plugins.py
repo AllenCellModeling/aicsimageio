@@ -8,7 +8,7 @@ else:
     from importlib.metadata import entry_points, version, distribution, EntryPoint
 
 from base_image_reader import ReaderMetadata
-
+from base_image_reader.reader import Reader
 
 class PluginEntry(NamedTuple):
     entrypoint: EntryPoint
@@ -49,7 +49,7 @@ def dump_plugins():
         print(f"  Version : {ep.dist.version}")
         print(f"  License : {ep.dist.metadata['license']}")
         # print(f"  Description : {ep.dist.metadata['description']}")
-        reader_meta = plugin.readermeta
+        reader_meta = plugin.metadata
         exts = ", ".join(reader_meta.get_supported_extensions())
         print(f"  Supported Extensions : {exts}")
     print("Plugins for extensions:")
@@ -59,16 +59,26 @@ def dump_plugins():
         print(f"{ext}: {plugins}")
 
 
-def find_reader_for_path(path: str) -> Optional[PluginEntry]:
-    # try to match on the longest possible registered extension
-    exts = sorted(plugins_by_ext.keys(), key=len, reverse=True)
-    for ext in exts:
-        if path.endswith(ext):
-            candidates = plugins_by_ext[ext]
-            # TODO select a candidate by some criteria?
-            return candidates[0]
-    # didn't find a reader for this extension
+def find_reader_for_path(path: str) -> Optional[Reader]:
+    candidates = find_readers_for_path(path)
+    for candidate in candidates:
+        reader = candidate.metadata.get_reader()
+        if reader.is_supported_image(
+            path,
+            # TODO fs_kwargs=fs_kwargs,
+        ):
+            return reader
     return None
+
+    # try to match on the longest possible registered extension
+    # exts = sorted(plugins_by_ext.keys(), key=len, reverse=True)
+    # for ext in exts:
+    #     if path.endswith(ext):
+    #         candidates = plugins_by_ext[ext]
+    #         # TODO select a candidate by some criteria?
+    #         return candidates[0]
+    # # didn't find a reader for this extension
+    # return None
 
 
 def find_readers_for_path(path: str) -> List[PluginEntry]:

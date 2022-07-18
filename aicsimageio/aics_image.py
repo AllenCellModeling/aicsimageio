@@ -13,6 +13,7 @@ from ome_types import OME
 
 from . import dimensions, exceptions, transforms, types
 from .formats import FORMAT_IMPLEMENTATIONS, READER_TO_INSTALL
+from .image_container import ImageContainer
 from .metadata import utils as metadata_utils
 from .readers import TiffGlobReader
 from .readers.reader import Reader
@@ -32,7 +33,7 @@ def _load_reader(reader_path: str) -> Type[Reader]:
     return getattr(loaded_mod, reader_name)
 
 
-class AICSImage:
+class AICSImage(ImageContainer):
     """
     AICSImage takes microscopy image data types (files or arrays) of varying
     dimensions ("ZYX", "TCZYX", "CYX") and reads them as consistent 5D "TCZYX"
@@ -726,6 +727,14 @@ class AICSImage:
         stack: np.ndarray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, "data", **kwargs)
 
@@ -738,6 +747,14 @@ class AICSImage:
         stack: da.Array
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, "dask_data", **kwargs)
 
@@ -750,6 +767,14 @@ class AICSImage:
         stack: xr.DataArray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
 
         Notes
         -----
@@ -767,6 +792,14 @@ class AICSImage:
         stack: xr.DataArray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
 
         Notes
         -----

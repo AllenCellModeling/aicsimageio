@@ -13,13 +13,14 @@ from ome_types import OME
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames, Dimensions
+from ..image_container import ImageContainer
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 
 ###############################################################################
 
 
-class Reader(ABC):
+class Reader(ImageContainer, ABC):
     """
     A small class to build standardized image reader objects that deal with the raw
     image and metadata.
@@ -844,10 +845,13 @@ class Reader(ABC):
         stack: np.ndarray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
 
         See Also
         --------
-        transforms.generate_stack
+        aicsimageio.transforms.generate_stack:
             Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="data", **kwargs)
@@ -861,10 +865,13 @@ class Reader(ABC):
         stack: da.Array
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
 
         See Also
         --------
-        transforms.generate_stack
+        aicsimageio.transforms.generate_stack:
             Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="dask_data", **kwargs)
@@ -879,16 +886,19 @@ class Reader(ABC):
         stack: xr.DataArray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
 
         Notes
         -----
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
-
-        See Also
-        --------
-        transforms.generate_stack
-            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="xarray_data", **kwargs)
 
@@ -901,16 +911,19 @@ class Reader(ABC):
         stack: xr.DataArray
             The fully stacked array. This can be 6+ dimensions with Scene being
             the first dimension.
+        kwargs: Any
+            Extra keyword arguments that will be passed down to the
+            generate stack function.
+
+        See Also
+        --------
+        aicsimageio.transforms.generate_stack:
+            Underlying function for generating various scene stacks.
 
         Notes
         -----
         When requesting an xarray stack, the first scene's coordinate planes
         are used for the returned xarray DataArray object coordinate planes.
-
-        See Also
-        --------
-        transforms.generate_stack
-            Underlying function for generating various scene stacks.
         """
         return transforms.generate_stack(self, mode="xarray_dask_data", **kwargs)
 

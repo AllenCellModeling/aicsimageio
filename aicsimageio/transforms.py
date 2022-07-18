@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 import dask.array as da
 import numpy as np
@@ -11,6 +11,7 @@ import xarray as xr
 
 from . import types
 from .exceptions import ConflictingArgumentsError, UnexpectedShapeError
+from .image_container import ImageContainer
 
 ###############################################################################
 
@@ -264,8 +265,8 @@ def reshape_data(
 
 
 def generate_stack(
-    image_container: Any,
-    mode: str,
+    image_container: ImageContainer,
+    mode: Literal["data", "dask_data", "xarray_data", "xarray_dask_data"],
     drop_non_matching_scenes: bool = False,
     select_scenes: Optional[
         Union[list[Union[str, int]], tuple[Union[str, int], ...]]
@@ -283,7 +284,7 @@ def generate_stack(
 
     Parameters
     ----------
-    mode: str
+    mode: Literal["data", "dask_data", "xarray_data", "xarray_dask_data"]
         String describing the style of data to return. Should be one of:
         "data", "dask_data", "xarray_data", "xarray_dask_data".
     drop_non_matching_scenes: bool

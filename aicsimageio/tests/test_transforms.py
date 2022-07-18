@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, List, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, List, Literal, Mapping, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -461,7 +461,7 @@ def get_data_reference(
 )
 def test_generate_stack_stacking(
     image_container: Any,
-    mode: str,
+    mode: Literal["data", "dask_data", "xarray_data", "xarray_dask_data"],
     scene_character: str,
     scene_coord_values: str,
 ) -> None:
@@ -508,7 +508,7 @@ def test_generate_stack_stacking(
 def test_generate_stack_mismatch_and_drop(
     # Test dropping and catching mismatched images
     image_container: Any,
-    mode: str,
+    mode: Literal["data", "dask_data", "xarray_data", "xarray_dask_data"],
     mismatch: str,
     drop_non_matching_scenes: bool,
     select_scenes: Optional[tuple[Union[int, str], ...]],

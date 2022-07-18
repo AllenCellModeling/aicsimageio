@@ -165,10 +165,10 @@ class AICSImage:
         """
         if isinstance(image, str):
             # try to find by extension
-            readermeta = find_reader_for_path(image)
-            if readermeta is not None:
-                print(f"found plugin reader for {image} : {readermeta}")
-                return readermeta.get_reader()
+            plugin_entry = find_reader_for_path(image)
+            if plugin_entry is not None:
+                print(f"found plugin reader for {image} : {plugin_entry}")
+                return plugin_entry.readermeta.get_reader()
 
         if isinstance(image, list) and isinstance(image[0], (str, Path)):
             return TiffGlobReader

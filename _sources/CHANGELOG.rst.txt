@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/image-container  (`#415
+  <https://github.com/AllenCellModeling/aicsimageio/pull/415>`_) [Eva
+  Maxfield Brown]
 - feature/lower-log-level-of-OME-TIFF-read-errors  (`#414
   <https://github.com/AllenCellModeling/aicsimageio/pull/414>`_) [Eva
   Maxfield Brown]

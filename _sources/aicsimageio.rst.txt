@@ -55,6 +55,14 @@ aicsimageio.formats module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.image\_container module
+-----------------------------------
+
+.. automodule:: aicsimageio.image_container
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.transforms module
 -----------------------------
 

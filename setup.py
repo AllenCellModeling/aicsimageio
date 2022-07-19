@@ -121,8 +121,8 @@ extra_requirements = {
 }
 
 setup(
-    author="Jackson Maxfield Brown, Allen Institute for Cell Science",
-    author_email="jmaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
+    author="Eva Maxfield Brown, Allen Institute for Cell Science",
+    author_email="evamaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
     cmdclass={"build_py": BuildPyCommand},
     classifiers=[
         "Development Status :: 5 - Production/Stable",

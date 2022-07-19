@@ -1,15 +1,16 @@
-
 from datetime import datetime
 import os
 import sys
+
 if sys.version_info < (3, 10):
-    from importlib_metadata import entry_points, version, distribution, EntryPoint
+    from importlib_metadata import entry_points, EntryPoint
 else:
-    from importlib.metadata import entry_points, version, distribution, EntryPoint
+    from importlib.metadata import entry_points, EntryPoint
 from typing import Dict, List, Optional, NamedTuple
 
 from base_image_reader import ReaderMetadata
 from base_image_reader.reader import Reader
+
 
 class PluginEntry(NamedTuple):
     entrypoint: EntryPoint
@@ -26,8 +27,17 @@ plugins_by_ext: Dict[str, List[PluginEntry]] = {}
 # TODO write an add_plugin_entry function so that
 # we can create simple test Readers to mock several cases
 
+
+def insert_sorted_by_timestamp(list: List[PluginEntry], item: PluginEntry):
+    for i, other in enumerate(list):
+        if item.timestamp > other.timestamp:
+            list.insert(i, item)
+            return
+    list.append(item)
+
+
 def get_plugins():
-    plugins = entry_points(group='aicsimageio.readers')
+    plugins = entry_points(group="aicsimageio.readers")
     for plugin in plugins:
         # ReaderMetadata knows how to instantiate the actual Reader
         reader_meta = plugin.load().ReaderMetadata
@@ -43,18 +53,10 @@ def get_plugins():
             if ext not in plugins_by_ext:
                 plugins_by_ext[ext] = [pluginentry]
                 continue
-            
+
             # insert in sorted order (sorted by most recently installed)
-            # TODO make this a function and test it
             pluginlist = plugins_by_ext[ext]
-            inserted = False
-            for i, otherplugin in enumerate(pluginlist):
-                if timestamp > otherplugin.timestamp:
-                    pluginlist.insert(i, pluginentry)
-                    inserted = True
-                    break
-            if not inserted:
-                pluginlist.append(pluginentry)
+            insert_sorted_by_timestamp(pluginlist, pluginentry)
 
     return plugin_cache
 
@@ -69,7 +71,8 @@ def dump_plugins():
         print(f"  Version : {ep.dist.version}")
         print(f"  License : {ep.dist.metadata['license']}")
         firstfile = ep.dist.files[0]
-        print(f"  Date    : {datetime.fromtimestamp(os.path.getmtime(firstfile.locate().parent))}")
+        t = datetime.fromtimestamp(os.path.getmtime(firstfile.locate().parent))
+        print(f"  Date    : {t}")
         # print(f"  Description : {ep.dist.metadata['description']}")
         reader_meta = plugin.metadata
         exts = ", ".join(reader_meta.get_supported_extensions())

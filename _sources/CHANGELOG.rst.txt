@@ -16,6 +16,10 @@ New
   <https://github.com/AllenCellModeling/aicsimageio/pull/403>`_) [John
   Russell]
 
+Other
+~~~~~
+- Update names, emails, and meta [evamaxfield]
+
 
 v4.8.0 (2022-05-26)
 -------------------

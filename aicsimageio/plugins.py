@@ -36,6 +36,19 @@ def insert_sorted_by_timestamp(list: List[PluginEntry], item: PluginEntry):
     list.append(item)
 
 
+def add_plugin(pluginentry: PluginEntry):
+    plugin_cache.append(pluginentry)
+    exts = pluginentry.metadata.get_supported_extensions()
+    for ext in exts:
+        if ext not in plugins_by_ext:
+            plugins_by_ext[ext] = [pluginentry]
+            continue
+
+        # insert in sorted order (sorted by most recently installed)
+        pluginlist = plugins_by_ext[ext]
+        insert_sorted_by_timestamp(pluginlist, pluginentry)
+
+
 def get_plugins():
     plugins = entry_points(group="aicsimageio.readers")
     for plugin in plugins:
@@ -47,16 +60,7 @@ def get_plugins():
         else:
             timestamp = 0
         pluginentry = PluginEntry(plugin, reader_meta, timestamp)
-        plugin_cache.append(pluginentry)
-        exts = reader_meta.get_supported_extensions()
-        for ext in exts:
-            if ext not in plugins_by_ext:
-                plugins_by_ext[ext] = [pluginentry]
-                continue
-
-            # insert in sorted order (sorted by most recently installed)
-            pluginlist = plugins_by_ext[ext]
-            insert_sorted_by_timestamp(pluginlist, pluginentry)
+        add_plugin(pluginentry)
 
     return plugin_cache
 

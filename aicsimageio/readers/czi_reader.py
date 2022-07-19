@@ -239,7 +239,9 @@ class CziReader(Reader):
         """
         dims_shape_index = 0 if consistent else scene_index
         dims_shape_dict = dims_shape[dims_shape_index]
-        scene_range = dims_shape_dict[CZI_SCENE_DIM_CHAR]
+        scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
+        if scene_range is None:
+            return scene_index
         return scene_range[0] + scene_index
 
     @staticmethod

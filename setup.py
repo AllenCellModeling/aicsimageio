@@ -97,6 +97,7 @@ benchmark_requirements = [
 ]
 
 requirements = [
+    "base-image-reader @ https://github.com/AllenCellModeling/base-image-reader/archive/main.zip",
     "dask[array]>=2021.4.1",
     "fsspec>=2021.4.0",
     "imagecodecs>=2020.5.30",

@@ -24,9 +24,6 @@ plugin_cache: List[PluginEntry] = []
 # note there can be multiple readers for the same extension
 plugins_by_ext: Dict[str, List[PluginEntry]] = {}
 
-# TODO write an add_plugin_entry function so that
-# we can create simple test Readers to mock several cases
-
 
 def insert_sorted_by_timestamp(list: List[PluginEntry], item: PluginEntry):
     for i, other in enumerate(list):

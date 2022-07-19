@@ -220,7 +220,8 @@ class CziReader(Reader):
         dims_shape: List[Dict], scene_index: int, consistent: bool
     ) -> int:
         """
-        This function modifies a scene index to be an offset into the true scene indices reported by the czi file
+        This function modifies a scene index to be an offset into the true scene
+        indices reported by the czi file
 
         Parameters
         ----------
@@ -289,7 +290,7 @@ class CziReader(Reader):
         # Init czi
         with fs.open(path) as open_resource:
             czi = CziFile(open_resource)
-            
+
             # Get current scene read dims
             adjusted_scene_index = CziReader._adjust_scene_index(
                 czi.get_dims_shape(), scene, czi.shape_is_consistent

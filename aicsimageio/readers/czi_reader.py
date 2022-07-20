@@ -198,10 +198,9 @@ class CziReader(Reader):
                             # We do not currently support loading multi-file split
                             # scene CZI files
                             raise ValueError(
-                                "CZI file appears to contain multiple "
-                                "scenes but dimension data is not "
-                                "available in this file. Root node of "
-                                "split multi-scene CZI files are not "
+                                "CZI file appears to contain multiple scenes but "
+                                "dimension data is not available in this file. "
+                                "Root node of split multi-scene CZI files are not "
                                 "supported by CziReader."
                             )
 

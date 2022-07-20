@@ -19,4 +19,9 @@ def test_dimensions_getitem() -> None:
     with pytest.raises(IndexError):
         dims["blarg", "nope"]
     with pytest.raises(TypeError):
+        # Ironic we have to type ignore this because uhhh
+        # we are testing a TypeError
         dims[0]  # type: ignore
+
+    assert dims.T == 1
+    assert dims.order == "TCZYX"

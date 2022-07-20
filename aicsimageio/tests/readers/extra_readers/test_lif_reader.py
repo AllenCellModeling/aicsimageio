@@ -248,10 +248,8 @@ def test_lif_reader_mosaic_stitching(
             None,
             None,
             None,
-            # The value returned from all of the calls is None
-            # Which when trying to operate on will raise an AttributeError
-            # Because None doesn't have a Y or X attribute for example
-            marks=pytest.mark.raises(exception=AttributeError),
+            # Doesn't have mosaic tiles
+            marks=pytest.mark.raises(exception=AssertionError),
         ),
     ],
 )
@@ -270,8 +268,9 @@ def test_lif_reader_mosaic_tile_inspection(
     reader.set_scene(set_scene)
 
     # Check basics
-    assert reader.mosaic_tile_dims.Y == expected_tile_dims[0]  # type: ignore
-    assert reader.mosaic_tile_dims.X == expected_tile_dims[1]  # type: ignore
+    assert reader.mosaic_tile_dims is not None
+    assert reader.mosaic_tile_dims.Y == expected_tile_dims[0]
+    assert reader.mosaic_tile_dims.X == expected_tile_dims[1]
 
     # Pull tile info for compare
     tile_y_pos, tile_x_pos = reader.get_mosaic_tile_position(select_tile_index)
@@ -287,8 +286,8 @@ def test_lif_reader_mosaic_tile_inspection(
         :,
         :,
         :,
-        tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),  # type: ignore
-        tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),  # type: ignore
+        tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),
+        tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),
     ].compute()
 
     # Remove the first Y and X pixels
@@ -513,8 +512,9 @@ def test_mosaic_passthrough(
 
     # Assert basics
     assert img.shape == expected_shape
-    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]  # type: ignore
-    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]  # type: ignore
+    assert img.mosaic_tile_dims is not None
+    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]
+    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)

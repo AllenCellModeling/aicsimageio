@@ -190,18 +190,20 @@ class CziReader(Reader):
                         dims_shape_dict = dims_shape[0]
                         scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
                         if scene_range is not None:
-                            scene_names = scene_names[scene_range[0]:scene_range[1]]
+                            scene_names = scene_names[scene_range[0] : scene_range[1]]
                         else:
                             # If this is the root node of a split multiscene czi,
                             # then the scene_range could be None because the dims_shape
                             # will be effectively empty.
-                            # We do not currently support loading multi-file split 
+                            # We do not currently support loading multi-file split
                             # scene CZI files
-                            raise ValueError("CZI file appears to contain multiple "
-                                             "scenes but dimension data is not "
-                                             "available in this file. Root node of "
-                                             "split multi-scene CZI files are not "
-                                             "supported by CziReader.")
+                            raise ValueError(
+                                "CZI file appears to contain multiple "
+                                "scenes but dimension data is not "
+                                "available in this file. Root node of "
+                                "split multi-scene CZI files are not "
+                                "supported by CziReader."
+                            )
 
                 self._scenes = tuple(scene_names)
 

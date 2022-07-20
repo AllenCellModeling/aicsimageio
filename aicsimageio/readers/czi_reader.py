@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import xml.etree.ElementTree as ET
 from copy import copy
 from pathlib import Path
@@ -29,6 +30,10 @@ except ImportError:
         "aicspylibczi is required for this reader. "
         "Install with `pip install aicspylibczi>=3.0.5"
     )
+
+###############################################################################
+
+log = logging.getLogger(__name__)
 
 ###############################################################################
 
@@ -197,7 +202,7 @@ class CziReader(Reader):
                             # will be effectively empty.
                             # We do not currently support loading multi-file split
                             # scene CZI files
-                            raise ValueError(
+                            log.warning(
                                 "CZI file appears to contain multiple scenes but "
                                 "dimension data is not available in this file. "
                                 "Root node of split multi-scene CZI files are not "

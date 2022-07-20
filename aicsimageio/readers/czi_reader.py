@@ -183,6 +183,15 @@ class CziReader(Reader):
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
                     scene_names = [metadata_utils.generate_ome_image_id(0)]
+                else:
+                    # reconcile scene list against the dims shape
+                    dims_shape = czi.get_dims_shape()
+                    if len(scene_names) != len(dims_shape) and czi.shape_is_consistent:
+                        dims_shape_dict = dims_shape[0]
+                        scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
+                        if scene_range is not None:
+                            scene_names = scene_names[scene_range[0]:scene_range[1]]
+
                 self._scenes = tuple(scene_names)
 
         return self._scenes

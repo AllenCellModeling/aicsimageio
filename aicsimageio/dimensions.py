@@ -146,5 +146,6 @@ class Dimensions:
     def __setattr__(self, __name: str, __value: int) -> None:
         super().__setattr__(__name, __value)
 
-    def __getattribute__(self, __name: str) -> int:
+    def __getattr__(self, __name: str) -> int:
+        # TODO: Py310 __match_args__ for better typing
         return super().__getattribute__(__name)

@@ -196,7 +196,7 @@ class ArrayLikeReader(Reader):
                         )
                         # Rename the dimensions from "dim_N" to just the guess dim
                         # Update scene list in place
-                        self._all_scenes[i] = this_scene.rename(  # type: ignore
+                        self._all_scenes[i] = this_scene.rename(
                             {
                                 f"dim_{d_index}": d
                                 for d_index, d in enumerate(
@@ -224,7 +224,7 @@ class ArrayLikeReader(Reader):
                             # Rename the dimensions from "dim_N" to just the guess dim
                             # Update scene list in place
                             self._all_scenes[i] = this_scene.rename(
-                                {  # type: ignore
+                                {
                                     f"dim_{d_index}": d
                                     for d_index, d in enumerate(dims_string)
                                 }
@@ -356,7 +356,7 @@ class ArrayLikeReader(Reader):
                     xr.DataArray(
                         data=scene_data,
                         dims=dims_list,
-                        coords=coords,  # type: ignore
+                        coords=coords,
                         attrs={constants.METADATA_UNPROCESSED: None},
                     )
                 )

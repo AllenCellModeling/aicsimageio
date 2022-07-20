@@ -147,13 +147,13 @@ class LifReader(Reader):
             # Create the fill array shape
             # Drop the YX as we will be pulling the individual YX planes
             retrieve_shape: List[int] = []
-            use_selected_or_np_map: Dict[str, Optional[int]] = {}
+            use_selected_or_np_map: Dict[str, int] = {}
             for dim, index_op in zip(retrieve_dims, retrieve_indices):
                 if dim not in [DimensionNames.SpatialY, DimensionNames.SpatialX]:
                     # Handle slices
                     if index_op is None:
                         # Store the dim for later to inform to use the np index
-                        use_selected_or_np_map[dim] = None
+                        use_selected_or_np_map[dim] = -1
                         if dim == DimensionNames.MosaicTile:
                             retrieve_shape.append(selected_scene.n_mosaic)
                         elif dim == DimensionNames.Time:
@@ -181,44 +181,38 @@ class LifReader(Reader):
 
                 # Handle MosaicTile
                 if DimensionNames.MosaicTile in use_selected_or_np_map:
-                    if use_selected_or_np_map[DimensionNames.MosaicTile] is None:
+                    if use_selected_or_np_map[DimensionNames.MosaicTile] == -1:
                         plane_indices["m"] = np_index[
                             retrieve_dims.index(DimensionNames.MosaicTile)
                         ]
                     else:
-                        plane_indices["m"] = use_selected_or_np_map[  # type: ignore
+                        plane_indices["m"] = use_selected_or_np_map[
                             DimensionNames.MosaicTile
                         ]
 
                 # Handle Time
-                if use_selected_or_np_map[DimensionNames.Time] is None:
+                if use_selected_or_np_map[DimensionNames.Time] == -1:
                     plane_indices["t"] = np_index[
                         retrieve_dims.index(DimensionNames.Time)
                     ]
                 else:
-                    plane_indices["t"] = use_selected_or_np_map[  # type: ignore
-                        DimensionNames.Time
-                    ]
+                    plane_indices["t"] = use_selected_or_np_map[DimensionNames.Time]
 
                 # Handle Channels
-                if use_selected_or_np_map[DimensionNames.Channel] is None:
+                if use_selected_or_np_map[DimensionNames.Channel] == -1:
                     plane_indices["c"] = np_index[
                         retrieve_dims.index(DimensionNames.Channel)
                     ]
                 else:
-                    plane_indices["c"] = use_selected_or_np_map[  # type: ignore
-                        DimensionNames.Channel
-                    ]
+                    plane_indices["c"] = use_selected_or_np_map[DimensionNames.Channel]
 
                 # Handle SpatialZ
-                if use_selected_or_np_map[DimensionNames.SpatialZ] is None:
+                if use_selected_or_np_map[DimensionNames.SpatialZ] == -1:
                     plane_indices["z"] = np_index[
                         retrieve_dims.index(DimensionNames.SpatialZ)
                     ]
                 else:
-                    plane_indices["z"] = use_selected_or_np_map[  # type: ignore
-                        DimensionNames.SpatialZ
-                    ]
+                    plane_indices["z"] = use_selected_or_np_map[DimensionNames.SpatialZ]
 
                 # Append the retrieved plane as a numpy array
                 planes.append(np.asarray(selected_scene.get_frame(**plane_indices)))
@@ -471,7 +465,7 @@ class LifReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,  # type: ignore
+                coords=coords,
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
 
@@ -531,7 +525,7 @@ class LifReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,  # type: ignore
+                coords=coords,
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
 
@@ -658,7 +652,10 @@ class LifReader(Reader):
             # so simply run array construct
             self.dask_data
 
-        return self._px_sizes  # type: ignore
+        if self._px_sizes is None:
+            raise ValueError("Pixel sizes weren't created as a part of image reading")
+
+        return self._px_sizes
 
     def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """
@@ -693,6 +690,6 @@ class LifReader(Reader):
         ]
 
         return (
-            (index_y * self.dims.Y) - index_y,  # type: ignore
-            (index_x * self.dims.X) - index_x,  # type: ignore
+            (index_y * self.dims.Y) - index_y,
+            (index_x * self.dims.X) - index_x,
         )

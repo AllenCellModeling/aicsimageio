@@ -285,7 +285,7 @@ class OmeTiffWriter(Writer):
                 image_data = data[scene_index]
                 # Assumption: if provided a dask array to save, it can fit into memory
                 if isinstance(image_data, da.core.Array):
-                    image_data = data[scene_index].compute()  # type: ignore
+                    image_data = data[scene_index].compute()
 
                 description = xml if scene_index == 0 else None
                 # assume if first channel is rgb then all of it is

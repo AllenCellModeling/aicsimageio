@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections.abc import Sequence as seq
-from typing import ItemsView, Iterable, Sequence, Tuple, Union
+from typing import Collection, ItemsView, Sequence, Tuple, Union
 
 ###############################################################################
 
@@ -64,14 +64,14 @@ REQUIRED_CHUNK_DIMS = [
 
 
 class Dimensions:
-    def __init__(self, dims: Iterable[str], shape: Tuple[int, ...]):
+    def __init__(self, dims: Collection[str], shape: Tuple[int, ...]):
         """
         A general object for managing the pairing of dimension name and dimension size.
 
         Parameters
         ----------
-        dims: Union[str, Iterable]
-            An ordered string or iterable of the dimensions to pair with their sizes.
+        dims: Collection[str]
+            An ordered string or collection of the dimensions to pair with their sizes.
         shape: Tuple[int, ...]
             An ordered tuple of the dimensions sizes to pair with their names.
 

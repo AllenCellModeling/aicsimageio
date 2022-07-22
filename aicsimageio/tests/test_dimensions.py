@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from typing import Collection, Tuple
+
 import pytest
 
 from aicsimageio.dimensions import Dimensions
-from typing import Iterable, Tuple
 
 
 def test_dimensions_getitem() -> None:
@@ -45,7 +46,7 @@ def test_dimensions_getitem() -> None:
     ],
 )
 def test_dimensions_mismatched_dims_len_and_shape_size(
-    dims: Iterable[str],
+    dims: Collection[str],
     shape: Tuple[int, ...],
 ) -> None:
     # Just check success
@@ -69,7 +70,7 @@ def test_dimensions_mismatched_dims_len_and_shape_size(
     ],
 )
 def test_dimensions_bad_iterable_of_characters(
-    dims: Iterable[str],
+    dims: Collection[str],
     shape: Tuple[int, ...],
 ) -> None:
     # Just check success

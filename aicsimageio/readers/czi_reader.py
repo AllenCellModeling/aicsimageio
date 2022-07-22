@@ -573,7 +573,7 @@ class CziReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=img_dims_list,
-                    coords=coords,  # type: ignore
+                    coords=coords,
                     attrs={constants.METADATA_UNPROCESSED: meta},
                 )
 
@@ -623,7 +623,7 @@ class CziReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=[d for d in self.mapped_dims],
-                coords=coords,  # type: ignore
+                coords=coords,
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
 
@@ -803,7 +803,10 @@ class CziReader(Reader):
             # so simply run array construct
             self.dask_data
 
-        return self._px_sizes  # type: ignore
+        if self._px_sizes is None:
+            raise ValueError("Pixel sizes weren't created as a part of image reading")
+
+        return self._px_sizes
 
     def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """

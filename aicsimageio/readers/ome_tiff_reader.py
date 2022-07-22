@@ -243,7 +243,7 @@ class OmeTiffReader(TiffReader):
         return xr.DataArray(
             image_data,
             dims=dims,
-            coords=coords,  # type: ignore
+            coords=coords,
             attrs={
                 constants.METADATA_UNPROCESSED: tiff_tags,
                 constants.METADATA_PROCESSED: self._ome,

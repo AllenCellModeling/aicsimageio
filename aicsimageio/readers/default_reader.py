@@ -486,7 +486,7 @@ class DefaultReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,  # type: ignore
+                    coords=coords,
                     attrs={constants.METADATA_UNPROCESSED: metadata},
                 )
 
@@ -547,6 +547,6 @@ class DefaultReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=dims,
-                coords=coords,  # type: ignore
+                coords=coords,
                 attrs={constants.METADATA_UNPROCESSED: metadata},
             )

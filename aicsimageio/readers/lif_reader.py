@@ -140,6 +140,8 @@ class LifReader(Reader):
         chunk: np.ndarray
             The image chunk as a numpy array.
         """
+        MISSING_DIM_SENTINAL_VALUE = -1
+
         # Open and select the target image
         with fs.open(path) as open_resource:
             selected_scene = LifFile(open_resource).get_image(scene)
@@ -153,7 +155,7 @@ class LifReader(Reader):
                     # Handle slices
                     if index_op is None:
                         # Store the dim for later to inform to use the np index
-                        use_selected_or_np_map[dim] = -1
+                        use_selected_or_np_map[dim] = MISSING_DIM_SENTINAL_VALUE
                         if dim == DimensionNames.MosaicTile:
                             retrieve_shape.append(selected_scene.n_mosaic)
                         elif dim == DimensionNames.Time:
@@ -181,7 +183,10 @@ class LifReader(Reader):
 
                 # Handle MosaicTile
                 if DimensionNames.MosaicTile in use_selected_or_np_map:
-                    if use_selected_or_np_map[DimensionNames.MosaicTile] == -1:
+                    if (
+                        use_selected_or_np_map[DimensionNames.MosaicTile]
+                        == MISSING_DIM_SENTINAL_VALUE
+                    ):
                         plane_indices["m"] = np_index[
                             retrieve_dims.index(DimensionNames.MosaicTile)
                         ]
@@ -191,7 +196,10 @@ class LifReader(Reader):
                         ]
 
                 # Handle Time
-                if use_selected_or_np_map[DimensionNames.Time] == -1:
+                if (
+                    use_selected_or_np_map[DimensionNames.Time]
+                    == MISSING_DIM_SENTINAL_VALUE
+                ):
                     plane_indices["t"] = np_index[
                         retrieve_dims.index(DimensionNames.Time)
                     ]
@@ -199,7 +207,10 @@ class LifReader(Reader):
                     plane_indices["t"] = use_selected_or_np_map[DimensionNames.Time]
 
                 # Handle Channels
-                if use_selected_or_np_map[DimensionNames.Channel] == -1:
+                if (
+                    use_selected_or_np_map[DimensionNames.Channel]
+                    == MISSING_DIM_SENTINAL_VALUE
+                ):
                     plane_indices["c"] = np_index[
                         retrieve_dims.index(DimensionNames.Channel)
                     ]
@@ -207,7 +218,10 @@ class LifReader(Reader):
                     plane_indices["c"] = use_selected_or_np_map[DimensionNames.Channel]
 
                 # Handle SpatialZ
-                if use_selected_or_np_map[DimensionNames.SpatialZ] == -1:
+                if (
+                    use_selected_or_np_map[DimensionNames.SpatialZ]
+                    == MISSING_DIM_SENTINAL_VALUE
+                ):
                     plane_indices["z"] = np_index[
                         retrieve_dims.index(DimensionNames.SpatialZ)
                     ]

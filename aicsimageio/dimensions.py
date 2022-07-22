@@ -64,7 +64,7 @@ REQUIRED_CHUNK_DIMS = [
 
 
 class Dimensions:
-    def __init__(self, dims: Union[str, Iterable], shape: Tuple[int, ...]):
+    def __init__(self, dims: Iterable[str], shape: Tuple[int, ...]):
         """
         A general object for managing the pairing of dimension name and dimension size.
 
@@ -81,8 +81,22 @@ class Dimensions:
         ... dims.X
         ... dims['T', 'X']
         """
+        # zip(strict=True) only in Python 3.10
+        # Check equal length dims and shape
+        if len(dims) != len(shape):
+            raise ValueError(
+                f"Number of dimensions provided ({len(dims)} -- '{dims}') "
+                f"does not match shape size provided ({len(shape)} -- '{shape}')."
+            )
+
         # Make dims a string
         if not isinstance(dims, str):
+            if any([len(c) != 1 for c in dims]):
+                raise ValueError(
+                    f"When providing a list of dimension strings, "
+                    f"each dimension may only be a single character long "
+                    f"(received: '{dims}')."
+                )
             dims = "".join(dims)
 
         # Store order and shape

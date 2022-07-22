@@ -4,6 +4,7 @@
 import pytest
 
 from aicsimageio.dimensions import Dimensions
+from typing import Iterable, Tuple
 
 
 def test_dimensions_getitem() -> None:
@@ -25,3 +26,51 @@ def test_dimensions_getitem() -> None:
 
     assert dims.T == 1
     assert dims.order == "TCZYX"
+
+
+@pytest.mark.parametrize(
+    "dims, shape",
+    [
+        (["Z", "Y", "X"], (70, 980, 980)),
+        pytest.param(
+            "ZYXS",
+            (70, 980, 980),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        pytest.param(
+            "YX",
+            (70, 980, 980),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+    ],
+)
+def test_dimensions_mismatched_dims_len_and_shape_size(
+    dims: Iterable[str],
+    shape: Tuple[int, ...],
+) -> None:
+    # Just check success
+    assert Dimensions(dims, shape)
+
+
+@pytest.mark.parametrize(
+    "dims, shape",
+    [
+        (["Z", "Y", "X"], (70, 980, 980)),
+        pytest.param(
+            ["C", "ZY", "X"],
+            (70, 980, 980),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+        pytest.param(
+            ["YX"],
+            (70, 980, 980),
+            marks=pytest.mark.raises(exception=ValueError),
+        ),
+    ],
+)
+def test_dimensions_bad_iterable_of_characters(
+    dims: Iterable[str],
+    shape: Tuple[int, ...],
+) -> None:
+    # Just check success
+    assert Dimensions(dims, shape)

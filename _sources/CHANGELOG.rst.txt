@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- bugfix/czi-scene-indexing  (`#417
+  <https://github.com/AllenCellModeling/aicsimageio/pull/417>`_)
+  [toloudis]
 - bugfix/dynamic-dimension-typing  (`#419
   <https://github.com/AllenCellModeling/aicsimageio/pull/419>`_) [Eva
   Maxfield Brown]

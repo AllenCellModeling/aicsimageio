@@ -13,6 +13,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/419>`_) [Eva
   Maxfield Brown]
 
+Other
+~~~~~
+- admin/add-fsspec-to-upstream-checks  (`#422
+  <https://github.com/AllenCellModeling/aicsimageio/pull/422>`_) [Eva
+  Maxfield Brown]
+
 
 v4.9.0 (2022-07-19)
 -------------------

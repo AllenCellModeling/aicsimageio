@@ -48,6 +48,7 @@ PIXEL_DICT = {
     "gray8": np.uint8,
     "gray16": np.uint16,
     "gray32": np.uint32,
+    "gray32float": np.float32,
     "bgr24": np.uint8,
     "bgr48": np.uint16,
     "invalid": np.uint8,

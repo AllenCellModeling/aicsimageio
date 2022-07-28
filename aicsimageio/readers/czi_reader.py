@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
 import xml.etree.ElementTree as ET
 from copy import copy
 from pathlib import Path
@@ -29,6 +30,10 @@ except ImportError:
         "aicspylibczi is required for this reader. "
         "Install with `pip install aicspylibczi>=3.0.5"
     )
+
+###############################################################################
+
+log = logging.getLogger(__name__)
 
 ###############################################################################
 
@@ -183,6 +188,27 @@ class CziReader(Reader):
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:
                     scene_names = [metadata_utils.generate_ome_image_id(0)]
+                else:
+                    # reconcile scene list against the dims shape
+                    dims_shape = czi.get_dims_shape()
+                    if len(scene_names) != len(dims_shape) and czi.shape_is_consistent:
+                        dims_shape_dict = dims_shape[0]
+                        scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
+                        if scene_range is not None:
+                            scene_names = scene_names[scene_range[0] : scene_range[1]]
+                        else:
+                            # If this is the root node of a split multiscene czi,
+                            # then the scene_range could be None because the dims_shape
+                            # will be effectively empty.
+                            # We do not currently support loading multi-file split
+                            # scene CZI files
+                            log.warning(
+                                "CZI file appears to contain multiple scenes but "
+                                "dimension data is not available in this file. "
+                                "Root node of split multi-scene CZI files are not "
+                                "supported by CziReader."
+                            )
+
                 self._scenes = tuple(scene_names)
 
         return self._scenes
@@ -624,7 +650,7 @@ class CziReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=img_dims_list,
-                    coords=coords,  # type: ignore
+                    coords=coords,
                     attrs={constants.METADATA_UNPROCESSED: meta},
                 )
 
@@ -674,7 +700,7 @@ class CziReader(Reader):
             return xr.DataArray(
                 image_data,
                 dims=[d for d in self.mapped_dims],
-                coords=coords,  # type: ignore
+                coords=coords,
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
 
@@ -854,7 +880,10 @@ class CziReader(Reader):
             # so simply run array construct
             self.dask_data
 
-        return self._px_sizes  # type: ignore
+        if self._px_sizes is None:
+            raise ValueError("Pixel sizes weren't created as a part of image reading")
+
+        return self._px_sizes
 
     def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """

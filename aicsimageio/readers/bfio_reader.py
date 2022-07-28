@@ -83,7 +83,7 @@ class BfioReader(Reader):
         return xr.DataArray(
             image_data,
             dims=self.out_dim_order,
-            coords=coords,  # type: ignore
+            coords=coords,
             attrs=attrs,
         )
 

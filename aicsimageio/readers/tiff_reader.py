@@ -471,7 +471,7 @@ class TiffReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,  # type: ignore
+                    coords=coords,
                     attrs=attrs,
                 )
 
@@ -526,6 +526,6 @@ class TiffReader(Reader):
                 return xr.DataArray(
                     image_data,
                     dims=dims,
-                    coords=coords,  # type: ignore
+                    coords=coords,
                     attrs=attrs,
                 )

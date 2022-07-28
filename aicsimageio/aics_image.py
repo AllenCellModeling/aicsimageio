@@ -379,7 +379,7 @@ class AICSImage(ImageContainer):
         # Pull the data with the appropriate dimensions
         data = transforms.reshape_data(
             data=arr.data,
-            given_dims="".join(arr.dims),  # type: ignore
+            given_dims="".join(arr.dims),
             return_dims=return_dims,
         )
 
@@ -401,7 +401,7 @@ class AICSImage(ImageContainer):
         return xr.DataArray(
             data,
             dims=tuple([d for d in return_dims]),
-            coords=coords,  # type: ignore
+            coords=coords,
             attrs=arr.attrs,
         )
 

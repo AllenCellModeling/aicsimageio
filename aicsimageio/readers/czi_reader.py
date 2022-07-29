@@ -95,7 +95,7 @@ class CziReader(Reader):
                 )
 
             with fs.open(path) as open_resource:
-                CziFile(open_resource)
+                CziFile(open_resource.f)
                 return True
 
         except RuntimeError:
@@ -144,7 +144,7 @@ class CziReader(Reader):
     def mapped_dims(self) -> str:
         if self._mapped_dims is None:
             with self._fs.open(self._path) as open_resource:
-                czi = CziFile(open_resource)
+                czi = CziFile(open_resource.f)
                 self._mapped_dims = CziReader._fix_czi_dims(czi.dims)
 
         return self._mapped_dims
@@ -161,7 +161,7 @@ class CziReader(Reader):
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
-                czi = CziFile(open_resource)
+                czi = CziFile(open_resource.f)
                 xpath_str = "./Metadata/Information/Image/Dimensions/S/Scenes/Scene"
                 meta_scenes = czi.meta.findall(xpath_str)
                 scene_names: List[str] = []
@@ -318,7 +318,7 @@ class CziReader(Reader):
 
         # Init czi
         with fs.open(path) as open_resource:
-            czi = CziFile(open_resource)
+            czi = CziFile(open_resource.f)
 
             # Get current scene read dims
             adjusted_scene_index = CziReader._adjust_scene_index(
@@ -610,7 +610,7 @@ class CziReader(Reader):
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            czi = CziFile(open_resource)
+            czi = CziFile(open_resource.f)
 
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
@@ -671,7 +671,7 @@ class CziReader(Reader):
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            czi = CziFile(open_resource)
+            czi = CziFile(open_resource.f)
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
                 scene_index=self.current_scene_index,
@@ -789,7 +789,7 @@ class CziReader(Reader):
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
         # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
-            czi = CziFile(open_resource)
+            czi = CziFile(open_resource.f)
             dims_shape = CziReader._dims_shape_to_scene_dims_shape(
                 dims_shape=czi.get_dims_shape(),
                 scene_index=self.current_scene_index,
@@ -914,7 +914,7 @@ class CziReader(Reader):
 
         # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
-            czi = CziFile(open_resource)
+            czi = CziFile(open_resource.f)
 
             bboxes = czi.get_all_mosaic_tile_bounding_boxes(S=self.current_scene_index)
             bbox = list(bboxes.values())[mosaic_tile_index]

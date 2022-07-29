@@ -6,6 +6,12 @@ Changelog
 
 Fix
 ~~~
+- Fix/czireader float32 dtype  (`#423
+  <https://github.com/AllenCellModeling/aicsimageio/pull/423>`_)
+  [toloudis]
+- bugfix/extract-czi-channel-names-more-safely  (`#418
+  <https://github.com/AllenCellModeling/aicsimageio/pull/418>`_)
+  [toloudis]
 - bugfix/czi-scene-indexing  (`#417
   <https://github.com/AllenCellModeling/aicsimageio/pull/417>`_)
   [toloudis]
@@ -15,6 +21,9 @@ Fix
 
 Other
 ~~~~~
+- admin/ignore-fsspec-2022.7.0  (`#424
+  <https://github.com/AllenCellModeling/aicsimageio/pull/424>`_) [Eva
+  Maxfield Brown]
 - admin/add-fsspec-to-upstream-checks  (`#422
   <https://github.com/AllenCellModeling/aicsimageio/pull/422>`_) [Eva
   Maxfield Brown]

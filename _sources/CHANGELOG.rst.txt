@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- bugfix/fsspec-local-file-opener-cpp-buffer-for-czi  (`#425
+  <https://github.com/AllenCellModeling/aicsimageio/pull/425>`_) [Eva
+  Maxfield Brown]
 - Fix/czireader float32 dtype  (`#423
   <https://github.com/AllenCellModeling/aicsimageio/pull/423>`_)
   [toloudis]

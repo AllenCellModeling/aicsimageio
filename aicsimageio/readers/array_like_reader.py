@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union, Dict
 
 import dask.array as da
 import numpy as np
@@ -11,7 +11,7 @@ import xarray as xr
 from .. import constants, exceptions
 from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
-from ..types import MetaArrayLike
+from ..types import MetaArrayLike, PhysicalPixelSizes
 from .reader import Reader
 
 ###############################################################################
@@ -107,6 +107,7 @@ class ArrayLikeReader(Reader):
         image: Union[List[MetaArrayLike], MetaArrayLike],
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
+        physical_pixel_sizes: Optional[Union[List[float], Dict[str, float]]] = None,
         **kwargs: Any,
     ):
         # Enforce valid image
@@ -360,6 +361,7 @@ class ArrayLikeReader(Reader):
                         attrs={constants.METADATA_UNPROCESSED: None},
                     )
                 )
+        self._physical_pixel_sizes = physical_pixel_sizes
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -378,3 +380,25 @@ class ArrayLikeReader(Reader):
         return self._xr_darrays[self.current_scene_index].copy(
             data=self._xr_darrays[self.current_scene_index].data.compute()
         )
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """
+        Returns
+        -------
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
+        """
+        if isinstance(self._physical_pixel_sizes, list):
+            return PhysicalPixelSizes(*self._physical_pixel_sizes)
+
+        if isinstance(self._physical_pixel_sizes, dict):
+            return PhysicalPixelSizes(**self._physical_pixel_sizes)
+
+        return super().physical_pixel_sizes

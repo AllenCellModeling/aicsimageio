@@ -51,6 +51,12 @@ class ArrayLikeReader(Reader):
         provided to image.
         Default: None (create OME channel IDs for names for single or multiple arrays)
 
+    physical_pixel_sizes: Optional[Union[List[float], Dict[str, float], PhysicalPixelSizes]]
+        A specification of this image's physical pixel sizes. Can be provided as
+        a list, dict or PhysicalPixelSizes object. If a list is passed, the assumed
+        order is [Z, Y, X]. If a dict is passed, it must contain "Z", "Y" and "X" as keys.
+        Default: None
+
     Raises
     ------
     exceptions.ConflictingArgumentsError
@@ -107,7 +113,7 @@ class ArrayLikeReader(Reader):
         image: Union[List[MetaArrayLike], MetaArrayLike],
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
-        physical_pixel_sizes: Optional[Union[List[float], Dict[str, float]]] = None,
+        physical_pixel_sizes: Optional[Union[List[float], Dict[str, float], PhysicalPixelSizes]] = None,
         **kwargs: Any,
     ):
         # Enforce valid image
@@ -361,7 +367,15 @@ class ArrayLikeReader(Reader):
                         attrs={constants.METADATA_UNPROCESSED: None},
                     )
                 )
-        self._physical_pixel_sizes = physical_pixel_sizes
+
+        if isinstance(physical_pixel_sizes, PhysicalPixelSizes):
+            self._physical_pixel_sizes = physical_pixel_sizes
+        elif isinstance(physical_pixel_sizes, (list, tuple)):
+            self._physical_pixel_sizes = PhysicalPixelSizes(*self._physical_pixel_sizes)
+        elif isinstance(physical_pixel_sizes, dict):
+            self._physical_pixel_sizes = PhysicalPixelSizes(**self._physical_pixel_sizes)
+        else:
+            self._physical_pixel_sizes = PhysicalPixelSizes(None, None, None)
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -395,10 +409,4 @@ class ArrayLikeReader(Reader):
         We currently do not handle unit attachment to these values. Please see the file
         metadata for unit information.
         """
-        if isinstance(self._physical_pixel_sizes, list):
-            return PhysicalPixelSizes(*self._physical_pixel_sizes)
-
-        if isinstance(self._physical_pixel_sizes, dict):
-            return PhysicalPixelSizes(**self._physical_pixel_sizes)
-
-        return super().physical_pixel_sizes
+        return self._physical_pixel_sizes

@@ -51,10 +51,13 @@ class ArrayLikeReader(Reader):
         provided to image.
         Default: None (create OME channel IDs for names for single or multiple arrays)
 
-    physical_pixel_sizes: Optional[Union[List[float], Dict[str, float], PhysicalPixelSizes]]
+    physical_pixel_sizes: Optional[
+        Union[List[float], Dict[str, float], PhysicalPixelSizes]
+    ]
         A specification of this image's physical pixel sizes. Can be provided as
         a list, dict or PhysicalPixelSizes object. If a list is passed, the assumed
-        order is [Z, Y, X]. If a dict is passed, it must contain "Z", "Y" and "X" as keys.
+        order is [Z, Y, X]. If a dict is passed, it must contain "Z", "Y" and "X"
+        as keys.
         Default: None
 
     Raises

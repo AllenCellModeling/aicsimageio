@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+New
+~~~
+- feature/add-physical-pixel-sizes-param-to-array-like  (`#426
+  <https://github.com/AllenCellModeling/aicsimageio/pull/426>`_)
+  [Guilherme Pires, Guilherme Pires]
+
+
 v4.9.1 (2022-08-02)
 -------------------
 

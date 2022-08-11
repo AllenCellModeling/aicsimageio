@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -11,7 +11,7 @@ import xarray as xr
 from .. import constants, exceptions
 from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
-from ..types import MetaArrayLike
+from ..types import MetaArrayLike, PhysicalPixelSizes
 from .reader import Reader
 
 ###############################################################################
@@ -50,6 +50,15 @@ class ArrayLikeReader(Reader):
         list of lists of string channel names to be mapped onto the list of arrays
         provided to image.
         Default: None (create OME channel IDs for names for single or multiple arrays)
+
+    physical_pixel_sizes: Optional[
+        Union[List[float], Dict[str, float], PhysicalPixelSizes]
+    ]
+        A specification of this image's physical pixel sizes. Can be provided as
+        a list, dict or PhysicalPixelSizes object. If a list is passed, the assumed
+        order is [Z, Y, X]. If a dict is passed, it must contain "Z", "Y" and "X"
+        as keys.
+        Default: None
 
     Raises
     ------
@@ -107,6 +116,9 @@ class ArrayLikeReader(Reader):
         image: Union[List[MetaArrayLike], MetaArrayLike],
         dim_order: Optional[Union[List[str], str]] = None,
         channel_names: Optional[Union[List[str], List[List[str]]]] = None,
+        physical_pixel_sizes: Optional[
+            Union[List[float], Dict[str, float], PhysicalPixelSizes]
+        ] = None,
         **kwargs: Any,
     ):
         # Enforce valid image
@@ -361,6 +373,15 @@ class ArrayLikeReader(Reader):
                     )
                 )
 
+        if isinstance(physical_pixel_sizes, PhysicalPixelSizes):
+            self._physical_pixel_sizes = physical_pixel_sizes
+        elif isinstance(physical_pixel_sizes, (list, tuple)):
+            self._physical_pixel_sizes = PhysicalPixelSizes(*physical_pixel_sizes)
+        elif isinstance(physical_pixel_sizes, dict):
+            self._physical_pixel_sizes = PhysicalPixelSizes(**physical_pixel_sizes)
+        else:
+            self._physical_pixel_sizes = PhysicalPixelSizes(None, None, None)
+
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
@@ -378,3 +399,19 @@ class ArrayLikeReader(Reader):
         return self._xr_darrays[self.current_scene_index].copy(
             data=self._xr_darrays[self.current_scene_index].data.compute()
         )
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """
+        Returns
+        -------
+        sizes: PhysicalPixelSizes
+            Using available metadata, the floats representing physical pixel sizes for
+            dimensions Z, Y, and X.
+
+        Notes
+        -----
+        We currently do not handle unit attachment to these values. Please see the file
+        metadata for unit information.
+        """
+        return self._physical_pixel_sizes

@@ -548,6 +548,6 @@ def test_generate_stack_mismatch_and_drop(
     ],
 )
 def test_convert_list_to_slice(
-    list_to_test: List, expected: Union[int, List, slice]
+    list_to_test: Union[List, Tuple], expected: Union[int, List, slice, Tuple]
 ) -> None:
     assert reduce_to_slice(list_to_test) == expected

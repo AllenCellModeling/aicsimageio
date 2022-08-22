@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any, List, Literal, Optional, Union
+from typing import Any, List, Literal, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -16,7 +16,7 @@ from .image_container import ImageContainer
 ###############################################################################
 
 
-def convert_list_to_slice(L: List) -> Union[int, List, slice]:
+def reduce_to_slice(L: Union[List, Tuple]) -> Union[int, List, slice, Tuple]:
     # if the list only has one element, then just use it
     if len(L) == 1:
         return L[0]
@@ -225,7 +225,7 @@ def reshape_data(
                 if isinstance(dim_spec, list):
                     check_selection_max = max([abs(min(dim_spec)), max(dim_spec)])
                     # try to convert to slice if possible
-                    dim_spec = convert_list_to_slice(dim_spec)
+                    dim_spec = reduce_to_slice(dim_spec)
 
                 # Get the largest absolute value index from start and stop of slice
                 if isinstance(dim_spec, slice):

@@ -10,6 +10,12 @@ New
   <https://github.com/AllenCellModeling/aicsimageio/pull/426>`_)
   [Guilherme Pires, Guilherme Pires]
 
+Fix
+~~~
+- bugfix/czi-scene-selection-for-inconsistent-scenes-regression  (`#432
+  <https://github.com/AllenCellModeling/aicsimageio/pull/432>`_)
+  [toloudis]
+
 
 v4.9.1 (2022-08-02)
 -------------------

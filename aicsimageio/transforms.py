@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any, Literal, Optional, Union
+from typing import Any, List, Literal, Optional, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -14,6 +14,22 @@ from .exceptions import ConflictingArgumentsError, UnexpectedShapeError
 from .image_container import ImageContainer
 
 ###############################################################################
+
+
+def reduce_to_slice(L: Union[List, Tuple]) -> Union[int, List, slice, Tuple]:
+    # if the list only has one element, then just use it
+    if len(L) == 1:
+        return L[0]
+    # if the list has at least 2 elements we can check for sliceable
+    # it is convertable to a slice if the step size between each
+    # consecutive pair of elements is equal and positive
+    # 1. get all the deltas in a list:
+    steps = [(L[i + 1] - L[i]) for i in range(len(L) - 1)]
+    # 2. check if all the deltas are equal and positive
+    if steps[0] > 0 and steps.count(steps[0]) == len(steps):
+        return slice(min(L), max(L) + 1, steps[0])
+    # if we can't convert to a slice, then just return the list unmodified
+    return L
 
 
 def transpose_to_dims(
@@ -208,6 +224,8 @@ def reshape_data(
                 # Get the largest absolute value index in the list using min and max
                 if isinstance(dim_spec, list):
                     check_selection_max = max([abs(min(dim_spec)), max(dim_spec)])
+                    # try to convert to slice if possible
+                    dim_spec = reduce_to_slice(dim_spec)
 
                 # Get the largest absolute value index from start and stop of slice
                 if isinstance(dim_spec, slice):

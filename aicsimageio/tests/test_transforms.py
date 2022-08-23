@@ -13,7 +13,12 @@ import xarray as xr
 from aicsimageio import AICSImage, types
 from aicsimageio.exceptions import ConflictingArgumentsError, UnexpectedShapeError
 from aicsimageio.readers import ArrayLikeReader
-from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_dims
+from aicsimageio.transforms import (
+    generate_stack,
+    reduce_to_slice,
+    reshape_data,
+    transpose_to_dims,
+)
 
 
 @pytest.mark.parametrize("array_maker", [np.zeros, da.zeros])
@@ -523,3 +528,26 @@ def test_generate_stack_mismatch_and_drop(
         xr.testing.assert_allclose(stack, reference)
     else:
         np.testing.assert_allclose(stack, reference)
+
+
+@pytest.mark.parametrize(
+    "list_to_test, expected",
+    [
+        ([0], 0),
+        ([0, 1], slice(0, 2, 1)),
+        ([1, 0], [1, 0]),
+        ([3, 5], slice(3, 6, 2)),
+        ([8, 9, 11], [8, 9, 11]),
+        ([15, 20, 25], slice(15, 26, 5)),
+        ((0,), 0),
+        ((0, 1), slice(0, 2, 1)),
+        ((1, 0), (1, 0)),
+        ((3, 5), slice(3, 6, 2)),
+        ((8, 9, 11), (8, 9, 11)),
+        ((15, 20, 25), slice(15, 26, 5)),
+    ],
+)
+def test_convert_list_to_slice(
+    list_to_test: Union[List, Tuple], expected: Union[int, List, slice, Tuple]
+) -> None:
+    assert reduce_to_slice(list_to_test) == expected

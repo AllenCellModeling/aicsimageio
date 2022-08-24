@@ -37,10 +37,10 @@ format_libs: Dict[str, List[str]] = {
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
-    "czi": [
-        "fsspec>=2022.7.1",
-        # "aicspylibczi>=3.0.5",  # excluded for licensing reasons
-    ],
+    # "czi": [  # excluded for licensing reasons
+    #     "fsspec>=2022.7.1",
+    #     "aicspylibczi>=3.0.5",
+    # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
 }

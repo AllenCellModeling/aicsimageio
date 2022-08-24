@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- bugfix/convert-dimension-spec-lists-to-slices-when-possible  (`#429
+  <https://github.com/AllenCellModeling/aicsimageio/pull/429>`_)
+  [toloudis]
 - bugfix/czi-scene-selection-for-inconsistent-scenes-regression  (`#432
   <https://github.com/AllenCellModeling/aicsimageio/pull/432>`_)
   [toloudis]

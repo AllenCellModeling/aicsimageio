@@ -19,6 +19,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/432>`_)
   [toloudis]
 
+Other
+~~~~~
+- admin/include-fsspec-dep-for-czi-in-readme  (`#433
+  <https://github.com/AllenCellModeling/aicsimageio/pull/433>`_) [Eva
+  Maxfield Brown]
+
 
 v4.9.1 (2022-08-02)
 -------------------

@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "readlif is required for this reader. "
-        "Install with `pip install readlif>=0.6.4`"
+        "Install with `pip install 'readlif>=0.6.4'`"
     )
 
 ###############################################################################

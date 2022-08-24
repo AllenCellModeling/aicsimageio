@@ -21,6 +21,8 @@ Fix
 
 Other
 ~~~~~
+- Remove CZI extra install that doesn't come with CZI [Eva Maxfield
+  Brown]
 - admin/include-fsspec-dep-for-czi-in-readme  (`#433
   <https://github.com/AllenCellModeling/aicsimageio/pull/433>`_) [Eva
   Maxfield Brown]

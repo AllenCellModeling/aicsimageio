@@ -1,10 +1,10 @@
 default_context:
-    full_name: "Jackson Maxfield Brown, Allen Institute for Cell Science"
-    email: "jmaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu"
+    full_name: "Eva Maxfield Brown, Allen Institute for Cell Science"
+    email: "evamaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu"
     github_username: "AllenCellModeling"
     project_name: "AICSImageIO"
     project_slug: "aicsimageio"
     project_short_description: "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python"
     pypi_username: "aicspypi"
-    version: "4.8.0"
+    version: "4.9.2"
     open_source_license: "BSD license"

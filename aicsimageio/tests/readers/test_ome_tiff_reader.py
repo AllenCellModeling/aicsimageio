@@ -699,11 +699,8 @@ def test_parallel_read(
             (1, 6, 65, 233, 345),
             None,
             0,
-            # AttributeError raises not because of error in rollback
-            # but because cannot access Y or X from
-            # None return from `mosaic_tile_dims` because
-            # image is not a mosaic tiled image
-            marks=pytest.mark.raises(exception=AttributeError),
+            # The file has no tiles
+            marks=pytest.mark.raises(exception=AssertionError),
         ),
     ],
 )
@@ -724,8 +721,11 @@ def test_mosaic_passthrough(
 
     # Assert basics
     assert img.shape == expected_shape
-    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]  # type: ignore
-    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]  # type: ignore
+
+    # Check that the test data has tiles
+    assert img.mosaic_tile_dims is not None
+    assert img.mosaic_tile_dims.Y == expected_mosaic_tile_dims[0]
+    assert img.mosaic_tile_dims.X == expected_mosaic_tile_dims[1]
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)

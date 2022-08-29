@@ -37,7 +37,10 @@ format_libs: Dict[str, List[str]] = {
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
-    # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
+    # "czi": [  # excluded for licensing reasons
+    #     "fsspec>=2022.7.1",
+    #     "aicspylibczi>=3.0.5",
+    # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
 }
@@ -98,7 +101,7 @@ benchmark_requirements = [
 
 requirements = [
     "dask[array]>=2021.4.1",
-    "fsspec>=2021.4.0",
+    "fsspec>=2021.4.0,!=2022.7.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
@@ -122,8 +125,8 @@ extra_requirements = {
 }
 
 setup(
-    author="Jackson Maxfield Brown, Allen Institute for Cell Science",
-    author_email="jmaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
+    author="Eva Maxfield Brown, Allen Institute for Cell Science",
+    author_email="evamaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu",
     cmdclass={"build_py": BuildPyCommand},
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -166,6 +169,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.8.0",
+    version="4.9.2",
     zip_safe=False,
 )

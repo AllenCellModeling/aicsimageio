@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections.abc import Sequence as seq
-from typing import ItemsView, Iterable, Sequence, Tuple, Union
+from typing import Collection, ItemsView, Sequence, Tuple, Union
 
 ###############################################################################
 
@@ -64,14 +64,14 @@ REQUIRED_CHUNK_DIMS = [
 
 
 class Dimensions:
-    def __init__(self, dims: Union[str, Iterable], shape: Tuple[int, ...]):
+    def __init__(self, dims: Collection[str], shape: Tuple[int, ...]):
         """
         A general object for managing the pairing of dimension name and dimension size.
 
         Parameters
         ----------
-        dims: Union[str, Iterable]
-            An ordered string or iterable of the dimensions to pair with their sizes.
+        dims: Collection[str]
+            An ordered string or collection of the dimensions to pair with their sizes.
         shape: Tuple[int, ...]
             An ordered tuple of the dimensions sizes to pair with their names.
 
@@ -81,8 +81,22 @@ class Dimensions:
         ... dims.X
         ... dims['T', 'X']
         """
+        # zip(strict=True) only in Python 3.10
+        # Check equal length dims and shape
+        if len(dims) != len(shape):
+            raise ValueError(
+                f"Number of dimensions provided ({len(dims)} -- '{dims}') "
+                f"does not match shape size provided ({len(shape)} -- '{shape}')."
+            )
+
         # Make dims a string
         if not isinstance(dims, str):
+            if any([len(c) != 1 for c in dims]):
+                raise ValueError(
+                    f"When providing a list of dimension strings, "
+                    f"each dimension may only be a single character long "
+                    f"(received: '{dims}')."
+                )
             dims = "".join(dims)
 
         # Store order and shape
@@ -142,3 +156,10 @@ class Dimensions:
             raise TypeError(
                 f"Key must be a string or list of strings but got type {type(key)}"
             )
+
+    def __setattr__(self, __name: str, __value: int) -> None:
+        super().__setattr__(__name, __value)
+
+    def __getattr__(self, __name: str) -> int:
+        # TODO: Py310 __match_args__ for better typing
+        return super().__getattribute__(__name)

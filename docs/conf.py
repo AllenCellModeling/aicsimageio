@@ -70,9 +70,9 @@ source_suffix = {
 main_doc = "index"
 
 # General information about the project.
-project = u"AICSImageIO"
-copyright = u"2021, Jackson Maxfield Brown, Allen Institute for Cell Science"
-author = u"Jackson Maxfield Brown, Allen Institute for Cell Science"
+project = "AICSImageIO"
+copyright = "2022, Eva Maxfield Brown, Allen Institute for Cell Science"
+author = "Eva Maxfield Brown, Allen Institute for Cell Science"
 
 # The version info for the project you"re documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -154,8 +154,8 @@ latex_documents = [
     (
         main_doc,
         "aicsimageio.tex",
-        u"AICSImageIO Documentation",
-        u"Jackson Maxfield Brown, Allen Institute for Cell Science",
+        "AICSImageIO Documentation",
+        "Eva Maxfield Brown, Allen Institute for Cell Science",
         "manual",
     ),
 ]
@@ -165,7 +165,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(main_doc, "aicsimageio", u"AICSImageIO Documentation", [author], 1)]
+man_pages = [(main_doc, "aicsimageio", "AICSImageIO Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------
@@ -177,7 +177,7 @@ texinfo_documents = [
     (
         main_doc,
         "aicsimageio",
-        u"AICSImageIO Documentation",
+        "AICSImageIO Documentation",
         author,
         "aicsimageio",
         (

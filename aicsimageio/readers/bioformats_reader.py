@@ -208,7 +208,7 @@ class BioformatsReader(Reader):
             dims=dimensions.DEFAULT_DIMENSION_ORDER_LIST_WITH_SAMPLES
             if rdr.core_meta.is_rgb
             else dimensions.DEFAULT_DIMENSION_ORDER_LIST,
-            coords=coords,  # type: ignore
+            coords=coords,
             attrs={
                 constants.METADATA_UNPROCESSED: rdr.ome_xml,
                 constants.METADATA_PROCESSED: rdr.ome_metadata,

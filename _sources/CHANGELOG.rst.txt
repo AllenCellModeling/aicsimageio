@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- fix/position-names-in-nd2-tests  (`#437
+  <https://github.com/AllenCellModeling/aicsimageio/pull/437>`_) [Talley
+  Lambert]
+
+
 v4.9.2 (2022-08-24)
 -------------------
 

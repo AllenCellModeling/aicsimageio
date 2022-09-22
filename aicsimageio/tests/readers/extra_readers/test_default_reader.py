@@ -9,6 +9,7 @@ import pytest
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers.default_reader import DefaultReader
 from aicsimageio.readers.reader import Reader
+from aicsimageio.exceptions import UnsupportedFileFormatError
 
 from ...conftest import LOCAL, get_resource_full_path, host
 from ...image_container_test_utils import run_image_file_checks
@@ -77,7 +78,7 @@ def test_default_reader(
 
 
 def test_ffmpeg_header_fail() -> None:
-    with pytest.raises(IOError):
+    with pytest.raises(UnsupportedFileFormatError):
         # Big Buck Bunny
         DefaultReader("https://archive.org/embed/archive-video-files/test.mp4")
 
@@ -268,8 +269,8 @@ def test_set_coords(
             "actk.ome.tiff",
             DefaultReader,
             {},
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            (390, 1, 1, 233, 345),
+            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+            (6, 1, 1, 65, 233, 345),
         ),
     ],
 )

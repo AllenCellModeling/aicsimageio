@@ -85,7 +85,7 @@ from aicsimageio.transforms import (
             "TYXCZ",
             {"Z": 7},
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -93,7 +93,7 @@ from aicsimageio.transforms import (
             "TYXCZX",
             {"Z": 7},
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.raises(exception=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -533,13 +533,14 @@ def test_generate_stack_mismatch_and_drop(
 @pytest.mark.parametrize(
     "list_to_test, expected",
     [
-        ([0], 0),
+        ([0], slice(0, 1, None)),
+        ([4], slice(4, 5, None)),
         ([0, 1], slice(0, 2, 1)),
         ([1, 0], [1, 0]),
         ([3, 5], slice(3, 6, 2)),
         ([8, 9, 11], [8, 9, 11]),
         ([15, 20, 25], slice(15, 26, 5)),
-        ((0,), 0),
+        ((0,), slice(0, 1, None)),
         ((0, 1), slice(0, 2, 1)),
         ((1, 0), (1, 0)),
         ((3, 5), slice(3, 6, 2)),

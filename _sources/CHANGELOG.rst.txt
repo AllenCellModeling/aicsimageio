@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- bugfix/single-dimension-index-requested-in-transform-return  (`#438
+  <https://github.com/AllenCellModeling/aicsimageio/pull/438>`_)
+  [toloudis]
 - fix/position-names-in-nd2-tests  (`#437
   <https://github.com/AllenCellModeling/aicsimageio/pull/437>`_) [Talley
   Lambert]

@@ -7,9 +7,9 @@ import numpy as np
 import pytest
 
 from aicsimageio import AICSImage, dimensions, exceptions
+from aicsimageio.exceptions import UnsupportedFileFormatError
 from aicsimageio.readers.default_reader import DefaultReader
 from aicsimageio.readers.reader import Reader
-from aicsimageio.exceptions import UnsupportedFileFormatError
 
 from ...conftest import LOCAL, get_resource_full_path, host
 from ...image_container_test_utils import run_image_file_checks

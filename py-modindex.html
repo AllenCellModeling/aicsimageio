@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -59,15 +60,47 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.AICSImage"><code class="docutils literal notranslate"><span class="pre">AICSImage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.imread"><code class="docutils literal notranslate"><span class="pre">imread()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.imread_dask"><code class="docutils literal notranslate"><span class="pre">imread_dask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.imread_xarray"><code class="docutils literal notranslate"><span class="pre">imread_xarray()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.aics_image.imread_xarray_dask"><code class="docutils literal notranslate"><span class="pre">imread_xarray_dask()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.dimensions.DimensionNames"><code class="docutils literal notranslate"><span class="pre">DimensionNames</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.dimensions.Dimensions"><code class="docutils literal notranslate"><span class="pre">Dimensions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.exceptions.ConflictingArgumentsError"><code class="docutils literal notranslate"><span class="pre">ConflictingArgumentsError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.exceptions.InvalidDimensionOrderingError"><code class="docutils literal notranslate"><span class="pre">InvalidDimensionOrderingError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.exceptions.UnexpectedShapeError"><code class="docutils literal notranslate"><span class="pre">UnexpectedShapeError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.exceptions.UnsupportedFileFormatError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFileFormatError</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.image_container">aicsimageio.image_container module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio">Module contents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.image_container">aicsimageio.image_container module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.image_container.ImageContainer"><code class="docutils literal notranslate"><span class="pre">ImageContainer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.transforms.generate_stack"><code class="docutils literal notranslate"><span class="pre">generate_stack()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.transforms.reduce_to_slice"><code class="docutils literal notranslate"><span class="pre">reduce_to_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.transforms.reshape_data"><code class="docutils literal notranslate"><span class="pre">reshape_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.transforms.transpose_to_dims"><code class="docutils literal notranslate"><span class="pre">transpose_to_dims()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.types.PhysicalPixelSizes"><code class="docutils literal notranslate"><span class="pre">PhysicalPixelSizes</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#module-aicsimageio">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsimageio.html#aicsimageio.get_module_version"><code class="docutils literal notranslate"><span class="pre">get_module_version()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -131,191 +164,192 @@
 <li class="toctree-l1"><a class="reference internal" href="CHANGELOG.html">Changelog</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#unreleased">(unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-9-2-2022-08-24">v4.9.2 (2022-08-24)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#new">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id4">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#other">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id5">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id8">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-9-1-2022-08-02">v4.9.1 (2022-08-02)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id8">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id14">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id10">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id16">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-9-0-2022-07-19">v4.9.0 (2022-07-19)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id17">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id21">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id19">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id23">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-8-0-2022-05-26">v4.8.0 (2022-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id22">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id26">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id24">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id26">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id28">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-7-0-2022-04-19">v4.7.0 (2022-04-19)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id30">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id32">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id32">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id34">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-6-4-2022-03-18">v4.6.4 (2022-03-18)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id33">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id35">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-6-3-2022-03-03">v4.6.3 (2022-03-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id35">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id37">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-6-2-2022-03-01">v4.6.2 (2022-03-01)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-6-1-2022-03-01">v4.6.1 (2022-03-01)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id38">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id40">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-6-0-2022-02-22">v4.6.0 (2022-02-22)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id40">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id43">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id42">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id45">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-5-2-2021-12-16">v4.5.2 (2021-12-16)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-5-1-2021-12-08">v4.5.1 (2021-12-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id48">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id50">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id53">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id50">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id52">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id55">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-5-0-2021-11-04">v4.5.0 (2021-11-04)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id58">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id63">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id60">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id65">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-4-0-2021-10-12">v4.4.0 (2021-10-12)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id65">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id67">New</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-3-0-2021-10-08">v4.3.0 (2021-10-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id68">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id70">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id70">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id72">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-2-0-2021-09-27">v4.2.0 (2021-09-27)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id75">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id78">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id84">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id77">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id80">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id86">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id92">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id94">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id97">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id94">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id96">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id99">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id99">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id101">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id101">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id103">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id104">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id106">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id106">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id108">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id109">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id112">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id111">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id114">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id114">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id116">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id116">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id118">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id121">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id123">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id144">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id152">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id125">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id146">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id154">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id166">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id168">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id169">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id171">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id171">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id173">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id174">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id176">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id176">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id178">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id178">New</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id180">New</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id182">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id184">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id184">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id186">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id187">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id189">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id189">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id193">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id196">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id191">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id195">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id198">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id200">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id202">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id202">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id204">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id204">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id206">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id206">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id208">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id208">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id210">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id210">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id212">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id213">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id216">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id215">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id218">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id219">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id221">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id221">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id223">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id225">New</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id227">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id227">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id229">Fix</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id230">Fix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id231">Other</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id232">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="CHANGELOG.html#id233">Other</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
@@ -325,11 +359,41 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Important Classes:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.aics_image.AICSImage.html#aicsimageio.aics_image.AICSImage"><code class="docutils literal notranslate"><span class="pre">AICSImage</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.aics_image.AICSImage.html#aicsimageio.aics_image.AICSImage.__init__"><code class="docutils literal notranslate"><span class="pre">AICSImage.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html#aicsimageio.readers.reader.Reader"><code class="docutils literal notranslate"><span class="pre">Reader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.readers.reader.Reader.html#aicsimageio.readers.reader.Reader.__init__"><code class="docutils literal notranslate"><span class="pre">Reader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader"><code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.__init__"><code class="docutils literal notranslate"><span class="pre">OmeTiffReader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.readers.tiff_reader.TiffReader.html#aicsimageio.readers.tiff_reader.TiffReader"><code class="docutils literal notranslate"><span class="pre">TiffReader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.readers.tiff_reader.TiffReader.html#aicsimageio.readers.tiff_reader.TiffReader.__init__"><code class="docutils literal notranslate"><span class="pre">TiffReader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter"><code class="docutils literal notranslate"><span class="pre">OmeTiffWriter</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.__init__"><code class="docutils literal notranslate"><span class="pre">OmeTiffWriter.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>

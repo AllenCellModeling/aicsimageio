@@ -13,6 +13,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/437>`_) [Talley
   Lambert]
 
+Other
+~~~~~
+- admin/citation-update  (`#440
+  <https://github.com/AllenCellModeling/aicsimageio/pull/440>`_) [Eva
+  Maxfield Brown]
+
 
 v4.9.2 (2022-08-24)
 -------------------

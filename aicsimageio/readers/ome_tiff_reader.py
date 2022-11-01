@@ -12,7 +12,7 @@ from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
-from xmlschema import XMLSchemaValidationError
+from lxml.etree import XMLSchemaValidateError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -99,7 +99,7 @@ class OmeTiffReader(TiffReader):
             return False
 
         # invalid OME XMl
-        except XMLSchemaValidationError as e:
+        except XMLSchemaValidateError as e:
             log.debug(f"OME XML validation failed. Error: {e}")
             return False
 

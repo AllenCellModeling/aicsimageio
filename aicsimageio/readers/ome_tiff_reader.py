@@ -66,7 +66,7 @@ class OmeTiffReader(TiffReader):
         if clean_metadata:
             ome_xml = metadata_utils.clean_ome_xml_for_known_issues(ome_xml)
 
-        return from_xml(ome_xml)
+        return from_xml(ome_xml, parser="lxml")
 
     @staticmethod
     def _is_supported_image(

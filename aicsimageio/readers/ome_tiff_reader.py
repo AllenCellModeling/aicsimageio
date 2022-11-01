@@ -12,6 +12,7 @@ from fsspec.spec import AbstractFileSystem
 from lxml.etree import XMLSchemaValidateError
 from ome_types import from_xml
 from ome_types.model.ome import OME
+from pydantic.error_wrappers import ValidationError
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 
 from .. import constants, exceptions, transforms, types
@@ -99,7 +100,7 @@ class OmeTiffReader(TiffReader):
             return False
 
         # invalid OME XMl
-        except XMLSchemaValidateError as e:
+        except (XMLSchemaValidateError, ValidationError) as e:
             log.debug(f"OME XML validation failed. Error: {e}")
             return False
 

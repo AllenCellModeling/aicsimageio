@@ -9,10 +9,10 @@ from urllib.error import URLError
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
+from lxml.etree import XMLSchemaValidateError
 from ome_types import from_xml
 from ome_types.model.ome import OME
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
-from lxml.etree import XMLSchemaValidateError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames

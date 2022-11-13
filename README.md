@@ -337,7 +337,18 @@ for information related to developing the code.
 
 If you find `aicsimageio` useful, please cite this repository as:
 
-> AICSImageIO Contributors (2021). AICSImageIO: Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python [Computer software]. GitHub. https://github.com/AllenCellModeling/aicsimageio
+> Eva Maxfield Brown, Dan Toloudis, Jamie Sherman, Madison Swain-Bowden, Talley Lambert, AICSImageIO Contributors (2021). AICSImageIO: Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python [Computer software]. GitHub. https://github.com/AllenCellModeling/aicsimageio
+
+bibtex:
+```bibtex
+@misc{aicsimageio,
+  author    = {Brown, Eva Maxfield and Toloudis, Dan and Sherman, Jamie and Swain-Bowden, Madison and Lambert, Talley and {AICSImageIO Contributors}},
+  title     = {AICSImageIO: Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in Pure Python},
+  year      = {2021},
+  publisher = {GitHub},
+  url       = {https://github.com/AllenCellModeling/aicsimageio}
+}
+```
 
 _Free software: BSD-3-Clause_
 

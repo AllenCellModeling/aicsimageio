@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- bugfix/handle-tiff-i-dim  (`#445
+  <https://github.com/AllenCellModeling/aicsimageio/pull/445>`_)
+  [toloudis]
 - bugfix/single-dimension-index-requested-in-transform-return  (`#438
   <https://github.com/AllenCellModeling/aicsimageio/pull/438>`_)
   [toloudis]

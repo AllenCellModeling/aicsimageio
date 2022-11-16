@@ -13,7 +13,7 @@ __author__ = "Eva Maxfield Brown, Allen Institute for Cell Science"
 __email__ = "evamaxfieldbrown@gmail.com, jamie.sherman@gmail.com, bowdenm@spu.edu"
 # Do not edit this string manually, always use bumpversion
 # Details in CONTRIBUTING.md
-__version__ = "4.9.2"
+__version__ = "4.9.3"
 
 
 def get_module_version() -> str:

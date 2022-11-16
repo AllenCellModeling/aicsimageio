@@ -8,6 +8,7 @@ from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
 
 from .. import types
+from .. import exceptions
 from ..metadata import utils
 from ..utils import io_utils
 
@@ -175,6 +176,11 @@ class OmeZarrWriter:
         ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
         ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
         """
+        if len(image_data.shape) < 5:
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Image data must have at least 5 dimensions. "
+                f"Received image data with shape: {image_data.shape}"
+            )
         if physical_pixel_sizes is None:
             pixelsizes = (1.0, 1.0, 1.0)
         else:

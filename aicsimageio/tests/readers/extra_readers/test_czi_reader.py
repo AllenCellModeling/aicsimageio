@@ -19,6 +19,7 @@ from ...image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
     run_multi_scene_image_read_checks,
+    run_no_scene_name_image_read_checks,
 )
 
 
@@ -536,6 +537,35 @@ def test_multi_scene_aicsimage(
         second_scene_dtype=np.dtype(np.uint16),
     )
 
+@pytest.mark.parametrize(
+    "filename, "
+    "first_scene_id, "
+    "second_scene_id, ",
+    [
+        (
+            "NoSceneName.czi",
+            "NoSceneName-0",
+            "NoSceneName-1",
+        ),
+    ],
+)
+def test_no_scene_name_aicsimage(
+    filename: str,
+    first_scene_id: str,
+    second_scene_id: str,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_no_scene_name_image_read_checks(
+        ImageContainer=AICSImage,
+        image=uri,
+        first_scene_id=first_scene_id,
+        first_scene_dtype=np.dtype(np.uint16),
+        second_scene_id=second_scene_id,
+        second_scene_dtype=np.dtype(np.uint16),
+    )
 
 @pytest.mark.parametrize(
     "filename, expected_shape",

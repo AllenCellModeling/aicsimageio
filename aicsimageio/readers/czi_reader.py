@@ -175,7 +175,7 @@ class CziReader(Reader):
                 #
                 # If we didn't do this, the produced list would have 96 of the same
                 # string name making it impossible to switch scenes.
-                for meta_scene in meta_scenes:
+                for scene_idx, meta_scene in enumerate(meta_scenes):
                     shape = meta_scene.find("Shape")
                     if shape is not None:
                         shape_name = shape.get("Name")
@@ -183,8 +183,15 @@ class CziReader(Reader):
                         combined_scene_name = f"{scene_name}-{shape_name}"
                     else:
                         combined_scene_name = meta_scene.get("Name")
+                        # Some scene names can be unpopulated, for those we should fill with filename-idx
+                        if combined_scene_name is None:
+                            fname_prefix = Path(self._path).stem
+                            combined_scene_name = f"{fname_prefix}-{scene_idx}"
 
                     scene_names.append(combined_scene_name)
+
+                # Check if scene names are identical
+                
 
                 # If the scene is implicit just assign it name Scene:0
                 if len(scene_names) < 1:

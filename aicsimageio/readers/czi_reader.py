@@ -159,6 +159,12 @@ class CziReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
+        """Note: scenes with no name (`None`) will be renamed to "filename-<scene index>" to prevent ambiguity. 
+        Similarly, scenes with same names are automatically appended with ocurrence number to distinguish between the two.
+
+        Returns:
+            Tuple[str, ...]: Scene names/id
+        """
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource.f)

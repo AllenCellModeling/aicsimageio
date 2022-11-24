@@ -589,8 +589,8 @@ def test_no_scene_name_aicsimage(
             ("a-1", "b-1", "b-2", "a-2"),
         ),
         (
-            ("a", None, None, "a"),
-            ("a-1", "test-1", "test-2", "a-2"),
+            ("a", None, "a", None),
+            ("a-1", "test-1", "a-2", "test-3"),
         ),
     ],
 )

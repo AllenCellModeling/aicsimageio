@@ -580,10 +580,22 @@ def test_no_scene_name_aicsimage(
             ("a", "a", "a"),
             ("a-1", "a-2", "a-3"),
         ),
+        (
+            ("a", "a", "b"),
+            ("a-1", "a-2", "b"),
+        ),
+        (
+            ("a", "b", "b", "a"),
+            ("a-1", "b-1", "b-2", "a-2"),
+        ),
+        (
+            ("a", None, None, "a"),
+            ("a-1", "test-1", "test-2", "a-2"),
+        ),
     ],
 )
 @patch("aicsimageio.readers.czi_reader.CziFile", spec=CziFile)
-@patch("aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs", return_value=(MagicMock(spec=LocalFileSystem), None))
+@patch("aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs", return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"))
 def test_same_scene_name_aicsimage(
     mock_pathlike_to_fs,
     mock_CziFile,
@@ -607,7 +619,7 @@ def test_same_scene_name_aicsimage(
     mock_CziFile.return_value.get_dims_shape = lambda : [{} for _ in orig_scene_name]
     
 
-    # Create Image with real information
+    # Create Image with mock
     image_container = AICSImage(None, reader=CziReader)
 
     # Run Checks

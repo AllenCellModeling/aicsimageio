@@ -37,9 +37,9 @@ class TiffGlobReader(Reader):
 
     Parameters
     ----------
-    glob_in: Union[PathLike, List[PathLike]]
+    glob_in: Union[PathLike, List[PathLike], pd.Series[PathLike]]
         Glob string that identifies all files to be loaded or a list
-        of paths to the files as returned by glob.
+        or pandas Series of paths to the files as returned by glob.
     indexer: Union[Callable, pandas.DataFrame]
         If callable, should consume each filename and return a pd.Series with series
         index corresponding to the dimensions and values corresponding to the array
@@ -147,6 +147,10 @@ class TiffGlobReader(Reader):
             file_series = pd.Series(glob_in)
         elif isinstance(glob_in, Path) and "*" in str(glob_in):
             file_series = pd.Series(glob.glob(str(glob_in)))
+        elif isinstance(glob_in, pd.Series):
+            file_series = glob_in
+        else:
+            raise TypeError(f"Invalid type glob_in - got type {type(glob_in)}")
 
         if len(file_series) == 0:
             raise ValueError("No files found matching glob pattern")

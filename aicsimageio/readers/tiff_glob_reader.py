@@ -148,7 +148,8 @@ class TiffGlobReader(Reader):
         elif isinstance(glob_in, Path) and "*" in str(glob_in):
             file_series = pd.Series(glob.glob(str(glob_in)))
         elif isinstance(glob_in, pd.Series):
-            file_series = glob_in
+            # Ensure all of our indices line up
+            file_series = glob_in.reset_index(drop=True, inplace=False)
         else:
             raise TypeError(f"Invalid type glob_in - got type {type(glob_in)}")
 
@@ -178,7 +179,10 @@ class TiffGlobReader(Reader):
             self._all_files = file_series.apply(indexer)
             self._all_files["filename"] = file_series
         elif isinstance(indexer, pd.DataFrame):
-            self._all_files = indexer
+            # make a copy of the indexing dataframe and reset it index
+            # to ensure that we don't generate nans when aligning with
+            # file_series.
+            self._all_files = indexer.reset_index(drop=True, inplace=False)
             self._all_files["filename"] = file_series
 
         # If a dim doesn't exist on the file set the column value for that dim to zero.

@@ -143,7 +143,7 @@ class TiffGlobReader(Reader):
         # Assemble glob list if given a string
         if isinstance(glob_in, str):
             file_series = pd.Series(glob.glob(glob_in))
-        elif isinstance(glob_in, list):
+        elif isinstance(glob_in, (list, tuple, np.ndarray)):
             file_series = pd.Series(glob_in)
         elif isinstance(glob_in, Path) and "*" in str(glob_in):
             file_series = pd.Series(glob.glob(str(glob_in)))

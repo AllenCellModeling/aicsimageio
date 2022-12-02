@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 import tifffile as tiff
 import xarray as xr
 
@@ -87,11 +88,32 @@ def test_index_alignment(tmp_path: Path) -> None:
 
     indexer = indexer.loc[keep]
 
-    reader = TiffGlobReader(filenames[keep].tolist(), indexer)
+    reader = TiffGlobReader(filenames[keep], indexer)
 
     # check that there are no nans
     # nans are a symptom of index misalignment
     assert not reader._all_files.isnull().any().any()
+
+
+def test_glob_types(tmp_path: Path) -> None:
+    reference = make_fake_data_2d(tmp_path)
+    filenames = list((tmp_path / "2d_images").glob("*.tif"))
+
+    # list
+    gr = TiffGlobReader(list(filenames))
+    check_values(gr, reference)
+
+    # pd.Series
+    gr = TiffGlobReader(pd.Series(filenames))
+    check_values(gr, reference)
+
+    # np.array
+    gr = TiffGlobReader(np.array(filenames))
+    check_values(gr, reference)
+
+    with pytest.raises(TypeError):
+        # should throw a TypeError instead of an unboundlocal error
+        TiffGlobReader(2022)  # type: ignore
 
 
 def test_mm_indexer(tmp_path: Path) -> None:

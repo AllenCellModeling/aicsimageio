@@ -2,6 +2,7 @@
 import os
 from itertools import product
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -96,15 +97,16 @@ def test_index_alignment(tmp_path: Path) -> None:
 
 
 @pytest.mark.parametrize(
-    "type_", [
+    "type_",
+    [
         list,
         pd.Series,
-        np.array, 
+        np.array,
         # should throw a TypeError instead of an unboundlocal error
-        pytest.param(bytes, marks=pytest.mark.raises(exception=TypeError)), 
-    ]
+        pytest.param(bytes, marks=pytest.mark.raises(exception=TypeError)),
+    ],
 )
-def test_glob_types(type_, tmp_path: Path) -> None:
+def test_glob_types(type_: Any, tmp_path: Path) -> None:
     reference = make_fake_data_2d(tmp_path)
     filenames = list((tmp_path / "2d_images").glob("*.tif"))
 

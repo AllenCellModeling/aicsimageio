@@ -1,10 +1,31 @@
+import dask.array as da
 from distributed import LocalCluster, Client
 import os
+import numpy as np
 import s3fs
 
 from aicsimageio.writers import OmeZarrWriter
 from aicsimageio import AICSImage
 from aicsimageio.dimensions import DimensionNames
+
+
+def build_combined_image(img):
+    result = da.array([])
+    for index, channel_name in enumerate(img.channel_names):
+        data = img.get_image_dask_data("ZYX", C=index, T=0)
+        if index > 0:
+            # handle bad data:
+            # general ZYX shape mismatch
+            if data.shape != result[0].shape:
+                raise ValueError(
+                    "Image shapes do not match: {} != {}".format(
+                        data.shape, result[0].shape
+                    )
+                )
+            result = da.append(result, [data], axis=0)
+        else:
+            result = da.array([data])
+    return result
 
 
 def write_scene(storeroot, scenename, sceneindex, img):
@@ -14,7 +35,12 @@ def write_scene(storeroot, scenename, sceneindex, img):
     pps = img.physical_pixel_sizes
     cn = img.channel_names
 
-    data = img.get_image_dask_data("TCZYX")
+    data = build_combined_image(img)
+    if len(data.shape) < 5:
+        for i in range(5 - len(data.shape)):
+            data = np.expand_dims(data, axis=0)
+
+    # data = img.get_image_dask_data("TCZYX")
     print(data.shape)
     writer = OmeZarrWriter(storeroot)
 
@@ -46,7 +72,7 @@ def do_main():
 
     # filepath = "E:\\data\\AICS-11_16415.ome.tif"
     filepath = "//allen/aics/animated-cell/Allen-Cell-Explorer/Allen-Cell-Explorer_1.4.0/Cell-Viewer_Data/AICS-11/AICS-11_16415.ome.tif"
-    filename = "FOV_16415"
+    filename = "FOV_16415_b"
 
     img = AICSImage(filepath, chunk_dims=chunk_dims)
 

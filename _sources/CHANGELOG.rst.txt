@@ -1,6 +1,18 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- bugfix/Fix `UnboundLocalError` in TiffGlobReader  (`#449
+  <https://github.com/AllenCellModeling/aicsimageio/pull/449>`_) [Ian
+  Hunt-Isaak, Madison Swain-Bowden <bowdenm@spu.edu>    * get typing
+  correct    * apply black + fix test typing    Co-authored-by: Madison
+  Swain-Bowden <bowdenm@spu.edu>]
+
+
 v4.9.3 (2022-11-15)
 -------------------
 

@@ -16,6 +16,7 @@ from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
+from ..types import PhysicalPixelSizes
 
 ###############################################################################
 
@@ -56,6 +57,7 @@ class TiffReader(Reader):
         Any specific keyword arguments to pass down to the fsspec created filesystem.
         Default: {}
     """
+    _physical_pixel_sizes: Optional[PhysicalPixelSizes] = None
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
@@ -131,6 +133,30 @@ class TiffReader(Reader):
                     )
 
         return self._scenes
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        if self._physical_pixel_sizes is None:
+            with self._fs.open(self._path) as open_resource:
+                with TiffFile(open_resource) as tiff:
+                    tags = tiff.series[self.current_scene_index].pages[0].tags
+
+            if tiff.is_imagej:
+                unit = tiff.imagej_metadata["unit"]
+                z_size = tiff.imagej_metadata.get("spacing", None)
+            else:
+                unit = tags["ResolutionUnit"].value
+                z_size = None
+
+            scalar = _NAME_TO_MICRONS.get(unit, 1)
+            dx, nx = tags["XResolution"].value
+            x_size = scalar * nx / dx
+            dy, ny = tags["YResolution"].value
+            y_size = scalar * ny / dy
+            if z_size is not None:
+                z_size *= scalar
+            self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)
+        return self._physical_pixel_sizes
 
     @staticmethod
     def _get_image_data(
@@ -529,3 +555,30 @@ class TiffReader(Reader):
                     coords=coords,
                     attrs=attrs,
                 )
+
+_NAME_TO_MICRONS = {
+    "pm": 1e-6,
+    "picometer": 1e-6,
+
+    "nm": 1e-3,
+    "nanometer": 1e-3,
+
+    "micron": 1,
+    "µm": 1,
+    "um": 1,
+    1: 1,       # tifffile RESUNIT.NONE
+    5: 1,  # tifffile RESUNIT.MICROMETER
+    "\\u00B5m": 1,  # µm
+    None: 1,
+
+    "mm": 1e3,
+    "millimeter": 1e3,
+    4: 1e3,  # tifffile RESUNIT.MILLIMETER
+
+    "cm": 1e4,
+    "centimeter": 1e4,
+    3: 1e4,  # tifffile RESUNIT.CENTIMETER
+
+    "cal": 2.54 * 1e4,
+    2: 2.54 * 1e4,  # tifffile RESUNIT.INCH
+}

@@ -3,6 +3,7 @@ import typing
 from typing import Dict, List, Optional, Tuple
 
 import zarr
+from zarr.storage import default_compressor
 from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
@@ -230,7 +231,8 @@ class OmeZarrWriter:
                     nplanes_per_chunk,
                     image_data.shape[3],
                     image_data.shape[4],
-                )
+                ),
+                compressor=default_compressor,
             )
         ]
         lasty = image_data.shape[3]
@@ -264,7 +266,8 @@ class OmeZarrWriter:
                 plane_size = lasty * lastx * image_data.itemsize
                 nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
                 nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
-                chunk_dims.append(dict(chunks=(1, 1, nplanes_per_chunk, lasty, lastx)))
+                chunk_dims.append(dict(chunks=(1, 1, nplanes_per_chunk, lasty, lastx), 
+                                       compressor=default_compressor))
         else:
             scaler = None
 
@@ -290,6 +293,7 @@ class OmeZarrWriter:
         # TODO image name must be unique within this root group
         group = self.root_group  # .create_group(image_name, overwrite=True)
         group.attrs["omero"] = ome_json
+
         write_image(
             image=image_data,
             group=group,

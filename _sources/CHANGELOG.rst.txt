@@ -1,6 +1,16 @@
 Changelog
 =========
 
+(unreleased)
+------------
+
+Fix
+~~~
+- fix/fix_future_warnings  (`#453
+  <https://github.com/AllenCellModeling/aicsimageio/pull/453>`_)
+  [JasonYu1]
+
+
 v4.9.4 (2022-12-06)
 -------------------
 

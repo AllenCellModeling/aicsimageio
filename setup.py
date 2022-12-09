@@ -64,7 +64,7 @@ test_requirements = [
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
     "s3fs[boto3]>=0.4.2",
-    "tox>=3.15.2",
+    "tox>=3.27.1",
 ]
 
 dev_requirements = [

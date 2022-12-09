@@ -322,7 +322,7 @@ class TiffGlobReader(Reader):
         unpack_sizes = OrderedDict(
             [
                 (d, s)
-                for d, s in scene_nunique.iteritems()
+                for d, s in scene_nunique.items()
                 if d in chunk_sizes.keys() - group_sizes.keys()
             ]
         )
@@ -473,7 +473,7 @@ class TiffGlobReader(Reader):
     ) -> OrderedDict:
 
         sizes = OrderedDict()
-        for i, x in scene_files_nunique.iteritems():
+        for i, x in scene_files_nunique.items():
             if i not in ["filename", *group_dims]:
                 if i not in self._single_file_dims:
                     sizes[i] = x

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from cProfile import label
 import logging
 import os
 import re
@@ -443,6 +444,17 @@ def clean_ome_xml_for_known_issues(xml: str) -> str:
     sa = root.find(f"{namespace}StructuredAnnotations")
     if sa is not None:
         for xml_anno in sa.findall(f"{namespace}XMLAnnotation"):
+            # fix invalid XMLAnnotation IDs that are not prefixed with "Annotation:"
+            # https://github.com/AllenCellModeling/aicsimageio/issues/454
+            anno_id = xml_anno.get("ID")
+            if anno_id and not anno_id.startswith("Annotation:"):
+                id_num = anno_id.rsplit(":", maxsplit=1)[-1]
+                new_id = f"Annotation:{id_num}"
+                xml_anno.set("ID", new_id)
+                metadata_changes.append(
+                    f"Fixed invalid XMLAnnotation ID: {anno_id} -> {new_id}"
+                )
+
             # At least these are namespaced
             if xml_anno.get("Namespace") == "alleninstitute.org/CZIMetadata":
                 # Get ID because some elements have annotation refs

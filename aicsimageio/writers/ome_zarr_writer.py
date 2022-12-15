@@ -38,7 +38,7 @@ class OmeZarrWriter:
         channel_minmax: List[Tuple[float, float]],
     ) -> Dict:
         """
-        Create the necessary metadata for an OME tiff image
+        Create the omero metadata for an OME zarr image
 
         Parameters
         ----------
@@ -300,9 +300,12 @@ class OmeZarrWriter:
                     if zdimindex > -1
                     else 1
                 )
+                chunk_dim_map["Z"] = nplanes_per_chunk
+                chunk_dim_map["Y"] = lasty
+                chunk_dim_map["X"] = lastx
                 chunk_dims.append(
                     dict(
-                        chunks=(1, 1, nplanes_per_chunk, lasty, lastx),
+                        chunks=tuple(chunk_dim_map[d] for d in dimension_order),
                         compressor=default_compressor,
                     )
                 )

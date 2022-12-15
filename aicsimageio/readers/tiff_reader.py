@@ -8,7 +8,7 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError, imread
+from tifffile import TiffFile, TiffFileError, imread, TIFF
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
@@ -57,6 +57,7 @@ class TiffReader(Reader):
         Any specific keyword arguments to pass down to the fsspec created filesystem.
         Default: {}
     """
+
     _physical_pixel_sizes: Optional[PhysicalPixelSizes] = None
 
     @staticmethod
@@ -136,6 +137,7 @@ class TiffReader(Reader):
 
     @property
     def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """Return the physical pixel sizes of the image."""
         if self._physical_pixel_sizes is None:
             with self._fs.open(self._path) as open_resource:
                 with TiffFile(open_resource) as tiff:
@@ -556,29 +558,25 @@ class TiffReader(Reader):
                     attrs=attrs,
                 )
 
+
 _NAME_TO_MICRONS = {
     "pm": 1e-6,
     "picometer": 1e-6,
-
     "nm": 1e-3,
     "nanometer": 1e-3,
-
     "micron": 1,
     "µm": 1,
     "um": 1,
-    1: 1,       # tifffile RESUNIT.NONE
-    5: 1,  # tifffile RESUNIT.MICROMETER
-    "\\u00B5m": 1,  # µm
+    "\\u00B5m": 1,  # µm unicode
+    TIFF.RESUNIT.NONE: 1,
+    TIFF.RESUNIT.MICROMETER: 1,
     None: 1,
-
     "mm": 1e3,
     "millimeter": 1e3,
-    4: 1e3,  # tifffile RESUNIT.MILLIMETER
-
+    TIFF.RESUNIT.MILLIMETER: 1e3,
     "cm": 1e4,
     "centimeter": 1e4,
-    3: 1e4,  # tifffile RESUNIT.CENTIMETER
-
+    TIFF.RESUNIT.CENTIMETER: 1e4,
     "cal": 2.54 * 1e4,
-    2: 2.54 * 1e4,  # tifffile RESUNIT.INCH
+    TIFF.RESUNIT.INCH: 2.54 * 1e4,
 }

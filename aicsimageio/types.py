@@ -24,4 +24,3 @@ class PhysicalPixelSizes(NamedTuple):
     Z: Optional[float]
     Y: Optional[float]
     X: Optional[float]
-    unit: Optional[str] = 'um'

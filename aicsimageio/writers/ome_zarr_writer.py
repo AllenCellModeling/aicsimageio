@@ -1,5 +1,4 @@
 import math
-import typing
 from typing import Dict, List, Optional, Tuple
 
 import zarr
@@ -12,8 +11,6 @@ from .. import types
 from .. import exceptions
 from ..metadata import utils
 from ..utils import io_utils
-
-# from .writer import Writer
 
 
 class OmeZarrWriter:
@@ -35,7 +32,7 @@ class OmeZarrWriter:
 
     @staticmethod
     def build_ome(
-        data_shape: Tuple[int, ...],
+        size_z: int,
         image_name: str,
         channel_names: List[str],
         channel_colors: List[int],
@@ -46,8 +43,8 @@ class OmeZarrWriter:
 
         Parameters
         ----------
-        data_shape:
-            A 5-d tuple, assumed to be TCZYX order
+        size_z:
+            Number of z planes
         image_name:
             The name of the image
         channel_names:
@@ -63,7 +60,7 @@ class OmeZarrWriter:
             An "omero" metadata object suitable for writing to ome-zarr
         """
         ch = []
-        for i in range(data_shape[1]):
+        for i in range(len(channel_names)):
             ch.append(
                 {
                     "active": True,
@@ -88,7 +85,7 @@ class OmeZarrWriter:
             "channels": ch,
             "rdefs": {
                 "defaultT": 0,  # First timepoint to show the user
-                "defaultZ": data_shape[2] // 2,  # First Z section to show the user
+                "defaultZ": size_z // 2,  # First Z section to show the user
                 "model": "color",  # "color" or "greyscale"
             },
             # TODO: can we add more metadata here?
@@ -121,13 +118,14 @@ class OmeZarrWriter:
     def write_image(
         self,
         # TODO how to pass in precomputed multiscales?
-        image_data: types.ArrayLike,  # must be 5D TCZYX
+        image_data: types.ArrayLike,  # must be 3D, 4D or 5D
         image_name: str,
         physical_pixel_sizes: Optional[types.PhysicalPixelSizes],
         channel_names: Optional[List[str]],
         channel_colors: Optional[List[int]],
         scale_num_levels: int = 1,
         scale_factor: float = 2.0,
+        dimension_order: Optional[str] = None,
     ) -> None:
         """
         Write a data array to a file.
@@ -160,6 +158,10 @@ class OmeZarrWriter:
         scale_factor: Optional[float]
             The scale factor to use for the image. Only active if scale_num_levels > 1.
             Default: 2.0
+        dimension_order: Optional[str]
+            The dimension order of the data. If None is given, the dimension order will
+            be guessed from the number of dimensions in the data according to TCZYX
+            order.
 
         Examples
         --------
@@ -177,11 +179,36 @@ class OmeZarrWriter:
         ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
         ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
         """
-        if len(image_data.shape) < 5:
+        ndims = len(image_data.shape)
+        if ndims < 2 or ndims > 5:
             raise exceptions.InvalidDimensionOrderingError(
-                f"Image data must have at least 5 dimensions. "
+                f"Image data must have 2, 3, 4, or 5 dimensions. "
                 f"Received image data with shape: {image_data.shape}"
             )
+        if dimension_order is None:
+            dimension_order = "TCZYX"[-ndims:]
+        if len(dimension_order) != ndims:
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Dimension order {dimension_order} does not match data "
+                f"shape: {image_data.shape}"
+            )
+        if (len(set(dimension_order) - set("TCZYX")) > 0) or len(
+            dimension_order
+        ) != len(set(dimension_order)):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Dimension order {dimension_order} is invalid or "
+                "contains unexpected dimensions. Only TCZYX currently supported."
+            )
+        xdimindex = dimension_order.find("X")
+        ydimindex = dimension_order.find("Y")
+        zdimindex = dimension_order.find("Z")
+        cdimindex = dimension_order.find("C")
+        if cdimindex > min(i for i in [xdimindex, ydimindex, zdimindex] if i > -1):
+            raise exceptions.InvalidDimensionOrderingError(
+                f"Dimension order {dimension_order} is invalid. Channel dimension "
+                "must be before X, Y, and Z."
+            )
+
         if physical_pixel_sizes is None:
             pixelsizes = (1.0, 1.0, 1.0)
         else:
@@ -193,71 +220,81 @@ class OmeZarrWriter:
         if channel_names is None:
             # TODO this isn't generating a very pretty looking name but it will be
             # unique
-            channel_names = [
-                utils.generate_ome_channel_id(image_id=image_name, channel_id=i)
-                for i in range(image_data.shape[1])
-            ]
+            channel_names = (
+                [
+                    utils.generate_ome_channel_id(image_id=image_name, channel_id=i)
+                    for i in range(image_data.shape[cdimindex])
+                ]
+                if cdimindex > -1
+                else [utils.generate_ome_channel_id(image_id=image_name, channel_id=0)]
+            )
         if channel_colors is None:
             # TODO generate proper colors or confirm that the underlying lib can handle
             # None
-            channel_colors = [i for i in range(image_data.shape[1])]
+            channel_colors = (
+                [i for i in range(image_data.shape[cdimindex])]
+                if cdimindex > -1
+                else [0]
+            )
+        scale_dim_map = {
+            "T": 1.0,
+            "C": 1.0,
+            "Z": pixelsizes[0],
+            "Y": pixelsizes[1],
+            "X": pixelsizes[2],
+        }
         transforms = [
             [
                 # the voxel size for the first scale level
                 {
                     "type": "scale",
-                    "scale": [
-                        1.0,
-                        1.0,
-                        pixelsizes[0],
-                        pixelsizes[1],
-                        pixelsizes[2],
-                    ],
+                    "scale": [scale_dim_map[d] for d in dimension_order],
                 }
             ]
         ]
-        # TODO parameterize or construct a sensible guess
-        # (maybe ZYX dims or YX dims, or some byte size limit)
         # TODO precompute sizes for downsampled also.
-        plane_size = image_data.shape[3] * image_data.shape[4] * image_data.itemsize
+        plane_size = (
+            image_data.shape[xdimindex]
+            * image_data.shape[ydimindex]
+            * image_data.itemsize
+        )
         target_chunk_size = 16 * (1024 * 1024)  # 16 MB
+        # this is making an assumption of chunking whole XY planes.
+        # TODO allow callers to configure chunk dims?
         nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
-        nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
+        nplanes_per_chunk = (
+            min(nplanes_per_chunk, image_data.shape[zdimindex]) if zdimindex > -1 else 1
+        )
+        chunk_dim_map = {
+            "T": 1,
+            "C": 1,
+            "Z": nplanes_per_chunk,
+            "Y": image_data.shape[ydimindex],
+            "X": image_data.shape[xdimindex],
+        }
         chunk_dims = [
             dict(
-                chunks=(
-                    1,
-                    1,
-                    nplanes_per_chunk,
-                    image_data.shape[3],
-                    image_data.shape[4],
-                ),
+                chunks=tuple(chunk_dim_map[d] for d in dimension_order),
                 compressor=default_compressor,
             )
         ]
-        lasty = image_data.shape[3]
-        lastx = image_data.shape[4]
+        lasty = image_data.shape[ydimindex]
+        lastx = image_data.shape[xdimindex]
         # TODO scaler might want to use different method for segmentations than raw
-        # TODO control how many levels of zarr are created
+        # TODO allow custom scaler or pre-computed multiresolution levels
         if scale_num_levels > 1:
             scaler = Scaler()
             scaler.method = "nearest"
             scaler.max_layer = scale_num_levels - 1
             scaler.downscale = scale_factor if scale_factor is not None else 2
             for i in range(scale_num_levels - 1):
-                last_transform = transforms[-1][0]
-                last_scale = typing.cast(List, last_transform["scale"])
+                scale_dim_map["Y"] *= scaler.downscale
+                scale_dim_map["X"] *= scaler.downscale
                 transforms.append(
                     [
                         {
                             "type": "scale",
-                            "scale": [
-                                1.0,
-                                1.0,
-                                pixelsizes[0],
-                                last_scale[3] * scaler.downscale,
-                                last_scale[4] * scaler.downscale,
-                            ],
+                            "scale": [scale_dim_map[d] for d in dimension_order],
                         }
                     ]
                 )
@@ -265,30 +302,43 @@ class OmeZarrWriter:
                 lastx = int(math.ceil(lastx / scaler.downscale))
                 plane_size = lasty * lastx * image_data.itemsize
                 nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
-                nplanes_per_chunk = min(nplanes_per_chunk, image_data.shape[2])
-                chunk_dims.append(dict(chunks=(1, 1, nplanes_per_chunk, lasty, lastx), 
-                                       compressor=default_compressor))
+                nplanes_per_chunk = (
+                    min(nplanes_per_chunk, image_data.shape[zdimindex])
+                    if zdimindex > -1
+                    else 1
+                )
+                chunk_dims.append(
+                    dict(
+                        chunks=(1, 1, nplanes_per_chunk, lasty, lastx),
+                        compressor=default_compressor,
+                    )
+                )
         else:
             scaler = None
 
         # try to construct per-image metadata
         ome_json = OmeZarrWriter.build_ome(
-            image_data.shape,
+            image_data.shape[zdimindex] if zdimindex > -1 else 1,
             image_name,
             channel_names=channel_names,  # type: ignore
             channel_colors=channel_colors,  # type: ignore
             # This can be slow if computed here.
             # TODO: Rely on user to supply the per-channel min/max.
-            channel_minmax=[(0.0, 1.0) for i in range(image_data.shape[1])],
+            channel_minmax=[
+                (0.0, 1.0)
+                for i in range(image_data.shape[cdimindex] if cdimindex > -1 else 1)
+            ],
         )
         # TODO user supplies units?
-        axes_5d = [
-            {"name": "t", "type": "time", "unit": "millisecond"},
-            {"name": "c", "type": "channel"},
-            {"name": "z", "type": "space", "unit": "micrometer"},
-            {"name": "y", "type": "space", "unit": "micrometer"},
-            {"name": "x", "type": "space", "unit": "micrometer"},
-        ]
+        dim_to_axis = {
+            "T": {"name": "t", "type": "time", "unit": "millisecond"},
+            "C": {"name": "c", "type": "channel"},
+            "Z": {"name": "z", "type": "space", "unit": "micrometer"},
+            "Y": {"name": "y", "type": "space", "unit": "micrometer"},
+            "X": {"name": "x", "type": "space", "unit": "micrometer"},
+        }
+
+        axes = [dim_to_axis[d] for d in dimension_order]
 
         # TODO image name must be unique within this root group
         group = self.root_group  # .create_group(image_name, overwrite=True)
@@ -298,7 +348,7 @@ class OmeZarrWriter:
             image=image_data,
             group=group,
             scaler=scaler,
-            axes=axes_5d,
+            axes=axes,
             # For each resolution, we have a List of transformation Dicts (not
             # validated). Each list of dicts are added to each datasets in order.
             coordinate_transformations=transforms,

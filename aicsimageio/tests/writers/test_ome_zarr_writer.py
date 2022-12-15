@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import shutil
 from typing import Callable, Optional, Tuple
 
 import numpy as np
 import pytest
-import shutil
-
-from ome_zarr.reader import Reader
 from ome_zarr.io import parse_url
+from ome_zarr.reader import Reader
 
 from aicsimageio import exceptions
 from aicsimageio.writers import OmeZarrWriter

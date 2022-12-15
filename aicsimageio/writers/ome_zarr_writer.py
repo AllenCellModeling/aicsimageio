@@ -2,13 +2,12 @@ import math
 from typing import Dict, List, Optional, Tuple
 
 import zarr
-from zarr.storage import default_compressor
 from ome_zarr.io import parse_url
 from ome_zarr.scale import Scaler
 from ome_zarr.writer import write_image
+from zarr.storage import default_compressor
 
-from .. import types
-from .. import exceptions
+from .. import exceptions, types
 from ..metadata import utils
 from ..utils import io_utils
 

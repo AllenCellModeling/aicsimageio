@@ -102,15 +102,6 @@ class OmeZarrWriter:
             #     "projectName": "aics cell variance project",
             #     "datasetId": 3
             # },
-            # no longer needed as this is captured elsewhere?
-            # or is this still a convenience for the 3d viewer?
-            # "size": {
-            #     "width": shape[4],
-            #     "c": shape[1],
-            #     "z": shape[2],
-            #     "t": shape[0],
-            #     "height": shape[3]
-            # },
         }
         return omero
 
@@ -282,6 +273,9 @@ class OmeZarrWriter:
         # TODO scaler might want to use different method for segmentations than raw
         # TODO allow custom scaler or pre-computed multiresolution levels
         if scale_num_levels > 1:
+            # TODO As of this writing, this Scaler is not the most general
+            # implementation (it does things by xy plane) but it's code already
+            # written that also works with dask, so it's a good starting point.
             scaler = Scaler()
             scaler.method = "nearest"
             scaler.max_layer = scale_num_levels - 1

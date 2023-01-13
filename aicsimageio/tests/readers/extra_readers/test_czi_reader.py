@@ -548,7 +548,7 @@ def test_multi_scene_aicsimage(
     "second_scene_id, ",
     [
         (
-            "NoSceneName.czi",
+            "NoSceneNames.czi",
             "NoSceneName-0",
             "NoSceneName-1",
         ),

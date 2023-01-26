@@ -159,7 +159,7 @@ class CziReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        """Note: scenes with no name (`None`) will be renamed to "filename-<scene index>" to prevent ambiguity. 
+        """Note: scenes with no name (`None`) will be renamed to "filename-<scene index>" to prevent ambiguity.
         Similarly, scenes with same names are automatically appended with ocurrence number to distinguish between the two.
 
         Returns:
@@ -199,11 +199,15 @@ class CziReader(Reader):
                             duplicates[combined_scene_name] = [scene_idx, 1]
                         else:
                             if duplicates[combined_scene_name][1] == 1:
-                                scene_names[duplicates[combined_scene_name][0]] += f"-{duplicates[combined_scene_name][1]}"
+                                scene_names[
+                                    duplicates[combined_scene_name][0]
+                                ] += f"-{duplicates[combined_scene_name][1]}"
 
                             duplicates[combined_scene_name][1] += 1
 
-                            combined_scene_name += f"-{duplicates[combined_scene_name][1]}"
+                            combined_scene_name += (
+                                f"-{duplicates[combined_scene_name][1]}"
+                            )
 
                     scene_names.append(combined_scene_name)
 

@@ -5,18 +5,17 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, List, Optional, Tuple, Union
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
-from ome_types import OME
+from aicspylibczi import CziFile
 from fsspec.implementations.local import LocalFileSystem
-from fsspec.spec import AbstractFileSystem
+from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import ArrayLikeReader
 from aicsimageio.readers.czi_reader import CziReader
-from aicspylibczi import CziFile
 
 from ...conftest import LOCAL, REMOTE, get_resource_full_path
 from ...image_container_test_utils import (
@@ -543,9 +542,7 @@ def test_multi_scene_aicsimage(
 
 
 @pytest.mark.parametrize(
-    "filename, "
-    "first_scene_id, "
-    "second_scene_id, ",
+    "filename, " "first_scene_id, " "second_scene_id, ",
     [
         (
             "NoSceneNames.czi",
@@ -572,9 +569,9 @@ def test_no_scene_name_aicsimage(
         second_scene_dtype=np.dtype(np.uint16),
     )
 
+
 @pytest.mark.parametrize(
-    "orig_scene_name, "
-    "corrected_scene_name, ",
+    "orig_scene_name, " "corrected_scene_name, ",
     [
         (
             ("a", "a", "a"),
@@ -595,16 +592,19 @@ def test_no_scene_name_aicsimage(
     ],
 )
 @patch("aicsimageio.readers.czi_reader.CziFile", spec=CziFile)
-@patch("aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs", return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"))
+@patch(
+    "aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs",
+    return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"),
+)
 def test_same_scene_name_aicsimage(
     mock_pathlike_to_fs,
     mock_CziFile,
-    orig_scene_name: Tuple,
-    corrected_scene_name: Tuple,
+    orig_scene_name,
+    corrected_scene_name,
 ) -> None:
 
     # Mock Metadata
-    root = ET.Element("ImageDocument")    
+    root = ET.Element("ImageDocument")
     metadata = ET.SubElement(root, "Metadata")
     information = ET.SubElement(metadata, "Information")
     image = ET.SubElement(information, "Image")
@@ -616,8 +616,7 @@ def test_same_scene_name_aicsimage(
         ET.SubElement(scenes, "Scene", {"Name": n})
 
     mock_CziFile.return_value.meta = root
-    mock_CziFile.return_value.get_dims_shape = lambda : [{} for _ in orig_scene_name]
-    
+    mock_CziFile.return_value.get_dims_shape = lambda: [{} for _ in orig_scene_name]
 
     # Create Image with mock
     image_container = AICSImage(None, reader=CziReader)

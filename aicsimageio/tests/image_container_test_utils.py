@@ -250,6 +250,7 @@ def run_multi_scene_image_read_checks(
 
     return image_container
 
+
 def run_no_scene_name_image_read_checks(
     ImageContainer: Type[Union[AICSImage, Reader]],
     image: types.PathLike,

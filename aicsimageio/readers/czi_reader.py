@@ -159,8 +159,10 @@ class CziReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
-        """Note: scenes with no name (`None`) will be renamed to "filename-<scene index>" to prevent ambiguity.
-        Similarly, scenes with same names are automatically appended with ocurrence number to distinguish between the two.
+        """Note: scenes with no name (`None`) will be renamed to
+        "filename-<scene index>" to prevent ambiguity. Similarly, scenes with same
+        names are automatically appended with ocurrence number to distinguish
+        between the two.
 
         Returns:
             Tuple[str, ...]: Scene names/id
@@ -190,7 +192,8 @@ class CziReader(Reader):
                         combined_scene_name = f"{scene_name}-{shape_name}"
                     else:
                         combined_scene_name = meta_scene.get("Name")
-                        # Some scene names can be unpopulated, for those we should fill with filename-idx
+                        # Some scene names can be unpopulated, for those we should fill
+                        # with filename-idx
                         if combined_scene_name is None:
                             fname_prefix = Path(self._path).stem
                             combined_scene_name = f"{fname_prefix}-{scene_idx}"

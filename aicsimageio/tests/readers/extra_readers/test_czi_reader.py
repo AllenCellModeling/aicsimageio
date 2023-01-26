@@ -597,10 +597,10 @@ def test_no_scene_name_aicsimage(
     return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"),
 )
 def test_same_scene_name_aicsimage(
-    mock_pathlike_to_fs,
-    mock_CziFile,
-    orig_scene_name,
-    corrected_scene_name,
+    mock_pathlike_to_fs: MagicMock,
+    mock_CziFile: MagicMock,
+    orig_scene_name: Tuple[str, ...],
+    corrected_scene_name: Tuple[str, ...],
 ) -> None:
 
     # Mock Metadata

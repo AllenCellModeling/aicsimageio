@@ -261,7 +261,8 @@ def run_no_scene_name_image_read_checks(
     allow_same_scene_data: bool = True,
 ) -> Union[AICSImage, Reader]:
     """
-    A suite of tests to check that scene names are auto-filled when not present, and scene switching is reflected in current_scene_index.
+    A suite of tests to check that scene names are auto-filled when not present, and
+    scene switching is reflected in current_scene_index.
     """
     # Read file
     image_container = ImageContainer(image, fs_kwargs=dict(anon=True))

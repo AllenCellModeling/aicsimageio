@@ -119,6 +119,7 @@ class OmeZarrWriter:
     ) -> None:
         """
         Write a data array to a file.
+        NOTE that this API is not yet finalized and will change in the future.
 
         Parameters
         ----------

@@ -247,8 +247,8 @@ class Reader(ImageContainer, ABC):
                 if scene_id >= len(self.scenes):
                     raise IndexError(
                         f"Scene index: {scene_id} "
-                        f"is greater than the number of available scenes "
-                        f"present in the file."
+                        f"is greater than the maximum availabe scene index "
+                        f"({len(self.scenes) - 1}) present in the file."
                     )
 
                 # Update current scene

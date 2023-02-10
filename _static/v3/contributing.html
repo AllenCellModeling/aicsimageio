@@ -25,14 +25,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -189,7 +193,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Contributing</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
@@ -213,24 +217,24 @@ helps, and credit will always be given.</p>
 <ol class="arabic">
 <li><p>Fork the <code class="docutils literal notranslate"><span class="pre">aicsimageio</span></code> repo on GitHub.</p></li>
 <li><p>Clone your fork locally:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone git@github.com:<span class="o">{</span>your_name_here<span class="o">}</span>/aicsimageio.git
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:<span class="o">{</span>your_name_here<span class="o">}</span>/aicsimageio.git
 </pre></div>
 </div>
 </li>
 <li><p>Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> aicsimageio/
-pip install -e .<span class="o">[</span>dev<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>aicsimageio/
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
 </pre></div>
 </div>
 </li>
 <li><p>Download the test resources:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python scripts/download_test_resources.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/download_test_resources.py
 </pre></div>
 </div>
 <p>If you need to upload new resources please let a core maintainer know.</p>
 </li>
 <li><p>Create a branch for local development:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git checkout -b <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span><span class="o">{</span>your_development_type<span class="o">}</span>/short-description
 </pre></div>
 </div>
 <p>Ex: feature/read-tiff-files or bugfix/handle-file-not-found<span class="raw-html-m2r"><br></span>
@@ -238,14 +242,14 @@ Now you can make your changes locally.</p>
 </li>
 <li><p>When you’re done making changes, check that your changes pass linting and
 tests, including testing other Python versions with make:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make build
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>build
 </pre></div>
 </div>
 </li>
 <li><p>Commit your changes and push your branch to GitHub:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git add .
-git commit -m <span class="s2">&quot;Resolves gh-###. Your detailed description of your changes.&quot;</span>
-git push origin <span class="o">{</span>your_development_type<span class="o">}</span>/short-description
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Resolves gh-###. Your detailed description of your changes.&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span><span class="o">{</span>your_development_type<span class="o">}</span>/short-description
 </pre></div>
 </div>
 </li>
@@ -257,9 +261,9 @@ git push origin <span class="o">{</span>your_development_type<span class="o">}</
 <p>A reminder for the maintainers on how to deploy.
 Make sure all your changes are committed.
 Then run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make prepare-release
-git push origin v3
-git push origin v3 --tags
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>prepare-release
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v3
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>v3<span class="w"> </span>--tags
 </pre></div>
 </div>
 <p>GitHub Actions will test and lint the code

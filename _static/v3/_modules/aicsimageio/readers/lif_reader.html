@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.readers.lif_reader</li>
       <li class="wy-breadcrumbs-aside">
@@ -227,7 +231,7 @@
 
 
 <div class="viewcode-block" id="LifReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader">[docs]</a><span class="k">class</span> <span class="nc">LifReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    LifReader wraps readlif.reader to provide the same reading capabilities but</span>
 <span class="sd">    abstracts the specifics of using the backend library to create a unified interface.</span>
 <span class="sd">    This enables higher level functions to duck type the File Readers.</span>
@@ -261,7 +265,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dims</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The dimensions for a lif file.</span>
 
 <span class="sd">        Returns</span>
@@ -273,7 +277,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_compute_offsets</span><span class="p">(</span><span class="n">lif</span><span class="p">:</span> <span class="n">LifFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compute the offsets for each of the YX planes so that the LifFile object</span>
 <span class="sd">        doesn&#39;t need to be created for each YX plane read.</span>
 
@@ -367,7 +371,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_this_type</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Test the file that was provided to check that the header is consistent with</span>
 <span class="sd">        this reader.</span>
 
@@ -402,7 +406,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_dims_shape</span><span class="p">(</span><span class="n">lif</span><span class="p">:</span> <span class="n">LifFile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the dimensions for the opened file from the binary data (not the metadata)</span>
 
 <span class="sd">        Parameters</span>
@@ -450,7 +454,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_read_dims_to_ranges</span><span class="p">(</span><span class="n">lif</span><span class="p">:</span> <span class="n">LifFile</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the provided read_dims and file structure into ranges to iterate over</span>
 
 <span class="sd">        Parameters</span>
@@ -495,7 +499,7 @@
 
 <div class="viewcode-block" id="LifReader.get_pixel_type"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader.get_pixel_type">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_pixel_type</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function parses the metadata to assign the appropriate numpy.dtype</span>
 
 <span class="sd">        Parameters</span>
@@ -541,7 +545,7 @@
         <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
         <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets specified bitmap data from the lif file (private).</span>
 
 <span class="sd">        Parameters</span>
@@ -629,7 +633,7 @@
         <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
         <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read and return the squeezed image data requested along with the dimension info</span>
 <span class="sd">        that was read.</span>
 
@@ -691,7 +695,7 @@
         <span class="n">meta</span><span class="p">:</span> <span class="n">Element</span><span class="p">,</span>
         <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is a pass through to _read_image above</span>
 <span class="sd">        the difference is it returns the data without the dims structure.</span>
 <span class="sd">        Parameters</span>
@@ -734,7 +738,7 @@
         <span class="p">],</span>
         <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a LIF image file as a delayed dask array where certain dimensions act as</span>
 <span class="sd">        the chunk size.</span>
 
@@ -932,7 +936,7 @@
         <span class="k">return</span> <span class="n">merged</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dims</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Constructed dask array where each chunk is a delayed read from the LIF file.</span>
@@ -981,7 +985,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
 <div class="viewcode-block" id="LifReader.dtype"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader.dtype">[docs]</a>    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The data type of the underlying numpy ndarray, ie uint8, uint16, uint32 etc.</span>
 
 <span class="sd">        Returns</span>
@@ -994,7 +998,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Element</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load and return the metadata from the LIF file</span>
 
 <span class="sd">        Returns</span>
@@ -1031,7 +1035,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_of_dimension</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LifReader.get_channel_names"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the channel names for the scene</span>
 
 <span class="sd">        Parameters</span>
@@ -1066,7 +1070,7 @@
         <span class="k">return</span> <span class="n">scene_channel_list</span></div>
 
 <div class="viewcode-block" id="LifReader.get_physical_pixel_size"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.lif_reader.LifReader.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the (X, Y, Z) pixel size. If the value is not set it returns 1.0.</span>
 
 <span class="sd">        Parameters</span>

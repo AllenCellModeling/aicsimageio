@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.readers.tiff_reader</li>
       <li class="wy-breadcrumbs-aside">
@@ -225,7 +229,7 @@
 
 
 <div class="viewcode-block" id="TiffReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader">[docs]</a><span class="k">class</span> <span class="nc">TiffReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    TiffReader wraps tifffile to provide the same reading capabilities but abstracts</span>
 <span class="sd">    the specifics of using the backend library to create a unified interface. This</span>
 <span class="sd">    enables higher level functions to duck type the File Readers.</span>
@@ -471,7 +475,7 @@
 
 <div class="viewcode-block" id="TiffReader.get_image_description"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.tiff_reader.TiffReader.get_image_description">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_image_description</span><span class="p">(</span><span class="n">buffer</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BufferedIOBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytearray</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Retrieve the image description as one large string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the image description as one large string.&quot;&quot;&quot;</span>
         <span class="n">description_length</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">description_offset</span> <span class="o">=</span> <span class="mi">0</span>
 

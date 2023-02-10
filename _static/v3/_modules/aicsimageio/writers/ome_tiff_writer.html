@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.writers.ome_tiff_writer</li>
       <li class="wy-breadcrumbs-aside">
@@ -219,7 +223,7 @@
 
 <div class="viewcode-block" id="OmeTiffWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeTiffWriter</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">overwrite_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This class can take arrays of pixel values and do the necessary metadata</span>
 <span class="sd">        creation to write them properly in OME xml format.</span>
 
@@ -285,7 +289,7 @@
         <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;STZCYX&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Save an image with the proper OME XML metadata.</span>
 
 <span class="sd">        Parameters</span>
@@ -398,7 +402,7 @@
         <span class="n">tif</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="OmeTiffWriter.save_slice"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save_slice">[docs]</a>    <span class="k">def</span> <span class="nf">save_slice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;this doesn&#39;t do the necessary functionality at this point</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;this doesn&#39;t do the necessary functionality at this point</span>
 
 <span class="sd">        TODO:</span>
 <span class="sd">            * make this insert a YX slice in between two other slices inside a full</span>
@@ -441,7 +445,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_size_of_ndarray</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the size of data to determine if we require bigtiff</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -462,7 +466,7 @@
         <span class="n">channel_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">dimension_order</span><span class="o">=</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates the necessary metadata for an OME tiff image</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates the necessary metadata for an OME tiff image</span>
 
 <span class="sd">        :param data: An array of dimensions TZCYX, ZCYX, or ZYX to be written out to a</span>
 <span class="sd">        file.</span>

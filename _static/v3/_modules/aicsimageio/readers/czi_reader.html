@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.readers.czi_reader</li>
       <li class="wy-breadcrumbs-aside">
@@ -226,7 +230,7 @@
 
 
 <div class="viewcode-block" id="CziReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.czi_reader.CziReader">[docs]</a><span class="k">class</span> <span class="nc">CziReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CziReader wraps aicspylibczi to provide the same reading capabilities but abstracts</span>
 <span class="sd">    the specifics of using the backend library to create a unified interface. This</span>
 <span class="sd">    enables higher level functions to duck type the File Readers.</span>
@@ -279,7 +283,7 @@
     <span class="k">def</span> <span class="nf">_read_image</span><span class="p">(</span>
         <span class="n">img</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">read_dims</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read and return the squeezed image data requested along with the dimension info</span>
 <span class="sd">        that was read.</span>
 
@@ -344,7 +348,7 @@
         <span class="p">],</span>
         <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a CZI image file as a delayed dask array where certain dimensions act as</span>
 <span class="sd">        the chunk size.</span>
 
@@ -544,7 +548,7 @@
         <span class="p">],</span>
         <span class="n">S</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Safely read a CZI image file as a delayed dask array where certain dimensions</span>
 <span class="sd">        act as the chunk size.</span>
 
@@ -588,7 +592,7 @@
             <span class="k">raise</span> <span class="n">e</span>
 
     <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        Constructed dask array where each chunk is a delayed read from the CZI file.</span>
@@ -660,7 +664,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Element</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Load and return the metadata from the CZI file</span>
 
 <span class="sd">        Returns</span>

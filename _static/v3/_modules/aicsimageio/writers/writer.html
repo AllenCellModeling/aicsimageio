@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.writers.writer</li>
       <li class="wy-breadcrumbs-aside">
@@ -206,7 +210,7 @@
 
 <div class="viewcode-block" id="Writer"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer">[docs]</a><span class="k">class</span> <span class="nc">Writer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write STCZYX data arrays to file, with accompanying metadata</span>
 <span class="sd">        Will overwrite existing files of same name.</span>
 
@@ -241,12 +245,12 @@
 
 <div class="viewcode-block" id="Writer.close"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer.close">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Close file objects&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close file objects&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="Writer.save"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.writer.Writer.save">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="n">constants</span><span class="o">.</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Write to open file&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write to open file&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 </pre></div>
 

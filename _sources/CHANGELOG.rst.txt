@@ -10,6 +10,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/453>`_)
   [JasonYu1]
 
+Other
+~~~~~
+- More descriptive scene index error message.  (`#458
+  <https://github.com/AllenCellModeling/aicsimageio/pull/458>`_) [Philip
+  Garrison]
+
 
 v4.9.4 (2022-12-06)
 -------------------

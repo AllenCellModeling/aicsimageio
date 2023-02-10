@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.aics_image</li>
       <li class="wy-breadcrumbs-aside">
@@ -252,7 +256,7 @@
         <span class="n">dask_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        AICSImage takes microscopy image data types (files) of varying dimensions</span>
 <span class="sd">        (&quot;ZYX&quot;, &quot;TCZYX&quot;, &quot;CYX&quot;) and puts them into a consistent 6D &quot;STCZYX&quot; ordered</span>
 <span class="sd">        dask array. The data, metadata are lazy loaded and can be accessed as needed.</span>
@@ -359,7 +363,7 @@
 
 <div class="viewcode-block" id="AICSImage.determine_reader"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.determine_reader">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">determine_reader</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">Reader</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cheaply check to see if a given file is a recognized type and return the</span>
 <span class="sd">        appropriate reader for the file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -372,7 +376,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">dask_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a dask array with dimension ordering &quot;STCZYX&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Construct dask array if never before constructed</span>
@@ -390,7 +394,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the entire image as a numpy array with dimension ordering &quot;STCZYX&quot;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -403,7 +407,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
 
 <div class="viewcode-block" id="AICSImage.size"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Dimensions</span><span class="o">.</span><span class="n">DefaultOrder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        dims: str</span>
@@ -431,7 +435,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        shape: Tuple[int]</span>
@@ -441,7 +445,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -451,7 +455,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -461,7 +465,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -471,7 +475,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_c</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -481,7 +485,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_t</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -491,7 +495,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">size_s</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        size: int</span>
@@ -501,7 +505,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        metadata: Any</span>
@@ -513,7 +517,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">reader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Reader</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This property returns the class created to read the image file type.</span>
 <span class="sd">        The intent is that if the AICSImage class doesn&#39;t provide a raw enough</span>
 <span class="sd">        interface then the base class can be used directly.</span>
@@ -528,7 +532,7 @@
 <div class="viewcode-block" id="AICSImage.get_image_dask_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_dask_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_dask_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get specific dimension image data out of an image as a dask array.</span>
 
 <span class="sd">        Parameters</span>
@@ -606,7 +610,7 @@
 <div class="viewcode-block" id="AICSImage.get_image_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_image_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_image_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">out_orientation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read the image as a numpy array then return specific dimension image data.</span>
 
 <span class="sd">        Parameters</span>
@@ -683,7 +687,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AICSImage.view_napari"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.view_napari">[docs]</a>    <span class="k">def</span> <span class="nf">view_napari</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If installed, load the image in a napari viewer.</span>
 
 <span class="sd">        Parameters</span>
@@ -723,7 +727,7 @@
             <span class="c1"># Handle RGB entirely differently</span>
             <span class="k">if</span> <span class="n">rgb</span><span class="p">:</span>
                 <span class="c1"># Swap channel to last dimension</span>
-                <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="n">new_dims</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dims</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="si">}{</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Channel</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">transpose_to_dims</span><span class="p">(</span>
                     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">given_dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span> <span class="n">return_dims</span><span class="o">=</span><span class="n">new_dims</span>
                 <span class="p">)</span>
@@ -786,7 +790,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AICSImage.get_channel_names"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_channel_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_channel_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attempts to use the image&#39;s metadata to get the image&#39;s channel names.</span>
 
 <span class="sd">        Parameters</span>
@@ -811,7 +815,7 @@
         <span class="k">return</span> <span class="n">channel_names</span></div>
 
 <div class="viewcode-block" id="AICSImage.get_physical_pixel_size"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.get_physical_pixel_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_physical_pixel_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scene</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Attempts to retrieve physical pixel size for the specified scene.</span>
 <span class="sd">        If none available, returns `1.0` for each spatial dimension.</span>
 
@@ -832,20 +836,20 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;distributed.LocalCluster&quot;</span><span class="p">]:</span>  <span class="c1"># noqa: F821</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If this object created a local Dask cluster, return it.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s2">&quot;distributed.Client&quot;</span><span class="p">]:</span>  <span class="c1"># noqa: F821</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If connected to a Dask cluster, return the connected Client.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span>
 
 <div class="viewcode-block" id="AICSImage.close"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.AICSImage.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Close the connection to the Dask distributed Client.</span>
 <span class="sd">        If this object created a LocalCluster, close it down as well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -856,7 +860,7 @@
         <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If provided an address, create a Dask Client connection.</span>
 <span class="sd">        If not provided an address, create a LocalCluster and Client connection.</span>
 <span class="sd">        If not provided an address, other Dask kwargs are accepted and passed down to</span>
@@ -880,7 +884,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Always close the Dask Client connection.</span>
 <span class="sd">        If connected to *strictly* a LocalCluster, close it down as well.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -888,7 +892,7 @@
 
 
 <div class="viewcode-block" id="imread_dask"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.imread_dask">[docs]</a><span class="k">def</span> <span class="nf">imread_dask</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">da</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Array</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read image as a dask array.</span>
 
 <span class="sd">    Parameters</span>
@@ -907,7 +911,7 @@
 
 
 <div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.aics_image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ImageLike</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read image as a numpy ndarray.</span>
 
 <span class="sd">    Parameters</span>

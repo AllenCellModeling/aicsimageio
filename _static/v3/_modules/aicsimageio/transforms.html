@@ -23,14 +23,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> aicsimageio
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            aicsimageio
           </a>
               <div class="version">
                 3.3.7
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -187,7 +191,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">aicsimageio.transforms</li>
       <li class="wy-breadcrumbs-aside">
@@ -220,7 +224,7 @@
 <div class="viewcode-block" id="reshape_data"><a class="viewcode-back" href="../../aicsimageio.html#aicsimageio.transforms.reshape_data">[docs]</a><span class="k">def</span> <span class="nf">reshape_data</span><span class="p">(</span>
     <span class="n">data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reshape the data into return_dims, pad missing dimensions, and prune extra</span>
 <span class="sd">    dimensions. Warns the user to use the base reader if the depth of the Dimension</span>
 <span class="sd">    being removed is not 1.</span>
@@ -420,7 +424,7 @@
     <span class="n">given_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">return_dims</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This shuffles the data dimensions from given_dims to return_dims. Each dimension</span>
 <span class="sd">    must be present in given_dims must be used in return_dims</span>
 

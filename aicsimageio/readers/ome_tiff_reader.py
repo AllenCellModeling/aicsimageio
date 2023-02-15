@@ -11,8 +11,10 @@ from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import from_xml
 from ome_types.model.ome import OME
+from pydantic.error_wrappers import ValidationError
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 from xmlschema import XMLSchemaValidationError
+from xmlschema.exceptions import XMLSchemaValueError
 
 from .. import constants, exceptions, transforms, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
@@ -99,7 +101,7 @@ class OmeTiffReader(TiffReader):
             return False
 
         # invalid OME XMl
-        except XMLSchemaValidationError as e:
+        except (XMLSchemaValueError, XMLSchemaValidationError, ValidationError) as e:
             log.debug(f"OME XML validation failed. Error: {e}")
             return False
 
@@ -110,6 +112,10 @@ class OmeTiffReader(TiffReader):
                 f"(no internet connection). "
                 f"Error: {e}"
             )
+            return False
+
+        except Exception as e:
+            log.debug(f"Unhandled exception: {e}")
             return False
 
     def __init__(

@@ -12,6 +12,14 @@ aicsimageio.writers.ome\_tiff\_writer module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.writers.ome\_zarr\_writer module
+--------------------------------------------
+
+.. automodule:: aicsimageio.writers.ome_zarr_writer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.writers.timeseries\_writer module
 ---------------------------------------------
 

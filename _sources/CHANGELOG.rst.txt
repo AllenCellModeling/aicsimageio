@@ -4,8 +4,17 @@ Changelog
 (unreleased)
 ------------
 
+New
+~~~
+- feature/zarrwriter  (`#381
+  <https://github.com/AllenCellModeling/aicsimageio/pull/381>`_)
+  [toloudis]
+
 Fix
 ~~~
+- Fix/build fix ometypes validation  (`#461
+  <https://github.com/AllenCellModeling/aicsimageio/pull/461>`_)
+  [toloudis]
 - fix/fix_future_warnings  (`#453
   <https://github.com/AllenCellModeling/aicsimageio/pull/453>`_)
   [JasonYu1]

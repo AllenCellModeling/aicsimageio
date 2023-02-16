@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>aicsimageio.writers.ome_zarr_writer &mdash; AICSImageIO 4.9.4 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            AICSImageIO
+          </a>
+              <div class="version">
+                4.9.4
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../INSTALLATION.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../INSTALLATION.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">Full API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.html">aicsimageio package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.utils.html">aicsimageio.utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.writers.html">aicsimageio.writers package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.aics_image">aicsimageio.aics_image module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.aics_image.AICSImage"><code class="docutils literal notranslate"><span class="pre">AICSImage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.aics_image.imread"><code class="docutils literal notranslate"><span class="pre">imread()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.aics_image.imread_dask"><code class="docutils literal notranslate"><span class="pre">imread_dask()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.aics_image.imread_xarray"><code class="docutils literal notranslate"><span class="pre">imread_xarray()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.aics_image.imread_xarray_dask"><code class="docutils literal notranslate"><span class="pre">imread_xarray_dask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.constants">aicsimageio.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.dimensions">aicsimageio.dimensions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.dimensions.DimensionNames"><code class="docutils literal notranslate"><span class="pre">DimensionNames</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.dimensions.Dimensions"><code class="docutils literal notranslate"><span class="pre">Dimensions</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.exceptions">aicsimageio.exceptions module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.exceptions.ConflictingArgumentsError"><code class="docutils literal notranslate"><span class="pre">ConflictingArgumentsError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.exceptions.InvalidDimensionOrderingError"><code class="docutils literal notranslate"><span class="pre">InvalidDimensionOrderingError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.exceptions.UnexpectedShapeError"><code class="docutils literal notranslate"><span class="pre">UnexpectedShapeError</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.exceptions.UnsupportedFileFormatError"><code class="docutils literal notranslate"><span class="pre">UnsupportedFileFormatError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.formats">aicsimageio.formats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.image_container">aicsimageio.image_container module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.image_container.ImageContainer"><code class="docutils literal notranslate"><span class="pre">ImageContainer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.transforms">aicsimageio.transforms module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.transforms.generate_stack"><code class="docutils literal notranslate"><span class="pre">generate_stack()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.transforms.reduce_to_slice"><code class="docutils literal notranslate"><span class="pre">reduce_to_slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.transforms.reshape_data"><code class="docutils literal notranslate"><span class="pre">reshape_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.transforms.transpose_to_dims"><code class="docutils literal notranslate"><span class="pre">transpose_to_dims()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio.types">aicsimageio.types module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.types.PhysicalPixelSizes"><code class="docutils literal notranslate"><span class="pre">PhysicalPixelSizes</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.html#module-aicsimageio">Module contents</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../aicsimageio.html#aicsimageio.get_module_version"><code class="docutils literal notranslate"><span class="pre">get_module_version()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer_resources.html">Developer Resources</a><ul>
+<li class="toctree-l2"><a class="reference external" href="./_benchmarks/index.html#http://">Benchmarks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CONTRIBUTING.html">Contributing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#get-started">Get Started!</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#updating-the-submodule">Updating the Submodule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#adding-a-new-custom-reader">Adding a New Custom Reader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#basics">Basics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#reader-class-implementation">Reader Class Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#custom-dependencies">Custom Dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#optional-reader-benchmarking">Optional Reader Benchmarking</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../CONTRIBUTING.html#documentation">Documentation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#benchmarking">Benchmarking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CONTRIBUTING.html#deploying">Deploying</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html">Code of Conduct</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-pledge">Our Pledge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-standards">Our Standards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#our-responsibilities">Our Responsibilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#scope">Scope</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#enforcement">Enforcement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CODE_OF_CONDUCT.html#attribution">Attribution</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../GOVERNANCE.html">Governance Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#abstract">Abstract</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#roles-and-responsibilities">Roles And Responsibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#the-community">The Community</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#contributors">Contributors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#core-developers">Core developers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../GOVERNANCE.html#steering-council">Steering Council</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../GOVERNANCE.html#decision-making-process">Decision Making Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../MISSION_AND_VALUES.html">Mission and Values</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#mission">Mission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#values">Values</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../MISSION_AND_VALUES.html#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ROADMAP.html">Roadmap</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#for-4-series-of-releases-september-2020">For 4.* Series of Releases - September 2020</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#enable-reading-and-writing-to-remote-sources-quick-and-easy">Enable Reading and Writing to Remote Sources Quick and Easy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-writing-n-dimensional-images-with-partial-or-complete-metadata-simple">Make Writing n-dimensional Images with Partial or Complete Metadata Simple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#make-converting-and-accessing-metadata-as-easy-as-possible-with-a-standard-api">Make Converting and Accessing Metadata as Easy as Possible with a Standard API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#expand-the-list-of-currently-available-proprietary-file-format-readers">Expand the List of Currently Available Proprietary File Format Readers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../ROADMAP.html#about-this-document">About This Document</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../CHANGELOG.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#unreleased">(unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#new">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#fix">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#other">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-9-4-2022-12-06">v4.9.4 (2022-12-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id5">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-9-3-2022-11-15">v4.9.3 (2022-11-15)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id7">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id11">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-9-2-2022-08-24">v4.9.2 (2022-08-24)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id13">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id15">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id18">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-9-1-2022-08-02">v4.9.1 (2022-08-02)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id20">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id26">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-9-0-2022-07-19">v4.9.0 (2022-07-19)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id29">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id33">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-8-0-2022-05-26">v4.8.0 (2022-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id34">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id36">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id38">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-7-0-2022-04-19">v4.7.0 (2022-04-19)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id42">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id44">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-6-4-2022-03-18">v4.6.4 (2022-03-18)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id45">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-6-3-2022-03-03">v4.6.3 (2022-03-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id47">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-6-2-2022-03-01">v4.6.2 (2022-03-01)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-6-1-2022-03-01">v4.6.1 (2022-03-01)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id50">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-6-0-2022-02-22">v4.6.0 (2022-02-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id52">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id55">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-5-2-2021-12-16">v4.5.2 (2021-12-16)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-5-1-2021-12-08">v4.5.1 (2021-12-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id60">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id62">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id65">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-5-0-2021-11-04">v4.5.0 (2021-11-04)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id70">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id75">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-4-0-2021-10-12">v4.4.0 (2021-10-12)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id77">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-3-0-2021-10-08">v4.3.0 (2021-10-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id80">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id82">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-2-0-2021-09-27">v4.2.0 (2021-09-27)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id87">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id90">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id96">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-1-0-2021-08-10">v4.1.0 (2021-08-10)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id104">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id106">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id109">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-5-2021-07-15">v4.0.5 (2021-07-15)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id111">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id113">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-4-2021-07-12">v4.0.4 (2021-07-12)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id116">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id118">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-3-2021-07-05">v4.0.3 (2021-07-05)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id121">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id124">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-2-2021-06-22">v4.0.2 (2021-06-22)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id126">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id128">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-1-2021-06-08">v4.0.1 (2021-06-08)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id133">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v4-0-0-2021-06-07">v4.0.0 (2021-06-07)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id135">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id156">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id164">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-5-2021-01-25">v3.3.5 (2021-01-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id178">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-4-2021-01-13">v3.3.4 (2021-01-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-3-2020-12-14">v3.3.3 (2020-12-14)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id181">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id183">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-2-2020-11-17">v3.3.2 (2020-11-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-1-2020-09-23">v3.3.1 (2020-09-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id186">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id188">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-3-0-2020-09-09">v3.3.0 (2020-09-09)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id190">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-3-2020-06-23">v3.2.3 (2020-06-23)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id192">New</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-2-2020-06-11">v3.2.2 (2020-06-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id194">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id196">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-1-2020-05-26">v3.2.1 (2020-05-26)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id199">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-2-0-2020-05-13">v3.2.0 (2020-05-13)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id201">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id205">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id208">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-4-2020-03-21">v3.1.4 (2020-03-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id212">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id214">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-3-2020-03-11">v3.1.3 (2020-03-11)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id216">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id218">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-2-2020-03-06">v3.1.2 (2020-03-06)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id220">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id222">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-1-2020-02-21">v3.1.1 (2020-02-21)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id225">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id228">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-1-0-2020-02-03">v3.1.0 (2020-02-03)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id231">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id233">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-7-2019-11-05">v3.0.7 (2019-11-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-6-2019-10-31">v3.0.6 (2019-10-31)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id237">New</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id239">Fix</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-5-2019-10-30">v3.0.5 (2019-10-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-4-2019-10-28">v3.0.4 (2019-10-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-3-2019-10-25">v3.0.3 (2019-10-25)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id242">Fix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../CHANGELOG.html#id243">Other</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-2-2019-10-11">v3.0.2 (2019-10-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../CHANGELOG.html#v3-0-1-2019-10-04">v3.0.1 (2019-10-04)</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Important Classes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html">aicsimageio.aics_image.AICSImage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html#aicsimageio.aics_image.AICSImage"><code class="docutils literal notranslate"><span class="pre">AICSImage</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.aics_image.AICSImage.html#aicsimageio.aics_image.AICSImage.__init__"><code class="docutils literal notranslate"><span class="pre">AICSImage.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html">aicsimageio.readers.reader.Reader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html#aicsimageio.readers.reader.Reader"><code class="docutils literal notranslate"><span class="pre">Reader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.readers.reader.Reader.html#aicsimageio.readers.reader.Reader.__init__"><code class="docutils literal notranslate"><span class="pre">Reader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html">aicsimageio.readers.ome_tiff_reader.OmeTiffReader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader"><code class="docutils literal notranslate"><span class="pre">OmeTiffReader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.readers.ome_tiff_reader.OmeTiffReader.html#aicsimageio.readers.ome_tiff_reader.OmeTiffReader.__init__"><code class="docutils literal notranslate"><span class="pre">OmeTiffReader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html">aicsimageio.readers.tiff_reader.TiffReader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html#aicsimageio.readers.tiff_reader.TiffReader"><code class="docutils literal notranslate"><span class="pre">TiffReader</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.readers.tiff_reader.TiffReader.html#aicsimageio.readers.tiff_reader.TiffReader.__init__"><code class="docutils literal notranslate"><span class="pre">TiffReader.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html">aicsimageio.writers.ome_tiff_writer.OmeTiffWriter</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter"><code class="docutils literal notranslate"><span class="pre">OmeTiffWriter</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.__init__"><code class="docutils literal notranslate"><span class="pre">OmeTiffWriter.__init__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">AICSImageIO</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../aicsimageio.html">aicsimageio</a></li>
+      <li class="breadcrumb-item active">aicsimageio.writers.ome_zarr_writer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for aicsimageio.writers.ome_zarr_writer</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">zarr</span>
+<span class="kn">from</span> <span class="nn">ome_zarr.io</span> <span class="kn">import</span> <span class="n">parse_url</span>
+<span class="kn">from</span> <span class="nn">ome_zarr.scale</span> <span class="kn">import</span> <span class="n">Scaler</span>
+<span class="kn">from</span> <span class="nn">ome_zarr.writer</span> <span class="kn">import</span> <span class="n">write_image</span>
+<span class="kn">from</span> <span class="nn">zarr.storage</span> <span class="kn">import</span> <span class="n">default_compressor</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+
+
+<div class="viewcode-block" id="OmeZarrWriter"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_zarr_writer.OmeZarrWriter">[docs]</a><span class="k">class</span> <span class="nc">OmeZarrWriter</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        uri: types.PathLike</span>
+<span class="sd">            The URI or local path for where to save the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Resolve final destination</span>
+        <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
+
+        <span class="c1"># Save image to zarr store!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">store</span> <span class="o">=</span> <span class="n">parse_url</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root_group</span> <span class="o">=</span> <span class="n">zarr</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">store</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">store</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OmeZarrWriter.build_ome"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_zarr_writer.OmeZarrWriter.build_ome">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_ome</span><span class="p">(</span>
+        <span class="n">size_z</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">image_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">channel_colors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">channel_minmax</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create the omero metadata for an OME zarr image</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size_z:</span>
+<span class="sd">            Number of z planes</span>
+<span class="sd">        image_name:</span>
+<span class="sd">            The name of the image</span>
+<span class="sd">        channel_names:</span>
+<span class="sd">            The names for each channel</span>
+<span class="sd">        channel_colors:</span>
+<span class="sd">            List of all channel colors</span>
+<span class="sd">        channel_minmax:</span>
+<span class="sd">            List of all (min, max) pairs of channel intensities</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Dict</span>
+<span class="sd">            An &quot;omero&quot; metadata object suitable for writing to ome-zarr</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">channel_names</span><span class="p">)):</span>
+            <span class="n">ch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="s2">&quot;coefficient&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">channel_colors</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">:</span><span class="s2">06x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;family&quot;</span><span class="p">:</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;inverted&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">channel_names</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="s2">&quot;window&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="s2">&quot;end&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">channel_minmax</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">channel_minmax</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">channel_minmax</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">channel_minmax</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span>
+                    <span class="p">},</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="n">omero</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># ID in OMERO</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">image_name</span><span class="p">,</span>  <span class="c1"># Name as shown in the UI</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="s2">&quot;0.4&quot;</span><span class="p">,</span>  <span class="c1"># Current version</span>
+            <span class="s2">&quot;channels&quot;</span><span class="p">:</span> <span class="n">ch</span><span class="p">,</span>
+            <span class="s2">&quot;rdefs&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;defaultT&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># First timepoint to show the user</span>
+                <span class="s2">&quot;defaultZ&quot;</span><span class="p">:</span> <span class="n">size_z</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>  <span class="c1"># First Z section to show the user</span>
+                <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;color&quot;</span><span class="p">,</span>  <span class="c1"># &quot;color&quot; or &quot;greyscale&quot;</span>
+            <span class="p">},</span>
+            <span class="c1"># TODO: can we add more metadata here?</span>
+            <span class="c1"># # from here down this is all extra and not part of the ome-zarr spec</span>
+            <span class="c1"># &quot;meta&quot;: {</span>
+            <span class="c1">#     &quot;projectDescription&quot;: &quot;20+ lines of gene edited cells etc&quot;,</span>
+            <span class="c1">#     &quot;datasetName&quot;: &quot;aics_hipsc_v2020.1&quot;,</span>
+            <span class="c1">#     &quot;projectId&quot;: 2,</span>
+            <span class="c1">#     &quot;imageDescription&quot;: &quot;foo bar&quot;,</span>
+            <span class="c1">#     &quot;imageTimestamp&quot;: 1277977808.0,</span>
+            <span class="c1">#     &quot;imageId&quot;: 12,</span>
+            <span class="c1">#     &quot;imageAuthor&quot;: &quot;danielt&quot;,</span>
+            <span class="c1">#     &quot;imageName&quot;: &quot;AICS-12_143.ome.tif&quot;,</span>
+            <span class="c1">#     &quot;datasetDescription&quot;: &quot;variance dataset after QC&quot;,</span>
+            <span class="c1">#     &quot;projectName&quot;: &quot;aics cell variance project&quot;,</span>
+            <span class="c1">#     &quot;datasetId&quot;: 3</span>
+            <span class="c1"># },</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">omero</span></div>
+
+<div class="viewcode-block" id="OmeZarrWriter.write_image"><a class="viewcode-back" href="../../../aicsimageio.writers.html#aicsimageio.writers.ome_zarr_writer.OmeZarrWriter.write_image">[docs]</a>    <span class="k">def</span> <span class="nf">write_image</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="c1"># TODO how to pass in precomputed multiscales?</span>
+        <span class="n">image_data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span>  <span class="c1"># must be 3D, 4D or 5D</span>
+        <span class="n">image_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">physical_pixel_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">],</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">channel_colors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+        <span class="n">scale_num_levels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">scale_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">dimension_order</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write a data array to a file.</span>
+<span class="sd">        NOTE that this API is not yet finalized and will change in the future.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_data: types.ArrayLike</span>
+<span class="sd">            The array of data to store. Data arrays must have 2 to 6 dimensions. If a</span>
+<span class="sd">            list is provided, then it is understood to be multiple images written to the</span>
+<span class="sd">            ome-tiff file. All following metadata parameters will be expanded to the</span>
+<span class="sd">            length of this list.</span>
+<span class="sd">        image_name: str</span>
+<span class="sd">            string representing the name of the image</span>
+<span class="sd">        physical_pixel_sizes: Optional[types.PhysicalPixelSizes]</span>
+<span class="sd">            PhysicalPixelSizes object representing the physical pixel sizes in Z, Y, X</span>
+<span class="sd">            in microns.</span>
+<span class="sd">            Default: None</span>
+<span class="sd">        channel_names: Optional[List[str]]</span>
+<span class="sd">            Lists of strings representing the names of the data channels</span>
+<span class="sd">            Default: None</span>
+<span class="sd">            If None is given, the list will be generated as a 0-indexed list of strings</span>
+<span class="sd">            of the form &quot;Channel:image_index:channel_index&quot;</span>
+<span class="sd">        channel_colors: Optional[List[int]]</span>
+<span class="sd">            List of rgb color values per channel or a list of lists for each image.</span>
+<span class="sd">            These must be values compatible with the OME spec.</span>
+<span class="sd">            Default: None</span>
+<span class="sd">        scale_num_levels: Optional[int]</span>
+<span class="sd">            Number of pyramid levels to use for the image.</span>
+<span class="sd">            Default: 1 (represents no downsampled levels)</span>
+<span class="sd">        scale_factor: Optional[float]</span>
+<span class="sd">            The scale factor to use for the image. Only active if scale_num_levels &gt; 1.</span>
+<span class="sd">            Default: 2.0</span>
+<span class="sd">        dimension_order: Optional[str]</span>
+<span class="sd">            The dimension order of the data. If None is given, the dimension order will</span>
+<span class="sd">            be guessed from the number of dimensions in the data according to TCZYX</span>
+<span class="sd">            order.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Write a TCZYX data set to OME-Zarr</span>
+
+<span class="sd">        &gt;&gt;&gt; image = numpy.ndarray([1, 10, 3, 1024, 2048])</span>
+<span class="sd">        ... writer = OmeZarrWriter(&quot;/path/to/file.ome.zarr&quot;)</span>
+<span class="sd">        ... writer.write_image(image)</span>
+
+<span class="sd">        Write multi-scene data to OME-Zarr, specifying channel names</span>
+
+<span class="sd">        &gt;&gt;&gt; image0 = numpy.ndarray([3, 10, 1024, 2048])</span>
+<span class="sd">        ... image1 = numpy.ndarray([3, 10, 512, 512])</span>
+<span class="sd">        ... writer = OmeZarrWriter(&quot;/path/to/file.ome.zarr&quot;)</span>
+<span class="sd">        ... writer.write_image(image0, &quot;Image:0&quot;, [&quot;C00&quot;,&quot;C01&quot;,&quot;C02&quot;])</span>
+<span class="sd">        ... writer.write_image(image1, &quot;Image:1&quot;, [&quot;C10&quot;,&quot;C11&quot;,&quot;C12&quot;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ndims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ndims</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">ndims</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Image data must have 2, 3, 4, or 5 dimensions. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Received image data with shape: </span><span class="si">{</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dimension_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dimension_order</span> <span class="o">=</span> <span class="s2">&quot;TCZYX&quot;</span><span class="p">[</span><span class="o">-</span><span class="n">ndims</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">!=</span> <span class="n">ndims</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> does not match data &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;shape: </span><span class="si">{</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="s2">&quot;TCZYX&quot;</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">dimension_order</span>
+        <span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">dimension_order</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> is invalid or &quot;</span>
+                <span class="s2">&quot;contains unexpected dimensions. Only TCZYX currently supported.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">xdimindex</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
+        <span class="n">ydimindex</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+        <span class="n">zdimindex</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+        <span class="n">cdimindex</span> <span class="o">=</span> <span class="n">dimension_order</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cdimindex</span> <span class="o">&gt;</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="n">xdimindex</span><span class="p">,</span> <span class="n">ydimindex</span><span class="p">,</span> <span class="n">zdimindex</span><span class="p">]</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidDimensionOrderingError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Dimension order </span><span class="si">{</span><span class="n">dimension_order</span><span class="si">}</span><span class="s2"> is invalid. Channel dimension &quot;</span>
+                <span class="s2">&quot;must be before X, Y, and Z.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">physical_pixel_sizes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pixelsizes</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pixelsizes</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Z</span> <span class="k">if</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Y</span> <span class="k">if</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span> <span class="k">if</span> <span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO this isn&#39;t generating a very pretty looking name but it will be</span>
+            <span class="c1"># unique</span>
+            <span class="n">channel_names</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span><span class="n">image_id</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">cdimindex</span><span class="p">])</span>
+                <span class="p">]</span>
+                <span class="k">if</span> <span class="n">cdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">else</span> <span class="p">[</span><span class="n">utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span><span class="n">image_id</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">channel_colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># TODO generate proper colors or confirm that the underlying lib can handle</span>
+            <span class="c1"># None</span>
+            <span class="n">channel_colors</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">cdimindex</span><span class="p">])]</span>
+                <span class="k">if</span> <span class="n">cdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="n">scale_dim_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">pixelsizes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="n">pixelsizes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">pixelsizes</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">transforms</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span>
+                <span class="c1"># the voxel size for the first scale level</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">scale_dim_map</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">],</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">]</span>
+        <span class="c1"># TODO precompute sizes for downsampled also.</span>
+        <span class="n">plane_size</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">xdimindex</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ydimindex</span><span class="p">]</span>
+            <span class="o">*</span> <span class="n">image_data</span><span class="o">.</span><span class="n">itemsize</span>
+        <span class="p">)</span>
+        <span class="n">target_chunk_size</span> <span class="o">=</span> <span class="mi">16</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>  <span class="c1"># 16 MB</span>
+        <span class="c1"># this is making an assumption of chunking whole XY planes.</span>
+        <span class="c1"># TODO allow callers to configure chunk dims?</span>
+        <span class="n">nplanes_per_chunk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">target_chunk_size</span> <span class="o">/</span> <span class="n">plane_size</span><span class="p">))</span>
+        <span class="n">nplanes_per_chunk</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">min</span><span class="p">(</span><span class="n">nplanes_per_chunk</span><span class="p">,</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">zdimindex</span><span class="p">])</span> <span class="k">if</span> <span class="n">zdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">chunk_dim_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">nplanes_per_chunk</span><span class="p">,</span>
+            <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ydimindex</span><span class="p">],</span>
+            <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">xdimindex</span><span class="p">],</span>
+        <span class="p">}</span>
+        <span class="n">chunk_dims</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">chunks</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chunk_dim_map</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">),</span>
+                <span class="n">compressor</span><span class="o">=</span><span class="n">default_compressor</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">lasty</span> <span class="o">=</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">ydimindex</span><span class="p">]</span>
+        <span class="n">lastx</span> <span class="o">=</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">xdimindex</span><span class="p">]</span>
+        <span class="c1"># TODO scaler might want to use different method for segmentations than raw</span>
+        <span class="c1"># TODO allow custom scaler or pre-computed multiresolution levels</span>
+        <span class="k">if</span> <span class="n">scale_num_levels</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># TODO As of this writing, this Scaler is not the most general</span>
+            <span class="c1"># implementation (it does things by xy plane) but it&#39;s code already</span>
+            <span class="c1"># written that also works with dask, so it&#39;s a good starting point.</span>
+            <span class="n">scaler</span> <span class="o">=</span> <span class="n">Scaler</span><span class="p">()</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;nearest&quot;</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">max_layer</span> <span class="o">=</span> <span class="n">scale_num_levels</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">scaler</span><span class="o">.</span><span class="n">downscale</span> <span class="o">=</span> <span class="n">scale_factor</span> <span class="k">if</span> <span class="n">scale_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">2</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">scale_num_levels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">scale_dim_map</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">downscale</span>
+                <span class="n">scale_dim_map</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">*=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">downscale</span>
+                <span class="n">transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;scale&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;scale&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">scale_dim_map</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">],</span>
+                        <span class="p">}</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">lasty</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">lasty</span> <span class="o">/</span> <span class="n">scaler</span><span class="o">.</span><span class="n">downscale</span><span class="p">))</span>
+                <span class="n">lastx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">lastx</span> <span class="o">/</span> <span class="n">scaler</span><span class="o">.</span><span class="n">downscale</span><span class="p">))</span>
+                <span class="n">plane_size</span> <span class="o">=</span> <span class="n">lasty</span> <span class="o">*</span> <span class="n">lastx</span> <span class="o">*</span> <span class="n">image_data</span><span class="o">.</span><span class="n">itemsize</span>
+                <span class="n">nplanes_per_chunk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">target_chunk_size</span> <span class="o">/</span> <span class="n">plane_size</span><span class="p">))</span>
+                <span class="n">nplanes_per_chunk</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="nb">min</span><span class="p">(</span><span class="n">nplanes_per_chunk</span><span class="p">,</span> <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">zdimindex</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">zdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="k">else</span> <span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="n">chunk_dim_map</span><span class="p">[</span><span class="s2">&quot;Z&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nplanes_per_chunk</span>
+                <span class="n">chunk_dim_map</span><span class="p">[</span><span class="s2">&quot;Y&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lasty</span>
+                <span class="n">chunk_dim_map</span><span class="p">[</span><span class="s2">&quot;X&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lastx</span>
+                <span class="n">chunk_dims</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="nb">dict</span><span class="p">(</span>
+                        <span class="n">chunks</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chunk_dim_map</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">),</span>
+                        <span class="n">compressor</span><span class="o">=</span><span class="n">default_compressor</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scaler</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># try to construct per-image metadata</span>
+        <span class="n">ome_json</span> <span class="o">=</span> <span class="n">OmeZarrWriter</span><span class="o">.</span><span class="n">build_ome</span><span class="p">(</span>
+            <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">zdimindex</span><span class="p">]</span> <span class="k">if</span> <span class="n">zdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">image_name</span><span class="p">,</span>
+            <span class="n">channel_names</span><span class="o">=</span><span class="n">channel_names</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="n">channel_colors</span><span class="o">=</span><span class="n">channel_colors</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+            <span class="c1"># This can be slow if computed here.</span>
+            <span class="c1"># TODO: Rely on user to supply the per-channel min/max.</span>
+            <span class="n">channel_minmax</span><span class="o">=</span><span class="p">[</span>
+                <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">cdimindex</span><span class="p">]</span> <span class="k">if</span> <span class="n">cdimindex</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO user supplies units?</span>
+        <span class="n">dim_to_axis</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;T&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;millisecond&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;C&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;channel&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;micrometer&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;micrometer&quot;</span><span class="p">},</span>
+            <span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;space&quot;</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;micrometer&quot;</span><span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim_to_axis</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dimension_order</span><span class="p">]</span>
+
+        <span class="c1"># TODO image name must be unique within this root group</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root_group</span>  <span class="c1"># .create_group(image_name, overwrite=True)</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;omero&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ome_json</span>
+
+        <span class="n">write_image</span><span class="p">(</span>
+            <span class="n">image</span><span class="o">=</span><span class="n">image_data</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+            <span class="n">scaler</span><span class="o">=</span><span class="n">scaler</span><span class="p">,</span>
+            <span class="n">axes</span><span class="o">=</span><span class="n">axes</span><span class="p">,</span>
+            <span class="c1"># For each resolution, we have a List of transformation Dicts (not</span>
+            <span class="c1"># validated). Each list of dicts are added to each datasets in order.</span>
+            <span class="n">coordinate_transformations</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span>
+            <span class="c1"># Options to be passed on to the storage backend. A list would need to</span>
+            <span class="c1"># match the number of datasets in a multiresolution pyramid. One can</span>
+            <span class="c1"># provide different chunk size for each level of a pyramid using this</span>
+            <span class="c1"># option.</span>
+            <span class="n">storage_options</span><span class="o">=</span><span class="n">chunk_dims</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Eva Maxfield Brown, Allen Institute for Cell Science.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -393,18 +393,10 @@ def test_multi_resolution_ome_tiff_reader(
         "s_3_t_1_c_3_z_5.ome.tiff",
         # A lot of our files aren't valid, :upside-down-smiley:
         # These files have invalid schema / layout
-        pytest.param(
-            "3d-cell-viewer.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "pre-variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
+        # but recently ome-types default settings are more lenient!
+        "3d-cell-viewer.ome.tiff",
+        "pre-variance-cfe.ome.tiff",
+        "variance-cfe.ome.tiff",
         pytest.param(
             "actk.ome.tiff",
             marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),

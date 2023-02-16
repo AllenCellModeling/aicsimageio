@@ -63,7 +63,7 @@ test_requirements = [
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
-    "s3fs[boto3]>=0.4.2",
+    "s3fs[boto3]>=2022.11.0",
     "tox==3.27.1",
 ]
 
@@ -106,6 +106,7 @@ requirements = [
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
     "ome-types>=0.2",
+    "ome-zarr>=0.6.1",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30",

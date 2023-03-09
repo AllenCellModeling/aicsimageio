@@ -19,7 +19,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   `CZI` -- (`pip install aicspylibczi>=3.0.5 fsspec>=2022.7.1`)
     -   `LIF` -- (`pip install readlif>=0.6.4`)
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
-    -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`)
+    -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`) (Note: requires `java` and `maven`, see below for details.)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)

@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- Bugfix/Docs-README-Mention-mvn/maven-requirement-for-bioformats_jar
+  (`#463 <https://github.com/AllenCellModeling/aicsimageio/pull/463>`_)
+  [Peter Sobolewski]
 - Fix/build fix ometypes validation  (`#461
   <https://github.com/AllenCellModeling/aicsimageio/pull/461>`_)
   [toloudis]

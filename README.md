@@ -19,7 +19,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   `CZI` -- (`pip install aicspylibczi>=3.0.5 fsspec>=2022.7.1`)
     -   `LIF` -- (`pip install readlif>=0.6.4`)
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
-    -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`)
+    -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`) (Note: requires `java` and `maven`, see below for details.)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
@@ -56,7 +56,7 @@ optionally installed using `[...]` syntax.
 -   For all additional supported (and openly licensed) formats: `pip install aicsimageio[all]`
 -   Due to the GPL license, LIF support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio readlif>=0.6.4`
 -   Due to the GPL license, CZI support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio aicspylibczi>=3.0.5 fsspec>=2022.7.1`
--   Due to the GPL license, Bio-Formats support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio bioformats_jar`. **Important!!** Bio-Formats support also requires a `java` executable in the environment. The simplest method is to install `bioformats_jar` from conda: `conda install -c conda-forge bioformats_jar` (which will additionally bring `openjdk`).
+-   Due to the GPL license, Bio-Formats support is not included with the `[all]` extra, and must be installed manually with `pip install aicsimageio bioformats_jar`. **Important!!** Bio-Formats support also requires a `java` and `mvn` executable in the environment. The simplest method is to install `bioformats_jar` from conda: `conda install -c conda-forge bioformats_jar` (which will additionally bring `openjdk` and `maven` packages).
 
 ## Documentation
 

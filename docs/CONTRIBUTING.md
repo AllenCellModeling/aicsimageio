@@ -20,7 +20,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 4.  Install the project in editable mode (and preferably in a virtual environment):
 
         cd aicsimageio/
-        pip install -e .[dev]
+        pip install -e ".[dev]"
 
 5.  Download the test resources:
 

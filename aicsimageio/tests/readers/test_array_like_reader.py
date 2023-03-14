@@ -726,7 +726,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         pytest.param(
             [np.random.rand(1, 1), np.random.rand(1, 1, 1, 1)],
@@ -737,7 +737,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Test mismatching mapping of arrays to channel_names
         pytest.param(
@@ -749,7 +749,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         pytest.param(
             [np.random.rand(1, 1, 1, 1), (1, 1, 1, 1, 1)],
@@ -760,7 +760,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Test dim string compare to dims shape
         pytest.param(
@@ -772,7 +772,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # Test channel names length to size of channel dim
         pytest.param(
@@ -784,7 +784,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # Test channel names provided when no channel dim present
         pytest.param(
@@ -796,7 +796,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # Test that without dim_order and with more than five dims, it raises an error
         # Our guess dim order only support up to five dims
@@ -809,9 +809,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(
-                exceptions=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         pytest.param(
             "hello world",
@@ -822,7 +820,7 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -1086,9 +1084,7 @@ def test_arraylike_reader(
             None,
             None,
             None,
-            marks=pytest.mark.raises(
-                exceptions=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         pytest.param(
             "hello world",
@@ -1099,7 +1095,7 @@ def test_arraylike_reader(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )

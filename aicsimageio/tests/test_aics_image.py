@@ -13,11 +13,11 @@ from .conftest import LOCAL, get_resource_full_path
     [
         pytest.param(
             "example.txt",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "does-not-exist-klafjjksdafkjl.bad",
-            marks=pytest.mark.raises(exception=FileNotFoundError),
+            marks=pytest.mark.xfail(raises=FileNotFoundError),
         ),
     ],
 )

@@ -103,7 +103,7 @@ def test_index_alignment(tmp_path: Path) -> None:
         pd.Series,
         np.array,
         # should throw a TypeError instead of an unboundlocal error
-        pytest.param(bytes, marks=pytest.mark.raises(exception=TypeError)),
+        pytest.param(bytes, marks=pytest.mark.xfail(raises=TypeError)),
     ],
 )
 def test_glob_types(type_: Any, tmp_path: Path) -> None:

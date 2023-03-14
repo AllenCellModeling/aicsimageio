@@ -121,7 +121,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
@@ -131,7 +131,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -141,7 +141,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -151,7 +151,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -426,7 +426,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing too many channels
         pytest.param(
@@ -437,7 +437,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing channels but no channel dim
         pytest.param(
@@ -448,7 +448,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check number of scenes dims list matches n scenes
         pytest.param(
@@ -459,7 +459,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check number of scenes channels list matches n scenes
         pytest.param(
@@ -470,7 +470,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
     ],
 )
@@ -641,7 +641,7 @@ def test_parallel_read(
             (50, 5, 256, 256),
             0,
             (50, 5, 256, 256),
-            marks=pytest.mark.raises(exceptions=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )

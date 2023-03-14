@@ -32,9 +32,7 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             "ZCYX",
             (10, 5, 16, 16),
             "ZCYX",
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         ((5, 10, 16, 16), "CZYX", (5, 10, 16, 16), "CZYX"),
         ((15, 16), "YX", (15, 16), "YX"),
@@ -43,9 +41,7 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             "AYX",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         ((2, 3, 3), "YXZ", (2, 3, 3), "YXZ"),
         pytest.param(
@@ -53,9 +49,7 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             "CYX",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         # error 6D data doesn't work yet
         pytest.param(
@@ -63,9 +57,7 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             None,
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )

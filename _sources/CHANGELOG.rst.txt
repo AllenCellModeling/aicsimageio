@@ -24,6 +24,9 @@ Fix
 
 Other
 ~~~~~
+- Quality of Life: Make pip install platform independent  (`#466
+  <https://github.com/AllenCellModeling/aicsimageio/pull/466>`_) [Sean
+  LeRoy]
 - More descriptive scene index error message.  (`#458
   <https://github.com/AllenCellModeling/aicsimageio/pull/458>`_) [Philip
   Garrison]

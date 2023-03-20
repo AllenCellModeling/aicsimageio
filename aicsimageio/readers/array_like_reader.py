@@ -9,7 +9,11 @@ import numpy as np
 import xarray as xr
 
 from .. import constants, exceptions
-from ..dimensions import DimensionNames
+from ..dimensions import (
+    DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+    DimensionNames,
+)
 from ..metadata import utils as metadata_utils
 from ..types import MetaArrayLike, PhysicalPixelSizes
 from .reader import Reader
@@ -110,6 +114,41 @@ class ArrayLikeReader(Reader):
             )
 
         return isinstance(image, (np.ndarray, da.Array, xr.DataArray))
+
+    @staticmethod
+    def _guess_dim_order(shape: Tuple[int, ...]) -> str:
+        """
+        Given an image shape attempts to guess the dimension order.
+
+        Parameters
+        ----------
+        shape: Tuple[int, ...]
+            Tuple of the image array's dimensions.
+
+        Returns
+        -------
+        dim_order: str
+            The guessed dimension order.
+
+        Raises
+        ------
+        exceptions.InvalidDimensionOrderingError
+            Raised when the shape has more than dimensions than the ArrayLikeReader
+            has a default order available to support.
+        """
+        if len(shape) > len(DEFAULT_DIMENSION_ORDER):
+            if len(shape) > len(DEFAULT_DIMENSION_ORDER_WITH_SAMPLES):
+                raise exceptions.InvalidDimensionOrderingError(
+                    "Unable to guess dimension order for array-like images with "
+                    + f"more than {len(DEFAULT_DIMENSION_ORDER_WITH_SAMPLES)} "
+                    + f"dimensions. Found {len(shape)} dimensions."
+                )
+
+            return DEFAULT_DIMENSION_ORDER_WITH_SAMPLES[
+                len(DEFAULT_DIMENSION_ORDER_WITH_SAMPLES) - len(shape) :
+            ]
+
+        return DEFAULT_DIMENSION_ORDER[len(DEFAULT_DIMENSION_ORDER) - len(shape) :]
 
     def __init__(
         self,

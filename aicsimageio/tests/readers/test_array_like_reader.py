@@ -716,6 +716,17 @@ from ..image_container_test_utils import run_image_container_checks
             "CZYX",
             ["A"],
         ),
+        # Test supporting six dimensions without explicit dim_order supplied
+        (
+            np.random.rand(1, 2, 3, 4, 5, 6),
+            None,
+            None,
+            "Image:0",
+            ("Image:0",),
+            (1, 2, 3, 4, 5, 6),
+            "TCZYXS",
+            ["Channel:0:0", "Channel:0:1"],
+        ),
         # Test mismatching mapping of arrays to dim_order
         pytest.param(
             [np.random.rand(1, 1)],
@@ -752,7 +763,7 @@ from ..image_container_test_utils import run_image_container_checks
             marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         pytest.param(
-            [np.random.rand(1, 1, 1, 1), (1, 1, 1, 1, 1)],
+            [np.random.rand(1, 1, 1, 1), np.random.rand(1, 1, 1, 1, 1)],
             None,
             [["A"], ["B"], ["C"]],
             None,
@@ -798,10 +809,10 @@ from ..image_container_test_utils import run_image_container_checks
             None,
             marks=pytest.mark.xfail(raises=ValueError),
         ),
-        # Test that without dim_order and with more than five dims, it raises an error
-        # Our guess dim order only support up to five dims
+        # Test that without dim_order and with more than six dims, it raises an error
+        # Our guess dim order only support up to six dims
         pytest.param(
-            np.random.rand(1, 2, 3, 4, 5, 6),
+            np.random.rand(1, 2, 3, 4, 5, 6, 7),
             None,
             None,
             None,
@@ -1073,21 +1084,21 @@ def test_arraylike_reader(
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Channel:1:0", "Channel:1:1", "Channel:1:2", "Channel:1:3"],
         ),
-        # Test that without dims and with more than five dims, it raises an error
-        # Our guess dim order only support up to five dims
-        pytest.param(
+        # Test supporting six dimensions without explicit dim_order supplied
+        (
             np.random.rand(1, 2, 3, 4, 5, 6),
             None,
             None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
+            "Image:0",
+            ("Image:0",),
+            (1, 2, 3, 4, 5, 6),
+            "TCZYXS",
+            ["Channel:0:0", "Channel:0:1"],
         ),
+        # Test that with more than 6 dims, it raises an error
+        # Our guess dim order only support up to six dims
         pytest.param(
-            "hello world",
+            np.random.rand(1, 2, 3, 4, 5, 6, 7),
             None,
             None,
             None,

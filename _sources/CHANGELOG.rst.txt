@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- Bugfix: Fix tests not asserting error expected  (`#464
+  <https://github.com/AllenCellModeling/aicsimageio/pull/464>`_) [Sean
+  LeRoy]
 - Bugfix/Docs-README-Mention-mvn/maven-requirement-for-bioformats_jar
   (`#463 <https://github.com/AllenCellModeling/aicsimageio/pull/463>`_)
   [Peter Sobolewski]

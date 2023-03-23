@@ -576,7 +576,9 @@ _NAME_TO_MICRONS = {
 }
 
 
-def _get_pixel_size(path_or_file: Any, series_index: int) -> Tuple[float, float, float]:
+def _get_pixel_size(
+    path_or_file: Any, series_index: int
+) -> Tuple[Optional[float], Optional[float], Optional[float]]:
     """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
 
     with TiffFile(path_or_file) as tiff:

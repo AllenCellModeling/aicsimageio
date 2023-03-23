@@ -50,7 +50,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "YX",
             None,
-            (None, 1.08333441666775, 1.08333441666775)
+            (None, 1.08333441666775, 1.08333441666775),
         ),
         (
             "s_1_t_1_c_10_z_1.ome.tiff",
@@ -60,7 +60,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "CYX",
             [f"Channel:0:{i}" for i in range(10)],
-            (None, 1, 1)
+            (None, 1, 1),
         ),
         (
             "s_1_t_10_c_3_z_1.tiff",
@@ -70,7 +70,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "TCYX",
             ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
-            (None, 1.08333441666775, 1.08333441666775)
+            (None, 1.08333441666775, 1.08333441666775),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -80,7 +80,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "ZCYX",
             ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
-            (None, 1.0833333604166673, 1.0833333604166673)
+            (None, 1.0833333604166673, 1.0833333604166673),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -90,7 +90,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "ZCYX",
             ["Channel:1:0", "Channel:1:1", "Channel:1:2"],
-            (None, 1.0833333604166673, 1.0833333604166673)
+            (None, 1.0833333604166673, 1.0833333604166673),
         ),
         (
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -100,7 +100,7 @@ from ..image_container_test_utils import (
             np.uint16,
             "ZCYX",
             ["Channel:2:0", "Channel:2:1", "Channel:2:2"],
-            (None, 1.0833333604166673, 1.0833333604166673)
+            (None, 1.0833333604166673, 1.0833333604166673),
         ),
         (
             "s_1_t_1_c_1_z_1_RGB.tiff",

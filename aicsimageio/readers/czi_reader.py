@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "aicspylibczi is required for this reader. "
-        "Install with `pip install aicspylibczi>=3.0.5"
+        "Install with `pip install 'aicspylibczi>=3.0.5' 'fsspec>=2022.7.1'`"
     )
 
 ###############################################################################
@@ -268,6 +268,15 @@ class CziReader(Reader):
         dims_shape_dict = dims_shape[dims_shape_index]
         scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
         if scene_range is None:
+            return scene_index
+        if not consistent:
+            # we have selected a dims_shape_dict already based on scene index
+            # let's make sure the scene index is in the S range
+            if scene_index < scene_range[0] or scene_index >= scene_range[1]:
+                raise ValueError(
+                    f"Scene index {scene_index} is not in the range "
+                    f"{scene_range[0]} to {scene_range[1]}"
+                )
             return scene_index
         return scene_range[0] + scene_index
 

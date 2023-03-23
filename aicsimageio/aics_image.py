@@ -186,11 +186,24 @@ class AICSImage(ImageContainer):
                                 fs_kwargs=fs_kwargs,
                             ):
                                 return ReaderClass
+
                         except Exception as e:
-                            log.warning(
-                                f"Attempted file ({path}) load with "
-                                f"reader: {reader} failed with error: {e}"
-                            )
+                            # _load_readers checks all readers.
+                            # bfio readers are an optional installs.
+                            if e.__class__ == ModuleNotFoundError and ("'bfio'") in str(
+                                e
+                            ):
+                                log.info(
+                                    f"Attempted file ({path}) "
+                                    f"load with reader: {reader}"
+                                    f"for better performance, "
+                                    f"consider installing 'bfio'."
+                                )
+                            else:
+                                log.warning(
+                                    f"Attempted file ({path}) load with "
+                                    f"reader: {reader} failed with error: {e}"
+                                )
 
         # Try all known readers
         # Useful in cases where the provided filename is a GUID or similar

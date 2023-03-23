@@ -12,6 +12,14 @@ from aicsimageio.tests.image_container_test_utils import run_image_file_checks
 
 from ...conftest import LOCAL, get_resource_full_path, host
 
+nd2 = pytest.importorskip("nd2")
+
+# nd2 0.4.3 and above improves detection of position names
+if tuple(int(x) for x in nd2.__version__.split(".")) >= (0, 4, 3):
+    pos_names = ("point name 1", "point name 2", "point name 3", "point name 4")
+else:
+    pos_names = ("XYPos:0", "XYPos:1", "XYPos:2", "XYPos:3")
+
 
 @host
 @pytest.mark.parametrize(
@@ -33,7 +41,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "ND2_aryeh_but3_cont200-1.nd2",
@@ -67,8 +75,8 @@ from ...conftest import LOCAL, get_resource_full_path, host
         ),
         (
             "ND2_dims_p4z5t3c2y32x32.nd2",
-            "XYPos:0",
-            ("XYPos:0", "XYPos:1", "XYPos:2", "XYPos:3"),
+            pos_names[0],
+            pos_names,
             (3, 5, 2, 32, 32),
             np.uint16,
             "TZCYX",
@@ -97,8 +105,8 @@ from ...conftest import LOCAL, get_resource_full_path, host
         ),
         (
             "ND2_dims_p2z5t3-2c4y32x32.nd2",
-            "XYPos:1",
-            ("XYPos:0", "XYPos:1"),
+            pos_names[1],
+            pos_names[:2],
             (5, 5, 4, 32, 32),
             np.uint16,
             "TZCYX",

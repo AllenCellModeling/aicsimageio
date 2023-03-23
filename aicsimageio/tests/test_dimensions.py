@@ -36,12 +36,12 @@ def test_dimensions_getitem() -> None:
         pytest.param(
             "ZYXS",
             (70, 980, 980),
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         pytest.param(
             "YX",
             (70, 980, 980),
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
     ],
 )
@@ -60,12 +60,12 @@ def test_dimensions_mismatched_dims_len_and_shape_size(
         pytest.param(
             ["C", "ZY", "X"],
             (70, 980, 980),
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         pytest.param(
             ["YX"],
             (70, 980, 980),
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
     ],
 )

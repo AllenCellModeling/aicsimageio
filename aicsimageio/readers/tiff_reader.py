@@ -20,9 +20,9 @@ from ..types import PhysicalPixelSizes
 
 ###############################################################################
 
-# "Q" is used by Gohlke to say "unknown dimension"
-# https://github.com/cgohlke/tifffile/blob/master/tifffile/tifffile.py#L10840
-UNKNOWN_DIM_CHAR = "Q"
+# "Q" is used by tifffile to say "unknown dimension"
+# "I" is used to mean a generic image sequence
+UNKNOWN_DIM_CHARS = ["Q", "I"]
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
 
 ###############################################################################
@@ -220,7 +220,7 @@ class TiffReader(Reader):
         best_guess = []
         for dim_from_meta in dims_from_meta:
             # Dim from meta is recognized, add it
-            if dim_from_meta != UNKNOWN_DIM_CHAR:
+            if dim_from_meta not in UNKNOWN_DIM_CHARS:
                 best_guess.append(dim_from_meta)
 
             # Dim from meta isn't recognized
@@ -248,7 +248,7 @@ class TiffReader(Reader):
         dims_from_meta = scene.pages.axes
 
         # If all dims are known, simply return as list
-        if UNKNOWN_DIM_CHAR not in dims_from_meta:
+        if all(i not in UNKNOWN_DIM_CHARS for i in dims_from_meta):
             return [d for d in dims_from_meta]
 
         # Otherwise guess the dimensions and return merge

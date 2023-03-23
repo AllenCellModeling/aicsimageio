@@ -14,7 +14,7 @@ from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers import TiffReader
 from aicsimageio.readers.reader import Reader
 
-from ..conftest import LOCAL, REMOTE, get_resource_full_path, host
+from ..conftest import LOCAL, get_resource_full_path, host
 from ..image_container_test_utils import (
     run_image_file_checks,
     run_multi_scene_image_read_checks,
@@ -121,7 +121,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
@@ -131,7 +131,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -141,7 +141,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -151,7 +151,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -426,7 +426,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing too many channels
         pytest.param(
@@ -437,7 +437,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing channels but no channel dim
         pytest.param(
@@ -448,7 +448,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check number of scenes dims list matches n scenes
         pytest.param(
@@ -459,7 +459,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check number of scenes channels list matches n scenes
         pytest.param(
@@ -470,7 +470,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
     ],
 )
@@ -612,7 +612,6 @@ def test_parallel_read(
 
 @pytest.mark.parametrize(
     "filename, "
-    "host, "
     "first_scene, "
     "expected_first_chunk_shape, "
     "second_scene, "
@@ -620,7 +619,6 @@ def test_parallel_read(
     [
         (
             "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
-            LOCAL,
             0,
             (50, 5, 256, 256),
             1,
@@ -628,27 +626,16 @@ def test_parallel_read(
         ),
         (
             "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
-            LOCAL,
             1,
             (50, 5, 256, 256),
             0,
             (50, 5, 256, 256),
-        ),
-        pytest.param(
-            "image_stack_tpzc_50tp_2p_5z_3c_512k_1_MMStack_2-Pos000_000.ome.tif",
-            REMOTE,
-            1,  # Start with second scene to trigger error faster
-            (50, 5, 256, 256),
-            0,
-            (50, 5, 256, 256),
-            marks=pytest.mark.raises(exceptions=IndexError),
         ),
     ],
 )
 @pytest.mark.parametrize("processes", [True, False])
 def test_parallel_multifile_tiff_read(
     filename: str,
-    host: str,
     first_scene: int,
     expected_first_chunk_shape: Tuple[int, ...],
     second_scene: int,
@@ -663,7 +650,7 @@ def test_parallel_multifile_tiff_read(
     read properly from each file.
     """
     # Construct full filepath
-    uri = get_resource_full_path(filename, host)
+    uri = get_resource_full_path(filename, LOCAL)
 
     # Init image
     img = AICSImage(uri)

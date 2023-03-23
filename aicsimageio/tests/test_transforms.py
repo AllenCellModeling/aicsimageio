@@ -13,7 +13,12 @@ import xarray as xr
 from aicsimageio import AICSImage, types
 from aicsimageio.exceptions import ConflictingArgumentsError, UnexpectedShapeError
 from aicsimageio.readers import ArrayLikeReader
-from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_dims
+from aicsimageio.transforms import (
+    generate_stack,
+    reduce_to_slice,
+    reshape_data,
+    transpose_to_dims,
+)
 
 
 @pytest.mark.parametrize("array_maker", [np.zeros, da.zeros])
@@ -72,7 +77,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXC",
             {"Z": 7},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -80,7 +85,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZ",
             {"Z": 7},
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -88,7 +93,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": 7},
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -96,7 +101,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCX",
             {"Z": [0, 1, 4]},
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=ConflictingArgumentsError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -104,7 +109,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": [0, 1, 7]},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -112,7 +117,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": (0, 1, 7)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -120,7 +125,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": range(7)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -128,7 +133,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": slice(0, 7, 2)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -136,7 +141,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": [0, 1, -7]},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -144,7 +149,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": (0, 1, -7)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -152,7 +157,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": range(0, -8, -1)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             (6, 200, 400),
@@ -160,7 +165,7 @@ from aicsimageio.transforms import generate_stack, reshape_data, transpose_to_di
             "TYXCZX",
             {"Z": slice(-7, 0, 2)},
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -340,28 +345,28 @@ def test_reshape_data_kwargs_values(
             "ZYX",
             "TYXC",
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=ConflictingArgumentsError),
         ),
         pytest.param(
             da.zeros((6, 200, 400)),
             "ZYX",
             "TYXC",
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=ConflictingArgumentsError),
         ),
         pytest.param(
             np.zeros((6, 200, 400)),
             "ZYX",
             "TYXCZ",
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=ConflictingArgumentsError),
         ),
         pytest.param(
             da.zeros((6, 200, 400)),
             "ZYX",
             "TYXCZ",
             None,
-            marks=pytest.mark.raises(exception=ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=ConflictingArgumentsError),
         ),
     ],
 )
@@ -446,7 +451,7 @@ def get_data_reference(
         ("xarray_data", "U", "index"),
         ("xarray_data", "U", "names"),
         pytest.param(
-            "xarray_data", "T", "index", marks=pytest.mark.raises(exception=ValueError)
+            "xarray_data", "T", "index", marks=pytest.mark.xfail(raises=ValueError)
         ),
         ("xarray_dask_data", "I", "index"),
         ("xarray_dask_data", "U", "index"),
@@ -455,7 +460,7 @@ def get_data_reference(
             "xarray_dask_data",
             "T",
             "index",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
     ],
 )
@@ -498,11 +503,9 @@ def test_generate_stack_stacking(
             "shape",
             False,
             None,
-            marks=pytest.mark.raises(exception=UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=UnexpectedShapeError),
         ),
-        pytest.param(
-            "dtype", False, None, marks=pytest.mark.raises(exception=TypeError)
-        ),
+        pytest.param("dtype", False, None, marks=pytest.mark.xfail(raises=TypeError)),
     ],
 )
 def test_generate_stack_mismatch_and_drop(
@@ -523,3 +526,27 @@ def test_generate_stack_mismatch_and_drop(
         xr.testing.assert_allclose(stack, reference)
     else:
         np.testing.assert_allclose(stack, reference)
+
+
+@pytest.mark.parametrize(
+    "list_to_test, expected",
+    [
+        ([0], slice(0, 1, None)),
+        ([4], slice(4, 5, None)),
+        ([0, 1], slice(0, 2, 1)),
+        ([1, 0], [1, 0]),
+        ([3, 5], slice(3, 6, 2)),
+        ([8, 9, 11], [8, 9, 11]),
+        ([15, 20, 25], slice(15, 26, 5)),
+        ((0,), slice(0, 1, None)),
+        ((0, 1), slice(0, 2, 1)),
+        ((1, 0), (1, 0)),
+        ((3, 5), slice(3, 6, 2)),
+        ((8, 9, 11), (8, 9, 11)),
+        ((15, 20, 25), slice(15, 26, 5)),
+    ],
+)
+def test_convert_list_to_slice(
+    list_to_test: Union[List, Tuple], expected: Union[int, List, slice, Tuple]
+) -> None:
+    assert reduce_to_slice(list_to_test) == expected

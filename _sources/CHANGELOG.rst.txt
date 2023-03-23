@@ -12,6 +12,9 @@ New
 
 Fix
 ~~~
+- Bugfix: unclear warning for missing 'bfio' install.  (`#471
+  <https://github.com/AllenCellModeling/aicsimageio/pull/471>`_)
+  [BrianWhitneyAI]
 - Bugfix: Upgrade minimum fsspec version  (`#473
   <https://github.com/AllenCellModeling/aicsimageio/pull/473>`_) [Sean
   LeRoy]

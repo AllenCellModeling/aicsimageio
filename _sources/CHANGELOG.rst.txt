@@ -12,6 +12,12 @@ New
 
 Fix
 ~~~
+- Bugfix: Upgrade minimum fsspec version  (`#473
+  <https://github.com/AllenCellModeling/aicsimageio/pull/473>`_) [Sean
+  LeRoy]
+- Bugfix: Restrict tifffile version for now  (`#472
+  <https://github.com/AllenCellModeling/aicsimageio/pull/472>`_) [Sean
+  LeRoy]
 - Bugfix: Fix tests not asserting error expected  (`#464
   <https://github.com/AllenCellModeling/aicsimageio/pull/464>`_) [Sean
   LeRoy]

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -140,26 +141,14 @@ class TiffReader(Reader):
         """Return the physical pixel sizes of the image."""
         if self._physical_pixel_sizes is None:
             with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
-                    tags = tiff.series[self.current_scene_index].pages[0].tags
+                try:
+                    z_size, y_size, x_size = _get_pixel_size(
+                        open_resource, self._current_scene_index
+                    )
+                except Exception as e:
+                    warnings.warn(f"Could not parse tiff pixel size: {e}")
+                    z_size, y_size, x_size = None, None, None
 
-            if tiff.is_imagej:
-                unit = tiff.imagej_metadata["unit"]
-                z_size = tiff.imagej_metadata.get("spacing", None)
-            else:
-                unit = tags["ResolutionUnit"].value
-                z_size = None
-
-            scalar = _NAME_TO_MICRONS.get(unit, 1)
-            # Resolution tags are two LONGs: representing a fraction
-            # "The number of pixels per ResolutionUnit"
-            x_npix, x_res_units = tags["XResolution"].value
-            y_npix, y_res_units = tags["YResolution"].value
-            # the inverse of the fraction is the size of a pixel
-            x_size = scalar * x_res_units / x_npix
-            y_size = scalar * y_res_units / y_npix
-            if z_size is not None:
-                z_size *= scalar
             self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)
         return self._physical_pixel_sizes
 
@@ -207,8 +196,10 @@ class TiffReader(Reader):
                 # handoff _during_ a read.
                 return arr[retrieve_indices].compute(scheduler="synchronous")
 
-    def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
+    def _get_tiff_tags(self, tiff: TiffFile, process: bool = True) -> TiffTags:
         unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
+        if not process:
+            return unprocessed_tags
 
         # Create dict of tag and value
         tags: Dict[int, str] = {}
@@ -583,3 +574,31 @@ _NAME_TO_MICRONS = {
     "cal": 2.54 * 1e4,
     TIFF.RESUNIT.INCH: 2.54 * 1e4,
 }
+
+
+def _get_pixel_size(path_or_file: Any, series_index: int) -> Tuple[float, float, float]:
+    """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
+
+    with TiffFile(path_or_file) as tiff:
+        tags = tiff.series[series_index].pages[0].tags
+
+    if tiff.is_imagej:
+        unit = tiff.imagej_metadata["unit"]
+        z_size = tiff.imagej_metadata.get("spacing", None)
+    else:
+        unit = tags["ResolutionUnit"].value
+        z_size = None
+
+    scalar = _NAME_TO_MICRONS.get(unit, 1)
+
+    # Resolution tags are two LONGs: representing a fraction
+    # "The number of pixels per ResolutionUnit"
+    x_npix, x_res_units = tags["XResolution"].value
+    y_npix, y_res_units = tags["YResolution"].value
+    # the inverse of the fraction is the size of a pixel
+    x_size = scalar * x_res_units / x_npix
+    y_size = scalar * y_res_units / y_npix
+    if z_size is not None:
+        z_size *= scalar
+
+    return z_size, y_size, x_size

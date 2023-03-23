@@ -8,15 +8,15 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError, imread, TIFF
+from tifffile import TIFF, TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
-from ..types import PhysicalPixelSizes
 
 ###############################################################################
 
@@ -151,10 +151,13 @@ class TiffReader(Reader):
                 z_size = None
 
             scalar = _NAME_TO_MICRONS.get(unit, 1)
-            dx, nx = tags["XResolution"].value
-            x_size = scalar * nx / dx
-            dy, ny = tags["YResolution"].value
-            y_size = scalar * ny / dy
+            # Resolution tags are two LONGs: representing a fraction
+            # "The number of pixels per ResolutionUnit"
+            x_npix, x_res_units = tags["XResolution"].value
+            y_npix, y_res_units = tags["YResolution"].value
+            # the inverse of the fraction is the size of a pixel
+            x_size = scalar * x_res_units / x_npix
+            y_size = scalar * y_res_units / y_npix
             if z_size is not None:
                 z_size *= scalar
             self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)

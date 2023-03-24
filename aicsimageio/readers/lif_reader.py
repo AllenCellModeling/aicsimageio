@@ -3,6 +3,7 @@
 
 import xml.etree.ElementTree as ET
 from copy import copy
+from math import floor
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -547,60 +548,85 @@ class LifReader(Reader):
     def _stitch_tiles(
         data: types.ArrayLike,
         dims: str,
-        ny: int,
-        nx: int,
+        mosaic_position: List[Tuple[int, int, float, float]],
     ) -> types.ArrayLike:
-        # Fill all tiles
-        rows: List[types.ArrayLike] = []
-        for row_i in range(ny):
-            row: List[types.ArrayLike] = []
-            for col_i in range(nx):
-                # Calc m_index
-                m_index = (row_i * nx) + col_i
+        """
+        This uses the mosaic_position of the LIF file to index into the data array,
+        retrieve the tile, transform it, and then recreate the XY plane of the tiles
+        before eventually combining them back together into one array (representing
+        the stitched mosaic image).
 
-                # Get tile by getting all data for specific M
-                tile = transforms.reshape_data(
-                    data,
-                    given_dims=dims,
-                    return_dims=dims.replace(DimensionNames.MosaicTile, ""),
-                    M=m_index,
-                )
+        This stitching expects LIF files to have an extra pixel of overlap between tiles
+        and will shave off those pixels.
 
-                # LIF image stitching has a 1 pixel overlap
-                # Take all pixels except the first _except_ if this is the last tile
-                # in the row (the X dimension)
-                if col_i + 1 < nx:
-                    row.insert(0, tile[:, :, :, :, 1:])
-                else:
-                    row.insert(0, tile)
+        Returns
+        -------
+        mosaic image: types.ArrayLike
+            The previously seperate tiles as one stitched image
+        """
+        # Determine the length of the x dimension (i.e. number of columns in XY plane)
+        number_of_columns = 0
+        for column_index, *_ in mosaic_position:
+            if column_index + 1 > number_of_columns:
+                number_of_columns = column_index + 1
 
-            # Concat row and append
-            # Take all pixels except the first Y dimension pixel _except_ if this is the
-            # last row
-            np_row = np.concatenate(row, axis=-1)
-            if row_i + 1 < ny:
-                rows.insert(0, np_row[:, :, :, 1:, :])
+        # The length of the mosaic_position array == X * Y so
+        # Y = (X * Y) / X
+        number_of_rows = floor(len(mosaic_position) / number_of_columns)
+
+        # Prefill a 2D list representing the XY plane
+        xy_plane: List[List[types.ArrayLike]] = [
+            [None] * number_of_columns
+        ] * number_of_rows
+
+        # Iterate over each mosaic_position coordinate using the relative
+        # field position (XY coordinate) given to retrieve each tile from
+        # the data array, transform it, and put back into a 2D (XY) array
+        for column_index, row_index, *_ in mosaic_position:
+            # Calc tile index (M) based on relative field position given
+            tile_index = (row_index * number_of_columns) + column_index
+
+            # Get tile by getting all data for specific M
+            tile = transforms.reshape_data(
+                data,
+                given_dims=dims,
+                return_dims=dims.replace(DimensionNames.MosaicTile, ""),
+                M=tile_index,
+            )
+
+            # LIF image stitching has a 1 pixel overlap;
+            # Drop the first pixel unless this is the last tile in the row
+            # AKA the X dimension
+            if column_index + 1 < number_of_columns:
+                xy_plane[row_index][column_index] = tile[:, :, :, :, 1:]
             else:
-                rows.insert(0, np_row)
+                xy_plane[row_index][column_index] = tile
 
-        # Concatenate
-        mosaic = np.concatenate(rows, axis=-2)
+        for row_index, row in enumerate(xy_plane):
+            concatenated_row = np.concatenate(row, axis=-1)
 
-        return mosaic
+            # LIF image stitching has a 1 pixel overlap;
+            # Drop the first pixel unless this is the last tile in the column
+            # AKA the Y dimension
+            if row_index + 1 < number_of_rows:
+                xy_plane[row_index] = concatenated_row[:, :, :, 1:, :]
+            else:
+                xy_plane[row_index] = concatenated_row
+
+        # Concatenate plane into singular mosaic image
+        return np.concatenate(xy_plane, axis=-2)
 
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
         # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            last_tile_position = selected_scene.info["mosaic_position"][-1]
 
         # Stitch
         stitched = self._stitch_tiles(
             data=data,
             dims=self.dims.order,
-            ny=last_tile_position[0] + 1,
-            nx=last_tile_position[1] + 1,
+            mosaic_position=selected_scene.mosaic_position,
         )
 
         # Copy metadata

@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/add-physical-pixel-size-to-tiff-reader  (`#456
+  <https://github.com/AllenCellModeling/aicsimageio/pull/456>`_) [Talley
+  Lambert]
 - feature/zarrwriter  (`#381
   <https://github.com/AllenCellModeling/aicsimageio/pull/381>`_)
   [toloudis]

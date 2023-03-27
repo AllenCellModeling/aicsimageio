@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -8,12 +9,13 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TiffFile, TiffFileError, imread
+from tifffile import TIFF, TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
 
@@ -56,6 +58,8 @@ class TiffReader(Reader):
         Any specific keyword arguments to pass down to the fsspec created filesystem.
         Default: {}
     """
+
+    _physical_pixel_sizes: Optional[PhysicalPixelSizes] = None
 
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
@@ -132,6 +136,22 @@ class TiffReader(Reader):
 
         return self._scenes
 
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """Return the physical pixel sizes of the image."""
+        if self._physical_pixel_sizes is None:
+            with self._fs.open(self._path) as open_resource:
+                try:
+                    z_size, y_size, x_size = _get_pixel_size(
+                        open_resource, self._current_scene_index
+                    )
+                except Exception as e:
+                    warnings.warn(f"Could not parse tiff pixel size: {e}")
+                    z_size, y_size, x_size = None, None, None
+
+            self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)
+        return self._physical_pixel_sizes
+
     @staticmethod
     def _get_image_data(
         fs: AbstractFileSystem,
@@ -176,8 +196,10 @@ class TiffReader(Reader):
                 # handoff _during_ a read.
                 return arr[retrieve_indices].compute(scheduler="synchronous")
 
-    def _get_tiff_tags(self, tiff: TiffFile) -> TiffTags:
+    def _get_tiff_tags(self, tiff: TiffFile, process: bool = True) -> TiffTags:
         unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
+        if not process:
+            return unprocessed_tags
 
         # Create dict of tag and value
         tags: Dict[int, str] = {}
@@ -529,3 +551,56 @@ class TiffReader(Reader):
                     coords=coords,
                     attrs=attrs,
                 )
+
+
+_NAME_TO_MICRONS = {
+    "pm": 1e-6,
+    "picometer": 1e-6,
+    "nm": 1e-3,
+    "nanometer": 1e-3,
+    "micron": 1,
+    "µm": 1,
+    "um": 1,
+    "\\u00B5m": 1,  # µm unicode
+    TIFF.RESUNIT.NONE: 1,
+    TIFF.RESUNIT.MICROMETER: 1,
+    None: 1,
+    "mm": 1e3,
+    "millimeter": 1e3,
+    TIFF.RESUNIT.MILLIMETER: 1e3,
+    "cm": 1e4,
+    "centimeter": 1e4,
+    TIFF.RESUNIT.CENTIMETER: 1e4,
+    "cal": 2.54 * 1e4,
+    TIFF.RESUNIT.INCH: 2.54 * 1e4,
+}
+
+
+def _get_pixel_size(
+    path_or_file: Any, series_index: int
+) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+    """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
+
+    with TiffFile(path_or_file) as tiff:
+        tags = tiff.series[series_index].pages[0].tags
+
+    if tiff.is_imagej:
+        unit = tiff.imagej_metadata["unit"]
+        z_size = tiff.imagej_metadata.get("spacing", None)
+    else:
+        unit = tags["ResolutionUnit"].value
+        z_size = None
+
+    scalar = _NAME_TO_MICRONS.get(unit, 1)
+
+    # Resolution tags are two LONGs: representing a fraction
+    # "The number of pixels per ResolutionUnit"
+    x_npix, x_res_units = tags["XResolution"].value
+    y_npix, y_res_units = tags["YResolution"].value
+    # the inverse of the fraction is the size of a pixel
+    x_size = scalar * x_res_units / x_npix
+    y_size = scalar * y_res_units / y_npix
+    if z_size is not None:
+        z_size *= scalar
+
+    return z_size, y_size, x_size

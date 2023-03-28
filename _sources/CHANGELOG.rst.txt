@@ -6,6 +6,9 @@ Changelog
 
 New
 ~~~
+- feature/github-action-stale  (`#474
+  <https://github.com/AllenCellModeling/aicsimageio/pull/474>`_)
+  [BrianWhitneyAI]
 - feature/add-physical-pixel-size-to-tiff-reader  (`#456
   <https://github.com/AllenCellModeling/aicsimageio/pull/456>`_) [Talley
   Lambert]

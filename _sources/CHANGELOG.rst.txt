@@ -18,6 +18,9 @@ New
 
 Fix
 ~~~
+- bugfix: removing 2.11.0 threshold  (`#470
+  <https://github.com/AllenCellModeling/aicsimageio/pull/470>`_)
+  [BrianWhitneyAI]
 - Bugfix: unclear warning for missing 'bfio' install.  (`#471
   <https://github.com/AllenCellModeling/aicsimageio/pull/471>`_)
   [BrianWhitneyAI]

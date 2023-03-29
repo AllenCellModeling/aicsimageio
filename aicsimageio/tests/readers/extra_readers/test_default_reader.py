@@ -268,8 +268,8 @@ def test_set_coords(
             "actk.ome.tiff",
             DefaultReader,
             {},
-            dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
-            (6, 1, 1, 65, 233, 345),
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            (1, 6, 65, 233, 345),
         ),
     ],
 )

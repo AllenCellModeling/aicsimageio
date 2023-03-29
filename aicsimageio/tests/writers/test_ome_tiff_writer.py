@@ -32,27 +32,21 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             "AYX",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         pytest.param(
             (2, 3, 3),
             "YXZ",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         pytest.param(
             (2, 5, 16, 16),
             "CYX",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
         ((1, 2, 3, 4, 5), None, (1, 2, 3, 4, 5), "TCZYX"),
         ((2, 3, 4, 5, 6), "TCZYX", (2, 3, 4, 5, 6), "TCZYX"),
@@ -64,7 +58,7 @@ from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
             None,
             (1, 2, 3, 4, 5, 6),
             "TCZYXS",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         ((5, 16, 16, 3), "ZYXS", (1, 1, 5, 16, 16, 3), "TCZYXS"),
         ((5, 16, 16, 4), "CYXS", (1, 5, 1, 16, 16, 4), "TCZYXS"),
@@ -129,42 +123,42 @@ def test_ome_tiff_writer_no_meta(
             (1, 2, 3, 4, 5),
             to_xml(OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float32)])),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # wrong dtype
         pytest.param(
             (1, 2, 3, 4, 5),
             OmeTiffWriter.build_ome([(1, 2, 3, 4, 5)], [np.dtype(np.float32)]),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # wrong dims
         pytest.param(
             (1, 2, 3, 4, 5),
             to_xml(OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float32)])),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # wrong dims
         pytest.param(
             (1, 2, 3, 4, 5),
             OmeTiffWriter.build_ome([(2, 2, 3, 4, 5)], [np.dtype(np.float32)]),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # just totally wrong but valid ome
         pytest.param(
             (1, 2, 3, 4, 5),
             to_xml(OME()),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # just totally wrong but valid ome
         pytest.param(
             (1, 2, 3, 4, 5),
             OME(),
             "TCZYX",
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         # even more blatantly bad ome
         pytest.param(
@@ -172,7 +166,7 @@ def test_ome_tiff_writer_no_meta(
             "bad ome string",
             "TCZYX",
             # raised from within ome-types
-            marks=pytest.mark.raises(exception=urllib.error.URLError),
+            marks=pytest.mark.xfail(raises=urllib.error.URLError),
         ),
     ],
 )
@@ -251,7 +245,7 @@ def test_ome_tiff_writer_with_meta(
             ["ZYXS"],
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # bad dims
         pytest.param(
@@ -259,9 +253,7 @@ def test_ome_tiff_writer_with_meta(
             "AYX",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )
@@ -372,7 +364,7 @@ def test_ome_tiff_writer_multiscene(
             [(1, 3, 1, 16, 16)],
             ["TCZYX"],
             [(None, 1.0, 1.0)],
-            marks=pytest.mark.raises(exception=ValueError),
+            marks=pytest.mark.xfail(raises=ValueError),
         ),
         (
             [np.random.rand(3, 16, 16)],

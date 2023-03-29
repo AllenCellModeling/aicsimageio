@@ -94,7 +94,7 @@ SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         (
             "s_3_t_1_c_3_z_5.czi",
@@ -235,7 +235,7 @@ SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )

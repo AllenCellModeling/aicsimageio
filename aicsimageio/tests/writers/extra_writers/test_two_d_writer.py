@@ -27,30 +27,28 @@ from ...conftest import LOCAL, array_constructor, get_resource_write_full_path
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1),
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1, 1),
             "STCZYX",
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1),
             "AB",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )

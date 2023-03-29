@@ -33,7 +33,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         (
             "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",

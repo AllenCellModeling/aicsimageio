@@ -63,7 +63,7 @@ test_requirements = [
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
-    "s3fs[boto3]>=0.4.2",
+    "s3fs[boto3]>=2022.11.0",
     "tox==3.27.1",
 ]
 
@@ -101,14 +101,15 @@ benchmark_requirements = [
 
 requirements = [
     "dask[array]>=2021.4.1",
-    "fsspec>=2021.4.0,!=2022.7.0",
+    "fsspec>=2022.8.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
     "ome-types>=0.2",
+    "ome-zarr>=0.6.1",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
-    "tifffile>=2021.8.30",
+    "tifffile>=2021.8.30,<2023.3.15",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",

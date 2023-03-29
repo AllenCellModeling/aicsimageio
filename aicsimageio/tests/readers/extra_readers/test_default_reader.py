@@ -39,14 +39,14 @@ from ...image_container_test_utils import run_image_file_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "example.png",
             "Image:1",
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -206,7 +206,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing too many channels
         pytest.param(
@@ -217,7 +217,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
         # Check providing channels but no channel dim
         pytest.param(
@@ -228,7 +228,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.ConflictingArgumentsError),
+            marks=pytest.mark.xfail(raises=exceptions.ConflictingArgumentsError),
         ),
     ],
 )

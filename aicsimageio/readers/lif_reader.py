@@ -575,17 +575,12 @@ class LifReader(Reader):
         number_of_rows = floor(len(mosaic_position) / number_of_columns)
 
         # Prefill a 2D list representing the XY plane
-        xy_plane: List[List[types.ArrayLike]] = [
-            [None] * number_of_columns
-        ] * number_of_rows
+        xy_plane = np.zeros((number_of_rows, number_of_columns), dtype=object)
 
         # Iterate over each mosaic_position coordinate using the relative
         # field position (XY coordinate) given to retrieve each tile from
         # the data array, transform it, and put back into a 2D (XY) array
-        for column_index, row_index, *_ in mosaic_position:
-            # Calc tile index (M) based on relative field position given
-            tile_index = (row_index * number_of_columns) + column_index
-
+        for tile_index, tile_position, *_ in enumerate(mosaic_position):
             # Get tile by getting all data for specific M
             tile = transforms.reshape_data(
                 data,
@@ -595,26 +590,21 @@ class LifReader(Reader):
             )
 
             # LIF image stitching has a 1 pixel overlap;
-            # Drop the first pixel unless this is the last tile in the row
-            # AKA the X dimension
-            if column_index + 1 < number_of_columns:
-                xy_plane[row_index][column_index] = tile[:, :, :, :, 1:]
-            else:
-                xy_plane[row_index][column_index] = tile
+            # Drop the first pixel unless this is the last tile for that dimension
+            column_index, row_index, *_ = tile_position
+            is_last_row = row_index + 1 >= number_of_rows
+            is_last_column = column_index + 1 >= number_of_columns
+            if not is_last_row:
+                tile = tile[:, :, :, 1:, :]
 
-        for row_index, row in enumerate(xy_plane):
-            concatenated_row = np.concatenate(row, axis=-1)
+            if not is_last_column:
+                tile = tile[:, :, :, :, 1:]
 
-            # LIF image stitching has a 1 pixel overlap;
-            # Drop the first pixel unless this is the last tile in the column
-            # AKA the Y dimension
-            if row_index + 1 < number_of_rows:
-                xy_plane[row_index] = concatenated_row[:, :, :, 1:, :]
-            else:
-                xy_plane[row_index] = concatenated_row
+            xy_plane[row_index, column_index] = tile
 
         # Concatenate plane into singular mosaic image
-        return np.concatenate(xy_plane, axis=-2)
+        rows = [np.concatenate(row_as_tiles, axis=-1) for row_as_tiles in xy_plane]
+        return np.concatenate(rows, axis=-2)
 
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
         # Get max of mosaic positions from lif
@@ -729,6 +719,9 @@ class LifReader(Reader):
             -(mosaic_tile_index + 1)
         ]
 
+        # Formula: (Dim position * Tile dim length) - Dim position
+        # where the "- Dim position" is to account for shaving a pixel off
+        # of each tile to account for overlap
         return (
             (index_y * self.dims.Y) - index_y,
             (index_x * self.dims.X) - index_x,

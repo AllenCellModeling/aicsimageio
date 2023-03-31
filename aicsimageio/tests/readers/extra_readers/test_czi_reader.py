@@ -40,7 +40,7 @@ from ...image_container_test_utils import (
             "s_1_t_1_c_1_z_1.ome.tiff",
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -163,7 +163,7 @@ def test_subblocks(filename: str, num_subblocks: int, acquistion_time: str) -> N
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -174,7 +174,7 @@ def test_subblocks(filename: str, num_subblocks: int, acquistion_time: str) -> N
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -290,7 +290,7 @@ def test_czi_reader_mosaic_stitching(
             (440, 544),
             999,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.czi",
@@ -299,7 +299,7 @@ def test_czi_reader_mosaic_stitching(
             None,
             None,
             # File has no mosaic tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )
@@ -514,7 +514,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=TypeError),
+            marks=pytest.mark.xfail(raises=TypeError),
         ),
     ],
 )
@@ -728,7 +728,7 @@ def test_roundtrip_save_all_scenes(
             None,
             0,
             # File has no mosaic tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )

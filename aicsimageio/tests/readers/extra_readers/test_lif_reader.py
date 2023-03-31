@@ -72,7 +72,7 @@ from ...image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "3d-cell-viewer.ome.tiff",
@@ -83,7 +83,7 @@ from ...image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -170,9 +170,7 @@ def test_sanity_check_correct_indexing(
             "merged-tiles.lif",
             "b2_001_Crop001_Resize001",
             "TileScan_002_Merging",
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )
@@ -240,7 +238,7 @@ def test_lif_reader_mosaic_stitching(
             (512, 512),
             999,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "merged-tiles.lif",
@@ -249,7 +247,7 @@ def test_lif_reader_mosaic_stitching(
             None,
             None,
             # Doesn't have mosaic tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )
@@ -491,7 +489,7 @@ def test_roundtrip_save_all_scenes(
             (165, 1, 4, 1, 512, 512),
             (512, 512),
             999,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )

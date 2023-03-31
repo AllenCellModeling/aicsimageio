@@ -76,6 +76,7 @@ class LifReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         fs_kwargs: Dict[str, Any] = {},
+        are_x_and_y_coordinates_flipped: bool = True,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(
@@ -89,6 +90,11 @@ class LifReader(Reader):
             chunk_dims = list(chunk_dims)
 
         self.chunk_dims = chunk_dims
+
+        # If `are_x_and_y_coordinates_flipped` is True, the field_x and field_y given
+        # from the mosaic_position will be swapped such that field_x represents y
+        # and field_y represents x.
+        self.are_x_and_y_coordinates_flipped = are_x_and_y_coordinates_flipped
 
         # Delayed storage
         self._scene_short_info: Dict[str, Any] = {}
@@ -549,6 +555,7 @@ class LifReader(Reader):
         data: types.ArrayLike,
         dims: str,
         mosaic_position: List[Tuple[int, int, float, float]],
+        are_x_and_y_coordinates_flipped: bool,
     ) -> types.ArrayLike:
         """
         This uses the mosaic_position of the LIF file to index into the data array,
@@ -564,6 +571,11 @@ class LifReader(Reader):
         mosaic image: types.ArrayLike
             The previously seperate tiles as one stitched image
         """
+        # LIF files coordinates can be flipped, if that is the case for this file
+        # we have to remap mosaic_position
+        if are_x_and_y_coordinates_flipped:
+            mosaic_position = [(y, x, py, px) for x, y, px, py in mosaic_position]
+
         # Determine the length of the x dimension (i.e. number of columns in XY plane)
         number_of_columns = 0
         for column_index, *_ in mosaic_position:
@@ -595,12 +607,15 @@ class LifReader(Reader):
             is_last_row = row_index + 1 >= number_of_rows
             is_last_column = column_index + 1 >= number_of_columns
             if not is_last_row:
-                tile = tile[:, :, :, :-1, :]
+                tile = tile[:, :, :, 1:, :]
 
             if not is_last_column:
-                tile = tile[:, :, :, :, :-1]
+                tile = tile[:, :, :, :, 1:]
 
-            xy_plane[row_index, column_index] = tile
+            # LIF tiles are packed starting from bottom right so
+            # the origin (0, 0) needs to be the bottom right of the grid
+            # i.e. the end of the array hence the negative indexing
+            xy_plane[-(row_index + 1), -(column_index + 1)] = tile
 
         # Concatenate plane into singular mosaic image
         rows = [np.concatenate(row_as_tiles, axis=-1) for row_as_tiles in xy_plane]
@@ -617,6 +632,7 @@ class LifReader(Reader):
             data=data,
             dims=self.dims.order,
             mosaic_position=selected_scene.mosaic_position,
+            are_x_and_y_coordinates_flipped=self.are_x_and_y_coordinates_flipped,
         )
 
         # Copy metadata
@@ -690,6 +706,7 @@ class LifReader(Reader):
     def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
+        Not equivalent to readlif's notion of mosaic_position.
 
         Parameters
         ----------
@@ -713,9 +730,14 @@ class LifReader(Reader):
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
 
+        # LIFs are packed from bottom right to top left
+        # To counter: subtract 1 + M from list index to get from back of list
         index_x, index_y, _, _ = self._scene_short_info["mosaic_position"][
-            mosaic_tile_index
+            -(mosaic_tile_index + 1)
         ]
+
+        if self.are_x_and_y_coordinates_flipped:
+            index_x, index_y = index_y, index_x
 
         # Formula: (Dim position * Tile dim length) - Dim position
         # where the "- Dim position" is to account for shaving a pixel off

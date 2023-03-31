@@ -209,28 +209,28 @@ def test_lif_reader_mosaic_stitching(
             "TileScan_002",
             (512, 512),
             0,
-            (0, 0),
+            (5110, 7154),
         ),
         (
             "tiled.lif",
             "TileScan_002",
             (512, 512),
             50,
-            (2555, 1533),
+            (3577, 4599),
         ),
         (
             "tiled.lif",
             "TileScan_002",
             (512, 512),
             3,
-            (1533, 0),
+            (5110, 5621),
         ),
         (
             "tiled.lif",
             "TileScan_002",
             (512, 512),
             164,
-            (7154, 5110),
+            (0, 0),
         ),
         pytest.param(
             "tiled.lif",
@@ -294,8 +294,8 @@ def test_lif_reader_mosaic_tile_inspection(
     # Remove the first Y and X pixels
     # The stitched tiles overlap each other by 1px each so this is just
     # ignoring what would be overlap / cleaned up
-    tile_from_m_index = tile_from_m_index[:, :, :, :-1, :-1]
-    tile_from_position = tile_from_position[:, :, :, :-1, :-1]
+    tile_from_m_index = tile_from_m_index[:, :, :, 1:, 1:]
+    tile_from_position = tile_from_position[:, :, :, 1:, 1:]
 
     # Assert equal
     np.testing.assert_array_equal(tile_from_m_index, tile_from_position)
@@ -312,8 +312,8 @@ def test_lif_reader_mosaic_tile_inspection(
             "tiled.lif",
             np.arange(0, 102.71391311154599, 0.20061311154598827),
             np.arange(0, 102.71391311154599, 0.20061311154598827),
-            np.arange(0, 1537.900113111546, 0.20061311154598827),
             np.arange(0, 1127.846913111546, 0.20061311154598827),
+            np.arange(0, 1537.900113111546, 0.20061311154598827),
         ),
     ],
 )
@@ -377,7 +377,7 @@ def test_lif_reader_mosaic_coords(
             "tiled.lif",
             "TileScan_002",
             ("TileScan_002",),
-            (1, 4, 1, 7666, 5622),
+            (1, 4, 1, 5622, 7666),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["Gray", "Red", "Green", "Cyan"],
@@ -473,7 +473,7 @@ def test_roundtrip_save_all_scenes(
             "tiled.lif",
             True,
             "TileScan_002",
-            (1, 4, 1, 7666, 5622),
+            (1, 4, 1, 5622, 7666),
             (512, 512),
             0,
         ),

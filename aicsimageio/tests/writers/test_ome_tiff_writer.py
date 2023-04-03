@@ -4,6 +4,7 @@
 import urllib
 from typing import Callable, List, Optional, Tuple, Union
 
+import lxml
 import numpy as np
 import pytest
 from ome_types import to_xml
@@ -166,7 +167,7 @@ def test_ome_tiff_writer_no_meta(
             "bad ome string",
             "TCZYX",
             # raised from within ome-types
-            marks=pytest.mark.xfail(raises=urllib.error.URLError),
+            marks=pytest.mark.xfail(raises=lxml.etree.XMLSyntaxError),
         ),
     ],
 )

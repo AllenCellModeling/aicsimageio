@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import urllib
 from typing import Callable, List, Optional, Tuple, Union
 
 import lxml

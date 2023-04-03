@@ -255,7 +255,7 @@ class OmeTiffWriter(Writer):
             )
         # else if string, then construct OME from string
         elif isinstance(ome_xml, str):
-            ome_xml = from_xml(ome_xml)
+            ome_xml = from_xml(ome_xml, parser="lxml")
 
         # if we do not have an OME object now, something is wrong
         if not isinstance(ome_xml, OME):

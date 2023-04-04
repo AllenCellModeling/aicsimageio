@@ -174,16 +174,8 @@ class CziReader(Reader):
                 meta_scenes = czi.meta.findall(xpath_str)
                 scene_names: List[str] = []
 
-                # Some "scenes" may have the same name but each scene has a sub-scene
-                # "Shape" with a name.
-                #
-                # An example of this is where someone images a 96 well plate with each
-                # well being it's own scene but they name every scene the same value.
-                # The sub-scene "Shape" elements have actual names of each well.
-                #
-                # If we didn't do this, the produced list would have 96 of the same
-                # string name making it impossible to switch scenes.
-                duplicates = {}
+                # mapping of scene name to occurrences, indicating duplication.
+                scene_name_frequency = {}
                 for scene_idx, meta_scene in enumerate(meta_scenes):
                     shape = meta_scene.find("Shape")
                     if shape is not None:
@@ -198,18 +190,20 @@ class CziReader(Reader):
                             fname_prefix = Path(self._path).stem
                             combined_scene_name = f"{fname_prefix}-{scene_idx}"
                         # Check for duplicated names
-                        if combined_scene_name not in duplicates:
-                            duplicates[combined_scene_name] = [scene_idx, 1]
+                        # first encounter with a duplicate modify original scene name
+                        # to reflect its new duplicate status
+                        if combined_scene_name not in scene_name_frequency:
+                            scene_name_frequency[combined_scene_name] = [scene_idx, 1]
                         else:
-                            if duplicates[combined_scene_name][1] == 1:
+                            if scene_name_frequency[combined_scene_name][1] == 1:
                                 scene_names[
-                                    duplicates[combined_scene_name][0]
+                                    scene_name_frequency[combined_scene_name][0]
                                 ] += "-1"
 
-                            duplicates[combined_scene_name][1] += 1
+                            scene_name_frequency[combined_scene_name][1] += 1
 
                             combined_scene_name += (
-                                f"-{duplicates[combined_scene_name][1]}"
+                                f"-{scene_name_frequency[combined_scene_name][1]}"
                             )
 
                     scene_names.append(combined_scene_name)

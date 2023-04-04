@@ -161,7 +161,7 @@ class CziReader(Reader):
     def scenes(self) -> Tuple[str, ...]:
         """Note: scenes with no name (`None`) will be renamed to
         "filename-<scene index>" to prevent ambiguity. Similarly, scenes with same
-        names are automatically appended with ocurrence number to distinguish
+        names are automatically appended with occurrence number to distinguish
         between the two.
 
         Returns:

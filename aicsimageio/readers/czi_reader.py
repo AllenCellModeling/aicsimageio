@@ -204,7 +204,7 @@ class CziReader(Reader):
                             if duplicates[combined_scene_name][1] == 1:
                                 scene_names[
                                     duplicates[combined_scene_name][0]
-                                ] += f"-{duplicates[combined_scene_name][1]}"
+                                ] += "-1"
 
                             duplicates[combined_scene_name][1] += 1
 

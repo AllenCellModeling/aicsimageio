@@ -601,7 +601,20 @@ class LifReader(Reader):
                 return_dims=dims.replace(DimensionNames.MosaicTile, ""),
                 M=tile_index,
             )
+
             column_index, row_index, *_ = tile_position
+            if self.is_x_and_y_swapped:
+                column_index, row_index = row_index, column_index
+
+            # LIF image stitching has a 1 pixel overlap;
+            # Drop the first pixel unless this is the last tile for that dimension
+            is_last_row = row_index + 1 >= number_of_rows
+            is_last_column = column_index + 1 >= number_of_columns
+            if not is_last_row:
+                tile = tile[:, :, :, 1:, :]
+
+            if not is_last_column:
+                tile = tile[:, :, :, :, 1:]
 
             # LIF tiles are packed starting from bottom right so
             # the origin (0, 0) needs to be the bottom right of the grid
@@ -614,33 +627,9 @@ class LifReader(Reader):
             xy_plane = np.fliplr(xy_plane)
         if self.is_y_flipped:
             xy_plane = np.flipud(xy_plane)
-        if self.is_x_and_y_swapped:
-            number_of_rows, number_of_columns = number_of_columns, number_of_rows
-            xy_plane = np.transpose(xy_plane)
 
-        # Iterate back over the xy_plane combining the rows into
-        # a singular numpy array (rather than list of arrays)
-        # while first shaving off an excess pixel seen as an overlap
-        rows: List[List[types.ArrayLike]] = []
-        for row_index, row_as_tiles in enumerate(xy_plane):
-            shaved_row_as_tiles: List[types.ArrayLike] = []
-            for column_index, tile in enumerate(row_as_tiles):
-                # LIF image stitching has a 1 pixel overlap;
-                # Drop the first pixel unless this is the last tile for that dimension
-                is_last_row = row_index + 1 >= number_of_rows
-                is_last_column = column_index + 1 >= number_of_columns
-                if not is_last_row:
-                    tile = tile[:, :, :, 1:, :]
-
-                if not is_last_column:
-                    tile = tile[:, :, :, :, 1:]
-
-                shaved_row_as_tiles.append(tile)
-
-            # Concatenate tiles into singular array representing the row
-            rows.append(np.concatenate(shaved_row_as_tiles, axis=-1))
-
-        # Concatenate rows into singular mosaic image
+        # Concatenate plane into singular mosaic image
+        rows = [np.concatenate(row_as_tiles, axis=-1) for row_as_tiles in xy_plane]
         return np.concatenate(rows, axis=-2)
 
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
@@ -697,8 +686,6 @@ class LifReader(Reader):
     def _get_yx_tile_count(self) -> Tuple[int, int]:
         """
         Get the number of tiles along the Y and X axis respectively.
-        Does not adjust count in regard to whether the Y or X coordinates
-        are swapped or flipped.
 
         Ex. Y = 3, X = 4 would mean the YX plane looks something like:
         - - - -
@@ -727,6 +714,10 @@ class LifReader(Reader):
         y_dim_length = floor(
             len(self._scene_short_info["mosaic_position"]) / x_dim_length
         )
+
+        if self.is_x_and_y_swapped:
+            y_dim_length, x_dim_length = x_dim_length, y_dim_length
+
         return y_dim_length, x_dim_length
 
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
@@ -793,13 +784,12 @@ class LifReader(Reader):
         ]
         y_dim_length, x_dim_length = self._get_yx_tile_count()
 
+        if self.is_x_and_y_swapped:
+            index_x, index_y = index_y, index_x
         if self.is_x_flipped:
             index_x = x_dim_length - index_x
         if self.is_y_flipped:
             index_y = y_dim_length - index_y
-        if self.is_x_and_y_swapped:
-            index_x, index_y = index_y, index_x
-            x_dim_length, y_dim_length = y_dim_length, x_dim_length
 
         # Formula: (Dim position * Tile dim length) - Dim position
         # where the "- Dim position" is to account for shaving a pixel off

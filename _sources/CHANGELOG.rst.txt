@@ -18,6 +18,14 @@ New
 
 Fix
 ~~~
+- Bugfix/empty scene name  (`#477
+  <https://github.com/AllenCellModeling/aicsimageio/pull/477>`_)
+  [BrianWhitneyAI, Sean LeRoy, Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * Update
+  aicsimageio/readers/czi_reader.py    Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * more discriptive
+  naming    ---------    Co-authored-by: Lukas Fan (----)
+  <Lukas.Fan@imec.be>, lukas]
 - bugfix: removing 2.11.0 threshold  (`#470
   <https://github.com/AllenCellModeling/aicsimageio/pull/470>`_)
   [BrianWhitneyAI]

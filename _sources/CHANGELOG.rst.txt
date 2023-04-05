@@ -53,6 +53,9 @@ Fix
 
 Other
 ~~~~~
+- try to use optimized codepath through ome-types  (`#478
+  <https://github.com/AllenCellModeling/aicsimageio/pull/478>`_)
+  [toloudis]
 - Quality of Life: Make pip install platform independent  (`#466
   <https://github.com/AllenCellModeling/aicsimageio/pull/466>`_) [Sean
   LeRoy]

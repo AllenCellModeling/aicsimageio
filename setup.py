@@ -110,7 +110,7 @@ requirements = [
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30,<2023.3.15",
-    "xarray>=0.16.1",
+    "xarray>=0.16.1,<2023.02.0",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",
 ]

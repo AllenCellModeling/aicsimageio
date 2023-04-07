@@ -189,14 +189,19 @@ class OmeTiffReader(TiffReader):
         # need to correct channel count if this is a RGB image
         n_samples = ome.images[scene_index].pixels.channels[0].samples_per_pixel
         for d in dims:
+            # SizeC can represent RGB (Samples) data rather
+            # than channel data, whether or not this is the case depends
+            # on what the SamplesPerPixel are for the channel
             if d == "C" and n_samples is not None and n_samples > 1:
                 count = len(ome.images[scene_index].pixels.channels)
+            elif d == "S" and n_samples is not None and n_samples > 1:
+                count = n_samples
             else:
                 count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             ome_shape.append(count)
 
         # Check for num samples and expand dims if greater than 1
-        if n_samples is not None and n_samples > 1:
+        if n_samples is not None and n_samples > 1 and "S" not in dims:
             # Append to the end, i.e. the last dimension
             dims.append("S")
             ome_shape.append(n_samples)

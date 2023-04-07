@@ -635,6 +635,21 @@ def get_dims_and_coords_from_ome(
     # and reversing it because OME store order vs use order is :shrug:
     dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
+    # The Samples dimension can be extracted from the OME data by
+    # looking at the SamplesPerPixel defined per channel
+    if "C" in dims and "S" not in dims:
+        n_samples = scene_meta.pixels.channels[0].samples_per_pixel
+        if n_samples is not None and n_samples > 1:
+            temp_dims: List[str] = []
+            for dim in dims:
+                # SamplesPerPixel is defined per channel so inserting it after
+                # we encounter the channel dimension seems appropriate
+                temp_dims.append(dim)
+                if dim == "C":
+                    temp_dims.append("S")
+
+            dims = temp_dims
+
     # Get coordinate planes
     coords: Dict[str, Union[List[str], np.ndarray]] = {}
 

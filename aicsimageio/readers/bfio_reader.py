@@ -65,7 +65,7 @@ class BfioReader(Reader):
     ) -> xr.DataArray:
 
         # Unpack dims and coords from OME
-        _, coords = metadata_utils.get_dims_and_coords_from_ome(
+        coords = metadata_utils.get_coords_from_ome(
             ome=self._rdr.metadata,
             scene_index=0,
         )

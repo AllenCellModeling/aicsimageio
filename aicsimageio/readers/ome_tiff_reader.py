@@ -9,15 +9,19 @@ from urllib.error import URLError
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
-from ome_types import from_xml
-from ome_types.model.ome import OME
+from ome_types import OME, from_xml
 from pydantic.error_wrappers import ValidationError
 from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
 from xmlschema import XMLSchemaValidationError
 from xmlschema.exceptions import XMLSchemaValueError
 
 from .. import constants, exceptions, transforms, types
-from ..dimensions import DEFAULT_CHUNK_DIMS, DEFAULT_DIMENSION_ORDER, DimensionNames
+from ..dimensions import (
+    DEFAULT_CHUNK_DIMS,
+    DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+    DimensionNames,
+)
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -118,6 +122,38 @@ class OmeTiffReader(TiffReader):
             log.debug(f"Unhandled exception: {e}")
             return False
 
+    @staticmethod
+    def _guess_ome_dim_order(tiff: TiffFile, ome: OME, scene_index: int) -> List[str]:
+        """
+        Guess the dimension order based on OME metadata and actual TIFF data.
+
+        Parameters
+        -------
+        tiff: TiffFile
+            A constructed TIFF object to retrieve data from.
+        ome: OME
+            A constructed OME object to retrieve data from.
+        scene_index: int
+            The current operating scene index to pull metadata from.
+
+        Returns
+        -------
+        dims: List[str]
+            Educated guess of the dimension order for the file
+        """
+        dims_from_ome = metadata_utils.get_dims_from_ome(ome, scene_index)
+
+        dims_from_tiff_axes = list(tiff.series[scene_index].axes)
+
+        # Adjust the guess of what the dimensions are based on the combined
+        # information from the tiff axes and the OME metadata.
+        # Necessary since while OME metadata should be source of truth, it
+        # does not provide enough data to guess which dimension is Samples
+        # for RGB files
+        dims = [dim for dim in dims_from_ome if dim not in dims_from_tiff_axes]
+        dims += [dim for dim in dims_from_tiff_axes if dim in dims_from_ome]
+        return dims
+
     def __init__(
         self,
         image: types.PathLike,
@@ -200,12 +236,6 @@ class OmeTiffReader(TiffReader):
                 count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             ome_shape.append(count)
 
-        # Check for num samples and expand dims if greater than 1
-        if n_samples is not None and n_samples > 1 and "S" not in dims:
-            # Append to the end, i.e. the last dimension
-            dims.append("S")
-            ome_shape.append(n_samples)
-
         # The file may not have all the data but OME requires certain dimensions
         # expand to fill
         expand_dim_ops: List[Optional[slice]] = []
@@ -237,7 +267,7 @@ class OmeTiffReader(TiffReader):
 
         # Always order array
         if DimensionNames.Samples in dims:
-            out_order = f"{DEFAULT_DIMENSION_ORDER}{DimensionNames.Samples}"
+            out_order = DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
         else:
             out_order = DEFAULT_DIMENSION_ORDER
 
@@ -282,10 +312,15 @@ class OmeTiffReader(TiffReader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
-                # Unpack dims and coords from OME
-                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
+                # Unpack coords from OME
+                coords = metadata_utils.get_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
+                )
+
+                # Guess the dim order based on metadata and actual tiff data
+                dims = OmeTiffReader._guess_ome_dim_order(
+                    tiff, self._ome, self.current_scene_index
                 )
 
                 # Grab the tifffile axes to use for dask array construction
@@ -324,10 +359,15 @@ class OmeTiffReader(TiffReader):
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
-                # Unpack dims and coords from OME
-                dims, coords = metadata_utils.get_dims_and_coords_from_ome(
+                # Unpack coords from OME
+                coords = metadata_utils.get_coords_from_ome(
                     ome=self._ome,
                     scene_index=self.current_scene_index,
+                )
+
+                # Guess the dim order based on metadata and actual tiff data
+                dims = OmeTiffReader._guess_ome_dim_order(
+                    tiff, self._ome, self.current_scene_index
                 )
 
                 # Read image into memory

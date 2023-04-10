@@ -920,8 +920,6 @@ class CziReader(Reader):
     def get_mosaic_tile_position(
         self,
         mosaic_tile_index: int,
-        T: Optional[int] = 0,
-        C: Optional[int] = 0,
         **kwargs: int,
     ) -> Tuple[int, int]:
         """
@@ -931,19 +929,13 @@ class CziReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
-        T: Optional[int] default 0
-            T ("time") dimension index. Defaults to 0 to avoid reading massive image
-            stack into memory in the simple case where the mosaic positions are the
-            same for each timepoint (or otherwise doesn't matter)
-        C: Optional[int] default 0
-            C ("channel") dimension index. Defaults to 0 to avoid reading massive image
-            stack into memory in the simple case where the mosaic positions are the
-            same for each channel (or otherwise doesn't matter)
         kwargs: int
             The keywords below allow you to specify the dimensions that you wish
             to match. If you under-specify the constraints you can easily
             end up with a massive image stack.
                        Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -958,6 +950,11 @@ class CziReader(Reader):
             The image has no mosaic dimension available.
         IndexError
             No matching mosaic tile index found.
+
+        Notes
+        -----
+        Defaults T and C dimensions to 0 if present as dimensions in image
+        to avoid reading in massive image stack for large files.
         """
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
@@ -965,7 +962,15 @@ class CziReader(Reader):
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
+            # Default T and C dimensions to 0 to improve
+            # worst case read time for large files **only**
+            # when those dimensions are present on the image.
+            if "T" not in kwargs and "T" in self.dims.order:
+                kwargs["T"] = 0
+            if "C" not in kwargs and "C" in self.dims.order:
+                kwargs["C"] = 0
+
             bbox = czi.get_mosaic_tile_bounding_box(
-                M=mosaic_tile_index, S=self.current_scene_index, T=T, C=C, **kwargs
+                M=mosaic_tile_index, S=self.current_scene_index, **kwargs
             )
             return bbox.y, bbox.x

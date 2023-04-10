@@ -750,7 +750,9 @@ class LifReader(Reader):
 
         return self._px_sizes
 
-    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(
+        self, mosaic_tile_index: int, **kwargs: Any
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
         Not equivalent to readlif's notion of mosaic_position.
@@ -759,6 +761,13 @@ class LifReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: Any
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -776,6 +785,13 @@ class LifReader(Reader):
         """
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        if kwargs:
+            raise NotImplementedError(
+                "Selecting mosaic positions by dimensions is not supporting "
+                + "by LifReader. Retrieve a specific mosaic position via the "
+                + "mosaic tile index (M) by using .get_mosaic_tile_position() instead."
+            )
 
         # LIFs are packed from bottom right to top left
         # To counter: subtract 1 + M from list index to get from back of list

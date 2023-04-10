@@ -878,16 +878,22 @@ class AICSImage(ImageContainer):
         return self.reader.physical_pixel_sizes
 
     def get_mosaic_tile_position(
-        self, mosaic_tile_index: int
-    ) -> Optional[Tuple[int, int]]:
+        self, mosaic_tile_index: int, **kwargs: Any
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
-        Returns None if the image is not a mosaic.
 
         Parameters
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: Any
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -895,8 +901,15 @@ class AICSImage(ImageContainer):
             The Y coordinate for the tile position.
         left: int
             The X coordinate for the tile position.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        IndexError
+            No matching mosaic tile index found.
         """
-        return self.reader.get_mosaic_tile_position(mosaic_tile_index)
+        return self.reader.get_mosaic_tile_position(mosaic_tile_index, **kwargs)
 
     @property
     def mosaic_tile_dims(self) -> Optional[dimensions.Dimensions]:

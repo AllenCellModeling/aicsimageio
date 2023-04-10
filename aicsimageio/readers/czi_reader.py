@@ -917,7 +917,13 @@ class CziReader(Reader):
 
         return self._px_sizes
 
-    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(
+        self,
+        mosaic_tile_index: int,
+        T: Optional[int] = 0,
+        C: Optional[int] = 0,
+        **kwargs: Any,
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
 
@@ -925,6 +931,19 @@ class CziReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        T: Optional[int] default 0
+            T ("time") dimension index. Defaults to 0 to avoid reading massive image
+            stack into memory in the simple case where the mosaic positions are the
+            same for each timepoint (or otherwise doesn't matter)
+        C: Optional[int] default 0
+            C ("channel") dimension index. Defaults to 0 to avoid reading massive image
+            stack into memory in the simple case where the mosaic positions are the
+            same for each channel (or otherwise doesn't matter)
+        kwargs: Any
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
 
         Returns
         -------
@@ -943,10 +962,10 @@ class CziReader(Reader):
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
 
-        # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
-            bboxes = czi.get_all_mosaic_tile_bounding_boxes(S=self.current_scene_index)
-            bbox = list(bboxes.values())[mosaic_tile_index]
+            bbox = czi.get_mosaic_tile_bounding_box(
+                M=mosaic_tile_index, S=self.current_scene_index, T=T, C=C, **kwargs
+            )
             return bbox.y, bbox.x

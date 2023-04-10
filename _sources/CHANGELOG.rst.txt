@@ -53,6 +53,9 @@ Fix
 
 Other
 ~~~~~
+- Restrict xarray version to support py3.8  (`#481
+  <https://github.com/AllenCellModeling/aicsimageio/pull/481>`_) [Sean
+  LeRoy]
 - try to use optimized codepath through ome-types  (`#478
   <https://github.com/AllenCellModeling/aicsimageio/pull/478>`_)
   [toloudis]

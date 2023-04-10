@@ -974,3 +974,39 @@ class CziReader(Reader):
                 M=mosaic_tile_index, S=self.current_scene_index, **kwargs
             )
             return bbox.y, bbox.x
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        """
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        with self._fs.open(self._path) as open_resource:
+            czi = CziFile(open_resource.f)
+
+            bboxes = czi.get_all_mosaic_tile_bounding_boxes(
+                S=self.current_scene_index, **kwargs
+            )
+            return [(bbox.y, bbox.x) for bbox in bboxes]

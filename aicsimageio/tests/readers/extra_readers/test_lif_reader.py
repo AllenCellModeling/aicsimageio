@@ -553,9 +553,10 @@ def test_multi_tile_position_retrieval(
     mosaic_positions = img.get_mosaic_tile_positions(**additional_kwargs)
     assert len(mosaic_positions) == num_mosaic_position_expected
     for m_index, mosaic_position in enumerate(mosaic_positions):
+        M = m_index + additional_kwargs.get("M", 0)
         assert mosaic_position == img.get_mosaic_tile_position(
-            m_index
-        ), f"Bad comparision at m_index {m_index}"
+            M
+        ), f"Bad comparison at M={M}"
 
 
 @pytest.mark.parametrize(

@@ -66,6 +66,7 @@ test_requirements = [
     "s3fs[boto3]>=2022.11.0",
     "tox>=3.27.1",
     "bioformats_jar",  # to test bioformats
+    "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
     "aicspylibczi>=3.0.5",  # to test czi
 ]

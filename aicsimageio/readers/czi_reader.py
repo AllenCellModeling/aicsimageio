@@ -922,7 +922,7 @@ class CziReader(Reader):
         mosaic_tile_index: int,
         T: Optional[int] = 0,
         C: Optional[int] = 0,
-        **kwargs: Any,
+        **kwargs: int,
     ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
@@ -939,7 +939,7 @@ class CziReader(Reader):
             C ("channel") dimension index. Defaults to 0 to avoid reading massive image
             stack into memory in the simple case where the mosaic positions are the
             same for each channel (or otherwise doesn't matter)
-        kwargs: Any
+        kwargs: int
             The keywords below allow you to specify the dimensions that you wish
             to match. If you under-specify the constraints you can easily
             end up with a massive image stack.

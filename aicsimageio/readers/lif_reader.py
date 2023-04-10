@@ -751,7 +751,7 @@ class LifReader(Reader):
         return self._px_sizes
 
     def get_mosaic_tile_position(
-        self, mosaic_tile_index: int, **kwargs: Any
+        self, mosaic_tile_index: int, **kwargs: int
     ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
@@ -761,7 +761,7 @@ class LifReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
-        kwargs: Any
+        kwargs: int
             The keywords below allow you to specify the dimensions that you wish
             to match. If you under-specify the constraints you can easily
             end up with a massive image stack.

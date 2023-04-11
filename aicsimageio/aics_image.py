@@ -906,8 +906,6 @@ class AICSImage(ImageContainer):
         ------
         UnexpectedShapeError
             The image has no mosaic dimension available.
-        IndexError
-            No matching mosaic tile index found.
         """
         return self.reader.get_mosaic_tile_position(mosaic_tile_index, **kwargs)
 

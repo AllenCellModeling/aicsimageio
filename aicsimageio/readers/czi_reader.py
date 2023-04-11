@@ -948,8 +948,6 @@ class CziReader(Reader):
         ------
         UnexpectedShapeError
             The image has no mosaic dimension available.
-        IndexError
-            No matching mosaic tile index found.
 
         Notes
         -----
@@ -1006,7 +1004,18 @@ class CziReader(Reader):
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
-            bboxes = czi.get_all_mosaic_tile_bounding_boxes(
+            tile_info_to_bboxes = czi.get_all_mosaic_tile_bounding_boxes(
                 S=self.current_scene_index, **kwargs
             )
-            return [(bbox.y, bbox.x) for bbox in bboxes]
+
+            # Convert dictionary of tile info mappings to
+            # a list of bounding boxes sorted according to their
+            # respective M indexes
+            m_indexes_to_mosaic_positions = {
+                tile_info.m_index: (bbox.y, bbox.x)
+                for tile_info, bbox in tile_info_to_bboxes.items()
+            }
+            return [
+                m_indexes_to_mosaic_positions[m_index]
+                for m_index in sorted(m_indexes_to_mosaic_positions.keys())
+            ]

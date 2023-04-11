@@ -762,13 +762,13 @@ def test_mosaic_passthrough(
 @pytest.mark.parametrize(
     "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
     [
-        ("OverViewScan.czi", "TR1", 10, {}),
+        ("OverViewScan.czi", "TR1", 120, {}),
         ("OverViewScan.czi", "TR1", 1, {"M": 3}),
         pytest.param(
-            "tiled.lif",
-            "TileScan_002",
-            -1,
-            {"M": 3},
+            "OverViewScan.czi",
+            "TR1",
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
             marks=pytest.mark.xfail(raises=NotImplementedError),
         ),
     ],

@@ -529,8 +529,8 @@ def test_mosaic_passthrough(
         pytest.param(
             "tiled.lif",
             "TileScan_002",
-            -1,
-            {"M": 3},
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
             marks=pytest.mark.xfail(raises=NotImplementedError),
         ),
     ],

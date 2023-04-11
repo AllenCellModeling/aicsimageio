@@ -143,6 +143,10 @@ class OmeTiffReader(TiffReader):
         """
         dims_from_ome = metadata_utils.get_dims_from_ome(ome, scene_index)
 
+        # Assumes the dimensions coming from here are align semantically
+        # with the dimensions specified in this package. Possible T dimension
+        # is not equivalent to T dimension here. However, any dimensions
+        # not also found in OME will be omitted.
         dims_from_tiff_axes = list(tiff.series[scene_index].axes)
 
         # Adjust the guess of what the dimensions are based on the combined

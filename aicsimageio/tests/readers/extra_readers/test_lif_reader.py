@@ -524,7 +524,7 @@ def test_mosaic_passthrough(
 @pytest.mark.parametrize(
     "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
     [
-        ("tiled.lif", "TileScan_002", 10, {}),
+        ("tiled.lif", "TileScan_002", 165, {}),
         ("tiled.lif", "TileScan_002", 1, {"M": 3}),
         pytest.param(
             "tiled.lif",

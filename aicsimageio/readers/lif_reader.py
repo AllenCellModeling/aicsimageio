@@ -852,12 +852,16 @@ class LifReader(Reader):
                 + "mosaic tile index (M) by using .get_mosaic_tile_position() instead."
             )
 
+        mosaic_positions: List[Tuple[int, int, float, float]] = self._scene_short_info[
+            "mosaic_position"
+        ]
+
         # LIFs are packed from bottom right to top left
         # To counter: reverse the list
-        mosaic_positions = self._scene_short_info["mosaic_position"].reverse()
-        y_dim_length, x_dim_length = self._get_yx_tile_count()
+        mosaic_positions.reverse()
 
         adjusted_mosaic_positions: List[Tuple[int, int]] = []
+        y_dim_length, x_dim_length = self._get_yx_tile_count()
         for x, y, *_ in mosaic_positions:
             if self.is_x_and_y_swapped:
                 x, y = y, x

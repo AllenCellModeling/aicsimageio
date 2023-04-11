@@ -38,8 +38,8 @@ format_libs: Dict[str, List[str]] = {
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
-    #     "fsspec>=2022.7.1",
-    #     "aicspylibczi>=3.0.5",
+    #     "fsspec>=2022.8.0",
+    #     "aicspylibczi>=3.1.0",
     # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons

@@ -6,7 +6,7 @@ import os
 import re
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 from xml.etree import ElementTree as ET
 
 import lxml.etree
@@ -606,11 +606,9 @@ def bioformats_ome(path: PathLike, original_meta: bool = False) -> OME:
         return lf.ome_metadata
 
 
-def get_dims_and_coords_from_ome(
-    ome: OME, scene_index: int
-) -> Tuple[List[str], Dict[str, Union[List[Any], Union[ArrayLike, Any]]]]:
+def get_dims_from_ome(ome: OME, scene_index: int) -> List[str]:
     """
-    Process the OME metadata to retrieve the dimension names and coordinate planes.
+    Process the OME metadata to retrieve the dimension names.
 
     Parameters
     ----------
@@ -623,6 +621,38 @@ def get_dims_and_coords_from_ome(
     -------
     dims: List[str]
         The dimension names pulled from the OME metadata.
+    """
+    # Select scene
+    scene_meta = ome.images[scene_index]
+
+    # Create dimension order by getting the current scene's dimension order
+    # and reversing it because OME store order vs use order is :shrug:
+    dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
+
+    # Check for num samples and expand dims if greater than 1
+    n_samples = scene_meta.pixels.channels[0].samples_per_pixel
+    if n_samples is not None and n_samples > 1 and "S" not in dims:
+        # Append to the end, i.e. the last dimension
+        dims.append("S")
+
+    return dims
+
+
+def get_coords_from_ome(
+    ome: OME, scene_index: int
+) -> Dict[str, Union[List[Any], Union[ArrayLike, Any]]]:
+    """
+    Process the OME metadata to retrieve the coordinate planes.
+
+    Parameters
+    ----------
+    ome: OME
+        A constructed OME object to retrieve data from.
+    scene_index: int
+        The current operating scene index to pull metadata from.
+
+    Returns
+    -------
     coords: Dict[str, Union[List[Any], Union[types.ArrayLike, Any]]]
         The coordinate planes / data for each dimension.
     """
@@ -630,10 +660,6 @@ def get_dims_and_coords_from_ome(
 
     # Select scene
     scene_meta = ome.images[scene_index]
-
-    # Create dimension order by getting the current scene's dimension order
-    # and reversing it because OME store order vs use order is :shrug:
-    dims = [d for d in scene_meta.pixels.dimension_order.value[::-1]]
 
     # Get coordinate planes
     coords: Dict[str, Union[List[str], np.ndarray]] = {}
@@ -681,7 +707,7 @@ def get_dims_and_coords_from_ome(
             0, scene_meta.pixels.size_x, scene_meta.pixels.physical_size_x
         )
 
-    return dims, coords
+    return coords
 
 
 def physical_pixel_sizes(ome: OME, scene: int = 0) -> PhysicalPixelSizes:

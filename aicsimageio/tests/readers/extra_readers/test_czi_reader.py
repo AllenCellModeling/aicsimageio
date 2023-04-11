@@ -9,6 +9,7 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
 from aicspylibczi import CziFile
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
@@ -290,7 +291,9 @@ def test_czi_reader_mosaic_stitching(
             (440, 544),
             999,
             None,
-            marks=pytest.mark.xfail(raises=IndexError),
+            marks=pytest.mark.xfail(
+                raises=PylibCZI_CDimCoordinatesOverspecifiedException
+            ),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.czi",

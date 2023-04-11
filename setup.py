@@ -31,7 +31,7 @@ with open("README.md") as readme_file:
 # "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
     "base-imageio": [
-        "imageio[ffmpeg]>=2.9.0,<2.11.0",
+        "imageio[ffmpeg]>=2.11.0",
         "Pillow>=8.2.0,!=8.3.0,<9",
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
@@ -105,12 +105,12 @@ requirements = [
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
-    "ome-types>=0.2",
+    "ome-types>=0.3.3",
     "ome-zarr>=0.6.1",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30,<2023.3.15",
-    "xarray>=0.16.1",
+    "xarray>=0.16.1,<2023.02.0",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",
 ]
@@ -170,6 +170,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.9.4",
+    version="4.10.0",
     zip_safe=False,
 )

@@ -158,6 +158,8 @@ class DefaultReader(Reader):
             return f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
         elif len(shape) == 3:
             # Handle greyscale timeseries
+            # If the last dimension is greater than 4 it is unlikely to be
+            # representing a samples dimension
             if shape[-1] > 4:
                 return (
                     f"{DimensionNames.Time}"
@@ -169,7 +171,9 @@ class DefaultReader(Reader):
                 f"{DimensionNames.SpatialY}{DimensionNames.SpatialX}"
                 f"{DimensionNames.Samples}"
             )
-        elif len(shape) == 4:
+        # If the last dimension is greater than 4 it is unlikely to be
+        # representing a samples dimension
+        elif len(shape) == 4 and shape[-1] <= 4:
             return (
                 f"{DimensionNames.Time}{DimensionNames.SpatialY}"
                 f"{DimensionNames.SpatialX}{DimensionNames.Samples}"

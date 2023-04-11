@@ -159,6 +159,14 @@ class CziReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
+        """Note: scenes with no name (`None`) will be renamed to
+        "filename-<scene index>" to prevent ambiguity. Similarly, scenes with same
+        names are automatically appended with occurrence number to distinguish
+        between the two.
+
+        Returns:
+            Tuple[str, ...]: Scene names/id
+        """
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource.f)
@@ -166,16 +174,9 @@ class CziReader(Reader):
                 meta_scenes = czi.meta.findall(xpath_str)
                 scene_names: List[str] = []
 
-                # Some "scenes" may have the same name but each scene has a sub-scene
-                # "Shape" with a name.
-                #
-                # An example of this is where someone images a 96 well plate with each
-                # well being it's own scene but they name every scene the same value.
-                # The sub-scene "Shape" elements have actual names of each well.
-                #
-                # If we didn't do this, the produced list would have 96 of the same
-                # string name making it impossible to switch scenes.
-                for meta_scene in meta_scenes:
+                # mapping of scene name to occurrences, indicating duplication.
+                scene_name_frequency = {}
+                for scene_idx, meta_scene in enumerate(meta_scenes):
                     shape = meta_scene.find("Shape")
                     if shape is not None:
                         shape_name = shape.get("Name")
@@ -183,6 +184,27 @@ class CziReader(Reader):
                         combined_scene_name = f"{scene_name}-{shape_name}"
                     else:
                         combined_scene_name = meta_scene.get("Name")
+                        # Some scene names can be unpopulated, for those we should fill
+                        # with filename-idx
+                        if combined_scene_name is None:
+                            fname_prefix = Path(self._path).stem
+                            combined_scene_name = f"{fname_prefix}-{scene_idx}"
+                        # Check for duplicated names
+                        # first encounter with a duplicate modify original scene name
+                        # to reflect its new duplicate status
+                        if combined_scene_name not in scene_name_frequency:
+                            scene_name_frequency[combined_scene_name] = [scene_idx, 1]
+                        else:
+                            if scene_name_frequency[combined_scene_name][1] == 1:
+                                scene_names[
+                                    scene_name_frequency[combined_scene_name][0]
+                                ] += "-1"
+
+                            scene_name_frequency[combined_scene_name][1] += 1
+
+                            combined_scene_name += (
+                                f"-{scene_name_frequency[combined_scene_name][1]}"
+                            )
 
                     scene_names.append(combined_scene_name)
 

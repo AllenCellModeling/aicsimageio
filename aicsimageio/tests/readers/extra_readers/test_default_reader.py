@@ -269,7 +269,7 @@ def test_set_coords(
             DefaultReader,
             {},
             dimensions.DEFAULT_DIMENSION_ORDER,
-            (390, 1, 1, 233, 345),
+            (1, 6, 65, 233, 345),
         ),
     ],
 )

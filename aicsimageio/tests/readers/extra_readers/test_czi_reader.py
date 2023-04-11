@@ -5,9 +5,12 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any, List, Optional, Tuple, Union
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from aicspylibczi import CziFile
+from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
@@ -19,6 +22,7 @@ from ...image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
     run_multi_scene_image_read_checks,
+    run_no_scene_name_image_read_checks,
 )
 
 
@@ -535,6 +539,98 @@ def test_multi_scene_aicsimage(
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.dtype(np.uint16),
     )
+
+
+@pytest.mark.parametrize(
+    "filename, " "first_scene_id, " "second_scene_id, ",
+    [
+        (
+            "NoSceneNames.czi",
+            "NoSceneNames-0",
+            "NoSceneNames-1",
+        ),
+    ],
+)
+def test_no_scene_name_aicsimage(
+    filename: str,
+    first_scene_id: str,
+    second_scene_id: str,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_no_scene_name_image_read_checks(
+        ImageContainer=AICSImage,
+        image=uri,
+        first_scene_id=first_scene_id,
+        first_scene_dtype=np.dtype(np.uint16),
+        second_scene_id=second_scene_id,
+        second_scene_dtype=np.dtype(np.uint16),
+    )
+
+
+@pytest.mark.parametrize(
+    "orig_scene_name, " "corrected_scene_name, ",
+    [
+        (
+            ("a", "a", "a"),
+            ("a-1", "a-2", "a-3"),
+        ),
+        (
+            ("a", "a", "b"),
+            ("a-1", "a-2", "b"),
+        ),
+        (
+            ("a", "b", "b", "a"),
+            ("a-1", "b-1", "b-2", "a-2"),
+        ),
+        (
+            ("a", None, "a", None),
+            ("a-1", "test-1", "a-2", "test-3"),
+        ),
+    ],
+)
+@patch("aicsimageio.readers.czi_reader.CziFile", spec=CziFile)
+@patch(
+    "aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs",
+    return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"),
+)
+def test_same_scene_name_aicsimage(
+    mock_pathlike_to_fs: MagicMock,
+    mock_CziFile: MagicMock,
+    orig_scene_name: Tuple[str, ...],
+    corrected_scene_name: Tuple[str, ...],
+) -> None:
+
+    # Mock Metadata
+    root = ET.Element("ImageDocument")
+    metadata = ET.SubElement(root, "Metadata")
+    information = ET.SubElement(metadata, "Information")
+    image = ET.SubElement(information, "Image")
+    dimensions = ET.SubElement(image, "Dimensions")
+    s = ET.SubElement(dimensions, "S")
+    scenes = ET.SubElement(s, "Scenes")
+
+    for n in orig_scene_name:
+        ET.SubElement(scenes, "Scene", {"Name": n})
+
+    mock_CziFile.return_value.meta = root
+    mock_CziFile.return_value.get_dims_shape = lambda: [{} for _ in orig_scene_name]
+
+    # Create Image with mock
+    image_container = AICSImage(None, reader=CziReader)
+
+    # Run Checks
+    # Set scene
+    for i, name in enumerate(corrected_scene_name):
+        image_container.set_scene(i)
+
+        assert image_container.current_scene_index == i
+
+        # Check basics
+        assert image_container.current_scene == image_container.scenes[i]
+        assert image_container.scenes[i] == name
 
 
 @pytest.mark.parametrize(

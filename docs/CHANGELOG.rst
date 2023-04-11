@@ -1,6 +1,288 @@
 Changelog
 =========
 
+v4.10.0 (2023-04-11)
+--------------------
+
+New
+~~~
+- feature/github-action-stale  (`#474
+  <https://github.com/AllenCellModeling/aicsimageio/pull/474>`_)
+  [BrianWhitneyAI]
+- feature/add-physical-pixel-size-to-tiff-reader  (`#456
+  <https://github.com/AllenCellModeling/aicsimageio/pull/456>`_) [Talley
+  Lambert]
+- feature/zarrwriter  (`#381
+  <https://github.com/AllenCellModeling/aicsimageio/pull/381>`_)
+  [toloudis]
+
+Fix
+~~~
+- Bugfix/empty scene name  (`#477
+  <https://github.com/AllenCellModeling/aicsimageio/pull/477>`_)
+  [BrianWhitneyAI, Sean LeRoy, Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * Update
+  aicsimageio/readers/czi_reader.py    Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * more discriptive
+  naming    ---------    Co-authored-by: Lukas Fan (----)
+  <Lukas.Fan@imec.be>, lukas]
+- bugfix: removing 2.11.0 threshold  (`#470
+  <https://github.com/AllenCellModeling/aicsimageio/pull/470>`_)
+  [BrianWhitneyAI]
+- Bugfix: unclear warning for missing 'bfio' install.  (`#471
+  <https://github.com/AllenCellModeling/aicsimageio/pull/471>`_)
+  [BrianWhitneyAI]
+- Bugfix: Upgrade minimum fsspec version  (`#473
+  <https://github.com/AllenCellModeling/aicsimageio/pull/473>`_) [Sean
+  LeRoy]
+- Bugfix: Restrict tifffile version for now  (`#472
+  <https://github.com/AllenCellModeling/aicsimageio/pull/472>`_) [Sean
+  LeRoy]
+- Bugfix: Fix tests not asserting error expected  (`#464
+  <https://github.com/AllenCellModeling/aicsimageio/pull/464>`_) [Sean
+  LeRoy]
+- Bugfix/Docs-README-Mention-mvn/maven-requirement-for-bioformats_jar
+  (`#463 <https://github.com/AllenCellModeling/aicsimageio/pull/463>`_)
+  [Peter Sobolewski]
+- Fix/build fix ometypes validation  (`#461
+  <https://github.com/AllenCellModeling/aicsimageio/pull/461>`_)
+  [toloudis]
+- fix/fix_future_warnings  (`#453
+  <https://github.com/AllenCellModeling/aicsimageio/pull/453>`_)
+  [JasonYu1]
+
+Other
+~~~~~
+- Restrict xarray version to support py3.8  (`#481
+  <https://github.com/AllenCellModeling/aicsimageio/pull/481>`_) [Sean
+  LeRoy]
+- try to use optimized codepath through ome-types  (`#478
+  <https://github.com/AllenCellModeling/aicsimageio/pull/478>`_)
+  [toloudis]
+- Quality of Life: Make pip install platform independent  (`#466
+  <https://github.com/AllenCellModeling/aicsimageio/pull/466>`_) [Sean
+  LeRoy]
+- More descriptive scene index error message.  (`#458
+  <https://github.com/AllenCellModeling/aicsimageio/pull/458>`_) [Philip
+  Garrison]
+
+
+v4.9.4 (2022-12-06)
+-------------------
+
+Fix
+~~~
+- bugfix/Fix `UnboundLocalError` in TiffGlobReader  (`#449
+  <https://github.com/AllenCellModeling/aicsimageio/pull/449>`_) [Ian
+  Hunt-Isaak, Madison Swain-Bowden <bowdenm@spu.edu>    * get typing
+  correct    * apply black + fix test typing    Co-authored-by: Madison
+  Swain-Bowden <bowdenm@spu.edu>]
+
+
+v4.9.3 (2022-11-15)
+-------------------
+
+Fix
+~~~
+- bugfix/handle-tiff-i-dim  (`#445
+  <https://github.com/AllenCellModeling/aicsimageio/pull/445>`_)
+  [toloudis]
+- bugfix/single-dimension-index-requested-in-transform-return  (`#438
+  <https://github.com/AllenCellModeling/aicsimageio/pull/438>`_)
+  [toloudis]
+- fix/position-names-in-nd2-tests  (`#437
+  <https://github.com/AllenCellModeling/aicsimageio/pull/437>`_) [Talley
+  Lambert]
+
+Other
+~~~~~
+- admin/citation-update  (`#440
+  <https://github.com/AllenCellModeling/aicsimageio/pull/440>`_) [Eva
+  Maxfield Brown]
+
+
+v4.9.2 (2022-08-24)
+-------------------
+
+New
+~~~
+- feature/add-physical-pixel-sizes-param-to-array-like  (`#426
+  <https://github.com/AllenCellModeling/aicsimageio/pull/426>`_)
+  [Guilherme Pires, Guilherme Pires]
+
+Fix
+~~~
+- bugfix/convert-dimension-spec-lists-to-slices-when-possible  (`#429
+  <https://github.com/AllenCellModeling/aicsimageio/pull/429>`_)
+  [toloudis]
+- bugfix/czi-scene-selection-for-inconsistent-scenes-regression  (`#432
+  <https://github.com/AllenCellModeling/aicsimageio/pull/432>`_)
+  [toloudis]
+
+Other
+~~~~~
+- Remove CZI extra install that doesn't come with CZI [Eva Maxfield
+  Brown]
+- admin/include-fsspec-dep-for-czi-in-readme  (`#433
+  <https://github.com/AllenCellModeling/aicsimageio/pull/433>`_) [Eva
+  Maxfield Brown]
+
+
+v4.9.1 (2022-08-02)
+-------------------
+
+Fix
+~~~
+- bugfix/fsspec-local-file-opener-cpp-buffer-for-czi  (`#425
+  <https://github.com/AllenCellModeling/aicsimageio/pull/425>`_) [Eva
+  Maxfield Brown]
+- Fix/czireader float32 dtype  (`#423
+  <https://github.com/AllenCellModeling/aicsimageio/pull/423>`_)
+  [toloudis]
+- bugfix/extract-czi-channel-names-more-safely  (`#418
+  <https://github.com/AllenCellModeling/aicsimageio/pull/418>`_)
+  [toloudis]
+- bugfix/czi-scene-indexing  (`#417
+  <https://github.com/AllenCellModeling/aicsimageio/pull/417>`_)
+  [toloudis]
+- bugfix/dynamic-dimension-typing  (`#419
+  <https://github.com/AllenCellModeling/aicsimageio/pull/419>`_) [Eva
+  Maxfield Brown]
+
+Other
+~~~~~
+- admin/ignore-fsspec-2022.7.0  (`#424
+  <https://github.com/AllenCellModeling/aicsimageio/pull/424>`_) [Eva
+  Maxfield Brown]
+- admin/add-fsspec-to-upstream-checks  (`#422
+  <https://github.com/AllenCellModeling/aicsimageio/pull/422>`_) [Eva
+  Maxfield Brown]
+
+
+v4.9.0 (2022-07-19)
+-------------------
+
+New
+~~~
+- feature/image-container  (`#415
+  <https://github.com/AllenCellModeling/aicsimageio/pull/415>`_) [Eva
+  Maxfield Brown]
+- feature/lower-log-level-of-OME-TIFF-read-errors  (`#414
+  <https://github.com/AllenCellModeling/aicsimageio/pull/414>`_) [Eva
+  Maxfield Brown]
+- feature/get-stack  (`#403
+  <https://github.com/AllenCellModeling/aicsimageio/pull/403>`_) [John
+  Russell]
+
+Other
+~~~~~
+- Update names, emails, and meta [evamaxfield]
+
+
+v4.8.0 (2022-05-26)
+-------------------
+
+New
+~~~
+- feature-and-admin/create-aicsimage-objects-with-fs-kwargs-and-remove-
+  need-for-creds  (`#407
+  <https://github.com/AllenCellModeling/aicsimageio/pull/407>`_)
+  [Jackson Maxfield Brown]
+
+Fix
+~~~
+- bugfix/pass-series-index-in-biofile-init  (`#401
+  <https://github.com/AllenCellModeling/aicsimageio/pull/401>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/prepare-bioformats_reader-to-work-with-new-bioformats_jar-based-
+  on-scyjava  (`#402
+  <https://github.com/AllenCellModeling/aicsimageio/pull/402>`_) [Talley
+  Lambert]
+- admin/add-test-upstreams-action  (`#406
+  <https://github.com/AllenCellModeling/aicsimageio/pull/406>`_)
+  [Jackson Maxfield Brown, Matthew Rocklin]
+- admin/ship-mypy-type-annotations-drop-py37-add-py310-manage-test-
+  dependencies-separate-for-each-tox-env  (`#397
+  <https://github.com/AllenCellModeling/aicsimageio/pull/397>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.7.0 (2022-04-19)
+-------------------
+
+New
+~~~
+- feature/tiledtiffreader  (`#387
+  <https://github.com/AllenCellModeling/aicsimageio/pull/387>`_)
+  [Nicholas-Schaub]
+
+Other
+~~~~~
+- Upgrade black version [JacksonMaxfield]
+
+
+v4.6.4 (2022-03-18)
+-------------------
+
+Fix
+~~~
+- bugfix/update-czi-to-ome-xslt-for-channel-id  (`#389
+  <https://github.com/AllenCellModeling/aicsimageio/pull/389>`_)
+  [Griffin Fujioka, Griffin Fujioka]
+
+
+v4.6.3 (2022-03-03)
+-------------------
+
+Fix
+~~~
+- bugfix/add-logic-to-ensure-OME-XML-plane-elements-occur-last  (`#385
+  <https://github.com/AllenCellModeling/aicsimageio/pull/385>`_)
+  [Nicholas-Schaub]
+
+
+v4.6.2 (2022-03-01)
+-------------------
+- admin/update-czi-to-ome-xslt-submodule  (`#382
+  <https://github.com/AllenCellModeling/aicsimageio/pull/382>`_)
+  [Jackson Maxfield Brown]
+
+
+v4.6.1 (2022-03-01)
+-------------------
+
+Fix
+~~~
+- bugfix/czi-physical-size  (`#384
+  <https://github.com/AllenCellModeling/aicsimageio/pull/384>`_)
+  [emay2022]
+
+
+v4.6.0 (2022-02-22)
+-------------------
+
+Fix
+~~~
+- bugfix/more-info-and-help-on-corrupt-file  (`#380
+  <https://github.com/AllenCellModeling/aicsimageio/pull/380>`_)
+  [Jackson Maxfield Brown]
+- bugfix/reader-selection-fixes  (`#367
+  <https://github.com/AllenCellModeling/aicsimageio/pull/367>`_)
+  [Jackson Maxfield Brown]
+
+Other
+~~~~~
+- admin/remove-czi-install-pattern  (`#376
+  <https://github.com/AllenCellModeling/aicsimageio/pull/376>`_)
+  [Jackson Maxfield Brown]
+- admin/bump-nd2-v0.2.0  (`#379
+  <https://github.com/AllenCellModeling/aicsimageio/pull/379>`_) [Talley
+  Lambert]
+
+
 v4.5.2 (2021-12-16)
 -------------------
 - Update XSLT subbmodule  (`#365

@@ -408,7 +408,7 @@ class TiffGlobReader(Reader):
         chunk_sizes = self._get_chunk_sizes(scene_nunique)
 
         unpack_sizes = OrderedDict(
-            [(d, s) for d, s in scene_nunique.iteritems() if d in chunk_sizes.keys()]
+            [(d, s) for d, s in scene_nunique.items() if d in chunk_sizes.keys()]
         )
 
         reshape_sizes = tuple(unpack_sizes.values()) + tuple(

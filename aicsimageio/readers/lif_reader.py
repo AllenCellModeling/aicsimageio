@@ -857,12 +857,10 @@ class LifReader(Reader):
         ]
 
         # LIFs are packed from bottom right to top left
-        # To counter: reverse the list
-        mosaic_positions.reverse()
-
+        # To counter: read the positions in reverse
         adjusted_mosaic_positions: List[Tuple[int, int]] = []
         y_dim_length, x_dim_length = self._get_yx_tile_count()
-        for x, y, *_ in mosaic_positions:
+        for x, y, *_ in reversed(mosaic_positions):
             if self.is_x_and_y_swapped:
                 x, y = y, x
             if self.is_x_flipped:

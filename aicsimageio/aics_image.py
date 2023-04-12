@@ -938,17 +938,23 @@ class AICSImage(ImageContainer):
             Unable to combine M dimension with other dimensions when finding
             tiles matching kwargs
         """
-        if "M" in kwargs:
+        if dimensions.DimensionNames.MosaicTile in kwargs:
             # Don't support getting positions by M + another dim
             if len(kwargs) != 1:
-                other_keys = {key for key in kwargs if key != "M"}
+                other_keys = {
+                    key for key in kwargs if key != dimensions.DimensionNames.MosaicTile
+                }
                 raise NotImplementedError(
                     "Unable to determine appropriate position using mosaic tile "
                     + "index (M) combined with other dimensions "
                     + f"(including {other_keys})"
                 )
 
-            return [self.get_mosaic_tile_position(kwargs["M"])]
+            return [
+                self.get_mosaic_tile_position(
+                    kwargs[dimensions.DimensionNames.MosaicTile]
+                )
+            ]
 
         return self.reader.get_mosaic_tile_positions(**kwargs)
 

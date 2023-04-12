@@ -960,13 +960,12 @@ class CziReader(Reader):
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
-            # Default T and C dimensions to 0 to improve
+            # Default Channel and Time dimensions to 0 to improve
             # worst case read time for large files **only**
             # when those dimensions are present on the image.
-            if "T" not in kwargs and "T" in self.dims.order:
-                kwargs["T"] = 0
-            if "C" not in kwargs and "C" in self.dims.order:
-                kwargs["C"] = 0
+            for dimension_name in [DimensionNames.Channel, DimensionNames.Time]:
+                if dimension_name not in kwargs and dimension_name in self.dims.order:
+                    kwargs[dimension_name] = 0
 
             bbox = czi.get_mosaic_tile_bounding_box(
                 M=mosaic_tile_index, S=self.current_scene_index, **kwargs

@@ -1,6 +1,15 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- Extract S dim from OME data  (`#483
+  <https://github.com/AllenCellModeling/aicsimageio/pull/483>`_)
+  [Madison Swain-Bowden <bowdenm@spu.edu>    * Comment on possible
+  dimension mismatch    ---------    Co-authored-by: Madison Swain-
+  Bowden <bowdenm@spu.edu>, Sean LeRoy]
+
+
 v4.10.0 (2023-04-11)
 --------------------
 

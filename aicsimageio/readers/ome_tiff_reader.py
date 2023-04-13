@@ -32,6 +32,7 @@ from .tiff_reader import TiffReader
 log = logging.getLogger(__name__)
 
 ###############################################################################
+MMSTACK_SCENE_DIMENSION = "R"
 
 
 class OmeTiffReader(TiffReader):
@@ -147,7 +148,7 @@ class OmeTiffReader(TiffReader):
         # with the dimensions specified in this package. Possible T dimension
         # is not equivalent to T dimension here. However, any dimensions
         # not also found in OME will be omitted.
-        dims_from_tiff_axes = list(tiff.series[scene_index].axes)
+        dims_from_tiff_axes = list(TiffReader._get_tiff_scene(tiff, scene_index).axes)
 
         # Adjust the guess of what the dimensions are based on the combined
         # information from the tiff axes and the OME metadata.
@@ -155,7 +156,15 @@ class OmeTiffReader(TiffReader):
         # does not provide enough data to guess which dimension is Samples
         # for RGB files
         dims = [dim for dim in dims_from_ome if dim not in dims_from_tiff_axes]
-        dims += [dim for dim in dims_from_tiff_axes if dim in dims_from_ome]
+        dims += [
+            dim
+            for dim in dims_from_tiff_axes
+            # if R is present in dims assume R represents positons/scenes
+            # due to how tiff file uses mmstack parser for micromanager files.
+            # This will help with data reshape to avoid scene as dim.
+            if dim in dims_from_ome
+            or (tiff.is_mmstack and dim == MMSTACK_SCENE_DIMENSION)
+        ]
         return dims
 
     def __init__(
@@ -237,6 +246,12 @@ class OmeTiffReader(TiffReader):
                 count = len(ome.images[scene_index].pixels.channels)
             elif d == "S" and has_multiple_samples:
                 count = n_samples
+            # See usage in _guess_dim_order.
+            # if R is present in dims assume R represents positons/scenes
+            # due to how tiff file uses mmstack parser for micromanager files.
+            # This will help with data reshape to avoid scene as dim.
+            elif d == MMSTACK_SCENE_DIMENSION:
+                count = len(ome.images)
             else:
                 count = getattr(ome.images[scene_index].pixels, f"size_{d.lower()}")
             ome_shape.append(count)
@@ -276,11 +291,20 @@ class OmeTiffReader(TiffReader):
         else:
             out_order = DEFAULT_DIMENSION_ORDER
 
+        kwargs = {}
+        # TODO: create a constant for R
+        # if R is present in dims assume R represents positons/scenes
+        # due to how tiff file uses mmstack parser for micromanager files.
+        # This will help with data reshape to avoid scene as dim.
+        if MMSTACK_SCENE_DIMENSION in dims:
+            kwargs[MMSTACK_SCENE_DIMENSION] = self.current_scene_index
+
         # Transform into order
         image_data = transforms.reshape_data(
             image_data,
             "".join(dims),
             out_order,
+            **kwargs,
         )
 
         # Reset dims after transform
@@ -331,7 +355,9 @@ class OmeTiffReader(TiffReader):
                 # Grab the tifffile axes to use for dask array construction
                 # If any of the non-"standard" dims are present
                 # they will be filtered out during later reshape data calls
-                strictly_read_dims = list(tiff.series[self.current_scene_index].axes)
+                strictly_read_dims = list(
+                    TiffReader._get_tiff_scene(tiff, self.current_scene_index).axes
+                )
 
                 # Create the delayed dask array
                 image_data = self._create_dask_array(tiff, strictly_read_dims)
@@ -376,7 +402,9 @@ class OmeTiffReader(TiffReader):
                 )
 
                 # Read image into memory
-                image_data = tiff.series[self.current_scene_index].asarray()
+                image_data = TiffReader._get_tiff_scene(
+                    tiff, self.current_scene_index
+                ).asarray()
 
                 return self._general_data_array_constructor(
                     image_data,

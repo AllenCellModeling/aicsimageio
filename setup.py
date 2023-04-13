@@ -55,7 +55,6 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "codecov>=2.1.4",
     "dask[array,distributed]>=2021.4.1,!=2022.5.1",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",

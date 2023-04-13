@@ -369,7 +369,7 @@ class CziReader(Reader):
 
                 # If the dim was provided in the read dims
                 # we know a single plane for that dimension was requested so remove it
-                if dim in read_dims or dim is CZI_BLOCK_DIM_CHAR:
+                if dim in read_dims or dim == CZI_BLOCK_DIM_CHAR:
                     ops.append(0)
 
                 # Otherwise just read the full slice

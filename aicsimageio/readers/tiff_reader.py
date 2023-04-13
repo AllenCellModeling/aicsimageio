@@ -9,7 +9,7 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TIFF, TiffFile, TiffFileError, imread
+from tifffile import TIFF, TiffFile, TiffFileError, TiffPageSeries, imread
 from tifffile.tifffile import TiffTags
 
 from .. import constants, exceptions, types
@@ -131,7 +131,7 @@ class TiffReader(Reader):
                     # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
                         metadata_utils.generate_ome_image_id(i)
-                        for i in range(len(tiff.series))
+                        for i in range(TiffReader._get_number_of_scenes(tiff))
                     )
 
         return self._scenes
@@ -197,7 +197,9 @@ class TiffReader(Reader):
                 return arr[retrieve_indices].compute(scheduler="synchronous")
 
     def _get_tiff_tags(self, tiff: TiffFile, process: bool = True) -> TiffTags:
-        unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
+        unprocessed_tags = (
+            TiffReader._get_tiff_scene(tiff, self.current_scene_index).pages[0].tags
+        )
         if not process:
             return unprocessed_tags
 
@@ -238,7 +240,7 @@ class TiffReader(Reader):
         return "".join(best_guess)
 
     def _guess_tiff_dim_order(self, tiff: TiffFile) -> List[str]:
-        scene = tiff.series[self.current_scene_index]
+        scene = TiffReader._get_tiff_scene(tiff, self.current_scene_index)
         dims_from_meta = scene.pages.axes
 
         # If all dims are known, simply return as list
@@ -358,7 +360,7 @@ class TiffReader(Reader):
         self.chunk_dims = [d.upper() for d in self.chunk_dims]
 
         # Construct delayed dask array
-        selected_scene = tiff.series[self.current_scene_index]
+        selected_scene = TiffReader._get_tiff_scene(tiff, self.current_scene_index)
         selected_scene_dims = "".join(selected_scene_dims_list)
 
         # Raise invalid dims error
@@ -518,7 +520,9 @@ class TiffReader(Reader):
                 dims = self._get_dims_for_scene(tiff)
 
                 # Read image into memory
-                image_data = tiff.series[self.current_scene_index].asarray()
+                image_data = TiffReader._get_tiff_scene(
+                    tiff, self.current_scene_index
+                ).asarray()
 
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
@@ -552,6 +556,18 @@ class TiffReader(Reader):
                     attrs=attrs,
                 )
 
+    @staticmethod
+    def _get_tiff_scene(tiff: TiffFile, scene_index: int) -> TiffPageSeries:
+        if tiff.is_mmstack:
+            return tiff.series[0]
+        return tiff.series[scene_index]
+
+    @staticmethod
+    def _get_number_of_scenes(tiff: TiffFile) -> int:
+        if tiff.is_mmstack:
+            return tiff.micromanager_metadata["Summary"]["Positions"]
+        return len(tiff.series)
+
 
 _NAME_TO_MICRONS = {
     "pm": 1e-6,
@@ -582,7 +598,7 @@ def _get_pixel_size(
     """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
 
     with TiffFile(path_or_file) as tiff:
-        tags = tiff.series[series_index].pages[0].tags
+        tags = TiffReader._get_tiff_scene(tiff, series_index).pages[0].tags
 
     if tiff.is_imagej:
         unit = tiff.imagej_metadata["unit"]

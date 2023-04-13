@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "aicspylibczi is required for this reader. "
-        "Install with `pip install 'aicspylibczi>=3.0.5' 'fsspec>=2022.7.1'`"
+        "Install with `pip install 'aicspylibczi>=3.1.1' 'fsspec>=2022.7.1'`"
     )
 
 ###############################################################################
@@ -82,7 +82,7 @@ class CziReader(Reader):
 
     Notes
     -----
-    To use this reader, install with: `pip install aicspylibczi>=3.0.5`.
+    To use this reader, install with: `pip install aicspylibczi>=3.1.1`.
     """
 
     @staticmethod

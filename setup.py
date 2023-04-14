@@ -32,14 +32,14 @@ with open("README.md") as readme_file:
 format_libs: Dict[str, List[str]] = {
     "base-imageio": [
         "imageio[ffmpeg]>=2.11.0",
-        "Pillow>=8.2.0,!=8.3.0,<9",
+        "Pillow>=9.3",
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
-    #     "fsspec>=2022.7.1",
-    #     "aicspylibczi>=3.0.5",
+    #     "fsspec>=2022.8.0",
+    #     "aicspylibczi>=3.1.1",
     # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
@@ -55,7 +55,6 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "codecov>=2.1.4",
     "dask[array,distributed]>=2021.4.1,!=2022.5.1",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",
@@ -91,7 +90,7 @@ dev_requirements = [
     "bioformats_jar",  # to test bioformats
     "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
-    "aicspylibczi>=3.0.5",  # to test czi
+    "aicspylibczi>=3.1.1",  # to test czi
 ]
 
 benchmark_requirements = [
@@ -138,6 +137,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "

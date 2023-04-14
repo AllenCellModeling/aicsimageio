@@ -3,6 +3,9 @@ Changelog
 
 (unreleased)
 ------------
+- admin/support-py311  (`#446
+  <https://github.com/AllenCellModeling/aicsimageio/pull/446>`_) [Brian
+  Whitney, Eva Maxfield Brown, dmt, dmt, toloudis, toloudis]
 - Extract S dim from OME data  (`#483
   <https://github.com/AllenCellModeling/aicsimageio/pull/483>`_)
   [Madison Swain-Bowden <bowdenm@spu.edu>    * Comment on possible

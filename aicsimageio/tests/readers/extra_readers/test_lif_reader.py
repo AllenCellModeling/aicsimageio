@@ -131,7 +131,7 @@ def test_sanity_check_correct_indexing(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri, chunk_dims=chunk_dims)
+    reader = LifReader(uri, chunk_dims=chunk_dims, is_x_and_y_swapped=True)
     lif_img = LifFile(uri).get_image(0)
 
     # Pull a chunk from LifReader
@@ -185,7 +185,7 @@ def test_lif_reader_mosaic_stitching(
     stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
 
     # Construct reader
-    tiles_reader = LifReader(tiles_uri)
+    tiles_reader = LifReader(tiles_uri, is_x_and_y_swapped=True)
     stitched_reader = LifReader(stitched_uri)
 
     # Run checks
@@ -262,7 +262,7 @@ def test_lif_reader_mosaic_tile_inspection(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri)
+    reader = LifReader(uri, is_x_and_y_swapped=True)
     reader.set_scene(set_scene)
 
     # Check basics
@@ -287,6 +287,9 @@ def test_lif_reader_mosaic_tile_inspection(
         tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),
         tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),
     ].compute()
+
+    # (sanity-check) Make sure they are the same shape before shaving pixels
+    assert tile_from_position.shape == tile_from_m_index.shape
 
     # Remove the first Y and X pixels
     # The stitched tiles overlap each other by 1px each so this is just
@@ -325,7 +328,7 @@ def test_lif_reader_mosaic_coords(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri)
+    reader = LifReader(uri, is_x_and_y_swapped=True)
 
     # Check tile y and x min max
     np.testing.assert_array_equal(

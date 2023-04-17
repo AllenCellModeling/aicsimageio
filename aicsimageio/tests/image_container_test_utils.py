@@ -132,6 +132,7 @@ def run_image_container_mosaic_checks(
     already_stitched_data = stitched_image_container.data
 
     # Compare
+    assert from_tiles_stitched_data.shape == already_stitched_data.shape
     np.testing.assert_array_equal(from_tiles_stitched_data, already_stitched_data)
 
 

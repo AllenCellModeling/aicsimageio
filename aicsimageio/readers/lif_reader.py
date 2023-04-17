@@ -3,6 +3,7 @@
 
 import xml.etree.ElementTree as ET
 from copy import copy
+from math import floor
 from typing import Any, Dict, Hashable, List, Optional, Tuple, Union
 
 import dask.array as da
@@ -75,6 +76,9 @@ class LifReader(Reader):
         image: types.PathLike,
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
         fs_kwargs: Dict[str, Any] = {},
+        is_x_flipped: bool = False,
+        is_y_flipped: bool = False,
+        is_x_and_y_swapped: bool = True,
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(
@@ -88,6 +92,22 @@ class LifReader(Reader):
             chunk_dims = list(chunk_dims)
 
         self.chunk_dims = chunk_dims
+
+        # If either of these are True, the respective dimension will be
+        # flipped along the other axis.
+        # Ex. if `is_x_flipped = True` in a 4x4 tiled space, coordinate (2, 3)
+        # will be (1, 3)
+        # Ex. where both are true in a 4x4 tiled space, coordinate (1, 0)
+        # will be (2, 3)
+        # from the mosaic_position will be swapped such that field_x represents y
+        # and field_y represents x.
+        self.is_x_flipped = is_x_flipped
+        self.is_y_flipped = is_y_flipped
+
+        # If `is_x_and_y_swapped` is True, the field_x and field_y given
+        # from the mosaic_position will be swapped such that field_x represents y
+        # and field_y represents x.
+        self.is_x_and_y_swapped = is_x_and_y_swapped
 
         # Delayed storage
         self._scene_short_info: Dict[str, Any] = {}
@@ -543,64 +563,86 @@ class LifReader(Reader):
                 attrs={constants.METADATA_UNPROCESSED: meta},
             )
 
-    @staticmethod
     def _stitch_tiles(
+        self,
         data: types.ArrayLike,
         dims: str,
-        ny: int,
-        nx: int,
+        mosaic_position: List[Tuple[int, int, float, float]],
     ) -> types.ArrayLike:
-        # Fill all tiles
-        rows: List[types.ArrayLike] = []
-        for row_i in range(ny):
-            row: List[types.ArrayLike] = []
-            for col_i in range(nx):
-                # Calc m_index
-                m_index = (row_i * nx) + col_i
+        """
+        This uses the mosaic_position of the LIF file to index into the data array,
+        retrieve the tile, transform it, and then recreate the XY plane of the tiles
+        before eventually combining them back together into one array (representing
+        the stitched mosaic image).
 
-                # Get tile by getting all data for specific M
-                tile = transforms.reshape_data(
-                    data,
-                    given_dims=dims,
-                    return_dims=dims.replace(DimensionNames.MosaicTile, ""),
-                    M=m_index,
-                )
+        This stitching expects LIF files to have an extra pixel of overlap between tiles
+        and will shave off those pixels.
 
-                # LIF image stitching has a 1 pixel overlap
-                # Take all pixels except the first _except_ if this is the last tile
-                # in the row (the X dimension)
-                if col_i + 1 < nx:
-                    row.insert(0, tile[:, :, :, :, 1:])
-                else:
-                    row.insert(0, tile)
+        The X and Y coordinates may need to be flipped or swapped, this information is
+        stored in the LIF file.
 
-            # Concat row and append
-            # Take all pixels except the first Y dimension pixel _except_ if this is the
-            # last row
-            np_row = np.concatenate(row, axis=-1)
-            if row_i + 1 < ny:
-                rows.insert(0, np_row[:, :, :, 1:, :])
-            else:
-                rows.insert(0, np_row)
+        Returns
+        -------
+        mosaic image: types.ArrayLike
+            The previously seperate tiles as one stitched image
+        """
+        # Prefill a 2D list representing the XY plane
+        number_of_rows, number_of_columns = self._get_yx_tile_count()
+        xy_plane = np.zeros((number_of_rows, number_of_columns), dtype=object)
 
-        # Concatenate
-        mosaic = np.concatenate(rows, axis=-2)
+        # Iterate over each mosaic_position coordinate using the relative
+        # field position (XY coordinate) given to retrieve each tile from
+        # the data array, transform it, and put back into a 2D (XY) array
+        for tile_index, tile_position, *_ in enumerate(mosaic_position):
+            # Get tile by getting all data for specific M
+            tile = transforms.reshape_data(
+                data,
+                given_dims=dims,
+                return_dims=dims.replace(DimensionNames.MosaicTile, ""),
+                M=tile_index,
+            )
 
-        return mosaic
+            column_index, row_index, *_ = tile_position
+            if self.is_x_and_y_swapped:
+                column_index, row_index = row_index, column_index
+
+            # LIF image stitching has a 1 pixel overlap;
+            # Drop the first pixel unless this is the last tile for that dimension
+            is_last_row = row_index + 1 >= number_of_rows
+            is_last_column = column_index + 1 >= number_of_columns
+            if not is_last_row:
+                tile = tile[:, :, :, 1:, :]
+
+            if not is_last_column:
+                tile = tile[:, :, :, :, 1:]
+
+            # LIF tiles are packed starting from bottom right so
+            # the origin (0, 0) needs to be the bottom right of the grid
+            # i.e. the end of the array hence the negative indexing
+            xy_plane[-(row_index + 1), -(column_index + 1)] = tile
+
+        # LIF files can have their X or Y coordinates flipped or even
+        # swapped, this information is stored in their metadata.
+        if self.is_x_flipped:
+            xy_plane = np.fliplr(xy_plane)
+        if self.is_y_flipped:
+            xy_plane = np.flipud(xy_plane)
+
+        # Concatenate plane into singular mosaic image
+        rows = [np.concatenate(row_as_tiles, axis=-1) for row_as_tiles in xy_plane]
+        return np.concatenate(rows, axis=-2)
 
     def _construct_mosaic_xarray(self, data: types.ArrayLike) -> xr.DataArray:
         # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
             lif = LifFile(open_resource)
             selected_scene = lif.get_image(self.current_scene_index)
-            last_tile_position = selected_scene.info["mosaic_position"][-1]
 
         # Stitch
         stitched = self._stitch_tiles(
             data=data,
             dims=self.dims.order,
-            ny=last_tile_position[0] + 1,
-            nx=last_tile_position[1] + 1,
+            mosaic_position=selected_scene.mosaic_position,
         )
 
         # Copy metadata
@@ -641,6 +683,43 @@ class LifReader(Reader):
             attrs=attrs,
         )
 
+    def _get_yx_tile_count(self) -> Tuple[int, int]:
+        """
+        Get the number of tiles along the Y and X axis respectively.
+
+        Ex. Y = 3, X = 4 would mean the YX plane looks something like:
+        - - - -
+        - - - -
+        - - - -
+        while Y = 3, X = 2 would be:
+        _ _
+        _ _
+        _ _
+
+        Returns
+        -------
+        Y dimension length: int
+            The number of tiles along the Y axis.
+        X dimension length: int
+            The number of tiles along the X axis.
+        """
+        # Determine the length of the x dimension (i.e. number of columns in XY plane)
+        x_dim_length = 1
+        for x, *_ in self._scene_short_info["mosaic_position"]:
+            if x + 1 > x_dim_length:
+                x_dim_length = x + 1
+
+        # The length of the mosaic_position array == X * Y so
+        # Y = (X * Y) / X
+        y_dim_length = floor(
+            len(self._scene_short_info["mosaic_position"]) / x_dim_length
+        )
+
+        if self.is_x_and_y_swapped:
+            y_dim_length, x_dim_length = x_dim_length, y_dim_length
+
+        return y_dim_length, x_dim_length
+
     def _get_stitched_dask_mosaic(self) -> xr.DataArray:
         return self._construct_mosaic_xarray(self.dask_data)
 
@@ -674,6 +753,7 @@ class LifReader(Reader):
     def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
+        Not equivalent to readlif's notion of mosaic_position.
 
         Parameters
         ----------
@@ -699,10 +779,21 @@ class LifReader(Reader):
 
         # LIFs are packed from bottom right to top left
         # To counter: subtract 1 + M from list index to get from back of list
-        index_y, index_x, _, _ = self._scene_short_info["mosaic_position"][
+        index_x, index_y, _, _ = self._scene_short_info["mosaic_position"][
             -(mosaic_tile_index + 1)
         ]
+        y_dim_length, x_dim_length = self._get_yx_tile_count()
 
+        if self.is_x_and_y_swapped:
+            index_x, index_y = index_y, index_x
+        if self.is_x_flipped:
+            index_x = x_dim_length - index_x
+        if self.is_y_flipped:
+            index_y = y_dim_length - index_y
+
+        # Formula: (Dim position * Tile dim length) - Dim position
+        # where the "- Dim position" is to account for shaving a pixel off
+        # of each tile to account for overlap
         return (
             (index_y * self.dims.Y) - index_y,
             (index_x * self.dims.X) - index_x,

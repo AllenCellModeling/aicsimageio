@@ -270,56 +270,6 @@ class OmeTiffReader(TiffReader):
         # Apply operators to dask array
         return image_data[tuple(expand_dim_ops)]
 
-    def _general_data_array_constructor(
-        self,
-        image_data: types.ArrayLike,
-        dims: List[str],
-        coords: Dict[str, Union[List[Any], types.ArrayLike]],
-        tiff_tags: TiffTags,
-    ) -> xr.DataArray:
-        # Expand the image data to match the OME empty dimensions
-        image_data = self._expand_dims_to_match_ome(
-            image_data=image_data,
-            ome=self._ome,
-            dims=dims,
-            scene_index=self.current_scene_index,
-        )
-
-        # Always order array
-        if DimensionNames.Samples in dims:
-            out_order = DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
-        else:
-            out_order = DEFAULT_DIMENSION_ORDER
-
-        kwargs = {}
-        # TODO: create a constant for R
-        # if R is present in dims assume R represents positons/scenes
-        # due to how tiff file uses mmstack parser for micromanager files.
-        # This will help with data reshape to avoid scene as dim.
-        if MMSTACK_SCENE_DIMENSION in dims:
-            kwargs[MMSTACK_SCENE_DIMENSION] = self.current_scene_index
-
-        # Transform into order
-        image_data = transforms.reshape_data(
-            image_data,
-            "".join(dims),
-            out_order,
-            **kwargs,
-        )
-
-        # Reset dims after transform
-        dims = [d for d in out_order]
-
-        return xr.DataArray(
-            image_data,
-            dims=dims,
-            coords=coords,
-            attrs={
-                constants.METADATA_UNPROCESSED: tiff_tags,
-                constants.METADATA_PROCESSED: self._ome,
-            },
-        )
-
     def _read_delayed(self) -> xr.DataArray:
         """
         Construct the delayed xarray DataArray object for the image.
@@ -362,11 +312,22 @@ class OmeTiffReader(TiffReader):
                 # Create the delayed dask array
                 image_data = self._create_dask_array(tiff, strictly_read_dims)
 
+                # Expand the image data to match the OME empty dimensions
+                image_data = self._expand_dims_to_match_ome(
+                    image_data=image_data,
+                    ome=self._ome,
+                    dims=dims,
+                    scene_index=self.current_scene_index,
+                )
+
                 return self._general_data_array_constructor(
                     image_data,
                     dims,
                     coords,
-                    tiff_tags,
+                    attrs = {
+                        constants.METADATA_UNPROCESSED: tiff_tags,
+                        constants.METADATA_PROCESSED: self._ome, 
+                    }
                 )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -406,6 +367,13 @@ class OmeTiffReader(TiffReader):
                     tiff, self.current_scene_index
                 ).asarray()
 
+                # Expand the image data to match the OME empty dimensions
+                image_data = self._expand_dims_to_match_ome(
+                    image_data=image_data,
+                    ome=self._ome,
+                    dims=dims,
+                    scene_index=self.current_scene_index,
+                )
                 return self._general_data_array_constructor(
                     image_data,
                     dims,

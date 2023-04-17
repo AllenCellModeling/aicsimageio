@@ -12,8 +12,14 @@ from fsspec.spec import AbstractFileSystem
 from tifffile import TIFF, TiffFile, TiffFileError, TiffPageSeries, imread
 from tifffile.tifffile import TiffTags
 
-from .. import constants, exceptions, types
-from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
+from .. import constants, exceptions, transforms, types
+from ..dimensions import (
+    DEFAULT_CHUNK_DIMS,
+    DEFAULT_DIMENSION_ORDER,
+    DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
+    REQUIRED_CHUNK_DIMS,
+    DimensionNames,
+)
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
 from ..utils import io_utils
@@ -25,6 +31,7 @@ from .reader import Reader
 # "I" is used to mean a generic image sequence
 UNKNOWN_DIM_CHARS = ["Q", "I"]
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
+MMSTACK_SCENE_DIMENSION = "R"
 
 ###############################################################################
 
@@ -492,6 +499,13 @@ class TiffReader(Reader):
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
+                if tiff.is_mmstack:
+                    return self._general_data_array_constructor(
+                        image_data,
+                        dims,
+                        coords,
+                        attrs,
+                    )
                 return xr.DataArray(
                     image_data,
                     dims=dims,
@@ -549,12 +563,58 @@ class TiffReader(Reader):
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
+                if tiff.is_mmstack:
+                    return self._general_data_array_constructor(
+                        image_data,
+                        dims,
+                        coords,
+                        attrs,
+                    )
                 return xr.DataArray(
                     image_data,
                     dims=dims,
                     coords=coords,
                     attrs=attrs,
                 )
+                
+    def _general_data_array_constructor(
+        self,
+        image_data: types.ArrayLike,
+        dims: List[str],
+        coords: Dict[str, Union[List[Any], types.ArrayLike]],
+        attrs: Dict[str,any],
+    ) -> xr.DataArray:
+        # Always order array
+        if DimensionNames.Samples in dims:
+            out_order = DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
+        else:
+            out_order = DEFAULT_DIMENSION_ORDER
+
+        kwargs = {}
+        # TODO: create a constant for R
+        # if R is present in dims assume R represents positons/scenes
+        # due to how tiff file uses mmstack parser for micromanager files.
+        # This will help with data reshape to avoid scene as dim.
+        if MMSTACK_SCENE_DIMENSION in dims:
+            kwargs[MMSTACK_SCENE_DIMENSION] = self.current_scene_index
+
+        # Transform into order
+        image_data = transforms.reshape_data(
+            image_data,
+            "".join(dims),
+            out_order,
+            **kwargs,
+        )
+
+        # Reset dims after transform
+        dims = [d for d in out_order]
+
+        return xr.DataArray(
+            image_data,
+            dims=dims,
+            coords=coords,
+            attrs=attrs,
+        )
 
     @staticmethod
     def _get_tiff_scene(tiff: TiffFile, scene_index: int) -> TiffPageSeries:
@@ -567,7 +627,6 @@ class TiffReader(Reader):
         if tiff.is_mmstack:
             return tiff.micromanager_metadata["Summary"]["Positions"]
         return len(tiff.series)
-
 
 _NAME_TO_MICRONS = {
     "pm": 1e-6,

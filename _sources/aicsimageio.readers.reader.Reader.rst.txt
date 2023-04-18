@@ -18,6 +18,7 @@ aicsimageio.readers.reader.Reader
       ~Reader.get_image_dask_data
       ~Reader.get_image_data
       ~Reader.get_mosaic_tile_position
+      ~Reader.get_mosaic_tile_positions
       ~Reader.get_stack
       ~Reader.get_xarray_dask_stack
       ~Reader.get_xarray_stack

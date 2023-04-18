@@ -6,6 +6,9 @@ Changelog
 
 Fix
 ~~~
+- Bugfix/slow tile retrieval  (`#486
+  <https://github.com/AllenCellModeling/aicsimageio/pull/486>`_) [Sean
+  LeRoy]
 - Bugfix/mosaic lif merge error  (`#480
   <https://github.com/AllenCellModeling/aicsimageio/pull/480>`_) [Sean
   LeRoy]

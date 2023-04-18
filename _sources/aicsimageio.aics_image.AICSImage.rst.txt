@@ -19,6 +19,7 @@ aicsimageio.aics\_image.AICSImage
       ~AICSImage.get_image_dask_data
       ~AICSImage.get_image_data
       ~AICSImage.get_mosaic_tile_position
+      ~AICSImage.get_mosaic_tile_positions
       ~AICSImage.get_stack
       ~AICSImage.get_xarray_dask_stack
       ~AICSImage.get_xarray_stack

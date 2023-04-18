@@ -18,6 +18,7 @@ aicsimageio.readers.ome\_tiff\_reader.OmeTiffReader
       ~OmeTiffReader.get_image_dask_data
       ~OmeTiffReader.get_image_data
       ~OmeTiffReader.get_mosaic_tile_position
+      ~OmeTiffReader.get_mosaic_tile_positions
       ~OmeTiffReader.get_stack
       ~OmeTiffReader.get_xarray_dask_stack
       ~OmeTiffReader.get_xarray_stack

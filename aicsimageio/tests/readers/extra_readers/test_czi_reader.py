@@ -4,11 +4,12 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
 from aicspylibczi import CziFile
 from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
@@ -290,7 +291,9 @@ def test_czi_reader_mosaic_stitching(
             (440, 544),
             999,
             None,
-            marks=pytest.mark.xfail(raises=IndexError),
+            marks=pytest.mark.xfail(
+                raises=PylibCZI_CDimCoordinatesOverspecifiedException
+            ),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.czi",
@@ -757,6 +760,44 @@ def test_mosaic_passthrough(
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
+    [
+        ("OverViewScan.czi", "TR1", 120, {}),
+        ("OverViewScan.czi", "TR1", 1, {"M": 3}),
+        pytest.param(
+            "OverViewScan.czi",
+            "TR1",
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
+            marks=pytest.mark.xfail(raises=NotImplementedError),
+        ),
+    ],
+)
+def test_multi_tile_position_retrieval(
+    filename: str,
+    set_scene: str,
+    num_mosaic_position_expected: int,
+    additional_kwargs: Dict[str, Any],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+    img.set_scene(set_scene)
+
+    # Assert listed positions is equivalent to individual
+    # position retrievals
+    mosaic_positions = img.get_mosaic_tile_positions(**additional_kwargs)
+    assert len(mosaic_positions) == num_mosaic_position_expected
+    for m_index, mosaic_position in enumerate(mosaic_positions):
+        M = m_index + additional_kwargs.get("M", 0)
+        assert mosaic_position == img.get_mosaic_tile_position(
+            M
+        ), f"Bad comparison at M={M}"
 
 
 @pytest.mark.parametrize(

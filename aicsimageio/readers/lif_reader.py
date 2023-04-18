@@ -750,7 +750,9 @@ class LifReader(Reader):
 
         return self._px_sizes
 
-    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(
+        self, mosaic_tile_index: int, **kwargs: int
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
         Not equivalent to readlif's notion of mosaic_position.
@@ -759,6 +761,13 @@ class LifReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -776,6 +785,13 @@ class LifReader(Reader):
         """
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        if kwargs:
+            raise NotImplementedError(
+                "Selecting mosaic positions by dimensions is not supporting "
+                + "by LifReader. Retrieve a specific mosaic position via the "
+                + "mosaic tile index (M) by using .get_mosaic_tile_position() instead."
+            )
 
         # LIFs are packed from bottom right to top left
         # To counter: subtract 1 + M from list index to get from back of list
@@ -798,3 +814,68 @@ class LifReader(Reader):
             (index_y * self.dims.Y) - index_y,
             (index_x * self.dims.X) - index_x,
         )
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        NotImplementedError
+            This reader does not support indexing tiles by dimensions other than M
+        """
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        if kwargs:
+            raise NotImplementedError(
+                "Selecting mosaic positions by dimensions is not supporting "
+                + "by LifReader. Retrieve a specific mosaic position via the "
+                + "mosaic tile index (M) by using .get_mosaic_tile_position() instead."
+            )
+
+        mosaic_positions: List[Tuple[int, int, float, float]] = self._scene_short_info[
+            "mosaic_position"
+        ]
+
+        # LIFs are packed from bottom right to top left
+        # To counter: read the positions in reverse
+        adjusted_mosaic_positions: List[Tuple[int, int]] = []
+        y_dim_length, x_dim_length = self._get_yx_tile_count()
+        for x, y, *_ in reversed(mosaic_positions):
+            if self.is_x_and_y_swapped:
+                x, y = y, x
+            if self.is_x_flipped:
+                x = x_dim_length - x
+            if self.is_y_flipped:
+                y = y_dim_length - y
+
+            # Formula: (Dim position * Tile dim length) - Dim position
+            # where the "- Dim position" is to account for shaving a pixel off
+            # of each tile to account for overlap
+            adjusted_mosaic_positions.append(
+                (
+                    (y * self.dims.Y) - y,
+                    (x * self.dims.X) - x,
+                )
+            )
+
+        return adjusted_mosaic_positions

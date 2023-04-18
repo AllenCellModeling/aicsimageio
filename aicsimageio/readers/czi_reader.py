@@ -917,7 +917,11 @@ class CziReader(Reader):
 
         return self._px_sizes
 
-    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(
+        self,
+        mosaic_tile_index: int,
+        **kwargs: int,
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
 
@@ -925,6 +929,13 @@ class CziReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -937,16 +948,73 @@ class CziReader(Reader):
         ------
         UnexpectedShapeError
             The image has no mosaic dimension available.
-        IndexError
-            No matching mosaic tile index found.
+
+        Notes
+        -----
+        Defaults T and C dimensions to 0 if present as dimensions in image
+        to avoid reading in massive image stack for large files.
         """
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
 
-        # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
-            bboxes = czi.get_all_mosaic_tile_bounding_boxes(S=self.current_scene_index)
-            bbox = list(bboxes.values())[mosaic_tile_index]
+            # Default Channel and Time dimensions to 0 to improve
+            # worst case read time for large files **only**
+            # when those dimensions are present on the image.
+            for dimension_name in [DimensionNames.Channel, DimensionNames.Time]:
+                if dimension_name not in kwargs and dimension_name in self.dims.order:
+                    kwargs[dimension_name] = 0
+
+            bbox = czi.get_mosaic_tile_bounding_box(
+                M=mosaic_tile_index, S=self.current_scene_index, **kwargs
+            )
             return bbox.y, bbox.x
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        """
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        with self._fs.open(self._path) as open_resource:
+            czi = CziFile(open_resource.f)
+
+            tile_info_to_bboxes = czi.get_all_mosaic_tile_bounding_boxes(
+                S=self.current_scene_index, **kwargs
+            )
+
+            # Convert dictionary of tile info mappings to
+            # a list of bounding boxes sorted according to their
+            # respective M indexes
+            m_indexes_to_mosaic_positions = {
+                tile_info.m_index: (bbox.y, bbox.x)
+                for tile_info, bbox in tile_info_to_bboxes.items()
+            }
+            return [
+                m_indexes_to_mosaic_positions[m_index]
+                for m_index in sorted(m_indexes_to_mosaic_positions.keys())
+            ]

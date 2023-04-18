@@ -522,6 +522,44 @@ def test_mosaic_passthrough(
 
 
 @pytest.mark.parametrize(
+    "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
+    [
+        ("tiled.lif", "TileScan_002", 165, {}),
+        ("tiled.lif", "TileScan_002", 1, {"M": 3}),
+        pytest.param(
+            "tiled.lif",
+            "TileScan_002",
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
+            marks=pytest.mark.xfail(raises=NotImplementedError),
+        ),
+    ],
+)
+def test_multi_tile_position_retrieval(
+    filename: str,
+    set_scene: str,
+    num_mosaic_position_expected: int,
+    additional_kwargs: Dict[str, Any],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+    img.set_scene(set_scene)
+
+    # Assert listed positions is equivalent to individual
+    # position retrievals
+    mosaic_positions = img.get_mosaic_tile_positions(**additional_kwargs)
+    assert len(mosaic_positions) == num_mosaic_position_expected
+    for m_index, mosaic_position in enumerate(mosaic_positions):
+        M = m_index + additional_kwargs.get("M", 0)
+        assert mosaic_position == img.get_mosaic_tile_position(
+            M
+        ), f"Bad comparison at M={M}"
+
+
+@pytest.mark.parametrize(
     "filename, set_scene, get_dims, get_specific_dims, expected_shape",
     [
         (

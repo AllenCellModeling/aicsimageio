@@ -11,11 +11,11 @@ from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 from ome_types import OME, from_xml
 from pydantic.error_wrappers import ValidationError
-from tifffile.tifffile import TiffFile, TiffFileError, TiffTags
+from tifffile.tifffile import TiffFile, TiffFileError
 from xmlschema import XMLSchemaValidationError
 from xmlschema.exceptions import XMLSchemaValueError
 
-from .. import constants, exceptions, transforms, types
+from .. import constants, exceptions, types
 from ..dimensions import (
     DEFAULT_CHUNK_DIMS,
     DEFAULT_DIMENSION_ORDER,
@@ -320,14 +320,20 @@ class OmeTiffReader(TiffReader):
                     scene_index=self.current_scene_index,
                 )
 
+                if DimensionNames.Samples in dims:
+                    out_order = DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
+                else:
+                    out_order = DEFAULT_DIMENSION_ORDER
+
                 return self._general_data_array_constructor(
                     image_data,
                     dims,
+                    out_order,
                     coords,
-                    attrs = {
+                    attrs={
                         constants.METADATA_UNPROCESSED: tiff_tags,
-                        constants.METADATA_PROCESSED: self._ome, 
-                    }
+                        constants.METADATA_PROCESSED: self._ome,
+                    },
                 )
 
     def _read_immediate(self) -> xr.DataArray:
@@ -374,11 +380,22 @@ class OmeTiffReader(TiffReader):
                     dims=dims,
                     scene_index=self.current_scene_index,
                 )
+
+                # Always order array
+                if DimensionNames.Samples in dims:
+                    out_order = DEFAULT_DIMENSION_ORDER_WITH_SAMPLES
+                else:
+                    out_order = DEFAULT_DIMENSION_ORDER
+
                 return self._general_data_array_constructor(
                     image_data,
                     dims,
+                    out_order,
                     coords,
-                    tiff_tags,
+                    attrs={
+                        constants.METADATA_UNPROCESSED: tiff_tags,
+                        constants.METADATA_PROCESSED: self._ome,
+                    },
                 )
 
     @property

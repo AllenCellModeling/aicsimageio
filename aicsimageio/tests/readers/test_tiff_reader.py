@@ -289,11 +289,11 @@ def test_micromanager_ome_tiff_binary_file() -> None:
         set_scene="Image:0",
         expected_scenes=("Image:0", "Image:1"),
         expected_current_scene="Image:0",
-        expected_shape=(50, 3, 5, 256, 256),
+        expected_shape=(50, 5, 3, 256, 256),
         expected_dtype=np.dtype(np.uint16),
         # Note this dimension order is correct but is different from OmeTiffReader
         # because we swap the dimensions into "standard" order
-        expected_dims_order="TCZYX",
+        expected_dims_order="TZCYX",
         expected_channel_names=["Channel:0:0", "Channel:0:1", "Channel:0:2"],
         expected_physical_pixel_sizes=(1.75, 0.0002, 0.0002),
         expected_metadata_type=str,

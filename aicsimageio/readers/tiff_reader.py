@@ -9,10 +9,10 @@ import numpy as np
 import xarray as xr
 from dask import delayed
 from fsspec.spec import AbstractFileSystem
-from tifffile import TIFF, TiffFile, TiffFileError, TiffPageSeries, imread
+from tifffile import TIFF, TiffFile, TiffFileError, imread
 from tifffile.tifffile import TiffTags
 
-from .. import constants, exceptions, transforms, types
+from .. import constants, exceptions, types
 from ..dimensions import DEFAULT_CHUNK_DIMS, REQUIRED_CHUNK_DIMS, DimensionNames
 from ..metadata import utils as metadata_utils
 from ..types import PhysicalPixelSizes
@@ -25,7 +25,6 @@ from .reader import Reader
 # "I" is used to mean a generic image sequence
 UNKNOWN_DIM_CHARS = ["Q", "I"]
 TIFF_IMAGE_DESCRIPTION_TAG_INDEX = 270
-MMSTACK_SCENE_DIMENSION = "R"
 
 ###############################################################################
 
@@ -34,7 +33,6 @@ class TiffReader(Reader):
     """
     Wraps the tifffile API to provide the same aicsimageio Reader API but for
     volumetric Tiff (and other tifffile supported) images.
-
     Parameters
     ----------
     image: types.PathLike
@@ -66,7 +64,7 @@ class TiffReader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
-                with TiffFile(open_resource):
+                with TiffFile(open_resource, is_mmstack=False):
                     return True
 
         except (TiffFileError, TypeError):
@@ -128,11 +126,11 @@ class TiffReader(Reader):
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
+                with TiffFile(open_resource, is_mmstack=False) as tiff:
                     # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
                         metadata_utils.generate_ome_image_id(i)
-                        for i in range(TiffReader._get_number_of_scenes(tiff))
+                        for i in range(len(tiff.series))
                     )
 
         return self._scenes
@@ -164,7 +162,6 @@ class TiffReader(Reader):
         """
         Open a file for reading, construct a Zarr store, select data, and compute to
         numpy.
-
         Parameters
         ----------
         fs: AbstractFileSystem
@@ -177,7 +174,6 @@ class TiffReader(Reader):
             The image indices to retrieve.
         transpose_indices: List[int]
             The indices to transpose to prior to requesting data.
-
         Returns
         -------
         chunk: np.ndarray
@@ -185,7 +181,12 @@ class TiffReader(Reader):
         """
         with fs.open(path) as open_resource:
             with imread(
-                open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
+                open_resource,
+                aszarr=True,
+                series=scene,
+                level=0,
+                chunkmode="page",
+                is_mmstack=False,
             ) as store:
                 arr = da.from_zarr(store)
                 arr = arr.transpose(transpose_indices)
@@ -198,9 +199,7 @@ class TiffReader(Reader):
                 return arr[retrieve_indices].compute(scheduler="synchronous")
 
     def _get_tiff_tags(self, tiff: TiffFile, process: bool = True) -> TiffTags:
-        unprocessed_tags = (
-            TiffReader._get_tiff_scene(tiff, self.current_scene_index).pages[0].tags
-        )
+        unprocessed_tags = tiff.series[self.current_scene_index].pages[0].tags
         if not process:
             return unprocessed_tags
 
@@ -241,7 +240,7 @@ class TiffReader(Reader):
         return "".join(best_guess)
 
     def _guess_tiff_dim_order(self, tiff: TiffFile) -> List[str]:
-        scene = TiffReader._get_tiff_scene(tiff, self.current_scene_index)
+        scene = tiff.series[self.current_scene_index]
         dims_from_meta = scene.pages.axes
 
         # If all dims are known, simply return as list
@@ -338,7 +337,6 @@ class TiffReader(Reader):
     ) -> da.Array:
         """
         Creates a delayed dask array for the file.
-
         Parameters
         ----------
         tiff: TiffFile
@@ -346,7 +344,6 @@ class TiffReader(Reader):
         selected_scene_dims_list: List[str]
             The dimensions to use for constructing the array with.
             Required for managing chunked vs non-chunked dimensions.
-
         Returns
         -------
         image_data: da.Array
@@ -361,7 +358,7 @@ class TiffReader(Reader):
         self.chunk_dims = [d.upper() for d in self.chunk_dims]
 
         # Construct delayed dask array
-        selected_scene = TiffReader._get_tiff_scene(tiff, self.current_scene_index)
+        selected_scene = tiff.series[self.current_scene_index]
         selected_scene_dims = "".join(selected_scene_dims_list)
 
         # Raise invalid dims error
@@ -448,20 +445,18 @@ class TiffReader(Reader):
     def _read_delayed(self) -> xr.DataArray:
         """
         Construct the delayed xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully delayed image as a DataArray object.
             Metadata is attached in some cases as coords, dims, and attrs.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get dims from provided or guess
                 dims = self._get_dims_for_scene(tiff)
 
@@ -493,18 +488,6 @@ class TiffReader(Reader):
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
-                if tiff.is_mmstack:
-                    mmstack_reshape_dims = "".join(
-                        [d for d in dims if d != MMSTACK_SCENE_DIMENSION]
-                    )
-                    return self._general_data_array_constructor(
-                        image_data,
-                        dims,
-                        mmstack_reshape_dims,
-                        coords,
-                        attrs,
-                    )
-
                 return xr.DataArray(
                     image_data,
                     dims=dims,
@@ -515,27 +498,23 @@ class TiffReader(Reader):
     def _read_immediate(self) -> xr.DataArray:
         """
         Construct the in-memory xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully read into memory image as a DataArray
             object. Metadata is attached in some cases as coords, dims, and attrs.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get dims from provided or guess
                 dims = self._get_dims_for_scene(tiff)
 
                 # Read image into memory
-                image_data = TiffReader._get_tiff_scene(
-                    tiff, self.current_scene_index
-                ).asarray()
+                image_data = tiff.series[self.current_scene_index].asarray()
 
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
@@ -562,71 +541,12 @@ class TiffReader(Reader):
                 except KeyError:
                     attrs = {constants.METADATA_UNPROCESSED: tiff_tags}
 
-                if tiff.is_mmstack:
-                    mmstack_reshape_dims = "".join(
-                        [d for d in dims if d != MMSTACK_SCENE_DIMENSION]
-                    )
-                    return self._general_data_array_constructor(
-                        image_data,
-                        dims,
-                        mmstack_reshape_dims,
-                        coords,
-                        attrs,
-                    )
-
                 return xr.DataArray(
                     image_data,
                     dims=dims,
                     coords=coords,
                     attrs=attrs,
                 )
-
-    def _general_data_array_constructor(
-        self,
-        image_data: types.ArrayLike,
-        dims: List[str],
-        output_dims: str,
-        coords: Dict[str, Union[List[Any], types.ArrayLike]],
-        attrs: Dict[str, TiffTags],
-    ) -> xr.DataArray:
-
-        kwargs = {}
-
-        # if R is present in dims assume R represents positons/scenes
-        # due to how tiff file uses mmstack parser for micromanager files.
-        # This will help with data reshape to avoid scene as dim.
-        if MMSTACK_SCENE_DIMENSION in dims:
-            kwargs[MMSTACK_SCENE_DIMENSION] = self.current_scene_index
-
-        # Transform into order
-        image_data = transforms.reshape_data(
-            image_data,
-            "".join(dims),
-            output_dims,
-            **kwargs,
-        )
-
-        # Reset dims after transform
-        dims = [d for d in output_dims]
-
-        return xr.DataArray(
-            image_data,
-            dims=dims,
-            coords=coords,
-            attrs=attrs,
-        )
-
-    @staticmethod
-    def _get_tiff_scene(tiff: TiffFile, scene_index: int) -> TiffPageSeries:
-        if tiff.is_mmstack:
-            return tiff.series[0]
-        return tiff.series[scene_index]
-
-    @staticmethod
-    def _get_number_of_scenes(tiff: TiffFile) -> int:
-        if tiff.is_mmstack:
-            return tiff.micromanager_metadata["Summary"]["Positions"]
-        return len(tiff.series)
 
 
 _NAME_TO_MICRONS = {
@@ -657,8 +577,8 @@ def _get_pixel_size(
 ) -> Tuple[Optional[float], Optional[float], Optional[float]]:
     """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
 
-    with TiffFile(path_or_file) as tiff:
-        tags = TiffReader._get_tiff_scene(tiff, series_index).pages[0].tags
+    with TiffFile(path_or_file, is_mmstack=False) as tiff:
+        tags = tiff.series[series_index].pages[0].tags
 
     if tiff.is_imagej:
         unit = tiff.imagej_metadata["unit"]

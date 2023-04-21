@@ -287,7 +287,7 @@ def test_micromanager_ome_tiff_binary_file() -> None:
         ImageContainer=TiffReader,
         image=uri,
         set_scene="Image:0",
-        expected_scenes=("Image:0", "Image:1"),
+        expected_scenes=("Image:0",),
         expected_current_scene="Image:0",
         expected_shape=(50, 5, 3, 256, 256),
         expected_dtype=np.dtype(np.uint16),

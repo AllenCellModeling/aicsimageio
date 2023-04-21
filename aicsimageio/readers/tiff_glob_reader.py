@@ -117,7 +117,7 @@ class TiffGlobReader(Reader):
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
-                with TiffFile(open_resource):
+                with TiffFile(open_resource, is_mmstack=False):
                     return True
 
         except (TiffFileError, TypeError):
@@ -256,7 +256,7 @@ class TiffGlobReader(Reader):
 
         if single_file_shape is None:
             with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
+                with TiffFile(open_resource, is_mmstack=False) as tiff:
                     self._single_file_shape = tiff.series[0].shape
 
         else:
@@ -299,7 +299,9 @@ class TiffGlobReader(Reader):
         scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
 
-        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
+        tiff_tags = self._get_tiff_tags(
+            TiffFile(scene_files.filename.iloc[0], is_mmstack=False)
+        )
 
         group_dims = [
             x for x in scene_files.columns if x not in ["filename", *self.chunk_dims]
@@ -364,7 +366,9 @@ class TiffGlobReader(Reader):
             dims = list(expanded_blocks_sizes.keys())
 
         else:  # assemble array in a single chunk
-            zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0)
+            zarr_im = imread(
+                scene_files.filename.tolist(), aszarr=True, level=0, is_mmstack=False
+            )
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
@@ -403,7 +407,9 @@ class TiffGlobReader(Reader):
         scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
 
-        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
+        tiff_tags = self._get_tiff_tags(
+            TiffFile(scene_files.filename.iloc[0], is_mmstack=False)
+        )
 
         chunk_sizes = self._get_chunk_sizes(scene_nunique)
 

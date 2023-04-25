@@ -64,7 +64,7 @@ class TiffReader(Reader):
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
             with fs.open(path) as open_resource:
-                with TiffFile(open_resource, is_mmstack=False):
+                with TiffFile(open_resource):
                     return True
 
         except (TiffFileError, TypeError):

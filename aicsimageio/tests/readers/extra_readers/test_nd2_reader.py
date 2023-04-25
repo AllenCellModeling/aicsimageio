@@ -227,3 +227,13 @@ def test_aicsimage(
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=expected_metadata_type,
     )
+
+
+def test_frame_metadata() -> None:
+    filename = "ND2_dims_rgb_t3p2c2z3x64y64.nd2"
+    uri = get_resource_full_path(filename, LOCAL)
+    rdr = ND2Reader(uri)
+    rdr.set_scene(0)
+    assert isinstance(
+        rdr.xarray_data.attrs["unprocessed"]["frame"], nd2.structures.FrameMetadata
+    )

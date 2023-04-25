@@ -77,7 +77,7 @@ class OmeTiffReader(TiffReader):
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
-                with TiffFile(open_resource, is_mmstack=False) as tiff:
+                with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
                     xml = tiff.pages[0].description
                     ome = OmeTiffReader._get_ome(xml, clean_metadata)

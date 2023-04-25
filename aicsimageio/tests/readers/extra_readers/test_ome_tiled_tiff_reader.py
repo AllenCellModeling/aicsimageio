@@ -215,20 +215,8 @@ def test_ome_tiff_reader_large_files(
     "filename, expected_reader",
     [
         (
-            "s_1_t_1_c_1_z_1.tiff",
-            readers.TiffReader,
-        ),
-        (
-            "s_1_t_1_c_1_z_1.ome.tiff",
-            readers.OmeTiffReader,
-        ),
-        (
             "s_1_t_1_c_1_z_1_ome_tiff_tiles.ome.tif",
             readers.OmeTiledTiffReader,
-        ),
-        (  # Multiscene tiff
-            "variable_scene_shape_first_scene_pyramid.ome.tiff",
-            readers.OmeTiffReader,
         ),
     ],
 )

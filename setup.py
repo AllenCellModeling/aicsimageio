@@ -31,8 +31,8 @@ with open("README.md") as readme_file:
 # "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
     "base-imageio": [
-        "imageio[ffmpeg]>=2.11.0",
-        "Pillow>=9.3.0,<9.5.0",
+        "imageio[ffmpeg]>=2.11.0,<2.28.0",
+        "Pillow>=9.3.0",
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],

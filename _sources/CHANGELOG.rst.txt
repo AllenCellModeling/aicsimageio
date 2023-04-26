@@ -15,6 +15,9 @@ Fix
 
 Other
 ~~~~~
+- store frame metadata when reading a specific scene  (`#492
+  <https://github.com/AllenCellModeling/aicsimageio/pull/492>`_) [Joshua
+  Gould]
 - admin/support-py311  (`#446
   <https://github.com/AllenCellModeling/aicsimageio/pull/446>`_) [Brian
   Whitney, Eva Maxfield Brown, dmt, dmt, toloudis, toloudis]

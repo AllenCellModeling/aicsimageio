@@ -38,8 +38,8 @@ format_libs: Dict[str, List[str]] = {
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
-    #     "fsspec>=2022.7.1",
-    #     "aicspylibczi>=3.0.5",
+    #     "fsspec>=2022.8.0",
+    #     "aicspylibczi>=3.1.1",
     # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
@@ -90,7 +90,7 @@ dev_requirements = [
     "bioformats_jar",  # to test bioformats
     "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
-    "aicspylibczi>=3.0.5",  # to test czi
+    "aicspylibczi>=3.1.1",  # to test czi
 ]
 
 benchmark_requirements = [
@@ -137,6 +137,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "

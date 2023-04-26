@@ -131,7 +131,7 @@ def test_sanity_check_correct_indexing(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri, chunk_dims=chunk_dims)
+    reader = LifReader(uri, chunk_dims=chunk_dims, is_x_and_y_swapped=True)
     lif_img = LifFile(uri).get_image(0)
 
     # Pull a chunk from LifReader
@@ -185,7 +185,7 @@ def test_lif_reader_mosaic_stitching(
     stitched_uri = get_resource_full_path(stitched_filename, LOCAL)
 
     # Construct reader
-    tiles_reader = LifReader(tiles_uri)
+    tiles_reader = LifReader(tiles_uri, is_x_and_y_swapped=True)
     stitched_reader = LifReader(stitched_uri)
 
     # Run checks
@@ -262,7 +262,7 @@ def test_lif_reader_mosaic_tile_inspection(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri)
+    reader = LifReader(uri, is_x_and_y_swapped=True)
     reader.set_scene(set_scene)
 
     # Check basics
@@ -287,6 +287,9 @@ def test_lif_reader_mosaic_tile_inspection(
         tile_y_pos : (tile_y_pos + reader.mosaic_tile_dims.Y),
         tile_x_pos : (tile_x_pos + reader.mosaic_tile_dims.X),
     ].compute()
+
+    # (sanity-check) Make sure they are the same shape before shaving pixels
+    assert tile_from_position.shape == tile_from_m_index.shape
 
     # Remove the first Y and X pixels
     # The stitched tiles overlap each other by 1px each so this is just
@@ -325,7 +328,7 @@ def test_lif_reader_mosaic_coords(
     uri = get_resource_full_path(filename, LOCAL)
 
     # Construct reader
-    reader = LifReader(uri)
+    reader = LifReader(uri, is_x_and_y_swapped=True)
 
     # Check tile y and x min max
     np.testing.assert_array_equal(
@@ -516,6 +519,44 @@ def test_mosaic_passthrough(
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
+    [
+        ("tiled.lif", "TileScan_002", 165, {}),
+        ("tiled.lif", "TileScan_002", 1, {"M": 3}),
+        pytest.param(
+            "tiled.lif",
+            "TileScan_002",
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
+            marks=pytest.mark.xfail(raises=NotImplementedError),
+        ),
+    ],
+)
+def test_multi_tile_position_retrieval(
+    filename: str,
+    set_scene: str,
+    num_mosaic_position_expected: int,
+    additional_kwargs: Dict[str, Any],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+    img.set_scene(set_scene)
+
+    # Assert listed positions is equivalent to individual
+    # position retrievals
+    mosaic_positions = img.get_mosaic_tile_positions(**additional_kwargs)
+    assert len(mosaic_positions) == num_mosaic_position_expected
+    for m_index, mosaic_position in enumerate(mosaic_positions):
+        M = m_index + additional_kwargs.get("M", 0)
+        assert mosaic_position == img.get_mosaic_tile_position(
+            M
+        ), f"Bad comparison at M={M}"
 
 
 @pytest.mark.parametrize(

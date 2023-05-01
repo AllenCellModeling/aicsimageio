@@ -15,6 +15,9 @@ Fix
 
 Other
 ~~~~~
+- Adjusting tiffile versioning  (`#487
+  <https://github.com/AllenCellModeling/aicsimageio/pull/487>`_)
+  [BrianWhitneyAI]
 - store frame metadata when reading a specific scene  (`#492
   <https://github.com/AllenCellModeling/aicsimageio/pull/492>`_) [Joshua
   Gould]

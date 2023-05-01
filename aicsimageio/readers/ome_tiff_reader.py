@@ -38,7 +38,6 @@ class OmeTiffReader(TiffReader):
     """
     Wraps the tifffile and ome-types APIs to provide the same aicsimageio Reader
     API but for volumetric OME-TIFF images.
-
     Parameters
     ----------
     image: types.PathLike
@@ -56,12 +55,10 @@ class OmeTiffReader(TiffReader):
     fs_kwargs: Dict[str, Any]
         Any specific keyword arguments to pass down to the fsspec created filesystem.
         Default: {}
-
     Notes
     -----
     If the OME metadata in your file isn't OME schema compilant or does not validate
     this will fail to read your file and raise an exception.
-
     If the OME metadata in your file doesn't use the latest OME schema (2016-06),
     this reader will make a request to the referenced remote OME schema to validate.
     """
@@ -82,6 +79,8 @@ class OmeTiffReader(TiffReader):
             with fs.open(path) as open_resource:
                 with TiffFile(open_resource) as tiff:
                     # Get first page description (aka the description tag in general)
+                    # after Tifffile version 2023.3.15 mmstack images read all scenes
+                    # into tiff.pages[0]
                     xml = tiff.pages[0].description
                     ome = OmeTiffReader._get_ome(xml, clean_metadata)
 
@@ -126,7 +125,6 @@ class OmeTiffReader(TiffReader):
     def _guess_ome_dim_order(tiff: TiffFile, ome: OME, scene_index: int) -> List[str]:
         """
         Guess the dimension order based on OME metadata and actual TIFF data.
-
         Parameters
         -------
         tiff: TiffFile
@@ -135,7 +133,6 @@ class OmeTiffReader(TiffReader):
             A constructed OME object to retrieve data from.
         scene_index: int
             The current operating scene index to pull metadata from.
-
         Returns
         -------
         dims: List[str]
@@ -188,7 +185,7 @@ class OmeTiffReader(TiffReader):
 
         # Get ome-types object and warn of other behaviors
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get and store OME
                 self._ome = self._get_ome(
                     tiff.pages[0].description, self.clean_metadata
@@ -299,21 +296,19 @@ class OmeTiffReader(TiffReader):
     def _read_delayed(self) -> xr.DataArray:
         """
         Construct the delayed xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully delayed image as a DataArray object.
             Metadata is attached in some cases as coords, dims, and attrs contains
             unprocessed tags and processed OME object.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
@@ -346,21 +341,19 @@ class OmeTiffReader(TiffReader):
     def _read_immediate(self) -> xr.DataArray:
         """
         Construct the in-memory xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully read into memory image as a DataArray
             object. Metadata is attached in some cases as coords, dims, and attrs
             contains unprocessed tags and processed OME object.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
@@ -397,7 +390,6 @@ class OmeTiffReader(TiffReader):
         sizes: PhysicalPixelSizes
             Using available metadata, the floats representing physical pixel sizes for
             dimensions Z, Y, and X.
-
         Notes
         -----
         We currently do not handle unit attachment to these values. Please see the file

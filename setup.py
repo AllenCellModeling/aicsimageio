@@ -31,8 +31,8 @@ with open("README.md") as readme_file:
 # "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
     "base-imageio": [
-        "imageio[ffmpeg]>=2.11.0",
-        "Pillow>=9.3",
+        "imageio[ffmpeg]>=2.11.0,<2.28.0",
+        "Pillow>=9.3.0",
     ],
     "nd2": ["nd2[legacy]>=0.2.0"],
     "dv": ["mrc>=0.2.0"],
@@ -108,7 +108,7 @@ requirements = [
     "ome-zarr>=0.6.1",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
-    "tifffile>=2021.8.30,<2023.3.15",
+    "tifffile>=2021.8.30",
     "xarray>=0.16.1,<2023.02.0",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",

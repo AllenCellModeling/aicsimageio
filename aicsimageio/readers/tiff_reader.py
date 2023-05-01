@@ -33,7 +33,6 @@ class TiffReader(Reader):
     """
     Wraps the tifffile API to provide the same aicsimageio Reader API but for
     volumetric Tiff (and other tifffile supported) images.
-
     Parameters
     ----------
     image: types.PathLike
@@ -127,7 +126,7 @@ class TiffReader(Reader):
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
+                with TiffFile(open_resource, is_mmstack=False) as tiff:
                     # This is non-metadata tiff, just use available series indices
                     self._scenes = tuple(
                         metadata_utils.generate_ome_image_id(i)
@@ -163,7 +162,6 @@ class TiffReader(Reader):
         """
         Open a file for reading, construct a Zarr store, select data, and compute to
         numpy.
-
         Parameters
         ----------
         fs: AbstractFileSystem
@@ -176,7 +174,6 @@ class TiffReader(Reader):
             The image indices to retrieve.
         transpose_indices: List[int]
             The indices to transpose to prior to requesting data.
-
         Returns
         -------
         chunk: np.ndarray
@@ -184,7 +181,12 @@ class TiffReader(Reader):
         """
         with fs.open(path) as open_resource:
             with imread(
-                open_resource, aszarr=True, series=scene, level=0, chunkmode="page"
+                open_resource,
+                aszarr=True,
+                series=scene,
+                level=0,
+                chunkmode="page",
+                is_mmstack=False,
             ) as store:
                 arr = da.from_zarr(store)
                 arr = arr.transpose(transpose_indices)
@@ -335,7 +337,6 @@ class TiffReader(Reader):
     ) -> da.Array:
         """
         Creates a delayed dask array for the file.
-
         Parameters
         ----------
         tiff: TiffFile
@@ -343,7 +344,6 @@ class TiffReader(Reader):
         selected_scene_dims_list: List[str]
             The dimensions to use for constructing the array with.
             Required for managing chunked vs non-chunked dimensions.
-
         Returns
         -------
         image_data: da.Array
@@ -445,20 +445,18 @@ class TiffReader(Reader):
     def _read_delayed(self) -> xr.DataArray:
         """
         Construct the delayed xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully delayed image as a DataArray object.
             Metadata is attached in some cases as coords, dims, and attrs.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get dims from provided or guess
                 dims = self._get_dims_for_scene(tiff)
 
@@ -500,20 +498,18 @@ class TiffReader(Reader):
     def _read_immediate(self) -> xr.DataArray:
         """
         Construct the in-memory xarray DataArray object for the image.
-
         Returns
         -------
         image: xr.DataArray
             The fully constructed and fully read into memory image as a DataArray
             object. Metadata is attached in some cases as coords, dims, and attrs.
-
         Raises
         ------
         exceptions.UnsupportedFileFormatError
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource) as tiff:
+            with TiffFile(open_resource, is_mmstack=False) as tiff:
                 # Get dims from provided or guess
                 dims = self._get_dims_for_scene(tiff)
 
@@ -581,7 +577,7 @@ def _get_pixel_size(
 ) -> Tuple[Optional[float], Optional[float], Optional[float]]:
     """Return the pixel size in microns (z,y,x) for the given series in a tiff path."""
 
-    with TiffFile(path_or_file) as tiff:
+    with TiffFile(path_or_file, is_mmstack=False) as tiff:
         tags = tiff.series[series_index].pages[0].tags
 
     if tiff.is_imagej:

@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .lif_reader import LifReader  # noqa: F401
     from .nd2_reader import ND2Reader  # noqa: F401
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
+    from .ome_zarr_reader import OmeZarrReader  # noqa: F401
     from .reader import Reader
     from .tiff_glob_reader import TiffGlobReader  # noqa: F401
     from .tiff_reader import TiffReader  # noqa: F401

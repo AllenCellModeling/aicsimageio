@@ -31,6 +31,7 @@ _READERS = (
     ".ome_tiff_reader.OmeTiffReader",
     ".tiff_reader.TiffReader",
     ".tiff_glob_reader.TiffGlobReader",
+    ".ome_zarr_reader.OmeZarrReader",
 )
 _LOOKUP = {k.rsplit(".", 1)[-1]: k for k in _READERS}
 __all__ = list(_LOOKUP)

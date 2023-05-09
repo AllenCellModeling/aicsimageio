@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
+from ome_types import OME, from_xml
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
+from ..metadata import utils as metadata_utils
 from ..utils import io_utils
 from .reader import Reader
 
@@ -24,8 +26,8 @@ except ImportError:
 
 class OmeZarrReader(Reader):
     """
-    Wraps the readlif API to provide the same aicsimageio Reader API but for
-    volumetric LIF images.
+    Wraps the ome-zarr-py API to provide the same aicsimageio Reader API but for
+    OmeZarr images.
 
     Parameters
     ----------
@@ -36,14 +38,34 @@ class OmeZarrReader(Reader):
         Default: {}
     """
 
+    @staticmethod
+    def _get_ome(ome_xml: str, clean_metadata: bool = True) -> OME:
+        # To clean or not to clean, that is the question
+        if clean_metadata:
+            ome_xml = metadata_utils.clean_ome_xml_for_known_issues(ome_xml)
+
+        return from_xml(ome_xml, parser="lxml")
+
+    @staticmethod
+    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
+        try:
+            with fs.open(path) as open_resource:
+                ZarrReader(parse_url(open_resource, mode="r"))
+                return True
+
+        except ValueError:
+            return False
+
     def __init__(
         self,
         image: types.PathLike,
+        clean_metadata: bool = True,
         fs_kwargs: Dict[str, Any] = {},
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(
             image,
+            enforce_exists=True,
             fs_kwargs=fs_kwargs,
         )
 
@@ -59,31 +81,46 @@ class OmeZarrReader(Reader):
                 self.__class__.__name__, self._path
             )
 
-    @staticmethod
-    def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
-        try:
-            with fs.open(path) as open_resource:
-                ZarrReader(parse_url(open_resource, mode="r"))
-                return True
+        self.clean_metadata = clean_metadata
 
-        except ValueError:
-            return False
+        # Get ome-types object and warn of other behaviors
+        with ZarrReader(parse_url(self._path, mode="r")).zarr as OmeZarr:
+            self._ome = self._get_ome(
+                OmeZarr.root_attrs["WHATEVER KEY GIVES OME METADATA"],  # OMERO?
+                self.clean_metadata,
+            )
+
+            self._scenes: Tuple[str, ...] = tuple(
+                image_meta.id for image_meta in self._ome.images
+            )
 
     def _read_delayed(self) -> xr.DataArray:
-        return self._create_dask_array(self._path)
+        return self._xarr_format(self._path, delayed=True)
 
     def _read_immediate(self) -> xr.DataArray:
-        return self._create_dask_array(self._path).compute()
+        return self._xarr_format(self._path, delayed=False)
 
-    def _create_dask_array(self, path: str) -> xr.DataArray:
-        image_location = parse_url(path, mode="r")
-        reader = ZarrReader(image_location).zarr
-        dask_array = reader.load("0")
-        return dask_array
+    def _xarr_format(self, path: str, delayed: bool) -> xr.DataArray:
 
-    """
-    def _create_dask_array(self, path: str) -> xr.DataArray:
-        reader = ZarrReader(parse_url(path, mode="r"))
-        image_node = list(reader())[0]
-        return image_node.data
-    """
+        with ZarrReader(parse_url(path, mode="r")).zarr as OmeZarr:
+            dask_array = OmeZarr.load(str(self.current_scene_index))
+            axes = OmeZarr.root_attrs["multiscales"][self.current_scene_index].axes
+            dims = [sub["name"].upper() for sub in axes]
+
+            coords = metadata_utils.get_coords_from_ome(
+                ome=self._ome,
+                scene_index=self.current_scene_index,
+            )
+
+            if not delayed:
+                dask_array = dask_array.compute()
+
+            return xr.DataArray(
+                dask_array,
+                dims=dims,
+                coords=coords,
+                attrs={
+                    constants.METADATA_PROCESSED: self._ome,
+                    # ADD info from "multiscenes"?
+                },
+            )

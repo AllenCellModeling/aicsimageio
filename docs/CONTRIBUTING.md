@@ -208,8 +208,18 @@ For more information on `asv` and full commands please see
 ## Deploying
 
 A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed.
+Make sure all your changes are committed and merged into main.
 Then run:
+
+```bash
+git checkout main
+git stash
+git pull
+export VERSION_CHANGE=? # NOTE: Specify either major, minor, or patch
+make prepare-release-dry-run
+```
+
+Check results of dry run, verify that it seems correct then run
 
 ```bash
 make prepare-release
@@ -218,6 +228,3 @@ git push --tags
 ```
 
 After all builds pass, GitHub Actions will automatically publish to PyPI.
-
-**Note:** `make prepare-release` by default only bumps the patch number and
-not a minor or major version.

@@ -46,10 +46,10 @@ from ....conftest import LOCAL, get_resource_full_path, host
             (None, 0.38388850322622897, 0.38388850322622897),
         ),
         (
-            "s1_t2_c2_z40.dir",
+            "s1_t1_c2_z40.dir",
             "Image:3500005564_20X_timelapse_202304201682033857",
             ("Image:3500005564_20X_timelapse_202304201682033857",),
-            (2, 2, 40, 1736, 1776),
+            (1, 2, 40, 1736, 1776),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             [

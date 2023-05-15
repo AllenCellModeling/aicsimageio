@@ -4,7 +4,7 @@
 import logging
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set
 
 import numpy as np
 import yaml
@@ -149,6 +149,13 @@ class SldyImage:
 
         return dim_to_data_paths
 
+    @staticmethod
+    def _cast_list(item: Any) -> List[Any]:
+        if isinstance(item, list):
+            return item
+
+        return [item]
+
     def __init__(
         self,
         fs: AbstractFileSystem,
@@ -181,15 +188,20 @@ class SldyImage:
                 "Something unexpected went wrong reading in channel and image records"
             )
 
-        m_micron_per_pixel = float(self._image_record["CLensDef70"]["mMicronPerPixel"])
-        optovar_mag = float(self._image_record["COptovarDef70"]["mMagnification"])
-        mx_factor = float(self._channel_record["CExposureRecord70"]["mXFactor"])
-        my_factor = float(self._channel_record["CExposureRecord70"]["mYFactor"])
-        m_interplane_spacing = self._channel_record.get("mInterplaneSpacing")
-        self.physical_pixel_size_x = m_micron_per_pixel / optovar_mag * mx_factor
-        self.physical_pixel_size_y = m_micron_per_pixel / optovar_mag * my_factor
+        lens_def = SldyImage._cast_list(self._image_record["CLensDef70"])[0]
+        optovar_def = SldyImage._cast_list(self._image_record["COptovarDef70"])[0]
+        exposure_record = SldyImage._cast_list(
+            self._channel_record["CExposureRecord70"]
+        )[0]
+        micron_per_pixel = float(lens_def["mMicronPerPixel"])
+        optovar_mag = float(optovar_def["mMagnification"])
+        x_factor = float(exposure_record["mXFactor"])
+        y_factor = float(exposure_record["mYFactor"])
+        interplane_spacing = self._channel_record.get("mInterplaneSpacing")
+        self.physical_pixel_size_x = micron_per_pixel / optovar_mag * x_factor
+        self.physical_pixel_size_y = micron_per_pixel / optovar_mag * y_factor
         self.physical_pixel_size_z = (
-            float(m_interplane_spacing) if m_interplane_spacing else None
+            float(interplane_spacing) if interplane_spacing is not None else None
         )
 
         data_path_matcher = fs.glob(self.image_directory / f"{data_file_prefix}*.npy")

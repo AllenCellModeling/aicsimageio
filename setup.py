@@ -84,6 +84,7 @@ dev_requirements = [
     "Sphinx>=3.4.3",
     "sphinx_rtd_theme>=0.5.1",
     "twine>=3.1.1",
+    "types-PyYAML>=6.0.12.9",
     "wheel>=0.34.2",
     # reader deps
     *all_formats,
@@ -106,6 +107,7 @@ requirements = [
     "numpy>=1.16,<2",
     "ome-types>=0.3.3",
     "ome-zarr>=0.6.1",
+    "PyYAML>=6.0",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30,<2023.3.15",

@@ -69,14 +69,5 @@ docs: ## generate Sphinx HTML documentation, including API docs, and serve to br
 	make gen-docs
 	$(BROWSER) docs/_build/html/index.html
 
-prepare-release: ## Generate new section of changelog & bump version
-	gitchangelog
-	git add docs/CHANGELOG.rst
-	git commit -m "Update changelog"
-	bumpversion $(VERSION_CHANGE)
-
-prepare-release-dry-run:
-	bumpversion $(VERSION_CHANGE) --dry-run --verbose
-
 update-from-cookiecutter: ## update this repo using latest cookiecutter-pypackage
 	cookiecutter gh:AllenCellModeling/cookiecutter-pypackage --config-file cookiecutter.yaml --no-input --overwrite-if-exists --output-dir ..

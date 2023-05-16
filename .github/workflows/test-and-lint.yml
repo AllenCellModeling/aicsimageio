@@ -64,6 +64,7 @@ jobs:
           dv,
           lif,
           nd2,
+          sldy,
           bfio,
         ]
     steps:

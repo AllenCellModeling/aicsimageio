@@ -6,7 +6,7 @@ import xarray as xr
 from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 
-from .. import exceptions, types
+from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
 from ..utils import io_utils
@@ -114,9 +114,7 @@ class OmeZarrReader(Reader):
             image_data,
             dims=dims,
             coords=coords,
-            attrs={
-                # TODO: ADD info from "multiscales" "omero"?
-            },
+            attrs={constants.METADATA_UNPROCESSED: OmeZarr.root_attrs},
         )
 
     @staticmethod

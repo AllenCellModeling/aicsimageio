@@ -12,7 +12,6 @@ from fsspec.spec import AbstractFileSystem
 
 from ... import constants, exceptions, transforms, types
 from ...dimensions import DEFAULT_DIMENSION_ORDER_LIST, DimensionNames
-from ...metadata import utils as metadata_utils
 from ...types import PhysicalPixelSizes
 from ...utils import io_utils
 from ..reader import Reader
@@ -121,9 +120,7 @@ class SldyReader(Reader):
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            self._scenes = tuple(
-                metadata_utils.generate_ome_image_id(image.id) for image in self._images
-            )
+            self._scenes = tuple(image.id for image in self._images)
 
         return self._scenes
 
@@ -263,10 +260,7 @@ class SldyReader(Reader):
         image = self._images[self.current_scene_index]
         if image.channels:
             coords[DimensionNames.Channel] = [
-                metadata_utils.generate_ome_channel_id(
-                    image_id=image.id, channel_id=channel
-                )
-                for channel in image.channels
+                str(channel) for channel in image.channels
             ]
 
         if image.timepoints:

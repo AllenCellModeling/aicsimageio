@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 import xarray as xr
-from fsspec.implementations.local import LocalFileSystem
 from fsspec.spec import AbstractFileSystem
 
 from .. import constants, exceptions, types
@@ -41,7 +40,7 @@ class OmeZarrReader(Reader):
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
-            _ = fs  # TODO: How to use the FS to test for suppored image
+            _ = fs  # TODO: How to use the FS to test for supported image
             ZarrReader(parse_url(path, mode="r"))
             return True
 
@@ -51,21 +50,14 @@ class OmeZarrReader(Reader):
     def __init__(
         self,
         image: types.PathLike,
-        channel_names: Optional[Union[List[str], List[List[str]]]] = None,
         fs_kwargs: Dict[str, Any] = {},
     ):
         # Expand details of provided image
         self._fs, self._path = io_utils.pathlike_to_fs(
             image,
-            enforce_exists=True,
+            enforce_exists=False,
             fs_kwargs=fs_kwargs,
         )
-
-        if not isinstance(self._fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot read OmeZarr from non-local file system. "
-                f"Received URI: {self._path}, which points to {type(self._fs)}."
-            )
 
         # Enforce valid image
         if not self._is_supported_image(self._fs, self._path):
@@ -73,16 +65,23 @@ class OmeZarrReader(Reader):
                 self.__class__.__name__, self._path
             )
 
-        self._channel_names = channel_names
-
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            OmeZarr = ZarrReader(parse_url(self._path, mode="r")).zarr
-            self._scenes = tuple(
-                metadata_utils.generate_ome_image_id(i)
-                for i in range(len(OmeZarr.root_attrs["multiscales"]))
-            )
+            omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
+            scenes = omezarr.root_attrs["multiscales"]
+
+            # if (each scene has a name) and (that name is unique) use name.
+            # otherwise generate scene names.
+            if all("name" in scene for scene in scenes) and (
+                len({scene["name"] for scene in scenes}) == len(scenes)
+            ):
+                self._scenes = tuple(str(scene["name"]) for scene in scenes)
+            else:
+                self._scenes = tuple(
+                    metadata_utils.generate_ome_image_id(i)
+                    for i in range(len(omezarr.root_attrs["multiscales"]))
+                )
         return self._scenes
 
     def _read_delayed(self) -> xr.DataArray:
@@ -93,28 +92,26 @@ class OmeZarrReader(Reader):
 
     def _xarr_format(self, delayed: bool) -> xr.DataArray:
 
-        OmeZarr = ZarrReader(parse_url(self._path, mode="r")).zarr
-        image_data = OmeZarr.load(str(self.current_scene_index))
-        axes = OmeZarr.root_attrs["multiscales"][self.current_scene_index]["axes"]
+        omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
+        image_data = omezarr.load(str(self.current_scene_index))
+        axes = omezarr.root_attrs["multiscales"][self.current_scene_index]["axes"]
         dims = [sub["name"].upper() for sub in axes]
 
         if not delayed:
             image_data = image_data.compute()
 
-        channels = self._get_channel_names_for_scene(image_data.shape, dims)
-
         coords = self._get_coords(
             dims,
             image_data.shape,
             scene_index=self.current_scene_index,
-            channel_names=channels,
+            channel_names=self._get_channel_names(),
         )
 
         return xr.DataArray(
             image_data,
             dims=dims,
             coords=coords,
-            attrs={constants.METADATA_UNPROCESSED: OmeZarr.root_attrs},
+            attrs={constants.METADATA_UNPROCESSED: omezarr.root_attrs},
         )
 
     @staticmethod
@@ -144,37 +141,13 @@ class OmeZarrReader(Reader):
 
         return coords
 
-    def _get_channel_names_for_scene(
-        self, image_shape: Tuple[int], dims: List[str]
-    ) -> Optional[List[str]]:
-        # Fast return in None case
-        if self._channel_names is None:
+    def _get_channel_names(self) -> List[str] | None:
+        try:
+            omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
+            channels = [
+                str(channel["label"])
+                for channel in omezarr.root_attrs["omero"]["channels"]
+            ]
+            return channels
+        except KeyError:
             return None
-
-        # If channels was provided as a list of lists
-        if isinstance(self._channel_names[0], list):
-            scene_channels = self._channel_names[self.current_scene_index]
-        elif all(isinstance(c, str) for c in self._channel_names):
-            scene_channels = self._channel_names  # type: ignore
-        else:
-            return None
-
-        # If scene channels isn't None and no channel dimension raise error
-        if DimensionNames.Channel not in dims:
-            raise exceptions.ConflictingArgumentsError(
-                f"Provided channel names for scene with no channel dimension. "
-                f"Scene dims: {dims}, "
-                f"Provided channel names: {scene_channels}"
-            )
-
-        # If scene channels isn't the same length as the size of channel dim
-        if len(scene_channels) != image_shape[dims.index(DimensionNames.Channel)]:
-            raise exceptions.ConflictingArgumentsError(
-                f"Number of channel names provided does not match the "
-                f"size of the channel dimension for this scene. "
-                f"Scene shape: {image_shape}, "
-                f"Dims: {dims}, "
-                f"Provided channel names: {self._channel_names}",
-            )
-
-        return scene_channels  # type: ignore

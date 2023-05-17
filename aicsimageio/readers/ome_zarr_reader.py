@@ -40,7 +40,6 @@ class OmeZarrReader(Reader):
     @staticmethod
     def _is_supported_image(fs: AbstractFileSystem, path: str, **kwargs: Any) -> bool:
         try:
-            _ = fs  # TODO: How to use the FS to test for supported image
             ZarrReader(parse_url(path, mode="r"))
             return True
 
@@ -65,11 +64,12 @@ class OmeZarrReader(Reader):
                 self.__class__.__name__, self._path
             )
 
+        self._zarr = ZarrReader(parse_url(self._path, mode="r")).zarr
+
     @property
     def scenes(self) -> Tuple[str, ...]:
         if self._scenes is None:
-            omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
-            scenes = omezarr.root_attrs["multiscales"]
+            scenes = self._zarr.root_attrs["multiscales"]
 
             # if (each scene has a name) and (that name is unique) use name.
             # otherwise generate scene names.
@@ -80,7 +80,7 @@ class OmeZarrReader(Reader):
             else:
                 self._scenes = tuple(
                     metadata_utils.generate_ome_image_id(i)
-                    for i in range(len(omezarr.root_attrs["multiscales"]))
+                    for i in range(len(self._zarr.root_attrs["multiscales"]))
                 )
         return self._scenes
 
@@ -91,10 +91,8 @@ class OmeZarrReader(Reader):
         return self._xarr_format(delayed=False)
 
     def _xarr_format(self, delayed: bool) -> xr.DataArray:
-
-        omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
-        image_data = omezarr.load(str(self.current_scene_index))
-        axes = omezarr.root_attrs["multiscales"][self.current_scene_index]["axes"]
+        image_data = self._zarr.load(str(self.current_scene_index))
+        axes = self._zarr.root_attrs["multiscales"][self.current_scene_index]["axes"]
         dims = [sub["name"].upper() for sub in axes]
 
         if not delayed:
@@ -111,7 +109,7 @@ class OmeZarrReader(Reader):
             image_data,
             dims=dims,
             coords=coords,
-            attrs={constants.METADATA_UNPROCESSED: omezarr.root_attrs},
+            attrs={constants.METADATA_UNPROCESSED: self._zarr.root_attrs},
         )
 
     @staticmethod
@@ -143,10 +141,9 @@ class OmeZarrReader(Reader):
 
     def _get_channel_names(self) -> List[str] | None:
         try:
-            omezarr = ZarrReader(parse_url(self._path, mode="r")).zarr
             channels = [
                 str(channel["label"])
-                for channel in omezarr.root_attrs["omero"]["channels"]
+                for channel in self._zarr.root_attrs["omero"]["channels"]
             ]
             return channels
         except KeyError:

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- Admin: Update deploy process  (`#494
+  <https://github.com/AllenCellModeling/aicsimageio/pull/494>`_) [Sean
+  LeRoy]
+
+
 v4.11.0 (2023-05-05)
 --------------------
 

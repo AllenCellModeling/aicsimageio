@@ -52,7 +52,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             (7, 4, 3, 1200, 1800),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ['C:0', 'C:1', 'C:2', 'C:3'],
+            ["C:0", "C:1", "C:2", "C:3"],
             (None, None, None),
         ),
         (
@@ -62,7 +62,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             (7, 4, 3, 1200, 1800),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ['C:0', 'C:1', 'C:2', 'C:3'],
+            ["C:0", "C:1", "C:2", "C:3"],
             (None, None, None),
         ),
     ],

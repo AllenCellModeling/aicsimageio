@@ -1,6 +1,36 @@
 Changelog
 =========
 
+v4.11.0 (2023-05-05)
+--------------------
+
+Fix
+~~~
+- Bugfix/slow tile retrieval  (`#486
+  <https://github.com/AllenCellModeling/aicsimageio/pull/486>`_) [Sean
+  LeRoy]
+- Bugfix/mosaic lif merge error  (`#480
+  <https://github.com/AllenCellModeling/aicsimageio/pull/480>`_) [Sean
+  LeRoy]
+
+Other
+~~~~~
+- Adjusting tiffile versioning  (`#487
+  <https://github.com/AllenCellModeling/aicsimageio/pull/487>`_)
+  [BrianWhitneyAI]
+- store frame metadata when reading a specific scene  (`#492
+  <https://github.com/AllenCellModeling/aicsimageio/pull/492>`_) [Joshua
+  Gould]
+- admin/support-py311  (`#446
+  <https://github.com/AllenCellModeling/aicsimageio/pull/446>`_) [Brian
+  Whitney, Eva Maxfield Brown, dmt, dmt, toloudis, toloudis]
+- Extract S dim from OME data  (`#483
+  <https://github.com/AllenCellModeling/aicsimageio/pull/483>`_)
+  [Madison Swain-Bowden <bowdenm@spu.edu>    * Comment on possible
+  dimension mismatch    ---------    Co-authored-by: Madison Swain-
+  Bowden <bowdenm@spu.edu>, Sean LeRoy]
+
+
 v4.10.0 (2023-04-11)
 --------------------
 

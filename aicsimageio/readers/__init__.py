@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from .nd2_reader import ND2Reader  # noqa: F401
     from .ome_tiff_reader import OmeTiffReader  # noqa: F401
     from .reader import Reader
+    from .sldy_reader import SldyReader  # noqa: F401
     from .tiff_glob_reader import TiffGlobReader  # noqa: F401
     from .tiff_reader import TiffReader  # noqa: F401
 
@@ -29,6 +30,7 @@ _READERS = (
     ".lif_reader.LifReader",
     ".nd2_reader.ND2Reader",
     ".ome_tiff_reader.OmeTiffReader",
+    ".sldy_reader.SldyReader",
     ".tiff_reader.TiffReader",
     ".tiff_glob_reader.TiffGlobReader",
 )

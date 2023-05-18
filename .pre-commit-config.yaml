@@ -30,3 +30,4 @@ repos:
       rev: v0.910
       hooks:
           - id: mypy
+            additional_dependencies: [types-PyYAML==6.0.12.9]

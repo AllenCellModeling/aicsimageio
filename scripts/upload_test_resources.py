@@ -136,6 +136,7 @@ def upload_test_resources(args: Args):
                     "s3://aics-modeling-packages-test-resources",
                     message=f"Test resources for `aicsimageio` version: {__version__}.",
                 )
+                print(pushed.top_hash)
 
                 log.info(f"Completed package push. Result hash: {pushed.top_hash}")
             else:

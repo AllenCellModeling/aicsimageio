@@ -43,7 +43,7 @@ class OmeZarrReader(Reader):
             ZarrReader(parse_url(path, mode="r"))
             return True
 
-        except ValueError:
+        except AttributeError:
             return False
 
     def __init__(

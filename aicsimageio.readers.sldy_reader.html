@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Python Module Index &mdash; AICSImageIO 4.11.0 documentation</title>
+  <title>aicsimageio.readers.sldy_reader package &mdash; AICSImageIO 4.11.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -19,9 +19,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
- 
-
-
+    <link rel="next" title="aicsimageio.utils package" href="aicsimageio.utils.html" />
+    <link rel="prev" title="aicsimageio.readers package" href="aicsimageio.readers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,18 +46,18 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="INSTALLATION.html">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#stable-release">Stable release</a></li>
 <li class="toctree-l2"><a class="reference internal" href="INSTALLATION.html#from-sources">From sources</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">Full API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Full API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="aicsimageio.html">aicsimageio package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="aicsimageio.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.metadata.html">aicsimageio.metadata package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.utils.html">aicsimageio.utils package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="aicsimageio.writers.html">aicsimageio.writers package</a></li>
 </ul>
@@ -434,198 +433,151 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Python Module Index</li>
+          <li class="breadcrumb-item"><a href="modules.html">aicsimageio</a></li>
+          <li class="breadcrumb-item"><a href="aicsimageio.html">aicsimageio package</a></li>
+          <li class="breadcrumb-item"><a href="aicsimageio.readers.html">aicsimageio.readers package</a></li>
+      <li class="breadcrumb-item active">aicsimageio.readers.sldy_reader package</li>
       <li class="wy-breadcrumbs-aside">
+            <a href="_sources/aicsimageio.readers.sldy_reader.rst.txt" rel="nofollow"> View page source</a>
       </li>
-  </ul>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="aicsimageio.readers.html" class="btn btn-neutral float-left" title="aicsimageio.readers package" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="aicsimageio.utils.html" class="btn btn-neutral float-right" title="aicsimageio.utils package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
+  <div class="section" id="aicsimageio-readers-sldy-reader-package">
+<h1>aicsimageio.readers.sldy_reader package<a class="headerlink" href="#aicsimageio-readers-sldy-reader-package" title="Permalink to this heading"></a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</div>
+<div class="section" id="module-aicsimageio.readers.sldy_reader.sldy_image">
+<span id="aicsimageio-readers-sldy-reader-sldy-image-module"></span><h2>aicsimageio.readers.sldy_reader.sldy_image module<a class="headerlink" href="#module-aicsimageio.readers.sldy_reader.sldy_image" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.sldy_image.SldyImage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aicsimageio.readers.sldy_reader.sldy_image.</span></span><span class="sig-name descname"><span class="pre">SldyImage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AbstractFileSystem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel_file_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_Ch'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timepoint_file_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'_TP'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/sldy_reader/sldy_image.html#SldyImage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.sldy_reader.sldy_image.SldyImage" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Representation of a single acquisition in a 3i slidebook (SLDY) image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fs</strong> (<em>AbstractFileSystem</em>) – The file system to used for reading.</p></li>
+<li><p><strong>image_directory</strong> (<em>types.PathLike</em>) – Path to the image directory this is meant to represent.</p></li>
+<li><p><strong>data_file_prefix</strong> (<em>str, default = “ImageData”</em>) – Prefix to the data files within this image directory to extract.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.sldy_image.SldyImage.get_data">
+<span class="sig-name descname"><span class="pre">get_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timepoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">channel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delayed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="_modules/aicsimageio/readers/sldy_reader/sldy_image.html#SldyImage.get_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.sldy_reader.sldy_image.SldyImage.get_data" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the image data for the given timepoint and channel if specified.
+If delayed, the data will be lazily read in.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>timepoint</strong> (<em>Optional[int]</em>) – Optional timepoint to get data about.</p></li>
+<li><p><strong>channel</strong> (<em>Optional[int]</em>) – Optional channel to get data about.</p></li>
+<li><p><strong>delayed</strong> (<em>bool</em>) – If True, the data will be lazily read in.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data</strong> – Numpy representation of the image data found.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
+<dl class="py property">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.sldy_image.SldyImage.metadata">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#aicsimageio.readers.sldy_reader.sldy_image.SldyImage.metadata" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary representing the metadata of this acquisition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>metadata</strong> – Simple mapping of metadata file names to the metadata extracted
+from them. Possibly different than the actual yaml due to mapping
+the yaml to Python dictionaries, specifically with duplicate keys.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dict[str, dict]</p>
+</dd>
+</dl>
+</dd></dl>
 
-   <div class="modindex-jumpbox">
-   <a href="#cap-a"><strong>a</strong></a>
-   </div>
+</dd></dl>
 
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-a"><td></td><td>
-       <strong>a</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <a href="aicsimageio.html#module-aicsimageio"><code class="xref">aicsimageio</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.aics_image"><code class="xref">aicsimageio.aics_image</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.constants"><code class="xref">aicsimageio.constants</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.dimensions"><code class="xref">aicsimageio.dimensions</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.exceptions"><code class="xref">aicsimageio.exceptions</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.formats"><code class="xref">aicsimageio.formats</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.image_container"><code class="xref">aicsimageio.image_container</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.metadata.html#module-aicsimageio.metadata"><code class="xref">aicsimageio.metadata</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.metadata.html#module-aicsimageio.metadata.utils"><code class="xref">aicsimageio.metadata.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers"><code class="xref">aicsimageio.readers</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.array_like_reader"><code class="xref">aicsimageio.readers.array_like_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.bfio_reader"><code class="xref">aicsimageio.readers.bfio_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.bioformats_reader"><code class="xref">aicsimageio.readers.bioformats_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.czi_reader"><code class="xref">aicsimageio.readers.czi_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.default_reader"><code class="xref">aicsimageio.readers.default_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.dv_reader"><code class="xref">aicsimageio.readers.dv_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.lif_reader"><code class="xref">aicsimageio.readers.lif_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.nd2_reader"><code class="xref">aicsimageio.readers.nd2_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.ome_tiff_reader"><code class="xref">aicsimageio.readers.ome_tiff_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.reader"><code class="xref">aicsimageio.readers.reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.sldy_reader.html#module-aicsimageio.readers.sldy_reader"><code class="xref">aicsimageio.readers.sldy_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.sldy_reader.html#module-aicsimageio.readers.sldy_reader.sldy_image"><code class="xref">aicsimageio.readers.sldy_reader.sldy_image</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.tiff_glob_reader"><code class="xref">aicsimageio.readers.tiff_glob_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.readers.html#module-aicsimageio.readers.tiff_reader"><code class="xref">aicsimageio.readers.tiff_reader</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.transforms"><code class="xref">aicsimageio.transforms</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.html#module-aicsimageio.types"><code class="xref">aicsimageio.types</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.utils.html#module-aicsimageio.utils"><code class="xref">aicsimageio.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.utils.html#module-aicsimageio.utils.io_utils"><code class="xref">aicsimageio.utils.io_utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers"><code class="xref">aicsimageio.writers</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers.ome_tiff_writer"><code class="xref">aicsimageio.writers.ome_tiff_writer</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers.ome_zarr_writer"><code class="xref">aicsimageio.writers.ome_zarr_writer</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers.timeseries_writer"><code class="xref">aicsimageio.writers.timeseries_writer</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers.two_d_writer"><code class="xref">aicsimageio.writers.two_d_writer</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="aicsimageio.writers.html#module-aicsimageio.writers.writer"><code class="xref">aicsimageio.writers.writer</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+</div>
+<div class="section" id="module-aicsimageio.readers.sldy_reader">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsimageio.readers.sldy_reader" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.SldyReader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aicsimageio.readers.sldy_reader.</span></span><span class="sig-name descname"><span class="pre">SldyReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fs_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'ImageData'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsimageio/readers/sldy_reader.html#SldyReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsimageio.readers.sldy_reader.SldyReader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="aicsimageio.readers.reader.Reader.html#aicsimageio.readers.reader.Reader" title="aicsimageio.readers.reader.Reader"><code class="xref py py-class docutils literal notranslate"><span class="pre">Reader</span></code></a></p>
+<p>Read 3i slidebook (SLDY) images</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>Path or str</em>) – path to file</p></li>
+<li><p><strong>fs_kwargs</strong> (<em>Dict[str, Any]</em>) – Any specific keyword arguments to pass down to the fsspec created filesystem.
+Default: {}</p></li>
+<li><p><strong>data_file_prefix</strong> (<em>str, default = “ImageData”</em>) – Prefix to the data files within the image directories to extract.
+By default this will
+be set to “ImageData”. However, specifying “HistogramData” would allow you
+to interact with the image’s histogram data instead.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="aicsimageio.html#aicsimageio.exceptions.UnsupportedFileFormatError" title="aicsimageio.exceptions.UnsupportedFileFormatError"><strong>exceptions.UnsupportedFileFormatError</strong></a> – If the file is not supported by this reader.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.SldyReader.physical_pixel_sizes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">physical_pixel_sizes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="aicsimageio.html#aicsimageio.types.PhysicalPixelSizes" title="aicsimageio.types.PhysicalPixelSizes"><span class="pre">PhysicalPixelSizes</span></a></em><a class="headerlink" href="#aicsimageio.readers.sldy_reader.SldyReader.physical_pixel_sizes" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>sizes</strong> – Using available metadata, the floats representing physical pixel sizes for
+dimensions Z, Y, and X.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="aicsimageio.html#aicsimageio.types.PhysicalPixelSizes" title="aicsimageio.types.PhysicalPixelSizes">PhysicalPixelSizes</a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>We currently do not handle unit attachment to these values. Please see the file
+metadata for unit information.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aicsimageio.readers.sldy_reader.SldyReader.scenes">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scenes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#aicsimageio.readers.sldy_reader.SldyReader.scenes" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>scenes</strong> – A tuple of valid scene ids in the file.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[str, …]</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Scene IDs are strings - not a range of integers.</p>
+<p>When iterating over scenes please use:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">scenes</span>
+</pre></div>
+</div>
+<p>and not:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">scenes</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
 
 
            </div>

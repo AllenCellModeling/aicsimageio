@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>aicsimageio.utils.io_utils &mdash; AICSImageIO 4.11.0 documentation</title>
+  <title>aicsimageio.readers.sldy_reader &mdash; AICSImageIO 4.11.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -433,7 +433,7 @@
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../aicsimageio.html">aicsimageio</a></li>
-      <li class="breadcrumb-item active">aicsimageio.utils.io_utils</li>
+      <li class="breadcrumb-item active">aicsimageio.readers.sldy_reader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -442,69 +442,302 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for aicsimageio.utils.io_utils</h1><div class="highlight"><pre>
+  <h1>Source code for aicsimageio.readers.sldy_reader</h1><div class="highlight"><pre>
 <span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: utf-8 -*-</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">cast</span>
 
-<span class="kn">from</span> <span class="nn">fsspec.core</span> <span class="kn">import</span> <span class="n">url_to_fs</span>
+<span class="kn">import</span> <span class="nn">dask.array</span> <span class="k">as</span> <span class="nn">da</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
 <span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
 
-<span class="kn">from</span> <span class="nn">..types</span> <span class="kn">import</span> <span class="n">PathLike</span>
+<span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">transforms</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">...dimensions</span> <span class="kn">import</span> <span class="n">DEFAULT_DIMENSION_ORDER_LIST</span><span class="p">,</span> <span class="n">DimensionNames</span>
+<span class="kn">from</span> <span class="nn">...types</span> <span class="kn">import</span> <span class="n">PhysicalPixelSizes</span>
+<span class="kn">from</span> <span class="nn">...utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
+<span class="kn">from</span> <span class="nn">..reader</span> <span class="kn">import</span> <span class="n">Reader</span>
+<span class="kn">from</span> <span class="nn">.sldy_image</span> <span class="kn">import</span> <span class="n">SldyImage</span>
 
 <span class="c1">###############################################################################</span>
 
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="pathlike_to_fs"><a class="viewcode-back" href="../../../aicsimageio.utils.html#aicsimageio.utils.io_utils.pathlike_to_fs">[docs]</a><span class="k">def</span> <span class="nf">pathlike_to_fs</span><span class="p">(</span>
-    <span class="n">uri</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">,</span>
-    <span class="n">enforce_exists</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">fs_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="c1">###############################################################################</span>
+
+<span class="n">DEFAULT_DATA_FILE_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;ImageData&quot;</span>
+
+
+<div class="viewcode-block" id="SldyReader"><a class="viewcode-back" href="../../../aicsimageio.readers.sldy_reader.html#aicsimageio.readers.sldy_reader.SldyReader">[docs]</a><span class="k">class</span> <span class="nc">SldyReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Find and return the appropriate filesystem and path from a path-like object.</span>
+<span class="sd">    Read 3i slidebook (SLDY) images</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    uri: PathLike</span>
-<span class="sd">        The local or remote path or uri.</span>
-<span class="sd">    enforce_exists: bool</span>
-<span class="sd">        Check whether or not the resource exists, if not, raise FileNotFoundError.</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    fs: AbstractFileSystem</span>
-<span class="sd">        The filesystem to operate on.</span>
-<span class="sd">    path: str</span>
-<span class="sd">        The full path to the target resource.</span>
+<span class="sd">    image : Path or str</span>
+<span class="sd">        path to file</span>
 <span class="sd">    fs_kwargs: Dict[str, Any]</span>
 <span class="sd">        Any specific keyword arguments to pass down to the fsspec created filesystem.</span>
 <span class="sd">        Default: {}</span>
+<span class="sd">    data_file_prefix: str, default = &quot;ImageData&quot;</span>
+<span class="sd">        Prefix to the data files within the image directories to extract.</span>
+<span class="sd">        By default this will</span>
+<span class="sd">        be set to &quot;ImageData&quot;. However, specifying &quot;HistogramData&quot; would allow you</span>
+<span class="sd">        to interact with the image&#39;s histogram data instead.</span>
 
 <span class="sd">    Raises</span>
 <span class="sd">    ------</span>
-<span class="sd">    FileNotFoundError</span>
-<span class="sd">        If enforce_exists is provided value True and the resource is not found or is</span>
-<span class="sd">        unavailable.</span>
+<span class="sd">    exceptions.UnsupportedFileFormatError</span>
+<span class="sd">        If the file is not supported by this reader.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Convert paths to string to be handled by url_to_fs</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="n">uri</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span>
 
-    <span class="c1"># Get details</span>
-    <span class="n">fs</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">url_to_fs</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="n">fs_kwargs</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span><span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">SldyReader</span><span class="o">.</span><span class="n">_get_images_from_data_directory</span><span class="p">(</span>
+                <span class="n">fs</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_file_prefix&quot;</span><span class="p">,</span> <span class="n">DEFAULT_DATA_FILE_PREFIX</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="c1"># Check file exists</span>
-    <span class="k">if</span> <span class="n">enforce_exists</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">fs</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fs</span><span class="o">.</span><span class="n">protocol</span><span class="si">}</span><span class="s2">://</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_images_from_data_directory</span><span class="p">(</span>
+        <span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">data_file_prefix</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">SldyImage</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieves list of image acquisitions found at path.</span>
 
-    <span class="c1"># Get and store details</span>
-    <span class="c1"># We do not return an AbstractBufferedFile (i.e. fs.open) as we do not want to have</span>
-    <span class="c1"># any open file buffers _after_ any API call. API calls must themselves call</span>
-    <span class="c1"># fs.open and complete their function during the context of the opened buffer.</span>
-    <span class="k">return</span> <span class="n">fs</span><span class="p">,</span> <span class="n">path</span></div>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fs: AbstractFileSystem</span>
+<span class="sd">            The file system to used for reading.</span>
+<span class="sd">        path: str</span>
+<span class="sd">            The path to the file to read.</span>
+<span class="sd">        data_file_prefix: str</span>
+<span class="sd">            Prefix to the data files within the image directories to extract.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        images: List[SldyImage]</span>
+<span class="sd">            A list of the acquisitions found at the path given</span>
+<span class="sd">            ordered by their names</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s2">&quot;.dir&quot;</span><span class="p">)</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">SldyImage</span><span class="p">(</span><span class="n">fs</span><span class="p">,</span> <span class="n">image_dir</span><span class="p">,</span> <span class="n">data_file_prefix</span><span class="o">=</span><span class="n">data_file_prefix</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">image_dir</span> <span class="ow">in</span> <span class="n">data_directory</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.imgdir&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">images</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unable to find any images within the image directory&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Prevent inconsistent scene (image) ordering</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">img</span><span class="p">:</span> <span class="n">img</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">images</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">fs_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+        <span class="n">data_file_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DATA_FILE_PREFIX</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Expand details of provided image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span>
+            <span class="n">image</span><span class="p">,</span>
+            <span class="n">enforce_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">fs_kwargs</span><span class="o">=</span><span class="n">fs_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_images</span> <span class="o">=</span> <span class="n">SldyReader</span><span class="o">.</span><span class="n">_get_images_from_data_directory</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">data_file_prefix</span><span class="o">=</span><span class="n">data_file_prefix</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="c1"># Enforce valid image</span>
+            <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
+            <span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">image</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">physical_pixel_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PhysicalPixelSizes</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">PhysicalPixelSizes</span><span class="p">(</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">physical_pixel_size_z</span><span class="p">,</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">physical_pixel_size_y</span><span class="p">,</span>
+            <span class="n">image</span><span class="o">.</span><span class="n">physical_pixel_size_x</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+
+        <span class="c1"># If no timepoints or channels available create a single</span>
+        <span class="c1"># element list of `None` to represent the empty dimension</span>
+        <span class="n">timepoints</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">timepoints</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+        <span class="c1"># Iterate over each timepoint and channel retreiving data from the</span>
+        <span class="c1"># image data file (lazily as a delayed read).</span>
+        <span class="c1"># If no timepoints or channels are available this will fill</span>
+        <span class="c1"># the otherwise empty Time/Channel dimension</span>
+        <span class="n">data_as_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">timepoint</span> <span class="ow">in</span> <span class="n">timepoints</span><span class="p">:</span>
+            <span class="n">data_for_timepoint</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">da</span><span class="o">.</span><span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+                    <span class="n">timepoint</span><span class="o">=</span><span class="n">timepoint</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span> <span class="n">delayed</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="n">data_for_timepoint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="n">data_as_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">da</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data_for_timepoint</span><span class="p">))</span>
+
+        <span class="n">image_data</span> <span class="o">=</span> <span class="n">da</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">data_as_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_data_array</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+
+        <span class="c1"># If no timepoints or channels available create a single</span>
+        <span class="c1"># element list of `None` to represent the empty dimension</span>
+        <span class="n">timepoints</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">timepoints</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">channels</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">channels</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+        <span class="c1"># Iterate over each timepoint and channel retreiving data from the</span>
+        <span class="c1"># image data file.</span>
+        <span class="c1"># If no timepoints or channels are available this will fill</span>
+        <span class="c1"># the otherwise empty Time/Channel dimension</span>
+        <span class="n">data_as_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">timepoint</span> <span class="ow">in</span> <span class="n">timepoints</span><span class="p">:</span>
+            <span class="n">data_for_timepoint</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">channels</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+                    <span class="n">timepoint</span><span class="o">=</span><span class="n">timepoint</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="n">channel</span><span class="p">,</span> <span class="n">delayed</span><span class="o">=</span><span class="kc">False</span>
+                <span class="p">)</span>
+                <span class="n">data_for_timepoint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="n">data_as_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_for_timepoint</span><span class="p">))</span>
+
+        <span class="n">image_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_as_list</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_data_array</span><span class="p">(</span><span class="n">image_data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_data_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given data representing an image this will create an xr.DataArray</span>
+<span class="sd">        representation of the image data.</span>
+
+<span class="sd">        This makes some assumptions about the dimensions of the image data</span>
+<span class="sd">        that are based on how the data arrays were constructed in _read_immediate</span>
+<span class="sd">        and _read_delayed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_data: types.ArrayLike</span>
+<span class="sd">            Array like representation of the image data intended to be wrapped.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        data_array: xr.DataArray</span>
+<span class="sd">            xarray representation of the image data given</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">original_dims</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">,</span>
+            <span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="n">intended_dims</span> <span class="o">=</span> <span class="n">DEFAULT_DIMENSION_ORDER_LIST</span>
+
+        <span class="c1"># If the original dimensions of the data does not equal the dimensions</span>
+        <span class="c1"># this needs to output then reshape the data</span>
+        <span class="k">if</span> <span class="n">original_dims</span> <span class="o">!=</span> <span class="n">intended_dims</span><span class="p">:</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">reshape_data</span><span class="p">(</span>
+                <span class="n">data</span><span class="o">=</span><span class="n">image_data</span><span class="p">,</span>
+                <span class="n">given_dims</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">original_dims</span><span class="p">),</span>
+                <span class="n">return_dims</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">intended_dims</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">image_data</span><span class="p">,</span>
+            <span class="n">dims</span><span class="o">=</span><span class="n">intended_dims</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_coords</span><span class="p">(</span><span class="n">image_data</span><span class="p">,</span> <span class="n">intended_dims</span><span class="p">),</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_coords</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">image_data</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">ArrayLike</span><span class="p">,</span> <span class="n">dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given data representing an image and the dimension order</span>
+<span class="sd">        this will return a dictionary mapping representing the</span>
+<span class="sd">        coordinates of the dimensions inside the image data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image_data: types.ArrayLike</span>
+<span class="sd">            Array like representation of the image data intended to be mapped.</span>
+<span class="sd">        dims: List[str]</span>
+<span class="sd">            Order of dimensions present in the image data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        coords: Dict[str, Any]</span>
+<span class="sd">            Dictionary mapping dimensions to their coordinates within the given</span>
+<span class="sd">            image data array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_images</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span> <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="n">image</span><span class="o">.</span><span class="n">channels</span>
+            <span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">timepoints</span><span class="p">:</span>
+            <span class="n">timepoint_scale</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Time</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">_generate_coord_array</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">timepoints</span><span class="p">),</span> <span class="n">timepoint_scale</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">_generate_coord_array</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span>
+                <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialZ</span><span class="p">)],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Should never happen due to how SldyImage reads these, but here to typeguard</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Unable to determine physical pixel size of Y and/or X dimension&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">_generate_coord_array</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialY</span><span class="p">)],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reader</span><span class="o">.</span><span class="n">_generate_coord_array</span><span class="p">(</span>
+            <span class="mi">0</span><span class="p">,</span>
+            <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">SpatialX</span><span class="p">)],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">physical_pixel_sizes</span><span class="o">.</span><span class="n">X</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">coords</span></div>
 </pre></div>
 
            </div>

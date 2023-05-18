@@ -1,0 +1,21 @@
+aicsimageio.readers.sldy\_reader package
+========================================
+
+Submodules
+----------
+
+aicsimageio.readers.sldy\_reader.sldy\_image module
+---------------------------------------------------
+
+.. automodule:: aicsimageio.readers.sldy_reader.sldy_image
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aicsimageio.readers.sldy_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:

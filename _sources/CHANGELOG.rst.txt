@@ -3,6 +3,15 @@ Changelog
 
 (unreleased)
 ------------
+
+New
+~~~
+- Feature/sldy reader  (`#496
+  <https://github.com/AllenCellModeling/aicsimageio/pull/496>`_) [Sean
+  LeRoy]
+
+Other
+~~~~~
 - Admin: Update deploy process  (`#494
   <https://github.com/AllenCellModeling/aicsimageio/pull/494>`_) [Sean
   LeRoy]

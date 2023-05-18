@@ -1,6 +1,14 @@
 aicsimageio.readers package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   aicsimageio.readers.sldy_reader
+
 Submodules
 ----------
 

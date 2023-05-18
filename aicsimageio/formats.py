@@ -404,6 +404,7 @@ FORMAT_IMPLEMENTATIONS: Dict[str, List[str]] = {
     "seq": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "sif": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "sld": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
+    "sldy": ["aicsimageio.readers.sldy_reader.SldyReader"],
     "sm2": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "sm3": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],
     "spc": ["aicsimageio.readers.bioformats_reader.BioformatsReader"],

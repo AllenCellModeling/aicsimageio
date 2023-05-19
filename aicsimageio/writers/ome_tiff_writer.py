@@ -666,7 +666,7 @@ class OmeTiffWriter(Writer):
 
         # validate! (TODO: Is there a better api in ome-types for this?)
         test = to_xml(ome_object)
-        from_xml(test)
+        from_xml(test, parser="lxml")
 
         return ome_object
 

@@ -139,7 +139,7 @@ class OmeZarrReader(Reader):
 
         return coords
 
-    def _get_channel_names(self) -> List[str] | None:
+    def _get_channel_names(self) -> "List[str] | None":
         try:
             channels = [
                 str(channel["label"])

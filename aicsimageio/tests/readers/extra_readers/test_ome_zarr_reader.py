@@ -115,7 +115,7 @@ def test_ome_zarr_reader(
             (7, 4, 3, 1200, 1800),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["0"],
+            ["C:0", "C:1", "C:2", "C:3"],
             (None, None, None),
             dict,
         ),

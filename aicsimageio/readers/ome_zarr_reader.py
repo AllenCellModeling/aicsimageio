@@ -101,8 +101,8 @@ class OmeZarrReader(Reader):
         coords = self._get_coords(
             dims,
             image_data.shape,
-            scene_index=self.current_scene_index,
-            channel_names=self._get_channel_names(),
+            scene=self.current_scene,
+            channel_names=self._get_channel_names_from_ome(),
         )
 
         return xr.DataArray(
@@ -116,30 +116,24 @@ class OmeZarrReader(Reader):
     def _get_coords(
         dims: List[str],
         shape: Tuple[int, ...],
-        scene_index: int,
+        scene: str,
         channel_names: Optional[List[str]],
     ) -> Dict[str, Any]:
         # Use dims for coord determination
         coords: Dict[str, Any] = {}
 
-        if channel_names is None:
-            # Get ImageId for channel naming
-            image_id = metadata_utils.generate_ome_image_id(scene_index)
-
-            # Use range for channel indices
-            if DimensionNames.Channel in dims:
+        if DimensionNames.Channel in dims:
+            if channel_names is None:
                 coords[DimensionNames.Channel] = [
-                    metadata_utils.generate_ome_channel_id(
-                        image_id=image_id, channel_id=i
-                    )
+                    metadata_utils.generate_ome_channel_id(image_id=scene, channel_id=i)
                     for i in range(shape[dims.index(DimensionNames.Channel)])
                 ]
-        else:
-            coords[DimensionNames.Channel] = channel_names
+            else:
+                coords[DimensionNames.Channel] = channel_names
 
         return coords
 
-    def _get_channel_names(self) -> "List[str] | None":
+    def _get_channel_names_from_ome(self) -> "List[str] | None":
         try:
             channels = [
                 str(channel["label"])

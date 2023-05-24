@@ -119,10 +119,12 @@ class OmeZarrReader(Reader):
         scene: str,
         channel_names: Optional[List[str]],
     ) -> Dict[str, Any]:
-        # Use dims for coord determination
+
         coords: Dict[str, Any] = {}
 
+        # Use dims for coord determination
         if DimensionNames.Channel in dims:
+            # Generate channel names if no existing channel names
             if channel_names is None:
                 coords[DimensionNames.Channel] = [
                     metadata_utils.generate_ome_channel_id(image_id=scene, channel_id=i)

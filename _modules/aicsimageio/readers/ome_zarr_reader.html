@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>aicsimageio.readers.dv_reader &mdash; AICSImageIO 4.11.0 documentation</title>
+  <title>aicsimageio.readers.ome_zarr_reader &mdash; AICSImageIO 4.11.0 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -433,7 +433,7 @@
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
           <li class="breadcrumb-item"><a href="../../aicsimageio.html">aicsimageio</a></li>
-      <li class="breadcrumb-item active">aicsimageio.readers.dv_reader</li>
+      <li class="breadcrumb-item active">aicsimageio.readers.ome_zarr_reader</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -442,107 +442,153 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <h1>Source code for aicsimageio.readers.dv_reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+  <h1>Source code for aicsimageio.readers.ome_zarr_reader</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
-
-<span class="kn">from</span> <span class="nn">fsspec.implementations.local</span> <span class="kn">import</span> <span class="n">LocalFileSystem</span>
-<span class="kn">from</span> <span class="nn">resource_backed_dask_array</span> <span class="kn">import</span> <span class="n">resource_backed_dask_array</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span><span class="p">,</span> <span class="n">exceptions</span><span class="p">,</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..dimensions</span> <span class="kn">import</span> <span class="n">DimensionNames</span>
+<span class="kn">from</span> <span class="nn">..metadata</span> <span class="kn">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">metadata_utils</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">io_utils</span>
 <span class="kn">from</span> <span class="nn">.reader</span> <span class="kn">import</span> <span class="n">Reader</span>
 
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
-    <span class="kn">from</span> <span class="nn">fsspec.spec</span> <span class="kn">import</span> <span class="n">AbstractFileSystem</span>
-
-
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">mrc</span> <span class="kn">import</span> <span class="n">DVFile</span>
+    <span class="kn">from</span> <span class="nn">ome_zarr.io</span> <span class="kn">import</span> <span class="n">parse_url</span>
+    <span class="kn">from</span> <span class="nn">ome_zarr.reader</span> <span class="kn">import</span> <span class="n">Reader</span> <span class="k">as</span> <span class="n">ZarrReader</span>
+
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
-        <span class="s2">&quot;The mrc package is required for this reader. &quot;</span>
-        <span class="s2">&quot;Install with `pip install aicsimageio[dv]`&quot;</span>
+        <span class="s2">&quot;ome_zarr is required for this reader. &quot;</span> <span class="s2">&quot;Install with `pip install &#39;ome_zarr&#39;`&quot;</span>
     <span class="p">)</span>
 
+<span class="c1">###############################################################################</span>
 
-<div class="viewcode-block" id="DVReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.dv_reader.DVReader">[docs]</a><span class="k">class</span> <span class="nc">DVReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read DV/Deltavision files.</span>
 
-<span class="sd">    This reader requires `mrc` to be installed in the environment.</span>
+<div class="viewcode-block" id="OmeZarrReader"><a class="viewcode-back" href="../../../aicsimageio.readers.html#aicsimageio.readers.ome_zarr_reader.OmeZarrReader">[docs]</a><span class="k">class</span> <span class="nc">OmeZarrReader</span><span class="p">(</span><span class="n">Reader</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps the ome-zarr-py API to provide the same aicsimageio Reader API but for</span>
+<span class="sd">    OmeZarr images.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    image : Path or str</span>
-<span class="sd">        path to file</span>
+<span class="sd">    image: types.PathLike</span>
+<span class="sd">        Path to image file to construct Reader for.</span>
 <span class="sd">    fs_kwargs: Dict[str, Any]</span>
 <span class="sd">        Any specific keyword arguments to pass down to the fsspec created filesystem.</span>
 <span class="sd">        Default: {}</span>
-
-<span class="sd">    Raises</span>
-<span class="sd">    ------</span>
-<span class="sd">    exceptions.UnsupportedFileFormatError</span>
-<span class="sd">        If the file is not a supported dv file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_is_supported_image</span><span class="p">(</span><span class="n">fs</span><span class="p">:</span> <span class="n">AbstractFileSystem</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">DVFile</span><span class="o">.</span><span class="n">is_supported_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ZarrReader</span><span class="p">(</span><span class="n">parse_url</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">fs_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}):</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">image</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">fs_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{},</span>
+    <span class="p">):</span>
+        <span class="c1"># Expand details of provided image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">io_utils</span><span class="o">.</span><span class="n">pathlike_to_fs</span><span class="p">(</span>
             <span class="n">image</span><span class="p">,</span>
-            <span class="n">enforce_exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">enforce_exists</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">fs_kwargs</span><span class="o">=</span><span class="n">fs_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># Catch non-local file system</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="n">LocalFileSystem</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;dv reader not yet implemented for non-local file system. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Received URI: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="si">}</span><span class="s2">, which points to </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
 
+        <span class="c1"># Enforce valid image</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_supported_image</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">UnsupportedFileFormatError</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span>
             <span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span> <span class="o">=</span> <span class="n">ZarrReader</span><span class="p">(</span><span class="n">parse_url</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">zarr</span>
+
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">scenes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;Image:0&quot;</span><span class="p">,)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scenes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">root_attrs</span><span class="p">[</span><span class="s2">&quot;multiscales&quot;</span><span class="p">]</span>
+
+            <span class="c1"># if (each scene has a name) and (that name is unique) use name.</span>
+            <span class="c1"># otherwise generate scene names.</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="s2">&quot;name&quot;</span> <span class="ow">in</span> <span class="n">scene</span> <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">({</span><span class="n">scene</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">})</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">scenes</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">scene</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">scene</span> <span class="ow">in</span> <span class="n">scenes</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_image_id</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">root_attrs</span><span class="p">[</span><span class="s2">&quot;multiscales&quot;</span><span class="p">]))</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scenes</span>
 
     <span class="k">def</span> <span class="nf">_read_delayed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_reformat</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_format</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_read_immediate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_reformat</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_xarr_format</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_xarr_reformat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delayed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">DVFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">dv</span><span class="p">:</span>
-            <span class="n">xarr</span> <span class="o">=</span> <span class="n">dv</span><span class="o">.</span><span class="n">to_xarray</span><span class="p">(</span><span class="n">delayed</span><span class="o">=</span><span class="n">delayed</span><span class="p">,</span> <span class="n">squeeze</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">delayed</span><span class="p">:</span>
-                <span class="n">xarr</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">resource_backed_dask_array</span><span class="p">(</span><span class="n">xarr</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">dv</span><span class="p">)</span>
-            <span class="n">xarr</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">]</span> <span class="o">=</span> <span class="n">xarr</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">xarr</span>
+    <span class="k">def</span> <span class="nf">_xarr_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delayed</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">:</span>
+        <span class="n">image_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">))</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">root_attrs</span><span class="p">[</span><span class="s2">&quot;multiscales&quot;</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene_index</span><span class="p">][</span><span class="s2">&quot;axes&quot;</span><span class="p">]</span>
+        <span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">sub</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">]</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">physical_pixel_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        sizes: PhysicalPixelSizes</span>
-<span class="sd">            Using available metadata, the floats representing physical pixel sizes for</span>
-<span class="sd">            dimensions Z, Y, and X.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">delayed</span><span class="p">:</span>
+            <span class="n">image_data</span> <span class="o">=</span> <span class="n">image_data</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
-<span class="sd">        Notes</span>
-<span class="sd">        -----</span>
-<span class="sd">        We currently do not handle unit attachment to these values. Please see the file</span>
-<span class="sd">        metadata for unit information.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="n">DVFile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">dvfile</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">types</span><span class="o">.</span><span class="n">PhysicalPixelSizes</span><span class="p">(</span><span class="o">*</span><span class="n">dvfile</span><span class="o">.</span><span class="n">voxel_size</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+        <span class="n">coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_coords</span><span class="p">(</span>
+            <span class="n">dims</span><span class="p">,</span>
+            <span class="n">image_data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span>
+            <span class="n">scene</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">current_scene</span><span class="p">,</span>
+            <span class="n">channel_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_channel_names_from_ome</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">xr</span><span class="o">.</span><span class="n">DataArray</span><span class="p">(</span>
+            <span class="n">image_data</span><span class="p">,</span>
+            <span class="n">dims</span><span class="o">=</span><span class="n">dims</span><span class="p">,</span>
+            <span class="n">coords</span><span class="o">=</span><span class="n">coords</span><span class="p">,</span>
+            <span class="n">attrs</span><span class="o">=</span><span class="p">{</span><span class="n">constants</span><span class="o">.</span><span class="n">METADATA_UNPROCESSED</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">root_attrs</span><span class="p">},</span>
+        <span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_coords</span><span class="p">(</span>
+        <span class="n">dims</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">scene</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">channel_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+
+        <span class="n">coords</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Use dims for coord determination</span>
+        <span class="k">if</span> <span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span> <span class="ow">in</span> <span class="n">dims</span><span class="p">:</span>
+            <span class="c1"># Generate channel names if no existing channel names</span>
+            <span class="k">if</span> <span class="n">channel_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">metadata_utils</span><span class="o">.</span><span class="n">generate_ome_channel_id</span><span class="p">(</span><span class="n">image_id</span><span class="o">=</span><span class="n">scene</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="n">dims</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">)])</span>
+                <span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">coords</span><span class="p">[</span><span class="n">DimensionNames</span><span class="o">.</span><span class="n">Channel</span><span class="p">]</span> <span class="o">=</span> <span class="n">channel_names</span>
+
+        <span class="k">return</span> <span class="n">coords</span>
+
+    <span class="k">def</span> <span class="nf">_get_channel_names_from_ome</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;List[str] | None&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">channels</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">channel</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">channel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zarr</span><span class="o">.</span><span class="n">root_attrs</span><span class="p">[</span><span class="s2">&quot;omero&quot;</span><span class="p">][</span><span class="s2">&quot;channels&quot;</span><span class="p">]</span>
+            <span class="p">]</span>
+            <span class="k">return</span> <span class="n">channels</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
 </pre></div>
 
            </div>

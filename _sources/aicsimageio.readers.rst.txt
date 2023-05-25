@@ -84,6 +84,14 @@ aicsimageio.readers.ome\_tiff\_reader module
    :undoc-members:
    :show-inheritance:
 
+aicsimageio.readers.ome\_zarr\_reader module
+--------------------------------------------
+
+.. automodule:: aicsimageio.readers.ome_zarr_reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 aicsimageio.readers.reader module
 ---------------------------------
 

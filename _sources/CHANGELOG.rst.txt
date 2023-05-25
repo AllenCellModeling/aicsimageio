@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- OmeZarrReader  (`#493
+  <https://github.com/AllenCellModeling/aicsimageio/pull/493>`_)
+  [BrianWhitneyAI]
 - Admin: Update deploy process  (`#494
   <https://github.com/AllenCellModeling/aicsimageio/pull/494>`_) [Sean
   LeRoy]

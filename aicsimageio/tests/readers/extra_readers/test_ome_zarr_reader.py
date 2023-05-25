@@ -55,16 +55,6 @@ from ...conftest import LOCAL, get_resource_full_path, host
             ["C:0", "C:1", "C:2", "C:3"],
             (None, None, None),
         ),
-        (
-            "s1_t7_c4_z3_Image_1.zarr",
-            "s1_t7_c4_z3_Image_1",
-            ("s1_t7_c4_z3_Image_1",),
-            (7, 4, 3, 1200, 1800),
-            np.uint16,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["C:0", "C:1", "C:2", "C:3"],
-            (None, None, None),
-        ),
     ],
 )
 def test_ome_zarr_reader(

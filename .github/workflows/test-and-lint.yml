@@ -66,6 +66,7 @@ jobs:
           nd2,
           sldy,
           bfio,
+          omezarr,
         ]
     steps:
       - uses: actions/checkout@v2

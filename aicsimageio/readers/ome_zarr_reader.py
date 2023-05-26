@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import warnings
 from typing import Any, Dict, List, Optional, Tuple
 
 import xarray as xr
@@ -8,6 +9,7 @@ from fsspec.spec import AbstractFileSystem
 from .. import constants, exceptions, types
 from ..dimensions import DimensionNames
 from ..metadata import utils as metadata_utils
+from ..types import PhysicalPixelSizes
 from ..utils import io_utils
 from .reader import Reader
 
@@ -65,6 +67,8 @@ class OmeZarrReader(Reader):
             )
 
         self._zarr = ZarrReader(parse_url(self._path, mode="r")).zarr
+        self._physical_pixel_sizes: Optional[PhysicalPixelSizes] = None
+        self._multiresolution_level = 0
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -83,6 +87,24 @@ class OmeZarrReader(Reader):
                     for i in range(len(self._zarr.root_attrs["multiscales"]))
                 )
         return self._scenes
+
+    @property
+    def physical_pixel_sizes(self) -> PhysicalPixelSizes:
+        """Return the physical pixel sizes of the image."""
+        if self._physical_pixel_sizes is None:
+            try:
+                z_size, y_size, x_size = OmeZarrReader._get_pixel_size(
+                    self._zarr,
+                    list(self.dims.order),
+                    self._current_scene_index,
+                    self._multiresolution_level,
+                )
+            except Exception as e:
+                warnings.warn(f"Could not parse zarr pixel size: {e}")
+                z_size, y_size, x_size = None, None, None
+
+            self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)
+        return self._physical_pixel_sizes
 
     def _read_delayed(self) -> xr.DataArray:
         return self._xarr_format(delayed=True)
@@ -134,6 +156,26 @@ class OmeZarrReader(Reader):
                 coords[DimensionNames.Channel] = channel_names
 
         return coords
+
+    @staticmethod
+    def _get_pixel_size(
+        reader: ZarrReader, dims: List[str], series_index: int, resolution_index: int
+    ) -> Tuple[Optional[float], Optional[float], Optional[float]]:
+
+        coord_transform = reader.root_attrs["multiscales"][series_index]["datasets"][
+            resolution_index
+        ]["coordinateTransformations"]
+
+        spatial_coeffs = {}
+
+        for dim in ["X", "Y", "Z"]:
+            if dim in dims:
+                dim_index = dims.index(dim)
+                spatial_coeffs[str(dim)] = coord_transform[0]["scale"][dim_index]
+            else:
+                spatial_coeffs[str(dim)] = None
+
+        return spatial_coeffs["Z"], spatial_coeffs["Y"], spatial_coeffs["X"]
 
     def _get_channel_names_from_ome(self) -> "List[str] | None":
         try:

@@ -53,7 +53,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
             ["C:0", "C:1", "C:2", "C:3"],
-            (None, None, None),
+            (1.0, 1.0, 1.0),
         ),
     ],
 )

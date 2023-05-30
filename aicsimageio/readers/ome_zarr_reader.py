@@ -175,9 +175,9 @@ class OmeZarrReader(Reader):
         ]:
             if dim in dims:
                 dim_index = dims.index(dim)
-                spatial_coeffs[str(dim)] = coord_transform[0]["scale"][dim_index]
+                spatial_coeffs[dim] = coord_transform[0]["scale"][dim_index]
             else:
-                spatial_coeffs[str(dim)] = None
+                spatial_coeffs[dim] = None
 
         return (
             spatial_coeffs[DimensionNames.SpatialZ],

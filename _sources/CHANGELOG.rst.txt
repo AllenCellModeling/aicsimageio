@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- Admin/OmeZarrReader redundant test  (`#507
+  <https://github.com/AllenCellModeling/aicsimageio/pull/507>`_)
+  [BrianWhitneyAI]
 - OmeZarrReader  (`#493
   <https://github.com/AllenCellModeling/aicsimageio/pull/493>`_)
   [BrianWhitneyAI]

@@ -168,14 +168,22 @@ class OmeZarrReader(Reader):
 
         spatial_coeffs = {}
 
-        for dim in ["X", "Y", "Z"]:
+        for dim in [
+            DimensionNames.SpatialX,
+            DimensionNames.SpatialY,
+            DimensionNames.SpatialZ,
+        ]:
             if dim in dims:
                 dim_index = dims.index(dim)
                 spatial_coeffs[str(dim)] = coord_transform[0]["scale"][dim_index]
             else:
                 spatial_coeffs[str(dim)] = None
 
-        return spatial_coeffs["Z"], spatial_coeffs["Y"], spatial_coeffs["X"]
+        return (
+            spatial_coeffs[DimensionNames.SpatialZ],
+            spatial_coeffs[DimensionNames.SpatialY],
+            spatial_coeffs[DimensionNames.SpatialX],
+        )
 
     def _get_channel_names_from_ome(self) -> "List[str] | None":
         try:

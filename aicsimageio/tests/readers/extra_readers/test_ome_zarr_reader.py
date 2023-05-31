@@ -55,6 +55,16 @@ from ...conftest import LOCAL, get_resource_full_path, host
             ["C:0", "C:1", "C:2", "C:3"],
             (1.0, 1.0, 1.0),
         ),
+        (
+            "resolution_constant_testfile.zarr",
+            "resolution_constant_testfile",
+            ("resolution_constant_testfile",),
+            (1, 1, 1, 7548, 7548),
+            np.uint8,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["Channel:0:0"],
+            (0.1, 26.458333333333332, 26.458333333333332),
+        ),
     ],
 )
 def test_ome_zarr_reader(

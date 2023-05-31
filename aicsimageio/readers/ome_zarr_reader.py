@@ -162,6 +162,18 @@ class OmeZarrReader(Reader):
         reader: ZarrReader, dims: List[str], series_index: int, resolution_index: int
     ) -> Tuple[Optional[float], Optional[float], Optional[float]]:
 
+        # OmeZarr file may contain an additional set of "coordinateTransformations"
+        # these coefficents are applied to all resolution levels.
+        if (
+            "coordinateTransformations"
+            in reader.root_attrs["multiscales"][series_index]
+        ):
+            universal_res_consts = reader.root_attrs["multiscales"][series_index][
+                "coordinateTransformations"
+            ][0]["scale"]
+        else:
+            universal_res_consts = [1.0 for _ in range(len(dims))]
+
         coord_transform = reader.root_attrs["multiscales"][series_index]["datasets"][
             resolution_index
         ]["coordinateTransformations"]
@@ -175,7 +187,10 @@ class OmeZarrReader(Reader):
         ]:
             if dim in dims:
                 dim_index = dims.index(dim)
-                spatial_coeffs[dim] = coord_transform[0]["scale"][dim_index]
+                spatial_coeffs[dim] = (
+                    coord_transform[0]["scale"][dim_index]
+                    * universal_res_consts[dim_index]
+                )
             else:
                 spatial_coeffs[dim] = None
 

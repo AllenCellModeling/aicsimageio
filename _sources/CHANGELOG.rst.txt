@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- OmeZarrReader physical_pixel_sizes support  (`#509
+  <https://github.com/AllenCellModeling/aicsimageio/pull/509>`_)
+  [BrianWhitneyAI]
 - Admin/OmeZarrReader redundant test  (`#507
   <https://github.com/AllenCellModeling/aicsimageio/pull/507>`_)
   [BrianWhitneyAI]

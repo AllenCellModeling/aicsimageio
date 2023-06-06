@@ -108,7 +108,7 @@ class OmeZarrReader(Reader):
         return self._physical_pixel_sizes
 
     @property
-    def channel_names(self) -> "List[str] | None":
+    def channel_names(self) -> Optional[List[str]]:
         if self._channel_names is None:
             try:
                 self._channel_names = [

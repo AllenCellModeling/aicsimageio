@@ -254,7 +254,7 @@ class LifReader(Reader):
             # Stack and reshape to get rid of the array of arrays
             scene_dims = selected_scene.info["dims"]
             retrieved_chunk = np.stack(planes).reshape(
-                np_array_for_indices.shape + (scene_dims.y, scene_dims.x)
+                np_array_for_indices.shape + (scene_dims.y, scene_dims.x), order="F"
             )
 
             # Remove extra dimensions if they were not requested

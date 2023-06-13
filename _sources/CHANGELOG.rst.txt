@@ -12,6 +12,12 @@ New
 
 Other
 ~~~~~
+- Admin/OmeZarrReader variable dimension unit tests  (`#510
+  <https://github.com/AllenCellModeling/aicsimageio/pull/510>`_)
+  [BrianWhitneyAI, Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * new hash
+  ---------    Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>]
 - OmeZarrReader physical_pixel_sizes support  (`#509
   <https://github.com/AllenCellModeling/aicsimageio/pull/509>`_)
   [BrianWhitneyAI]

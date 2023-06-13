@@ -69,6 +69,7 @@ class OmeZarrReader(Reader):
         self._zarr = ZarrReader(parse_url(self._path, mode="r")).zarr
         self._physical_pixel_sizes: Optional[PhysicalPixelSizes] = None
         self._multiresolution_level = 0
+        self._channel_names: Optional[List[str]] = None
 
     @property
     def scenes(self) -> Tuple[str, ...]:
@@ -106,6 +107,18 @@ class OmeZarrReader(Reader):
             self._physical_pixel_sizes = PhysicalPixelSizes(z_size, y_size, x_size)
         return self._physical_pixel_sizes
 
+    @property
+    def channel_names(self) -> Optional[List[str]]:
+        if self._channel_names is None:
+            try:
+                self._channel_names = [
+                    str(channel["label"])
+                    for channel in self._zarr.root_attrs["omero"]["channels"]
+                ]
+            except KeyError:
+                self._channel_names = super().channel_names
+        return self._channel_names
+
     def _read_delayed(self) -> xr.DataArray:
         return self._xarr_format(delayed=True)
 
@@ -124,7 +137,7 @@ class OmeZarrReader(Reader):
             dims,
             image_data.shape,
             scene=self.current_scene,
-            channel_names=self._get_channel_names_from_ome(),
+            channel_names=self.channel_names,
         )
 
         return xr.DataArray(
@@ -199,13 +212,3 @@ class OmeZarrReader(Reader):
             spatial_coeffs[DimensionNames.SpatialY],
             spatial_coeffs[DimensionNames.SpatialX],
         )
-
-    def _get_channel_names_from_ome(self) -> "List[str] | None":
-        try:
-            channels = [
-                str(channel["label"])
-                for channel in self._zarr.root_attrs["omero"]["channels"]
-            ]
-            return channels
-        except KeyError:
-            return None

@@ -35,6 +35,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             None,
             marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
+        # General Zarr
         (
             "s1_t1_c1_z1_Image_0.zarr",
             "s1_t1_c1_z1",
@@ -45,6 +46,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
             ["Channel:0:0"],
             (1.0, 264.5833333333333, 264.5833333333333),
         ),
+        # Complex General Zarr
         (
             "s1_t7_c4_z3_Image_0.zarr",
             "s1_t7_c4_z3_Image_0",
@@ -55,15 +57,66 @@ from ...conftest import LOCAL, get_resource_full_path, host
             ["C:0", "C:1", "C:2", "C:3"],
             (1.0, 1.0, 1.0),
         ),
+        # Test Resolution Constant
         (
-            "resolution_constant_testfile.zarr",
-            "resolution_constant_testfile",
-            ("resolution_constant_testfile",),
-            (1, 1, 1, 7548, 7548),
-            np.uint8,
-            dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0:0"],
-            (0.1, 26.458333333333332, 26.458333333333332),
+            "resolution_constant_zyx.zarr",
+            "resolution_constant_zyx",
+            ("resolution_constant_zyx",),
+            (2, 4, 4),
+            np.int64,
+            (
+                dimensions.DimensionNames.SpatialZ
+                + dimensions.DimensionNames.SpatialY
+                + dimensions.DimensionNames.SpatialX
+            ),
+            ["Channel:0"],
+            (0.1, 0.1, 0.1),
+        ),
+        # Test TYX
+        (
+            "dimension_handling_tyx.zarr",
+            "dimension_handling_tyx",
+            ("dimension_handling_tyx",),
+            (2, 4, 4),
+            np.int64,
+            (
+                dimensions.DimensionNames.Time
+                + dimensions.DimensionNames.SpatialY
+                + dimensions.DimensionNames.SpatialX
+            ),
+            ["Channel:0"],
+            (None, 1.0, 1.0),
+        ),
+        # Test ZYX
+        (
+            "dimension_handling_zyx.zarr",
+            "dimension_handling_zyx",
+            ("dimension_handling_zyx",),
+            (2, 4, 4),
+            np.int64,
+            (
+                dimensions.DimensionNames.SpatialZ
+                + dimensions.DimensionNames.SpatialY
+                + dimensions.DimensionNames.SpatialX
+            ),
+            ["Channel:0"],
+            (1.0, 1.0, 1.0),
+        ),
+        # Test TZYX
+        (
+            "dimension_handling_tzyx.zarr",
+            "dimension_handling_tzyx",
+            ("dimension_handling_tzyx",),
+            (2, 2, 4, 4),
+            np.int64,
+            (
+                dimensions.DimensionNames.Time
+                + dimensions.DimensionNames.SpatialZ
+                + dimensions.DimensionNames.SpatialY
+                + dimensions.DimensionNames.SpatialX
+            ),
+            ["Channel:0"],
+            (1.0, 1.0, 1.0),
         ),
     ],
 )

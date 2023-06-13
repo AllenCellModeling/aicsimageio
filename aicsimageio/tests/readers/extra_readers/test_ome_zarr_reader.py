@@ -118,6 +118,20 @@ from ...conftest import LOCAL, get_resource_full_path, host
             ["Channel:0"],
             (1.0, 1.0, 1.0),
         ),
+        (
+            "absent_metadata_dims_zyx.zarr",
+            "absent_metadata_dims_zyx",
+            ("absent_metadata_dims_zyx",),
+            (2, 4, 4),
+            np.int64,
+            (
+                dimensions.DimensionNames.SpatialZ
+                + dimensions.DimensionNames.SpatialY
+                + dimensions.DimensionNames.SpatialX
+            ),
+            ["Channel:0"],
+            (1.0, 1.0, 1.0),
+        ),
     ],
 )
 def test_ome_zarr_reader(

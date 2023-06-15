@@ -128,10 +128,10 @@ class OmeZarrReader(Reader):
     def _xarr_format(self, delayed: bool) -> xr.DataArray:
         image_data = self._zarr.load(str(self.current_scene_index))
 
-        if "axes" in self._zarr.root_attrs["multiscales"][self.current_scene_index]:
-            axes = self._zarr.root_attrs["multiscales"][self.current_scene_index][
-                "axes"
-            ]
+        axes = self._zarr.root_attrs["multiscales"][self.current_scene_index].get(
+            "axes"
+        )
+        if axes:
             dims = [sub["name"].upper() for sub in axes]
         else:
             dims = list(OmeZarrReader._guess_dim_order(image_data.shape))

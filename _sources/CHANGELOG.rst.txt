@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- Guess dims for missing field 'axes'  (`#514
+  <https://github.com/AllenCellModeling/aicsimageio/pull/514>`_)
+  [BrianWhitneyAI]
 - Admin/OmeZarrReader variable dimension unit tests  (`#510
   <https://github.com/AllenCellModeling/aicsimageio/pull/510>`_)
   [BrianWhitneyAI, Sean LeRoy

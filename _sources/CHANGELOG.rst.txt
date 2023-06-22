@@ -12,6 +12,9 @@ New
 
 Other
 ~~~~~
+- Ignore missing Position dimension  (`#498
+  <https://github.com/AllenCellModeling/aicsimageio/pull/498>`_) [Sean
+  LeRoy]
 - Guess dims for missing field 'axes'  (`#514
   <https://github.com/AllenCellModeling/aicsimageio/pull/514>`_)
   [BrianWhitneyAI]

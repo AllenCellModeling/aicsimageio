@@ -8,6 +8,7 @@ from ome_zarr.writer import write_image
 from zarr.storage import default_compressor
 
 from .. import exceptions, types
+from ..dimensions import DEFAULT_DIMENSION_ORDER
 from ..metadata import utils
 from ..utils import io_utils
 
@@ -105,6 +106,18 @@ class OmeZarrWriter:
         }
         return omero
 
+    @staticmethod
+    def build_chunk_dims(
+        chunk_dim_map: Dict,
+        dimension_order: str = DEFAULT_DIMENSION_ORDER,
+    ) -> List[Dict]:
+        return [
+            dict(
+                chunks=tuple(chunk_dim_map[d] for d in dimension_order),
+                compressor=default_compressor,
+            )
+        ]
+
     def write_image(
         self,
         # TODO how to pass in precomputed multiscales?
@@ -116,6 +129,7 @@ class OmeZarrWriter:
         scale_num_levels: int = 1,
         scale_factor: float = 2.0,
         dimension_order: Optional[str] = None,
+        chunk_dims: Optional[List[Dict]] = None,
     ) -> None:
         """
         Write a data array to a file.
@@ -249,6 +263,7 @@ class OmeZarrWriter:
             * image_data.shape[ydimindex]
             * image_data.itemsize
         )
+
         target_chunk_size = 16 * (1024 * 1024)  # 16 MB
         # this is making an assumption of chunking whole XY planes.
         # TODO allow callers to configure chunk dims?
@@ -256,19 +271,20 @@ class OmeZarrWriter:
         nplanes_per_chunk = (
             min(nplanes_per_chunk, image_data.shape[zdimindex]) if zdimindex > -1 else 1
         )
-        chunk_dim_map = {
-            "T": 1,
-            "C": 1,
-            "Z": nplanes_per_chunk,
-            "Y": image_data.shape[ydimindex],
-            "X": image_data.shape[xdimindex],
-        }
-        chunk_dims = [
-            dict(
-                chunks=tuple(chunk_dim_map[d] for d in dimension_order),
-                compressor=default_compressor,
-            )
-        ]
+        if chunk_dims is None:
+            chunk_dim_map = {
+                "T": 1,
+                "C": 1,
+                "Z": nplanes_per_chunk,
+                "Y": image_data.shape[ydimindex],
+                "X": image_data.shape[xdimindex],
+            }
+            chunk_dims = [
+                dict(
+                    chunks=tuple(chunk_dim_map[d] for d in dimension_order),
+                    compressor=default_compressor,
+                )
+            ]
         lasty = image_data.shape[ydimindex]
         lastx = image_data.shape[xdimindex]
         # TODO scaler might want to use different method for segmentations than raw
@@ -281,7 +297,7 @@ class OmeZarrWriter:
             scaler.method = "nearest"
             scaler.max_layer = scale_num_levels - 1
             scaler.downscale = scale_factor if scale_factor is not None else 2
-            for i in range(scale_num_levels - 1):
+            for _ in range(scale_num_levels - 1):
                 scale_dim_map["Y"] *= scaler.downscale
                 scale_dim_map["X"] *= scaler.downscale
                 transforms.append(

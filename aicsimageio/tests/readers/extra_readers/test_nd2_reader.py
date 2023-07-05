@@ -5,6 +5,7 @@ from typing import Any, List, Tuple, Union
 
 import numpy as np
 import pytest
+from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers.nd2_reader import ND2Reader
@@ -219,3 +220,21 @@ def test_aicsimage(
         expected_physical_pixel_sizes=expected_physical_pixel_sizes,
         expected_metadata_type=expected_metadata_type,
     )
+
+@pytest.mark.parametrize(
+    "filename",
+    [
+        "ND2_jonas_header_test2.nd2",
+        "ND2_maxime_BF007.nd2",
+        "ND2_dims_p4z5t3c2y32x32.nd2",
+    ],
+)
+def test_ome_metadata(filename: str) -> None:
+    # Get full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init image
+    img = AICSImage(uri)
+
+    # Test the transform
+    assert isinstance(img.ome_metadata, OME)

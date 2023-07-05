@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
+from nd2 import ND2File
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
@@ -11,6 +12,7 @@ from .reader import Reader
 if TYPE_CHECKING:
     import xarray as xr
     from fsspec.spec import AbstractFileSystem
+    from ome_types import OME
 
 
 try:
@@ -98,3 +100,24 @@ class ND2Reader(Reader):
         """
         with nd2.ND2File(self._path) as rdr:
             return types.PhysicalPixelSizes(*rdr.voxel_size()[::-1])
+
+    @property
+    def ome_metadata(self) -> OME:
+        """Return OME metadata.
+
+        Returns
+        -------
+        metadata: OME
+            The original metadata transformed into the OME specfication.
+            This likely isn't a complete transformation but is guarenteed to
+            be a valid transformation.
+
+        Raises
+        ------
+        NotImplementedError
+            No metadata transformer available.
+        """
+        if hasattr(ND2File, "ome_metadata"):
+            with nd2.ND2File(self._path) as rdr:
+                return rdr.ome_metadata()
+        raise NotImplementedError()

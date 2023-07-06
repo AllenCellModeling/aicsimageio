@@ -28,7 +28,7 @@ try:
 except ImportError:
     raise ImportError(
         "aicspylibczi is required for this reader. "
-        "Install with `pip install aicspylibczi>=3.0.5"
+        "Install with `pip install 'aicspylibczi>=3.1.1' 'fsspec>=2022.7.1'`"
     )
 
 ###############################################################################
@@ -82,7 +82,7 @@ class CziReader(Reader):
 
     Notes
     -----
-    To use this reader, install with: `pip install aicspylibczi>=3.0.5`.
+    To use this reader, install with: `pip install aicspylibczi>=3.1.1`.
     """
 
     @staticmethod
@@ -159,6 +159,14 @@ class CziReader(Reader):
 
     @property
     def scenes(self) -> Tuple[str, ...]:
+        """Note: scenes with no name (`None`) will be renamed to
+        "filename-<scene index>" to prevent ambiguity. Similarly, scenes with same
+        names are automatically appended with occurrence number to distinguish
+        between the two.
+
+        Returns:
+            Tuple[str, ...]: Scene names/id
+        """
         if self._scenes is None:
             with self._fs.open(self._path) as open_resource:
                 czi = CziFile(open_resource.f)
@@ -166,16 +174,9 @@ class CziReader(Reader):
                 meta_scenes = czi.meta.findall(xpath_str)
                 scene_names: List[str] = []
 
-                # Some "scenes" may have the same name but each scene has a sub-scene
-                # "Shape" with a name.
-                #
-                # An example of this is where someone images a 96 well plate with each
-                # well being it's own scene but they name every scene the same value.
-                # The sub-scene "Shape" elements have actual names of each well.
-                #
-                # If we didn't do this, the produced list would have 96 of the same
-                # string name making it impossible to switch scenes.
-                for meta_scene in meta_scenes:
+                # mapping of scene name to occurrences, indicating duplication.
+                scene_name_frequency = {}
+                for scene_idx, meta_scene in enumerate(meta_scenes):
                     shape = meta_scene.find("Shape")
                     if shape is not None:
                         shape_name = shape.get("Name")
@@ -183,6 +184,27 @@ class CziReader(Reader):
                         combined_scene_name = f"{scene_name}-{shape_name}"
                     else:
                         combined_scene_name = meta_scene.get("Name")
+                        # Some scene names can be unpopulated, for those we should fill
+                        # with filename-idx
+                        if combined_scene_name is None:
+                            fname_prefix = Path(self._path).stem
+                            combined_scene_name = f"{fname_prefix}-{scene_idx}"
+                        # Check for duplicated names
+                        # first encounter with a duplicate modify original scene name
+                        # to reflect its new duplicate status
+                        if combined_scene_name not in scene_name_frequency:
+                            scene_name_frequency[combined_scene_name] = [scene_idx, 1]
+                        else:
+                            if scene_name_frequency[combined_scene_name][1] == 1:
+                                scene_names[
+                                    scene_name_frequency[combined_scene_name][0]
+                                ] += "-1"
+
+                            scene_name_frequency[combined_scene_name][1] += 1
+
+                            combined_scene_name += (
+                                f"-{scene_name_frequency[combined_scene_name][1]}"
+                            )
 
                     scene_names.append(combined_scene_name)
 
@@ -269,6 +291,15 @@ class CziReader(Reader):
         scene_range = dims_shape_dict.get(CZI_SCENE_DIM_CHAR)
         if scene_range is None:
             return scene_index
+        if not consistent:
+            # we have selected a dims_shape_dict already based on scene index
+            # let's make sure the scene index is in the S range
+            if scene_index < scene_range[0] or scene_index >= scene_range[1]:
+                raise ValueError(
+                    f"Scene index {scene_index} is not in the range "
+                    f"{scene_range[0]} to {scene_range[1]}"
+                )
+            return scene_index
         return scene_range[0] + scene_index
 
     @staticmethod
@@ -338,7 +369,7 @@ class CziReader(Reader):
 
                 # If the dim was provided in the read dims
                 # we know a single plane for that dimension was requested so remove it
-                if dim in read_dims or dim is CZI_BLOCK_DIM_CHAR:
+                if dim in read_dims or dim == CZI_BLOCK_DIM_CHAR:
                     ops.append(0)
 
                 # Otherwise just read the full slice
@@ -886,7 +917,11 @@ class CziReader(Reader):
 
         return self._px_sizes
 
-    def get_mosaic_tile_position(self, mosaic_tile_index: int) -> Tuple[int, int]:
+    def get_mosaic_tile_position(
+        self,
+        mosaic_tile_index: int,
+        **kwargs: int,
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
 
@@ -894,6 +929,13 @@ class CziReader(Reader):
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -906,16 +948,73 @@ class CziReader(Reader):
         ------
         UnexpectedShapeError
             The image has no mosaic dimension available.
-        IndexError
-            No matching mosaic tile index found.
+
+        Notes
+        -----
+        Defaults T and C dimensions to 0 if present as dimensions in image
+        to avoid reading in massive image stack for large files.
         """
         if DimensionNames.MosaicTile not in self.dims.order:
             raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
 
-        # Get max of mosaic positions from lif
         with self._fs.open(self._path) as open_resource:
             czi = CziFile(open_resource.f)
 
-            bboxes = czi.get_all_mosaic_tile_bounding_boxes(S=self.current_scene_index)
-            bbox = list(bboxes.values())[mosaic_tile_index]
+            # Default Channel and Time dimensions to 0 to improve
+            # worst case read time for large files **only**
+            # when those dimensions are present on the image.
+            for dimension_name in [DimensionNames.Channel, DimensionNames.Time]:
+                if dimension_name not in kwargs and dimension_name in self.dims.order:
+                    kwargs[dimension_name] = 0
+
+            bbox = czi.get_mosaic_tile_bounding_box(
+                M=mosaic_tile_index, S=self.current_scene_index, **kwargs
+            )
             return bbox.y, bbox.x
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        """
+        if DimensionNames.MosaicTile not in self.dims.order:
+            raise exceptions.UnexpectedShapeError("No mosaic dimension in image.")
+
+        with self._fs.open(self._path) as open_resource:
+            czi = CziFile(open_resource.f)
+
+            tile_info_to_bboxes = czi.get_all_mosaic_tile_bounding_boxes(
+                S=self.current_scene_index, **kwargs
+            )
+
+            # Convert dictionary of tile info mappings to
+            # a list of bounding boxes sorted according to their
+            # respective M indexes
+            m_indexes_to_mosaic_positions = {
+                tile_info.m_index: (bbox.y, bbox.x)
+                for tile_info, bbox in tile_info_to_bboxes.items()
+            }
+            return [
+                m_indexes_to_mosaic_positions[m_index]
+                for m_index in sorted(m_indexes_to_mosaic_positions.keys())
+            ]

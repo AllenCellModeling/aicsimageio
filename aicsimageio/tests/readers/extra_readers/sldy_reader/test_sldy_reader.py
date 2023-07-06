@@ -7,10 +7,10 @@ import numpy as np
 import pytest
 
 from aicsimageio import AICSImage, dimensions, exceptions
-from aicsimageio.readers import DVReader
+from aicsimageio.readers import SldyReader
 from aicsimageio.tests.image_container_test_utils import run_image_file_checks
 
-from ...conftest import LOCAL, get_resource_full_path, host
+from ....conftest import LOCAL, get_resource_full_path, host
 
 
 @host
@@ -25,7 +25,7 @@ from ...conftest import LOCAL, get_resource_full_path, host
     "expected_physical_pixel_sizes",
     [
         pytest.param(
-            "example.txt",
+            "example.png",
             None,
             None,
             None,
@@ -36,28 +36,31 @@ from ...conftest import LOCAL, get_resource_full_path, host
             marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         (
-            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
-            "Image:0",
-            ("Image:0",),
-            (4, 1, 40, 512, 512),
-            np.int16,
-            "CTZYX",
-            ["360/457", "490/528", "555/617", "640/685"],
-            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+            "s1_t10_c1_z5.dir",
+            "20220726 endo diff1658874976",
+            ("20220726 endo diff1658874976",),
+            (10, 1, 5, 1736, 1776),
+            np.uint16,
+            dimensions.DEFAULT_DIMENSION_ORDER,
+            ["0"],
+            (None, 0.38388850322622897, 0.38388850322622897),
         ),
         (
-            "DV_siRNAi-HeLa_IN_02.r3d",
-            "Image:0",
-            ("Image:0",),
-            (1, 4, 40, 512, 512),
-            np.dtype(">i2"),
+            "s1_t1_c2_z40.dir",
+            "3500005564_20X_timelapse_202304201682033857",
+            ("3500005564_20X_timelapse_202304201682033857",),
+            (1, 2, 40, 1736, 1776),
+            np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["0/0", "0/0", "0/0", "0/0"],
-            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+            [
+                "0",
+                "1",
+            ],
+            (None, 0.3820158766750814, 0.3820158766750814),
         ),
     ],
 )
-def test_dv_reader(
+def test_sldy_reader(
     filename: str,
     host: str,
     set_scene: str,
@@ -73,7 +76,7 @@ def test_dv_reader(
 
     # Run checks
     run_image_file_checks(
-        ImageContainer=DVReader,
+        ImageContainer=SldyReader,
         image=uri,
         set_scene=set_scene,
         expected_scenes=expected_scenes,
@@ -99,14 +102,14 @@ def test_dv_reader(
     "expected_metadata_type",
     [
         (
-            "DV_siRNAi-HeLa_IN_02.r3d_D3D.dv",
-            "Image:0",
-            ("Image:0",),
-            (1, 4, 40, 512, 512),
-            np.int16,
+            "s1_t10_c1_z5.dir",
+            "20220726 endo diff1658874976",
+            ("20220726 endo diff1658874976",),
+            (10, 1, 5, 1736, 1776),
+            np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["360/457", "490/528", "555/617", "640/685"],
-            (0.20000000298023224, 0.06502940505743027, 0.06502940505743027),
+            ["0"],
+            (None, 0.38388850322622897, 0.38388850322622897),
             dict,
         ),
     ],

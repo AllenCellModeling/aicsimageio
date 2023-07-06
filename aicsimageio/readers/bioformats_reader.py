@@ -198,7 +198,7 @@ class BioformatsReader(Reader):
             **self._bf_kwargs,  # type: ignore
         ) as rdr:
             image_data = rdr.to_dask() if delayed else rdr.to_numpy()
-            _, coords = metadata_utils.get_dims_and_coords_from_ome(
+            coords = metadata_utils.get_coords_from_ome(
                 ome=rdr.ome_metadata,
                 scene_index=self.current_scene_index,
             )

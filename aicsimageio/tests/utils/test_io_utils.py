@@ -19,12 +19,12 @@ from ..conftest import LOCAL, REMOTE, get_resource_full_path
         pytest.param(
             "does-not-exist.bad",
             True,
-            marks=pytest.mark.raises(exception=FileNotFoundError),
+            marks=pytest.mark.xfail(raises=FileNotFoundError),
         ),
         pytest.param(
             "does-not-exist.bad",
             True,
-            marks=pytest.mark.raises(exception=FileNotFoundError),
+            marks=pytest.mark.xfail(raises=FileNotFoundError),
         ),
     ],
 )

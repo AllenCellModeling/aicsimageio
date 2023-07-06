@@ -93,7 +93,7 @@ def upload_test_resources(args: Args):
         # Check for dry run
         if args.dry_run:
             # Attempt to build the package
-            built = package.build(package_name)
+            top_hash = package.build(package_name)
 
             # Get resolved save path
             manifest_save_path = Path("upload_manifest.jsonl").resolve()
@@ -102,7 +102,7 @@ def upload_test_resources(args: Args):
 
             # Report where manifest was saved
             log.info(f"Dry run generated manifest stored to: {manifest_save_path}")
-            log.info(f"Completed package dry run. Result hash: {built.top_hash}")
+            log.info(f"Completed package dry run. Result hash: {top_hash}")
 
         # Upload
         else:

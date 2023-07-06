@@ -31,13 +31,16 @@ with open("README.md") as readme_file:
 # "READER_TO_INSTALL" lookup table from aicsimageio/formats.py.
 format_libs: Dict[str, List[str]] = {
     "base-imageio": [
-        "imageio[ffmpeg]>=2.9.0,<2.11.0",
-        "Pillow>=8.2.0,!=8.3.0,<9",
+        "imageio[ffmpeg]>=2.11.0,<2.28.0",
+        "Pillow>=9.3.0",
     ],
-    "nd2": ["nd2[legacy]>=0.2.0"],
+    "nd2": ["nd2[legacy]>=0.6.0"],
     "dv": ["mrc>=0.2.0"],
     "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
-    # "czi": ["aicspylibczi>=3.0.5"],  # excluded for licensing reasons
+    # "czi": [  # excluded for licensing reasons
+    #     "fsspec>=2022.8.0",
+    #     "aicspylibczi>=3.1.1",
+    # ],
     # "bioformats": ["bioformats_jar"],  # excluded for licensing reasons
     # "lif": ["readlif>=0.6.4"],  # excluded for licensing reasons
 }
@@ -52,7 +55,6 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "codecov>=2.1.4",
     "dask[array,distributed]>=2021.4.1,!=2022.5.1",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",
@@ -60,8 +62,8 @@ test_requirements = [
     "pytest-cov>=2.9.0",
     "pytest-raises>=0.11",
     "quilt3",  # no pin to avoid pip cycling (boto is really hard to manage)
-    "s3fs[boto3]>=0.4.2",
-    "tox>=3.15.2",
+    "s3fs[boto3]>=2022.11.0",
+    "tox==3.27.1",
 ]
 
 dev_requirements = [
@@ -75,20 +77,21 @@ dev_requirements = [
     "flake8-debugger>=3.2.1",
     "gitchangelog>=3.0.4",
     "ipython>=7.15.0",
-    "isort>=5.7.0",
+    "isort>=5.11.5",
     "m2r2>=0.2.7",
     "mypy>=0.800",
     "pytest-runner>=5.2",
     "Sphinx>=3.4.3",
     "sphinx_rtd_theme>=0.5.1",
     "twine>=3.1.1",
+    "types-PyYAML>=6.0.12.9",
     "wheel>=0.34.2",
     # reader deps
     *all_formats,
     "bioformats_jar",  # to test bioformats
     "bfio>=2.3.0",
     "readlif>=0.6.4",  # to test lif
-    "aicspylibczi>=3.0.5",  # to test czi
+    "aicspylibczi>=3.1.1",  # to test czi
 ]
 
 benchmark_requirements = [
@@ -98,15 +101,17 @@ benchmark_requirements = [
 
 requirements = [
     "dask[array]>=2021.4.1",
-    "fsspec>=2021.4.0,!=2022.7.0",
+    "fsspec>=2022.8.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<2",
-    "ome-types>=0.2",
+    "ome-types>=0.3.3",
+    "ome-zarr>=0.6.1",
+    "PyYAML>=6.0",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30",
-    "xarray>=0.16.1",
+    "xarray>=0.16.1,<2023.02.0",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",
 ]
@@ -134,6 +139,7 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     description=(
         "Image Reading, Metadata Conversion, and Image Writing for Microscopy Images "
@@ -165,6 +171,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.9.1",
+    version="4.11.0",
     zip_safe=False,
 )

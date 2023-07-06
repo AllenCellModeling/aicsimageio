@@ -57,7 +57,7 @@ from ...image_container_test_utils import run_image_file_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "example.txt",
@@ -68,7 +68,7 @@ from ...image_container_test_utils import run_image_file_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
@@ -79,7 +79,7 @@ from ...image_container_test_utils import run_image_file_checks
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -215,20 +215,8 @@ def test_ome_tiff_reader_large_files(
     "filename, expected_reader",
     [
         (
-            "s_1_t_1_c_1_z_1.tiff",
-            readers.TiffReader,
-        ),
-        (
-            "s_1_t_1_c_1_z_1.ome.tiff",
-            readers.OmeTiffReader,
-        ),
-        (
             "s_1_t_1_c_1_z_1_ome_tiff_tiles.ome.tif",
             readers.OmeTiledTiffReader,
-        ),
-        (  # Multiscene tiff
-            "variable_scene_shape_first_scene_pyramid.ome.tiff",
-            readers.OmeTiffReader,
         ),
     ],
 )

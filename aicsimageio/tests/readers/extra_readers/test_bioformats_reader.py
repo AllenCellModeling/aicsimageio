@@ -94,7 +94,7 @@ SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         (
             "s_3_t_1_c_3_z_5.czi",
@@ -235,7 +235,7 @@ SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -392,9 +392,9 @@ def test_bioformats_reader_large_files(
         (
             "S=2_4x2_T=2=Z=3_CH=2.czi",
             "S=2_4x2_T=2=Z=3_CH=2.czi #1",
-            (2, 2, 3, 488, 948),
+            (2, 2, 3, 487, 947),
             "S=2_4x2_T=2=Z=3_CH=2.czi #2",
-            (2, 2, 3, 244, 474),
+            (2, 2, 3, 243, 473),
         ),
     ],
 )

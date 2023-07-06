@@ -247,8 +247,8 @@ class Reader(ImageContainer, ABC):
                 if scene_id >= len(self.scenes):
                     raise IndexError(
                         f"Scene index: {scene_id} "
-                        f"is greater than the number of available scenes "
-                        f"present in the file."
+                        f"is greater than the maximum available scene index "
+                        f"({len(self.scenes) - 1}) present in the file."
                     )
 
                 # Update current scene
@@ -794,16 +794,22 @@ class Reader(ImageContainer, ABC):
         return PhysicalPixelSizes(None, None, None)
 
     def get_mosaic_tile_position(
-        self, mosaic_tile_index: int
-    ) -> Optional[Tuple[int, int]]:
+        self, mosaic_tile_index: int, **kwargs: int
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
-        Returns None if the image is not a mosaic.
 
         Parameters
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -818,6 +824,33 @@ class Reader(ImageContainer, ABC):
             The image has no mosaic dimension available.
         IndexError
             No matching mosaic tile index found.
+        """
+        raise NotImplementedError()
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
         """
         raise NotImplementedError()
 

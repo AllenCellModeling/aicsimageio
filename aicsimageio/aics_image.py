@@ -186,11 +186,24 @@ class AICSImage(ImageContainer):
                                 fs_kwargs=fs_kwargs,
                             ):
                                 return ReaderClass
+
                         except Exception as e:
-                            log.warning(
-                                f"Attempted file ({path}) load with "
-                                f"reader: {reader} failed with error: {e}"
-                            )
+                            # _load_readers checks all readers.
+                            # bfio readers are an optional installs.
+                            if e.__class__ == ModuleNotFoundError and ("'bfio'") in str(
+                                e
+                            ):
+                                log.info(
+                                    f"Attempted file ({path}) "
+                                    f"load with reader: {reader}"
+                                    f"for better performance, "
+                                    f"consider installing 'bfio'."
+                                )
+                            else:
+                                log.warning(
+                                    f"Attempted file ({path}) load with "
+                                    f"reader: {reader} failed with error: {e}"
+                                )
 
         # Try all known readers
         # Useful in cases where the provided filename is a GUID or similar
@@ -865,16 +878,22 @@ class AICSImage(ImageContainer):
         return self.reader.physical_pixel_sizes
 
     def get_mosaic_tile_position(
-        self, mosaic_tile_index: int
-    ) -> Optional[Tuple[int, int]]:
+        self, mosaic_tile_index: int, **kwargs: int
+    ) -> Tuple[int, int]:
         """
         Get the absolute position of the top left point for a single mosaic tile.
-        Returns None if the image is not a mosaic.
 
         Parameters
         ----------
         mosaic_tile_index: int
             The index for the mosaic tile to retrieve position information for.
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
 
         Returns
         -------
@@ -882,8 +901,62 @@ class AICSImage(ImageContainer):
             The Y coordinate for the tile position.
         left: int
             The X coordinate for the tile position.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
         """
-        return self.reader.get_mosaic_tile_position(mosaic_tile_index)
+        return self.reader.get_mosaic_tile_position(mosaic_tile_index, **kwargs)
+
+    def get_mosaic_tile_positions(self, **kwargs: int) -> List[Tuple[int, int]]:
+        """
+        Get the absolute positions of the top left points for each mosaic tile
+        matching the specified dimensions and current scene.
+
+        Parameters
+        ----------
+        kwargs: int
+            The keywords below allow you to specify the dimensions that you wish
+            to match. If you under-specify the constraints you can easily
+            end up with a massive image stack.
+                       Z = 1   # The Z-dimension.
+                       C = 2   # The C-dimension ("channel").
+                       T = 3   # The T-dimension ("time").
+                       M = 4   # The mosaic tile index
+
+        Returns
+        -------
+        mosaic_tile_positions: List[Tuple[int, int]]
+            List of the Y and X coordinate for the tile positions.
+
+        Raises
+        ------
+        UnexpectedShapeError
+            The image has no mosaic dimension available.
+        NotImplementedError
+            Unable to combine M dimension with other dimensions when finding
+            tiles matching kwargs
+        """
+        if dimensions.DimensionNames.MosaicTile in kwargs:
+            # Don't support getting positions by M + another dim
+            if len(kwargs) != 1:
+                other_keys = {
+                    key for key in kwargs if key != dimensions.DimensionNames.MosaicTile
+                }
+                raise NotImplementedError(
+                    "Unable to determine appropriate position using mosaic tile "
+                    + "index (M) combined with other dimensions "
+                    + f"(including {other_keys})"
+                )
+
+            return [
+                self.get_mosaic_tile_position(
+                    kwargs[dimensions.DimensionNames.MosaicTile]
+                )
+            ]
+
+        return self.reader.get_mosaic_tile_positions(**kwargs)
 
     @property
     def mosaic_tile_dims(self) -> Optional[dimensions.Dimensions]:

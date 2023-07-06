@@ -2,8 +2,11 @@
 import os
 from itertools import product
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+import pandas as pd
+import pytest
 import tifffile as tiff
 import xarray as xr
 
@@ -65,6 +68,49 @@ def test_glob_reader_2d(tmp_path: Path) -> None:
 
     assert gr.xarray_dask_data.data.chunksize == (1, 1) + DATA_SHAPE[-3:]
 
+    check_values(gr, reference)
+
+
+def test_index_alignment(tmp_path: Path) -> None:
+    # Testing case where user has passed in a list of files
+    # and a dataframe with non-continuous index
+
+    # use as_mm to have an easily available Indexer function
+    _ = make_fake_data_2d(tmp_path, as_mm=True)
+    filenames = np.array(list((tmp_path / "2d_images").glob("*.tif")))
+    # print(filenames)
+    indexer = pd.Series(filenames).apply(TiffGlobReader.MicroManagerIndexer)
+
+    # Keep only some of the Z
+    # more realistic case is eliminating everything after a given time point
+    # but this garuntees that our eliminated images will be embedded all through the
+    # order rather than just at the end
+    keep = indexer.Z < 5
+
+    indexer = indexer.loc[keep]
+
+    reader = TiffGlobReader(filenames[keep], indexer)
+
+    # check that there are no nans
+    # nans are a symptom of index misalignment
+    assert not reader._all_files.isnull().any().any()
+
+
+@pytest.mark.parametrize(
+    "type_",
+    [
+        list,
+        pd.Series,
+        np.array,
+        # should throw a TypeError instead of an unboundlocal error
+        pytest.param(bytes, marks=pytest.mark.xfail(raises=TypeError)),
+    ],
+)
+def test_glob_types(type_: Any, tmp_path: Path) -> None:
+    reference = make_fake_data_2d(tmp_path)
+    filenames = list((tmp_path / "2d_images").glob("*.tif"))
+
+    gr = TiffGlobReader(type_(filenames))
     check_values(gr, reference)
 
 

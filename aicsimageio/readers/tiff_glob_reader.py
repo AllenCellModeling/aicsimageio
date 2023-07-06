@@ -5,7 +5,7 @@ import glob
 import re
 from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 import dask.array as da
 import numpy as np
@@ -37,8 +37,8 @@ class TiffGlobReader(Reader):
 
     Parameters
     ----------
-    glob_in: Union[PathLike, List[PathLike]]
-        Glob string that identifies all files to be loaded or a list
+    glob_in: Union[PathLike, Iterable[PathLike]]
+        Glob string that identifies all files to be loaded or an iterable
         of paths to the files as returned by glob.
     indexer: Union[Callable, pandas.DataFrame]
         If callable, should consume each filename and return a pd.Series with series
@@ -117,7 +117,7 @@ class TiffGlobReader(Reader):
     ) -> bool:
         try:
             with fs.open(path) as open_resource:
-                with TiffFile(open_resource):
+                with TiffFile(open_resource, is_mmstack=False):
                     return True
 
         except (TiffFileError, TypeError):
@@ -125,7 +125,7 @@ class TiffGlobReader(Reader):
 
     def __init__(
         self,
-        glob_in: Union[types.PathLike, List[types.PathLike]],
+        glob_in: Union[types.PathLike, Iterable[types.PathLike]],
         indexer: Union[pd.DataFrame, Callable] = None,
         scene_glob_character: str = "S",
         chunk_dims: Union[str, List[str]] = DEFAULT_CHUNK_DIMS,
@@ -143,10 +143,15 @@ class TiffGlobReader(Reader):
         # Assemble glob list if given a string
         if isinstance(glob_in, str):
             file_series = pd.Series(glob.glob(glob_in))
-        elif isinstance(glob_in, list):
-            file_series = pd.Series(glob_in)
         elif isinstance(glob_in, Path) and "*" in str(glob_in):
             file_series = pd.Series(glob.glob(str(glob_in)))
+        elif isinstance(glob_in, pd.Series):
+            # Ensure all of our indices line up
+            file_series = glob_in.reset_index(drop=True, inplace=False)
+        elif isinstance(glob_in, Iterable):
+            file_series = pd.Series(glob_in)
+        else:
+            raise TypeError(f"Invalid type glob_in - got type {type(glob_in)}")
 
         if len(file_series) == 0:
             raise ValueError("No files found matching glob pattern")
@@ -174,7 +179,10 @@ class TiffGlobReader(Reader):
             self._all_files = file_series.apply(indexer)
             self._all_files["filename"] = file_series
         elif isinstance(indexer, pd.DataFrame):
-            self._all_files = indexer
+            # make a copy of the indexing dataframe and reset it index
+            # to ensure that we don't generate nans when aligning with
+            # file_series.
+            self._all_files = indexer.reset_index(drop=True, inplace=False)
             self._all_files["filename"] = file_series
 
         # If a dim doesn't exist on the file set the column value for that dim to zero.
@@ -248,7 +256,7 @@ class TiffGlobReader(Reader):
 
         if single_file_shape is None:
             with self._fs.open(self._path) as open_resource:
-                with TiffFile(open_resource) as tiff:
+                with TiffFile(open_resource, is_mmstack=False) as tiff:
                     self._single_file_shape = tiff.series[0].shape
 
         else:
@@ -291,7 +299,9 @@ class TiffGlobReader(Reader):
         scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
 
-        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
+        tiff_tags = self._get_tiff_tags(
+            TiffFile(scene_files.filename.iloc[0], is_mmstack=False)
+        )
 
         group_dims = [
             x for x in scene_files.columns if x not in ["filename", *self.chunk_dims]
@@ -314,7 +324,7 @@ class TiffGlobReader(Reader):
         unpack_sizes = OrderedDict(
             [
                 (d, s)
-                for d, s in scene_nunique.iteritems()
+                for d, s in scene_nunique.items()
                 if d in chunk_sizes.keys() - group_sizes.keys()
             ]
         )
@@ -356,7 +366,9 @@ class TiffGlobReader(Reader):
             dims = list(expanded_blocks_sizes.keys())
 
         else:  # assemble array in a single chunk
-            zarr_im = imread(scene_files.filename.tolist(), aszarr=True, level=0)
+            zarr_im = imread(
+                scene_files.filename.tolist(), aszarr=True, level=0, is_mmstack=False
+            )
             darr = da.from_zarr(zarr_im).rechunk(-1)
             darr = darr.reshape(reshape_sizes)
             darr = darr.transpose(axes_order)
@@ -395,12 +407,14 @@ class TiffGlobReader(Reader):
         scene_files = scene_files.drop(self.scene_glob_character, axis=1)
         scene_nunique = scene_files.nunique()
 
-        tiff_tags = self._get_tiff_tags(TiffFile(scene_files.filename.iloc[0]))
+        tiff_tags = self._get_tiff_tags(
+            TiffFile(scene_files.filename.iloc[0], is_mmstack=False)
+        )
 
         chunk_sizes = self._get_chunk_sizes(scene_nunique)
 
         unpack_sizes = OrderedDict(
-            [(d, s) for d, s in scene_nunique.iteritems() if d in chunk_sizes.keys()]
+            [(d, s) for d, s in scene_nunique.items() if d in chunk_sizes.keys()]
         )
 
         reshape_sizes = tuple(unpack_sizes.values()) + tuple(
@@ -465,7 +479,7 @@ class TiffGlobReader(Reader):
     ) -> OrderedDict:
 
         sizes = OrderedDict()
-        for i, x in scene_files_nunique.iteritems():
+        for i, x in scene_files_nunique.items():
             if i not in ["filename", *group_dims]:
                 if i not in self._single_file_dims:
                     sizes[i] = x

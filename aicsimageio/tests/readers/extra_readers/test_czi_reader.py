@@ -4,10 +4,14 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 import pytest
+from _aicspylibczi import PylibCZI_CDimCoordinatesOverspecifiedException
+from aicspylibczi import CziFile
+from fsspec.implementations.local import LocalFileSystem
 from ome_types import OME
 
 from aicsimageio import AICSImage, dimensions, exceptions
@@ -19,6 +23,7 @@ from ...image_container_test_utils import (
     run_image_container_mosaic_checks,
     run_image_file_checks,
     run_multi_scene_image_read_checks,
+    run_no_scene_name_image_read_checks,
 )
 
 
@@ -36,7 +41,7 @@ from ...image_container_test_utils import (
             "s_1_t_1_c_1_z_1.ome.tiff",
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -159,7 +164,7 @@ def test_subblocks(filename: str, num_subblocks: int, acquistion_time: str) -> N
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -170,7 +175,7 @@ def test_subblocks(filename: str, num_subblocks: int, acquistion_time: str) -> N
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -286,7 +291,9 @@ def test_czi_reader_mosaic_stitching(
             (440, 544),
             999,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(
+                raises=PylibCZI_CDimCoordinatesOverspecifiedException
+            ),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.czi",
@@ -295,7 +302,7 @@ def test_czi_reader_mosaic_stitching(
             None,
             None,
             # File has no mosaic tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )
@@ -510,7 +517,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=TypeError),
+            marks=pytest.mark.xfail(raises=TypeError),
         ),
     ],
 )
@@ -535,6 +542,98 @@ def test_multi_scene_aicsimage(
         second_scene_shape=second_scene_shape,
         second_scene_dtype=np.dtype(np.uint16),
     )
+
+
+@pytest.mark.parametrize(
+    "filename, " "first_scene_id, " "second_scene_id, ",
+    [
+        (
+            "NoSceneNames.czi",
+            "NoSceneNames-0",
+            "NoSceneNames-1",
+        ),
+    ],
+)
+def test_no_scene_name_aicsimage(
+    filename: str,
+    first_scene_id: str,
+    second_scene_id: str,
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Run checks
+    run_no_scene_name_image_read_checks(
+        ImageContainer=AICSImage,
+        image=uri,
+        first_scene_id=first_scene_id,
+        first_scene_dtype=np.dtype(np.uint16),
+        second_scene_id=second_scene_id,
+        second_scene_dtype=np.dtype(np.uint16),
+    )
+
+
+@pytest.mark.parametrize(
+    "orig_scene_name, " "corrected_scene_name, ",
+    [
+        (
+            ("a", "a", "a"),
+            ("a-1", "a-2", "a-3"),
+        ),
+        (
+            ("a", "a", "b"),
+            ("a-1", "a-2", "b"),
+        ),
+        (
+            ("a", "b", "b", "a"),
+            ("a-1", "b-1", "b-2", "a-2"),
+        ),
+        (
+            ("a", None, "a", None),
+            ("a-1", "test-1", "a-2", "test-3"),
+        ),
+    ],
+)
+@patch("aicsimageio.readers.czi_reader.CziFile", spec=CziFile)
+@patch(
+    "aicsimageio.readers.czi_reader.io_utils.pathlike_to_fs",
+    return_value=(MagicMock(spec=LocalFileSystem), "./test.czi"),
+)
+def test_same_scene_name_aicsimage(
+    mock_pathlike_to_fs: MagicMock,
+    mock_CziFile: MagicMock,
+    orig_scene_name: Tuple[str, ...],
+    corrected_scene_name: Tuple[str, ...],
+) -> None:
+
+    # Mock Metadata
+    root = ET.Element("ImageDocument")
+    metadata = ET.SubElement(root, "Metadata")
+    information = ET.SubElement(metadata, "Information")
+    image = ET.SubElement(information, "Image")
+    dimensions = ET.SubElement(image, "Dimensions")
+    s = ET.SubElement(dimensions, "S")
+    scenes = ET.SubElement(s, "Scenes")
+
+    for n in orig_scene_name:
+        ET.SubElement(scenes, "Scene", {"Name": n})
+
+    mock_CziFile.return_value.meta = root
+    mock_CziFile.return_value.get_dims_shape = lambda: [{} for _ in orig_scene_name]
+
+    # Create Image with mock
+    image_container = AICSImage(None, reader=CziReader)
+
+    # Run Checks
+    # Set scene
+    for i, name in enumerate(corrected_scene_name):
+        image_container.set_scene(i)
+
+        assert image_container.current_scene_index == i
+
+        # Check basics
+        assert image_container.current_scene == image_container.scenes[i]
+        assert image_container.scenes[i] == name
 
 
 @pytest.mark.parametrize(
@@ -632,7 +731,7 @@ def test_roundtrip_save_all_scenes(
             None,
             0,
             # File has no mosaic tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )
@@ -661,6 +760,44 @@ def test_mosaic_passthrough(
 
     # Ensure that regardless of stitched or not, we can get tile position
     img.get_mosaic_tile_position(specific_tile_index)
+
+
+@pytest.mark.parametrize(
+    "filename, " "set_scene, " "num_mosaic_position_expected, " "additional_kwargs, ",
+    [
+        ("OverViewScan.czi", "TR1", 120, {}),
+        ("OverViewScan.czi", "TR1", 1, {"M": 3}),
+        pytest.param(
+            "OverViewScan.czi",
+            "TR1",
+            -1,  # Shouldn't ever compare against this
+            {"M": 3, "C": 1},
+            marks=pytest.mark.xfail(raises=NotImplementedError),
+        ),
+    ],
+)
+def test_multi_tile_position_retrieval(
+    filename: str,
+    set_scene: str,
+    num_mosaic_position_expected: int,
+    additional_kwargs: Dict[str, Any],
+) -> None:
+    # Construct full filepath
+    uri = get_resource_full_path(filename, LOCAL)
+
+    # Init
+    img = AICSImage(uri)
+    img.set_scene(set_scene)
+
+    # Assert listed positions is equivalent to individual
+    # position retrievals
+    mosaic_positions = img.get_mosaic_tile_positions(**additional_kwargs)
+    assert len(mosaic_positions) == num_mosaic_position_expected
+    for m_index, mosaic_position in enumerate(mosaic_positions):
+        M = m_index + additional_kwargs.get("M", 0)
+        assert mosaic_position == img.get_mosaic_tile_position(
+            M
+        ), f"Bad comparison at M={M}"
 
 
 @pytest.mark.parametrize(

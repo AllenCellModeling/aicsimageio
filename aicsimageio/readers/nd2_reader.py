@@ -82,7 +82,11 @@ class ND2Reader(Reader):
                 delayed=delayed, squeeze=False, position=self.current_scene_index
             )
             xarr.attrs[constants.METADATA_UNPROCESSED] = xarr.attrs.pop("metadata")
-        return xarr.isel({nd2.AXIS.POSITION: 0})
+            if self.current_scene_index is not None:
+                xarr.attrs[constants.METADATA_UNPROCESSED][
+                    "frame"
+                ] = rdr.frame_metadata(self.current_scene_index)
+        return xarr.isel({nd2.AXIS.POSITION: 0}, missing_dims="ignore")
 
     @property
     def physical_pixel_sizes(self) -> types.PhysicalPixelSizes:

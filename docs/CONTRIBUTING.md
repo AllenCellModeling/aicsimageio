@@ -20,7 +20,7 @@ Ready to contribute? Here's how to set up `aicsimageio` for local development.
 4.  Install the project in editable mode (and preferably in a virtual environment):
 
         cd aicsimageio/
-        pip install -e .[dev]
+        pip install -e ".[dev]"
 
 5.  Download the test resources:
 
@@ -208,16 +208,29 @@ For more information on `asv` and full commands please see
 ## Deploying
 
 A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed.
-Then run:
+1) Make sure all your changes are committed and merged into main.
+2) Run:
+    ```bash
+    git checkout main
+    git stash
+    git pull
+    export VERSION_CHANGE=? # NOTE: Specify either major, minor, or patch
+    bumpversion ${VERSION_CHANGE} --dry-run --verbose
+    ```
+3) Check results of dry run, verify that it seems correct
+4) Run:
+    ```bash
+    bumpversion ${VERSION_CHANGE}
+    git push
+    git push --tags
+    ```
+5) Wait for a [GitHub Action](https://github.com/AllenCellModeling/aicsimageio/actions) to automatically publish to [PyPI](https://pypi.org/project/aicsimageio/)
+6) [Create GitHub release](https://github.com/AllenCellModeling/aicsimageio/releases/new) for the corresponding version created.
 
-```bash
-make prepare-release
-git push
-git push --tags
-```
+    6a) Select tag for version created
 
-After all builds pass, GitHub Actions will automatically publish to PyPI.
+    6b) Ensure GitHub automatically generates releases notes ([click "Generate Release Notes"](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes))
 
-**Note:** `make prepare-release` by default only bumps the patch number and
-not a minor or major version.
+    6c) Double check format is similar to previous releases
+
+    6d) Publish release

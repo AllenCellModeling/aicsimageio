@@ -105,7 +105,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_2_z_1.lif",
@@ -116,7 +116,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         pytest.param(
             "s_1_t_1_c_1_z_1.ome.tiff",
@@ -127,7 +127,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -138,7 +138,7 @@ from ..image_container_test_utils import (
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -393,26 +393,18 @@ def test_multi_resolution_ome_tiff_reader(
         "s_3_t_1_c_3_z_5.ome.tiff",
         # A lot of our files aren't valid, :upside-down-smiley:
         # These files have invalid schema / layout
-        pytest.param(
-            "3d-cell-viewer.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "pre-variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "variance-cfe.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
-        ),
+        # but recently ome-types default settings are more lenient!
+        "3d-cell-viewer.ome.tiff",
+        "pre-variance-cfe.ome.tiff",
+        "variance-cfe.ome.tiff",
         pytest.param(
             "actk.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
         # This file has a namespace that doesn't exist
         pytest.param(
             "s_1_t_1_c_10_z_1.ome.tiff",
-            marks=pytest.mark.raises(exception=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )
@@ -601,7 +593,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
         pytest.param(
             "s_3_t_1_c_3_z_5.ome.tiff",
@@ -609,7 +601,7 @@ def test_aicsimage(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=IndexError),
+            marks=pytest.mark.xfail(raises=IndexError),
         ),
     ],
 )
@@ -700,7 +692,7 @@ def test_parallel_read(
             None,
             0,
             # The file has no tiles
-            marks=pytest.mark.raises(exception=AssertionError),
+            marks=pytest.mark.xfail(raises=AssertionError),
         ),
     ],
 )
@@ -768,7 +760,7 @@ def test_selected_tiff_reader(
             {},
             None,
             None,
-            marks=pytest.mark.raises(exceptions=exceptions.UnsupportedFileFormatError),
+            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
     ],
 )

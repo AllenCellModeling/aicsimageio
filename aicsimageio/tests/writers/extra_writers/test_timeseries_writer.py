@@ -28,30 +28,28 @@ from ...conftest import LOCAL, array_constructor, get_resource_write_full_path
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1),
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1, 1),
             "STCZYX",
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1),
             "ABCD",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )
@@ -99,30 +97,28 @@ def test_timeseries_writer(
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1),
             None,
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1, 1, 1),
             "STCZYX",
             None,
             None,
-            marks=pytest.mark.raises(exception=exceptions.UnexpectedShapeError),
+            marks=pytest.mark.xfail(raises=exceptions.UnexpectedShapeError),
         ),
         pytest.param(
             (1, 1, 1, 1),
             "ABCD",
             None,
             None,
-            marks=pytest.mark.raises(
-                exception=exceptions.InvalidDimensionOrderingError
-            ),
+            marks=pytest.mark.xfail(raises=exceptions.InvalidDimensionOrderingError),
         ),
     ],
 )

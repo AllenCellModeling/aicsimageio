@@ -257,4 +257,3 @@ def test_frame_metadata() -> None:
     assert isinstance(
         rdr.xarray_data.attrs["unprocessed"]["frame"], nd2.structures.FrameMetadata
     )
-

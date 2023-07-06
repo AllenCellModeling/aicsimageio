@@ -121,7 +121,7 @@ class OmeZarrWriter:
         physical_pixel_sizes: Optional[types.PhysicalPixelSizes],
         channel_names: Optional[List[str]],
         channel_colors: Optional[List[int]],
-        chunk_dims: Optional[Tuple],
+        chunk_dims: Optional[Tuple] = None,
         scale_num_levels: int = 1,
         scale_factor: float = 2.0,
         dimension_order: Optional[str] = None,

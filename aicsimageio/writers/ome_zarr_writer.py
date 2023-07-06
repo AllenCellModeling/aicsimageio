@@ -110,13 +110,8 @@ class OmeZarrWriter:
     def build_chunk_dims(
         chunk_dim_map: Dict,
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
-    ) -> List[Dict]:
-        return [
-            dict(
-                chunks=tuple(chunk_dim_map[d] for d in dimension_order),
-                compressor=default_compressor,
-            )
-        ]
+    ) -> Tuple:
+        return tuple(chunk_dim_map[d] for d in dimension_order)
 
     def write_image(
         self,
@@ -126,10 +121,10 @@ class OmeZarrWriter:
         physical_pixel_sizes: Optional[types.PhysicalPixelSizes],
         channel_names: Optional[List[str]],
         channel_colors: Optional[List[int]],
+        chunk_dims: Optional[Tuple],
         scale_num_levels: int = 1,
         scale_factor: float = 2.0,
         dimension_order: Optional[str] = None,
-        chunk_dims: Optional[List[Dict]] = None,
     ) -> None:
         """
         Write a data array to a file.
@@ -214,6 +209,12 @@ class OmeZarrWriter:
                 "must be before X, Y, and Z."
             )
 
+        if chunk_dims and len(chunk_dims) != ndims:
+            raise exceptions.UnexpectedShapeError(
+                f"Chunk dimensions:{chunk_dims} do not match data. "
+                f"Expected chunk dimension length:{ndims}"
+            )
+
         if physical_pixel_sizes is None:
             pixelsizes = (1.0, 1.0, 1.0)
         else:
@@ -271,6 +272,7 @@ class OmeZarrWriter:
         nplanes_per_chunk = (
             min(nplanes_per_chunk, image_data.shape[zdimindex]) if zdimindex > -1 else 1
         )
+
         if chunk_dims is None:
             chunk_dim_map = {
                 "T": 1,
@@ -279,12 +281,15 @@ class OmeZarrWriter:
                 "Y": image_data.shape[ydimindex],
                 "X": image_data.shape[xdimindex],
             }
-            chunk_dims = [
-                dict(
-                    chunks=tuple(chunk_dim_map[d] for d in dimension_order),
-                    compressor=default_compressor,
-                )
-            ]
+            chunk_dims = tuple(chunk_dim_map[d] for d in dimension_order)
+
+        chunks = [
+            dict(
+                chunks=chunk_dims,
+                compressor=default_compressor,
+            )
+        ]
+
         lasty = image_data.shape[ydimindex]
         lastx = image_data.shape[xdimindex]
         # TODO scaler might want to use different method for segmentations than raw
@@ -320,7 +325,7 @@ class OmeZarrWriter:
                 chunk_dim_map["Z"] = nplanes_per_chunk
                 chunk_dim_map["Y"] = lasty
                 chunk_dim_map["X"] = lastx
-                chunk_dims.append(
+                chunks.append(
                     dict(
                         chunks=tuple(chunk_dim_map[d] for d in dimension_order),
                         compressor=default_compressor,
@@ -369,5 +374,5 @@ class OmeZarrWriter:
             # match the number of datasets in a multiresolution pyramid. One can
             # provide different chunk size for each level of a pyramid using this
             # option.
-            storage_options=chunk_dims,
+            storage_options=chunks,
         )

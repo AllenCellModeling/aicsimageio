@@ -209,7 +209,7 @@ class OmeZarrWriter:
                 "must be before X, Y, and Z."
             )
 
-        if chunk_dims and len(chunk_dims) != ndims:
+        if chunk_dims is not None and len(chunk_dims) != ndims:
             raise exceptions.UnexpectedShapeError(
                 f"Chunk dimensions:{chunk_dims} do not match data. "
                 f"Expected chunk dimension length:{ndims}"

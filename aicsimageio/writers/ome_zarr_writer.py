@@ -108,7 +108,7 @@ class OmeZarrWriter:
 
     @staticmethod
     def build_chunk_dims(
-        chunk_dim_map: Dict,
+        chunk_dim_map: Dict[str, int],
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
     ) -> Tuple:
         return tuple(chunk_dim_map[d] for d in dimension_order)

@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 
 from fsspec.implementations.local import LocalFileSystem
-from nd2 import ND2File
 
 from .. import constants, exceptions, types
 from ..utils import io_utils
@@ -121,7 +120,7 @@ class ND2Reader(Reader):
         NotImplementedError
             No metadata transformer available.
         """
-        if hasattr(ND2File, "ome_metadata"):
+        if hasattr(nd2.ND2File, "ome_metadata"):
             with nd2.ND2File(self._path) as rdr:
                 return rdr.ome_metadata()
         raise NotImplementedError()

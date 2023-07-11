@@ -8,7 +8,7 @@ from ome_zarr.writer import write_image
 from zarr.storage import default_compressor
 
 from .. import exceptions, types
-from ..dimensions import DEFAULT_DIMENSION_ORDER
+from ..dimensions import DEFAULT_DIMENSION_ORDER, DimensionNames
 from ..metadata import utils
 from ..utils import io_utils
 
@@ -202,7 +202,7 @@ class OmeZarrWriter:
         xdimindex = dimension_order.find("X")
         ydimindex = dimension_order.find("Y")
         zdimindex = dimension_order.find("Z")
-        cdimindex = dimension_order.find("C")
+        cdimindex = dimension_order.find(DimensionNames.Channel)
         if cdimindex > min(i for i in [xdimindex, ydimindex, zdimindex] if i > -1):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Dimension order {dimension_order} is invalid. Channel dimension "
@@ -242,12 +242,13 @@ class OmeZarrWriter:
                 if cdimindex > -1
                 else [0]
             )
+        # Chunk spatial dimensions
         scale_dim_map = {
-            "T": 1.0,
-            "C": 1.0,
-            "Z": pixelsizes[0],
-            "Y": pixelsizes[1],
-            "X": pixelsizes[2],
+            DimensionNames.Time: 1.0,
+            DimensionNames.Channel: 1.0,
+            DimensionNames.SpatialZ: pixelsizes[0],
+            DimensionNames.SpatialY: pixelsizes[1],
+            DimensionNames.SpatialX: pixelsizes[2],
         }
         transforms = [
             [
@@ -275,13 +276,13 @@ class OmeZarrWriter:
 
         if chunk_dims is None:
             chunk_dim_map = {
-                "T": 1,
-                "C": 1,
-                "Z": nplanes_per_chunk,
-                "Y": image_data.shape[ydimindex],
-                "X": image_data.shape[xdimindex],
+                DimensionNames.Time: 1,
+                DimensionNames.Channel: 1,
+                DimensionNames.SpatialZ: nplanes_per_chunk,
+                DimensionNames.SpatialY: image_data.shape[ydimindex],
+                DimensionNames.SpatialX: image_data.shape[xdimindex],
             }
-            chunk_dims = tuple(chunk_dim_map[d] for d in dimension_order)
+            chunk_dims = OmeZarrWriter.build_chunk_dims(chunk_dim_map=chunk_dim_map)
 
         chunks = [
             dict(
@@ -303,8 +304,8 @@ class OmeZarrWriter:
             scaler.max_layer = scale_num_levels - 1
             scaler.downscale = scale_factor if scale_factor is not None else 2
             for _ in range(scale_num_levels - 1):
-                scale_dim_map["Y"] *= scaler.downscale
-                scale_dim_map["X"] *= scaler.downscale
+                scale_dim_map[DimensionNames.SpatialY] *= scaler.downscale
+                scale_dim_map[DimensionNames.SpatialX] *= scaler.downscale
                 transforms.append(
                     [
                         {
@@ -322,12 +323,14 @@ class OmeZarrWriter:
                     if zdimindex > -1
                     else 1
                 )
-                chunk_dim_map["Z"] = nplanes_per_chunk
-                chunk_dim_map["Y"] = lasty
-                chunk_dim_map["X"] = lastx
+                chunk_dim_map[DimensionNames.SpatialZ] = nplanes_per_chunk
+                chunk_dim_map[DimensionNames.SpatialY] = lasty
+                chunk_dim_map[DimensionNames.SpatialX] = lastx
                 chunks.append(
                     dict(
-                        chunks=tuple(chunk_dim_map[d] for d in dimension_order),
+                        chunks=OmeZarrWriter.build_chunk_dims(
+                            chunk_dim_map=chunk_dim_map
+                        ),
                         compressor=default_compressor,
                     )
                 )
@@ -349,11 +352,23 @@ class OmeZarrWriter:
         )
         # TODO user supplies units?
         dim_to_axis = {
-            "T": {"name": "t", "type": "time", "unit": "millisecond"},
-            "C": {"name": "c", "type": "channel"},
-            "Z": {"name": "z", "type": "space", "unit": "micrometer"},
-            "Y": {"name": "y", "type": "space", "unit": "micrometer"},
-            "X": {"name": "x", "type": "space", "unit": "micrometer"},
+            DimensionNames.Time: {"name": "t", "type": "time", "unit": "millisecond"},
+            DimensionNames.Channel: {"name": "c", "type": "channel"},
+            DimensionNames.SpatialZ: {
+                "name": "z",
+                "type": "space",
+                "unit": "micrometer",
+            },
+            DimensionNames.SpatialY: {
+                "name": "y",
+                "type": "space",
+                "unit": "micrometer",
+            },
+            DimensionNames.SpatialX: {
+                "name": "x",
+                "type": "space",
+                "unit": "micrometer",
+            },
         }
 
         axes = [dim_to_axis[d] for d in dimension_order]

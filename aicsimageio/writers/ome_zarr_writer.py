@@ -282,7 +282,9 @@ class OmeZarrWriter:
                 DimensionNames.SpatialY: image_data.shape[ydimindex],
                 DimensionNames.SpatialX: image_data.shape[xdimindex],
             }
-            chunk_dims = OmeZarrWriter.build_chunk_dims(chunk_dim_map=chunk_dim_map)
+            chunk_dims = OmeZarrWriter.build_chunk_dims(
+                chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
+            )
 
         chunks = [
             dict(
@@ -329,7 +331,7 @@ class OmeZarrWriter:
                 chunks.append(
                     dict(
                         chunks=OmeZarrWriter.build_chunk_dims(
-                            chunk_dim_map=chunk_dim_map
+                            chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
                         ),
                         compressor=default_compressor,
                     )

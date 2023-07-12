@@ -285,6 +285,11 @@ class OmeZarrWriter:
             chunk_dims = OmeZarrWriter.build_chunk_dims(
                 chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
             )
+        else:
+            chunk_dim_map = {
+                DimensionNames.Time: 1,
+                DimensionNames.Channel: 1,
+            }
 
         chunks = [
             dict(

@@ -160,3 +160,52 @@ def test_ome_zarr_writer_scaling(
         assert len(xforms) == 1
         assert xforms[0]["type"] == "scale"
         assert xforms[0]["scale"] == expected_read_scales[i]
+
+
+@array_constructor
+@pytest.mark.parametrize(
+    "write_shape, chunk_dims, num_levels, expected_read_shapes",
+    [
+        (
+            (2, 4, 8, 16, 32),
+            (1, 1, 2, 16, 16),
+            2,
+            [(2, 4, 8, 16, 32), (2, 4, 8, 8, 16), (2, 4, 8, 4, 8)],
+        ),
+        (
+            (16, 32),
+            (2, 4),
+            2,
+            [(16, 32), (8, 16), (4, 8)],
+        ),
+    ],
+)
+@pytest.mark.parametrize("filename", ["e.zarr"])
+def test_ome_zarr_writer_chunks(
+    array_constructor: Callable,
+    write_shape: Tuple[int, ...],
+    chunk_dims: Tuple[int, ...],
+    num_levels: int,
+    filename: str,
+    expected_read_shapes: List[Tuple[int, ...]],
+) -> None:
+    arr = array_constructor(write_shape, dtype=np.uint8)
+
+    # Construct save end point
+    save_uri = get_resource_write_full_path(filename, LOCAL)
+    # clear out anything left over
+    shutil.rmtree(save_uri, ignore_errors=True)
+
+    # Normal save
+    writer = OmeZarrWriter(save_uri)
+    writer.write_image(
+        arr, "", None, None, None, chunk_dims=chunk_dims, scale_num_levels=num_levels
+    )
+    reader = Reader(parse_url(save_uri))
+    node = list(reader())[0]
+
+    for level in range(num_levels):
+        shape = node.data[level].shape
+        assert shape == expected_read_shapes[level]
+
+    # TODO: Add Chunk comparison

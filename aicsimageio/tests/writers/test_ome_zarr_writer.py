@@ -193,8 +193,10 @@ def test_ome_zarr_writer_chunks(
 
     # Construct save end point
     save_uri = get_resource_write_full_path(filename, LOCAL)
+    save_uri_baseline = get_resource_write_full_path(f"baseline_{filename}", LOCAL)
     # clear out anything left over
     shutil.rmtree(save_uri, ignore_errors=True)
+    shutil.rmtree(save_uri_baseline, ignore_errors=True)
 
     # Normal save
     writer = OmeZarrWriter(save_uri)
@@ -204,8 +206,18 @@ def test_ome_zarr_writer_chunks(
     reader = Reader(parse_url(save_uri))
     node = list(reader())[0]
 
+    # Check expected shapes
     for level in range(num_levels):
         shape = node.data[level].shape
         assert shape == expected_read_shapes[level]
 
-    # TODO: Add Chunk comparison
+    # Create baseline chunking to compare against manual.
+    writer = OmeZarrWriter(save_uri_baseline)
+    writer.write_image(arr, "", None, None, None, scale_num_levels=num_levels)
+    reader_baseline = Reader(parse_url(save_uri_baseline))
+    node_baseline = list(reader_baseline())[0]
+
+    data = node.data[0]
+    baseline_data = node_baseline.data[0]
+
+    assert np.all(np.equal(data, baseline_data))

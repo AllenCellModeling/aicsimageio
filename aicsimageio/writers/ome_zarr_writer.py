@@ -107,7 +107,7 @@ class OmeZarrWriter:
         return omero
 
     @staticmethod
-    def build_chunk_dims(
+    def _build_chunk_dims(
         chunk_dim_map: Dict[str, int],
         dimension_order: str = DEFAULT_DIMENSION_ORDER,
     ) -> Tuple[int, ...]:
@@ -186,27 +186,28 @@ class OmeZarrWriter:
                 f"Received image data with shape: {image_data.shape}"
             )
         if dimension_order is None:
-            dimension_order = "TCZYX"[-ndims:]
+            dimension_order = DEFAULT_DIMENSION_ORDER[-ndims:]
         if len(dimension_order) != ndims:
             raise exceptions.InvalidDimensionOrderingError(
                 f"Dimension order {dimension_order} does not match data "
                 f"shape: {image_data.shape}"
             )
-        if (len(set(dimension_order) - set("TCZYX")) > 0) or len(
+        if (len(set(dimension_order) - set(DEFAULT_DIMENSION_ORDER)) > 0) or len(
             dimension_order
         ) != len(set(dimension_order)):
             raise exceptions.InvalidDimensionOrderingError(
-                f"Dimension order {dimension_order} is invalid or "
-                "contains unexpected dimensions. Only TCZYX currently supported."
+                f"Dimension order {dimension_order} is invalid or contains"
+                f"unexpected dimensions. Only {DEFAULT_DIMENSION_ORDER}"
+                f"currently supported."
             )
-        xdimindex = dimension_order.find("X")
-        ydimindex = dimension_order.find("Y")
-        zdimindex = dimension_order.find("Z")
+        xdimindex = dimension_order.find(DimensionNames.SpatialX)
+        ydimindex = dimension_order.find(DimensionNames.SpatialY)
+        zdimindex = dimension_order.find(DimensionNames.SpatialZ)
         cdimindex = dimension_order.find(DimensionNames.Channel)
         if cdimindex > min(i for i in [xdimindex, ydimindex, zdimindex] if i > -1):
             raise exceptions.InvalidDimensionOrderingError(
                 f"Dimension order {dimension_order} is invalid. Channel dimension "
-                "must be before X, Y, and Z."
+                f"must be before X, Y, and Z."
             )
 
         if chunk_dims is not None and len(chunk_dims) != ndims:
@@ -282,7 +283,7 @@ class OmeZarrWriter:
                 DimensionNames.SpatialY: image_data.shape[ydimindex],
                 DimensionNames.SpatialX: image_data.shape[xdimindex],
             }
-            chunk_dims = OmeZarrWriter.build_chunk_dims(
+            chunk_dims = OmeZarrWriter._build_chunk_dims(
                 chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
             )
         else:
@@ -335,7 +336,7 @@ class OmeZarrWriter:
                 chunk_dim_map[DimensionNames.SpatialX] = lastx
                 chunks.append(
                     dict(
-                        chunks=OmeZarrWriter.build_chunk_dims(
+                        chunks=OmeZarrWriter._build_chunk_dims(
                             chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
                         ),
                         compressor=default_compressor,

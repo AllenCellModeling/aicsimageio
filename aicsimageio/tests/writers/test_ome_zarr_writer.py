@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import shutil
+import pathlib
 from typing import Callable, List, Optional, Tuple
 
 import numpy as np
@@ -12,7 +12,7 @@ from ome_zarr.reader import Reader
 from aicsimageio import exceptions
 from aicsimageio.writers import OmeZarrWriter
 
-from ..conftest import LOCAL, array_constructor, get_resource_write_full_path
+from ..conftest import array_constructor
 
 
 @array_constructor
@@ -69,14 +69,12 @@ def test_ome_zarr_writer_dims(
     expected_read_shape: Tuple[int, ...],
     expected_read_dim_order: str,
     filename: str,
+    tmpdir: pathlib.Path,
 ) -> None:
     # Create array
     arr = array_constructor(write_shape, dtype=np.uint8)
 
-    # Construct save end point
-    save_uri = get_resource_write_full_path(filename, LOCAL)
-    # clear out anything left over
-    shutil.rmtree(save_uri, ignore_errors=True)
+    save_uri = str(tmpdir / filename)
 
     # Normal save
     writer = OmeZarrWriter(save_uri)
@@ -132,14 +130,11 @@ def test_ome_zarr_writer_scaling(
     expected_read_shapes: List[Tuple[int, ...]],
     expected_read_scales: List[List[int]],
     filename: str,
+    tmpdir: pathlib.Path,
 ) -> None:
     # Create array
     arr = array_constructor(write_shape, dtype=np.uint8)
-
-    # Construct save end point
-    save_uri = get_resource_write_full_path(filename, LOCAL)
-    # clear out anything left over
-    shutil.rmtree(save_uri, ignore_errors=True)
+    save_uri = str(tmpdir / filename)
 
     # Normal save
     writer = OmeZarrWriter(save_uri)
@@ -188,15 +183,14 @@ def test_ome_zarr_writer_chunks(
     num_levels: int,
     filename: str,
     expected_read_shapes: List[Tuple[int, ...]],
+    tmpdir: pathlib.Path,
 ) -> None:
     arr = array_constructor(write_shape, dtype=np.uint8)
 
     # Construct save end point
-    save_uri = get_resource_write_full_path(filename, LOCAL)
-    save_uri_baseline = get_resource_write_full_path(f"baseline_{filename}", LOCAL)
-    # clear out anything left over
-    shutil.rmtree(save_uri, ignore_errors=True)
-    shutil.rmtree(save_uri_baseline, ignore_errors=True)
+
+    baseline_save_uri = str(tmpdir / f"baseline_{filename}")
+    save_uri = str(tmpdir / filename)
 
     # Normal save
     writer = OmeZarrWriter(save_uri)
@@ -212,9 +206,9 @@ def test_ome_zarr_writer_chunks(
         assert shape == expected_read_shapes[level]
 
     # Create baseline chunking to compare against manual.
-    writer = OmeZarrWriter(save_uri_baseline)
+    writer = OmeZarrWriter(baseline_save_uri)
     writer.write_image(arr, "", None, None, None, scale_num_levels=num_levels)
-    reader_baseline = Reader(parse_url(save_uri_baseline))
+    reader_baseline = Reader(parse_url(baseline_save_uri))
     node_baseline = list(reader_baseline())[0]
 
     data = node.data[0]

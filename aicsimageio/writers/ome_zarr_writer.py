@@ -283,21 +283,21 @@ class OmeZarrWriter:
                 DimensionNames.SpatialY: image_data.shape[ydimindex],
                 DimensionNames.SpatialX: image_data.shape[xdimindex],
             }
-            chunk_dims = OmeZarrWriter._build_chunk_dims(
-                chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
-            )
+            chunks = [
+                dict(
+                    chunks=OmeZarrWriter._build_chunk_dims(
+                        chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
+                    ),
+                    compressor=default_compressor,
+                )
+            ]
         else:
-            chunk_dim_map = {
-                DimensionNames.Time: 1,
-                DimensionNames.Channel: 1,
-            }
-
-        chunks = [
-            dict(
-                chunks=chunk_dims,
-                compressor=default_compressor,
-            )
-        ]
+            chunks = [
+                dict(
+                    chunks=chunk_dims,
+                    compressor=default_compressor,
+                )
+            ]
 
         lasty = image_data.shape[ydimindex]
         lastx = image_data.shape[xdimindex]
@@ -322,26 +322,47 @@ class OmeZarrWriter:
                         }
                     ]
                 )
-                lasty = int(math.ceil(lasty / scaler.downscale))
-                lastx = int(math.ceil(lastx / scaler.downscale))
-                plane_size = lasty * lastx * image_data.itemsize
-                nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
-                nplanes_per_chunk = (
-                    min(nplanes_per_chunk, image_data.shape[zdimindex])
-                    if zdimindex > -1
-                    else 1
-                )
-                chunk_dim_map[DimensionNames.SpatialZ] = nplanes_per_chunk
-                chunk_dim_map[DimensionNames.SpatialY] = lasty
-                chunk_dim_map[DimensionNames.SpatialX] = lastx
-                chunks.append(
-                    dict(
-                        chunks=OmeZarrWriter._build_chunk_dims(
-                            chunk_dim_map=chunk_dim_map, dimension_order=dimension_order
-                        ),
-                        compressor=default_compressor,
+
+                if chunk_dims is None:
+                    lasty = int(math.ceil(lasty / scaler.downscale))
+                    lastx = int(math.ceil(lastx / scaler.downscale))
+                    chunk_dim_map = {
+                        DimensionNames.Time: 1,
+                        DimensionNames.Channel: 1,
+                    }
+                    plane_size = lasty * lastx * image_data.itemsize
+                    nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
+                    nplanes_per_chunk = (
+                        min(nplanes_per_chunk, image_data.shape[zdimindex])
+                        if zdimindex > -1
+                        else 1
                     )
-                )
+
+                    chunk_dim_map[DimensionNames.SpatialZ] = nplanes_per_chunk
+                    chunk_dim_map[DimensionNames.SpatialY] = lasty
+                    chunk_dim_map[DimensionNames.SpatialX] = lastx
+
+                    chunks.append(
+                        dict(
+                            chunks=OmeZarrWriter._build_chunk_dims(
+                                chunk_dim_map=chunk_dim_map,
+                                dimension_order=dimension_order,
+                            ),
+                            compressor=default_compressor,
+                        )
+                    )
+                else:
+                    rescaley = int(math.ceil(chunk_dims[ydimindex] / scaler.downscale))
+                    rescalex = int(math.ceil(chunk_dims[xdimindex] / scaler.downscale))
+                    chunk_dims = tuple(list(chunk_dims[:-2]) + [rescaley, rescalex])
+
+                    chunks.append(
+                        dict(
+                            chunks=chunk_dims,
+                            compressor=default_compressor,
+                        )
+                    )
+
         else:
             scaler = None
 

@@ -269,13 +269,14 @@ class OmeZarrWriter:
 
         target_chunk_size = 16 * (1024 * 1024)  # 16 MB
         # this is making an assumption of chunking whole XY planes.
-        # TODO allow callers to configure chunk dims?
-        nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
-        nplanes_per_chunk = (
-            min(nplanes_per_chunk, image_data.shape[zdimindex]) if zdimindex > -1 else 1
-        )
 
         if chunk_dims is None:
+            nplanes_per_chunk = int(math.ceil(target_chunk_size / plane_size))
+            nplanes_per_chunk = (
+                min(nplanes_per_chunk, image_data.shape[zdimindex])
+                if zdimindex > -1
+                else 1
+            )
             chunk_dim_map = {
                 DimensionNames.Time: 1,
                 DimensionNames.Channel: 1,

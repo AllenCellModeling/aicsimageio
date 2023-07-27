@@ -6,6 +6,20 @@ Changelog
 
 New
 ~~~
+- Feature/OmeZarr Chunk Dims   (`#519
+  <https://github.com/AllenCellModeling/aicsimageio/pull/519>`_)
+  [BrianWhitneyAI, Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * Update
+  aicsimageio/writers/ome_zarr_writer.py    Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * Update
+  aicsimageio/writers/ome_zarr_writer.py    Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>    * DimensionNames    *
+  pass dimension order to build_chunk_dims    * OmeZarrWriter chunk
+  tests    * chunk comparison    * pytest tmpdir fixture    *
+  DimensionNames    * chunk_dim scaling for levels    * nplanes inside
+  chunk dims = None    * ome-types 0.4.0 breaks build-main    ---------
+  Co-authored-by: Sean LeRoy
+  <41307451+SeanLeRoy@users.noreply.github.com>]
 - Feature/sldy reader  (`#496
   <https://github.com/AllenCellModeling/aicsimageio/pull/496>`_) [Sean
   LeRoy]

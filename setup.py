@@ -55,7 +55,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "dask[array,distributed]>=2021.4.1,!=2022.5.1,<=2023.5.0",
+    "dask[array,distributed]>=2021.4.1,!=2022.5.1",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",
     "pytest>=5.4.3",
@@ -100,18 +100,18 @@ benchmark_requirements = [
 ]
 
 requirements = [
-    "dask[array]>=2021.4.1,<=2023.5.0",
+    "dask[array]>=2021.4.1",
     "fsspec>=2022.8.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
-    "numpy>=1.16,<=1.24.0",
+    "numpy>=1.21.0",
     "ome-types>=0.3.3,<0.4.0",
     "ome-zarr>=0.6.1",
     "PyYAML>=6.0",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
     "tifffile>=2021.8.30",
-    "xarray>=0.16.1,<2023.02.0",
+    "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
     "zarr>=2.6,<3",
 ]
@@ -136,7 +136,6 @@ setup(
         "Intended Audience :: Education",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -163,7 +162,7 @@ setup(
             "*.benchmarks.*",
         ]
     ),
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     setup_requires=setup_requirements,
     test_suite="aicsimageio/tests",
     tests_require=test_requirements,

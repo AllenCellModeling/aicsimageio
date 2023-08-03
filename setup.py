@@ -55,7 +55,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "dask[array,distributed]>=2021.4.1,!=2022.5.1",
+    "dask[array,distributed]>=2021.4.1,!=2022.5.1,<=2023.5.0",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",
     "pytest>=5.4.3",
@@ -100,11 +100,11 @@ benchmark_requirements = [
 ]
 
 requirements = [
-    "dask[array]>=2021.4.1",
+    "dask[array]>=2021.4.1,<=2023.5.0",
     "fsspec>=2022.8.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
-    "numpy>=1.16,<2",
+    "numpy>=1.16,<=1.24.0",
     "ome-types>=0.3.3,<0.4.0",
     "ome-zarr>=0.6.1",
     "PyYAML>=6.0",

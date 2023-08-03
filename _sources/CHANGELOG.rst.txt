@@ -26,6 +26,9 @@ New
 
 Other
 ~~~~~
+- Limit numpy and dask  (`#527
+  <https://github.com/AllenCellModeling/aicsimageio/pull/527>`_) [Sean
+  LeRoy]
 - Ignore missing Position dimension  (`#498
   <https://github.com/AllenCellModeling/aicsimageio/pull/498>`_) [Sean
   LeRoy]

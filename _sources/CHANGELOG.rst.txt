@@ -24,6 +24,12 @@ New
   <https://github.com/AllenCellModeling/aicsimageio/pull/496>`_) [Sean
   LeRoy]
 
+Fix
+~~~
+- Fix publish task according to pypi rec for 2fa accounts  (`#528
+  <https://github.com/AllenCellModeling/aicsimageio/pull/528>`_) [sean
+  meharry]
+
 Other
 ~~~~~
 - Limit numpy and dask  (`#527

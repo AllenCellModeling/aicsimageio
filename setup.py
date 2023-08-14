@@ -55,7 +55,7 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "dask[array,distributed]>=2021.4.1,!=2022.5.1",
+    "dask[array,distributed]>=2021.4.1,!=2022.5.1,<=2023.5.0",
     "docutils>=0.10,<0.16",
     "psutil>=5.7.0",
     "pytest>=5.4.3",
@@ -100,7 +100,7 @@ benchmark_requirements = [
 ]
 
 requirements = [
-    "dask[array]>=2021.4.1",
+    "dask[array]>=2021.4.1,<=2023.5.0",
     "fsspec>=2022.8.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
@@ -171,6 +171,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.11.0",
+    version="4.12.0",
     zip_safe=False,
 )

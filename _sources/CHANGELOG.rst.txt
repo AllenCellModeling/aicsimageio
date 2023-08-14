@@ -6,6 +6,22 @@ Changelog
 
 New
 ~~~
+- Feature/ome_metadata-for-nd2  (`#521
+  <https://github.com/AllenCellModeling/aicsimageio/pull/521>`_) [Talley
+  Lambert]
+
+Fix
+~~~
+- Fix publish task according to pypi rec for 2fa accounts  (`#528
+  <https://github.com/AllenCellModeling/aicsimageio/pull/528>`_) [sean
+  meharry]
+
+
+v4.12.0 (2023-08-03)
+--------------------
+
+New
+~~~
 - Feature/OmeZarr Chunk Dims   (`#519
   <https://github.com/AllenCellModeling/aicsimageio/pull/519>`_)
   [BrianWhitneyAI, Sean LeRoy
@@ -23,12 +39,6 @@ New
 - Feature/sldy reader  (`#496
   <https://github.com/AllenCellModeling/aicsimageio/pull/496>`_) [Sean
   LeRoy]
-
-Fix
-~~~
-- Fix publish task according to pypi rec for 2fa accounts  (`#528
-  <https://github.com/AllenCellModeling/aicsimageio/pull/528>`_) [sean
-  meharry]
 
 Other
 ~~~~~

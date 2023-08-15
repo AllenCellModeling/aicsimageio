@@ -165,8 +165,10 @@ def test_ome_tiff_writer_no_meta(
             (1, 2, 3, 4, 5),
             "bad ome string",
             "TCZYX",
-            # raised from within ome-types
-            marks=pytest.mark.xfail(raises=lxml.etree.XMLSyntaxError),
+            # Raised from within ome-types.
+            # Purposely not specifying the exact exception due to
+            # version differences in ome-types.
+            marks=pytest.mark.xfail(),
         ),
     ],
 )

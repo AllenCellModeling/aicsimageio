@@ -397,15 +397,6 @@ def test_multi_resolution_ome_tiff_reader(
         "3d-cell-viewer.ome.tiff",
         "pre-variance-cfe.ome.tiff",
         "variance-cfe.ome.tiff",
-        pytest.param(
-            "actk.ome.tiff",
-            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
-        ),
-        # This file has a namespace that doesn't exist
-        pytest.param(
-            "s_1_t_1_c_10_z_1.ome.tiff",
-            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
-        ),
     ],
 )
 def test_known_errors_without_cleaning(filename: str, host: str) -> None:

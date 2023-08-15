@@ -3,7 +3,6 @@
 
 from typing import Callable, List, Optional, Tuple, Union
 
-import lxml
 import numpy as np
 import pytest
 from ome_types import to_xml

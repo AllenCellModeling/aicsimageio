@@ -105,7 +105,7 @@ requirements = [
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<=1.24.0",
-    "ome-types>=0.3.3,<0.4.0",
+    "ome-types>=0.3.4",
     "ome-zarr>=0.6.1",
     "PyYAML>=6.0",
     "wrapt>=1.12",

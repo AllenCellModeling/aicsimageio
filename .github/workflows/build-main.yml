@@ -124,6 +124,10 @@ jobs:
     if: "contains(github.event.head_commit.message, 'Bump version')"
     needs: [test-core-lib, test-readers, lint]
     runs-on: ubuntu-latest
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    environment: release
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
       - uses: actions/checkout@v2
@@ -141,7 +145,4 @@ jobs:
         run: |
           python setup.py sdist bdist_wheel
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          user: aicspypi
-          password: ${{ secrets.PYPI_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1

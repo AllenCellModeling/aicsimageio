@@ -105,7 +105,7 @@ requirements = [
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.21.0",
-    "ome-types>=0.3.3,<0.4.0",
+    "ome-types>=0.3.4",
     "ome-zarr>=0.6.1",
     "PyYAML>=6.0",
     "wrapt>=1.12",
@@ -170,6 +170,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.12.0",
+    version="4.12.1",
     zip_safe=False,
 )

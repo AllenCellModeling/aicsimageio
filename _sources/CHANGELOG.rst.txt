@@ -16,6 +16,12 @@ Fix
   <https://github.com/AllenCellModeling/aicsimageio/pull/528>`_) [sean
   meharry]
 
+Other
+~~~~~
+- DependencyFix/Upgrade ome-types to 0.3.4  (`#522
+  <https://github.com/AllenCellModeling/aicsimageio/pull/522>`_)
+  [Virgile Andreani, toloudis]
+
 
 v4.12.0 (2023-08-03)
 --------------------

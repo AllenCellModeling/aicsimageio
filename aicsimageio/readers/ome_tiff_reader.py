@@ -185,7 +185,7 @@ class OmeTiffReader(TiffReader):
 
         # Get ome-types object and warn of other behaviors
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource, is_mmstack=False) as tiff:
+            with TiffFile(open_resource) as tiff:
                 # Get and store OME
                 self._ome = self._get_ome(
                     tiff.pages[0].description, self.clean_metadata
@@ -308,7 +308,7 @@ class OmeTiffReader(TiffReader):
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource, is_mmstack=False) as tiff:
+            with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 
@@ -353,7 +353,7 @@ class OmeTiffReader(TiffReader):
             The file could not be read or is not supported.
         """
         with self._fs.open(self._path) as open_resource:
-            with TiffFile(open_resource, is_mmstack=False) as tiff:
+            with TiffFile(open_resource) as tiff:
                 # Get unprocessed metadata from tags
                 tiff_tags = self._get_tiff_tags(tiff)
 

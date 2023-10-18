@@ -85,6 +85,14 @@ class ND2Reader(Reader):
                 xarr.attrs[constants.METADATA_UNPROCESSED][
                     "frame"
                 ] = rdr.frame_metadata(self.current_scene_index)
+
+            # include OME metadata as attrs of returned xarray.DataArray if possible
+            # (not possible with `nd2` version < 0.7.0; see PR #521)
+            try:
+                xarr.attrs[constants.METADATA_PROCESSED] = self.ome_metadata
+            except NotImplementedError:
+                pass
+        
         return xarr.isel({nd2.AXIS.POSITION: 0}, missing_dims="ignore")
 
     @property

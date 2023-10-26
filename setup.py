@@ -36,7 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.6.0"],
     "dv": ["mrc>=0.2.0"],
-    "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
+    "bfio": ["bfio==2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
     #     "fsspec>=2022.8.0",
     #     "aicspylibczi>=3.1.1",

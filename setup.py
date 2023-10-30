@@ -36,7 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.6.0"],
     "dv": ["mrc>=0.2.0"],
-    "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
+    "bfio": ["bfio==2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
     #     "fsspec>=2022.8.0",
     #     "aicspylibczi>=3.1.1",
@@ -101,7 +101,9 @@ benchmark_requirements = [
 
 requirements = [
     "dask[array]>=2021.4.1,<=2023.5.0",
-    "fsspec>=2022.8.0",
+    # fssspec restricted due to glob issue tracked here, when fixed remove ceiling
+    # https://github.com/fsspec/filesystem_spec/issues/1380
+    "fsspec>=2022.8.0,<2023.9.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.16,<=1.24.0",

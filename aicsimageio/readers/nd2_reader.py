@@ -92,7 +92,7 @@ class ND2Reader(Reader):
                 xarr.attrs[constants.METADATA_PROCESSED] = self.ome_metadata
             except NotImplementedError:
                 pass
-        
+
         return xarr.isel({nd2.AXIS.POSITION: 0}, missing_dims="ignore")
 
     @property

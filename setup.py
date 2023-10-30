@@ -101,7 +101,9 @@ benchmark_requirements = [
 
 requirements = [
     "dask[array]>=2021.4.1",
-    "fsspec>=2022.8.0",
+    # fssspec restricted due to glob issue tracked here, when fixed remove ceiling
+    # https://github.com/fsspec/filesystem_spec/issues/1380
+    "fsspec>=2022.8.0,<2023.9.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
     "numpy>=1.21.0",

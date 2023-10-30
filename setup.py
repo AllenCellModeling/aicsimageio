@@ -172,6 +172,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.13.0",
+    version="4.14.0",
     zip_safe=False,
 )

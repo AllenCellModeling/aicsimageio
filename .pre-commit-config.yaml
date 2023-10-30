@@ -11,7 +11,7 @@ repos:
                     --count,
                     --show-source,
                     --statistics,
-                    --min-python-version=3.8.0,
+                    --min-python-version=3.9.0,
                 ]
     - repo: https://github.com/myint/autoflake
       rev: v1.4

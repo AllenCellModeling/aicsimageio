@@ -36,7 +36,7 @@ format_libs: Dict[str, List[str]] = {
     ],
     "nd2": ["nd2[legacy]>=0.6.0"],
     "dv": ["mrc>=0.2.0"],
-    "bfio": ["bfio>=2.3.0", "tifffile<2022.4.22"],
+    "bfio": ["bfio==2.3.0", "tifffile<2022.4.22"],
     # "czi": [  # excluded for licensing reasons
     #     "fsspec>=2022.8.0",
     #     "aicspylibczi>=3.1.1",
@@ -110,10 +110,10 @@ requirements = [
     "PyYAML>=6.0",
     "wrapt>=1.12",
     "resource-backed-dask-array>=0.1.0",
-    "tifffile>=2021.8.30",
+    "tifffile>=2021.8.30,<2023.3.15",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
-    "zarr>=2.6,<3",
+    "zarr>=2.6,<2.16.0",
 ]
 
 extra_requirements = {
@@ -170,6 +170,6 @@ setup(
     url="https://github.com/AllenCellModeling/aicsimageio",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.md
-    version="4.12.1",
+    version="4.13.0",
     zip_safe=False,
 )

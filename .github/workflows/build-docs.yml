@@ -9,7 +9,7 @@ jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: main
@@ -17,11 +17,11 @@ jobs:
 
       # v3 Docs
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: 3.9
       - name: Checkout v3 Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: v3
@@ -40,7 +40,7 @@ jobs:
 
       # Latest Docs
       - name: Set up Python
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
       - name: Install Dependencies
@@ -51,7 +51,7 @@ jobs:
         run: |
           python scripts/download_test_resources.py --debug
       - name: Get Prior Benchmark Results
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: benchmark-results

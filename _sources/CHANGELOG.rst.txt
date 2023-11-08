@@ -1,6 +1,13 @@
 Changelog
 =========
 
+(unreleased)
+------------
+- Move off Node12  (`#538
+  <https://github.com/AllenCellModeling/aicsimageio/pull/538>`_) [Sean
+  LeRoy]
+
+
 v4.14.0 (2023-10-30)
 --------------------
 

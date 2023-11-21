@@ -557,7 +557,18 @@ class CziReader(Reader):
             # Construct channel name list
             scene_channel_list = []
             channels = img.findall("./Channel")
-            for i, channel in enumerate(channels):
+            number_of_channels_in_data = dims_shape[DimensionNames.Channel][1]
+
+            # There may be more channels in the metadata than in the data
+            # if so, we will just use the first N channels and log
+            # a warning to the user
+            if len(channels) > number_of_channels_in_data:
+                log.warning(
+                    "More channels in metadata than in data "
+                    f"({len(channels)} vs {number_of_channels_in_data})"
+                )
+
+            for i, channel in enumerate(channels[:number_of_channels_in_data]):
                 # Id is required, Name is not.
                 # But we prefer to use Name if it is present
                 channel_name = channel.attrib.get("Name")

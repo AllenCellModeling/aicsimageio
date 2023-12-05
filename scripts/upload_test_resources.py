@@ -133,7 +133,7 @@ def upload_test_resources(args: Args):
             if confirmation:
                 pushed = package.push(
                     package_name,
-                    "s3://aics-modeling-packages-test-resources",
+                    "s3://bioio-dev-test-resources",
                     message=f"Test resources for `aicsimageio` version: {__version__}.",
                 )
 

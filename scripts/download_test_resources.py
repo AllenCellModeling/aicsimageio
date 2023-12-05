@@ -81,7 +81,7 @@ def download_test_resources(args: Args):
         # Get quilt package
         package = Package.browse(
             "aicsimageio/test_resources",
-            "s3://aics-modeling-packages-test-resources",
+            "s3://bioio-dev-test-resources",
             top_hash=top_hash,
         )
 

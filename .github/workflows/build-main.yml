@@ -11,6 +11,13 @@ on:
     # Run every Monday at 18:00:00 UTC (Monday at 10:00:00 PST)
     - cron: "0 18 * * 1"
 
+env:
+  BUCKET_NAME : "bioio-dev-test-resources"
+  AWS_REGION : "us-west-2"
+permissions:
+  id-token: write   # This is required for requesting the JWT
+  contents: read    # This is required for actions/checkout
+
 jobs:
   test-core-lib:
     runs-on: ${{ matrix.os }}
@@ -27,6 +34,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::978220035532:role/bioio_github
+          role-session-name: bioio-aicsimageio-${{ github.sha }}
+          aws-region: ${{ env.AWS_REGION }}
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -35,7 +47,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .[test]
-      - uses: actions/cache@v4
+      - uses: actions/cache@v3
         id: cache
         with:
           path: aicsimageio/tests/resources
@@ -76,6 +88,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::978220035532:role/bioio_github
+          role-session-name: bioio-aicsimageio-${{ github.sha }}
+          aws-region: ${{ env.AWS_REGION }}
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -88,7 +105,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install .[test]
-      - uses: actions/cache@v4
+      - uses: actions/cache@v3
         id: cache
         with:
           path: aicsimageio/tests/resources

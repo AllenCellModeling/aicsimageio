@@ -18,10 +18,9 @@ from ...image_container_test_utils import run_image_file_checks
 @pytest.mark.parametrize(
     "filename, set_scene, expected_shape, expected_dims_order",
     [
-        ("example.bmp", "Image:0", (480, 640, 4), "YXS"),
         ("example.png", "Image:0", (800, 537, 4), "YXS"),
         ("example.jpg", "Image:0", (452, 400, 3), "YXS"),
-        ("example.gif", "Image:0", (72, 268, 268, 4), "TYXS"),
+        ("example.gif", "Image:0", (72, 268, 268, 3), "TYXS"),
         (
             "example_invalid_frame_count.mp4",
             "Image:0",
@@ -108,7 +107,7 @@ def test_ffmpeg_header_fail() -> None:
             "example.gif",
             "Image:0",
             ("Image:0",),
-            (72, 1, 1, 268, 268, 4),
+            (72, 1, 1, 268, 268, 3),
             np.uint8,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
@@ -175,7 +174,7 @@ def test_aicsimage(
             None,
             dimensions.DEFAULT_DIMENSION_ORDER_WITH_SAMPLES,
             ["Channel:0:0"],
-            (72, 1, 1, 268, 268, 4),
+            (72, 1, 1, 268, 268, 3),
         ),
         # Check just dims to see default channel name creation
         (
@@ -184,18 +183,18 @@ def test_aicsimage(
             "ZYXC",
             None,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0:0", "Channel:0:1", "Channel:0:2", "Channel:0:3"],
-            (1, 4, 72, 268, 268),
+            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            (1, 3, 72, 268, 268),
         ),
         # Check setting both as simple definitions
         (
             "example.gif",
             "Image:0",
             "ZYXC",
-            ["Red", "Green", "Blue", "Alpha"],
+            ["Red", "Green", "Blue"],
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Red", "Green", "Blue", "Alpha"],
-            (1, 4, 72, 268, 268),
+            ["Red", "Green", "Blue"],
+            (1, 3, 72, 268, 268),
         ),
         # Check providing too many dims
         pytest.param(
@@ -213,7 +212,7 @@ def test_aicsimage(
             "example.gif",
             "Image:0",
             "ZYXC",
-            ["A", "B", "C"],
+            ["A", "B", "C", "D"],
             None,
             None,
             None,

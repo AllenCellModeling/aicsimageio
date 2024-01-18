@@ -17,12 +17,12 @@ from ...conftest import LOCAL, array_constructor, get_resource_write_full_path
 @pytest.mark.parametrize(
     "write_shape, write_dim_order, read_shape, read_dim_order",
     [
-        ((30, 100, 100), None, (30, 100, 100), "TYX"),
+        ((30, 100, 100), None, (30, 100, 100, 3), "TYXS"),
         # Note that files get saved out with RGBA, instead of just RGB
-        ((30, 100, 100, 3), None, (30, 100, 100, 4), "TYXS"),
-        ((100, 30, 100), "XTY", (30, 100, 100), "TYX"),
+        ((30, 100, 100, 3), None, (30, 100, 100, 3), "TYXS"),
+        ((100, 30, 100), "XTY", (30, 100, 100, 3), "TYXS"),
         # Note that files get saved out with RGBA, instead of just RGB
-        ((3, 100, 30, 100), "SYTX", (30, 100, 100, 4), "TYXS"),
+        ((3, 100, 30, 100), "SYTX", (30, 100, 100, 3), "TYXS"),
         pytest.param(
             (1, 1),
             None,

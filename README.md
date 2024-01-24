@@ -22,6 +22,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`) (Note: requires `java` and `maven`, see below for details.)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
+    -   `OME-ZARR`
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
 -   Supports reading and writing to
     [fsspec](https://github.com/intake/filesystem_spec) supported file systems

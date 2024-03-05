@@ -63,7 +63,7 @@ class OmeTiffWriter(Writer):
             Note: OmeTiffWriter can only write to local file systems.
         dim_order: Optional[Union[str, List[Union[str, None]]]]
             The dimension order of the provided data.
-            Dimensions must be a list of T, C, Z, Y, Z, and S (S=samples for rgb data).
+            Dimensions must be a list of T, C, Z, Y, X, and S (S=samples for rgb data).
             Dimension strings must be same length as number of dimensions in the data.
             If S is present it must be last and its data count must be 3 or 4.
             Default: None.

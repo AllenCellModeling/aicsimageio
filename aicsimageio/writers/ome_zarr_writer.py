@@ -178,6 +178,46 @@ class OmeZarrWriter:
         ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
         ... writer.write_image(image0, "Image:0", ["C00","C01","C02"])
         ... writer.write_image(image1, "Image:1", ["C10","C11","C12"])
+
+        Write multi-scale image to OME-Zarr
+        >>> image = numpy.ndarray([3, 10, 1024, 2048])
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.write_image(
+        ...     data, 
+        ...     image_name="Image:0", 
+        ...     channel_names=["C00","C01","C02"],
+        ...     scale_num_levels=3,
+        ...     scale_factor=2.0,
+        ...     dimension_order="CZYX"
+        ...     )
+
+        Write image channel color to OME-Zarr
+        >>> image = numpy.ndarray([3, 10, 1024, 2048])
+        ... channel_colors = ["FFFFFF","00FFFF","0000FF"]
+        ... int_color = [int(c, 16) for c in channel_colors]
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.write_image(
+        ...     data, 
+        ...     image_name="Image:0", 
+        ...     channel_names=["C00","C01","C02"],
+        ...     channel_colors=int_color,
+        ...     dimension_order="CZYX"
+        ...     )
+
+        Write pixel size to OME-Zarr
+        >>> from aicsimageio import AICSImage, types
+        ... image = numpy.ndarray([3, 10, 1024, 2048])
+        ... channel_colors = ["FFFFFF","00FFFF","0000FF"]
+        ... int_color = [int(c, 16) for c in channel_colors]
+        ... writer = OmeZarrWriter("/path/to/file.ome.zarr")
+        ... writer.write_image(
+        ...     data, 
+        ...     image_name="Image:0", 
+        ...     physical_pixel_sizes=types.PhysicalPixelSizes(X=0.5, Y=0.5, Z=1.0)
+        ...     channel_names=["C00","C01","C02"],
+        ...     channel_colors=int_color,
+        ...     dimension_order="CZYX"
+        ...     )
         """
         ndims = len(image_data.shape)
         if ndims < 2 or ndims > 5:

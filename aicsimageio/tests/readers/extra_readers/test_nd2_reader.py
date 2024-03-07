@@ -10,7 +10,6 @@ from ome_types import OME
 from aicsimageio import AICSImage, dimensions, exceptions
 from aicsimageio.readers.nd2_reader import ND2Reader
 from aicsimageio.tests.image_container_test_utils import run_image_file_checks
-
 from ...conftest import LOCAL, get_resource_full_path, host
 
 nd2 = pytest.importorskip("nd2")
@@ -266,6 +265,16 @@ def test_frame_metadata() -> None:
     filename = "ND2_dims_rgb_t3p2c2z3x64y64.nd2"
     uri = get_resource_full_path(filename, LOCAL)
     rdr = ND2Reader(uri)
+    rdr.set_scene(0)
+    assert isinstance(
+        rdr.xarray_data.attrs["unprocessed"]["frame"], nd2.structures.FrameMetadata
+    )
+
+
+def test_non_local_read() -> None:
+    filename = "ND2_dims_rgb_t3p2c2z3x64y64.nd2"
+    uri = get_resource_full_path(filename, LOCAL)
+    rdr = ND2Reader("simplecache::" + str(uri))
     rdr.set_scene(0)
     assert isinstance(
         rdr.xarray_data.attrs["unprocessed"]["frame"], nd2.structures.FrameMetadata

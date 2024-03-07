@@ -2,17 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, Tuple
 
-from fsspec.implementations.local import LocalFileSystem
-
+from .reader import Reader
 from .. import constants, exceptions, types
 from ..utils import io_utils
-from .reader import Reader
 
 if TYPE_CHECKING:
     import xarray as xr
     from fsspec.spec import AbstractFileSystem
     from ome_types import OME
-
 
 try:
     import nd2
@@ -52,12 +49,6 @@ class ND2Reader(Reader):
             enforce_exists=True,
             fs_kwargs=fs_kwargs,
         )
-        # Catch non-local file system
-        if not isinstance(self._fs, LocalFileSystem):
-            raise ValueError(
-                f"Cannot read ND2 from non-local file system. "
-                f"Received URI: {self._path}, which points to {type(self._fs)}."
-            )
 
         if not self._is_supported_image(self._fs, self._path):
             raise exceptions.UnsupportedFileFormatError(

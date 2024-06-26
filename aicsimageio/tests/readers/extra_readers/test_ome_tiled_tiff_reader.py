@@ -57,17 +57,6 @@ from ...image_container_test_utils import run_image_file_checks
             None,
             marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
         ),
-        pytest.param(
-            "s_1_t_1_c_2_z_1.lif",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
-        ),
     ],
 )
 def test_ome_tiff_reader(

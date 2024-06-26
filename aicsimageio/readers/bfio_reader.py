@@ -181,8 +181,7 @@ class BfioReader(Reader):
                     "Scene id: Cannot change scene for "
                     + f"{self.__class__.__name__} objects."
                 )
-
-        else:
+        elif scene_id is not None:
             raise TypeError(
                 f"Must provide either a string (for scene id) "
                 f"or integer (for scene index). Provided: {scene_id} ({type(scene_id)}."

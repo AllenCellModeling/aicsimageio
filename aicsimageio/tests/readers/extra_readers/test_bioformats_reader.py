@@ -203,7 +203,7 @@ SERIES_0 = "PRIMARY" if bf_version > (6, 7) else "Series 0"
             (1, 3, 1, 1024, 1024),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            ["Red", "Green", "Blue"],
             (0.001, 1.2059374999999999, 1.2059570312500014),
         ),
         (
@@ -508,7 +508,7 @@ def test_bioformats_dask_tiling_read(filename: str) -> None:
             (1, 3, 1, 1024, 1024),
             np.uint16,
             dimensions.DEFAULT_DIMENSION_ORDER,
-            ["Channel:0:0", "Channel:0:1", "Channel:0:2"],
+            ["Red", "Green", "Blue"],
             (0.001, 1.2059374999999999, 1.2059570312500014),
             OME,
         ),

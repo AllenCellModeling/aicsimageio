@@ -75,16 +75,16 @@ def run_image_container_checks(
     image_container.set_scene(set_scene)
 
     # Check scene info
-    assert image_container.scenes == expected_scenes
-    assert image_container.current_scene == expected_current_scene
+    assert image_container.scenes == expected_scenes, f"{image_container.scenes} != {expected_scenes}"
+    assert image_container.current_scene == expected_current_scene, f"{image_container.current_scene} != {expected_current_scene}"
 
     # Check basics
-    assert image_container.shape == expected_shape
-    assert image_container.dtype == expected_dtype
-    assert image_container.dims.order == expected_dims_order
-    assert image_container.dims.shape == expected_shape
-    assert image_container.channel_names == expected_channel_names
-    assert image_container.physical_pixel_sizes == expected_physical_pixel_sizes
+    assert image_container.shape == expected_shape, f"{image_container.shape} != {expected_shape}"
+    assert image_container.dtype == expected_dtype, f"{image_container.dtype} != {expected_dtype}"
+    assert image_container.dims.order == expected_dims_order, f"{image_container.dims.order} != {expected_dims_order}"
+    assert image_container.dims.shape == expected_shape, f"{image_container.dims} != {expected_shape}"
+    assert image_container.channel_names == expected_channel_names, f"{image_container.channel_names} != {expected_channel_names}"
+    assert image_container.physical_pixel_sizes == expected_physical_pixel_sizes, f"{image_container.physical_pixel_sizes} != {expected_physical_pixel_sizes}"
     assert isinstance(image_container.metadata, expected_metadata_type)
 
     # Read different chunks

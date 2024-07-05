@@ -1,7 +1,7 @@
 # AICSImageIO
 
 > [!WARNING]  
-> Deprecated in favor of replacement tool `bioio` ([see here for migration guide](https://bioio-devs.github.io/bioio/MIGRATION.html))
+> AICSImageIO is now in maintenance mode only.  Please take a look at its compatible successor [`bioio`](https://github.com/bioio-devs/bioio) ([see here for migration guide](https://bioio-devs.github.io/bioio/MIGRATION.html))
 
 [![Build Status](https://github.com/AllenCellModeling/aicsimageio/actions/workflows/build-main.yml/badge.svg)](https://github.com/AllenCellModeling/aicsimageio/actions)
 [![Documentation](https://github.com/AllenCellModeling/aicsimageio/workflows/Documentation/badge.svg)](https://AllenCellModeling.github.io/aicsimageio/)

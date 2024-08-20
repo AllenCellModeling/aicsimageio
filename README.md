@@ -26,6 +26,7 @@ Image Reading, Metadata Conversion, and Image Writing for Microscopy Images in P
     -   Files supported by [Bio-Formats](https://docs.openmicroscopy.org/bio-formats/latest/supported-formats.html) -- (`pip install aicsimageio bioformats_jar`) (Note: requires `java` and `maven`, see below for details.)
 -   Supports writing metadata and imaging data for:
     -   `OME-TIFF`
+    -   `OME-ZARR`
     -   `PNG`, `GIF`, [etc.](https://github.com/imageio/imageio) -- (`pip install aicsimageio[base-imageio]`)
 -   Supports reading and writing to
     [fsspec](https://github.com/intake/filesystem_spec) supported file systems
@@ -308,7 +309,7 @@ as an OME-TIFF, the writer class can also be used to customize as needed.
 
 ```python
 import numpy as np
-from aicsimageio.writers import OmeTiffWriter
+from aicsimageio.writers.ome_tiff_writer import OmeTiffWriter
 
 image = np.random.rand(10, 3, 1024, 2048)
 OmeTiffWriter.save(image, "file.ome.tif", dim_order="ZCYX")
@@ -316,6 +317,35 @@ OmeTiffWriter.save(image, "file.ome.tif", dim_order="ZCYX")
 
 See
 [OmeTiffWriter documentation](./aicsimageio.writers.html#aicsimageio.writers.ome_tiff_writer.OmeTiffWriter.save)
+for more details.
+
+### Saving to OME-ZARR
+In-built writer for OME-ZARR output, effectively towards large image data
+
+```python
+from aicsimageio import AICSImage, types
+from aicsimageio.writers.ome_zarr_writer import OmeZarrWriter
+
+image = np.random.rand(3, 10, 1024, 2048)
+channel_colors = ["FFFFFF","00FFFF","0000FF"]
+int_color = [int(c, 16) for c in channel_colors]
+
+writer = OmeZarrWriter("./test.ome.zarr")
+
+writer.write_image(
+    image, 
+    image_name="Image:0", 
+    physical_pixel_sizes=types.PhysicalPixelSizes(X=0.5, Y=0.5, Z=1.0), # in um
+    channel_names=["C00","C01","C02"],
+    channel_colors=int_color,
+    scale_num_levels=3,
+    scale_factor=2.0,
+    dimension_order="CZYX"
+    )
+```
+
+See
+[OmeZarrWriter documentation](./aicsimageio.writers.html#aicsimageio.writers.ome_zarr_writer.OmeZarrWriter.save)
 for more details.
 
 #### Other Writers

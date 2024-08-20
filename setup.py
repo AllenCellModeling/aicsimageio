@@ -106,7 +106,7 @@ requirements = [
     "fsspec>=2022.8.0,<2023.9.0",
     "imagecodecs>=2020.5.30",
     "lxml>=4.6,<5",
-    "numpy>=1.21.0",
+    "numpy>=1.21.0,<2",
     "ome-types>=0.3.4",
     "ome-zarr>=0.6.1",
     "PyYAML>=6.0",
@@ -115,7 +115,7 @@ requirements = [
     "tifffile>=2021.8.30,<2023.3.15",
     "xarray>=0.16.1",
     "xmlschema",  # no pin because it's pulled in from OME types
-    "zarr>=2.6,<2.16.0",
+    "zarr>=2.6",
 ]
 
 extra_requirements = {

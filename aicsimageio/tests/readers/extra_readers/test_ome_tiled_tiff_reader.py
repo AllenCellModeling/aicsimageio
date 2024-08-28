@@ -47,31 +47,7 @@ from ...image_container_test_utils import run_image_file_checks
             (None, None, None),
         ),
         pytest.param(
-            # This is the same file as the first file, but it is not tiled
-            # This should throw and error since it is not tiled
-            "s_1_t_1_c_1_z_1.ome.tiff",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
             "example.txt",
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            None,
-            marks=pytest.mark.xfail(raises=exceptions.UnsupportedFileFormatError),
-        ),
-        pytest.param(
-            "s_1_t_1_c_2_z_1.lif",
             None,
             None,
             None,

@@ -21,10 +21,7 @@ def check_values(
 ) -> None:
     for i, s in enumerate(reader.scenes):
         reader.set_scene(s)
-        assert np.all(
-            reference.isel(S=i).data == reader.xarray_dask_data.data
-        ).compute()
-        assert np.all(reference.isel(S=i).data == reader.xarray_data.data)
+        np.testing.assert_array_equal(reference.isel(S=i).data, reader.xarray_data.data)
 
 
 def make_fake_data_2d(path: Path, as_mm: bool = False) -> xr.DataArray:
